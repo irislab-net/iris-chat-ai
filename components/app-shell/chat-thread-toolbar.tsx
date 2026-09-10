@@ -173,7 +173,6 @@ function ChatThreadToolbar(props: ChatThreadToolbarProps) {
         "flex shrink-0 items-center justify-end gap-1.5 px-3 py-2",
         props.className
       )}
-      data-tour="chat-thread-toolbar"
     >
       <ChatThreadActions {...props} />
     </div>

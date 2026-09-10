@@ -1,0 +1,270 @@
+"use client"
+
+import * as React from "react"
+import { Link } from "@/i18n/navigation"
+import {
+  CheckIcon,
+  ChevronDownIcon,
+  EclipseIcon,
+  LogOutIcon,
+  MenuIcon,
+  NewspaperIcon,
+  SparklesIcon,
+  SquarePenIcon,
+} from "lucide-react"
+import { useTranslations } from "next-intl"
+import { useTheme } from "@wrksz/themes/client/use-theme"
+
+import { useAuth } from "@/components/auth/auth-provider"
+import { GoogleGlyph } from "@/components/auth/google-glyph"
+import { useUserAvatarUrl } from "@/hooks/use-user-avatar-url"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Button } from "@/components/ui/button"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import {
+  CHAT_EFFORT_OPTIONS,
+  chatEffortLabel,
+  type ChatEffort,
+} from "@/lib/chat-effort"
+import { UPGRADE_PATH } from "@/lib/site"
+import type { User } from "@/lib/api/types"
+import {
+  userAccountLabel,
+  userAccountSubline,
+  userAvatarFallback,
+} from "@/lib/user-profile"
+import { cn } from "@/lib/utils"
+
+const headerCircleClass =
+  "size-10 shrink-0 rounded-full bg-muted/50 text-foreground hover:bg-muted/70 dark:bg-muted/30 dark:hover:bg-muted/45 [&_svg:not([class*='size-'])]:size-[18px]"
+
+type ChatMobileHeaderProps = {
+  onOpenHistory?: () => void
+  historyOpen?: boolean
+  effort?: ChatEffort
+  onEffortChange?: (effort: ChatEffort) => void
+  hideEffort?: boolean
+  onNewChat: () => void
+  onOpenNews: () => void
+  sending?: boolean
+  className?: string
+}
+
+function AccountAvatar({
+  user,
+  avatarUrl,
+}: {
+  user: User
+  avatarUrl: string | null
+}) {
+  return (
+    <Avatar className="size-9 after:border-0">
+      {avatarUrl ? (
+        <AvatarImage src={avatarUrl} alt={userAccountLabel(user)} />
+      ) : null}
+      <AvatarFallback className="text-[11px] font-medium">
+        {userAvatarFallback(user)}
+      </AvatarFallback>
+    </Avatar>
+  )
+}
+
+function ChatMobileHeader({
+  onOpenHistory,
+  historyOpen = false,
+  effort,
+  onEffortChange,
+  hideEffort = false,
+  onNewChat,
+  onOpenNews,
+  sending = false,
+  className,
+}: ChatMobileHeaderProps) {
+  const t = useTranslations("workspace")
+  const common = useTranslations("common")
+  const { user, isProUser, login, logout, loginPending } = useAuth()
+  const avatarUrl = useUserAvatarUrl(user)
+  const { resolvedTheme, setTheme } = useTheme()
+  const effortLabel = effort ? chatEffortLabel(effort) : chatEffortLabel("instant")
+
+  return (
+    <header
+      className={cn(
+        "flex min-h-14 shrink-0 items-center justify-between gap-2 px-3 pt-[var(--app-safe-top,0px)]",
+        className
+      )}
+    >
+      <div className="flex min-w-0 items-center gap-0.5">
+        {onOpenHistory ? (
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className={headerCircleClass}
+            aria-label={t("chatHistory")}
+            aria-pressed={historyOpen}
+            onClick={onOpenHistory}
+          >
+            <MenuIcon />
+          </Button>
+        ) : null}
+        {!hideEffort && effort && onEffortChange ? (
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              render={
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  aria-label={`Response depth: ${effortLabel}`}
+                  className="h-10 max-w-[11rem] gap-0.5 rounded-full px-2.5 text-[17px] font-normal tracking-tight text-foreground hover:bg-muted/40"
+                />
+              }
+            >
+              <span className="truncate">{effortLabel}</span>
+              <ChevronDownIcon className="size-4 shrink-0 text-muted-foreground" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="min-w-48">
+              <DropdownMenuGroup>
+                <p className="px-2 pb-1 pt-1.5 text-[10px] font-medium tracking-wide text-muted-foreground uppercase">
+                  Response depth
+                </p>
+                {CHAT_EFFORT_OPTIONS.map((item) => (
+                  <DropdownMenuItem
+                    key={item.value}
+                    className="items-start py-2"
+                    onClick={() => onEffortChange(item.value)}
+                  >
+                    <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+                      <span className="text-[13px]">{item.label}</span>
+                      <span className="text-[11px] text-muted-foreground">
+                        {item.hint}
+                      </span>
+                    </span>
+                    {effort === item.value ? (
+                      <CheckIcon className="mt-0.5 size-3.5" />
+                    ) : null}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ) : null}
+      </div>
+
+      <div className="flex shrink-0 items-center gap-1">
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          className={headerCircleClass}
+          aria-label={t("newChat")}
+          disabled={sending}
+          onClick={onNewChat}
+        >
+          <SquarePenIcon />
+        </Button>
+        {user ? (
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              render={
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="size-10 rounded-full p-0 hover:bg-transparent"
+                  aria-label={`Account menu for ${userAccountLabel(user)}`}
+                />
+              }
+            >
+              <AccountAvatar user={user} avatarUrl={avatarUrl} />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="min-w-52">
+              <DropdownMenuGroup>
+                <DropdownMenuLabel className="font-normal">
+                  <div className="flex items-center gap-2.5">
+                    <AccountAvatar user={user} avatarUrl={avatarUrl} />
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-medium">
+                        {userAccountLabel(user)}
+                      </p>
+                      {userAccountSubline(user) ? (
+                        <p className="truncate text-xs text-muted-foreground">
+                          {userAccountSubline(user)}
+                        </p>
+                      ) : null}
+                    </div>
+                  </div>
+                </DropdownMenuLabel>
+              </DropdownMenuGroup>
+              {!isProUser ? (
+                <>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    className="gap-2"
+                    nativeButton={false}
+                    render={<Link href={UPGRADE_PATH} />}
+                  >
+                    <SparklesIcon className="size-4" />
+                    {t("upgradeToPlus")}
+                  </DropdownMenuItem>
+                </>
+              ) : null}
+              <DropdownMenuSeparator />
+              <DropdownMenuItem className="gap-2" onClick={onOpenNews}>
+                <NewspaperIcon className="size-4" />
+                {t("news")}
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                className="gap-2"
+                onClick={() =>
+                  setTheme(resolvedTheme === "dark" ? "light" : "dark")
+                }
+              >
+                <EclipseIcon className="size-4" />
+                {resolvedTheme === "dark"
+                  ? common("lightMode")
+                  : common("darkMode")}
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                variant="destructive"
+                className="gap-2"
+                onClick={() => void logout()}
+              >
+                <LogOutIcon className="size-4" />
+                {t("logOut")}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ) : (
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="size-10 rounded-full p-0"
+            aria-label={t("signIn")}
+            disabled={loginPending}
+            onClick={() => login({ source: "chat" })}
+          >
+            <Avatar className="size-9 after:border-0">
+              <AvatarFallback className="bg-muted text-[11px] font-medium">
+                <GoogleGlyph className="size-3.5" />
+              </AvatarFallback>
+            </Avatar>
+          </Button>
+        )}
+      </div>
+    </header>
+  )
+}
+
+export { ChatMobileHeader }

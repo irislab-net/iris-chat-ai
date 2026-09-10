@@ -1,7 +1,13 @@
 "use client"
 
 import * as React from "react"
-import { ArrowUpIcon, CheckIcon, ChevronDownIcon, PlusIcon, XIcon } from "lucide-react"
+import {
+  ArrowUpIcon,
+  CheckIcon,
+  ChevronDownIcon,
+  PlusIcon,
+  XIcon,
+} from "lucide-react"
 import { useLocale, useTranslations } from "next-intl"
 
 import { Badge } from "@/components/ui/badge"
@@ -49,6 +55,8 @@ type ChatComposerProps = {
   onEffortChange?: (effort: ChatEffort) => void
   /** Hide effort picker — guests must use normal effort only. */
   hideEffort?: boolean
+  /** Gemini-style floating pill — used on mobile full-screen chat. */
+  layout?: "default" | "floating"
 }
 
 function ChatComposer({
@@ -61,6 +69,7 @@ function ChatComposer({
   effort = DEFAULT_CHAT_EFFORT,
   onEffortChange,
   hideEffort = false,
+  layout = "default",
 }: ChatComposerProps) {
   const t = useTranslations("workspace")
   const textDir = localeDirection(useLocale())
@@ -74,6 +83,7 @@ function ChatComposer({
   const isControlled = valueProp !== undefined
   const value = isControlled ? valueProp : uncontrolled
   const canSend = !disabled && value.trim().length > 0
+  const isFloating = layout === "floating"
   const textareaNodeRef = React.useMemo(
     () => mergeRefs(localRef, textareaRef),
     [textareaRef]
@@ -241,9 +251,11 @@ function ChatComposer({
   return (
     <form
       data-slot="chat-composer"
-      data-tour="composer"
       className={cn(
-        "relative shrink-0 bg-linear-to-t from-sidebar via-sidebar to-sidebar/80 px-3 pt-3 pb-[max(0.625rem,env(safe-area-inset-bottom))]",
+        "relative shrink-0",
+        isFloating
+          ? "px-4 pt-3 pb-[max(1rem,env(safe-area-inset-bottom,0px))]"
+          : "bg-linear-to-t from-sidebar via-sidebar to-sidebar/80 px-3 pt-3 pb-[max(0.625rem,env(safe-area-inset-bottom))]",
         className
       )}
       onSubmit={(event) => {
@@ -293,15 +305,70 @@ function ChatComposer({
       <div
         data-composer-body=""
         className={cn(
-          "grid cursor-text grid-cols-[auto_1fr_auto] rounded-2xl border border-foreground/[0.06] bg-muted/25 px-1 pb-1.5",
-          "shadow-[inset_0_1px_0_0_color-mix(in_oklch,var(--foreground)_7%,transparent),0_10px_28px_-20px_color-mix(in_oklch,var(--foreground)_14%,transparent)]",
-          "[grid-template-areas:'primary_primary_primary'_'leading_._trailing']",
-          "transition-[background-color,box-shadow,border-color] focus-within:border-foreground/10 focus-within:bg-muted/38",
-          "focus-within:shadow-[inset_0_1px_0_0_color-mix(in_oklch,var(--foreground)_11%,transparent),0_14px_36px_-18px_color-mix(in_oklch,var(--foreground)_18%,transparent)]"
+          "cursor-text transition-[background-color,box-shadow,border-color]",
+          isFloating
+            ? cn(
+                "flex min-h-14 items-center gap-1 rounded-full px-2.5",
+                "border border-sky-200/50 bg-background/88 shadow-[0_4px_24px_-10px_rgba(59,130,246,0.2)] backdrop-blur-md",
+                "focus-within:border-sky-200/70 focus-within:bg-background/95 focus-within:shadow-[0_6px_28px_-8px_rgba(59,130,246,0.24)]",
+                "dark:border-border/20 dark:bg-muted/25 dark:shadow-none dark:backdrop-blur-none",
+                "dark:focus-within:border-border/45 dark:focus-within:bg-muted/35 dark:focus-within:shadow-none"
+              )
+            : cn(
+                "grid grid-cols-[auto_1fr_auto] rounded-2xl border border-foreground/[0.06] bg-muted/25 px-1 pb-1.5",
+                "shadow-[inset_0_1px_0_0_color-mix(in_oklch,var(--foreground)_7%,transparent),0_10px_28px_-20px_color-mix(in_oklch,var(--foreground)_14%,transparent)]",
+                "[grid-template-areas:'primary_primary_primary'_'leading_._trailing']",
+                "focus-within:border-foreground/10 focus-within:bg-muted/38",
+                "focus-within:shadow-[inset_0_1px_0_0_color-mix(in_oklch,var(--foreground)_11%,transparent),0_14px_36px_-18px_color-mix(in_oklch,var(--foreground)_18%,transparent)]"
+              )
         )}
         onClick={focusField}
       >
-        <div className="[grid-area:primary] flex min-h-11 flex-wrap items-start gap-1.5 px-3.5 pt-3.5 pb-1.5 sm:min-h-10">
+        {isFloating ? (
+          <DropdownMenu modal={false}>
+            <DropdownMenuTrigger
+              render={
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon-sm"
+                  aria-label={t("composerToolsMenu")}
+                  title={t("composerToolsMenu")}
+                  disabled={disabled}
+                  className="size-10 shrink-0 rounded-full text-muted-foreground hover:bg-sky-50/80 hover:text-foreground dark:hover:bg-muted/50"
+                />
+              }
+            >
+              <PlusIcon className="size-5" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="min-w-52" side="top">
+              <DropdownMenuGroup>
+                <DropdownMenuLabel className="text-[10px] font-medium tracking-wide uppercase">
+                  {t("composerToolsMenu")}
+                </DropdownMenuLabel>
+                {IRIS_MENTION_OPTIONS.map((option) => (
+                  <DropdownMenuItem
+                    key={option.id}
+                    className="flex-col items-start gap-0.5 py-2"
+                    onClick={() => insertMentionToken(option)}
+                  >
+                    <span className="text-[13px] font-medium">{option.label}</span>
+                    <span className="line-clamp-2 text-[11px] text-muted-foreground">
+                      {t("composerToolSignalDesc")}
+                    </span>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ) : null}
+        <div
+          className={cn(
+            isFloating
+              ? "flex min-w-0 flex-1 items-center gap-1 px-0.5"
+              : "[grid-area:primary] flex min-h-11 flex-wrap items-start gap-1.5 px-3.5 pt-3.5 pb-1.5 sm:min-h-10"
+          )}
+        >
           {activeTool ? (
             <Badge
               variant="secondary"
@@ -333,14 +400,50 @@ function ChatComposer({
             onClick={syncCursor}
             onSelect={syncCursor}
             placeholder={
-              activeTool ? t("composerToolSignalPlaceholder") : t("composerPlaceholder")
+              activeTool
+                ? t("composerToolSignalPlaceholder")
+                : isFloating
+                  ? t("composerMobilePlaceholder")
+                  : t("composerPlaceholder")
             }
             rows={1}
             disabled={disabled}
             dir={textDir}
-            className="chat-bidi min-h-6 min-w-[8rem] flex-1 field-sizing-content resize-none rounded-none border-0 bg-transparent p-0 text-start text-[16px] leading-6 shadow-none focus-visible:border-transparent focus-visible:ring-0 sm:text-[14px] sm:leading-[1.45] dark:bg-transparent"
+            className={cn(
+              "chat-bidi min-w-[8rem] flex-1 field-sizing-content resize-none rounded-none border-0 bg-transparent p-0 text-start shadow-none focus-visible:border-transparent focus-visible:ring-0 dark:bg-transparent",
+              isFloating
+                ? "min-h-10 py-2.5 text-[16px] leading-6 placeholder:text-muted-foreground/65"
+                : "min-h-6 text-[16px] leading-6 sm:text-[14px] sm:leading-[1.45]"
+            )}
           />
         </div>
+        {isFloating ? (
+          <>
+            <div
+              className="mx-0.5 h-7 w-px shrink-0 bg-sky-200/75 dark:bg-border/50"
+              aria-hidden
+            />
+            <div className="flex shrink-0 items-center pe-0.5">
+              <Button
+                type="submit"
+                size="icon-sm"
+                variant={canSend ? "default" : "ghost"}
+                aria-label="Send message"
+                title="Send · Enter"
+                disabled={!canSend}
+                className={cn(
+                  "size-10 rounded-full transition-transform",
+                  !canSend &&
+                    "text-muted-foreground hover:bg-sky-50/80 dark:hover:bg-muted/50",
+                  canSend && "shadow-sm"
+                )}
+              >
+                <ArrowUpIcon className="size-[18px]" />
+              </Button>
+            </div>
+          </>
+        ) : null}
+        {!isFloating ? (
         <div className="[grid-area:leading] flex items-center gap-0.5 px-0.5 pb-0.5">
           <DropdownMenu modal={isMobile ? false : undefined}>
             <DropdownMenuTrigger
@@ -425,6 +528,8 @@ function ChatComposer({
             </DropdownMenu>
           ) : null}
         </div>
+        ) : null}
+        {!isFloating ? (
         <div className="[grid-area:trailing] flex items-center justify-end px-1 pb-0.5">
           <Button
             type="submit"
@@ -441,10 +546,13 @@ function ChatComposer({
             <ArrowUpIcon />
           </Button>
         </div>
+        ) : null}
       </div>
-      <p className="mt-2 text-center text-[10px] leading-4 text-muted-foreground/70">
-        {t("composerHint")}
-      </p>
+      {!isFloating ? (
+        <p className="mt-2 text-center text-[10px] leading-4 text-muted-foreground/70">
+          {t("composerHint")}
+        </p>
+      ) : null}
     </form>
   )
 }

@@ -1,8 +1,10 @@
 "use client"
 
 import * as React from "react"
+import Image from "next/image"
 import { ExternalLinkIcon } from "lucide-react"
 
+import { GoogleGlyph } from "@/components/auth/google-glyph"
 import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
 import {
@@ -32,6 +34,12 @@ type LoginConsentDialogProps = {
   confirming?: boolean
 }
 
+const TITLE = "Before you connect"
+const DESCRIPTION =
+  "Review and accept IRIS Lab's legal terms to continue with Google."
+const DISCLAIMER =
+  "By continuing, you confirm that you are at least 18 years old, are not a U.S. Person or resident of a sanctioned jurisdiction, and acknowledge that IRIS Intel provides analytics for informational purposes only, not financial advice."
+
 function ConsentCheck({
   id,
   checked,
@@ -49,14 +57,15 @@ function ConsentCheck({
     <label
       htmlFor={id}
       className={cn(
-        "flex min-h-11 cursor-pointer items-center gap-3 rounded-2xl border border-border bg-muted/40 px-3.5 py-3 text-left transition-colors",
-        "hover:bg-muted/70",
-        checked && "border-foreground/20 bg-muted"
+        "flex min-h-12 cursor-pointer items-center gap-3 rounded-xl border px-3.5 py-3 text-left transition-[background-color,border-color,box-shadow]",
+        checked
+          ? "border-sky-200/70 bg-sky-50/60 shadow-[0_1px_0_0_rgba(255,255,255,0.6)_inset] dark:border-border/60 dark:bg-muted/50 dark:shadow-none"
+          : "border-border/45 bg-background/90 hover:border-border/70 hover:bg-muted/35 dark:bg-muted/20"
       )}
     >
       <span
         id={labelId}
-        className="min-w-0 flex-1 text-sm leading-relaxed text-foreground sm:text-[15px]"
+        className="min-w-0 flex-1 text-[15px] leading-snug text-foreground"
       >
         {children}
       </span>
@@ -65,6 +74,7 @@ function ConsentCheck({
         checked={checked}
         onCheckedChange={onCheckedChange}
         aria-labelledby={labelId}
+        className="shrink-0"
       />
     </label>
   )
@@ -76,12 +86,40 @@ function LegalLink({ href, children }: { href: string; children: React.ReactNode
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="inline-flex items-center gap-1 font-medium text-foreground underline underline-offset-3 hover:text-foreground/80"
+      className="inline-flex items-center gap-1 font-medium text-foreground underline decoration-border underline-offset-[3px] transition-colors hover:decoration-foreground/40"
       onClick={(event) => event.stopPropagation()}
     >
       {children}
-      <ExternalLinkIcon className="size-3 opacity-60" aria-hidden />
+      <ExternalLinkIcon className="size-3 opacity-50" aria-hidden />
     </a>
+  )
+}
+
+function LoginConsentBrand({ compact = false }: { compact?: boolean }) {
+  return (
+    <div
+      className={cn(
+        "flex items-center gap-3",
+        compact ? "px-5 pb-1" : "pb-2"
+      )}
+    >
+      <Image
+        src="/Logo.png"
+        alt=""
+        width={40}
+        height={40}
+        className="block size-10 shrink-0 rounded-xl"
+        priority
+      />
+      <div className="min-w-0">
+        <p className="text-[15px] font-medium leading-none tracking-tight text-foreground">
+          IRIS Lab
+        </p>
+        <p className="mt-1 text-[13px] leading-snug text-muted-foreground">
+          Secure sign-in with Google
+        </p>
+      </div>
+    </div>
   )
 }
 
@@ -97,27 +135,28 @@ function LoginConsentActions({
   onCancel: () => void
 }) {
   return (
-    <>
+    <div className="flex w-full flex-col gap-2">
       <Button
         type="button"
         size="lg"
-        className="h-11 w-full rounded-2xl px-4 text-base font-semibold whitespace-normal"
+        className="h-12 w-full gap-2.5 rounded-full px-5 text-[15px] font-medium shadow-sm disabled:opacity-45"
         disabled={!canContinue}
         onClick={onConfirm}
       >
+        <GoogleGlyph className="size-4" />
         {confirming ? "Connecting…" : "Agree & continue with Google"}
       </Button>
       <Button
         type="button"
         variant="ghost"
         size="lg"
-        className="h-11 w-full rounded-2xl text-muted-foreground hover:text-foreground"
+        className="h-10 w-full rounded-full text-[15px] font-normal text-muted-foreground hover:bg-muted/50 hover:text-foreground"
         disabled={confirming}
         onClick={onCancel}
       >
         Cancel
       </Button>
-    </>
+    </div>
   )
 }
 
@@ -133,8 +172,8 @@ function LoginConsentBody({
   onPrivacyChange: (checked: boolean) => void
 }) {
   return (
-    <>
-      <div className="flex flex-col gap-2.5">
+    <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-2">
         <ConsentCheck
           id="accept-terms"
           checked={termsAccepted}
@@ -153,13 +192,12 @@ function LoginConsentBody({
         </ConsentCheck>
       </div>
 
-      <p className="text-pretty text-xs leading-relaxed text-muted-foreground sm:text-sm">
-        By continuing, you confirm that you are at least 18 years old, are not a
-        U.S. Person or resident of a sanctioned jurisdiction, and acknowledge
-        that IRIS Intel provides analytics for informational purposes only, not
-        financial advice.
-      </p>
-    </>
+      <div className="rounded-xl border border-border/40 bg-muted/25 px-3.5 py-3 dark:bg-muted/15">
+        <p className="text-pretty text-[13px] leading-relaxed text-muted-foreground">
+          {DISCLAIMER}
+        </p>
+      </div>
+    </div>
   )
 }
 
@@ -191,22 +229,30 @@ function LoginConsentDialog({
 
   if (isDesktop === null) return null
 
-  const title = "Before you connect"
-  const description =
-    "Review and accept IRIS Lab's legal terms to continue with Google."
+  const actions = (
+    <LoginConsentActions
+      canContinue={canContinue}
+      confirming={confirming}
+      onConfirm={onConfirm}
+      onCancel={resetAndClose}
+    />
+  )
 
   if (isDesktop) {
     return (
       <Dialog open={open} onOpenChange={handleOpenChange}>
         <DialogContent
-          className="gap-0 overflow-hidden rounded-3xl border-0 p-0 ring-0 sm:max-w-md"
+          className="gap-0 overflow-hidden rounded-[1.35rem] border border-border/40 bg-background p-0 shadow-xl ring-0 sm:max-w-[26rem]"
           showCloseButton={!confirming}
         >
-          <div className="flex flex-col gap-5 px-6 pt-7 pb-2">
-            <DialogHeader className="gap-2 text-left">
-              <DialogTitle className="text-xl tracking-tight">{title}</DialogTitle>
-              <DialogDescription className="text-pretty text-base leading-relaxed">
-                {description}
+          <div className="flex flex-col gap-5 px-6 pt-6 pb-2">
+            <LoginConsentBrand />
+            <DialogHeader className="gap-1.5 space-y-0 text-left">
+              <DialogTitle className="text-[22px] font-normal tracking-tight">
+                {TITLE}
+              </DialogTitle>
+              <DialogDescription className="text-pretty text-[15px] leading-relaxed text-muted-foreground">
+                {DESCRIPTION}
               </DialogDescription>
             </DialogHeader>
             <LoginConsentBody
@@ -216,13 +262,8 @@ function LoginConsentDialog({
               onPrivacyChange={setPrivacyAccepted}
             />
           </div>
-          <DialogFooter className="mx-0 mb-0 flex-col gap-2 rounded-none border-t-0 bg-transparent p-5 pt-3 sm:flex-col sm:justify-stretch">
-            <LoginConsentActions
-              canContinue={canContinue}
-              confirming={confirming}
-              onConfirm={onConfirm}
-              onCancel={resetAndClose}
-            />
+          <DialogFooter className="mx-0 mb-0 flex-col gap-2 rounded-none border-t border-border/40 bg-muted/10 p-5 pt-4 sm:flex-col sm:justify-stretch">
+            {actions}
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -234,19 +275,26 @@ function LoginConsentDialog({
       <SheetContent
         side="bottom"
         showCloseButton={!confirming}
-        className="gap-0 rounded-t-2xl border-0 bg-popover pb-[max(1rem,env(safe-area-inset-bottom))] pt-2"
+        className={cn(
+          "max-h-[min(92dvh,720px)] gap-0 overflow-y-auto rounded-t-[1.75rem] border-0",
+          "bg-linear-to-b from-background via-background to-sky-100/45 pb-[max(1rem,env(safe-area-inset-bottom,0px))] pt-2",
+          "dark:to-muted/10"
+        )}
       >
         <div
           aria-hidden
-          className="mx-auto mb-3 h-1 w-10 rounded-full bg-muted-foreground/25"
+          className="mx-auto mb-4 h-1 w-10 shrink-0 rounded-full bg-muted-foreground/20"
         />
-        <SheetHeader className="gap-2 px-4 pb-2 text-left">
-          <SheetTitle className="text-xl tracking-tight">{title}</SheetTitle>
-          <SheetDescription className="text-pretty text-base leading-relaxed">
-            {description}
-          </SheetDescription>
-        </SheetHeader>
-        <div className="flex flex-col gap-5 px-4 pb-2">
+        <div className="flex flex-col gap-5 px-5 pb-2">
+          <LoginConsentBrand compact />
+          <SheetHeader className="gap-1.5 space-y-0 p-0 text-left">
+            <SheetTitle className="text-[22px] font-normal tracking-tight">
+              {TITLE}
+            </SheetTitle>
+            <SheetDescription className="text-pretty text-[15px] leading-relaxed text-muted-foreground">
+              {DESCRIPTION}
+            </SheetDescription>
+          </SheetHeader>
           <LoginConsentBody
             termsAccepted={termsAccepted}
             privacyAccepted={privacyAccepted}
@@ -254,13 +302,8 @@ function LoginConsentDialog({
             onPrivacyChange={setPrivacyAccepted}
           />
         </div>
-        <SheetFooter className="border-0 pt-2">
-          <LoginConsentActions
-            canContinue={canContinue}
-            confirming={confirming}
-            onConfirm={onConfirm}
-            onCancel={resetAndClose}
-          />
+        <SheetFooter className="sticky bottom-0 border-t border-border/40 bg-background/90 px-5 pt-4 pb-0 backdrop-blur-md">
+          {actions}
         </SheetFooter>
       </SheetContent>
     </Sheet>

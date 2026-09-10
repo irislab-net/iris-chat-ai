@@ -161,16 +161,6 @@ export function trackProGateView(authenticated: boolean) {
   })
 }
 
-export function trackProductTour(action: "start" | "complete" | "dismiss", params?: {
-  trigger?: "auto" | "manual"
-  step?: number
-}) {
-  trackEvent(`product_tour_${action}`, {
-    trigger: params?.trigger,
-    step: params?.step,
-  })
-}
-
 export function trackContactClick(channel: "x" | "telegram") {
   trackEvent("contact_click", { channel })
 }

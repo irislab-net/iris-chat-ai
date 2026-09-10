@@ -5,7 +5,6 @@ import { Link } from "@/i18n/navigation"
 import {
   EclipseIcon,
   LogOutIcon,
-  OrbitIcon,
   SparklesIcon,
 } from "lucide-react"
 import { useTheme } from "@wrksz/themes/client/use-theme"
@@ -97,13 +96,7 @@ function AccountPlanBadge({
   )
 }
 
-function ChatAccountFooter({
-  onStartTour,
-  className,
-}: {
-  onStartTour?: () => void
-  className?: string
-}) {
+function ChatAccountFooter({ className }: { className?: string }) {
   const { user, isProUser, logout } = useAuth()
   const avatarUrl = useUserAvatarUrl(user)
   const { resolvedTheme, setTheme } = useTheme()
@@ -118,7 +111,6 @@ function ChatAccountFooter({
         "flex shrink-0 items-center gap-2 border-t border-border/60 p-2",
         className
       )}
-      data-tour="account"
     >
       <DropdownMenu>
         <DropdownMenuTrigger
@@ -187,16 +179,6 @@ function ChatAccountFooter({
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
-            <DropdownMenuItem
-              className="min-h-9 gap-2"
-              onClick={() => {
-                void import("@/components/app-shell/product-tour")
-                onStartTour?.()
-              }}
-            >
-              <OrbitIcon />
-              Product tour
-            </DropdownMenuItem>
             <DropdownMenuItem
               className="min-h-9 gap-2"
               onClick={() =>

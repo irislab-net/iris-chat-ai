@@ -27,7 +27,6 @@ function TryPaperTradingButton({ className }: { className?: string }) {
               "h-8 gap-2 rounded-full shadow-none sm:h-9 px-4!",
               className
             )}
-            data-tour="paper"
             aria-label="Try paper trading"
             onPointerEnter={prefetchPaperTrading}
             onFocus={prefetchPaperTrading}

@@ -180,7 +180,6 @@ function MobileBookPanel({
       <div
         role="tablist"
         aria-label="Book views"
-        data-tour="desk-positions"
         className="grid shrink-0 grid-cols-3 gap-0.5 rounded-lg border border-border/50 bg-muted/20 p-0.5"
       >
         {tabs.map((item) => {
@@ -324,7 +323,6 @@ function BottomTradingPanel({
         <div className="flex h-10 shrink-0 items-center border-b border-border/50 bg-muted/10 px-3">
           <TabsList
             variant="default"
-            data-tour="desk-positions"
             className={bookTabListClass}
           >
             <TabsTrigger value="positions" className={bookTabTriggerClass}>

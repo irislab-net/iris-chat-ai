@@ -74,7 +74,6 @@ function MobileDeskLayout({
 
       {!placing ? (
         <div
-          data-tour="desk-tabs"
           className="shrink-0 border-b border-border/60 bg-background/88 px-3 py-1.5 backdrop-blur-xl backdrop-saturate-150"
           role="tablist"
           aria-label="Desk views"

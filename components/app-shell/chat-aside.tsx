@@ -9,10 +9,10 @@ import {
   HistoryIcon,
   Maximize2Icon,
   MessageSquarePlusIcon,
-  XIcon,
 } from "lucide-react"
 
 import { ChatAccountFooter } from "@/components/app-shell/chat-account-footer"
+import { ChatMobileHeader } from "@/components/app-shell/chat-mobile-header"
 import {
   ChatHistoryRail,
   ChatHistorySidebar,
@@ -60,6 +60,11 @@ import {
 } from "@/lib/chat-history-sync"
 import { displayPlanName } from "@/lib/billing/catalog"
 import { UPGRADE_PATH } from "@/lib/site"
+import {
+  WORKSPACE_TAB_NEWS,
+  workspaceTabHref,
+} from "@/lib/workspace-tab"
+import { resolveUserDisplayName } from "@/lib/user-profile"
 import type { CoPilotHistoryMessage, TrialInfo } from "@/lib/api/types"
 import {
   trackChatMessageBlockedGuest,
@@ -118,7 +123,6 @@ type ChatAsideProps = {
   onClose?: () => void
   displayMode?: ChatDisplayMode
   onDisplayModeChange?: (mode: ChatDisplayMode) => void
-  onStartTour?: () => void
 }
 
 const CHAT_CONTENT_MAX_WIDTH = "max-w-3xl"
@@ -272,7 +276,6 @@ function ChatAside({
   onClose,
   displayMode = "docked",
   onDisplayModeChange,
-  onStartTour,
 }: ChatAsideProps) {
   const t = useTranslations("workspace")
   const common = useTranslations("common")
@@ -1358,11 +1361,12 @@ function ChatAside({
   const historyRailVisible = canEmbedHistoryRail
   const showFocusedMainHeader = isFocusedLayout && !isAuthenticated
   const showMainHeader = showFocusedMainHeader || !isFocusedLayout
+  const showMobileHistoryOverlay = isMobileOverlay && historyOpen
   const showHistoryPanel =
-    isAuthenticated &&
+    !isMobileOverlay &&
     historyOpen &&
     !isFocusedLayout &&
-    (isMobileOverlay || displayMode === "docked")
+    displayMode === "docked"
   const showThread = !showHistoryPanel
   const activeConversation = conversations.find(
     (chat) => chat.id === conversationId
@@ -1419,6 +1423,17 @@ function ChatAside({
     removeConversation(conversationId)
   }
 
+  function openNewsFromChat() {
+    setHistoryOpen(false)
+    onClose?.()
+    router.replace(workspaceTabHref(WORKSPACE_TAB_NEWS), { scroll: false })
+  }
+
+  const mobileGreetingName = resolveUserDisplayName(user)
+  const mobileGreeting = mobileGreetingName
+    ? t("mobileGreeting", { name: mobileGreetingName.split(/\s+/)[0] ?? mobileGreetingName })
+    : t("mobileGreetingGuest")
+
   React.useEffect(() => {
     if (displayMode === "focused" && isAuthenticated) {
       setHistoryOpen(true)
@@ -1445,13 +1460,14 @@ function ChatAside({
   return (
     <aside
       data-slot="chat-aside"
-      data-tour="chat"
       className={cn(
         "relative flex h-full min-h-0 w-full overflow-hidden",
-        isFocusedLayout
-          ? "flex-row bg-sidebar text-sidebar-foreground"
-          : "flex-col bg-sidebar text-sidebar-foreground",
-        displayMode === "docked" ? "rounded-r-2xl" : "rounded-none",
+        isMobileOverlay
+          ? "flex-col bg-linear-to-b from-background via-background to-sky-100/55 text-foreground dark:to-muted/10"
+          : isFocusedLayout
+            ? "flex-row bg-sidebar text-sidebar-foreground"
+            : "flex-col bg-sidebar text-sidebar-foreground",
+        displayMode === "docked" && !isMobileOverlay ? "rounded-r-2xl" : "rounded-none",
         className
       )}
     >
@@ -1466,7 +1482,7 @@ function ChatAside({
           onTogglePin={toggleConversationPin}
           onNewChat={startNewChat}
           sidebarWidth={shellSidebars.chat.minSize}
-          footer={<ChatAccountFooter onStartTour={onStartTour} />}
+          footer={<ChatAccountFooter />}
           onDock={
             showDesktopLayoutControls
               ? () => onDisplayModeChange?.("docked")
@@ -1475,10 +1491,50 @@ function ChatAside({
         />
       ) : null}
 
-      <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-sidebar text-sidebar-foreground">
-      {showFocusedMainHeader || !isFocusedLayout ? (
+      <div
+        className={cn(
+          "relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden",
+          isMobileOverlay
+            ? "bg-transparent text-foreground"
+            : "bg-sidebar text-sidebar-foreground"
+        )}
+      >
+      {isMobileOverlay ? (
+        <ChatMobileHeader
+          historyOpen={historyOpen}
+          onOpenHistory={() => setHistoryOpen((open) => !open)}
+          effort={effort}
+          onEffortChange={onEffortChange}
+          hideEffort={!isAuthenticated}
+          onNewChat={startNewChat}
+          onOpenNews={openNewsFromChat}
+          sending={sending}
+        />
+      ) : null}
+      {showMobileHistoryOverlay ? (
+        <div className="absolute inset-0 z-30 flex min-h-0 flex-col bg-background">
+          <ChatHistorySidebar
+            variant="mobile-drawer"
+            conversations={conversations}
+            conversationId={conversationId}
+            sending={sending}
+            onSelect={openConversation}
+            onDelete={removeConversation}
+            onRename={renameConversation}
+            onTogglePin={toggleConversationPin}
+            onNewChat={startNewChat}
+            onClose={() => setHistoryOpen(false)}
+            onOpenNews={() => {
+              setHistoryOpen(false)
+              openNewsFromChat()
+            }}
+            showBrandHeader={false}
+            className="min-h-0 flex-1"
+          />
+        </div>
+      ) : null}
+      {!isMobileOverlay && (showFocusedMainHeader || !isFocusedLayout) ? (
       <header
-        data-tour="chat-header"
         className={cn(
           "flex min-h-12 shrink-0 items-center gap-1 px-2 sm:gap-2 sm:px-3",
           onClose && "pt-[var(--app-safe-top,0px)]"
@@ -1560,18 +1616,6 @@ function ChatAside({
             <MessageSquarePlusIcon />
           </ChatHeaderIconButton>
         ) : null}
-        {isMobileOverlay ? (
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            className={headerIconClass}
-            aria-label={t("closeChat")}
-            onClick={onClose}
-          >
-            <XIcon />
-          </Button>
-        ) : null}
       </header>
       ) : null}
 
@@ -1593,36 +1637,66 @@ function ChatAside({
             <ScrollArea
               viewportRef={scrollViewportRef}
               className="h-full min-h-0"
-              data-tour="chat-thread"
             >
               {messages.length === 0 ? (
-                <div className="flex min-h-full flex-col justify-center px-4 py-10">
+                <div
+                  className={cn(
+                    "flex min-h-full flex-col px-4 py-10",
+                    isMobileOverlay
+                      ? "items-center justify-center text-center"
+                      : "justify-center"
+                  )}
+                >
                   <div
                     className={cn(
                       "mx-auto w-full",
                       CHAT_CONTENT_MAX_WIDTH
                     )}
                   >
-                    <div className="mb-5 flex flex-col items-center text-center">
-                      <IrisMark className="size-10 rounded-xl" />
-                      <h2 className="mt-3 text-[15px] font-semibold tracking-tight">
-                        How can I help?
+                    <div
+                      className={cn(
+                        "flex flex-col items-center text-center",
+                        isMobileOverlay ? "gap-5" : "mb-5"
+                      )}
+                    >
+                      <IrisMark
+                        className={cn(
+                          isMobileOverlay
+                            ? "size-[4.5rem] rounded-[1.35rem] bg-transparent shadow-none ring-0"
+                            : "size-10 rounded-xl"
+                        )}
+                      />
+                      <h2
+                        className={cn(
+                          "font-normal tracking-tight text-foreground",
+                          isMobileOverlay
+                            ? "max-w-[20rem] text-[1.75rem] leading-tight"
+                            : "mt-3 text-[15px] font-semibold"
+                        )}
+                      >
+                        {isMobileOverlay
+                          ? mobileGreeting
+                          : "How can I help?"}
                       </h2>
-                      <p className="mt-1.5 max-w-[16rem] text-[12px] leading-5 text-muted-foreground">
-                        {isAuthenticated
-                          ? t("emptySignedIn")
-                          : guestUnavailable
-                            ? t("emptyGuestUnavailable")
-                            : t("emptyGuestTrial")}
-                      </p>
+                      {!isMobileOverlay ? (
+                        <p className="mt-1.5 max-w-[16rem] text-[12px] leading-5 text-muted-foreground">
+                          {isAuthenticated
+                            ? t("emptySignedIn")
+                            : guestUnavailable
+                              ? t("emptyGuestUnavailable")
+                              : t("emptyGuestTrial")}
+                        </p>
+                      ) : null}
                     </div>
-                    <IrisSamplePrompts
-                      disabled={sending}
-                      onEdit={(text) => {
-                        setDraft(text)
-                        queueMicrotask(() => composerRef.current?.focus())
-                      }}
-                    />
+                    {!isMobileOverlay ? (
+                      <IrisSamplePrompts
+                        disabled={sending}
+                        onEdit={(text) => {
+                          setDraft(text)
+                          queueMicrotask(() => composerRef.current?.focus())
+                        }}
+                      />
+                    ) : null}
                   </div>
                 </div>
               ) : (
@@ -1875,7 +1949,10 @@ function ChatAside({
           {showThread ? (
             <div
               className={cn(
-                "mx-auto w-full shrink-0 border-t border-border/50 bg-sidebar/95 backdrop-blur-md supports-[backdrop-filter]:bg-sidebar/90",
+                "mx-auto w-full shrink-0",
+                isMobileOverlay
+                  ? "bg-transparent"
+                  : "border-t border-border/50 bg-sidebar/95 backdrop-blur-md supports-[backdrop-filter]:bg-sidebar/90",
                 CHAT_CONTENT_MAX_WIDTH
               )}
             >
@@ -1909,7 +1986,8 @@ function ChatAside({
                 hideEffort={!isAuthenticated}
                 onSend={handleSend}
                 disabled={sending}
-                className="px-3 sm:px-4"
+                layout={isMobileOverlay ? "floating" : "default"}
+                className={isMobileOverlay ? undefined : "px-3 sm:px-4"}
               />
             </div>
           ) : null}

@@ -63,8 +63,8 @@ describe("chat API adapters", () => {
       prediction_horizon: null,
       mark_price: null,
       open_positions: undefined,
-      draft_order: null,
-      paper_account: null,
+      draft_order: undefined,
+      paper_account: undefined,
       available_ui_actions: ["navigate_to_page"],
     })
   })

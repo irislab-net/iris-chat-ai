@@ -982,7 +982,6 @@ function NewsBulletin({
       <div
         className={cn("min-w-0", className)}
         data-slot="news"
-        data-tour="news-feed"
       >
         {body}
       </div>

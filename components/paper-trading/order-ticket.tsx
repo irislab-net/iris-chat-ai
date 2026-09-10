@@ -1429,7 +1429,6 @@ function OrderTicket({
 
   return (
     <form
-      data-tour="order-ticket"
       className={cn(
         "m-0 flex min-h-0 flex-col bg-transparent",
         mobile

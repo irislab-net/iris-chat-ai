@@ -102,10 +102,6 @@ import {
   type TradingMode,
 } from "@/lib/trading/types"
 import type { InsightSummary, Prediction } from "@/lib/api/types"
-import {
-  PRODUCT_TOUR_NAV_EVENT,
-  type ProductTourNavDetail,
-} from "@/lib/product-tour-nav"
 import { cn } from "@/lib/utils"
 
 const TIMEFRAMES = ["1m", "5m", "15m", "30m", "1h", "4h", "1d"] as const
@@ -226,17 +222,6 @@ function PaperTradingWorkspace({
     limitPrice?: number | null
     highlightSubmit?: boolean
   } | null>(null)
-
-  React.useEffect(() => {
-    if (!embedded) return
-    const onTourNav = (event: Event) => {
-      const detail = (event as CustomEvent<ProductTourNavDetail>).detail
-      if (detail.deskPane) setMobilePane(detail.deskPane)
-      if (detail.marketView) setMarketView(detail.marketView)
-    }
-    window.addEventListener(PRODUCT_TOUR_NAV_EVENT, onTourNav)
-    return () => window.removeEventListener(PRODUCT_TOUR_NAV_EVENT, onTourNav)
-  }, [embedded])
 
   const sessionOpen = embedded || open
 
@@ -1057,7 +1042,6 @@ function PaperTradingWorkspace({
 
   const marketPaneBody = showOrderBookInChartPane ? (
       <div
-        data-tour="chart-book"
         className="min-h-0 flex-1 overflow-y-auto bg-background"
       >
         <OrderBook
@@ -1270,7 +1254,7 @@ function PaperTradingWorkspace({
           </header>
           <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
             <div className="max-h-44 shrink-0 overflow-y-auto border-b border-border/50">
-              <div data-tour="order-book">
+              <div>
                 <OrderBook symbol={activeSymbol} />
               </div>
             </div>
@@ -1292,7 +1276,6 @@ function PaperTradingWorkspace({
     return (
       <>
         <div
-          data-tour="paper"
           className={cn("flex h-full min-h-0 flex-col", className)}
         >
           {!mobileDeskWithTabs ? deskChrome : null}

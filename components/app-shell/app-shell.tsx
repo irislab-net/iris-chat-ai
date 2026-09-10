@@ -1,14 +1,12 @@
 "use client"
 
 import * as React from "react"
-import dynamic from "next/dynamic"
 import { useSearchParams } from "next/navigation"
 
 import { ChatAside } from "@/components/app-shell/chat-aside"
 import { ContextMain } from "@/components/app-shell/context-main"
 import { WebsiteToolbar } from "@/components/app-shell/website-toolbar"
 import { AppViewportSync } from "@/components/app-shell/app-viewport-sync"
-import { MobileBottomNav } from "@/components/app-shell/mobile-bottom-nav"
 import { WorkspacePageIntroSheet } from "@/components/app-shell/workspace-page-info-sheet"
 import {
   ResizableHandle,
@@ -16,10 +14,9 @@ import {
   ResizablePanelGroup,
 } from "@/components/ui/resizable"
 import { useIsDesktop } from "@/hooks/use-media-query"
-import { usePathname, useRouter } from "@/i18n/navigation"
+import { usePathname } from "@/i18n/navigation"
 import { useWorkspacePageIntro } from "@/hooks/use-mobile-workspace-page-intro"
 import { useShellSidebarLayout } from "@/hooks/use-shell-sidebar-layout"
-import { idlePrefetch } from "@/lib/idle-prefetch"
 import {
   readPanelLayoutForTier,
   readShellLayoutPrefs,
@@ -30,25 +27,14 @@ import {
 import { SHELL_SIDEBAR_COMPACT_FALLBACK } from "@/lib/shell-sidebar-layout"
 import { cn } from "@/lib/utils"
 import type { Layout } from "react-resizable-panels"
-import { trackProductTour } from "@/lib/analytics"
 import {
   resolveWorkspaceTab,
-  WORKSPACE_TAB_NEWS,
-  workspaceTabHref,
   type WorkspaceTab,
 } from "@/lib/workspace-tab"
-import { subscribeDismissMobileChat } from "@/lib/paper-trading/copilot-client"
 import {
-  hasSeenProductTour,
-  markProductTourSeen,
-  TOUR_AUTO_OPEN_DELAY_MS,
-  type TourStep,
-} from "@/lib/product-tour"
-import { subscribeCopilotChatPrefill } from "@/lib/paper-trading/copilot-client"
-
-const ProductTour = dynamic(() =>
-  import("@/components/app-shell/product-tour").then((m) => m.ProductTour)
-)
+  subscribeCopilotChatPrefill,
+  subscribeDismissMobileChat,
+} from "@/lib/paper-trading/copilot-client"
 
 type AppShellProps = {
   children: React.ReactNode
@@ -92,14 +78,9 @@ function AppShellInner({
   const sidebarLayout = useShellSidebarLayout()
   const shellSidebars = sidebarLayout ?? SHELL_SIDEBAR_COMPACT_FALLBACK
   const pathname = usePathname()
-  const router = useRouter()
   const [chatOpen, setChatOpen] = React.useState(false)
   const [chatMode, setChatMode] = React.useState<ChatDisplayMode>("docked")
   const [panelLayout, setPanelLayout] = React.useState<Layout | undefined>()
-  const [tourOpen, setTourOpen] = React.useState(false)
-  const [tourTrigger, setTourTrigger] = React.useState<"auto" | "manual">(
-    "auto"
-  )
   const [shellMediaHydrated, setShellMediaHydrated] = React.useState<
     null | "mobile" | "desktop"
   >(null)
@@ -109,7 +90,7 @@ function AppShellInner({
 
   if (isDesktop === false && shellMediaHydrated !== "mobile") {
     setShellMediaHydrated("mobile")
-    setChatOpen(false)
+    setChatOpen(true)
   } else if (isDesktop === true && shellMediaHydrated !== "desktop") {
     const prefs = readShellLayoutPrefs()
     setShellMediaHydrated("desktop")
@@ -150,23 +131,6 @@ function AppShellInner({
     isDesktop === true && (pathname === "/app" || defaultChatOpen)
 
   React.useEffect(() => {
-    if (hasSeenProductTour()) return
-    return idlePrefetch(() => import("@/components/app-shell/product-tour"))
-  }, [])
-
-  React.useEffect(() => {
-    if (pathname !== "/app") return
-    if (hasSeenProductTour()) return
-    if (isDesktop !== true) return
-    const id = window.setTimeout(() => {
-      setTourTrigger("auto")
-      setTourOpen(true)
-      trackProductTour("start", { trigger: "auto" })
-    }, TOUR_AUTO_OPEN_DELAY_MS)
-    return () => window.clearTimeout(id)
-  }, [pathname, isDesktop])
-
-  React.useEffect(() => {
     if (isDesktop !== false || !chatOpen) return
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") persistChatOpen(false)
@@ -183,43 +147,12 @@ function AppShellInner({
     })
   }, [isDesktop])
 
-  const prepareTourStep = React.useEffectEvent(async (step: TourStep) => {
-    if (step.closeChat) persistChatOpen(false)
-    if (
-      pathname === "/app" &&
-      step.workspaceTab &&
-      workspaceTab !== step.workspaceTab
-    ) {
-      router.replace(workspaceTabHref(step.workspaceTab), { scroll: false })
-      await new Promise((r) => window.setTimeout(r, 180))
-    }
-    if (step.openChat) {
-      persistChatOpen(true)
-      persistChatMode("docked")
-      await new Promise((r) => window.setTimeout(r, 320))
-    }
-  })
-
-  function startTour() {
-    void import("@/components/app-shell/product-tour")
-    if (pathname === "/app" && workspaceTab !== WORKSPACE_TAB_NEWS) {
-      router.replace(workspaceTabHref(WORKSPACE_TAB_NEWS), { scroll: false })
-    }
-    setTourTrigger("manual")
-    setTourOpen(true)
-    trackProductTour("start", { trigger: "manual" })
-  }
-
-  function onTourOpenChange(open: boolean) {
-    setTourOpen(open)
-    if (!open) markProductTourSeen()
-  }
-
   const toolbarProps = {
-    onStartTour: startTour,
     onWorkspaceTabNavigate: () => {
       if (chatMode === "focused") persistChatMode("docked")
     },
+    onCloseToChat:
+      isDesktop === false ? () => persistChatOpen(true) : undefined,
   }
 
   const showDesktopChatDocked =
@@ -235,10 +168,8 @@ function AppShellInner({
     mobileIrisTab: isDesktop === false && chatOpen,
   })
   const mobileShellClearance =
-    isDesktop === false
-      ? showMobileChat
-        ? "calc(0.5rem + env(safe-area-inset-bottom))"
-        : "var(--mobile-app-nav-height)"
+    isDesktop === false && showMobileChat
+      ? "calc(0.5rem + env(safe-area-inset-bottom, 0px))"
       : null
 
   const contextColumn = (
@@ -281,7 +212,6 @@ function AppShellInner({
           className="min-h-0 flex-1 rounded-none"
           displayMode="focused"
           onDisplayModeChange={persistChatMode}
-          onStartTour={startTour}
         />
       ) : showDesktopSplit ? (
         <ResizablePanelGroup
@@ -325,22 +255,6 @@ function AppShellInner({
         contextColumn
       )}
 
-      {tourOpen ? (
-        <ProductTour
-          open={tourOpen}
-          onOpenChange={onTourOpenChange}
-          onPrepareStep={prepareTourStep}
-          trigger={tourTrigger}
-        />
-      ) : null}
-      <React.Suspense fallback={null}>
-        <MobileBottomNav
-          hidden={showMobileChat}
-          chatActive={showMobileChat}
-          onOpenChat={() => persistChatOpen(true)}
-          onCloseChat={() => persistChatOpen(false)}
-        />
-      </React.Suspense>
       <WorkspacePageIntroSheet
         page={introPage}
         open={introOpen}

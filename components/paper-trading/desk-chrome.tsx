@@ -229,7 +229,6 @@ function ModeToggle({
       )}
       role="group"
       aria-label="Trading mode"
-      data-tour="desk-mode"
     >
       {mode === "demo" ? (
         <span
@@ -317,7 +316,6 @@ function DeskChrome({
                 render={
                   <button
                     type="button"
-                    data-tour="desk-demo-budget"
                     aria-label={`Edit demo budget, ${demoBudgetLabel}`}
                     onClick={onDemoBudgetClick}
                     className="group inline-flex h-7 shrink-0 items-center gap-1 rounded-md border border-dashed border-primary/40 bg-primary/5 px-2 text-[10px] transition-all hover:border-primary/60 hover:bg-primary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"

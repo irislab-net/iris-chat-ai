@@ -44,7 +44,6 @@ function ChartPaneToolbar({
         "flex h-9 shrink-0 items-center gap-2 border-b border-border/60 px-2 lg:h-8 lg:px-3",
         className
       )}
-      data-tour="chart-toolbar"
     >
       <div
         role="tablist"

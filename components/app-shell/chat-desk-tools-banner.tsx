@@ -41,7 +41,6 @@ function ChatDeskToolsBanner({ onDock, className }: ChatDeskToolsBannerProps) {
       <div
         role="button"
         tabIndex={0}
-        data-tour="chat-desk-tools-banner"
         className={bannerSurfaceClass}
         onClick={onDock}
         onKeyDown={(event) => {

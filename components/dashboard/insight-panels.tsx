@@ -258,7 +258,7 @@ function HeroPulse({
   const hasSideDrivers = Boolean(bias || volatility || rewardRisk != null)
 
   return (
-    <Card data-tour="pulse" className="shrink-0">
+    <Card className="shrink-0">
       <MarketStanceChime stance={summary.stance} symbol={summary.symbol} />
       <CardContent className="space-y-4 p-5 md:p-6">
         {/* Compact metadata — quietest layer */}

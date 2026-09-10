@@ -1,7 +1,6 @@
 import { requestOpenPaperTrading } from "@/lib/paper-trading/open-request"
 
 import type { PositionSide } from "@/lib/trading/types"
-import type { ProductTourDeskPane } from "@/lib/product-tour-nav"
 import type { GhostTradePreview } from "@/lib/chart/ghost-trade-overlay"
 import type { BracketPreviewInput } from "@/lib/chart/bracket-preview-overlay"
 
@@ -51,8 +50,10 @@ export type CopilotWalletHighlightInput = {
   asset?: string
 }
 
+export type CopilotDeskPane = "chart" | "trade" | "portfolio"
+
 export type CopilotDeskPaneInput = {
-  pane: ProductTourDeskPane
+  pane: CopilotDeskPane
 }
 
 export type CopilotGhostTradeInput = GhostTradePreview & {

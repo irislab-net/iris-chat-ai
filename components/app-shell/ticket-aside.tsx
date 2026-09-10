@@ -15,7 +15,6 @@ function TicketAside({ className, variant = "ticket" }: TicketAsideProps) {
   return (
     <aside
       data-slot="ticket-aside"
-      data-tour="ticket"
       className={cn(
         "relative flex h-full min-h-0 w-full flex-col overflow-hidden bg-sidebar text-sidebar-foreground",
         className
