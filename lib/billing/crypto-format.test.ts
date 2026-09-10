@@ -1,0 +1,25 @@
+import { describe, expect, it } from "vitest"
+
+import {
+  formatCountdown,
+  formatCryptoAmount,
+  formatUsd,
+} from "@/lib/billing/crypto-format"
+
+describe("crypto-format", () => {
+  it("formats invoice crypto amounts with USDT decimals", () => {
+    expect(formatCryptoAmount("800000.000000000000000000")).toBe("0.8 USDT")
+    expect(formatCryptoAmount("7990000.000000000000000000")).toBe("7.99 USDT")
+    expect(formatCryptoAmount("9990000.000000000000000000")).toBe("9.99 USDT")
+  })
+
+  it("formats USD amounts for invoice summaries", () => {
+    expect(formatUsd(0.8)).toBe("$0.80")
+    expect(formatUsd(9.99)).toBe("$9.99")
+  })
+
+  it("formats countdown timers", () => {
+    expect(formatCountdown(125_000)).toBe("2:05")
+    expect(formatCountdown(4_500)).toBe("0:04")
+  })
+})

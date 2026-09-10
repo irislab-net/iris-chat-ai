@@ -1,0 +1,242 @@
+import type {
+  ChatApiEffort,
+  ChatClientContext,
+  ChatCreditBalance,
+  ChatMessageResponse,
+  ChatToolCallResult,
+  CoPilotChatJsonResponse,
+  CoPilotEffort,
+  CoPilotToolCall,
+  CoPilotUsage,
+  CoPilotUsageResponse,
+  TrialInfo,
+  User,
+} from "@/lib/api/types"
+import {
+  buildChatClientContext as buildChatClientContextFromTools,
+} from "@/lib/chat/client-tools"
+import type { DeskContextSnapshot } from "@/lib/paper-trading/desk-context"
+import { WORKSPACE_TAB_NEWS, workspaceTabHref } from "@/lib/workspace-tab"
+import type { WorkspaceTab } from "@/lib/workspace-tab"
+
+export const CHAT_API_BASE = "/v1/chat"
+
+export {
+  createChatClientActionHandlers,
+  executeChatClientActions,
+  type ChatClientActionHandlers,
+} from "@/lib/chat/client-tools"
+
+/** Same-origin chat paths — proxied to CHAT_API_ORIGIN in next.config rewrites. */
+
+export function toChatApiEffort(effort?: CoPilotEffort): ChatApiEffort {
+  if (effort === "instant" || effort === undefined) return "normal"
+  if (effort === "high") return "ultimate"
+  return "high"
+}
+
+export function chatRoleFromUser(
+  user: User | null | undefined,
+  isProUser = false
+): string {
+  const role = user?.role?.trim().toLowerCase()
+  if (role === "admin" || role === "pro" || role === "user") return role
+  if (isProUser || user?.tier === "pro" || user?.tier === "ultimate") {
+    return "pro"
+  }
+  return "user"
+}
+
+/** Desk symbol for chat `client_context.active_symbol` — ETH/BTC/XAU, not pairs. */
+export function toChatApiSymbol(symbol?: string) {
+  const raw = (symbol || "ETH")
+    .trim()
+    .toUpperCase()
+    .replace(/[^A-Z0-9]/g, "")
+  if (!raw) return "ETH"
+  const desk = raw.replace(/USDT$/, "").replace(/USD$/, "")
+  return desk || "ETH"
+}
+
+export function buildChatClientContext(input: {
+  user?: User | null
+  isProUser?: boolean
+  symbol?: string
+  pathname?: string
+  workspaceTab?: WorkspaceTab | null
+  locale?: string
+  deskContext?: DeskContextSnapshot | null
+}): ChatClientContext {
+  const base = buildChatClientContextFromTools(input)
+  const desk = input.deskContext
+
+  return {
+    ...base,
+    open_positions: desk?.openPositions.map((position) => ({
+      id: position.id,
+      symbol: position.symbol,
+      side: position.side,
+      quantity: position.quantity,
+      entry_price: position.entryPrice,
+      mark_price: position.markPrice,
+      stop_loss: position.stopLoss,
+      take_profit: position.takeProfit,
+      leverage: position.leverage,
+      margin_mode: position.marginMode,
+      unrealized_pnl: position.unrealizedPnl,
+    })),
+    draft_order: desk
+      ? desk.draft
+        ? {
+            side: desk.draft.side,
+            quantity: desk.draft.quantity,
+            stop_loss: desk.draft.stopLoss,
+            take_profit: desk.draft.takeProfit,
+          }
+        : null
+      : undefined,
+    paper_account: desk?.paperAccount
+      ? {
+          starting_balance: desk.paperAccount.startingBalance,
+          balance: desk.paperAccount.balance,
+          equity: desk.paperAccount.equity,
+          available_balance: desk.paperAccount.availableBalance,
+          risk_per_trade: desk.paperAccount.riskPerTradeUsd,
+          risk_fraction: desk.paperAccount.riskFraction,
+        }
+      : undefined,
+  }
+}
+
+export function usageFromCreditBalance(
+  balance?: ChatCreditBalance | null
+): CoPilotUsage | undefined {
+  if (!balance) return undefined
+  const used = Number(balance.daily_limit) - Number(balance.remaining_daily)
+  return {
+    plan: "daily",
+    used: Number.isFinite(used) ? used : "—",
+    limit: balance.daily_limit,
+    remaining: balance.remaining_daily,
+    day: balance.daily_reset_at,
+  }
+}
+
+export function usageFromTrial(trial?: TrialInfo | null): CoPilotUsage | undefined {
+  if (!trial) return undefined
+  return {
+    plan: "guest",
+    used: trial.messages_used,
+    limit: trial.messages_limit,
+    remaining: trial.messages_remaining,
+    day: trial.weekly_reset_at,
+  }
+}
+
+export function unwrapChatPayload<T extends object>(body: unknown): T {
+  if (!body || typeof body !== "object") return {} as T
+  const record = body as Record<string, unknown>
+  if (record.data && typeof record.data === "object") {
+    return record.data as T
+  }
+  return body as T
+}
+
+export function chatToolToLegacy(call: ChatToolCallResult): CoPilotToolCall {
+  return {
+    name: call.tool_name,
+    arguments: call.input,
+    function: {
+      name: call.tool_name,
+      arguments: call.input,
+    },
+  }
+}
+
+export function parseSuggestedPrompts(
+  metadata?: Record<string, unknown> | null
+): string[] {
+  if (!metadata) return []
+  const keys = [
+    "suggested_prompts",
+    "follow_up_prompts",
+    "follow_up_questions",
+    "suggested_messages",
+  ] as const
+  for (const key of keys) {
+    const value = metadata[key]
+    if (!Array.isArray(value)) continue
+    return value
+      .filter(
+        (item): item is string =>
+          typeof item === "string" && item.trim().length > 0
+      )
+      .map((item) => item.trim())
+      .slice(0, 4)
+  }
+  return []
+}
+
+export function adaptChatMessageResponse(
+  data: ChatMessageResponse
+): CoPilotChatJsonResponse {
+  const toolCalls = [
+    ...(data.tool_calls ?? []),
+    ...(data.client_actions ?? []),
+  ].map(chatToolToLegacy)
+  const message = (data.output_text || "").trim()
+  return {
+    message,
+    output_text: data.output_text,
+    conversation_id: data.session_id,
+    session_id: data.session_id,
+    usage: usageFromCreditBalance(data.credit_balance) ?? usageFromTrial(data.trial),
+    credit_balance: data.credit_balance,
+    trial: data.trial,
+    code: data.code,
+    tool_calls: toolCalls,
+    client_actions: data.client_actions,
+    suggestedPrompts: parseSuggestedPrompts(data.metadata),
+  }
+}
+
+export function parseToolActionInput(
+  input: string | undefined
+): Record<string, unknown> {
+  if (!input?.trim()) return {}
+  try {
+    const parsed = JSON.parse(input) as unknown
+    return parsed && typeof parsed === "object" && !Array.isArray(parsed)
+      ? (parsed as Record<string, unknown>)
+      : {}
+  } catch {
+    return {}
+  }
+}
+
+export function pathForChatPage(page: unknown): string | null {
+  if (page === "trading_chart") return workspaceTabHref(WORKSPACE_TAB_NEWS)
+  if (page === "wallet_page") return workspaceTabHref(WORKSPACE_TAB_NEWS)
+  return null
+}
+
+export function creditsToUsageResponse(body: unknown): CoPilotUsageResponse {
+  const payload = unwrapChatPayload<{
+    balance?: ChatCreditBalance
+    trial?: TrialInfo
+    error?: string
+  }>(body)
+  return {
+    usage: usageFromCreditBalance(payload.balance) ?? usageFromTrial(payload.trial),
+    trial: payload.trial,
+    error: payload.error,
+  }
+}
+
+/** Strip role/tier for guest chat — server assigns free tier automatically. */
+export function toGuestClientContext(
+  context: ChatClientContext
+): Omit<ChatClientContext, "role"> {
+  const { role: _role, ...rest } = context
+  return rest
+}

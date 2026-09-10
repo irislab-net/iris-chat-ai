@@ -1,0 +1,66 @@
+"use client"
+
+import { marked } from "marked"
+
+import { prepareAssistantMarkdown } from "@/lib/prepare-assistant-markdown"
+import { cn } from "@/lib/utils"
+
+marked.setOptions({
+  gfm: true,
+  breaks: true,
+})
+
+const aiMessageClassName = cn(
+  "ai-message chat-bidi min-w-0 wrap-anywhere overflow-x-auto text-[14px] leading-[1.7] sm:text-[13px]",
+  "[&_p]:mb-3 [&_p:last-child]:mb-0 [&_p]:leading-[1.65]",
+  "[&_h1]:mt-4 [&_h1]:mb-2 [&_h1]:text-[15px] [&_h1]:font-semibold [&_h1]:tracking-tight [&_h1:first-child]:mt-0",
+  "[&_h2]:mt-3.5 [&_h2]:mb-2 [&_h2]:text-[14px] [&_h2]:font-semibold [&_h2]:tracking-tight [&_h2:first-child]:mt-0",
+  "[&_h3]:mt-3 [&_h3]:mb-1.5 [&_h3]:text-[13px] [&_h3]:font-semibold [&_h3:first-child]:mt-0",
+  "[&_ul]:my-2.5 [&_ul]:list-disc [&_ul]:space-y-1.5 [&_ul]:ps-5 [&_ul:last-child]:mb-0",
+  "[&_ol]:my-2.5 [&_ol]:list-decimal [&_ol]:space-y-1.5 [&_ol]:ps-5 [&_ol:last-child]:mb-0",
+  "[&_li]:leading-[1.6]",
+  "[&_blockquote]:my-3 [&_blockquote]:border-s-2 [&_blockquote]:border-border/70 [&_blockquote]:ps-3 [&_blockquote]:text-muted-foreground",
+  "[&_hr]:my-4 [&_hr]:border-border/60",
+  "[&_a]:font-medium [&_a]:text-foreground [&_a]:underline [&_a]:decoration-foreground/30 [&_a]:underline-offset-2 hover:[&_a]:decoration-foreground/60",
+  "[&_strong]:font-semibold [&_strong]:text-foreground",
+  "[&_em]:italic",
+  "[&_code]:rounded-md [&_code]:bg-foreground/6 [&_code]:px-1 [&_code]:py-0.5 [&_code]:font-mono [&_code]:text-[0.92em]",
+  "[&_pre]:my-3 [&_pre]:overflow-x-auto [&_pre]:rounded-xl [&_pre]:border [&_pre]:border-border/50 [&_pre]:bg-foreground/4 [&_pre]:p-3.5 [&_pre:last-child]:mb-0",
+  "[&_pre_code]:block [&_pre_code]:bg-transparent [&_pre_code]:p-0 [&_pre_code]:text-[12px] [&_pre_code]:leading-[1.55]",
+  "[&_table]:my-4 [&_table]:w-full [&_table]:min-w-[28rem] [&_table]:border-collapse [&_table]:text-[12px] [&_table]:leading-[1.5] sm:[&_table]:min-w-[36rem]",
+  "[&_thead]:border-b [&_thead]:border-border/60 [&_thead]:bg-muted/40",
+  "[&_tbody]:divide-y [&_tbody]:divide-border/50",
+  "[&_tr]:align-top",
+  "[&_th]:px-3.5 [&_th]:py-2.5 [&_th]:text-start [&_th]:font-semibold [&_th]:whitespace-normal [&_th]:text-foreground",
+  "[&_td]:px-3.5 [&_td]:py-2.5 [&_td]:text-start [&_td]:align-top [&_td]:whitespace-normal [&_td]:text-foreground/90"
+)
+
+function renderAssistantHtml(content: string) {
+  const prepared = prepareAssistantMarkdown(content)
+  const html = marked.parse(prepared, { async: false })
+  return typeof html === "string" ? html : ""
+}
+
+/**
+ * Renders assistant markdown (GFM tables, lists, code, links) for the chat UI.
+ */
+function AIMessageRenderer({
+  content,
+  className,
+}: {
+  content: string
+  className?: string
+}) {
+  const html = renderAssistantHtml(content)
+
+  return (
+    <div
+      data-ai-message-renderer=""
+      className={cn(aiMessageClassName, className)}
+      dir="auto"
+      dangerouslySetInnerHTML={{ __html: html }}
+    />
+  )
+}
+
+export { AIMessageRenderer, renderAssistantHtml }

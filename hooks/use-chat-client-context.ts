@@ -1,0 +1,91 @@
+"use client"
+
+import * as React from "react"
+import { useLocale } from "next-intl"
+import { useSearchParams } from "next/navigation"
+
+import { buildChatClientContext } from "@/lib/api/chat"
+import { usePathname } from "@/i18n/navigation"
+import { subscribeDeskSymbolSync } from "@/lib/paper-trading/desk-symbol"
+import {
+  subscribeDeskContextSync,
+  type DeskContextSnapshot,
+} from "@/lib/paper-trading/desk-context"
+import { resolveWorkspaceTab } from "@/lib/workspace-tab"
+import type { User } from "@/lib/api/types"
+
+function deskSymbolFromPair(symbol: string): string {
+  return symbol.replace(/USDT$/, "").replace(/USD$/, "")
+}
+
+export function useChatClientContext(input: {
+  user?: User | null
+  isProUser?: boolean
+}) {
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+  const locale = useLocale()
+  const workspaceTab =
+    pathname === "/app" ? resolveWorkspaceTab(searchParams.get("tab")) : null
+  const [symbol, setSymbol] = React.useState("ETH")
+  const [deskContext, setDeskContext] =
+    React.useState<DeskContextSnapshot | null>(null)
+
+  React.useEffect(() => subscribeDeskSymbolSync(setSymbol), [])
+  React.useEffect(() => subscribeDeskContextSync(setDeskContext), [])
+
+  return React.useMemo(
+    () =>
+      buildChatClientContext({
+        user: input.user,
+        isProUser: input.isProUser,
+        symbol: deskSymbolFromPair(deskContext?.symbol ?? symbol),
+        pathname,
+        workspaceTab,
+        locale,
+        deskContext,
+      }),
+    [input.user, input.isProUser, symbol, deskContext, pathname, workspaceTab, locale]
+  )
+}
+
+/** Resolve an open position for client-tool handlers (chat aside). */
+export function useChatPositionResolver(
+  deskContext: DeskContextSnapshot | null
+) {
+  return React.useCallback(
+    (input: { positionId?: string; symbol?: string }) => {
+      const positions = deskContext?.openPositions ?? []
+      if (input.positionId) {
+        const match = positions.find((p) => p.id === input.positionId)
+        if (!match) return null
+        return {
+          id: match.id,
+          symbol: match.symbol,
+          side: match.side,
+          entryPrice: match.entryPrice,
+          quantity: match.quantity,
+        }
+      }
+      const key = input.symbol?.trim().toUpperCase()
+      if (!key) return null
+      const match = positions.find((p) => p.symbol === key)
+      if (!match) return null
+      return {
+        id: match.id,
+        symbol: match.symbol,
+        side: match.side,
+        entryPrice: match.entryPrice,
+        quantity: match.quantity,
+      }
+    },
+    [deskContext]
+  )
+}
+
+export function useDeskContextSnapshot() {
+  const [deskContext, setDeskContext] =
+    React.useState<DeskContextSnapshot | null>(null)
+  React.useEffect(() => subscribeDeskContextSync(setDeskContext), [])
+  return deskContext
+}

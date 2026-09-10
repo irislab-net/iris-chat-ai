@@ -1,0 +1,28 @@
+allowBuilds:
+  sharp: true
+  unrs-resolver: true
+  msw: false
+  esbuild: true
+  workerd: true
+  '@parcel/watcher': true
+  '@swc/core': true
+
+minimumReleaseAgeExclude:
+  - '@next/env@16.3.4'
+  - '@next/eslint-plugin-next@16.3.4'
+  - '@next/swc-darwin-arm64@16.3.4'
+  - '@next/swc-darwin-x64@16.3.4'
+  - '@next/swc-linux-arm64-gnu@16.3.4'
+  - '@next/swc-linux-arm64-musl@16.3.4'
+  - '@next/swc-linux-x64-gnu@16.3.4'
+  - '@next/swc-linux-x64-musl@16.3.4'
+  - '@next/swc-win32-arm64-msvc@16.3.4'
+  - '@next/swc-win32-x64-msvc@16.3.4'
+  - '@opennextjs/aws@4.1.3'
+  - '@opennextjs/cloudflare@1.20.5'
+  - eslint-config-next@16.3.4
+  - next@16.3.4
+
+overrides:
+  sharp: ">=0.35.0"
+  postcss: ">=8.5.23"

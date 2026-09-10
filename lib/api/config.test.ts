@@ -1,0 +1,22 @@
+import { describe, expect, it } from "vitest"
+
+import { loginWithGoogleUrl } from "@/lib/api/config"
+
+describe("loginWithGoogleUrl", () => {
+  it("hits the Google login host with destination and legal accept flags", () => {
+    const url = new URL(
+      loginWithGoogleUrl("https://intel.irislab.info/auth/success", {
+        legalAccepted: true,
+      })
+    )
+
+    expect(url.origin + url.pathname).toBe(
+      "https://api.irislab.info/v1/auth/google/login"
+    )
+    expect(url.searchParams.get("destination")).toBe(
+      "https://intel.irislab.info/auth/success"
+    )
+    expect(url.searchParams.get("terms")).toBe("accepted")
+    expect(url.searchParams.get("privacy_notice")).toBe("accepted")
+  })
+})

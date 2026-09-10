@@ -1,0 +1,184 @@
+import type { PaperSide } from "@/lib/paper-trading"
+import { ETH_SIGNAL_SAMPLE_PROMPT } from "@/lib/iris-paper-trade/signal-prompts"
+
+export const PAPER_TRADE_SAMPLE_PROMPT = ETH_SIGNAL_SAMPLE_PROMPT
+
+/** Empty-state starters — signal first (regular chat), not auto paper-trade pipeline. */
+export const IRIS_SAMPLE_PROMPTS = [
+  {
+    title: "ETH signal",
+    text: ETH_SIGNAL_SAMPLE_PROMPT,
+  },
+  {
+    title: "Market pulse",
+    text: "What is IRIS stance, model bias, and the news pulse on ETH right now? Keep it factual — do not propose a trade.",
+  },
+  {
+    title: "Wait or watch",
+    text: "From live ETH trend and volatility, should I wait on the sidelines or is a setup forming? Analysis only — do not open a paper trade.",
+  },
+] as const
+
+/** Legacy samples — still recognized as paper-trade intent. */
+export const PAPER_TRADE_SAMPLE_PROMPT_EN_PREV =
+  "Based on live price, trend, volatility, news, and current IRIS analysis: if a valid setup exists right now, propose one Paper Trade with Entry, SL, and TP. If conditions are not sufficient, do not propose a trade."
+
+export const PAPER_TRADE_SAMPLE_PROMPT_EN_LEGACY =
+  "Use live price, trend, volatility, news, and current IRIS analysis. If a valid setup exists right now, propose one Paper Trade with Entry, SL, and TP. If conditions are not sufficient, do not open a trade."
+
+/** Legacy Persian sample — still recognized as paper-trade intent. */
+export const PAPER_TRADE_SAMPLE_PROMPT_FA =
+  "بازار اتریوم را با قیمت زنده، روند، نوسان، اخبار و مدل‌های IRIS بررسی کن. اگر الان ستاپ معتبر داری، یک Paper Trade با entry، stop loss و take profit پیشنهاد بده. اگر شرایط کافی نیست، معامله باز نکن."
+
+export const PAPER_TRADE_INTENT_PROMPTS = [
+  PAPER_TRADE_SAMPLE_PROMPT,
+  PAPER_TRADE_SAMPLE_PROMPT_EN_PREV,
+  PAPER_TRADE_SAMPLE_PROMPT_EN_LEGACY,
+  PAPER_TRADE_SAMPLE_PROMPT_FA,
+] as const
+
+export type PaperDecisionAction = "OPEN_PAPER_TRADE" | "NO_TRADE"
+
+export type OpenPaperTradeToolArgs = {
+  symbol: string
+  direction: PaperSide
+  setup: string
+  stopLoss: number
+  takeProfit: number
+  leverage: number
+  thesis: string
+}
+
+export type NoTradeToolArgs = {
+  reason: string
+}
+
+export type ParsedPaperDecision =
+  | { action: "OPEN_PAPER_TRADE"; args: OpenPaperTradeToolArgs }
+  | { action: "NO_TRADE"; args: NoTradeToolArgs }
+
+export type ModelClassifierSnapshot = {
+  p: number
+  edge: number
+  signal: boolean
+}
+
+export type MarketContextPacket = {
+  asOf: number
+  asOfIso: string
+  symbol: string
+  timeframe: string
+  live: {
+    price: number
+    barTime: number
+    source: "hyperliquid"
+  }
+  trend: {
+    bars: number
+    closeFirst: number
+    closeLast: number
+    changePct: number
+    recentCloses: number[]
+  }
+  volatility: {
+    rangePct: number
+    atrPct: number
+  }
+  insight: {
+    stance: string
+    bias: string
+    headline: string
+    calmness: string
+    rewardRisk: number
+    expectedMovePct: number
+    generatedAt: number
+  } | null
+  models: {
+    long: ModelClassifierSnapshot
+    short: ModelClassifierSnapshot
+    breakout: ModelClassifierSnapshot
+    fast: ModelClassifierSnapshot
+  } | null
+  news: {
+    ethSummary: string | null
+    items: Array<{
+      title: string
+      impact: number
+      sentiment: number
+      publishedAt: number
+    }>
+  }
+}
+
+export type PaperProposalRejectReason =
+  | "STRUCTURED_OUTPUT_INVALID"
+  | "EXTRA_PROPERTIES"
+  | "MISSING_LIVE_PRICE"
+  | "STALE_CONTEXT"
+  | "SYMBOL_MISMATCH"
+  | "INVALID_DIRECTION"
+  | "INVALID_LEVELS"
+  | "INVALID_LEVERAGE"
+  | "STOP_TOO_TIGHT"
+  | "STOP_TOO_WIDE"
+  | "EXISTING_POSITION"
+  | "INVALID_SIZE"
+  | "INSUFFICIENT_MARGIN"
+  | "ENGINE_REJECTED"
+  | "MULTIPLE_TOOL_CALLS"
+
+export type PlanIrisPaperTradeResult =
+  | {
+      status: "no_trade"
+      reason: string
+    }
+  | {
+      status: "rejected"
+      reason: PaperProposalRejectReason
+      detail: string
+    }
+  | {
+      status: "ready"
+      symbol: string
+      side: PaperSide
+      quantity: number
+      markPrice: number
+      stopLoss: number
+      takeProfit: number
+      leverage: number
+      setup: string
+      thesis: string
+    }
+
+/** Engine ticket held until the user confirms Open Paper Trade. */
+export type PaperTradeTicket = {
+  symbol: string
+  side: PaperSide
+  quantity: number
+  markPrice: number
+  stopLoss: number
+  takeProfit: number
+  leverage: number
+  setup: string
+  thesis: string
+}
+
+export type IrisPaperTradeChatResult =
+  | {
+      status: "no_trade"
+      message: string
+      reason: string
+    }
+  | {
+      status: "rejected"
+      message: string
+      reason: PaperProposalRejectReason
+      detail: string
+    }
+  | {
+      status: "proposed"
+      message: string
+      ticket: PaperTradeTicket
+    }
+
+export type IrisPaperTradePhase = "context" | "evaluate"
