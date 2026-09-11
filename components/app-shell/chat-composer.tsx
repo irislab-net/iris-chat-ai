@@ -87,6 +87,8 @@ function ChatComposer({
   const deferMobileKeyboard = isFloating && isDesktop !== true
   const [userUnlockedKeyboard, setUserUnlockedKeyboard] = React.useState(false)
   const mobileKeyboardReady = !deferMobileKeyboard || userUnlockedKeyboard
+  /** Ignore ghost taps when chat mounts under the finger (click retargeting). */
+  const keyboardUnlockAllowedAtRef = React.useRef(0)
   const [uncontrolled, setUncontrolled] = React.useState("")
   const [activeTool, setActiveTool] = React.useState<IrisMentionTool | null>(null)
   const [mentionIndex, setMentionIndex] = React.useState(0)
@@ -113,6 +115,38 @@ function ChatComposer({
 
   const mentionOpen = Boolean(mentionPalette && mentionOptions.length > 0)
 
+  React.useEffect(() => {
+    if (!deferMobileKeyboard) return
+    setUserUnlockedKeyboard(false)
+    keyboardUnlockAllowedAtRef.current = Date.now() + 500
+  }, [deferMobileKeyboard])
+
+  React.useEffect(() => {
+    if (!deferMobileKeyboard || mobileKeyboardReady) return
+
+    const blurIfFocused = () => {
+      const el = localRef.current
+      if (el && document.activeElement === el) {
+        el.blur()
+      }
+    }
+
+    blurIfFocused()
+    const raf = requestAnimationFrame(blurIfFocused)
+    const timer = window.setTimeout(blurIfFocused, 50)
+
+    const onFocusIn = (event: FocusEvent) => {
+      if (event.target === localRef.current) blurIfFocused()
+    }
+
+    document.addEventListener("focusin", onFocusIn, true)
+    return () => {
+      cancelAnimationFrame(raf)
+      window.clearTimeout(timer)
+      document.removeEventListener("focusin", onFocusIn, true)
+    }
+  }, [deferMobileKeyboard, mobileKeyboardReady])
+
   const focusComposer = React.useCallback(
     (options?: { force?: boolean }) => {
       const el = localRef.current
@@ -130,6 +164,7 @@ function ChatComposer({
 
   const enableMobileKeyboard = React.useCallback(() => {
     if (!deferMobileKeyboard) return
+    if (Date.now() < keyboardUnlockAllowedAtRef.current) return
     setUserUnlockedKeyboard(true)
     queueMicrotask(() => focusComposer({ force: true }))
   }, [deferMobileKeyboard, focusComposer])
@@ -197,7 +232,7 @@ function ChatComposer({
 
   function clearActiveTool() {
     setActiveTool(null)
-    focusComposer()
+    if (isDesktop === true) focusComposer()
   }
 
   function insertMentionToken(option: IrisMentionOption) {
@@ -341,16 +376,6 @@ function ChatComposer({
               )
         )}
         onClick={focusField}
-        onPointerDown={(event) => {
-          if (!deferMobileKeyboard || mobileKeyboardReady) return
-          if (
-            event.target instanceof HTMLElement &&
-            event.target.closest("button, [role='menu'], [data-mention-item]")
-          ) {
-            return
-          }
-          enableMobileKeyboard()
-        }}
       >
         {isFloating ? (
           <DropdownMenu modal={false}>
@@ -437,6 +462,10 @@ function ChatComposer({
             rows={1}
             disabled={disabled}
             readOnly={deferMobileKeyboard && !mobileKeyboardReady}
+            tabIndex={deferMobileKeyboard && !mobileKeyboardReady ? -1 : 0}
+            inputMode={
+              deferMobileKeyboard && !mobileKeyboardReady ? "none" : "text"
+            }
             enterKeyHint="send"
             onFocus={(event) => {
               if (deferMobileKeyboard && !mobileKeyboardReady) {
