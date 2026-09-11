@@ -6,7 +6,6 @@ import {
   CheckIcon,
   ChevronDownIcon,
   EclipseIcon,
-  EllipsisVerticalIcon,
   LogOutIcon,
   MenuIcon,
   NewspaperIcon,
@@ -25,8 +24,11 @@ import {
   chatContextMenuSeparatorClass,
 } from "@/components/app-shell/chat-context-menu-styles"
 import {
+  chatMobileHeaderAvatarButtonClass,
+  chatMobileHeaderAvatarClass,
   chatMobileHeaderButtonClass,
   chatMobileHeaderModelClass,
+  chatMobileHeaderNewChatClass,
 } from "@/components/app-shell/chat-mobile-gemini-styles"
 import { ChatAccountAvatar } from "@/components/app-shell/chat-account-avatar"
 import { useAuth } from "@/components/auth/auth-provider"
@@ -68,7 +70,7 @@ type ChatMobileHeaderProps = {
   className?: string
 }
 
-function AccountMoreMenu({
+function AccountAvatarMenu({
   onOpenNews,
 }: {
   onOpenNews: () => void
@@ -85,14 +87,13 @@ function AccountMoreMenu({
       <Button
         type="button"
         variant="ghost"
-        size="icon"
-        className={chatMobileHeaderButtonClass}
+        className={chatMobileHeaderAvatarButtonClass}
         aria-label={t("signIn")}
         disabled={loginPending}
         onClick={() => login({ source: "chat" })}
       >
-        <Avatar className="size-7 rounded-full after:border-0">
-          <AvatarFallback className="bg-muted text-[11px] font-medium">
+        <Avatar className={chatMobileHeaderAvatarClass}>
+          <AvatarFallback className="bg-[#f0f4f9] text-[11px] font-medium dark:bg-muted">
             <GoogleGlyph className="size-3.5" />
           </AvatarFallback>
         </Avatar>
@@ -107,13 +108,20 @@ function AccountMoreMenu({
           <Button
             type="button"
             variant="ghost"
-            size="icon"
-            className={chatMobileHeaderButtonClass}
-            aria-label="More options"
+            className={chatMobileHeaderAvatarButtonClass}
+            aria-label={`Account menu for ${userAccountLabel(user)}`}
           />
         }
       >
-        <EllipsisVerticalIcon />
+        <ChatAccountAvatar
+          user={user}
+          avatarUrl={avatarUrl}
+          isProUser={isProUser}
+          planName={planName}
+          compact
+          showPlanBadge={false}
+          avatarClassName={chatMobileHeaderAvatarClass}
+        />
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="end"
@@ -207,7 +215,7 @@ function ChatMobileHeader({
   return (
     <header
       className={cn(
-        "grid shrink-0 grid-cols-[1fr_auto_1fr] items-center gap-1 px-2 pb-1 pt-[var(--app-safe-top,0px)]",
+        "grid shrink-0 grid-cols-[1fr_auto_1fr] items-center gap-1 bg-transparent px-2 pb-1 pt-[var(--app-safe-top,0px)]",
         className
       )}
     >
@@ -241,8 +249,8 @@ function ChatMobileHeader({
                 />
               }
             >
-              <span className="truncate">IRIS · {effortLabel}</span>
-              <ChevronDownIcon className="size-4 shrink-0 text-muted-foreground" />
+              <span className="truncate">IRIS {effortLabel}</span>
+              <ChevronDownIcon className="shrink-0" />
             </DropdownMenuTrigger>
             <DropdownMenuContent
               align="center"
@@ -280,19 +288,19 @@ function ChatMobileHeader({
         )}
       </div>
 
-      <div className="flex shrink-0 items-center justify-end gap-0.5">
+      <div className="flex shrink-0 items-center justify-end gap-1">
         <Button
           type="button"
           variant="ghost"
           size="icon"
-          className={chatMobileHeaderButtonClass}
+          className={chatMobileHeaderNewChatClass}
           aria-label={t("newChat")}
           disabled={sending}
           onClick={onNewChat}
         >
           <SquarePenIcon />
         </Button>
-        <AccountMoreMenu onOpenNews={onOpenNews} />
+        <AccountAvatarMenu onOpenNews={onOpenNews} />
       </div>
     </header>
   )

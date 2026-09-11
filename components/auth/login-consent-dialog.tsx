@@ -25,6 +25,20 @@ import {
 } from "@/components/ui/sheet"
 import { useIsDesktop } from "@/hooks/use-media-query"
 import { PRIVACY_NOTICE_URL, TERMS_OF_SERVICE_URL } from "@/lib/legal"
+import {
+  chatMobileSheetBodyClass,
+  chatMobileSheetConsentCheckedClass,
+  chatMobileSheetConsentUncheckedClass,
+  chatMobileSheetContentClass,
+  chatMobileSheetDescriptionClass,
+  chatMobileSheetFooterBarClass,
+  chatMobileSheetFooterClass,
+  chatMobileSheetGhostButtonClass,
+  chatMobileSheetHandleClass,
+  chatMobileSheetHeaderClass,
+  chatMobileSheetPrimaryButtonClass,
+  chatMobileSheetTitleClass,
+} from "@/components/app-shell/chat-mobile-gemini-styles"
 import { cn } from "@/lib/utils"
 
 type LoginConsentDialogProps = {
@@ -57,10 +71,10 @@ function ConsentCheck({
     <label
       htmlFor={id}
       className={cn(
-        "flex min-h-12 cursor-pointer items-center gap-3 rounded-xl border px-3.5 py-3 text-left transition-[background-color,border-color,box-shadow]",
+        "flex min-h-12 cursor-pointer items-center gap-3 rounded-2xl border px-3.5 py-3 text-left transition-[background-color,border-color,box-shadow]",
         checked
-          ? "border-sky-200/70 bg-sky-50/60 shadow-[0_1px_0_0_rgba(255,255,255,0.6)_inset] dark:border-border/60 dark:bg-muted/50 dark:shadow-none"
-          : "border-border/45 bg-background/90 hover:border-border/70 hover:bg-muted/35 dark:bg-muted/20"
+          ? chatMobileSheetConsentCheckedClass
+          : chatMobileSheetConsentUncheckedClass
       )}
     >
       <span
@@ -128,18 +142,23 @@ function LoginConsentActions({
   confirming,
   onConfirm,
   onCancel,
+  mobile = false,
 }: {
   canContinue: boolean
   confirming: boolean
   onConfirm: () => void
   onCancel: () => void
+  mobile?: boolean
 }) {
   return (
     <div className="flex w-full flex-col gap-2">
       <Button
         type="button"
         size="lg"
-        className="h-12 w-full gap-2.5 rounded-full px-5 text-[15px] font-medium shadow-sm disabled:opacity-45"
+        className={cn(
+          "h-12 w-full gap-2.5 rounded-full px-5 text-[15px] font-medium shadow-none disabled:opacity-45",
+          mobile && chatMobileSheetPrimaryButtonClass
+        )}
         disabled={!canContinue}
         onClick={onConfirm}
       >
@@ -150,7 +169,11 @@ function LoginConsentActions({
         type="button"
         variant="ghost"
         size="lg"
-        className="h-10 w-full rounded-full text-[15px] font-normal text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+        className={cn(
+          mobile
+            ? chatMobileSheetGhostButtonClass
+            : "h-10 w-full rounded-full text-[15px] font-normal text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+        )}
         disabled={confirming}
         onClick={onCancel}
       >
@@ -192,7 +215,7 @@ function LoginConsentBody({
         </ConsentCheck>
       </div>
 
-      <div className="rounded-xl border border-border/40 bg-muted/25 px-3.5 py-3 dark:bg-muted/15">
+      <div className="rounded-2xl border border-black/[0.06] bg-white/70 px-3.5 py-3 dark:border-border/40 dark:bg-muted/15">
         <p className="text-pretty text-[13px] leading-relaxed text-muted-foreground">
           {DISCLAIMER}
         </p>
@@ -235,6 +258,7 @@ function LoginConsentDialog({
       confirming={confirming}
       onConfirm={onConfirm}
       onCancel={resetAndClose}
+      mobile={!isDesktop}
     />
   )
 
@@ -275,23 +299,14 @@ function LoginConsentDialog({
       <SheetContent
         side="bottom"
         showCloseButton={!confirming}
-        className={cn(
-          "max-h-[min(92dvh,720px)] gap-0 overflow-y-auto rounded-t-[1.75rem] border-0",
-          "bg-linear-to-b from-background via-background to-sky-100/45 pb-[max(1rem,env(safe-area-inset-bottom,0px))] pt-2",
-          "dark:to-muted/10"
-        )}
+        className={chatMobileSheetContentClass}
       >
-        <div
-          aria-hidden
-          className="mx-auto mb-4 h-1 w-10 shrink-0 rounded-full bg-muted-foreground/20"
-        />
-        <div className="flex flex-col gap-5 px-5 pb-2">
+        <div aria-hidden className={chatMobileSheetHandleClass} />
+        <div className={cn(chatMobileSheetBodyClass, "gap-5 pb-2")}>
           <LoginConsentBrand compact />
-          <SheetHeader className="gap-1.5 space-y-0 p-0 text-left">
-            <SheetTitle className="text-[22px] font-normal tracking-tight">
-              {TITLE}
-            </SheetTitle>
-            <SheetDescription className="text-pretty text-[15px] leading-relaxed text-muted-foreground">
+          <SheetHeader className={chatMobileSheetHeaderClass}>
+            <SheetTitle className={chatMobileSheetTitleClass}>{TITLE}</SheetTitle>
+            <SheetDescription className={chatMobileSheetDescriptionClass}>
               {DESCRIPTION}
             </SheetDescription>
           </SheetHeader>
@@ -302,8 +317,8 @@ function LoginConsentDialog({
             onPrivacyChange={setPrivacyAccepted}
           />
         </div>
-        <SheetFooter className="sticky bottom-0 border-t border-border/40 bg-background/90 px-5 pt-4 pb-0 backdrop-blur-md">
-          {actions}
+        <SheetFooter className={chatMobileSheetFooterClass}>
+          <div className={cn(chatMobileSheetFooterBarClass, "px-5")}>{actions}</div>
         </SheetFooter>
       </SheetContent>
     </Sheet>

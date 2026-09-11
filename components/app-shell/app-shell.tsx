@@ -125,7 +125,8 @@ function AppShellInner({
     writeShellLayoutPrefs({ chatOpen: next })
   }
 
-  const resolvedChatOpen = onDesk || chatOpen
+  const resolvedChatOpen =
+    isDesktop === false ? chatOpen : onDesk || chatOpen
   const resolvedChatMode: ChatDisplayMode =
     onDesk && isDesktop === true && chatMode !== "docked"
       ? "focused"

@@ -30,6 +30,9 @@ import {
 import { useNow } from "@/hooks/use-now"
 import { usePendingPaymentInvoice } from "@/hooks/use-pending-payment-invoice"
 import { APP_NEWS_PATH, SOCIAL_X_URL } from "@/lib/site"
+import { chatMobileSheetFooterBarClass, chatMobileSheetPrimaryButtonClass } from "@/components/app-shell/chat-mobile-gemini-styles"
+import { useIsDesktop } from "@/hooks/use-media-query"
+import { cn } from "@/lib/utils"
 
 function continueLabel(
   plan: PlanKey,
@@ -80,6 +83,7 @@ function footerHint({
 
 function UpgradeView() {
   const router = useRouter()
+  const isDesktop = useIsDesktop()
   const { user, isAuthenticated, isProUser, login, loginPending, refresh } =
     useAuth()
   const [billing, setBilling] = React.useState<BillingCycle>("monthly")
@@ -277,7 +281,17 @@ function UpgradeView() {
         onPaid={handleInvoicePaid}
       />
 
-      <footer className="sticky bottom-0 border-t border-border/60 bg-background/95 px-4 py-4 backdrop-blur-sm sm:px-6">
+      <footer
+        className={cn(
+          "sticky bottom-0 px-4 py-4 sm:px-6",
+          isDesktop
+            ? "border-t border-border/60 bg-background/95 backdrop-blur-sm"
+            : cn(
+                chatMobileSheetFooterBarClass,
+                "border-0 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom,0px))] pt-4"
+              )
+        )}
+      >
         <div className="mx-auto flex w-full max-w-5xl flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-sm text-muted-foreground">
             {footerHint({
@@ -290,7 +304,10 @@ function UpgradeView() {
           </p>
           <Button
             size="lg"
-            className="h-11 rounded-xl px-8"
+            className={cn(
+              "h-11 px-8",
+              isDesktop ? "rounded-xl" : cn(chatMobileSheetPrimaryButtonClass, "h-12")
+            )}
             disabled={busy || plusLocked}
             onClick={() => {
               if (selected === "plus" && hasPendingPayment) {

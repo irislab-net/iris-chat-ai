@@ -13,7 +13,7 @@ import {
 
 import { ChatAccountFooter } from "@/components/app-shell/chat-account-footer"
 import { ChatMobileGeminiBackground } from "@/components/app-shell/chat-mobile-gemini-background"
-import { chatMobileScrollDownClass, chatMobileThreadClass } from "@/components/app-shell/chat-mobile-gemini-styles"
+import { chatMobileScrollDownClass, chatMobileThreadBottomSpacerClass, chatMobileThreadClass, chatMobileThreadScrollMaskClass } from "@/components/app-shell/chat-mobile-gemini-styles"
 import { ChatMobileHeader } from "@/components/app-shell/chat-mobile-header"
 import {
   ChatHistoryRail,
@@ -49,6 +49,7 @@ import {
 } from "@/lib/api/chat"
 import {
   dispatchCopilotGhostTrade,
+  dispatchDismissMobileChat,
   dispatchDockChat,
   subscribeCopilotChatPrefill,
 } from "@/lib/paper-trading/copilot-client"
@@ -1388,12 +1389,14 @@ function ChatAside({
 
   const isFocusedLayout = displayMode === "focused" && !onClose
   const isMobileOverlay = Boolean(onClose)
-  const canEmbedHistoryRail = isAuthenticated && isFocusedLayout
+  const canEmbedHistoryRail =
+    isAuthenticated && !isMobileOverlay && isDesktop === true
   const historyRailVisible = canEmbedHistoryRail
   const showFocusedMainHeader = isFocusedLayout && !isAuthenticated
   const showMainHeader = showFocusedMainHeader || !isFocusedLayout
   const showMobileHistoryOverlay = isMobileOverlay && historyOpen
   const showHistoryPanel =
+    !historyRailVisible &&
     !isMobileOverlay &&
     historyOpen &&
     !isFocusedLayout &&
@@ -1456,6 +1459,7 @@ function ChatAside({
 
   function openNewsFromChat() {
     setHistoryOpen(false)
+    dispatchDismissMobileChat()
     onClose?.()
     dispatchDockChat()
     router.replace(workspaceTabHref(WORKSPACE_TAB_NEWS), { scroll: false })
@@ -1465,15 +1469,16 @@ function ChatAside({
   const mobileGreeting = mobileGreetingName
     ? t("mobileGreeting", { name: mobileGreetingName.split(/\s+/)[0] ?? mobileGreetingName })
     : t("mobileGreetingGuest")
+  const showMobileEmptyGeminiBg = isMobileOverlay && messages.length === 0
   const [mobileComposerFocused, setMobileComposerFocused] = React.useState(false)
   const [mobileIntroGlow, setMobileIntroGlow] = React.useState(true)
 
   React.useEffect(() => {
-    if (!isMobileOverlay) return
+    if (!showMobileEmptyGeminiBg) return
     setMobileIntroGlow(true)
     const id = window.setTimeout(() => setMobileIntroGlow(false), 1400)
     return () => window.clearTimeout(id)
-  }, [isMobileOverlay, conversationId])
+  }, [showMobileEmptyGeminiBg, conversationId])
 
   React.useEffect(() => {
     if (displayMode === "focused" && isAuthenticated) {
@@ -1499,18 +1504,18 @@ function ChatAside({
         "relative flex h-full min-h-0 w-full overflow-hidden",
         isMobileOverlay
           ? "flex-col bg-white text-foreground dark:bg-background"
-          : isFocusedLayout
+          : historyRailVisible || isFocusedLayout
             ? "flex-row bg-sidebar text-sidebar-foreground"
             : "flex-col bg-sidebar text-sidebar-foreground",
         displayMode === "docked" && !isMobileOverlay ? "rounded-r-2xl" : "rounded-none",
         className
       )}
     >
-      {isMobileOverlay ? (
+      {showMobileEmptyGeminiBg ? (
         <ChatMobileGeminiBackground
-          active={mobileComposerFocused && messages.length === 0}
-          loading={sending && messages.length === 0}
-          intro={mobileIntroGlow && messages.length === 0}
+          active={mobileComposerFocused}
+          loading={sending}
+          intro={mobileIntroGlow}
         />
       ) : null}
       {historyRailVisible ? (
@@ -1526,7 +1531,7 @@ function ChatAside({
           sidebarWidth={shellSidebars.chat.minSize}
           footer={<ChatAccountFooter />}
           onDock={
-            showDesktopLayoutControls
+            showDesktopLayoutControls && isFocusedLayout
               ? () => onDisplayModeChange?.("docked")
               : undefined
           }
@@ -1632,7 +1637,7 @@ function ChatAside({
             <Maximize2Icon />
           </ChatHeaderIconButton>
         ) : null}
-        {isAuthenticated && !isFocusedLayout ? (
+        {isAuthenticated && !isFocusedLayout && !historyRailVisible ? (
           <ChatHeaderIconButton
             label={t("chatHistory")}
             pressed={historyOpen}
@@ -1681,7 +1686,12 @@ function ChatAside({
             <div className="relative min-h-0 flex-1 overflow-hidden">
             <ScrollArea
               viewportRef={scrollViewportRef}
-              className="h-full min-h-0"
+              className={cn(
+                "h-full min-h-0",
+                isMobileOverlay &&
+                  messages.length > 0 &&
+                  chatMobileThreadScrollMaskClass
+              )}
             >
               {messages.length === 0 ? (
                 <div
@@ -1914,7 +1924,10 @@ function ChatAside({
                 </div>
               )
             })}
-            <div ref={bottomRef} />
+            <div
+              ref={bottomRef}
+              className={cn(isMobileOverlay && chatMobileThreadBottomSpacerClass)}
+            />
                 </div>
               )}
             </ScrollArea>
@@ -1994,7 +2007,7 @@ function ChatAside({
                 disabled={sending}
                 layout={isMobileOverlay ? "floating" : "default"}
                 onFloatingFocusChange={
-                  isMobileOverlay ? setMobileComposerFocused : undefined
+                  showMobileEmptyGeminiBg ? setMobileComposerFocused : undefined
                 }
                 className={isMobileOverlay ? undefined : "px-3 sm:px-4"}
               />

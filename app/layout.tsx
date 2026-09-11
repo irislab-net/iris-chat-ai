@@ -128,7 +128,7 @@ export default async function RootLayout({
         <JsonLd data={webApplicationJsonLd()} />
         <ThemeProvider
           attribute="class"
-          defaultTheme="dark"
+          defaultTheme="light"
           enableSystem
           disableTransitionOnChange
         >

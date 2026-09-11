@@ -25,6 +25,15 @@ import {
 } from "@/components/ui/sheet"
 import { useNow } from "@/hooks/use-now"
 import { useIsDesktop } from "@/hooks/use-media-query"
+import {
+  chatMobileSheetCardClass,
+  chatMobileSheetContentClass,
+  chatMobileSheetDescriptionClass,
+  chatMobileSheetFooterBarClass,
+  chatMobileSheetHandleClass,
+  chatMobileSheetHeaderClass,
+  chatMobileSheetTitleClass,
+} from "@/components/app-shell/chat-mobile-gemini-styles"
 import type { BillingCycle } from "@/lib/billing/catalog"
 import {
   formatCountdown,
@@ -361,37 +370,38 @@ export function CryptoPaymentSheet({
         side={sheetSide}
         showCloseButton={isDesktop === true}
         className={cn(
-          "flex w-full flex-col gap-0 bg-background p-0",
+          "flex w-full flex-col gap-0 p-0",
           isDesktop
-            ? "border-l border-border/60 sm:max-w-95"
-            : "max-h-[92dvh] rounded-t-2xl border-0 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-1.5"
+            ? "border-l border-border/60 bg-background sm:max-w-95"
+            : cn(
+                chatMobileSheetContentClass,
+                "max-h-[92dvh] overflow-hidden pb-0"
+              )
         )}
       >
         {!isDesktop ? (
-          <div
-            aria-hidden
-            className="mx-auto mb-0.5 h-1 w-9 shrink-0 rounded-full bg-muted-foreground/25"
-          />
+          <div aria-hidden className={chatMobileSheetHandleClass} />
         ) : null}
         <SheetHeader
           className={cn(
-            "border-b border-border/50",
             isDesktop
-              ? "space-y-2 p-0 px-5 py-5"
-              : "space-y-0.5 p-0 px-3.5 py-2.5"
+              ? "space-y-2 border-b border-border/50 p-0 px-5 py-5"
+              : cn(
+                  chatMobileSheetHeaderClass,
+                  "border-b border-black/[0.06] pb-3 dark:border-border/50"
+                )
           )}
         >
           <SheetTitle
             className={cn(
-              "font-semibold tracking-tight",
-              isDesktop ? "text-lg" : "text-base"
+              isDesktop ? "text-lg font-semibold tracking-tight" : chatMobileSheetTitleClass
             )}
           >
             Pay for Plus
           </SheetTitle>
           <SheetDescription
             className={cn(
-              isDesktop ? "text-sm leading-relaxed" : "text-xs leading-snug"
+              isDesktop ? "text-sm leading-relaxed" : chatMobileSheetDescriptionClass
             )}
           >
             {checkout ? planSummary(checkout.billing) : "Plus upgrade"}
@@ -499,7 +509,7 @@ export function CryptoPaymentSheet({
               </div>
             ) : (
               <div className="space-y-5">
-                <section className="rounded-2xl border border-border/60 bg-card p-5">
+                <section className={cn(isDesktop ? "rounded-2xl border border-border/60 bg-card p-5" : cn(chatMobileSheetCardClass, "p-4"))}>
                   <p className="text-sm text-muted-foreground">Send exactly</p>
                   <div className="mt-2 flex items-start justify-between gap-3">
                     <div className="min-w-0">
@@ -553,8 +563,10 @@ export function CryptoPaymentSheet({
           {isAwaitingPayment ? (
             <div
               className={cn(
-                "shrink-0 border-t border-border/50",
-                isDesktop ? "px-5 py-4" : "px-3.5 py-2"
+                "shrink-0",
+                isDesktop
+                  ? "border-t border-border/50 px-5 py-4"
+                  : cn(chatMobileSheetFooterBarClass, "px-3.5 py-2")
               )}
             >
               <PaymentWatcherBanner

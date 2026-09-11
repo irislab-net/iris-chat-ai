@@ -45,36 +45,6 @@ function FeatureIllustrationSlot({
   )
 }
 
-function FeatureCardTop({
-  title,
-  body,
-  illustration,
-  className,
-}: {
-  title: string
-  body: string
-  illustration: ReactNode
-  className?: string
-}) {
-  return (
-    <FeatureCard className={className}>
-      <CardContent className="relative z-10 flex h-full flex-col px-4 pt-8 pb-5 sm:px-5 sm:pt-9 sm:pb-6">
-        <FeatureIllustrationSlot inset="none" className="mt-2 aspect-386/130 w-full shrink-0 sm:mt-3">
-          {illustration}
-        </FeatureIllustrationSlot>
-        <div className="mt-auto space-y-1.5 pt-5 text-center sm:pt-6">
-          <CardTitle className="text-base font-medium tracking-tight sm:text-lg">
-            {title}
-          </CardTitle>
-          <CardDescription className="text-pretty leading-relaxed">
-            {body}
-          </CardDescription>
-        </div>
-      </CardContent>
-    </FeatureCard>
-  )
-}
-
 function FeatureCardWide({
   title,
   body,
@@ -105,13 +75,12 @@ function FeatureCardWide({
   )
 }
 
-const VIZ_WIDE = "0 -6 386 130"
 const VIZ_TALL = "0 0 320 220"
 
 function FeatureVizSvg({
   children,
   defs,
-  viewBox = VIZ_WIDE,
+  viewBox = VIZ_TALL,
 }: {
   children: ReactNode
   defs?: ReactNode
@@ -194,158 +163,6 @@ function GlassCircle({
         opacity={Math.min(stroke + 0.12, 0.42)}
       />
     </g>
-  )
-}
-
-function PulseLiveGraphic() {
-  const px = 50
-  const py = 48
-  const wave =
-    "M6 68C16 68 28 30 48 48C68 30 80 68 92 68C104 68 116 26 136 26C156 26 168 68 180 68C192 68 204 34 224 34C236 34 248 48 268 48C280 48 292 30 312 30C324 30 336 40 356 40C368 40 378 36 378 36"
-
-  return (
-    <FeatureVizSvg
-      defs={
-        <>
-          <VizGlowFilter id="pulse-glow" blur={1.2} />
-          <radialGradient id="pulse-radial" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor="currentColor" stopOpacity="0.28" />
-            <stop offset="100%" stopColor="currentColor" stopOpacity="0" />
-          </radialGradient>
-        </>
-      }
-    >
-        <ellipse cx={px} cy={py} rx="36" ry="28" fill="url(#pulse-radial)" className="text-foreground" />
-        {[30, 21, 12].map((r, i) => (
-          <circle key={r} cx={px} cy={py} r={r} className="stroke-foreground" strokeWidth="1" fill="none" opacity={0.2 - i * 0.06} vectorEffect="nonScalingStroke" />
-        ))}
-        <path
-          d={wave}
-          className="stroke-foreground"
-          strokeWidth="1"
-          strokeLinecap="round"
-          vectorEffect="nonScalingStroke"
-        />
-        <circle cx={px} cy={py} r="2.75" className="fill-foreground" filter="url(#pulse-glow)" />
-        <circle cx={px} cy={py} r="1.25" className="fill-background" />
-        <circle cx="376" cy="36" r="2.5" className="fill-foreground" opacity="0.9" />
-        <rect x={px - 22} y="12" width="44" height="13" rx="6.5" className="fill-foreground" opacity="0.06" />
-        <rect x={px - 22} y="12" width="44" height="13" rx="6.5" className="stroke-foreground" strokeWidth="1" fill="none" opacity="0.18" />
-        <circle cx={px - 12} cy="18.5" r="2" className="fill-foreground" />
-        <text x={px - 4} y="21.5" className="fill-foreground" fontSize="6" fontWeight="700" letterSpacing="0.16em" fontFamily="ui-sans-serif, system-ui, sans-serif">
-          LIVE
-        </text>
-      </FeatureVizSvg>
-  )
-}
-
-const ISO_CANDLES = [
-  { x: 38, b: 54, t: 40, up: true },
-  { x: 52, b: 52, t: 38, up: true },
-  { x: 66, b: 54, t: 42, up: false },
-  { x: 80, b: 50, t: 36, up: true },
-  { x: 94, b: 48, t: 34, up: true },
-  { x: 108, b: 50, t: 40, up: false },
-  { x: 122, b: 46, t: 30, up: true },
-  { x: 136, b: 44, t: 28, up: true },
-  { x: 150, b: 42, t: 26, up: true },
-  { x: 164, b: 40, t: 24, up: true },
-  { x: 178, b: 38, t: 22, up: true },
-] as const
-
-function SignalChartGraphic() {
-  return (
-    <FeatureVizSvg
-      defs={
-        <>
-          <VizGlowFilter id="signal-glow" blur={1.8} />
-          <linearGradient id="candle-up" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="currentColor" stopOpacity="0.95" />
-            <stop offset="100%" stopColor="currentColor" stopOpacity="0.35" />
-          </linearGradient>
-        </>
-      }
-    >
-        <g transform="translate(72 10)">
-          <g transform="matrix(1 0 -0.48 1 0 0)">
-            <GlassRect x={20} y={14} w={218} h={58} fill={0.025} stroke={0.08} />
-            <GlassRect x={10} y={7} w={218} h={58} fill={0.04} stroke={0.12} />
-            <GlassRect x={0} y={0} w={218} h={58} fill={0.08} stroke={0.24} />
-            {ISO_CANDLES.map((c) => (
-              <g key={c.x}>
-                <line x1={c.x} x2={c.x} y1={c.t - 3} y2={c.b + 3} className="stroke-foreground" strokeWidth="1" opacity={c.up ? 0.85 : 0.22} />
-                <rect
-                  x={c.x - 2.5}
-                  y={c.t}
-                  width="5"
-                  height={c.b - c.t}
-                  rx="0.5"
-                  fill={c.up ? "url(#candle-up)" : "none"}
-                  className={c.up ? "text-foreground" : "stroke-foreground fill-background"}
-                  strokeWidth="1"
-                  strokeOpacity={c.up ? 0.95 : 0.28}
-                  filter={c.up && c.x > 130 ? "url(#signal-glow)" : undefined}
-                />
-              </g>
-            ))}
-            <rect x={168} y={6} width="36" height="11" rx="5.5" className="fill-foreground" opacity="0.07" />
-            <rect x={168} y={6} width="36" height="11" rx="5.5" className="stroke-foreground" strokeWidth="1" fill="none" opacity="0.22" />
-            <text x={175} y="14.5" className="fill-foreground" fontSize="5.5" fontWeight="700" letterSpacing="0.1em" fontFamily="ui-sans-serif, system-ui, sans-serif">
-              IRIS
-            </text>
-          </g>
-        </g>
-      </FeatureVizSvg>
-  )
-}
-
-const STANCE_FILL =
-  "M0 90C0 90 14.3 55 35 48C55.7 41 66 39 66 39C66 39 80.7 39 92.2 39C103.7 39 100.9 18 109 18C117.2 18 117.2 52 124.8 52C132.4 52 142.3 35 153.8 39C165.4 42 186.8 52 193.8 52C200.7 52 206.3 18 214.1 18C221.8 18 238.7 55 244.2 52C249.8 50 258.8 15 266.2 15C272.1 15 284.1 48 286.7 48C294.8 48 300.2 30 305.4 30C312.3 30 323.4 21 335.6 18C347.7 15 348.2 41 363.6 39C367.9 38.5 372.9 41 376.4 47C379.4 52 381 60 382.5 68C383.5 74 382.5 90 382.5 90H0Z"
-
-const STANCE_STROKE =
-  "M0 88C0 88 15.3 54 36 47C56.7 40 66.7 39 66.7 39C66.7 39 80 39 91.5 39C102.9 39 100.4 19 108.6 19C116.7 19 117.7 53 125.2 53C132.8 53 142.1 36 153.6 39C165.1 42 186.1 53 193 53C199.9 53 205.3 19 213 19C220.8 19 237.8 55 243.4 53C248.9 51 257.9 15.5 265.3 15.5C271.1 15.5 283.2 47 285.8 47C293.8 47.1 299.2 30 304.4 30C311.3 30 321.4 22 333.6 19C345.7 16 346.9 41 362.3 39C377.6 37 383 70 383 70"
-
-function SpeedChartGraphic() {
-  const peakX = 334
-  const peakY = 19
-
-  return (
-    <FeatureVizSvg
-      defs={
-        <>
-          <linearGradient id="stance-fill" x1="0" y1="10" x2="0" y2="90" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stopColor="currentColor" stopOpacity="0.14" />
-            <stop offset="100%" stopColor="currentColor" stopOpacity="0" />
-          </linearGradient>
-          <radialGradient id="stance-radial" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor="currentColor" stopOpacity="0.16" />
-            <stop offset="100%" stopColor="currentColor" stopOpacity="0" />
-          </radialGradient>
-          <VizGlowFilter id="stance-glow" blur={1.1} />
-        </>
-      }
-    >
-        <path fillRule="evenodd" clipRule="evenodd" d={STANCE_FILL} fill="url(#stance-fill)" />
-        <path
-          d="M24 90C40 72 60 64 80 58C100 52 120 48 140 44C160 40 180 38 200 36C220 34 240 32 260 30C280 28 300 26 320 24C340 22 360 20 372 18"
-          className="fill-foreground"
-          opacity="0.04"
-        />
-        <path
-          className="text-foreground"
-          d={STANCE_STROKE}
-          stroke="currentColor"
-          strokeWidth="1"
-          fill="none"
-          vectorEffect="nonScalingStroke"
-        />
-        <ellipse cx={peakX} cy={peakY + 8} rx="22" ry="18" fill="url(#stance-radial)" className="text-foreground" />
-        {[11, 7, 3.5].map((r, i) => (
-          <circle key={r} cx={peakX} cy={peakY} r={r} className="stroke-foreground" strokeWidth="1" fill="none" opacity={0.16 - i * 0.04} vectorEffect="nonScalingStroke" />
-        ))}
-        <circle cx={peakX} cy={peakY} r="2.5" className="fill-foreground" filter="url(#stance-glow)" />
-        <circle cx={peakX} cy={peakY} r="1.25" className="fill-background" />
-      </FeatureVizSvg>
   )
 }
 

@@ -219,7 +219,7 @@ function ChatAsideSkeleton({
   const mobile = variant === "mobile"
   const focused = variant === "focused"
   const guest = !isAuthenticated
-  const showHistoryRail = focused && isAuthenticated
+  const showHistoryRail = isAuthenticated && (focused || !mobile)
   const showHeader = !focused || guest
 
   const mainColumn = (
@@ -230,7 +230,7 @@ function ChatAsideSkeleton({
           guestSubtitle={guest}
           showUpgrade={!mobile}
           showFullscreen={!focused && !mobile}
-          showHistory={isAuthenticated && !focused && !mobile}
+          showHistory={isAuthenticated && !focused && !mobile && !showHistoryRail}
           showNewChat={!focused && !mobile}
         />
       ) : null}
@@ -241,12 +241,13 @@ function ChatAsideSkeleton({
     </div>
   )
 
-  if (focused) {
+  if (focused || showHistoryRail) {
     return (
       <div
         data-slot="chat-aside"
         className={cn(
           "relative flex h-full min-h-0 w-full flex-row overflow-hidden bg-sidebar text-sidebar-foreground",
+          !focused && !mobile && "rounded-r-2xl",
           className
         )}
         aria-busy="true"
