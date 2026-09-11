@@ -21,7 +21,9 @@ import Image from "next/image"
 import { useTranslations } from "next-intl"
 import { useTheme } from "@wrksz/themes/client/use-theme"
 
+import { ChatAccountAvatar } from "@/components/app-shell/chat-account-avatar"
 import { useAuth } from "@/components/auth/auth-provider"
+import { displayPlanName } from "@/lib/billing/catalog"
 import { GoogleGlyph } from "@/components/auth/google-glyph"
 import { useUserAvatarUrl } from "@/hooks/use-user-avatar-url"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -147,14 +149,13 @@ function MobileHistoryDrawerFooter({
     <footer className="flex shrink-0 items-center gap-2 border-t border-border/40 px-3 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom,0px))]">
       {user ? (
         <div className="flex min-w-0 flex-1 items-center gap-2.5">
-          <Avatar className="size-9 after:border-0">
-            {avatarUrl ? (
-              <AvatarImage src={avatarUrl} alt={userAccountLabel(user)} />
-            ) : null}
-            <AvatarFallback className="text-[11px] font-medium">
-              {userAvatarFallback(user)}
-            </AvatarFallback>
-          </Avatar>
+          <ChatAccountAvatar
+            user={user}
+            avatarUrl={avatarUrl}
+            isProUser={isProUser}
+            planName={displayPlanName(user.tier)}
+            avatarClassName="size-9"
+          />
           <span className="min-w-0 truncate text-sm font-medium">
             {userAccountLabel(user)}
           </span>

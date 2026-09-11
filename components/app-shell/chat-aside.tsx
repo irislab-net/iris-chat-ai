@@ -12,6 +12,9 @@ import {
 } from "lucide-react"
 
 import { ChatAccountFooter } from "@/components/app-shell/chat-account-footer"
+import { ChatMobileGeminiBackground } from "@/components/app-shell/chat-mobile-gemini-background"
+import { ChatMobileGeminiLogo } from "@/components/app-shell/chat-mobile-gemini-logo"
+import { chatMobileScrollDownClass } from "@/components/app-shell/chat-mobile-gemini-styles"
 import { ChatMobileHeader } from "@/components/app-shell/chat-mobile-header"
 import {
   ChatHistoryRail,
@@ -1463,6 +1466,15 @@ function ChatAside({
   const mobileGreeting = mobileGreetingName
     ? t("mobileGreeting", { name: mobileGreetingName.split(/\s+/)[0] ?? mobileGreetingName })
     : t("mobileGreetingGuest")
+  const [mobileComposerFocused, setMobileComposerFocused] = React.useState(false)
+  const [mobileIntroGlow, setMobileIntroGlow] = React.useState(true)
+
+  React.useEffect(() => {
+    if (!isMobileOverlay) return
+    setMobileIntroGlow(true)
+    const id = window.setTimeout(() => setMobileIntroGlow(false), 1400)
+    return () => window.clearTimeout(id)
+  }, [isMobileOverlay, conversationId])
 
   React.useEffect(() => {
     if (displayMode === "focused" && isAuthenticated) {
@@ -1487,7 +1499,7 @@ function ChatAside({
       className={cn(
         "relative flex h-full min-h-0 w-full overflow-hidden",
         isMobileOverlay
-          ? "flex-col bg-linear-to-b from-background from-20% via-sky-50/35 to-sky-100/70 text-foreground dark:from-background dark:via-background dark:to-muted/10"
+          ? "flex-col bg-white text-foreground dark:bg-background"
           : isFocusedLayout
             ? "flex-row bg-sidebar text-sidebar-foreground"
             : "flex-col bg-sidebar text-sidebar-foreground",
@@ -1495,6 +1507,13 @@ function ChatAside({
         className
       )}
     >
+      {isMobileOverlay ? (
+        <ChatMobileGeminiBackground
+          active={mobileComposerFocused}
+          loading={sending}
+          intro={mobileIntroGlow}
+        />
+      ) : null}
       {historyRailVisible ? (
         <ChatHistoryRail
           conversations={conversations}
@@ -1518,7 +1537,7 @@ function ChatAside({
 
       <div
         className={cn(
-          "relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden",
+          "relative z-10 flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden",
           isMobileOverlay
             ? "bg-transparent text-foreground"
             : "bg-sidebar text-sidebar-foreground"
@@ -1686,18 +1705,16 @@ function ChatAside({
                         isMobileOverlay ? "gap-5" : "mb-5"
                       )}
                     >
-                      <IrisMark
-                        className={cn(
-                          isMobileOverlay
-                            ? "size-[4.5rem] rounded-[1.35rem] bg-transparent shadow-none ring-0"
-                            : "size-10 rounded-xl"
-                        )}
-                      />
+                      {isMobileOverlay ? (
+                        <ChatMobileGeminiLogo />
+                      ) : (
+                        <IrisMark className="size-10 rounded-xl" />
+                      )}
                       <h2
                         className={cn(
                           "font-normal tracking-tight text-foreground",
                           isMobileOverlay
-                            ? "max-w-[20rem] text-[1.75rem] leading-tight"
+                            ? "max-w-[20rem] text-[1.75rem] leading-tight text-[#1f1f1f] dark:text-foreground"
                             : "mt-3 text-[15px] font-semibold"
                         )}
                       >
@@ -1900,7 +1917,12 @@ function ChatAside({
                 type="button"
                 variant="outline"
                 size="icon-sm"
-                className="absolute bottom-3 left-1/2 z-10 size-8 -translate-x-1/2 rounded-full border-border/70 bg-background/95 shadow-md backdrop-blur-sm hover:bg-background"
+                className={cn(
+                  "absolute bottom-3 left-1/2 z-10 -translate-x-1/2",
+                  isMobileOverlay
+                    ? chatMobileScrollDownClass
+                    : "size-8 rounded-full border-border/70 bg-background/95 shadow-md backdrop-blur-sm hover:bg-background"
+                )}
                 aria-label={t("scrollToLatest")}
                 title={t("scrollToLatest")}
                 onClick={() => scrollToChatBottom("smooth")}
@@ -1965,6 +1987,9 @@ function ChatAside({
                 onSend={handleSend}
                 disabled={sending}
                 layout={isMobileOverlay ? "floating" : "default"}
+                onFloatingFocusChange={
+                  isMobileOverlay ? setMobileComposerFocused : undefined
+                }
                 className={isMobileOverlay ? undefined : "px-3 sm:px-4"}
               />
             </div>

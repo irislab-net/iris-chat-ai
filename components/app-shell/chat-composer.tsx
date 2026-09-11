@@ -5,6 +5,7 @@ import {
   ArrowUpIcon,
   CheckIcon,
   ChevronDownIcon,
+  MicIcon,
   PlusIcon,
   XIcon,
 } from "lucide-react"
@@ -41,6 +42,12 @@ import {
 } from "@/lib/chat/composer-mentions"
 import { localeDirection } from "@/lib/i18n/locale"
 import { mergeRefs } from "@/lib/merge-refs"
+import {
+  chatMobileComposerIconButtonClass,
+  chatMobileComposerPillClass,
+  chatMobileComposerSendClass,
+  chatMobileComposerShellClass,
+} from "@/components/app-shell/chat-mobile-gemini-styles"
 import { useIsDesktop } from "@/hooks/use-media-query"
 import { cn } from "@/lib/utils"
 
@@ -57,6 +64,7 @@ type ChatComposerProps = {
   hideEffort?: boolean
   /** Gemini-style floating pill — used on mobile full-screen chat. */
   layout?: "default" | "floating"
+  onFloatingFocusChange?: (focused: boolean) => void
 }
 
 function ChatComposer({
@@ -70,6 +78,7 @@ function ChatComposer({
   onEffortChange,
   hideEffort = false,
   layout = "default",
+  onFloatingFocusChange,
 }: ChatComposerProps) {
   const t = useTranslations("workspace")
   const textDir = localeDirection(useLocale())
@@ -270,7 +279,7 @@ function ChatComposer({
       className={cn(
         "relative shrink-0",
         isFloating
-          ? "bg-linear-to-t from-sky-100/50 via-background/70 to-transparent px-4 pt-3 pb-[max(1rem,env(safe-area-inset-bottom,0px))] backdrop-blur-[2px] dark:from-muted/20 dark:via-transparent dark:to-transparent dark:backdrop-blur-none"
+          ? chatMobileComposerShellClass
           : "bg-linear-to-t from-sidebar via-sidebar to-sidebar/80 px-3 pt-3 pb-[max(0.625rem,env(safe-area-inset-bottom))]",
         className
       )}
@@ -323,13 +332,7 @@ function ChatComposer({
         className={cn(
           "cursor-text transition-[background-color,box-shadow,border-color]",
           isFloating
-            ? cn(
-                "flex min-h-16 items-center gap-1.5 rounded-full px-3",
-                "border border-border/35 bg-background shadow-[0_2px_16px_-6px_rgba(15,23,42,0.08)]",
-                "focus-within:border-border/50 focus-within:shadow-[0_4px_24px_-8px_rgba(15,23,42,0.12)]",
-                "dark:border-border/20 dark:bg-muted/25 dark:shadow-none",
-                "dark:focus-within:border-border/45 dark:focus-within:bg-muted/35 dark:focus-within:shadow-none"
-              )
+            ? chatMobileComposerPillClass
             : cn(
                 "grid grid-cols-[auto_1fr_auto] rounded-2xl border border-foreground/[0.06] bg-muted/25 px-1 pb-1.5",
                 "shadow-[inset_0_1px_0_0_color-mix(in_oklch,var(--foreground)_7%,transparent),0_10px_28px_-20px_color-mix(in_oklch,var(--foreground)_14%,transparent)]",
@@ -361,7 +364,7 @@ function ChatComposer({
                   aria-label={t("composerToolsMenu")}
                   title={t("composerToolsMenu")}
                   disabled={disabled}
-                  className="size-11 shrink-0 rounded-full text-muted-foreground hover:bg-muted/60 hover:text-foreground dark:hover:bg-muted/50"
+                  className={chatMobileComposerIconButtonClass}
                 />
               }
             >
@@ -439,7 +442,12 @@ function ChatComposer({
             onFocus={(event) => {
               if (deferMobileKeyboard && !mobileKeyboardReady) {
                 event.currentTarget.blur()
+                return
               }
+              if (isFloating) onFloatingFocusChange?.(true)
+            }}
+            onBlur={() => {
+              if (isFloating) onFloatingFocusChange?.(false)
             }}
             dir={textDir}
             className={cn(
@@ -452,22 +460,38 @@ function ChatComposer({
         </div>
         {isFloating ? (
           <div className="flex shrink-0 items-center pe-0.5">
-            <Button
-              type="submit"
-              size="icon-sm"
-              variant={canSend ? "default" : "ghost"}
-              aria-label="Send message"
-              title="Send · Enter"
-              disabled={!canSend}
-              className={cn(
-                "size-11 rounded-full transition-transform",
-                !canSend &&
-                  "text-muted-foreground hover:bg-muted/60 dark:hover:bg-muted/50",
-                canSend && "shadow-sm"
-              )}
-            >
-              <ArrowUpIcon className="size-[18px]" />
-            </Button>
+            {canSend ? (
+              <Button
+                type="submit"
+                size="icon-sm"
+                variant="default"
+                aria-label="Send message"
+                title="Send · Enter"
+                className={chatMobileComposerSendClass}
+              >
+                <ArrowUpIcon className="size-[18px]" />
+              </Button>
+            ) : (
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon-sm"
+                aria-label="Voice input"
+                title="Voice input"
+                disabled={disabled}
+                className={chatMobileComposerIconButtonClass}
+                onClick={(event) => {
+                  event.stopPropagation()
+                  if (deferMobileKeyboard && !mobileKeyboardReady) {
+                    enableMobileKeyboard()
+                    return
+                  }
+                  localRef.current?.focus()
+                }}
+              >
+                <MicIcon className="size-5" />
+              </Button>
+            )}
           </div>
         ) : null}
         {!isFloating ? (

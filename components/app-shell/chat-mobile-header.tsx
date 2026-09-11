@@ -23,10 +23,17 @@ import {
   chatContextMenuItemClass,
   chatContextMenuSeparatorClass,
 } from "@/components/app-shell/chat-context-menu-styles"
+import {
+  chatMobileHeaderAvatarButtonClass,
+  chatMobileHeaderButtonClass,
+  chatMobileHeaderModelClass,
+} from "@/components/app-shell/chat-mobile-gemini-styles"
+import { ChatAccountAvatar } from "@/components/app-shell/chat-account-avatar"
 import { useAuth } from "@/components/auth/auth-provider"
 import { GoogleGlyph } from "@/components/auth/google-glyph"
 import { useUserAvatarUrl } from "@/hooks/use-user-avatar-url"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { displayPlanName } from "@/lib/billing/catalog"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -43,16 +50,11 @@ import {
   type ChatEffort,
 } from "@/lib/chat-effort"
 import { UPGRADE_PATH } from "@/lib/site"
-import type { User } from "@/lib/api/types"
 import {
   userAccountLabel,
   userAccountSubline,
-  userAvatarFallback,
 } from "@/lib/user-profile"
 import { cn } from "@/lib/utils"
-
-const headerCircleClass =
-  "size-10 shrink-0 rounded-full bg-muted/50 text-foreground hover:bg-muted/70 dark:bg-muted/30 dark:hover:bg-muted/45 [&_svg:not([class*='size-'])]:size-[18px]"
 
 type ChatMobileHeaderProps = {
   onOpenHistory?: () => void
@@ -64,25 +66,6 @@ type ChatMobileHeaderProps = {
   onOpenNews: () => void
   sending?: boolean
   className?: string
-}
-
-function AccountAvatar({
-  user,
-  avatarUrl,
-}: {
-  user: User
-  avatarUrl: string | null
-}) {
-  return (
-    <Avatar className="size-9 after:border-0">
-      {avatarUrl ? (
-        <AvatarImage src={avatarUrl} alt={userAccountLabel(user)} />
-      ) : null}
-      <AvatarFallback className="text-[11px] font-medium">
-        {userAvatarFallback(user)}
-      </AvatarFallback>
-    </Avatar>
-  )
 }
 
 function ChatMobileHeader({
@@ -102,6 +85,7 @@ function ChatMobileHeader({
   const avatarUrl = useUserAvatarUrl(user)
   const { resolvedTheme, setTheme } = useTheme()
   const effortLabel = effort ? chatEffortLabel(effort) : chatEffortLabel("instant")
+  const planName = user ? displayPlanName(user.tier) : "Free"
 
   return (
     <header
@@ -116,7 +100,7 @@ function ChatMobileHeader({
             type="button"
             variant="ghost"
             size="icon"
-            className={headerCircleClass}
+            className={chatMobileHeaderButtonClass}
             aria-label={t("chatHistory")}
             aria-pressed={historyOpen}
             onClick={onOpenHistory}
@@ -133,14 +117,18 @@ function ChatMobileHeader({
                   variant="ghost"
                   size="sm"
                   aria-label={`Response depth: ${effortLabel}`}
-                  className="h-10 max-w-[11rem] gap-0.5 rounded-full px-2.5 text-[17px] font-normal tracking-tight text-foreground hover:bg-muted/40"
+                  className={chatMobileHeaderModelClass}
                 />
               }
             >
               <span className="truncate">{effortLabel}</span>
               <ChevronDownIcon className="size-4 shrink-0 text-muted-foreground" />
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="min-w-48">
+            <DropdownMenuContent
+              align="start"
+              sideOffset={8}
+              className={chatContextMenuContentClass}
+            >
               <DropdownMenuGroup>
                 <p className="px-2 pb-1 pt-1.5 text-[10px] font-medium tracking-wide text-muted-foreground uppercase">
                   Response depth
@@ -168,12 +156,12 @@ function ChatMobileHeader({
         ) : null}
       </div>
 
-      <div className="flex shrink-0 items-center gap-1">
+      <div className="flex shrink-0 items-center gap-1 pb-0.5">
         <Button
           type="button"
           variant="ghost"
           size="icon"
-          className={headerCircleClass}
+          className={chatMobileHeaderButtonClass}
           aria-label={t("newChat")}
           disabled={sending}
           onClick={onNewChat}
@@ -188,12 +176,18 @@ function ChatMobileHeader({
                   type="button"
                   variant="ghost"
                   size="icon"
-                  className="size-10 rounded-full p-0 hover:bg-transparent"
+                  className={chatMobileHeaderAvatarButtonClass}
                   aria-label={`Account menu for ${userAccountLabel(user)}`}
                 />
               }
             >
-              <AccountAvatar user={user} avatarUrl={avatarUrl} />
+              <ChatAccountAvatar
+                user={user}
+                avatarUrl={avatarUrl}
+                isProUser={isProUser}
+                planName={planName}
+                avatarClassName="size-full rounded-full"
+              />
             </DropdownMenuTrigger>
             <DropdownMenuContent
               align="end"
@@ -203,7 +197,14 @@ function ChatMobileHeader({
               <DropdownMenuGroup>
                 <DropdownMenuLabel className={chatContextMenuHeaderClass}>
                   <div className="flex items-center gap-3">
-                    <AccountAvatar user={user} avatarUrl={avatarUrl} />
+                    <ChatAccountAvatar
+                      user={user}
+                      avatarUrl={avatarUrl}
+                      isProUser={isProUser}
+                      planName={planName}
+                      showPlanBadge={false}
+                      avatarClassName="size-9"
+                    />
                     <div className="min-w-0">
                       <p className="truncate text-[15px] font-medium leading-tight">
                         {userAccountLabel(user)}
@@ -265,12 +266,12 @@ function ChatMobileHeader({
             type="button"
             variant="ghost"
             size="icon"
-            className="size-10 rounded-full p-0"
+            className={chatMobileHeaderAvatarButtonClass}
             aria-label={t("signIn")}
             disabled={loginPending}
             onClick={() => login({ source: "chat" })}
           >
-            <Avatar className="size-9 after:border-0">
+            <Avatar className="size-full rounded-full after:border-0">
               <AvatarFallback className="bg-muted text-[11px] font-medium">
                 <GoogleGlyph className="size-3.5" />
               </AvatarFallback>

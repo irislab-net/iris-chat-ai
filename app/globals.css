@@ -350,6 +350,112 @@
   }
 }
 
+@keyframes gemini-glow-rise {
+  0% {
+    opacity: 0;
+    transform: translateY(10%) scale(0.94);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes gemini-glow-breathe {
+  0%,
+  100% {
+    opacity: 0.78;
+    transform: scale(1) translateY(0);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05) translateY(-1.5%);
+  }
+}
+
+@keyframes gemini-logo-enter {
+  0% {
+    opacity: 0;
+    transform: scale(0.88) translateY(6px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.chat-gemini-glow {
+  transform-origin: center bottom;
+  transition:
+    background 700ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 700ms cubic-bezier(0.22, 1, 0.36, 1);
+  background: radial-gradient(
+    ellipse 125% 92% at 50% 100%,
+    var(--gemini-glow-color) 0%,
+    transparent 72%
+  );
+}
+
+.chat-gemini-glow-idle {
+  --gemini-glow-color: color-mix(in oklab, #a7f3d0 78%, #ffffff);
+}
+
+.chat-gemini-glow-active {
+  --gemini-glow-color: color-mix(in oklab, #bae6fd 86%, #ffffff);
+}
+
+.chat-gemini-glow-intro {
+  animation:
+    gemini-glow-rise 1.05s cubic-bezier(0.22, 1, 0.36, 1) both,
+    gemini-glow-breathe 2.8s ease-in-out 1.05s infinite;
+}
+
+.chat-gemini-glow-loading {
+  animation: gemini-glow-breathe 2.4s ease-in-out infinite;
+}
+
+.chat-gemini-dots {
+  background-image: radial-gradient(
+    circle,
+    color-mix(in oklab, #059669 16%, transparent) 0.85px,
+    transparent 0.85px
+  );
+  background-size: 11px 11px;
+  opacity: 0.55;
+  transition: opacity 700ms ease;
+  mask-image: linear-gradient(to top, black 0%, black 38%, transparent 90%);
+  -webkit-mask-image: linear-gradient(to top, black 0%, black 38%, transparent 90%);
+}
+
+.chat-gemini-dots-active {
+  background-image: radial-gradient(
+    circle,
+    color-mix(in oklab, #0284c7 18%, transparent) 0.85px,
+    transparent 0.85px
+  );
+  opacity: 0.72;
+}
+
+.chat-gemini-logo {
+  animation: gemini-logo-enter 0.85s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.dark .chat-gemini-glow-idle {
+  --gemini-glow-color: color-mix(in oklab, #065f46 42%, transparent);
+}
+
+.dark .chat-gemini-glow-active {
+  --gemini-glow-color: color-mix(in oklab, #0369a1 48%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chat-gemini-glow-intro,
+  .chat-gemini-glow-loading,
+  .chat-gemini-logo {
+    animation: none;
+  }
+}
+
 .chat-typing-dots span {
   display: block;
   width: 0.35rem;

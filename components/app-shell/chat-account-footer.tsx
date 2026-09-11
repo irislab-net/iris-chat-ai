@@ -9,9 +9,9 @@ import {
 } from "lucide-react"
 import { useTheme } from "@wrksz/themes/client/use-theme"
 
+import { ChatAccountAvatar } from "@/components/app-shell/chat-account-avatar"
 import { useAuth } from "@/components/auth/auth-provider"
 import { useUserAvatarUrl } from "@/hooks/use-user-avatar-url"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -25,55 +25,11 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { displayPlanName } from "@/lib/billing/catalog"
 import { UPGRADE_PATH } from "@/lib/site"
-import type { User } from "@/lib/api/types"
 import {
   userAccountLabel,
   userAccountSubline,
-  userAvatarFallback,
 } from "@/lib/user-profile"
 import { cn } from "@/lib/utils"
-
-function AccountAvatar({
-  user,
-  avatarUrl,
-  isProUser,
-  planName,
-  compact = false,
-}: {
-  user: User
-  avatarUrl: string | null
-  isProUser: boolean
-  planName: ReturnType<typeof displayPlanName>
-  compact?: boolean
-}) {
-  return (
-    <span className="relative shrink-0">
-      <Avatar
-        className={cn(
-          "size-8 after:border-0",
-          isProUser &&
-            !compact &&
-            "ring-2 ring-foreground/15 ring-offset-1 ring-offset-background"
-        )}
-      >
-        {avatarUrl ? (
-          <AvatarImage src={avatarUrl} alt={userAccountLabel(user)} />
-        ) : null}
-        <AvatarFallback className="text-[11px] font-medium">
-          {userAvatarFallback(user)}
-        </AvatarFallback>
-      </Avatar>
-      {isProUser ? (
-        <Badge
-          className="absolute bottom-0 left-1/2 z-10 h-3 min-w-0 -translate-x-1/2 translate-y-1/2 rounded-full border border-background px-1 text-[7px] font-bold leading-none tracking-wide bg-foreground text-background shadow-sm"
-          aria-hidden
-        >
-          {planName}
-        </Badge>
-      ) : null}
-    </span>
-  )
-}
 
 function AccountPlanBadge({
   planName,
@@ -123,7 +79,7 @@ function ChatAccountFooter({ className }: { className?: string }) {
             />
           }
         >
-          <AccountAvatar
+          <ChatAccountAvatar
             user={user}
             avatarUrl={avatarUrl}
             isProUser={isProUser}
@@ -144,11 +100,13 @@ function ChatAccountFooter({ className }: { className?: string }) {
             <DropdownMenuLabel className="font-normal">
               <div className="flex items-start justify-between gap-3">
                 <div className="flex min-w-0 items-center gap-2.5">
-                  <AccountAvatar
+                  <ChatAccountAvatar
                     user={user}
                     avatarUrl={avatarUrl}
                     isProUser={isProUser}
                     planName={planName}
+                    showPlanBadge={false}
+                    avatarClassName="size-9"
                   />
                   <div className="flex min-w-0 flex-col gap-0.5">
                     <span className="truncate text-sm font-medium text-foreground">
