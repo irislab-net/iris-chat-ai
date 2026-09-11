@@ -1,9 +1,16 @@
-/** Gemini mobile shell — theme-aware surface styles. */
+/** iOS-style liquid glass — edge from highlight + shadow, no border. */
 const chatMobileGlassSurfaceClass =
-  "border-0 bg-white/84 shadow-[inset_0_1px_0_0_color-mix(in_oklch,var(--background)_55%,white),0_2px_10px_-3px_color-mix(in_oklch,var(--foreground)_7%,transparent),0_10px_28px_-12px_color-mix(in_oklch,var(--foreground)_8%,transparent)] backdrop-blur-2xl backdrop-saturate-150 supports-[backdrop-filter]:bg-white/72 dark:bg-card/82 dark:shadow-[inset_0_1px_0_0_color-mix(in_oklch,var(--foreground)_8%,transparent),0_2px_10px_-3px_color-mix(in_oklch,var(--foreground)_12%,transparent),0_10px_28px_-12px_color-mix(in_oklch,var(--foreground)_14%,transparent)] dark:supports-[backdrop-filter]:bg-card/68"
+  "border-0 bg-white/78 shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_75%,transparent),0_1px_2px_color-mix(in_oklch,var(--foreground)_4%,transparent),0_8px_24px_-10px_color-mix(in_oklch,var(--foreground)_9%,transparent)] backdrop-blur-2xl backdrop-saturate-[180%] supports-[backdrop-filter]:bg-white/62 dark:bg-white/[0.08] dark:shadow-[inset_0_1px_0_0_color-mix(in_oklch,var(--foreground)_10%,transparent),0_8px_28px_-12px_color-mix(in_oklch,black_35%,transparent)] dark:supports-[backdrop-filter]:bg-white/[0.06]"
 
 const chatMobileGlassSurfaceFocusClass =
-  "focus-within:bg-white/92 focus-within:shadow-[inset_0_1px_0_0_color-mix(in_oklch,var(--background)_55%,white),0_4px_14px_-4px_color-mix(in_oklch,var(--foreground)_9%,transparent),0_14px_36px_-10px_color-mix(in_oklch,var(--foreground)_10%,transparent)] dark:focus-within:bg-card/90"
+  "focus-within:bg-white/88 focus-within:shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_85%,transparent),0_2px_4px_color-mix(in_oklch,var(--foreground)_5%,transparent),0_12px_32px_-10px_color-mix(in_oklch,var(--foreground)_11%,transparent)] dark:focus-within:bg-white/[0.12]"
+
+/** Composer — floating iOS bar with softer lift and no hard edge. */
+const chatMobileComposerGlassClass =
+  "border-0 bg-white/80 shadow-[inset_0_0.5px_0_0_color-mix(in_oklch,white_90%,transparent),inset_0_1px_0_0_color-mix(in_oklch,white_70%,transparent),0_2px_6px_-2px_color-mix(in_oklch,var(--foreground)_6%,transparent),0_12px_40px_-14px_color-mix(in_oklch,var(--foreground)_10%,transparent)] backdrop-blur-[32px] backdrop-saturate-[190%] supports-[backdrop-filter]:bg-white/68 dark:bg-white/[0.1] dark:shadow-[inset_0_1px_0_0_color-mix(in_oklch,var(--foreground)_12%,transparent),0_10px_36px_-14px_color-mix(in_oklch,black_45%,transparent)] dark:supports-[backdrop-filter]:bg-white/[0.07]"
+
+const chatMobileComposerGlassFocusClass =
+  "focus-within:bg-white/90 focus-within:shadow-[inset_0_0.5px_0_0_color-mix(in_oklch,white_95%,transparent),inset_0_1px_0_0_color-mix(in_oklch,white_80%,transparent),0_4px_10px_-3px_color-mix(in_oklch,var(--foreground)_7%,transparent),0_16px_44px_-12px_color-mix(in_oklch,var(--foreground)_12%,transparent)] dark:focus-within:bg-white/[0.14]"
 
 const chatMobilePrimaryButtonClass =
   "border-0 bg-primary text-primary-foreground shadow-none hover:bg-primary/90"
@@ -12,10 +19,10 @@ const chatMobileHeaderShadowClass =
   "shadow-[inset_0_1px_0_0_color-mix(in_oklch,var(--background)_55%,white),0_1px_3px_color-mix(in_oklch,var(--foreground)_4%,transparent),0_6px_18px_-8px_color-mix(in_oklch,var(--foreground)_6%,transparent)] dark:shadow-[inset_0_1px_0_0_color-mix(in_oklch,var(--foreground)_8%,transparent),0_1px_3px_color-mix(in_oklch,var(--foreground)_8%,transparent),0_6px_18px_-8px_color-mix(in_oklch,var(--foreground)_10%,transparent)]"
 
 const chatMobileHeaderShadowHoverClass =
-  "hover:bg-white/92 hover:shadow-[inset_0_1px_0_0_color-mix(in_oklch,var(--background)_55%,white),0_2px_8px_-3px_color-mix(in_oklch,var(--foreground)_5%,transparent),0_10px_24px_-10px_color-mix(in_oklch,var(--foreground)_7%,transparent)] dark:hover:bg-card/90"
+  "hover:bg-white/88 hover:shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_80%,transparent),0_2px_8px_-3px_color-mix(in_oklch,var(--foreground)_5%,transparent),0_10px_24px_-10px_color-mix(in_oklch,var(--foreground)_7%,transparent)] dark:hover:bg-white/[0.12]"
 
 const chatMobileHeaderCircleClass =
-  "rounded-full border-0 bg-white/84 text-foreground backdrop-blur-2xl backdrop-saturate-150 supports-[backdrop-filter]:bg-white/72 transition-[transform,background-color,box-shadow] active:scale-[0.96] dark:bg-card/82 dark:supports-[backdrop-filter]:bg-card/68"
+  `rounded-full ${chatMobileGlassSurfaceClass} text-foreground transition-[transform,background-color,box-shadow] active:scale-[0.96]`
 
 const chatMobileHeaderButtonClass =
   `size-10 shrink-0 ${chatMobileHeaderCircleClass} ${chatMobileHeaderShadowClass} ${chatMobileHeaderShadowHoverClass} [&_svg:not([class*='size-'])]:size-[22px] [&_svg]:stroke-[1.75]`
@@ -72,16 +79,16 @@ const chatMobileComposerShellClass =
   "relative shrink-0 bg-transparent px-4 pt-1.5 pb-[max(1rem,env(safe-area-inset-bottom,0px))]"
 
 const chatMobileComposerPillClass =
-  `flex min-h-[3.25rem] items-end gap-0.5 rounded-[22px] px-2.5 py-1.5 text-foreground transition-[box-shadow,transform,background-color] duration-300 ${chatMobileGlassSurfaceClass} ${chatMobileGlassSurfaceFocusClass}`
+  `flex min-h-[3.25rem] items-end gap-0.5 rounded-[24px] px-2.5 py-1.5 text-foreground transition-[box-shadow,background-color] duration-300 ease-out ${chatMobileComposerGlassClass} ${chatMobileComposerGlassFocusClass}`
 
 const chatMobileComposerIconButtonClass =
   "size-10 shrink-0 rounded-full text-muted-foreground transition-colors hover:bg-foreground/[0.05] hover:text-foreground [&_svg]:stroke-[1.75]"
 
 const chatMobileComposerSendClass =
-  `size-10 rounded-full transition-[transform,background-color] active:scale-[0.96] ${chatMobilePrimaryButtonClass}`
+  "size-10 rounded-full border-0 bg-primary text-primary-foreground shadow-[0_2px_8px_-2px_color-mix(in_oklch,var(--foreground)_18%,transparent)] transition-[transform,background-color,box-shadow] hover:bg-primary/90 active:scale-[0.96] active:shadow-[0_1px_4px_-1px_color-mix(in_oklch,var(--foreground)_14%,transparent)]"
 
 const chatMobileScrollDownClass =
-  "absolute bottom-3 left-1/2 z-10 size-9 -translate-x-1/2 rounded-full border-0 bg-white/84 text-foreground backdrop-blur-2xl backdrop-saturate-150 supports-[backdrop-filter]:bg-white/72 shadow-[inset_0_1px_0_0_color-mix(in_oklch,var(--background)_55%,white),0_2px_10px_-3px_color-mix(in_oklch,var(--foreground)_7%,transparent),0_8px_24px_-10px_color-mix(in_oklch,var(--foreground)_8%,transparent)] hover:bg-white/92 dark:bg-card/82 dark:supports-[backdrop-filter]:bg-card/68 dark:hover:bg-card/90"
+  "absolute bottom-3 left-1/2 z-10 size-9 -translate-x-1/2 rounded-full border-0 bg-white/78 text-foreground backdrop-blur-2xl backdrop-saturate-[180%] supports-[backdrop-filter]:bg-white/62 shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_75%,transparent),0_2px_10px_-3px_color-mix(in_oklch,var(--foreground)_7%,transparent),0_8px_24px_-10px_color-mix(in_oklch,var(--foreground)_8%,transparent)] hover:bg-white/88 dark:bg-white/[0.08] dark:supports-[backdrop-filter]:bg-white/[0.06] dark:hover:bg-white/[0.12]"
 
 const chatMobileDrawerSurfaceClass = "bg-background text-foreground"
 
