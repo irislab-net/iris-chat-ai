@@ -20,11 +20,9 @@ import { JsonLd } from "@/components/seo/json-ld"
 
 const FAQ_IDS = [
   "what",
-  "signals",
+  "news",
   "chatbot",
   "ask",
-  "paper",
-  "execute",
   "account",
   "free",
   "profits",

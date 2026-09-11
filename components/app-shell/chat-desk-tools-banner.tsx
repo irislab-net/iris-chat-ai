@@ -22,18 +22,19 @@ type ChatDeskToolsBannerProps = {
 
 function ChatDeskToolsBanner({ onDock, className }: ChatDeskToolsBannerProps) {
   const t = useTranslations("workspace")
-  const [snoozed, setSnoozed] = React.useState<boolean | null>(null)
+  const [dismissedLocally, setDismissedLocally] = React.useState(false)
+  const snoozed = React.useSyncExternalStore(
+    () => () => {},
+    () => isDeskToolsBannerSnoozed(),
+    () => false
+  )
 
-  React.useEffect(() => {
-    setSnoozed(isDeskToolsBannerSnoozed())
-  }, [])
-
-  if (snoozed !== false) return null
+  if (snoozed || dismissedLocally) return null
 
   function dismiss(event: React.MouseEvent) {
     event.stopPropagation()
     snoozeDeskToolsBanner()
-    setSnoozed(true)
+    setDismissedLocally(true)
   }
 
   return (

@@ -25,7 +25,16 @@ const AIMessageRenderer = dynamic(
   }
 )
 
-function IrisMark({ className }: { className?: string }) {
+function IrisMark({
+  className,
+  variant = "default",
+}: {
+  className?: string
+  /** Large empty-state mark — requests a sharper src than the inline default. */
+  variant?: "default" | "hero"
+}) {
+  const isHero = variant === "hero"
+
   return (
     <div
       className={cn(
@@ -36,9 +45,14 @@ function IrisMark({ className }: { className?: string }) {
       <Image
         src="/Logo.png"
         alt=""
-        width={24}
-        height={24}
-        className="size-[65%] object-contain"
+        width={isHero ? 144 : 24}
+        height={isHero ? 144 : 24}
+        priority={isHero}
+        sizes={isHero ? "4.5rem" : "1.75rem"}
+        className={cn(
+          "object-contain",
+          isHero ? "size-full" : "size-[65%]"
+        )}
       />
     </div>
   )

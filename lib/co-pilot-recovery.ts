@@ -158,7 +158,6 @@ export function isGuestTrialExhaustedError(error: unknown): boolean {
 export function coPilotFailureAction(error: unknown): "connect" | "retry" {
   if (isGuestTrialExhaustedError(error)) return "connect"
   const status = (error as { status?: number } | null)?.status
-  const code = coPilotErrorCode(error)
   if (status === 401 && !isGuestChatSession()) return "connect"
   return "retry"
 }

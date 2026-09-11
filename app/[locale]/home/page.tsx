@@ -3,8 +3,6 @@ import { getTranslations, setRequestLocale } from "next-intl/server"
 
 import { LandingComingSoon } from "@/components/landing/coming-soon"
 import { LandingCopilot } from "@/components/landing/copilot"
-import { LandingDemoTrading } from "@/components/landing/demo-trading"
-import { LandingMarketWatch } from "@/components/landing/market-watch"
 import { LandingFaq } from "@/components/landing/faq"
 import { LandingFeatures } from "@/components/landing/features"
 import { LandingHero } from "@/components/landing/hero"
@@ -94,8 +92,6 @@ export default async function LandingPage({ params }: Props) {
         <LandingHero />
         <LandingFeatures />
         <LandingCopilot />
-        <LandingDemoTrading />
-        <LandingMarketWatch />
         <LandingComingSoon />
         <LandingPricing />
         <LandingTestimonials />

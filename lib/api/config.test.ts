@@ -19,4 +19,18 @@ describe("loginWithGoogleUrl", () => {
     expect(url.searchParams.get("terms")).toBe("accepted")
     expect(url.searchParams.get("privacy_notice")).toBe("accepted")
   })
+
+  it("uses app=chat for chat OAuth without destination", () => {
+    const url = new URL(
+      loginWithGoogleUrl(null, {
+        app: "chat",
+        legalAccepted: true,
+      })
+    )
+
+    expect(url.searchParams.get("app")).toBe("chat")
+    expect(url.searchParams.get("destination")).toBeNull()
+    expect(url.searchParams.get("terms")).toBe("accepted")
+    expect(url.searchParams.get("privacy_notice")).toBe("accepted")
+  })
 })

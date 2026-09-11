@@ -31,6 +31,7 @@ export function clearStoredTokens() {
 export const AUTH_SUCCESS_MESSAGE = "iris-auth-success"
 export const AUTH_POPUP_CLOSED_EVENT = "iris-auth-popup-closed"
 export const AUTH_SESSION_EXPIRED_EVENT = "iris-auth-session-expired"
+export const AUTH_RETURN_TO_KEY = "iris-auth-return-to"
 
 export function notifyAuthSessionExpired(): void {
   if (typeof window === "undefined") return
@@ -40,11 +41,18 @@ export function notifyAuthSessionExpired(): void {
 export function startLoginWithGoogle(options?: {
   ref?: string
   legalAccepted?: boolean
+  app?: string
+  returnTo?: string
 }) {
-  const destination = getAuthDestination()
+  if (typeof window !== "undefined" && options?.returnTo) {
+    sessionStorage.setItem(AUTH_RETURN_TO_KEY, options.returnTo)
+  }
+
+  const destination = options?.app ? null : getAuthDestination()
   const url = loginWithGoogleUrl(destination, {
     ref: options?.ref,
     legalAccepted: options?.legalAccepted ?? true,
+    app: options?.app,
   })
 
   // Open API login as the FIRST document in a new browsing context so pkce cookies stick.

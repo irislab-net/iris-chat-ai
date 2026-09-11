@@ -25,6 +25,7 @@ import {
   trackLogout,
   type LoginSource,
 } from "@/lib/analytics"
+import { APP_PATH } from "@/lib/site"
 import { resetClientSessionOnLogout } from "@/lib/session-reset"
 
 type LoginOptions = {
@@ -225,6 +226,8 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     startLoginWithGoogle({
       ref: options?.ref,
       legalAccepted: true,
+      app: options?.source === "chat" ? "chat" : undefined,
+      returnTo: options?.source === "chat" ? APP_PATH : undefined,
     })
   }, [])
 

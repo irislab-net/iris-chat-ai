@@ -397,8 +397,8 @@ const bookCellMeta = "block whitespace-nowrap text-[10px] text-muted-foreground"
 const bookHideXl = "hidden xl:table-cell"
 const bookGrowThClass = cn(thClass, "min-w-[5.5rem] text-left")
 const bookGrowTdClass = cn(tdStackClass, "min-w-[5.5rem] text-left")
-const bookNumThClass = cn(thClass, "text-right")
-const bookNumTdClass = cn(tdMonoClass, "text-right")
+const _bookNumThClass = cn(thClass, "text-right")
+const _bookNumTdClass = cn(tdMonoClass, "text-right")
 const bookActionsThClass = cn(
   thClass,
   "w-[7.25rem] bg-background/95 pr-3 text-right backdrop-blur-sm"

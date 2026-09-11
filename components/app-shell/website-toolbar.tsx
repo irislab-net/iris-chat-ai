@@ -129,7 +129,7 @@ function WorkspaceNavLabel() {
 }
 
 function WebsiteToolbar({
-  onWorkspaceTabNavigate,
+  onWorkspaceTabNavigate: _onWorkspaceTabNavigate,
   onCloseToChat,
   className,
 }: WebsiteToolbarProps) {

@@ -186,13 +186,15 @@ function ChatMobileHeader({
                 avatarUrl={avatarUrl}
                 isProUser={isProUser}
                 planName={planName}
+                compact
+                className="size-[2.125rem]"
                 avatarClassName="size-full rounded-full"
               />
             </DropdownMenuTrigger>
             <DropdownMenuContent
               align="end"
-              sideOffset={8}
-              className={chatContextMenuContentClass}
+              sideOffset={10}
+              className={cn(chatContextMenuContentClass, "min-w-[17rem]")}
             >
               <DropdownMenuGroup>
                 <DropdownMenuLabel className={chatContextMenuHeaderClass}>

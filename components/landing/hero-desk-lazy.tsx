@@ -3,13 +3,13 @@
 import * as React from "react"
 import dynamic from "next/dynamic"
 
-import { HeroDeskSkeleton } from "@/components/landing/hero-desk-frame"
+import { HeroAppSkeleton } from "@/components/landing/hero-app-frame"
 import { LANDING_DESK_MAX } from "@/lib/landing-layout"
 
-const HeroDeskMock = dynamic(
+const HeroAppMock = dynamic(
   () =>
-    import("@/components/landing/hero-desk-mock").then((m) => m.HeroDeskMock),
-  { ssr: false, loading: () => <HeroDeskSkeleton /> }
+    import("@/components/landing/hero-app-mock").then((m) => m.HeroAppMock),
+  { ssr: false, loading: () => <HeroAppSkeleton /> }
 )
 
 const PaperTilt = dynamic(
@@ -57,7 +57,7 @@ export function HeroDeskLazy() {
   React.useEffect(() => {
     if (!near) return
     const warm = () => {
-      void import("@/components/landing/hero-desk-mock")
+      void import("@/components/landing/hero-app-mock")
       void import("@/components/landing/paper-tilt")
     }
     if (typeof window.requestIdleCallback === "function") {
@@ -76,10 +76,10 @@ export function HeroDeskLazy() {
       <div className={LANDING_DESK_MAX}>
         {near ? (
           <PaperTilt disableTiltOnCoarsePointer>
-            <HeroDeskMock />
+            <HeroAppMock />
           </PaperTilt>
         ) : (
-          <HeroDeskSkeleton />
+          <HeroAppSkeleton />
         )}
       </div>
     </div>

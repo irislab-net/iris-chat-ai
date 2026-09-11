@@ -1,15 +1,15 @@
 import { beforeEach, describe, expect, it, vi } from "vitest"
 
-vi.mock("@/lib/api/client", () => ({
-  apiFetch: vi.fn(),
+vi.mock("@/lib/api/co-pilot", () => ({
+  sendCoPilotChat: vi.fn(),
 }))
 
-import { apiFetch } from "@/lib/api/client"
+import { sendCoPilotChat } from "@/lib/api/co-pilot"
 import { requestPaperTradeDecision } from "@/lib/iris-paper-trade/request"
 import { PAPER_TRADE_TOOLS } from "@/lib/iris-paper-trade/schema"
 import type { MarketContextPacket } from "@/lib/iris-paper-trade/types"
 
-const mockedFetch = vi.mocked(apiFetch)
+const mockedSend = vi.mocked(sendCoPilotChat)
 
 function packet(): MarketContextPacket {
   const asOf = Date.now()
@@ -35,15 +35,12 @@ function packet(): MarketContextPacket {
 
 describe("requestPaperTradeDecision", () => {
   beforeEach(() => {
-    mockedFetch.mockReset()
-    mockedFetch.mockResolvedValue({
-      ok: true,
-      json: async () => ({
-        session_id: "sess-1",
-        output_text: "",
-        tool_calls: [],
-      }),
-    } as Response)
+    mockedSend.mockReset()
+    mockedSend.mockResolvedValue({
+      session_id: "sess-1",
+      output_text: "",
+      tool_calls: [],
+    })
   })
 
   it("sends paper-trade tools without leaking model instructions into message", async () => {
@@ -55,13 +52,13 @@ describe("requestPaperTradeDecision", () => {
       history: [],
     })
 
-    expect(mockedFetch).toHaveBeenCalledOnce()
-    const body = JSON.parse(String(mockedFetch.mock.calls[0]?.[1]?.body))
-    expect(body.message).toContain(userMessage)
-    expect(body.message).not.toContain("You are IRIS evaluating ONE user-initiated")
-    expect(body.instructions).toContain("open_paper_trade")
-    expect(body.tools).toEqual(PAPER_TRADE_TOOLS)
-    expect(body.tool_choice).toBe("required")
-    expect(body.parallel_tool_calls).toBe(false)
+    expect(mockedSend).toHaveBeenCalledOnce()
+    const call = mockedSend.mock.calls[0]?.[0]
+    expect(call?.message).toContain(userMessage)
+    expect(call?.message).not.toContain("You are IRIS evaluating ONE user-initiated")
+    expect(call?.instructions).toContain("open_paper_trade")
+    expect(call?.tools).toEqual(PAPER_TRADE_TOOLS)
+    expect(call?.toolChoice).toBe("required")
+    expect(call?.parallelToolCalls).toBe(false)
   })
 })

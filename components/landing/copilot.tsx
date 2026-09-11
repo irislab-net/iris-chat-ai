@@ -13,8 +13,8 @@ import { LANDING_CONTAINER, LANDING_SECTION_PY, LANDING_SECTION_TITLE } from "@/
 import { cn } from "@/lib/utils"
 
 const PILLAR_ICONS = [LayersIcon, CrosshairIcon, MonitorDotIcon] as const
-const PILLAR_KEYS = ["depth", "bracket", "desk"] as const
-const SIGNAL_KEYS = ["tape", "structure", "funding", "news"] as const
+const PILLAR_KEYS = ["context", "ask", "focused"] as const
+const SIGNAL_KEYS = ["headlines", "context", "market", "analysis"] as const
 
 export async function LandingCopilot() {
   const t = await getTranslations("landing.copilot")
@@ -59,7 +59,7 @@ export async function LandingCopilot() {
                 className="mx-0.5 size-3.5 shrink-0 text-muted-foreground rtl:rotate-180"
               />
               <Badge className="rounded-full px-2.5 py-0.5 text-[11px] font-medium">
-                {t("signals.bracket")}
+                {t("signals.answer")}
               </Badge>
             </div>
 

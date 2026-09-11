@@ -373,17 +373,6 @@
   }
 }
 
-@keyframes gemini-logo-enter {
-  0% {
-    opacity: 0;
-    transform: scale(0.88) translateY(6px);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
-}
-
 .chat-gemini-glow {
   transform-origin: center bottom;
   transition:
@@ -436,10 +425,6 @@
   opacity: 0.72;
 }
 
-.chat-gemini-logo {
-  animation: gemini-logo-enter 0.85s cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-
 .dark .chat-gemini-glow-idle {
   --gemini-glow-color: color-mix(in oklab, #065f46 42%, transparent);
 }
@@ -450,8 +435,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .chat-gemini-glow-intro,
-  .chat-gemini-glow-loading,
-  .chat-gemini-logo {
+  .chat-gemini-glow-loading {
     animation: none;
   }
 }

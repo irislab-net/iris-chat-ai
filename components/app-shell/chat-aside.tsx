@@ -13,7 +13,6 @@ import {
 
 import { ChatAccountFooter } from "@/components/app-shell/chat-account-footer"
 import { ChatMobileGeminiBackground } from "@/components/app-shell/chat-mobile-gemini-background"
-import { ChatMobileGeminiLogo } from "@/components/app-shell/chat-mobile-gemini-logo"
 import { chatMobileScrollDownClass } from "@/components/app-shell/chat-mobile-gemini-styles"
 import { ChatMobileHeader } from "@/components/app-shell/chat-mobile-header"
 import {
@@ -429,7 +428,7 @@ function ChatAside({
     return () => {
       cancelled = true
     }
-  }, [authLoading, isAuthenticated])
+  }, [authLoading, isAuthenticated, t])
 
   const guestTrialExhausted =
     !isAuthenticated && (guestTrial?.messages_remaining ?? 1) <= 0
@@ -1556,7 +1555,7 @@ function ChatAside({
         />
       ) : null}
       {showMobileHistoryOverlay ? (
-        <div className="absolute inset-0 z-30 flex min-h-0 flex-col bg-background">
+        <div className="absolute inset-0 z-30 flex min-h-0 flex-col bg-[#f6f8fb] dark:bg-background">
           <ChatHistorySidebar
             variant="mobile-drawer"
             conversations={conversations}
@@ -1705,11 +1704,14 @@ function ChatAside({
                         isMobileOverlay ? "gap-5" : "mb-5"
                       )}
                     >
-                      {isMobileOverlay ? (
-                        <ChatMobileGeminiLogo />
-                      ) : (
-                        <IrisMark className="size-10 rounded-xl" />
-                      )}
+                      <IrisMark
+                        variant={isMobileOverlay ? "hero" : "default"}
+                        className={cn(
+                          isMobileOverlay
+                            ? "size-[4.5rem] rounded-[1.35rem] bg-transparent shadow-none ring-0"
+                            : "size-10 rounded-xl"
+                        )}
+                      />
                       <h2
                         className={cn(
                           "font-normal tracking-tight text-foreground",

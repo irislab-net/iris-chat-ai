@@ -54,11 +54,13 @@ function DemoBudgetDialog({
   const [amount, setAmount] = React.useState(String(currentBudget))
   const [error, setError] = React.useState<string | null>(null)
 
-  React.useEffect(() => {
-    if (!open) return
-    setAmount(String(currentBudget))
-    setError(null)
-  }, [open, currentBudget])
+  function handleOpenChange(next: boolean) {
+    if (next) {
+      setAmount(String(currentBudget))
+      setError(null)
+    }
+    onOpenChange(next)
+  }
 
   const parsed = Number(amount.replace(/,/g, ""))
   const previewRisk =
@@ -81,7 +83,7 @@ function DemoBudgetDialog({
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="gap-0 overflow-hidden p-0 sm:max-w-md">
         <DialogHeader className="space-y-1 border-b border-border/60 px-4 py-3 text-left">
           <DialogTitle className="flex items-center gap-2 text-base tracking-tight">

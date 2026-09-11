@@ -86,10 +86,6 @@ function ChatThreadOptionsMenu({
     return () => window.clearTimeout(shareTimerRef.current)
   }, [])
 
-  React.useEffect(() => {
-    if (!renameOpen) setRenameDraft(title)
-  }, [title, renameOpen])
-
   async function handleShare() {
     if (disabled) return
     await onShare()

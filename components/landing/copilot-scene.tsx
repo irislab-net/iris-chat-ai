@@ -15,14 +15,12 @@ import { cn } from "@/lib/utils"
 const USER_AVATAR_SRC =
   "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=96&h=96&q=80"
 
-const PLAN = [
-  { label: "Side", value: "Short" },
-  { label: "Size", value: "0.42 ETH" },
-  { label: "Stop", value: "3,445.0" },
-  { label: "Target", value: "3,310.0" },
+const CONTEXT_POINTS = [
+  { labelKey: "pointImpact" as const, valueKey: "pointImpactValue" as const },
+  { labelKey: "pointWatch" as const, valueKey: "pointWatchValue" as const },
 ] as const
 
-function CopilotBracketReply() {
+function CopilotContextReply() {
   const t = useTranslations("landing.scenes")
 
   return (
@@ -38,37 +36,31 @@ function CopilotBracketReply() {
           variant="outline"
           className="rounded-full px-2 py-0 text-[10px] font-medium"
         >
-          15m
-        </Badge>
-        <Badge className="rounded-full px-2 py-0 text-[10px] font-medium">
-          {t("copilotSide")}
+          {t("copilotTopic")}
         </Badge>
         <p className="text-[11px] leading-snug text-foreground/85">
           {t("copilotAlign")}
         </p>
       </div>
 
-      <dl className="grid grid-cols-2 gap-1 p-2">
-        {PLAN.map((row) => (
+      <div className="space-y-1.5 p-2">
+        {CONTEXT_POINTS.map((row) => (
           <div
-            key={row.label}
+            key={row.labelKey}
             className="rounded-md border border-border/55 bg-muted/30 px-2 py-1.5"
           >
-            <dt className="text-[8px] font-medium tracking-[0.14em] text-muted-foreground uppercase">
-              {row.label}
-            </dt>
-            <dd className="mt-0.5 font-mono text-[11px] leading-none font-semibold tracking-tight text-foreground tabular-nums">
-              {row.value}
-            </dd>
+            <p className="text-[8px] font-medium tracking-[0.14em] text-muted-foreground uppercase">
+              {t(row.labelKey)}
+            </p>
+            <p className="mt-0.5 text-[11px] leading-snug text-foreground">
+              {t(row.valueKey)}
+            </p>
           </div>
         ))}
-      </dl>
+      </div>
 
-      <div className="flex items-center justify-between gap-2 border-t border-border/45 bg-muted/15 px-3 py-1.5">
+      <div className="border-t border-border/45 bg-muted/15 px-3 py-1.5">
         <p className="text-[9px] text-muted-foreground">{t("copilotAnalysis")}</p>
-        <p className="font-mono text-[9px] tabular-nums text-muted-foreground">
-          R:R 2.0×
-        </p>
       </div>
     </div>
   )
@@ -362,7 +354,7 @@ export function CopilotScene() {
 
                   {showReply ? (
                     <div className="transition-opacity duration-1000 ease-out">
-                      <CopilotBracketReply />
+                      <CopilotContextReply />
                     </div>
                   ) : null}
                 </div>

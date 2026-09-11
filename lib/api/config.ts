@@ -23,16 +23,22 @@ export function getAuthDestination() {
 }
 
 export function loginWithGoogleUrl(
-  destination: string,
+  destination: string | null,
   options?: {
     ref?: string
     /** Required for new sessions — backend expects both accepted. */
     legalAccepted?: boolean
+    /** Shorthand return target — e.g. chat OAuth uses `app=chat`. */
+    app?: string
   }
 ) {
   // Login MUST hit the API host so pkce_verifier_google + destination cookies are set on api.irislab.info
   const url = new URL(`${API_BASE}/v1/auth/google/login`)
-  url.searchParams.set("destination", destination)
+  if (options?.app) {
+    url.searchParams.set("app", options.app)
+  } else if (destination) {
+    url.searchParams.set("destination", destination)
+  }
   if (options?.ref) url.searchParams.set("ref", options.ref)
   if (options?.legalAccepted) {
     url.searchParams.set("terms", AUTH_TERMS_ACCEPTED)

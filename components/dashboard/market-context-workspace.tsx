@@ -113,7 +113,7 @@ function MarketContextWorkspaceInner({
 }
 
 function MarketContextWorkspaceFallback({
-  preferIntel = false,
+  preferIntel: _preferIntel = false,
 }: Pick<MarketContextWorkspaceProps, "preferIntel">) {
   return <IntelWorkspaceSkeleton panel="news" />
 }

@@ -1108,7 +1108,6 @@ function OrderTicket({
   )
   const sizeAllocationPctRef = React.useRef(sizeAllocationPct)
   const maxQtyRef = React.useRef<number | null>(null)
-  sizeAllocationPctRef.current = sizeAllocationPct
   const placing =
     interactionMode === "placing-sl" || interactionMode === "placing-tp"
 
@@ -1236,21 +1235,6 @@ function OrderTicket({
     return () => window.clearTimeout(timer)
   }, [selectedPosition?.id])
 
-  React.useEffect(() => {
-    const pct = sizeAllocationPctRef.current
-    const cap = maxQtyRef.current
-    if (pct == null || cap == null || !(cap > 0)) return
-    applySizeAllocation(pct, cap)
-  }, [
-    leverage,
-    reduceOnly,
-    positionQty,
-    limitPrice,
-    triggerPrice,
-    orderType,
-    applySizeAllocation,
-  ])
-
   const levelSide = editing ? selectedPosition.side : draft.side
   const levelEntry = editing
     ? decimalNumber(selectedPosition.entryPrice)
@@ -1301,7 +1285,28 @@ function OrderTicket({
       ? Math.min(100, Math.max(0, (draft.quantity / maxQty) * 100))
       : 0
   const sizePct = sizeAllocationPct ?? derivedSizePct
-  maxQtyRef.current = maxQty
+
+  React.useEffect(() => {
+    sizeAllocationPctRef.current = sizeAllocationPct
+  }, [sizeAllocationPct])
+
+  React.useEffect(() => {
+    maxQtyRef.current = maxQty
+
+    const pct = sizeAllocationPctRef.current
+    const cap = maxQtyRef.current
+    if (pct == null || cap == null || !(cap > 0)) return
+    applySizeAllocation(pct, cap)
+  }, [
+    leverage,
+    reduceOnly,
+    positionQty,
+    limitPrice,
+    triggerPrice,
+    orderType,
+    applySizeAllocation,
+    maxQty,
+  ])
 
   const orderValue =
     refPrice != null && draft.quantity > 0 ? refPrice * draft.quantity : null

@@ -64,10 +64,6 @@ function ChatConversationToolbar({
   const shareTimerRef = React.useRef(0)
 
   React.useEffect(() => {
-    setRenameDraft(title)
-  }, [title])
-
-  React.useEffect(() => {
     return () => window.clearTimeout(shareTimerRef.current)
   }, [])
 

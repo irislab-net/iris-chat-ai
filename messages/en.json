@@ -23,44 +23,52 @@
   },
   "landing": {
     "hero": {
-      "title": "One desk for the next candle",
-      "subtitle": "Chart and stance stay put. IRIS on the rail when you want a second read. Paper it first.",
+      "title": "News and IRIS chat for the market you follow",
+      "subtitle": "Scored headlines on the main pane. Ask IRIS on the rail when a story needs context.",
       "seeInside": "See what's inside"
     },
+    "heroMock": {
+      "newsTab": "News",
+      "newsHeading": "Market headlines",
+      "updated": "Updated 2m ago",
+      "chatSubtitle": "Market co-pilot",
+      "composerPlaceholder": "Ask about this headline…",
+      "send": "Send",
+      "headline0": "Spot ETF flows turn positive after three weeks of outflows",
+      "headline1": "Funding flips negative as leverage resets ahead of CPI",
+      "headline2": "Exchange reserves drop to lowest level since March",
+      "headline3": "Stablecoin supply expands on major chains",
+      "userQ": "Does the ETF headline matter for ETH today?",
+      "aiReply": "Yes — inflows usually lift beta first. Watch whether funding stays negative while spot leads."
+    },
     "features": {
-      "eyebrow": "The desk",
-      "title": "Everything on one screen",
-      "subtitle": "Pulse, signals, stance, news — for the market you're on.",
-      "pulseTitle": "Market pulse",
-      "pulseBody": "Where conviction is building.",
-      "signalsTitle": "IRIS signals",
-      "signalsBody": "Entry, stop, target on the chart.",
-      "stanceTitle": "Market stance",
-      "stanceBody": "Invalidation and payoff for this candle.",
+      "eyebrow": "The app",
+      "title": "Two surfaces, one flow",
+      "subtitle": "Read scored news, then ask IRIS without leaving the market.",
       "newsTitle": "News bullets",
-      "newsBody": "Headlines that move the tape.",
+      "newsBody": "Headlines ranked for relevance to the market you selected.",
       "copilotTitle": "IRIS co-pilot",
-      "copilotBody": "Ask IRIS. Get a bracket back."
+      "copilotBody": "Ask about what you are reading. Get a focused answer back."
     },
     "copilot": {
       "badge": "IRIS",
       "titleNot": "Not a",
       "titleStrike": "chatbot",
-      "titleRest": "A desk model.",
+      "titleRest": "A market model.",
       "signals": {
-        "tape": "Tape",
-        "structure": "Structure",
-        "funding": "Funding",
-        "news": "News",
-        "bracket": "One bracket"
+        "headlines": "Headlines",
+        "context": "Context",
+        "market": "Market",
+        "analysis": "Analysis",
+        "answer": "Clear answer"
       },
       "pillars": {
-        "depthTitle": "Depth",
-        "depthBody": "Flow and levels before a side.",
-        "bracketTitle": "Bracket",
-        "bracketBody": "Side, size, stop, target.",
-        "deskTitle": "On-desk",
-        "deskBody": "Same read as the chart."
+        "contextTitle": "Context",
+        "contextBody": "IRIS reads the headlines you are on.",
+        "askTitle": "Ask",
+        "askBody": "Follow up on a story or the wider tape.",
+        "focusedTitle": "Focused",
+        "focusedBody": "Short answers — not endless chat."
       }
     },
     "demo": {
@@ -104,7 +112,7 @@
     "pricing": {
       "badge": "Pricing",
       "title": "Pick your depth",
-      "subtitle": "Free to start. Plus when the desk is daily.",
+      "subtitle": "Free to browse news. Plus when IRIS is part of your routine.",
       "monthly": "Monthly",
       "annual": "Annual",
       "annualSave": "Save 17%",
@@ -114,23 +122,23 @@
       "plans": {
         "freeEyebrow": "Start here",
         "freeName": "Free",
-        "freeDescription": "Browse the desk. Co-pilot on a daily cap.",
+        "freeDescription": "Browse news. Co-pilot on a daily cap.",
         "freeCta": "Start free",
         "freeFeatures": [
-          "Live market pulse",
-          "News, signals, stance",
+          "Scored market headlines",
+          "News for your selected market",
           "Daily co-pilot sends",
           "Weekly usage cap"
         ],
         "plusEyebrow": "Daily use",
         "plusName": "Plus",
-        "plusDescription": "Full desk. Higher limits.",
+        "plusDescription": "More chat. Higher limits.",
         "plusCta": "Get Plus",
         "plusFeatures": [
           "More daily sends",
           "Higher weekly cap",
-          "IRIS trade planning",
-          "Chart + signal workflow"
+          "Deeper IRIS follow-ups",
+          "Priority model access"
         ],
         "ultimateEyebrow": "Teams",
         "ultimateName": "Ultimate",
@@ -146,49 +154,45 @@
     },
     "testimonials": {
       "badge": "Testimonials",
-      "title": "From the desk",
+      "title": "From the feed",
       "items": {
-        "0": { "text": "Pulse plus IRIS cut the noise. We actually look at levels now.", "name": "Maya Carter", "role": "Execution Lead" },
-        "1": { "text": "One tab instead of six. Chart and context finally match.", "name": "Bilal Ahmed", "role": "Trading Ops" },
-        "2": { "text": "Fast answers. No hype. Just a bracket we can argue about.", "name": "Saman Malik", "role": "Risk Analyst" },
-        "3": { "text": "Team was on it in an afternoon. Feels like a desk, not a demo.", "name": "Omar Raza", "role": "Desk Manager" },
-        "4": { "text": "Signals and chart finally speak the same language.", "name": "Zainab Hussain", "role": "Macro Trader" },
-        "5": { "text": "Morning scan takes minutes. Built for people who trade, not pitch decks.", "name": "Aliza Khan", "role": "Portfolio Associate" },
-        "6": { "text": "Calm UI, dense info. Scan, ask, act — no tab hopping.", "name": "Farhan Siddiqui", "role": "Market Research" },
+        "0": { "text": "Scored headlines cut the scroll. I know what to read first.", "name": "Maya Carter", "role": "Execution Lead" },
+        "1": { "text": "News and IRIS in one tab — finally.", "name": "Bilal Ahmed", "role": "Trading Ops" },
+        "2": { "text": "Fast answers on the story I am already reading.", "name": "Saman Malik", "role": "Risk Analyst" },
+        "3": { "text": "Team was productive in an afternoon. Simple and focused.", "name": "Omar Raza", "role": "Desk Manager" },
+        "4": { "text": "The chat stays tied to the market I picked.", "name": "Zainab Hussain", "role": "Macro Trader" },
+        "5": { "text": "Morning scan takes minutes. Built for readers, not dashboards.", "name": "Aliza Khan", "role": "Portfolio Associate" },
+        "6": { "text": "Calm UI. Read, ask, move on — no tab hopping.", "name": "Farhan Siddiqui", "role": "Market Research" },
         "7": { "text": "Free tier is real. Plus unlocked exactly where we needed it.", "name": "Sana Sheikh", "role": "Strategy Lead" },
-        "8": { "text": "Keeps us on structure — entry, risk, invalidation. Not vibes.", "name": "Hassan Ali", "role": "Systems Trader" }
+        "8": { "text": "Keeps follow-ups grounded in the headlines — not random prompts.", "name": "Hassan Ali", "role": "Systems Trader" }
       }
     },
     "faq": {
       "eyebrow": "FAQ",
       "title": "Frequently asked questions",
-      "subtitle": "Straight answers on the desk, the model, and what IRIS will not do.",
+      "subtitle": "Straight answers on news, IRIS chat, and what the app will not do.",
       "items": {
-        "whatQ": "What is IRIS Lab?",
-        "whatA": "IRIS Lab is a crypto market-intelligence desk. Live pulse, IRIS signals on the chart, market stance, news bullets, and an on-desk co-pilot — all tied to the market you have selected. You can browse the public desk without signing in.",
-        "signalsQ": "What are IRIS signals?",
-        "signalsA": "High-conviction setups marked on the chart with entry, stop, and target. Same model behind stance and the co-pilot — on the desk where you trade, not hidden in a feed.",
+        "whatQ": "What is IRIS Chat AI?",
+        "whatA": "IRIS Chat AI is a focused market-intelligence app. Scored news bullets for the market you select, plus an IRIS co-pilot when you connect an account. Browse headlines without signing in.",
+        "newsQ": "What are news bullets?",
+        "newsA": "Curated headlines ranked for relevance to your selected market — so you can scan what matters instead of scrolling feeds.",
         "chatbotQ": "Is IRIS a generic chatbot?",
-        "chatbotA": "No. IRIS is a desk model built for trading context. It reads tape, structure, funding, and news together, then returns a bracket: side, size, stop, and target. Built for the candle in front of you — not open-ended chat.",
-        "askQ": "What can I ask the co-pilot?",
-        "askA": "Anything about the active market: what to open, how to size it, where invalidation sits, or whether the setup still holds. IRIS answers with a plan you can read while the move is still live.",
-        "paperQ": "Can I paper trade on IRIS Lab?",
-        "paperA": "Yes. The paper desk fills against live prices — no wallet, no brokerage link. Test entries, sizing, and exits before you risk capital on your venue.",
-        "executeQ": "Does IRIS execute live orders?",
-        "executeA": "No. IRIS Lab does not route orders to an exchange or hold funds. Signals and co-pilot output are analysis. Where and whether you trade stays with you.",
+        "chatbotA": "No. IRIS is built for market context. It reads the headlines and market you have open, then returns focused answers — not open-ended chat.",
+        "askQ": "What can I ask IRIS?",
+        "askA": "Anything about the active market or a headline you are reading: why it matters, what to watch next, or how it fits the wider tape.",
         "accountQ": "Do I need an account?",
-        "accountA": "Not to browse. Open the public desk and read pulse, stance, and news without signing in. Connect an account for co-pilot chat, history, and plan limits on Free or Plus.",
+        "accountA": "Not to browse news. Open the app and read headlines without signing in. Connect an account for co-pilot chat, history, and plan limits on Free or Plus.",
         "freeQ": "How do Free and Plus differ?",
-        "freeA": "Free is the full public desk with a daily co-pilot send cap and a weekly usage limit — enough to learn the flow. Plus raises both for traders who run the desk every session.",
+        "freeA": "Free includes the full news feed with a daily co-pilot send cap and a weekly usage limit. Plus raises both for people who use IRIS every session.",
         "profitsQ": "Does IRIS guarantee trading profits?",
-        "profitsA": "No. Pulse, signals, and co-pilot replies support your process — they are not promises of return, win rate, or accuracy. IRIS Lab is analysis, not financial advice."
+        "profitsA": "No. News scores and co-pilot replies support your process — they are not promises of return, win rate, or accuracy. IRIS Chat AI is analysis, not financial advice."
       }
     },
     "footer": {
       "getStarted": "Get started",
-      "title": "Open the desk",
-      "subtitle": "Free to browse. No account required.",
-      "tagline": "AI market desk for crypto. Pulse, signals, IRIS co-pilot.",
+      "title": "Open the app",
+      "subtitle": "Free to browse news. No account required.",
+      "tagline": "Scored crypto headlines and IRIS co-pilot chat.",
       "columns": {
         "product": "Product",
         "company": "Company",
@@ -208,14 +212,18 @@
     },
     "scenes": {
       "copilotName": "IRIS",
-      "copilotSubtitle": "Desk co-pilot",
+      "copilotSubtitle": "Market co-pilot",
       "copilotIdleTitle": "Ask IRIS",
-      "copilotIdleBody": "One bracket back.",
+      "copilotIdleBody": "About the headline you are reading.",
       "copilotPlaceholder": "Ask about this market…",
-      "copilotUserQ": "What should I open?",
-      "copilotAlign": "Tape and funding align.",
+      "copilotUserQ": "Why does this headline matter for ETH?",
+      "copilotTopic": "ETF flows",
+      "copilotAlign": "Spot inflows are leading while leverage resets.",
+      "pointImpact": "Impact",
+      "pointImpactValue": "Beta tends to lift first on inflow days.",
+      "pointWatch": "Watch",
+      "pointWatchValue": "Funding staying negative while spot leads.",
       "copilotAnalysis": "Analysis, not advice",
-      "copilotSide": "Short ETH",
       "ticketTitle": "Order ticket",
       "ticketSubtitle": "ETH · paper · live",
       "ticketSection": "Size & bracket",
@@ -243,9 +251,9 @@
     }
   },
   "metadata": {
-    "homeTitle": "IRIS Lab — AI Trading Signals & Crypto Market Co-Pilot",
-    "homeDescription": "IRIS Lab — crypto market desk with pulse, signals, and IRIS co-pilot.",
-    "homeOg": "Pulse, signals, news, and IRIS co-pilot — one desk."
+    "homeTitle": "IRIS Chat AI — Market News & AI Co-Pilot",
+    "homeDescription": "Scored crypto headlines and IRIS co-pilot chat for the market you select.",
+    "homeOg": "News bullets and IRIS chat — one focused app."
   },
   "notFound": {
     "title": "Page not found",

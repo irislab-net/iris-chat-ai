@@ -528,37 +528,16 @@ export async function LandingFeatures() {
         </div>
 
         <div className="relative">
-          <div className="relative z-10 grid auto-rows-fr grid-cols-6 gap-3 md:gap-4">
-            <FeatureCardTop
-              className="col-span-full lg:col-span-2"
-              title={t("pulseTitle")}
-              body={t("pulseBody")}
-              illustration={<PulseLiveGraphic />}
-            />
-
-            <FeatureCardTop
-              className="col-span-full sm:col-span-3 lg:col-span-2"
-              title={t("signalsTitle")}
-              body={t("signalsBody")}
-              illustration={<SignalChartGraphic />}
-            />
-
-            <FeatureCardTop
-              className="col-span-full sm:col-span-3 lg:col-span-2"
-              title={t("stanceTitle")}
-              body={t("stanceBody")}
-              illustration={<SpeedChartGraphic />}
-            />
-
+          <div className="relative z-10 grid auto-rows-fr grid-cols-1 gap-3 md:grid-cols-2 md:gap-4">
             <FeatureCardWide
-              className="col-span-full lg:col-span-3"
+              className="col-span-full"
               title={t("newsTitle")}
               body={t("newsBody")}
               illustration={<NewsBulletsGraphic />}
             />
 
             <FeatureCardWide
-              className="col-span-full lg:col-span-3"
+              className="col-span-full"
               title={t("copilotTitle")}
               body={t("copilotBody")}
               illustration={<CopilotThreadGraphic />}

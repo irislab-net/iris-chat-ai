@@ -26,7 +26,7 @@ import { useAuth } from "@/components/auth/auth-provider"
 import { displayPlanName } from "@/lib/billing/catalog"
 import { GoogleGlyph } from "@/components/auth/google-glyph"
 import { useUserAvatarUrl } from "@/hooks/use-user-avatar-url"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -43,6 +43,16 @@ import {
   chatContextMenuItemClass,
   chatContextMenuSeparatorClass,
 } from "@/components/app-shell/chat-context-menu-styles"
+import {
+  chatMobileDrawerFooterBarClass,
+  chatMobileDrawerFooterFadeClass,
+  chatMobileDrawerFooterWrapClass,
+  chatMobileDrawerNavItemClass,
+  chatMobileDrawerSectionLabelClass,
+  chatMobileDrawerSurfaceClass,
+  chatMobileDrawerUpgradeClass,
+  chatMobileHeaderButtonClass,
+} from "@/components/app-shell/chat-mobile-gemini-styles"
 import { ChatDeskToolsBanner } from "@/components/app-shell/chat-desk-tools-banner"
 import { ChatRenameDialog } from "@/components/app-shell/chat-rename-dialog"
 import {
@@ -68,7 +78,7 @@ import {
 import { UPGRADE_PATH } from "@/lib/site"
 import {
   userAccountLabel,
-  userAvatarFallback,
+  userAccountSubline,
 } from "@/lib/user-profile"
 import { cn } from "@/lib/utils"
 
@@ -94,7 +104,7 @@ function HistoryNewsNav({
       className={cn(
         "justify-start gap-3 text-sm font-normal shadow-none",
         isMobileDrawer
-          ? "mb-4 h-10 w-full rounded-lg px-3 text-[15px] hover:bg-muted/45"
+          ? cn("mb-1", chatMobileDrawerNavItemClass)
           : "mb-2 h-9 w-full rounded-lg px-3 hover:bg-muted/50"
       )}
       onClick={onOpenNews}
@@ -106,12 +116,14 @@ function HistoryNewsNav({
         )}
       />
       <span className="min-w-0 flex-1 truncate text-start">{t("news")}</span>
-      <Badge
-        variant="secondary"
-        className="h-5 shrink-0 px-1.5 text-[10px] font-medium tracking-wide"
-      >
-        {t("desk")}
-      </Badge>
+      {!isMobileDrawer ? (
+        <Badge
+          variant="secondary"
+          className="h-5 shrink-0 px-1.5 text-[10px] font-medium tracking-wide"
+        >
+          {t("desk")}
+        </Badge>
+      ) : null}
     </Button>
   )
 }
@@ -146,7 +158,14 @@ function MobileHistoryDrawerFooter({
   const { resolvedTheme, setTheme } = useTheme()
 
   return (
-    <footer className="flex shrink-0 items-center gap-2 border-t border-border/40 px-3 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom,0px))]">
+    <footer className={chatMobileDrawerFooterWrapClass}>
+      <div aria-hidden className={chatMobileDrawerFooterFadeClass} />
+      <div
+        className={cn(
+          chatMobileDrawerFooterBarClass,
+          "flex items-center gap-2 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom,0px))]"
+        )}
+      >
       {user ? (
         <div className="flex min-w-0 flex-1 items-center gap-2.5">
           <ChatAccountAvatar
@@ -154,18 +173,26 @@ function MobileHistoryDrawerFooter({
             avatarUrl={avatarUrl}
             isProUser={isProUser}
             planName={displayPlanName(user.tier)}
+            compact
             avatarClassName="size-9"
           />
-          <span className="min-w-0 truncate text-sm font-medium">
-            {userAccountLabel(user)}
-          </span>
+          <div className="min-w-0">
+            <p className="truncate text-[15px] font-normal leading-tight">
+              {userAccountLabel(user)}
+            </p>
+            {userAccountSubline(user) ? (
+              <p className="truncate text-[13px] text-muted-foreground">
+                {userAccountSubline(user)}
+              </p>
+            ) : null}
+          </div>
         </div>
       ) : (
         <Button
           type="button"
           variant="ghost"
           size="sm"
-          className="h-9 flex-1 justify-start gap-2 px-1"
+          className="h-10 flex-1 justify-start gap-2.5 px-1 text-[15px] font-normal"
           disabled={loginPending}
           onClick={() => login({ source: "chat" })}
         >
@@ -180,7 +207,7 @@ function MobileHistoryDrawerFooter({
       {!isProUser ? (
         <Button
           size="sm"
-          className="h-9 shrink-0 rounded-full px-4 text-sm font-medium"
+          className={chatMobileDrawerUpgradeClass}
           nativeButton={false}
           render={<Link href={UPGRADE_PATH} />}
         >
@@ -194,44 +221,53 @@ function MobileHistoryDrawerFooter({
               type="button"
               variant="ghost"
               size="icon"
-              className="size-9 shrink-0 rounded-full text-muted-foreground hover:bg-muted/60 hover:text-foreground"
+              className={cn(chatMobileHeaderButtonClass, "size-9 shrink-0")}
               aria-label={common("settings")}
             />
           }
         >
           <Settings className="size-[18px]" />
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" side="top" className="min-w-48">
+        <DropdownMenuContent
+          align="end"
+          side="top"
+          sideOffset={8}
+          className={chatContextMenuContentClass}
+        >
           {onOpenNews ? (
-            <DropdownMenuItem className="gap-2" onClick={onOpenNews}>
-              <NewspaperIcon className="size-4" />
+            <DropdownMenuItem
+              className={chatContextMenuItemClass}
+              onClick={onOpenNews}
+            >
+              <NewspaperIcon className={chatContextMenuIconClass} />
               {t("news")}
             </DropdownMenuItem>
           ) : null}
           <DropdownMenuItem
-            className="gap-2"
+            className={chatContextMenuItemClass}
             onClick={() =>
               setTheme(resolvedTheme === "dark" ? "light" : "dark")
             }
           >
-            <EclipseIcon className="size-4" />
+            <EclipseIcon className={chatContextMenuIconClass} />
             {resolvedTheme === "dark" ? common("lightMode") : common("darkMode")}
           </DropdownMenuItem>
           {user ? (
             <>
-              <DropdownMenuSeparator />
+              <DropdownMenuSeparator className={chatContextMenuSeparatorClass} />
               <DropdownMenuItem
                 variant="destructive"
-                className="gap-2"
+                className={chatContextMenuDeleteClass}
                 onClick={() => void logout()}
               >
-                <LogOutIcon className="size-4" />
+                <LogOutIcon className="size-[18px] shrink-0" />
                 {t("logOut")}
               </DropdownMenuItem>
             </>
           ) : null}
         </DropdownMenuContent>
       </DropdownMenu>
+      </div>
     </footer>
   )
 }
@@ -286,33 +322,24 @@ function ChatHistorySidebar({
 
   return (
     <>
-      <div className={cn("flex h-full min-h-0 flex-col", className)}>
+      <div
+        className={cn(
+          "flex h-full min-h-0 flex-col",
+          isMobileDrawer && chatMobileDrawerSurfaceClass,
+          className
+        )}
+      >
         {isMobileDrawer ? (
-          <header className="flex shrink-0 items-start justify-between gap-3 px-4 pb-3 pt-[max(0.75rem,var(--app-safe-top,0px))]">
-            <div className="flex min-w-0 items-start gap-3">
-              <Image
-                src="/Logo.png"
-                alt=""
-                width={36}
-                height={36}
-                className="block size-9 shrink-0 rounded-lg"
-                priority
-              />
-              <div className="min-w-0 pt-0.5">
-                <p className="text-[22px] font-normal leading-none tracking-tight text-foreground">
-                  {t("iris")}
-                </p>
-                <p className="mt-1 text-[13px] leading-snug text-muted-foreground">
-                  {t("historyDrawerSubtitle")}
-                </p>
-              </div>
-            </div>
+          <header className="flex shrink-0 items-center justify-between gap-3 px-4 pb-2 pt-[max(0.75rem,var(--app-safe-top,0px))]">
+            <h2 className="text-[1.75rem] font-normal leading-none tracking-tight text-foreground">
+              {t("iris")}
+            </h2>
             {onClose ? (
               <Button
                 type="button"
                 variant="ghost"
                 size="icon"
-                className="size-10 shrink-0 rounded-full bg-muted/50 text-foreground hover:bg-muted/70 dark:bg-muted/30"
+                className={chatMobileHeaderButtonClass}
                 aria-label={t("closeChatHistory")}
                 onClick={onClose}
               >
@@ -353,8 +380,8 @@ function ChatHistorySidebar({
         <ScrollArea className="min-h-0 flex-1">
           <div
             className={cn(
-              "flex flex-col pb-2",
-              isMobileDrawer ? "px-3 pt-1" : "px-2"
+              "flex flex-col",
+              isMobileDrawer ? "px-2 pb-20 pt-0" : "px-2 pb-2"
             )}
           >
             {onNewChat ? (
@@ -365,12 +392,17 @@ function ChatHistorySidebar({
                 className={cn(
                   "justify-start gap-3 text-sm font-normal shadow-none",
                   isMobileDrawer
-                    ? "mb-3 h-11 w-full rounded-full bg-muted/55 px-4 hover:bg-muted/70 dark:bg-muted/35"
+                    ? cn("mb-1", chatMobileDrawerNavItemClass)
                     : "h-9 w-full rounded-lg px-3 hover:bg-muted/50"
                 )}
                 onClick={onNewChat}
               >
-                <SquarePenIcon className="size-4 shrink-0 text-muted-foreground" />
+                <SquarePenIcon
+                  className={cn(
+                    "shrink-0 text-foreground",
+                    isMobileDrawer ? "size-[18px]" : "size-4"
+                  )}
+                />
                 {t("newChat")}
               </Button>
             ) : null}
@@ -409,7 +441,7 @@ function ChatHistorySidebar({
                   />
                 ) : null}
 
-                {pinned.length > 0 && recent.length > 0 ? (
+                {pinned.length > 0 && recent.length > 0 && !isMobileDrawer ? (
                   <Separator className="mx-2 my-2" />
                 ) : null}
 
@@ -481,15 +513,14 @@ function ConversationSection({
     <section className={cn(compact ? "pt-2" : "pt-4", className)}>
       <p
         className={cn(
-          "pb-2 text-muted-foreground",
           compact
-            ? "px-1 text-[13px] font-normal"
-            : "px-3 pb-1.5 text-xs"
+            ? chatMobileDrawerSectionLabelClass
+            : "px-3 pb-1.5 text-xs text-muted-foreground"
         )}
       >
         {label}
       </p>
-      <ul className="flex flex-col gap-0.5">
+      <ul className={cn("flex flex-col", compact ? "gap-0.5 px-1" : "gap-0.5")}>
         {chats.map((chat) => (
           <li key={chat.id}>
             <ConversationRow
@@ -579,8 +610,18 @@ function ConversationRow({
   const row = (
     <div
       className={cn(
-        "group/item relative flex min-w-0 items-center gap-1 rounded-lg px-1 py-0.5 transition-colors",
-        active ? "bg-muted" : "hover:bg-muted/50"
+        "group/item relative flex min-w-0 items-center transition-colors",
+        compact
+          ? cn(
+              "rounded-full px-1",
+              active
+                ? "bg-muted/75 dark:bg-muted/45"
+                : "hover:bg-muted/45 dark:hover:bg-muted/30"
+            )
+          : cn(
+              "gap-1 rounded-lg px-1 py-0.5",
+              active ? "bg-muted" : "hover:bg-muted/50"
+            )
       )}
     >
       <Button
@@ -589,7 +630,7 @@ function ConversationRow({
         className={cn(
           "min-w-0 flex-1 justify-start text-left font-normal shadow-none hover:bg-transparent",
           compact
-            ? "h-10 gap-0 rounded-lg px-3 text-[15px]"
+            ? "h-11 gap-0 rounded-full px-4 text-[15px]"
             : "h-9 gap-2.5 rounded-md px-2 text-sm"
         )}
         onClick={onSelect}
@@ -604,7 +645,8 @@ function ConversationRow({
         <span className="truncate">{chat.title}</span>
       </Button>
 
-      <DropdownMenu modal={compact ? false : undefined}>
+      {!compact ? (
+      <DropdownMenu modal={undefined}>
         <DropdownMenuTrigger
           render={
             <Button
@@ -638,6 +680,7 @@ function ConversationRow({
           />
         </DropdownMenuContent>
       </DropdownMenu>
+      ) : null}
     </div>
   )
 

@@ -4,7 +4,11 @@ import * as React from "react"
 import { useRouter } from "next/navigation"
 
 import { useAuth } from "@/components/auth/auth-provider"
-import { AUTH_SUCCESS_MESSAGE, establishSession } from "@/lib/api/auth"
+import {
+  AUTH_RETURN_TO_KEY,
+  AUTH_SUCCESS_MESSAGE,
+  establishSession,
+} from "@/lib/api/auth"
 import { trackLoginFail, trackLoginSuccess } from "@/lib/analytics"
 import { APP_NEWS_PATH } from "@/lib/site"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -34,7 +38,12 @@ export default function AuthSuccessPage() {
         if (cancelled) return
         trackLoginSuccess(session.user)
         await refresh()
-        if (!cancelled) router.replace(APP_NEWS_PATH)
+        if (!cancelled) {
+          const returnTo =
+            sessionStorage.getItem(AUTH_RETURN_TO_KEY) ?? APP_NEWS_PATH
+          sessionStorage.removeItem(AUTH_RETURN_TO_KEY)
+          router.replace(returnTo)
+        }
       } catch (err) {
         if (!cancelled) {
           const message =
@@ -49,7 +58,10 @@ export default function AuthSuccessPage() {
               )
               window.close()
             } else {
-              router.replace(APP_NEWS_PATH)
+              router.replace(
+                sessionStorage.getItem(AUTH_RETURN_TO_KEY) ?? APP_NEWS_PATH
+              )
+              sessionStorage.removeItem(AUTH_RETURN_TO_KEY)
             }
           }, 2000)
         }

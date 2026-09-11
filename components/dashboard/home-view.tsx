@@ -61,7 +61,7 @@ function HomeViewInner({
 }
 
 function HomeViewFallback({
-  initialTab = WORKSPACE_TAB_NEWS,
+  initialTab: _initialTab = WORKSPACE_TAB_NEWS,
 }: Pick<HomeViewProps, "initialTab">) {
   return (
     <div className="flex h-full min-h-0 w-full flex-1 flex-col">

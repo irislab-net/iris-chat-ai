@@ -125,13 +125,11 @@ function AppShellInner({
     writeShellLayoutPrefs({ chatOpen: next })
   }
 
-  React.useEffect(() => {
-    if (!isAppDeskPath(pathname)) return
-    setChatOpen(true)
-    if (isDesktop === true) {
-      setChatMode((mode) => (mode === "docked" ? "docked" : "focused"))
-    }
-  }, [pathname, isDesktop])
+  const resolvedChatOpen = onDesk || chatOpen
+  const resolvedChatMode: ChatDisplayMode =
+    onDesk && isDesktop === true && chatMode !== "docked"
+      ? "focused"
+      : chatMode
 
   React.useEffect(() => {
     return subscribeDismissMobileChat(() => {
@@ -156,13 +154,13 @@ function AppShellInner({
     isDesktop === true && (onDesk || defaultChatOpen)
 
   React.useEffect(() => {
-    if (isDesktop !== false || !chatOpen) return
+    if (isDesktop !== false || !resolvedChatOpen) return
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") persistChatOpen(false)
     }
     window.addEventListener("keydown", onKeyDown)
     return () => window.removeEventListener("keydown", onKeyDown)
-  }, [isDesktop, chatOpen])
+  }, [isDesktop, resolvedChatOpen])
 
   React.useEffect(() => {
     return subscribeCopilotChatPrefill((input) => {
@@ -174,23 +172,23 @@ function AppShellInner({
 
   const toolbarProps = {
     onWorkspaceTabNavigate: () => {
-      if (chatMode === "focused") persistChatMode("docked")
+      if (resolvedChatMode === "focused") persistChatMode("docked")
     },
     onCloseToChat:
       isDesktop === false ? () => persistChatOpen(true) : undefined,
   }
 
   const showDesktopChatDocked =
-    desktopChatEnabled && chatMode === "docked"
+    desktopChatEnabled && resolvedChatMode === "docked"
   const showDesktopChatFocused =
-    desktopChatEnabled && chatMode === "focused"
+    desktopChatEnabled && resolvedChatMode === "focused"
   const showDesktopSplit = showDesktopChatDocked
-  const showMobileChat = isDesktop === false && chatOpen
+  const showMobileChat = isDesktop === false && resolvedChatOpen
   const { introPage, introOpen, onIntroOpenChange } = useWorkspacePageIntro({
     enabled: onDesk && isDesktop === false,
     pathname,
     workspaceTab,
-    mobileIrisTab: isDesktop === false && chatOpen,
+    mobileIrisTab: isDesktop === false && resolvedChatOpen,
   })
   const mobileShellClearance =
     isDesktop === false && showMobileChat
