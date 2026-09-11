@@ -300,6 +300,7 @@
     "composerToolSignalPlaceholder": "ETH, BTC, SOL, اتریوم…",
     "composerRemoveTool": "Remove tool",
     "composerHint": "IRIS provides market information only — not financial advice",
+    "lowSignalUserReply": "I didn't quite get that. Ask about ETH or BTC, market news, or describe the setup you want IRIS to check.",
     "signalCardTitle": "Trade signal",
     "signalCardSize": "Size",
     "fillOrderFromSignal": "Fill order ticket",

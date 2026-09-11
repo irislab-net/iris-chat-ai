@@ -4,4 +4,20 @@ const chatTurnActionsClass = "flex items-center gap-0.5"
 const chatTurnActionButtonClass =
   "size-7 text-muted-foreground hover:bg-muted hover:text-foreground aria-pressed:bg-muted aria-pressed:text-foreground"
 
-export { chatTurnActionButtonClass, chatTurnActionsClass }
+/** Gemini-style user bubble — soft gray in light mode, elevated surface in dark. */
+const chatUserBubbleClass =
+  "rounded-[24px] bg-muted/90 px-4 py-3 text-[14px] leading-[1.55] text-foreground sm:text-[13px] [&::selection]:bg-foreground/10 dark:border dark:border-border/50 dark:bg-secondary dark:text-foreground dark:[&::selection]:bg-foreground/15"
+
+const chatUserBubbleInlineActionClass =
+  "size-7 text-muted-foreground/75 hover:bg-foreground/5 hover:text-foreground dark:text-muted-foreground dark:hover:bg-foreground/5 dark:hover:text-foreground"
+
+const chatUserBubbleExpandToggleClass =
+  "h-auto min-h-0 w-auto gap-0.5 px-1 py-0.5 text-xs font-normal text-muted-foreground underline-offset-2 hover:bg-foreground/5 hover:text-foreground hover:underline dark:text-muted-foreground dark:hover:bg-foreground/5 dark:hover:text-foreground"
+
+export {
+  chatTurnActionButtonClass,
+  chatTurnActionsClass,
+  chatUserBubbleClass,
+  chatUserBubbleExpandToggleClass,
+  chatUserBubbleInlineActionClass,
+}

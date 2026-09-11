@@ -4,6 +4,7 @@ import type { ReactNode } from "react"
 import dynamic from "next/dynamic"
 import Image from "next/image"
 
+import { chatUserBubbleClass } from "@/components/app-shell/chat-turn-actions"
 import { TypingDots } from "@/components/app-shell/chat-typing"
 import { cn } from "@/lib/utils"
 
@@ -54,7 +55,10 @@ function ChatUserBubble({
     <div className={cn("flex w-full min-w-0 justify-end", className)}>
       <div
         dir="auto"
-        className="chat-bidi max-w-[88%] min-w-0 overflow-hidden wrap-anywhere rounded-xl rounded-br-sm border border-foreground/15 bg-foreground px-3.5 py-2.5 text-[14px] leading-[1.55] text-background dark:border-border/50 dark:bg-secondary dark:text-foreground sm:text-[13px] [&::selection]:bg-background/25 dark:[&::selection]:bg-foreground/15"
+        className={cn(
+          "chat-bidi max-w-[88%] min-w-0 overflow-hidden wrap-anywhere px-3.5 py-2.5",
+          chatUserBubbleClass
+        )}
       >
         {children}
       </div>

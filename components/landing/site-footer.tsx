@@ -5,7 +5,7 @@ import { getTranslations } from "next-intl/server"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { Link } from "@/i18n/navigation"
-import { APP_NEWS_PATH, SITE_NAME, SOCIAL_X_URL } from "@/lib/site"
+import { APP_NEWS_PATH, LANDING_PATH, SITE_NAME, SOCIAL_X_URL } from "@/lib/site"
 import { LANDING_CONTAINER } from "@/lib/landing-layout"
 import { cn } from "@/lib/utils"
 
@@ -138,7 +138,7 @@ export async function SiteFooter() {
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-5 lg:gap-8">
           <div className="sm:col-span-2 lg:col-span-2">
             <Link
-              href="/"
+              href={LANDING_PATH}
               aria-label={SITE_NAME}
               className="inline-flex w-fit items-center gap-3 transition-opacity hover:opacity-80"
             >

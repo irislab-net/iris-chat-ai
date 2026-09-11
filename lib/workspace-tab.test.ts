@@ -8,7 +8,7 @@ import {
 } from "@/lib/workspace-tab"
 
 describe("workspace tab routing", () => {
-  it("defaults bare /app to news", () => {
+  it("defaults bare desk path to news", () => {
     expect(resolveWorkspaceTab(null)).toBe(WORKSPACE_TAB_NEWS)
     expect(resolveWorkspaceTab(undefined)).toBe(WORKSPACE_TAB_NEWS)
     expect(resolveWorkspaceTab("")).toBe(WORKSPACE_TAB_NEWS)
@@ -20,10 +20,10 @@ describe("workspace tab routing", () => {
   })
 
   it("builds canonical app hrefs", () => {
-    expect(workspaceTabHref(WORKSPACE_TAB_NEWS)).toBe("/app?tab=news")
-    expect(appPathWithTab(WORKSPACE_TAB_NEWS)).toBe("/app?tab=news")
+    expect(workspaceTabHref(WORKSPACE_TAB_NEWS)).toBe("/?tab=news")
+    expect(appPathWithTab(WORKSPACE_TAB_NEWS)).toBe("/?tab=news")
     expect(
       appPathWithTab(WORKSPACE_TAB_NEWS, { checkout: "success" })
-    ).toBe("/app?tab=news&checkout=success")
+    ).toBe("/?tab=news&checkout=success")
   })
 })

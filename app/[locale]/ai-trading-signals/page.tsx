@@ -86,7 +86,8 @@ function AiTradingSignalsPage() {
         <LegalSection id="signals-who" title="Who it is for">
           <LegalP>
             Traders who want an AI co-pilot on crypto markets — especially ETH
-            pulse today — without handing funds to a bot.             Guests can use the public desk at /app. Connecting an account unlocks
+            pulse today — without handing funds to a bot. Guests can use the
+            public desk at the site root. Connecting an account unlocks
             co-pilot chat and member tools when available.
           </LegalP>
         </LegalSection>

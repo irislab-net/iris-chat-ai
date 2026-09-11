@@ -26,11 +26,10 @@ import {
 import { UPGRADE_PATH } from "@/lib/site"
 import { cn } from "@/lib/utils"
 
-type ChatThreadActionsProps = {
+type ChatThreadMenuProps = {
   title: string
   pinned: boolean
   disabled?: boolean
-  showUpgrade?: boolean
   onShare: () => void | Promise<void>
   onRename: (title: string) => void
   onTogglePin: () => void
@@ -38,17 +37,45 @@ type ChatThreadActionsProps = {
   className?: string
 }
 
-function ChatThreadActions({
+type ChatThreadActionsProps = ChatThreadMenuProps & {
+  showUpgrade?: boolean
+}
+
+function ChatThreadUpgradeButton({
+  className,
+}: {
+  className?: string
+}) {
+  const t = useTranslations("workspace")
+
+  return (
+    <Button
+      type="button"
+      variant="ghost"
+      size="sm"
+      className={cn(
+        "hidden h-8 gap-1.5 px-2 text-primary hover:bg-primary/10 hover:text-primary sm:inline-flex",
+        className
+      )}
+      nativeButton={false}
+      render={<Link href={UPGRADE_PATH} />}
+    >
+      <SparklesIcon className="size-3.5" />
+      {t("upgrade")}
+    </Button>
+  )
+}
+
+function ChatThreadOptionsMenu({
   title,
   pinned,
   disabled,
-  showUpgrade,
   onShare,
   onRename,
   onTogglePin,
   onDelete,
   className,
-}: ChatThreadActionsProps) {
+}: ChatThreadMenuProps) {
   const t = useTranslations("workspace")
   const [shared, setShared] = React.useState(false)
   const [renameOpen, setRenameOpen] = React.useState(false)
@@ -85,73 +112,53 @@ function ChatThreadActions({
 
   return (
     <>
-      <div className={cn("flex shrink-0 items-center gap-1.5", className)}>
-        {showUpgrade ? (
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            className="hidden h-8 gap-1.5 px-2 text-primary hover:bg-primary/10 hover:text-primary sm:inline-flex"
-            nativeButton={false}
-            render={<Link href={UPGRADE_PATH} />}
-          >
-            <SparklesIcon className="size-3.5" />
-            {t("upgrade")}
-          </Button>
-        ) : null}
-
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          className="h-8 gap-1.5 px-2.5"
-          disabled={disabled}
-          onClick={() => void handleShare()}
+      <DropdownMenu>
+        <DropdownMenuTrigger
+          render={
+            <Button
+              type="button"
+              variant="outline"
+              size="icon-sm"
+              className={cn("size-8 shrink-0", className)}
+              aria-label={t("chatOptions")}
+              disabled={disabled}
+            />
+          }
         >
-          {shared ? (
-            <CheckIcon className="size-3.5 text-emerald-600" />
-          ) : (
-            <ShareIcon className="size-3.5" />
-          )}
-          {shared ? t("sharedChat") : t("shareChat")}
-        </Button>
-
-        <DropdownMenu>
-          <DropdownMenuTrigger
-            render={
-              <Button
-                type="button"
-                variant="outline"
-                size="icon-sm"
-                className="size-8 shrink-0"
-                aria-label={t("chatOptions")}
-                disabled={disabled}
-              />
-            }
+          <MoreHorizontalIcon className="size-4" />
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="min-w-44">
+          <DropdownMenuItem
+            className="gap-2"
+            disabled={disabled}
+            onClick={() => void handleShare()}
           >
-            <MoreHorizontalIcon className="size-4" />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="min-w-44">
-            <DropdownMenuItem className="gap-2" onClick={openRename}>
-              <PencilIcon />
-              {t("renameChat")}
-            </DropdownMenuItem>
-            <DropdownMenuItem className="gap-2" onClick={onTogglePin}>
-              {pinned ? <PinOffIcon /> : <PinIcon />}
-              {pinned ? t("unpinChat") : t("pinChat")}
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem
-              variant="destructive"
-              className="gap-2"
-              onClick={onDelete}
-            >
-              <Trash2Icon />
-              {t("deleteChat")}
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
+            {shared ? (
+              <CheckIcon className="text-emerald-600" />
+            ) : (
+              <ShareIcon />
+            )}
+            {shared ? t("sharedChat") : t("shareChat")}
+          </DropdownMenuItem>
+          <DropdownMenuItem className="gap-2" onClick={openRename}>
+            <PencilIcon />
+            {t("renameChat")}
+          </DropdownMenuItem>
+          <DropdownMenuItem className="gap-2" onClick={onTogglePin}>
+            {pinned ? <PinOffIcon /> : <PinIcon />}
+            {pinned ? t("unpinChat") : t("pinChat")}
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            variant="destructive"
+            className="gap-2"
+            onClick={onDelete}
+          >
+            <Trash2Icon />
+            {t("deleteChat")}
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
 
       <ChatRenameDialog
         open={renameOpen}
@@ -161,6 +168,19 @@ function ChatThreadActions({
         onSubmit={submitRename}
       />
     </>
+  )
+}
+
+function ChatThreadActions({
+  showUpgrade,
+  className,
+  ...menuProps
+}: ChatThreadActionsProps) {
+  return (
+    <div className={cn("flex shrink-0 items-center gap-1.5", className)}>
+      {showUpgrade ? <ChatThreadUpgradeButton /> : null}
+      <ChatThreadOptionsMenu {...menuProps} />
+    </div>
   )
 }
 
@@ -179,4 +199,9 @@ function ChatThreadToolbar(props: ChatThreadToolbarProps) {
   )
 }
 
-export { ChatThreadActions, ChatThreadToolbar }
+export {
+  ChatThreadActions,
+  ChatThreadOptionsMenu,
+  ChatThreadToolbar,
+  ChatThreadUpgradeButton,
+}

@@ -25,6 +25,7 @@ import { useAuth } from "@/components/auth/auth-provider"
 import { GoogleGlyph } from "@/components/auth/google-glyph"
 import { useUserAvatarUrl } from "@/hooks/use-user-avatar-url"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
   ContextMenu,
@@ -33,6 +34,13 @@ import {
   ContextMenuSeparator,
   ContextMenuTrigger,
 } from "@/components/ui/context-menu"
+import {
+  chatContextMenuContentClass,
+  chatContextMenuDeleteClass,
+  chatContextMenuIconClass,
+  chatContextMenuItemClass,
+  chatContextMenuSeparatorClass,
+} from "@/components/app-shell/chat-context-menu-styles"
 import { ChatDeskToolsBanner } from "@/components/app-shell/chat-desk-tools-banner"
 import { ChatRenameDialog } from "@/components/app-shell/chat-rename-dialog"
 import {
@@ -68,16 +76,43 @@ const headerIconClass =
 const rowMenuButtonClass =
   "size-8 shrink-0 rounded-full text-muted-foreground hover:bg-muted/60 hover:text-foreground opacity-100 [@media(hover:hover)]:opacity-0 [@media(hover:hover)]:group-hover/item:opacity-100 [@media(hover:hover)]:group-focus-within/item:opacity-100"
 
-const chatOptionsMenuClass =
-  "min-w-[12.5rem] rounded-2xl border border-border/40 bg-popover/95 p-1.5 shadow-[0_10px_40px_-16px_rgba(15,23,42,0.28)] ring-0 backdrop-blur-xl dark:border-border/50"
+function HistoryNewsNav({
+  onOpenNews,
+  isMobileDrawer = false,
+}: {
+  onOpenNews: () => void
+  isMobileDrawer?: boolean
+}) {
+  const t = useTranslations("workspace")
 
-const chatOptionsItemClass =
-  "min-h-10 gap-3 rounded-xl px-3 py-2.5 text-[15px] font-normal focus:bg-muted/70"
-
-const chatOptionsIconClass = "size-[18px] shrink-0 text-muted-foreground"
-
-const chatOptionsDeleteClass =
-  "min-h-10 gap-3 rounded-xl px-3 py-2.5 text-[15px] font-normal text-destructive focus:bg-destructive/10 focus:text-destructive [&_svg]:text-destructive!"
+  return (
+    <Button
+      type="button"
+      variant="ghost"
+      className={cn(
+        "justify-start gap-3 text-sm font-normal shadow-none",
+        isMobileDrawer
+          ? "mb-4 h-10 w-full rounded-lg px-3 text-[15px] hover:bg-muted/45"
+          : "mb-2 h-9 w-full rounded-lg px-3 hover:bg-muted/50"
+      )}
+      onClick={onOpenNews}
+    >
+      <NewspaperIcon
+        className={cn(
+          "shrink-0 text-muted-foreground",
+          isMobileDrawer ? "size-[18px]" : "size-4"
+        )}
+      />
+      <span className="min-w-0 flex-1 truncate text-start">{t("news")}</span>
+      <Badge
+        variant="secondary"
+        className="h-5 shrink-0 px-1.5 text-[10px] font-medium tracking-wide"
+      >
+        {t("desk")}
+      </Badge>
+    </Button>
+  )
+}
 
 type ChatHistorySidebarProps = {
   conversations: StoredConversation[]
@@ -338,16 +373,11 @@ function ChatHistorySidebar({
                 {t("newChat")}
               </Button>
             ) : null}
-            {isMobileDrawer && onOpenNews ? (
-              <Button
-                type="button"
-                variant="ghost"
-                className="mb-4 h-10 w-full justify-start gap-3 rounded-lg px-3 text-[15px] font-normal shadow-none hover:bg-muted/45"
-                onClick={onOpenNews}
-              >
-                <NewspaperIcon className="size-[18px] shrink-0 text-muted-foreground" />
-                {t("news")}
-              </Button>
+            {onOpenNews ? (
+              <HistoryNewsNav
+                onOpenNews={onOpenNews}
+                isMobileDrawer={isMobileDrawer}
+              />
             ) : null}
 
             {conversations.length === 0 ? (
@@ -498,22 +528,22 @@ function ChatConversationOptionsItems({
 
   return (
     <>
-      <Item className={chatOptionsItemClass} onClick={onRename}>
-        <PencilIcon className={chatOptionsIconClass} />
+      <Item className={chatContextMenuItemClass} onClick={onRename}>
+        <PencilIcon className={chatContextMenuIconClass} />
         {t("renameChat")}
       </Item>
-      <Item className={chatOptionsItemClass} onClick={onTogglePin}>
+      <Item className={chatContextMenuItemClass} onClick={onTogglePin}>
         {pinned ? (
-          <PinOffIcon className={chatOptionsIconClass} />
+          <PinOffIcon className={chatContextMenuIconClass} />
         ) : (
-          <PinIcon className={chatOptionsIconClass} />
+          <PinIcon className={chatContextMenuIconClass} />
         )}
         {pinned ? t("unpinChat") : t("pinChat")}
       </Item>
-      <Separator className="my-1.5 bg-border/50" />
+      <Separator className={chatContextMenuSeparatorClass} />
       <Item
         variant="destructive"
-        className={chatOptionsDeleteClass}
+        className={chatContextMenuDeleteClass}
         onClick={onDelete}
       >
         <Trash2Icon className="size-[18px] shrink-0" />
@@ -596,7 +626,7 @@ function ConversationRow({
         <DropdownMenuContent
           align="end"
           sideOffset={8}
-          className={chatOptionsMenuClass}
+          className={chatContextMenuContentClass}
         >
           <ChatConversationOptionsItems
             pinned={pinned}
@@ -613,7 +643,10 @@ function ConversationRow({
   return (
     <ContextMenu>
       <ContextMenuTrigger render={row} />
-      <ContextMenuContent className={chatOptionsMenuClass}>
+      <ContextMenuContent
+        sideOffset={8}
+        className={chatContextMenuContentClass}
+      >
         <ChatConversationOptionsItems
           pinned={pinned}
           onRename={onRename}
@@ -636,6 +669,7 @@ function ChatHistoryRail({
   onTogglePin,
   onNewChat,
   onDock,
+  onOpenNews,
   footer,
   sidebarWidth,
   className,
@@ -662,6 +696,7 @@ function ChatHistoryRail({
         onTogglePin={onTogglePin}
         onNewChat={onNewChat}
         onDock={onDock}
+        onOpenNews={onOpenNews}
         footer={footer}
         className="min-h-0 flex-1"
       />

@@ -17,6 +17,7 @@ const BRACKET_CONFIRM_EVENT = "iris:copilot-bracket-confirm"
 const BRACKET_DISMISS_EVENT = "iris:copilot-bracket-dismiss"
 const TRADE_TRACE_EVENT = "iris:copilot-trade-trace"
 const DISMISS_MOBILE_CHAT_EVENT = "iris:dismiss-mobile-chat"
+const DOCK_CHAT_EVENT = "iris:dock-chat"
 
 export type CopilotChartIndicatorType = "support" | "resistance" | "trendline"
 export type CopilotChartIndicatorMode = "append" | "replace"
@@ -488,6 +489,17 @@ export function subscribeDismissMobileChat(handler: () => void): () => void {
   const onEvent = () => handler()
   window.addEventListener(DISMISS_MOBILE_CHAT_EVENT, onEvent)
   return () => window.removeEventListener(DISMISS_MOBILE_CHAT_EVENT, onEvent)
+}
+
+export function dispatchDockChat() {
+  if (typeof window === "undefined") return
+  window.dispatchEvent(new Event(DOCK_CHAT_EVENT))
+}
+
+export function subscribeDockChat(handler: () => void): () => void {
+  const onEvent = () => handler()
+  window.addEventListener(DOCK_CHAT_EVENT, onEvent)
+  return () => window.removeEventListener(DOCK_CHAT_EVENT, onEvent)
 }
 
 /** Fill the desk order ticket from an IRIS signal — user only confirms Buy/Sell. */

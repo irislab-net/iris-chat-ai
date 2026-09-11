@@ -2,6 +2,7 @@
 
 import * as React from "react"
 
+import { isAppDeskPath } from "@/lib/site"
 import type { WorkspacePageId } from "@/lib/workspace-page-info"
 import { hasSeenWorkspacePageIntro } from "@/lib/workspace-page-intro"
 import {
@@ -17,7 +18,7 @@ export function resolveWorkspaceIntroPage(input: {
   /** Mobile IRIS tab — full-screen chat, not the desktop chat rail. */
   mobileIrisTab: boolean
 }): WorkspacePageId | null {
-  if (input.pathname !== "/app") return null
+  if (!isAppDeskPath(input.pathname)) return null
   if (input.mobileIrisTab) return "iris"
   if (input.workspaceTab === WORKSPACE_TAB_NEWS) return "news"
   return null

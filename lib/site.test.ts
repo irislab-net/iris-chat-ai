@@ -5,6 +5,7 @@ import { CANDLE_INTERVAL_MS } from "@/lib/format"
 import {
   AUTH_SUCCESS_ROBOTS,
   getSiteOrigin,
+  isAppDeskPath,
   PRODUCTION_ORIGIN,
   PUBLIC_INDEXABLE_PATHS,
   ROOT_ROBOTS,
@@ -32,10 +33,16 @@ describe("public SEO site policy (S1/S2)", () => {
     expect(PUBLIC_HOME_REVALIDATE_SECONDS).not.toBe(6 * 60 * 60)
   })
 
+  it("recognizes root and legacy /app as desk paths", () => {
+    expect(isAppDeskPath("/")).toBe(true)
+    expect(isAppDeskPath("/app")).toBe(true)
+    expect(isAppDeskPath("/home")).toBe(false)
+  })
+
   it("lists only real public indexable paths for sitemap IA", () => {
     expect(PUBLIC_INDEXABLE_PATHS).toEqual([
       "/",
-      "/app",
+      "/home",
       "/about",
       "/ai-trading-signals",
       "/privacy",

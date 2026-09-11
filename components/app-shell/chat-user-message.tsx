@@ -3,29 +3,28 @@
 import * as React from "react"
 import { CheckIcon, ChevronDownIcon, CopyIcon, PencilIcon } from "lucide-react"
 
-import { chatTurnActionsClass } from "@/components/app-shell/chat-turn-actions"
+import {
+  chatContextMenuContentClass,
+  chatContextMenuIconClass,
+  chatContextMenuItemClass,
+} from "@/components/app-shell/chat-context-menu-styles"
+import {
+  chatTurnActionsClass,
+  chatUserBubbleClass,
+  chatUserBubbleExpandToggleClass,
+  chatUserBubbleInlineActionClass,
+} from "@/components/app-shell/chat-turn-actions"
 import { Button } from "@/components/ui/button"
 import {
   ContextMenu,
   ContextMenuContent,
   ContextMenuItem,
-  ContextMenuShortcut,
   ContextMenuTrigger,
 } from "@/components/ui/context-menu"
 import { trackChatMessageCopied } from "@/lib/analytics"
 import { cn } from "@/lib/utils"
 
 const COLLAPSE_CHAR_LIMIT = 360
-
-/** Dark bubble in light mode; soft elevated surface in dark mode (not pure white). */
-const userBubbleClass =
-  "rounded-xl border border-foreground/15 bg-foreground px-4 py-3 text-[14px] leading-[1.55] text-background dark:border-border/50 dark:bg-secondary dark:text-foreground sm:text-[13px] [&::selection]:bg-background/25 dark:[&::selection]:bg-foreground/15"
-
-const userExpandToggleClass =
-  "h-auto min-h-0 w-auto gap-0.5 px-1 py-0.5 text-xs font-normal text-background/60 underline-offset-2 hover:bg-background/10 hover:text-background hover:underline dark:text-muted-foreground dark:hover:bg-foreground/5 dark:hover:text-foreground"
-
-const userTurnActionButtonClass =
-  "size-7 text-background/55 hover:bg-background/10 hover:text-background dark:text-muted-foreground dark:hover:bg-foreground/5 dark:hover:text-foreground"
 
 type ChatUserTurnProps = {
   messageId: string
@@ -90,7 +89,7 @@ function ChatUserTurn({
               dir="auto"
               className={cn(
                 "chat-bidi w-full min-w-0 cursor-text select-text wrap-anywhere",
-                userBubbleClass
+                chatUserBubbleClass
               )}
             >
               <span className="block min-w-0 whitespace-pre-wrap wrap-anywhere">
@@ -107,7 +106,7 @@ function ChatUserTurn({
                     type="button"
                     variant="ghost"
                     size="xs"
-                    className={userExpandToggleClass}
+                    className={chatUserBubbleExpandToggleClass}
                     onClick={() => setExpanded((value) => !value)}
                   >
                     {expanded ? "Show less" : "Show more"}
@@ -126,7 +125,7 @@ function ChatUserTurn({
                     type="button"
                     variant="ghost"
                     size="icon-sm"
-                    className={userTurnActionButtonClass}
+                    className={chatUserBubbleInlineActionClass}
                     aria-label={copied ? "Copied message" : "Copy message"}
                     title={copied ? "Copied" : "Copy"}
                     disabled={disabled || !trimmed}
@@ -143,7 +142,7 @@ function ChatUserTurn({
                       type="button"
                       variant="ghost"
                       size="icon-sm"
-                      className={userTurnActionButtonClass}
+                      className={chatUserBubbleInlineActionClass}
                       aria-label="Edit message"
                       title="Edit"
                       disabled={disabled}
@@ -158,17 +157,26 @@ function ChatUserTurn({
           </div>
         }
       />
-      <ContextMenuContent className="min-w-40">
+      <ContextMenuContent
+        sideOffset={8}
+        className={chatContextMenuContentClass}
+      >
         <ContextMenuItem
+          className={chatContextMenuItemClass}
           disabled={disabled || !trimmed}
           onClick={() => void copyMessage(false)}
         >
-          Copy
-          <ContextMenuShortcut>⌘C</ContextMenuShortcut>
+          <CopyIcon className={chatContextMenuIconClass} />
+          Copy text
         </ContextMenuItem>
         {onEdit ? (
-          <ContextMenuItem disabled={disabled} onClick={onEdit}>
-            Edit message
+          <ContextMenuItem
+            className={chatContextMenuItemClass}
+            disabled={disabled}
+            onClick={onEdit}
+          >
+            <PencilIcon className={chatContextMenuIconClass} />
+            Edit
           </ContextMenuItem>
         ) : null}
       </ContextMenuContent>

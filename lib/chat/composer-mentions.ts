@@ -1,5 +1,6 @@
 /** @-mentions and tool tags in the IRIS chat composer. */
 
+import { isLowSignalUserMessage } from "@/lib/co-pilot-recovery"
 import { buildActionSignalPrompt } from "@/lib/iris-paper-trade/signal-prompts"
 
 export type IrisMentionTool = "signal"
@@ -76,6 +77,7 @@ export function filterMentionOptions(query: string): IrisMentionOption[] {
 export function expandComposerDraft(input: ComposerDraft): string {
   const body = input.text.trim()
   if (input.tool === "signal") {
+    if (isLowSignalUserMessage(body)) return body
     return buildSignalPrompt(body)
   }
   return body
@@ -88,7 +90,9 @@ export function expandComposerMentions(text: string): string {
 
   const inline = trimmed.match(/@signal\s+([^\s@]+)/u)
   if (inline) {
-    return buildSignalPrompt(inline[1] ?? "")
+    const asset = inline[1] ?? ""
+    if (isLowSignalUserMessage(asset)) return trimmed
+    return buildSignalPrompt(asset)
   }
 
   return trimmed

@@ -104,15 +104,15 @@ export function absoluteUrl(path = "/") {
 export const INDEXABLE_ROUTES = [
   {
     path: "/",
-    changeFrequency: "weekly" as const,
+    changeFrequency: "hourly" as const,
     priority: 1,
-    images: ["/home-bg-header.webp", "/Logo.png", "/opengraph-image"] as const,
+    images: [ORGANIZATION_LOGO.path, "/Logo.png"] as const,
   },
   {
-    path: "/app",
-    changeFrequency: "hourly" as const,
+    path: "/home",
+    changeFrequency: "weekly" as const,
     priority: 0.95,
-    images: [ORGANIZATION_LOGO.path, "/Logo.png"] as const,
+    images: ["/home-bg-header.webp", "/Logo.png", "/opengraph-image"] as const,
   },
   {
     path: "/about",
@@ -271,8 +271,8 @@ export function llmsTxt() {
     "",
     "## Pages",
     "",
-    `- Landing: ${SITE_URL}/`,
-    `- Market desk (Launch App): ${absoluteUrl("/app")}`,
+    `- Landing: ${absoluteUrl("/home")}`,
+    `- Market desk (Launch App): ${absoluteUrl("/")}`,
     `- AI trading signals: ${absoluteUrl(AI_SIGNALS_PATH)}`,
     `- About: ${absoluteUrl("/about")}`,
     `- Terms: ${absoluteUrl("/terms")}`,

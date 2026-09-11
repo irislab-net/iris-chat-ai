@@ -25,8 +25,9 @@ import {
   IrisMark,
 } from "@/components/app-shell/chat-message"
 import {
-  ChatThreadActions,
+  ChatThreadOptionsMenu,
   ChatThreadToolbar,
+  ChatThreadUpgradeButton,
 } from "@/components/app-shell/chat-thread-toolbar"
 import { ChatUserTurn } from "@/components/app-shell/chat-user-message"
 import { formatConversationTranscript } from "@/lib/chat/transcript"
@@ -37,7 +38,6 @@ import { useAuth } from "@/components/auth/auth-provider"
 import { GoogleGlyph } from "@/components/auth/google-glyph"
 import { useIsDesktop } from "@/hooks/use-media-query"
 import { useShellSidebarLayout } from "@/hooks/use-shell-sidebar-layout"
-import { ChatActionCard } from "@/components/app-shell/chat-action-card"
 import { useChatClientContext, useDeskContextSnapshot } from "@/hooks/use-chat-client-context"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
@@ -46,9 +46,8 @@ import {
   executeChatClientActions,
 } from "@/lib/api/chat"
 import {
-  dispatchCopilotConfirmBracketApply,
-  dispatchCopilotDismissBracketApply,
   dispatchCopilotGhostTrade,
+  dispatchDockChat,
   subscribeCopilotChatPrefill,
 } from "@/lib/paper-trading/copilot-client"
 import { submitChatMessageFeedback } from "@/lib/api/chat-feedback"
@@ -59,7 +58,7 @@ import {
   syncChatHistoryFromServer,
 } from "@/lib/chat-history-sync"
 import { displayPlanName } from "@/lib/billing/catalog"
-import { UPGRADE_PATH } from "@/lib/site"
+import { isAppDeskPath, UPGRADE_PATH } from "@/lib/site"
 import {
   WORKSPACE_TAB_NEWS,
   workspaceTabHref,
@@ -80,6 +79,7 @@ import {
   buildFailedAssistantTurn,
   getRetryUserMessage,
   isAbortError,
+  isLowSignalUserMessage,
   prepareMessagesForRetry,
   removeEmptyAssistantTurn,
   COPILOT_CREDIT_MESSAGE,
@@ -112,7 +112,7 @@ import { requestOpenPaperTrading } from "@/lib/paper-trading/open-request"
 import { SESSION_RESET_EVENT } from "@/lib/session-reset"
 import type { ChatDisplayMode } from "@/lib/shell-layout-prefs"
 import { SHELL_SIDEBAR_COMPACT_FALLBACK } from "@/lib/shell-sidebar-layout"
-import { resolvePaperTicketFromChatTurn, resolvePaperTicketForAssistantMessage } from "@/lib/chat/parse-trade-setup"
+import { resolvePaperTicketFromChatTurn } from "@/lib/chat/parse-trade-setup"
 import { isPaperTradeIntent } from "@/lib/iris-paper-trade/intent"
 import { IRIS_SAMPLE_PROMPTS } from "@/lib/iris-paper-trade/types"
 import { cn } from "@/lib/utils"
@@ -285,7 +285,7 @@ function ChatAside({
   const shellSidebars = useShellSidebarLayout() ?? SHELL_SIDEBAR_COMPACT_FALLBACK
   const ticketSlot = useTicketSlot()
   const [deskWaitTimedOut, setDeskWaitTimedOut] = React.useState(false)
-  const waitForDesk = pathname === "/app" && isDesktop === true
+  const waitForDesk = isAppDeskPath(pathname) && isDesktop === true
   React.useEffect(() => {
     if (!waitForDesk) return
     const id = window.setTimeout(() => setDeskWaitTimedOut(true), 4000)
@@ -301,6 +301,7 @@ function ChatAside({
   } = useAuth()
   const showDeskSkeleton =
     waitForDesk &&
+    displayMode === "docked" &&
     !authLoading &&
     !ticketSlot?.occupied &&
     !deskWaitTimedOut
@@ -361,6 +362,18 @@ function ChatAside({
   const stickToBottomRef = React.useRef(true)
   const [showScrollDown, setShowScrollDown] = React.useState(false)
   const composerRef = React.useRef<HTMLTextAreaElement>(null)
+  const focusComposerOnDesktop = React.useCallback(() => {
+    if (isDesktop !== true) return
+    queueMicrotask(() => {
+      const el = composerRef.current
+      if (!el) return
+      try {
+        el.focus({ preventScroll: true })
+      } catch {
+        el.focus()
+      }
+    })
+  }, [isDesktop])
   const [draft, setDraft] = React.useState("")
   const [effort, setEffort] = React.useState<ChatEffort>(DEFAULT_CHAT_EFFORT)
   React.useEffect(() => {
@@ -583,18 +596,10 @@ function ChatAside({
     return subscribeCopilotChatPrefill((input) => {
       setDraft(input.text)
       if (input.focus !== false) {
-        queueMicrotask(() => {
-          const el = composerRef.current
-          if (!el) return
-          try {
-            el.focus({ preventScroll: true })
-          } catch {
-            el.focus()
-          }
-        })
+        focusComposerOnDesktop()
       }
     })
-  }, [])
+  }, [focusComposerOnDesktop])
 
   React.useEffect(() => {
     function onSessionReset() {
@@ -782,7 +787,7 @@ function ChatAside({
 
     const controller = new AbortController()
     abortRef.current = controller
-    const partialContent = ""
+    let partialContent = ""
 
     if (isPaperTradeIntent(userMessage)) {
       try {
@@ -896,7 +901,7 @@ function ChatAside({
               m.id === assistantId
                 ? {
                     ...m,
-                    content: failed.content,
+                    content: failed.content || m.content,
                     error: true as const,
                   errorText: coPilotUserFacingError(error),
                   action: coPilotFailureAction(error),
@@ -1056,6 +1061,7 @@ function ChatAside({
         await typewriterReveal(
           fullText,
           (partial) => {
+            partialContent = partial
             setMessages((prev) =>
               prev.map((m) =>
                 m.id === assistantId
@@ -1064,6 +1070,7 @@ function ChatAside({
                       content: partial,
                       error: false,
                       action: undefined,
+                      errorText: undefined,
                     }
                   : m
               )
@@ -1119,7 +1126,7 @@ function ChatAside({
             m.id === assistantId
               ? {
                   ...m,
-                  content: failed.content,
+                  content: failed.content || m.content,
                   error: true as const,
                   errorText: coPilotUserFacingError(error),
                   action: coPilotFailureAction(error),
@@ -1168,17 +1175,19 @@ function ChatAside({
     })
     setDraft(target.content)
 
-    queueMicrotask(() => {
-      const el = composerRef.current
-      if (!el) return
-      try {
-        el.focus({ preventScroll: true })
-      } catch {
-        el.focus()
-      }
-      const end = target.content.length
-      el.setSelectionRange(end, end)
-    })
+    if (isDesktop === true) {
+      queueMicrotask(() => {
+        const el = composerRef.current
+        if (!el) return
+        try {
+          el.focus({ preventScroll: true })
+        } catch {
+          el.focus()
+        }
+        const end = target.content.length
+        el.setSelectionRange(end, end)
+      })
+    }
   }
 
   function appendGuestLoginRequiredTurn(
@@ -1304,6 +1313,26 @@ function ChatAside({
       message_length: userMessage.length,
     })
 
+    if (isLowSignalUserMessage(userMessage)) {
+      const assistantId = crypto.randomUUID()
+      const reply = t("lowSignalUserReply")
+      const nextHistory: CoPilotHistoryMessage[] = [
+        ...history,
+        { role: "user", content: userMessage },
+        { role: "assistant", content: reply },
+      ]
+      setHistory(nextHistory)
+      setMessagesAndPersist(
+        (prev) => [
+          ...prev,
+          { id: crypto.randomUUID(), role: "user", content: userMessage },
+          { id: assistantId, role: "assistant", content: reply },
+        ],
+        { id: conversationId, history: nextHistory, ownerId: chatOwnerId }
+      )
+      return
+    }
+
     const assistantId = crypto.randomUUID()
     const historySnapshot = history
     const activeId = conversationId
@@ -1426,6 +1455,7 @@ function ChatAside({
   function openNewsFromChat() {
     setHistoryOpen(false)
     onClose?.()
+    dispatchDockChat()
     router.replace(workspaceTabHref(WORKSPACE_TAB_NEWS), { scroll: false })
   }
 
@@ -1444,13 +1474,7 @@ function ChatAside({
     return (
       <ChatAsideSkeleton
         className={className}
-        variant={
-          onClose
-            ? "mobile"
-            : displayMode === "focused"
-              ? "focused"
-              : "docked"
-        }
+        variant={onClose ? "mobile" : "docked"}
         sidebarWidth={shellSidebars.chat.minSize}
         isAuthenticated={isAuthenticated}
       />
@@ -1463,7 +1487,7 @@ function ChatAside({
       className={cn(
         "relative flex h-full min-h-0 w-full overflow-hidden",
         isMobileOverlay
-          ? "flex-col bg-linear-to-b from-background via-background to-sky-100/55 text-foreground dark:to-muted/10"
+          ? "flex-col bg-linear-to-b from-background from-20% via-sky-50/35 to-sky-100/70 text-foreground dark:from-background dark:via-background dark:to-muted/10"
           : isFocusedLayout
             ? "flex-row bg-sidebar text-sidebar-foreground"
             : "flex-col bg-sidebar text-sidebar-foreground",
@@ -1488,6 +1512,7 @@ function ChatAside({
               ? () => onDisplayModeChange?.("docked")
               : undefined
           }
+          onOpenNews={openNewsFromChat}
         />
       ) : null}
 
@@ -1568,18 +1593,9 @@ function ChatAside({
                   : t("copilotGuestTry")}
           </span>
         </div>
-        {showThreadToolbarInHeader ? (
-          <ChatThreadActions
-            title={threadTitle}
-            pinned={Boolean(activeConversation?.pinned)}
-            disabled={sending}
-            showUpgrade={!isMobileOverlay && !isProUser}
-            onShare={shareCurrentConversation}
-            onRename={(title) => renameConversation(conversationId, title)}
-            onTogglePin={() => toggleConversationPin(conversationId)}
-            onDelete={deleteCurrentConversation}
-          />
-        ) : !isMobileOverlay && !isProUser ? (
+        {showThreadToolbarInHeader && !isMobileOverlay && !isProUser ? (
+          <ChatThreadUpgradeButton />
+        ) : !showThreadToolbarInHeader && !isMobileOverlay && !isProUser ? (
           <Button
             size="xs"
             variant="outline"
@@ -1615,6 +1631,17 @@ function ChatAside({
           >
             <MessageSquarePlusIcon />
           </ChatHeaderIconButton>
+        ) : null}
+        {showThreadToolbarInHeader ? (
+          <ChatThreadOptionsMenu
+            title={threadTitle}
+            pinned={Boolean(activeConversation?.pinned)}
+            disabled={sending}
+            onShare={shareCurrentConversation}
+            onRename={(title) => renameConversation(conversationId, title)}
+            onTogglePin={() => toggleConversationPin(conversationId)}
+            onDelete={deleteCurrentConversation}
+          />
         ) : null}
       </header>
       ) : null}
@@ -1693,7 +1720,7 @@ function ChatAside({
                         disabled={sending}
                         onEdit={(text) => {
                           setDraft(text)
-                          queueMicrotask(() => composerRef.current?.focus())
+                          focusComposerOnDesktop()
                         }}
                       />
                     ) : null}
@@ -1777,65 +1804,17 @@ function ChatAside({
                       disabled={sending}
                       onSelect={(text) => {
                         setDraft(text)
-                        queueMicrotask(() => composerRef.current?.focus())
+                        focusComposerOnDesktop()
                       }}
                     />
                   ) : null}
                 </>
               )
-              const resolvedPaperTicket = resolvePaperTicketForAssistantMessage({
-                content: message.content,
-                paperTicket: message.paperTicket,
-              })
-
               const hasAction =
                 message.action === "connect" ||
                 message.action === "retry" ||
                 message.action === "view_paper_trade" ||
-                Boolean(message.suggestedPrompts?.length) ||
-                Boolean(resolvedPaperTicket) ||
-                Boolean(message.pendingBracket)
-
-              const actionCard =
-                resolvedPaperTicket || message.pendingBracket ? (
-                  <ChatActionCard
-                    paperTicket={resolvedPaperTicket ?? undefined}
-                    pendingBracket={message.pendingBracket}
-                    disabled={sending}
-                    onApplyBracket={(requestId) => {
-                      dispatchCopilotConfirmBracketApply(requestId)
-                      setMessagesAndPersist(
-                        (prev) =>
-                          prev.map((m) =>
-                            m.id === message.id
-                              ? { ...m, pendingBracket: undefined }
-                              : m
-                          ),
-                        {
-                          id: conversationId,
-                          history,
-                          ownerId: chatOwnerId,
-                        }
-                      )
-                    }}
-                    onDismissBracket={(requestId) => {
-                      dispatchCopilotDismissBracketApply(requestId)
-                      setMessagesAndPersist(
-                        (prev) =>
-                          prev.map((m) =>
-                            m.id === message.id
-                              ? { ...m, pendingBracket: undefined }
-                              : m
-                          ),
-                        {
-                          id: conversationId,
-                          history,
-                          ownerId: chatOwnerId,
-                        }
-                      )
-                    }}
-                  />
-                ) : null
+                Boolean(message.suggestedPrompts?.length)
 
               if (message.role === "user") {
                 return (
@@ -1908,7 +1887,6 @@ function ChatAside({
                     }
                   >
                     {errorNote}
-                    {actionCard}
                   </ChatAssistantTurn>
                 </div>
               )

@@ -31,7 +31,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { displayPlanName } from "@/lib/billing/catalog"
-import { APP_NEWS_PATH, UPGRADE_PATH } from "@/lib/site"
+import { APP_NEWS_PATH, isAppDeskPath, UPGRADE_PATH } from "@/lib/site"
 import { cn } from "@/lib/utils"
 import {
   userAccountLabel,
@@ -118,7 +118,7 @@ type WebsiteToolbarProps = {
 function WorkspaceNavLabel() {
   const t = useTranslations("workspace")
   const pathname = usePathname()
-  if (pathname !== "/app") return null
+  if (!isAppDeskPath(pathname)) return null
 
   return (
     <div className="hidden items-center gap-1.5 text-[13px] font-semibold text-foreground lg:flex">
@@ -175,7 +175,7 @@ function WebsiteToolbar({
           aria-label="IRIS Chat AI news"
           className={cn(
             "shrink-0 rounded-md outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50",
-            pathname === "/app" && "lg:hidden",
+            isAppDeskPath(pathname) && "lg:hidden",
             onCloseToChat && "hidden lg:block"
           )}
         >

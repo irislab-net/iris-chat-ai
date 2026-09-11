@@ -12,6 +12,7 @@ import {
   getRetryUserMessage,
   isAbortError,
   isGuestTrialExhaustedError,
+  isLowSignalUserMessage,
   prepareMessagesForRetry,
   removeEmptyAssistantTurn,
 } from "@/lib/co-pilot-recovery"
@@ -169,5 +170,24 @@ describe("co-pilot recovery helpers", () => {
     ]
     const cleaned = sanitizeMessages(messages)
     expect(cleaned.map((m) => m.id)).toEqual(["u1", "fail", "partial-fail"])
+  })
+
+  it("flags digit-only and punctuation-only input as low signal", () => {
+    expect(isLowSignalUserMessage("12312434546")).toBe(true)
+    expect(isLowSignalUserMessage("!!!")).toBe(true)
+    expect(isLowSignalUserMessage("ETH outlook")).toBe(false)
+    expect(isLowSignalUserMessage("Should I short?")).toBe(false)
+  })
+
+  it("preserves fallback content on failed assistant turns", () => {
+    const failed = buildFailedAssistantTurn({
+      assistantId: "a1",
+      partialContent: "",
+      fallbackContent: "Partial trade setup…",
+      userMessage: "123",
+      error: new Error("HTTP 502"),
+    })
+    expect(failed.content).toBe("Partial trade setup…")
+    expect(failed.error).toBe(true)
   })
 })

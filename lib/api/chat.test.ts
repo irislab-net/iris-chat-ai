@@ -51,7 +51,7 @@ describe("chat API adapters", () => {
     expect(
       buildChatClientContext({
         user: { role: "user", tier: "free" } as never,
-        pathname: "/app",
+        pathname: "/",
         workspaceTab: "news",
       })
     ).toEqual({
@@ -112,7 +112,7 @@ describe("chat API adapters", () => {
         },
       }).usage?.remaining
     ).toBe(10)
-    expect(pathForChatPage("trading_chart")).toBe("/app?tab=news")
+    expect(pathForChatPage("trading_chart")).toBe("/?tab=news")
     const navigate = vi.fn()
     executeChatClientActions(
       [
@@ -124,6 +124,6 @@ describe("chat API adapters", () => {
       ],
       { navigate, openDesk: vi.fn(), focusDeskPane: vi.fn() }
     )
-    expect(navigate).toHaveBeenCalledWith("/app?tab=news")
+    expect(navigate).toHaveBeenCalledWith("/?tab=news")
   })
 })

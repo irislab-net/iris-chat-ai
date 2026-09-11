@@ -28,18 +28,26 @@ export const TERMS_DESCRIPTION =
 export const SOCIAL_X_URL = "https://x.com/TheIrisLab"
 
 /** Authenticated / public market desk (Launch App target). */
-export const APP_PATH = "/app"
+export const APP_PATH = "/"
+
+/** Marketing landing page. */
+export const LANDING_PATH = "/home"
 
 /** Launch App lands on the news tab (canonical in-app entry). */
 export const APP_NEWS_PATH = `${APP_PATH}?tab=news`
+
+/** Desk routes — root chat app and legacy `/app` redirect target. */
+export function isAppDeskPath(pathname: string | null | undefined): boolean {
+  return pathname === APP_PATH || pathname === "/app"
+}
 
 /** Full-screen plan picker → crypto invoice checkout. */
 export const UPGRADE_PATH = "/upgrade"
 
 /** Public indexable paths (sitemap + IA) — keep in sync with INDEXABLE_ROUTES. */
 export const PUBLIC_INDEXABLE_PATHS = [
-  "/",
   APP_PATH,
+  LANDING_PATH,
   "/about",
   "/ai-trading-signals",
   "/privacy",

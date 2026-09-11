@@ -15,6 +15,14 @@ import {
 import { useTranslations } from "next-intl"
 import { useTheme } from "@wrksz/themes/client/use-theme"
 
+import {
+  chatContextMenuContentClass,
+  chatContextMenuDeleteClass,
+  chatContextMenuHeaderClass,
+  chatContextMenuIconClass,
+  chatContextMenuItemClass,
+  chatContextMenuSeparatorClass,
+} from "@/components/app-shell/chat-context-menu-styles"
 import { useAuth } from "@/components/auth/auth-provider"
 import { GoogleGlyph } from "@/components/auth/google-glyph"
 import { useUserAvatarUrl } from "@/hooks/use-user-avatar-url"
@@ -187,17 +195,21 @@ function ChatMobileHeader({
             >
               <AccountAvatar user={user} avatarUrl={avatarUrl} />
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="min-w-52">
+            <DropdownMenuContent
+              align="end"
+              sideOffset={8}
+              className={chatContextMenuContentClass}
+            >
               <DropdownMenuGroup>
-                <DropdownMenuLabel className="font-normal">
-                  <div className="flex items-center gap-2.5">
+                <DropdownMenuLabel className={chatContextMenuHeaderClass}>
+                  <div className="flex items-center gap-3">
                     <AccountAvatar user={user} avatarUrl={avatarUrl} />
                     <div className="min-w-0">
-                      <p className="truncate text-sm font-medium">
+                      <p className="truncate text-[15px] font-medium leading-tight">
                         {userAccountLabel(user)}
                       </p>
                       {userAccountSubline(user) ? (
-                        <p className="truncate text-xs text-muted-foreground">
+                        <p className="truncate text-[13px] text-muted-foreground">
                           {userAccountSubline(user)}
                         </p>
                       ) : null}
@@ -207,40 +219,43 @@ function ChatMobileHeader({
               </DropdownMenuGroup>
               {!isProUser ? (
                 <>
-                  <DropdownMenuSeparator />
+                  <DropdownMenuSeparator className={chatContextMenuSeparatorClass} />
                   <DropdownMenuItem
-                    className="gap-2"
+                    className={chatContextMenuItemClass}
                     nativeButton={false}
                     render={<Link href={UPGRADE_PATH} />}
                   >
-                    <SparklesIcon className="size-4" />
+                    <SparklesIcon className={chatContextMenuIconClass} />
                     {t("upgradeToPlus")}
                   </DropdownMenuItem>
                 </>
               ) : null}
-              <DropdownMenuSeparator />
-              <DropdownMenuItem className="gap-2" onClick={onOpenNews}>
-                <NewspaperIcon className="size-4" />
+              <DropdownMenuSeparator className={chatContextMenuSeparatorClass} />
+              <DropdownMenuItem
+                className={chatContextMenuItemClass}
+                onClick={onOpenNews}
+              >
+                <NewspaperIcon className={chatContextMenuIconClass} />
                 {t("news")}
               </DropdownMenuItem>
               <DropdownMenuItem
-                className="gap-2"
+                className={chatContextMenuItemClass}
                 onClick={() =>
                   setTheme(resolvedTheme === "dark" ? "light" : "dark")
                 }
               >
-                <EclipseIcon className="size-4" />
+                <EclipseIcon className={chatContextMenuIconClass} />
                 {resolvedTheme === "dark"
                   ? common("lightMode")
                   : common("darkMode")}
               </DropdownMenuItem>
-              <DropdownMenuSeparator />
+              <DropdownMenuSeparator className={chatContextMenuSeparatorClass} />
               <DropdownMenuItem
                 variant="destructive"
-                className="gap-2"
+                className={chatContextMenuDeleteClass}
                 onClick={() => void logout()}
               >
-                <LogOutIcon className="size-4" />
+                <LogOutIcon className="size-[18px] shrink-0" />
                 {t("logOut")}
               </DropdownMenuItem>
             </DropdownMenuContent>

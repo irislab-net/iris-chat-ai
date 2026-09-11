@@ -21,6 +21,7 @@ import {
   parseCopilotOrderPrefillArgs,
 } from "@/lib/paper-trading/copilot-client"
 import { requestDeskSymbolChange } from "@/lib/paper-trading/desk-symbol"
+import { APP_PATH, isAppDeskPath } from "@/lib/site"
 import { requestOpenPaperTrading } from "@/lib/paper-trading/open-request"
 import {
   WORKSPACE_TAB_NEWS,
@@ -81,7 +82,7 @@ export function resolveChatActivePage(input: {
   pathname: string
   workspaceTab?: WorkspaceTab | null
 }): ChatClientActivePage {
-  if (input.pathname !== "/app") return "trading_chart"
+  if (!isAppDeskPath(input.pathname)) return "trading_chart"
   return "trading_chart"
 }
 
@@ -137,7 +138,7 @@ export function buildChatClientContext(input: {
 
   return {
     active_page: resolveChatActivePage({
-      pathname: input.pathname ?? "/app",
+      pathname: input.pathname ?? APP_PATH,
       workspaceTab: input.workspaceTab,
     }),
     active_symbol: toChatApiSymbol(desk?.symbol ?? input.symbol),

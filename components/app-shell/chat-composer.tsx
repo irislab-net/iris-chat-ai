@@ -75,6 +75,10 @@ function ChatComposer({
   const textDir = localeDirection(useLocale())
   const isDesktop = useIsDesktop()
   const isMobile = isDesktop === false
+  const isFloating = layout === "floating"
+  const deferMobileKeyboard = isFloating && isDesktop !== true
+  const [userUnlockedKeyboard, setUserUnlockedKeyboard] = React.useState(false)
+  const mobileKeyboardReady = !deferMobileKeyboard || userUnlockedKeyboard
   const [uncontrolled, setUncontrolled] = React.useState("")
   const [activeTool, setActiveTool] = React.useState<IrisMentionTool | null>(null)
   const [mentionIndex, setMentionIndex] = React.useState(0)
@@ -83,7 +87,6 @@ function ChatComposer({
   const isControlled = valueProp !== undefined
   const value = isControlled ? valueProp : uncontrolled
   const canSend = !disabled && value.trim().length > 0
-  const isFloating = layout === "floating"
   const textareaNodeRef = React.useMemo(
     () => mergeRefs(localRef, textareaRef),
     [textareaRef]
@@ -106,15 +109,22 @@ function ChatComposer({
     (options?: { force?: boolean }) => {
       const el = localRef.current
       if (!el) return
-      if (isMobile && !options?.force) return
+      if (isDesktop !== true && !options?.force) return
+      if (deferMobileKeyboard && !mobileKeyboardReady && !options?.force) return
       try {
         el.focus({ preventScroll: true })
       } catch {
         el.focus()
       }
     },
-    [isMobile]
+    [deferMobileKeyboard, isDesktop, mobileKeyboardReady]
   )
+
+  const enableMobileKeyboard = React.useCallback(() => {
+    if (!deferMobileKeyboard) return
+    setUserUnlockedKeyboard(true)
+    queueMicrotask(() => focusComposer({ force: true }))
+  }, [deferMobileKeyboard, focusComposer])
 
   function syncMentionIndex(nextValue: string, selectionStart: number) {
     if (activeTool) return
@@ -172,7 +182,7 @@ function ChatComposer({
       })
     }
     setActiveTool(tool)
-    if (!isMobile) {
+    if (isDesktop === true) {
       queueMicrotask(() => focusComposer())
     }
   }
@@ -245,7 +255,13 @@ function ChatComposer({
     const target = event.target
     if (!(target instanceof HTMLElement)) return
     if (target.closest("button, [role='menu'], [data-mention-item]")) return
-    localRef.current?.focus()
+    if (deferMobileKeyboard && !mobileKeyboardReady) {
+      enableMobileKeyboard()
+      return
+    }
+    if (isDesktop === true || mobileKeyboardReady) {
+      localRef.current?.focus()
+    }
   }
 
   return (
@@ -254,7 +270,7 @@ function ChatComposer({
       className={cn(
         "relative shrink-0",
         isFloating
-          ? "px-4 pt-3 pb-[max(1rem,env(safe-area-inset-bottom,0px))]"
+          ? "bg-linear-to-t from-sky-100/50 via-background/70 to-transparent px-4 pt-3 pb-[max(1rem,env(safe-area-inset-bottom,0px))] backdrop-blur-[2px] dark:from-muted/20 dark:via-transparent dark:to-transparent dark:backdrop-blur-none"
           : "bg-linear-to-t from-sidebar via-sidebar to-sidebar/80 px-3 pt-3 pb-[max(0.625rem,env(safe-area-inset-bottom))]",
         className
       )}
@@ -308,10 +324,10 @@ function ChatComposer({
           "cursor-text transition-[background-color,box-shadow,border-color]",
           isFloating
             ? cn(
-                "flex min-h-14 items-center gap-1 rounded-full px-2.5",
-                "border border-sky-200/50 bg-background/88 shadow-[0_4px_24px_-10px_rgba(59,130,246,0.2)] backdrop-blur-md",
-                "focus-within:border-sky-200/70 focus-within:bg-background/95 focus-within:shadow-[0_6px_28px_-8px_rgba(59,130,246,0.24)]",
-                "dark:border-border/20 dark:bg-muted/25 dark:shadow-none dark:backdrop-blur-none",
+                "flex min-h-16 items-center gap-1.5 rounded-full px-3",
+                "border border-border/35 bg-background shadow-[0_2px_16px_-6px_rgba(15,23,42,0.08)]",
+                "focus-within:border-border/50 focus-within:shadow-[0_4px_24px_-8px_rgba(15,23,42,0.12)]",
+                "dark:border-border/20 dark:bg-muted/25 dark:shadow-none",
                 "dark:focus-within:border-border/45 dark:focus-within:bg-muted/35 dark:focus-within:shadow-none"
               )
             : cn(
@@ -323,6 +339,16 @@ function ChatComposer({
               )
         )}
         onClick={focusField}
+        onPointerDown={(event) => {
+          if (!deferMobileKeyboard || mobileKeyboardReady) return
+          if (
+            event.target instanceof HTMLElement &&
+            event.target.closest("button, [role='menu'], [data-mention-item]")
+          ) {
+            return
+          }
+          enableMobileKeyboard()
+        }}
       >
         {isFloating ? (
           <DropdownMenu modal={false}>
@@ -335,7 +361,7 @@ function ChatComposer({
                   aria-label={t("composerToolsMenu")}
                   title={t("composerToolsMenu")}
                   disabled={disabled}
-                  className="size-10 shrink-0 rounded-full text-muted-foreground hover:bg-sky-50/80 hover:text-foreground dark:hover:bg-muted/50"
+                  className="size-11 shrink-0 rounded-full text-muted-foreground hover:bg-muted/60 hover:text-foreground dark:hover:bg-muted/50"
                 />
               }
             >
@@ -408,40 +434,41 @@ function ChatComposer({
             }
             rows={1}
             disabled={disabled}
+            readOnly={deferMobileKeyboard && !mobileKeyboardReady}
+            enterKeyHint="send"
+            onFocus={(event) => {
+              if (deferMobileKeyboard && !mobileKeyboardReady) {
+                event.currentTarget.blur()
+              }
+            }}
             dir={textDir}
             className={cn(
               "chat-bidi min-w-[8rem] flex-1 field-sizing-content resize-none rounded-none border-0 bg-transparent p-0 text-start shadow-none focus-visible:border-transparent focus-visible:ring-0 dark:bg-transparent",
               isFloating
-                ? "min-h-10 py-2.5 text-[16px] leading-6 placeholder:text-muted-foreground/65"
+                ? "min-h-11 py-3 text-[16px] leading-6 placeholder:text-muted-foreground/65"
                 : "min-h-6 text-[16px] leading-6 sm:text-[14px] sm:leading-[1.45]"
             )}
           />
         </div>
         {isFloating ? (
-          <>
-            <div
-              className="mx-0.5 h-7 w-px shrink-0 bg-sky-200/75 dark:bg-border/50"
-              aria-hidden
-            />
-            <div className="flex shrink-0 items-center pe-0.5">
-              <Button
-                type="submit"
-                size="icon-sm"
-                variant={canSend ? "default" : "ghost"}
-                aria-label="Send message"
-                title="Send · Enter"
-                disabled={!canSend}
-                className={cn(
-                  "size-10 rounded-full transition-transform",
-                  !canSend &&
-                    "text-muted-foreground hover:bg-sky-50/80 dark:hover:bg-muted/50",
-                  canSend && "shadow-sm"
-                )}
-              >
-                <ArrowUpIcon className="size-[18px]" />
-              </Button>
-            </div>
-          </>
+          <div className="flex shrink-0 items-center pe-0.5">
+            <Button
+              type="submit"
+              size="icon-sm"
+              variant={canSend ? "default" : "ghost"}
+              aria-label="Send message"
+              title="Send · Enter"
+              disabled={!canSend}
+              className={cn(
+                "size-11 rounded-full transition-transform",
+                !canSend &&
+                  "text-muted-foreground hover:bg-muted/60 dark:hover:bg-muted/50",
+                canSend && "shadow-sm"
+              )}
+            >
+              <ArrowUpIcon className="size-[18px]" />
+            </Button>
+          </div>
         ) : null}
         {!isFloating ? (
         <div className="[grid-area:leading] flex items-center gap-0.5 px-0.5 pb-0.5">

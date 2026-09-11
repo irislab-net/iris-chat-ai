@@ -1,3 +1,5 @@
+import { APP_PATH } from "@/lib/site"
+
 export const WORKSPACE_TAB_NEWS = "news"
 
 export const WORKSPACE_TABS = [WORKSPACE_TAB_NEWS] as const
@@ -11,7 +13,7 @@ export function parseWorkspaceTab(
   return null
 }
 
-/** Default workspace when `/app` has no (valid) `tab` query param. */
+/** Default workspace when the desk has no (valid) `tab` query param. */
 export function resolveWorkspaceTab(
   value: string | null | undefined,
   fallback: WorkspaceTab = WORKSPACE_TAB_NEWS
@@ -20,12 +22,12 @@ export function resolveWorkspaceTab(
 }
 
 export function workspaceTabHref(tab: WorkspaceTab = WORKSPACE_TAB_NEWS) {
-  return `/app?tab=${tab}`
+  return `${APP_PATH}?tab=${tab}`
 }
 
 type AppSearchParams = Record<string, string | string[] | undefined>
 
-/** Canonical `/app` URL with tab and optional extra query params preserved. */
+/** Canonical desk URL with tab and optional extra query params preserved. */
 export function appPathWithTab(
   tab: WorkspaceTab = WORKSPACE_TAB_NEWS,
   extra?: AppSearchParams
@@ -44,5 +46,5 @@ export function appPathWithTab(
       }
     }
   }
-  return `/app?${qs.toString()}`
+  return `${APP_PATH}?${qs.toString()}`
 }

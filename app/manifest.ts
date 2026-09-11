@@ -7,7 +7,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: SITE_NAME,
     short_name: SITE_SHORT_NAME,
     description: SITE_DESCRIPTION,
-    start_url: "/app",
+    start_url: "/",
     scope: "/",
     display: "standalone",
     display_override: ["fullscreen", "standalone", "minimal-ui"],

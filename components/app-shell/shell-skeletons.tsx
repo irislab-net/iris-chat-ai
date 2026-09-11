@@ -178,6 +178,7 @@ function ChatHistoryRailSkeleton({
       </div>
       <div className="flex min-h-0 flex-1 flex-col gap-2 px-2 py-2">
         <Bone className="h-9 w-full rounded-lg" />
+        <Bone className="h-9 w-full rounded-lg" />
         <Bone className="h-3 w-12 px-3 pt-2" />
         {Array.from({ length: 4 }, (_, index) => (
           <div

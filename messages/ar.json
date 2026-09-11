@@ -300,6 +300,7 @@
     "composerToolSignalPlaceholder": "ETH أو BTC أو SOL أو اتریوم…",
     "composerRemoveTool": "إزالة الأداة",
     "composerHint": "IRIS للمعلومات السوقية فقط — وليس نصيحة مالية",
+    "lowSignalUserReply": "لم أفهم ذلك جيداً. اسأل عن ETH أو BTC أو أخبار السوق، أو صِف السيناريو الذي تريد أن يتحقق منه IRIS.",
     "signalCardTitle": "إشارة تداول",
     "signalCardSize": "الحجم",
     "fillOrderFromSignal": "ملء نموذج الأمر",

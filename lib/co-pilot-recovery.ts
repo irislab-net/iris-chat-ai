@@ -28,6 +28,15 @@ export function isAbortError(error: unknown): boolean {
   return name === "AbortError"
 }
 
+/** Skip co-pilot for noise input (digits-only, no letters) — avoids bogus trade replies. */
+export function isLowSignalUserMessage(text: string): boolean {
+  const trimmed = text.trim()
+  if (trimmed.length < 2) return true
+  if (/^\d+$/u.test(trimmed)) return true
+  if (!/[\p{L}]/u.test(trimmed)) return true
+  return false
+}
+
 /**
  * Map transport/API failures to safe UI copy.
  * Never surface HTTP codes, stack traces, or raw infrastructure text.
@@ -87,10 +96,12 @@ export type FailedAssistantTurn = {
 export function buildFailedAssistantTurn(input: {
   assistantId: string
   partialContent: string
+  fallbackContent?: string
   userMessage: string
   error: unknown
 }): FailedAssistantTurn {
-  const partial = input.partialContent.trim()
+  const partial =
+    input.partialContent.trim() || input.fallbackContent?.trim() || ""
   return {
     id: input.assistantId,
     role: "assistant",

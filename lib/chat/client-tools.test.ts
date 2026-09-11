@@ -50,7 +50,7 @@ describe("chat client tools", () => {
       }
     )
 
-    expect(navigate).toHaveBeenCalledWith("/app?tab=news")
+    expect(navigate).toHaveBeenCalledWith("/?tab=news")
     expect(focusDeskPane).toHaveBeenCalledWith({ pane: "chart" })
     expect(drawChartIndicator).toHaveBeenCalledWith({
       type: "support",

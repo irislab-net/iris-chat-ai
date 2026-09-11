@@ -11,6 +11,7 @@ import {
   subscribeDeskContextSync,
   type DeskContextSnapshot,
 } from "@/lib/paper-trading/desk-context"
+import { isAppDeskPath } from "@/lib/site"
 import { resolveWorkspaceTab } from "@/lib/workspace-tab"
 import type { User } from "@/lib/api/types"
 
@@ -26,7 +27,7 @@ export function useChatClientContext(input: {
   const searchParams = useSearchParams()
   const locale = useLocale()
   const workspaceTab =
-    pathname === "/app" ? resolveWorkspaceTab(searchParams.get("tab")) : null
+    isAppDeskPath(pathname) ? resolveWorkspaceTab(searchParams.get("tab")) : null
   const [symbol, setSymbol] = React.useState("ETH")
   const [deskContext, setDeskContext] =
     React.useState<DeskContextSnapshot | null>(null)
