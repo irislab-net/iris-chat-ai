@@ -125,7 +125,7 @@ export function mergeServerHistoryIntoStore(
   const activeId =
     local.activeId && conversations.some((c) => c.id === local.activeId)
       ? local.activeId
-      : conversations[0]?.id ?? null
+      : null
 
   return { version: 1, conversations, activeId }
 }

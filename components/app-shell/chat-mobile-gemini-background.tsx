@@ -26,16 +26,22 @@ function ChatMobileGeminiBackground({
       <div className="absolute inset-0 bg-white dark:bg-background" />
       <div
         className={cn(
-          "chat-gemini-glow absolute inset-x-[-12%] bottom-[-8%] h-[62%]",
-          active ? "chat-gemini-glow-active" : "chat-gemini-glow-idle",
-          intro && "chat-gemini-glow-intro",
-          loading && "chat-gemini-glow-loading"
+          "chat-gemini-mesh absolute inset-0",
+          intro && "chat-gemini-mesh-intro",
+          active && "chat-gemini-mesh-active",
+          loading && "chat-gemini-mesh-loading"
         )}
-      />
+      >
+        <div className="chat-gemini-orb chat-gemini-orb-a" />
+        <div className="chat-gemini-orb chat-gemini-orb-b" />
+        <div className="chat-gemini-orb chat-gemini-orb-c" />
+        <div className="chat-gemini-orb chat-gemini-orb-d" />
+      </div>
       <div
         className={cn(
-          "chat-gemini-dots absolute inset-x-0 bottom-0 h-[48%]",
-          active && "chat-gemini-dots-active"
+          "chat-gemini-dots absolute inset-x-0 bottom-0 h-[52%]",
+          active && "chat-gemini-dots-active",
+          loading && "chat-gemini-dots-loading"
         )}
       />
     </div>

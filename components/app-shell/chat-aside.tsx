@@ -520,19 +520,10 @@ function ChatAside({
       setSession(nextSession)
       const store = readChatStore(chatOwnerId)
       setConversations(store.conversations)
-      const active =
-        store.conversations.find((c) => c.id === store.activeId) ??
-        store.conversations[0]
-      if (active) {
-        setConversationId(active.id)
-        const restored = restoreMessages(active.messages, active.history)
-        setMessages(restored)
-        setHistory(active.history)
-      } else {
-        setConversationId(crypto.randomUUID())
-        setMessages([])
-        setHistory([])
-      }
+      const blank = blankConversation()
+      setConversationId(blank.id)
+      setMessages(blank.messages)
+      setHistory(blank.history)
       setHistoryOpen(false)
       setHydrated(true)
     }
@@ -550,10 +541,6 @@ function ChatAside({
         const store = await syncChatHistoryFromServer(chatOwnerId)
         if (cancelled || syncId !== historySyncRef.current) return
         setConversations(store.conversations)
-        const active =
-          store.conversations.find((c) => c.id === store.activeId) ??
-          store.conversations[0]
-        if (active) applyStoredConversation(active)
       } catch {
         // Offline or unauthenticated copilot — local history still works.
       }
@@ -563,7 +550,6 @@ function ChatAside({
       cancelled = true
     }
   }, [
-    applyStoredConversation,
     authLoading,
     chatOwnerId,
     hydrated,
@@ -702,18 +688,14 @@ function ChatAside({
     setConversations(store.conversations)
 
     if (id === conversationId) {
-      const next = store.conversations[0]
-      if (next) {
-        setConversationId(next.id)
-        const restored = restoreMessages(next.messages, next.history)
-        setMessages(restored)
-        setHistory(next.history)
-      } else {
-        const blank = blankConversation()
-        setConversationId(blank.id)
-        setMessages(blank.messages)
-        setHistory(blank.history)
-      }
+      const blank = blankConversation()
+      setConversationId(blank.id)
+      setMessages(blank.messages)
+      setHistory(blank.history)
+      writeChatStore(
+        chatOwnerId,
+        setActiveConversation(store, blank.id)
+      )
     }
   }
 
@@ -1471,14 +1453,6 @@ function ChatAside({
     : t("mobileGreetingGuest")
   const showMobileEmptyGeminiBg = isMobileOverlay && messages.length === 0
   const [mobileComposerFocused, setMobileComposerFocused] = React.useState(false)
-  const [mobileIntroGlow, setMobileIntroGlow] = React.useState(true)
-
-  React.useEffect(() => {
-    if (!showMobileEmptyGeminiBg) return
-    setMobileIntroGlow(true)
-    const id = window.setTimeout(() => setMobileIntroGlow(false), 1400)
-    return () => window.clearTimeout(id)
-  }, [showMobileEmptyGeminiBg, conversationId])
 
   React.useEffect(() => {
     if (displayMode === "focused" && isAuthenticated) {
@@ -1515,7 +1489,7 @@ function ChatAside({
         <ChatMobileGeminiBackground
           active={mobileComposerFocused}
           loading={sending}
-          intro={mobileIntroGlow}
+          intro
         />
       ) : null}
       {historyRailVisible ? (
