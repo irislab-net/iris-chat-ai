@@ -1,83 +1,119 @@
-/** Gemini mobile shell — shared surface styles. */
+/** Gemini mobile shell — theme-aware surface styles. */
+const chatMobileGlassSurfaceClass =
+  "border-0 bg-white/84 shadow-[inset_0_1px_0_0_color-mix(in_oklch,var(--background)_55%,white),0_2px_10px_-3px_color-mix(in_oklch,var(--foreground)_7%,transparent),0_10px_28px_-12px_color-mix(in_oklch,var(--foreground)_8%,transparent)] backdrop-blur-2xl backdrop-saturate-150 supports-[backdrop-filter]:bg-white/72 dark:bg-card/82 dark:shadow-[inset_0_1px_0_0_color-mix(in_oklch,var(--foreground)_8%,transparent),0_2px_10px_-3px_color-mix(in_oklch,var(--foreground)_12%,transparent),0_10px_28px_-12px_color-mix(in_oklch,var(--foreground)_14%,transparent)] dark:supports-[backdrop-filter]:bg-card/68"
+
+const chatMobileGlassSurfaceFocusClass =
+  "focus-within:bg-white/92 focus-within:shadow-[inset_0_1px_0_0_color-mix(in_oklch,var(--background)_55%,white),0_4px_14px_-4px_color-mix(in_oklch,var(--foreground)_9%,transparent),0_14px_36px_-10px_color-mix(in_oklch,var(--foreground)_10%,transparent)] dark:focus-within:bg-card/90"
+
+const chatMobilePrimaryButtonClass =
+  "border-0 bg-primary text-primary-foreground shadow-none hover:bg-primary/90"
+
+const chatMobileHeaderShadowClass =
+  "shadow-[inset_0_1px_0_0_color-mix(in_oklch,var(--background)_55%,white),0_1px_3px_color-mix(in_oklch,var(--foreground)_4%,transparent),0_6px_18px_-8px_color-mix(in_oklch,var(--foreground)_6%,transparent)] dark:shadow-[inset_0_1px_0_0_color-mix(in_oklch,var(--foreground)_8%,transparent),0_1px_3px_color-mix(in_oklch,var(--foreground)_8%,transparent),0_6px_18px_-8px_color-mix(in_oklch,var(--foreground)_10%,transparent)]"
+
+const chatMobileHeaderShadowHoverClass =
+  "hover:bg-white/92 hover:shadow-[inset_0_1px_0_0_color-mix(in_oklch,var(--background)_55%,white),0_2px_8px_-3px_color-mix(in_oklch,var(--foreground)_5%,transparent),0_10px_24px_-10px_color-mix(in_oklch,var(--foreground)_7%,transparent)] dark:hover:bg-card/90"
+
 const chatMobileHeaderCircleClass =
-  "rounded-full border border-black/[0.06] bg-white/92 text-foreground shadow-[0_1px_3px_rgba(15,23,42,0.06)] transition-[transform,background-color] hover:bg-white active:scale-[0.96] dark:border-white/10 dark:bg-background/92 dark:shadow-none"
+  "rounded-full border-0 bg-white/84 text-foreground backdrop-blur-2xl backdrop-saturate-150 supports-[backdrop-filter]:bg-white/72 transition-[transform,background-color,box-shadow] active:scale-[0.96] dark:bg-card/82 dark:supports-[backdrop-filter]:bg-card/68"
 
 const chatMobileHeaderButtonClass =
-  `size-10 shrink-0 ${chatMobileHeaderCircleClass} [&_svg:not([class*='size-'])]:size-[22px]`
+  `size-10 shrink-0 ${chatMobileHeaderCircleClass} ${chatMobileHeaderShadowClass} ${chatMobileHeaderShadowHoverClass} [&_svg:not([class*='size-'])]:size-[22px] [&_svg]:stroke-[1.75]`
 
 const chatMobileHeaderNewChatClass =
-  `relative size-10 shrink-0 ${chatMobileHeaderCircleClass} [&_svg:not([class*='size-'])]:size-[20px] before:pointer-events-none before:absolute before:inset-[7px] before:rounded-full before:border before:border-dashed before:border-black/[0.2] dark:before:border-white/25`
+  `size-10 shrink-0 ${chatMobileHeaderCircleClass} ${chatMobileHeaderShadowClass} ${chatMobileHeaderShadowHoverClass} text-foreground [&_svg:not([class*='size-'])]:size-5 [&_svg]:stroke-[1.75]`
 
 const chatMobileHeaderAvatarButtonClass =
-  `flex size-10 shrink-0 items-center justify-center p-0 ${chatMobileHeaderCircleClass}`
+  `flex size-10 shrink-0 items-center justify-center overflow-visible p-0 ${chatMobileHeaderCircleClass} ${chatMobileHeaderShadowClass} ${chatMobileHeaderShadowHoverClass}`
 
 const chatMobileHeaderAvatarClass = "size-8 after:border-0 ring-0"
 
+const chatMobileHeaderPlanBadgeClass =
+  "h-3.5 translate-y-[48%] px-1.5 text-[8px] font-semibold shadow-[0_1px_2px_color-mix(in_oklch,var(--foreground)_8%,transparent)]"
+
 const chatMobileHeaderModelClass =
-  "h-10 max-w-[11rem] gap-1 rounded-full px-2 text-[17px] font-normal tracking-tight text-[#1f1f1f] hover:bg-black/[0.04] dark:text-foreground dark:hover:bg-white/[0.06] [&_svg]:size-5 [&_svg]:text-[#444746]"
+  "h-10 max-w-[12rem] gap-0.5 rounded-full px-2.5 text-[17px] font-normal tracking-[-0.01em] text-foreground hover:bg-accent [&_svg]:size-[18px] [&_svg]:text-muted-foreground"
+
+const chatMobileHeaderModelPrimaryClass = "text-foreground"
+
+const chatMobileHeaderModelSecondaryClass = "text-muted-foreground"
+
+const chatMobileEmptyHeroWrapClass =
+  "flex min-h-full flex-col items-center justify-center px-5 pb-6 pt-4"
+
+const chatMobileEmptyHeroContentClass = "flex flex-col items-center gap-3 text-center"
+
+const chatMobileEmptyHeroMarkClass =
+  "size-8 rounded-none bg-transparent shadow-none ring-0"
+
+const chatMobileEmptyHeroTitleClass =
+  "max-w-[19rem] text-[1.625rem] font-normal leading-[1.28] tracking-[-0.02em] text-foreground"
 
 const chatMobileThreadClass = "px-4 pt-3 pb-2 sm:px-5"
 
 /** Scroll tail room so the last turn clears the bottom fade + composer. */
 const chatMobileThreadBottomSpacerClass = "h-40 shrink-0"
 
-/** Soft bottom fade — masks scroll content, no visible overlay band. */
+/** Soft bottom fade — masks scroll content opacity. */
 const chatMobileThreadScrollMaskClass =
-  "[&_[data-slot=scroll-area-viewport]]:mask-[linear-gradient(to_bottom,black_0%,black_72%,rgba(0,0,0,0.55)_86%,transparent_100%)] [&_[data-slot=scroll-area-viewport]]:[-webkit-mask-image:linear-gradient(to_bottom,black_0%,black_72%,rgba(0,0,0,0.55)_86%,transparent_100%)]"
+  "[&_[data-slot=scroll-area-viewport]]:mask-[linear-gradient(to_bottom,black_0%,black_52%,rgba(0,0,0,0.88)_68%,rgba(0,0,0,0.45)_82%,transparent_100%)] [&_[data-slot=scroll-area-viewport]]:[-webkit-mask-image:linear-gradient(to_bottom,black_0%,black_52%,rgba(0,0,0,0.88)_68%,rgba(0,0,0,0.45)_82%,transparent_100%)]"
+
+/** Bottom blur + fade overlay — masked so the top edge stays invisible. */
+const chatMobileThreadBottomFadeClass =
+  "pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-36 bg-gradient-to-t from-background from-0% via-background/55 via-40% to-transparent to-100% backdrop-blur-md backdrop-saturate-150 [mask-image:linear-gradient(to_top,black_0%,black_38%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_top,black_0%,black_38%,transparent_100%)] supports-[backdrop-filter]:from-background/92 supports-[backdrop-filter]:via-background/30 supports-[backdrop-filter]:to-transparent"
 
 const chatMobileUserBubbleClass =
-  "max-w-[88%] rounded-[24px] bg-[#f0f4f9] px-4 py-3 text-[15px] leading-[1.55] text-[#1f1f1f] dark:border dark:border-border/50 dark:bg-secondary dark:text-foreground"
+  "max-w-[88%] rounded-[24px] border border-transparent bg-secondary px-4 py-3 text-[15px] leading-[1.55] text-secondary-foreground dark:border-border/50"
 
 const chatMobileAssistantClass =
-  "text-[15px] leading-[1.65] text-[#1f1f1f] dark:text-foreground/92 [&_p]:mb-3 [&_p:last-child]:mb-0"
+  "text-[15px] leading-[1.65] text-foreground [&_p]:mb-3 [&_p:last-child]:mb-0"
 
 const chatMobileComposerShellClass =
-  "relative shrink-0 bg-transparent px-4 pt-2 pb-[max(0.75rem,env(safe-area-inset-bottom,0px))]"
+  "relative shrink-0 bg-transparent px-4 pt-1.5 pb-[max(1rem,env(safe-area-inset-bottom,0px))]"
 
 const chatMobileComposerPillClass =
-  "flex min-h-[3.75rem] items-center gap-1 rounded-full border border-black/[0.06] bg-[#f0f4f9] px-2.5 shadow-none transition-[box-shadow,transform,border-color,background-color] duration-300 focus-within:border-black/[0.08] focus-within:bg-[#e8eef6] dark:border-white/10 dark:bg-muted/40 dark:focus-within:bg-muted/55"
+  `flex min-h-[3.25rem] items-end gap-0.5 rounded-[22px] px-2.5 py-1.5 text-foreground transition-[box-shadow,transform,background-color] duration-300 ${chatMobileGlassSurfaceClass} ${chatMobileGlassSurfaceFocusClass}`
 
 const chatMobileComposerIconButtonClass =
-  "size-10 shrink-0 rounded-full text-[#444746] transition-colors hover:bg-black/[0.05] hover:text-foreground dark:text-muted-foreground dark:hover:bg-white/[0.06]"
+  "size-10 shrink-0 rounded-full text-muted-foreground transition-colors hover:bg-foreground/[0.05] hover:text-foreground [&_svg]:stroke-[1.75]"
 
 const chatMobileComposerSendClass =
-  "size-10 rounded-full border-0 bg-[#0b57d0] text-white shadow-none transition-[transform,background-color] hover:bg-[#0842a0] active:scale-[0.96] dark:bg-[#8ab4f8] dark:hover:bg-[#7aa7f7]"
+  `size-10 rounded-full transition-[transform,background-color] active:scale-[0.96] ${chatMobilePrimaryButtonClass}`
 
 const chatMobileScrollDownClass =
-  "absolute bottom-3 left-1/2 z-10 size-9 -translate-x-1/2 rounded-full border border-black/[0.05] bg-white/95 text-foreground shadow-[0_4px_20px_-8px_rgba(15,23,42,0.18)] backdrop-blur-sm hover:bg-white dark:border-white/10 dark:bg-background/90"
+  "absolute bottom-3 left-1/2 z-10 size-9 -translate-x-1/2 rounded-full border-0 bg-white/84 text-foreground backdrop-blur-2xl backdrop-saturate-150 supports-[backdrop-filter]:bg-white/72 shadow-[inset_0_1px_0_0_color-mix(in_oklch,var(--background)_55%,white),0_2px_10px_-3px_color-mix(in_oklch,var(--foreground)_7%,transparent),0_8px_24px_-10px_color-mix(in_oklch,var(--foreground)_8%,transparent)] hover:bg-white/92 dark:bg-card/82 dark:supports-[backdrop-filter]:bg-card/68 dark:hover:bg-card/90"
 
-const chatMobileDrawerSurfaceClass =
-  "bg-[#f6f8fb] text-foreground dark:bg-background"
+const chatMobileDrawerSurfaceClass = "bg-background text-foreground"
 
 const chatMobileDrawerNavItemClass =
-  "h-11 w-full justify-start gap-4 rounded-xl px-3 text-[15px] font-normal text-foreground shadow-none hover:bg-black/[0.04] dark:hover:bg-white/[0.06]"
+  "h-11 w-full justify-start gap-4 rounded-xl px-3 text-[15px] font-normal text-foreground shadow-none hover:bg-accent"
 
 const chatMobileDrawerSectionLabelClass =
   "px-3 pb-2 pt-5 text-[13px] font-normal text-muted-foreground first:pt-2"
 
 const chatMobileDrawerUpgradeClass =
-  "h-9 shrink-0 rounded-full border-0 bg-[#8ab4f8] px-5 text-[14px] font-medium text-white shadow-none hover:bg-[#7aa7f7]"
+  `h-9 shrink-0 rounded-full px-5 text-[14px] font-medium ${chatMobilePrimaryButtonClass}`
 
 const chatMobileDrawerFooterWrapClass = "relative z-10 -mt-14 shrink-0"
 
 const chatMobileDrawerFooterFadeClass =
-  "pointer-events-none absolute inset-x-0 bottom-full h-14 bg-linear-to-b from-transparent from-0% via-[#f6f8fb]/20 via-40% to-[#f6f8fb] to-100% dark:via-background/20 dark:to-background"
+  "pointer-events-none absolute inset-x-0 bottom-full h-14 bg-linear-to-b from-transparent from-0% via-background/20 via-40% to-background to-100%"
 
 const chatMobileDrawerFooterBarClass =
-  "relative bg-[#f6f8fb]/92 pt-3 shadow-[0_-8px_24px_-16px_rgba(15,23,42,0.1)] backdrop-blur-2xl backdrop-saturate-150 supports-[backdrop-filter]:bg-[#f6f8fb]/78 dark:bg-background/92 dark:supports-[backdrop-filter]:bg-background/78"
+  "relative bg-background/92 pt-3 shadow-[0_-8px_24px_-16px_color-mix(in_oklch,var(--foreground)_10%,transparent)] backdrop-blur-2xl backdrop-saturate-150 supports-[backdrop-filter]:bg-background/78"
 
 /** Shared mobile bottom sheets — guide, privacy, checkout. */
 const chatMobileSheetContentClass =
-  "max-h-[min(92dvh,720px)] gap-0 overflow-y-auto rounded-t-[1.75rem] border-0 bg-[#f6f8fb] pb-[max(0.75rem,env(safe-area-inset-bottom,0px))] pt-2 text-foreground shadow-[0_-12px_48px_-16px_rgba(15,23,42,0.14)] dark:bg-background dark:shadow-[0_-12px_48px_-16px_rgba(0,0,0,0.45)]"
+  "max-h-[min(92dvh,720px)] gap-0 overflow-y-auto rounded-t-[1.75rem] border-0 bg-background pb-[max(0.75rem,env(safe-area-inset-bottom,0px))] pt-2 text-foreground shadow-[0_-12px_48px_-16px_color-mix(in_oklch,var(--foreground)_12%,transparent)]"
 
 const chatMobileSheetHandleClass =
-  "mx-auto mb-4 h-1 w-10 shrink-0 rounded-full bg-black/[0.12] dark:bg-white/20"
+  "mx-auto mb-4 h-1 w-10 shrink-0 rounded-full bg-border"
 
 const chatMobileSheetHeaderClass =
   "gap-1.5 space-y-0 px-5 pb-2 pt-0 text-left"
 
 const chatMobileSheetTitleClass =
-  "text-[22px] font-normal tracking-tight text-[#1f1f1f] dark:text-foreground"
+  "text-[22px] font-normal tracking-tight text-foreground"
 
 const chatMobileSheetDescriptionClass =
   "text-pretty text-[15px] leading-relaxed text-muted-foreground"
@@ -88,25 +124,25 @@ const chatMobileSheetSectionLabelClass =
   "text-[13px] font-normal tracking-wide text-muted-foreground uppercase"
 
 const chatMobileSheetCardClass =
-  "rounded-2xl border border-black/[0.06] bg-white/75 px-3.5 py-3 dark:border-border/50 dark:bg-muted/20"
+  "rounded-2xl border border-border/60 bg-card/75 px-3.5 py-3"
 
 const chatMobileSheetFooterClass =
   "sticky bottom-0 border-0 px-5 pt-4 pb-0"
 
 const chatMobileSheetFooterBarClass =
-  "rounded-t-[1.25rem] border-t border-black/[0.06] bg-[#f6f8fb]/92 px-0 pt-4 pb-[max(0.75rem,env(safe-area-inset-bottom,0px))] shadow-[0_-8px_24px_-16px_rgba(15,23,42,0.1)] backdrop-blur-2xl backdrop-saturate-150 supports-[backdrop-filter]:bg-[#f6f8fb]/78 dark:border-border/50 dark:bg-background/92 dark:supports-[backdrop-filter]:bg-background/78"
+  "rounded-t-[1.25rem] border-t border-border/60 bg-background/92 px-0 pt-4 pb-[max(0.75rem,env(safe-area-inset-bottom,0px))] shadow-[0_-8px_24px_-16px_color-mix(in_oklch,var(--foreground)_10%,transparent)] backdrop-blur-2xl backdrop-saturate-150 supports-[backdrop-filter]:bg-background/78"
 
 const chatMobileSheetPrimaryButtonClass =
-  "h-12 w-full rounded-full text-[15px] font-medium shadow-none"
+  `h-12 w-full rounded-full text-[15px] font-medium ${chatMobilePrimaryButtonClass}`
 
 const chatMobileSheetGhostButtonClass =
-  "h-10 w-full rounded-full text-[15px] font-normal text-muted-foreground hover:bg-black/[0.04] hover:text-foreground dark:hover:bg-white/[0.06]"
+  "h-10 w-full rounded-full text-[15px] font-normal text-muted-foreground hover:bg-accent hover:text-foreground"
 
 const chatMobileSheetConsentCheckedClass =
-  "border-black/[0.08] bg-white/90 shadow-[0_1px_0_0_rgba(255,255,255,0.8)_inset] dark:border-border/60 dark:bg-muted/40 dark:shadow-none"
+  "border-border/60 bg-card shadow-[0_1px_0_0_color-mix(in_oklch,var(--background)_80%,transparent)_inset]"
 
 const chatMobileSheetConsentUncheckedClass =
-  "border-black/[0.06] bg-white/60 hover:border-black/[0.1] hover:bg-white/80 dark:border-border/45 dark:bg-muted/15 dark:hover:bg-muted/25"
+  "border-border/50 bg-card/60 hover:border-border hover:bg-card/80"
 
 export {
   chatMobileAssistantClass,
@@ -114,6 +150,10 @@ export {
   chatMobileComposerPillClass,
   chatMobileComposerSendClass,
   chatMobileComposerShellClass,
+  chatMobileEmptyHeroContentClass,
+  chatMobileEmptyHeroMarkClass,
+  chatMobileEmptyHeroTitleClass,
+  chatMobileEmptyHeroWrapClass,
   chatMobileDrawerFooterBarClass,
   chatMobileDrawerFooterFadeClass,
   chatMobileDrawerFooterWrapClass,
@@ -126,6 +166,10 @@ export {
   chatMobileHeaderNewChatClass,
   chatMobileHeaderAvatarButtonClass,
   chatMobileHeaderAvatarClass,
+  chatMobileHeaderPlanBadgeClass,
+  chatMobileHeaderModelPrimaryClass,
+  chatMobileHeaderModelSecondaryClass,
+  chatMobilePrimaryButtonClass,
   chatMobileScrollDownClass,
   chatMobileSheetBodyClass,
   chatMobileSheetCardClass,
@@ -143,6 +187,7 @@ export {
   chatMobileSheetTitleClass,
   chatMobileThreadClass,
   chatMobileThreadBottomSpacerClass,
+  chatMobileThreadBottomFadeClass,
   chatMobileThreadScrollMaskClass,
   chatMobileUserBubbleClass,
 }

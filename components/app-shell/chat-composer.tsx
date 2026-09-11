@@ -393,7 +393,7 @@ function ChatComposer({
         <div
           className={cn(
             isFloating
-              ? "flex min-w-0 flex-1 items-center gap-1 px-0.5"
+              ? "flex min-w-0 flex-1 items-end gap-1 px-0.5 pb-0.5"
               : "[grid-area:primary] flex min-h-11 flex-wrap items-start gap-1.5 px-3.5 pt-3.5 pb-1.5 sm:min-h-10"
           )}
         >
@@ -452,13 +452,13 @@ function ChatComposer({
             className={cn(
               "chat-bidi min-w-[8rem] flex-1 field-sizing-content resize-none rounded-none border-0 bg-transparent p-0 text-start shadow-none focus-visible:border-transparent focus-visible:ring-0 dark:bg-transparent",
               isFloating
-                ? "min-h-11 py-3 text-[16px] leading-6 placeholder:text-muted-foreground/65"
+                ? "max-h-40 min-h-11 py-2.5 text-[16px] leading-6 text-foreground placeholder:text-muted-foreground"
                 : "min-h-6 text-[16px] leading-6 sm:text-[14px] sm:leading-[1.45]"
             )}
           />
         </div>
         {isFloating ? (
-          <div className="flex shrink-0 items-center pe-0.5">
+          <div className="flex shrink-0 items-end pb-0.5 pe-0.5">
             {canSend ? (
               <Button
                 type="submit"

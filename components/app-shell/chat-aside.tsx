@@ -13,7 +13,7 @@ import {
 
 import { ChatAccountFooter } from "@/components/app-shell/chat-account-footer"
 import { ChatMobileGeminiBackground } from "@/components/app-shell/chat-mobile-gemini-background"
-import { chatMobileScrollDownClass, chatMobileThreadBottomSpacerClass, chatMobileThreadClass, chatMobileThreadScrollMaskClass } from "@/components/app-shell/chat-mobile-gemini-styles"
+import { chatMobileScrollDownClass, chatMobileThreadBottomFadeClass, chatMobileThreadBottomSpacerClass, chatMobileThreadClass, chatMobileThreadScrollMaskClass, chatMobileEmptyHeroContentClass, chatMobileEmptyHeroMarkClass, chatMobileEmptyHeroTitleClass, chatMobileEmptyHeroWrapClass } from "@/components/app-shell/chat-mobile-gemini-styles"
 import { ChatMobileHeader } from "@/components/app-shell/chat-mobile-header"
 import {
   ChatHistoryRail,
@@ -1477,7 +1477,7 @@ function ChatAside({
       className={cn(
         "relative flex h-full min-h-0 w-full overflow-hidden",
         isMobileOverlay
-          ? "flex-col bg-white text-foreground dark:bg-background"
+          ? "flex-col bg-background text-foreground"
           : historyRailVisible || isFocusedLayout
             ? "flex-row bg-sidebar text-sidebar-foreground"
             : "flex-col bg-sidebar text-sidebar-foreground",
@@ -1534,7 +1534,7 @@ function ChatAside({
         />
       ) : null}
       {showMobileHistoryOverlay ? (
-        <div className="absolute inset-0 z-30 flex min-h-0 flex-col bg-[#f6f8fb] dark:bg-background">
+        <div className="absolute inset-0 z-30 flex min-h-0 flex-col bg-background">
           <ChatHistorySidebar
             variant="mobile-drawer"
             conversations={conversations}
@@ -1670,10 +1670,9 @@ function ChatAside({
               {messages.length === 0 ? (
                 <div
                   className={cn(
-                    "flex min-h-full flex-col px-4 py-10",
                     isMobileOverlay
-                      ? "items-center justify-center text-center"
-                      : "justify-center"
+                      ? chatMobileEmptyHeroWrapClass
+                      : "flex min-h-full flex-col justify-center px-4 py-10"
                   )}
                 >
                   <div
@@ -1684,24 +1683,24 @@ function ChatAside({
                   >
                     <div
                       className={cn(
-                        "flex flex-col items-center text-center",
-                        isMobileOverlay ? "gap-5" : "mb-5"
+                        isMobileOverlay
+                          ? chatMobileEmptyHeroContentClass
+                          : "mb-5 flex flex-col items-center text-center"
                       )}
                     >
                       <IrisMark
                         variant={isMobileOverlay ? "hero" : "default"}
                         className={cn(
                           isMobileOverlay
-                            ? "size-[4.5rem] rounded-[1.35rem] bg-transparent shadow-none ring-0"
+                            ? chatMobileEmptyHeroMarkClass
                             : "size-10 rounded-xl"
                         )}
                       />
                       <h2
                         className={cn(
-                          "font-normal tracking-tight text-foreground",
                           isMobileOverlay
-                            ? "max-w-[20rem] text-[1.75rem] leading-tight text-[#1f1f1f] dark:text-foreground"
-                            : "mt-3 text-[15px] font-semibold"
+                            ? chatMobileEmptyHeroTitleClass
+                            : "mt-3 text-[15px] font-semibold tracking-tight text-foreground"
                         )}
                       >
                         {isMobileOverlay
@@ -1905,6 +1904,9 @@ function ChatAside({
                 </div>
               )}
             </ScrollArea>
+            {isMobileOverlay && messages.length > 0 ? (
+              <div aria-hidden className={chatMobileThreadBottomFadeClass} />
+            ) : null}
             {showScrollDown ? (
               <Button
                 type="button"

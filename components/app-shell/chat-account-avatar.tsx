@@ -16,6 +16,7 @@ type ChatAccountAvatarProps = {
   avatarClassName?: string
   compact?: boolean
   showPlanBadge?: boolean
+  planBadgeClassName?: string
 }
 
 function ChatAccountAvatar({
@@ -27,6 +28,7 @@ function ChatAccountAvatar({
   avatarClassName,
   compact = false,
   showPlanBadge = true,
+  planBadgeClassName,
 }: ChatAccountAvatarProps) {
   const planName = planNameProp ?? displayPlanName(user.tier)
 
@@ -54,7 +56,8 @@ function ChatAccountAvatar({
             "absolute bottom-0 left-1/2 z-10 h-3 min-w-0 -translate-x-1/2 translate-y-[42%] rounded-full border px-1 text-[7px] font-bold leading-none tracking-wide shadow-sm",
             isProUser
               ? "border-background bg-foreground text-background"
-              : "border-border/50 bg-background text-muted-foreground"
+              : "border-border/50 bg-background text-muted-foreground",
+            planBadgeClassName
           )}
           aria-hidden
         >

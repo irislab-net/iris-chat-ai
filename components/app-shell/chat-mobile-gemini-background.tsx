@@ -1,6 +1,18 @@
 "use client"
 
+import * as React from "react"
+
 import { cn } from "@/lib/utils"
+
+const GEMINI_BG_PALETTES = ["mint", "sky", "aqua"] as const
+
+type GeminiBgPalette = (typeof GEMINI_BG_PALETTES)[number]
+
+function pickGeminiPalette(): GeminiBgPalette {
+  return GEMINI_BG_PALETTES[
+    Math.floor(Math.random() * GEMINI_BG_PALETTES.length)
+  ]!
+}
 
 type ChatMobileGeminiBackgroundProps = {
   active?: boolean
@@ -15,15 +27,19 @@ function ChatMobileGeminiBackground({
   intro = false,
   className,
 }: ChatMobileGeminiBackgroundProps) {
+  const [palette] = React.useState<GeminiBgPalette>(pickGeminiPalette)
+
   return (
     <div
       aria-hidden
+      data-gemini-palette={palette}
       className={cn(
-        "pointer-events-none absolute inset-0 overflow-hidden",
+        "chat-gemini-bg pointer-events-none absolute inset-0 overflow-hidden",
         className
       )}
     >
-      <div className="absolute inset-0 bg-white dark:bg-background" />
+      <div className="absolute inset-0 bg-background" />
+      <div className="chat-gemini-bg-top-fade absolute inset-x-0 top-0 h-[42%]" />
       <div
         className={cn(
           "chat-gemini-mesh absolute inset-0",
@@ -39,7 +55,7 @@ function ChatMobileGeminiBackground({
       </div>
       <div
         className={cn(
-          "chat-gemini-dots absolute inset-x-0 bottom-0 h-[52%]",
+          "chat-gemini-dots absolute inset-x-0 bottom-0 h-[48%]",
           active && "chat-gemini-dots-active",
           loading && "chat-gemini-dots-loading"
         )}

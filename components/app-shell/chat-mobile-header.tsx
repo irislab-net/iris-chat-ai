@@ -7,13 +7,14 @@ import {
   ChevronDownIcon,
   EclipseIcon,
   LogOutIcon,
-  MenuIcon,
   NewspaperIcon,
   SparklesIcon,
   SquarePenIcon,
 } from "lucide-react"
 import { useTranslations } from "next-intl"
 import { useTheme } from "@wrksz/themes/client/use-theme"
+
+import { ChatGeminiMenuIcon } from "@/components/app-shell/chat-gemini-menu-icon"
 
 import {
   chatContextMenuContentClass,
@@ -28,13 +29,17 @@ import {
   chatMobileHeaderAvatarClass,
   chatMobileHeaderButtonClass,
   chatMobileHeaderModelClass,
+  chatMobileHeaderModelPrimaryClass,
+  chatMobileHeaderModelSecondaryClass,
   chatMobileHeaderNewChatClass,
+  chatMobileHeaderPlanBadgeClass,
 } from "@/components/app-shell/chat-mobile-gemini-styles"
 import { ChatAccountAvatar } from "@/components/app-shell/chat-account-avatar"
 import { useAuth } from "@/components/auth/auth-provider"
 import { GoogleGlyph } from "@/components/auth/google-glyph"
 import { useUserAvatarUrl } from "@/hooks/use-user-avatar-url"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Badge } from "@/components/ui/badge"
 import { displayPlanName } from "@/lib/billing/catalog"
 import { Button } from "@/components/ui/button"
 import {
@@ -92,11 +97,22 @@ function AccountAvatarMenu({
         disabled={loginPending}
         onClick={() => login({ source: "chat" })}
       >
-        <Avatar className={chatMobileHeaderAvatarClass}>
-          <AvatarFallback className="bg-[#f0f4f9] text-[11px] font-medium dark:bg-muted">
-            <GoogleGlyph className="size-3.5" />
-          </AvatarFallback>
-        </Avatar>
+        <span className="relative inline-flex shrink-0">
+          <Avatar className={chatMobileHeaderAvatarClass}>
+            <AvatarFallback className="bg-muted text-[11px] font-medium text-muted-foreground">
+              <GoogleGlyph className="size-3.5" />
+            </AvatarFallback>
+          </Avatar>
+          <Badge
+            className={cn(
+              "absolute bottom-0 left-1/2 z-10 min-w-0 -translate-x-1/2 rounded-full border border-border/50 bg-background text-muted-foreground",
+              chatMobileHeaderPlanBadgeClass
+            )}
+            aria-hidden
+          >
+            Free
+          </Badge>
+        </span>
       </Button>
     )
   }
@@ -119,7 +135,8 @@ function AccountAvatarMenu({
           isProUser={isProUser}
           planName={planName}
           compact
-          showPlanBadge={false}
+          showPlanBadge
+          planBadgeClassName={chatMobileHeaderPlanBadgeClass}
           avatarClassName={chatMobileHeaderAvatarClass}
         />
       </DropdownMenuTrigger>
@@ -215,7 +232,7 @@ function ChatMobileHeader({
   return (
     <header
       className={cn(
-        "grid shrink-0 grid-cols-[1fr_auto_1fr] items-center gap-1 bg-transparent px-2 pb-1 pt-[var(--app-safe-top,0px)]",
+        "grid shrink-0 grid-cols-[1fr_auto_1fr] items-center gap-2 bg-transparent px-3 pb-2 pt-[max(0.375rem,var(--app-safe-top,0px))]",
         className
       )}
     >
@@ -230,7 +247,7 @@ function ChatMobileHeader({
             aria-pressed={historyOpen}
             onClick={onOpenHistory}
           >
-            <MenuIcon />
+            <ChatGeminiMenuIcon />
           </Button>
         ) : null}
       </div>
@@ -249,7 +266,13 @@ function ChatMobileHeader({
                 />
               }
             >
-              <span className="truncate">IRIS {effortLabel}</span>
+              <span className="truncate">
+                <span className={chatMobileHeaderModelPrimaryClass}>IRIS</span>
+                <span className={chatMobileHeaderModelSecondaryClass}>
+                  {" "}
+                  {effortLabel}
+                </span>
+              </span>
               <ChevronDownIcon className="shrink-0" />
             </DropdownMenuTrigger>
             <DropdownMenuContent
@@ -282,13 +305,13 @@ function ChatMobileHeader({
             </DropdownMenuContent>
           </DropdownMenu>
         ) : (
-          <span className="truncate px-2 text-[17px] font-normal tracking-tight text-[#1f1f1f] dark:text-foreground">
+          <span className="truncate px-2 text-[17px] font-normal tracking-tight text-foreground">
             IRIS
           </span>
         )}
       </div>
 
-      <div className="flex shrink-0 items-center justify-end gap-1">
+      <div className="flex shrink-0 items-center justify-end gap-2">
         <Button
           type="button"
           variant="ghost"

@@ -431,7 +431,26 @@
 .chat-gemini-mesh {
   transform: translateZ(0);
   contain: paint;
-  filter: blur(52px);
+  filter: blur(58px);
+}
+
+.chat-gemini-bg-top-fade {
+  background: linear-gradient(
+    to bottom,
+    var(--background) 0%,
+    color-mix(in oklab, var(--background) 88%, transparent) 52%,
+    transparent 100%
+  );
+  pointer-events: none;
+}
+
+.dark .chat-gemini-bg-top-fade {
+  background: linear-gradient(
+    to bottom,
+    var(--background) 0%,
+    color-mix(in oklab, var(--background) 88%, transparent) 52%,
+    transparent 100%
+  );
 }
 
 .chat-gemini-mesh-intro {
@@ -449,138 +468,269 @@
 }
 
 .chat-gemini-orb-a {
-  width: min(78vw, 440px);
-  height: min(78vw, 440px);
-  bottom: -22%;
-  left: -16%;
-  background: radial-gradient(
-    circle,
-    color-mix(in oklab, #93c5fd 62%, transparent) 0%,
-    transparent 70%
-  );
-  animation: gemini-orb-drift-a 15s ease-in-out infinite alternate;
+  width: min(82vw, 460px);
+  height: min(82vw, 460px);
+  bottom: -24%;
+  left: -18%;
+  animation: gemini-orb-drift-a 16s ease-in-out infinite alternate;
 }
 
 .chat-gemini-orb-b {
-  width: min(64vw, 360px);
-  height: min(64vw, 360px);
-  bottom: -8%;
-  right: -18%;
-  background: radial-gradient(
-    circle,
-    color-mix(in oklab, #7dd3fc 58%, transparent) 0%,
-    transparent 68%
-  );
-  animation: gemini-orb-drift-b 12s ease-in-out infinite alternate;
-  animation-delay: -3s;
+  width: min(68vw, 380px);
+  height: min(68vw, 380px);
+  bottom: -10%;
+  right: -20%;
+  animation: gemini-orb-drift-b 13s ease-in-out infinite alternate;
+  animation-delay: -3.5s;
 }
 
 .chat-gemini-orb-c {
-  width: min(52vw, 300px);
-  height: min(52vw, 300px);
-  bottom: 8%;
-  left: 28%;
-  background: radial-gradient(
-    circle,
-    color-mix(in oklab, #a5f3fc 48%, transparent) 0%,
-    transparent 72%
-  );
-  animation: gemini-orb-drift-c 18s ease-in-out infinite alternate;
-  animation-delay: -6s;
+  width: min(54vw, 320px);
+  height: min(54vw, 320px);
+  bottom: 6%;
+  left: 24%;
+  animation: gemini-orb-drift-c 19s ease-in-out infinite alternate;
+  animation-delay: -7s;
 }
 
 .chat-gemini-orb-d {
-  width: min(44vw, 260px);
-  height: min(44vw, 260px);
-  bottom: 2%;
+  width: min(46vw, 280px);
+  height: min(46vw, 280px);
+  bottom: 0%;
   left: 50%;
-  background: radial-gradient(
-    circle,
-    color-mix(in oklab, #bae6fd 52%, transparent) 0%,
-    transparent 74%
-  );
-  animation: gemini-orb-drift-d 10s ease-in-out infinite alternate;
-  animation-delay: -1.5s;
+  animation: gemini-orb-drift-d 11s ease-in-out infinite alternate;
+  animation-delay: -2s;
 }
 
-.chat-gemini-mesh-active .chat-gemini-orb-a {
+.chat-gemini-bg[data-gemini-palette="mint"] .chat-gemini-orb-a {
   background: radial-gradient(
     circle,
-    color-mix(in oklab, #60a5fa 68%, transparent) 0%,
+    color-mix(in oklab, #6ee7b7 58%, transparent) 0%,
+    transparent 72%
+  );
+}
+
+.chat-gemini-bg[data-gemini-palette="mint"] .chat-gemini-orb-b {
+  background: radial-gradient(
+    circle,
+    color-mix(in oklab, #5eead4 52%, transparent) 0%,
     transparent 70%
   );
 }
 
-.chat-gemini-mesh-active .chat-gemini-orb-b {
+.chat-gemini-bg[data-gemini-palette="mint"] .chat-gemini-orb-c {
   background: radial-gradient(
     circle,
-    color-mix(in oklab, #38bdf8 64%, transparent) 0%,
-    transparent 68%
+    color-mix(in oklab, #86efac 44%, transparent) 0%,
+    transparent 74%
+  );
+}
+
+.chat-gemini-bg[data-gemini-palette="mint"] .chat-gemini-orb-d {
+  background: radial-gradient(
+    circle,
+    color-mix(in oklab, #a7f3d0 48%, transparent) 0%,
+    transparent 76%
+  );
+}
+
+.chat-gemini-bg[data-gemini-palette="sky"] .chat-gemini-orb-a {
+  background: radial-gradient(
+    circle,
+    color-mix(in oklab, #93c5fd 58%, transparent) 0%,
+    transparent 72%
+  );
+}
+
+.chat-gemini-bg[data-gemini-palette="sky"] .chat-gemini-orb-b {
+  background: radial-gradient(
+    circle,
+    color-mix(in oklab, #7dd3fc 52%, transparent) 0%,
+    transparent 70%
+  );
+}
+
+.chat-gemini-bg[data-gemini-palette="sky"] .chat-gemini-orb-c {
+  background: radial-gradient(
+    circle,
+    color-mix(in oklab, #bae6fd 44%, transparent) 0%,
+    transparent 74%
+  );
+}
+
+.chat-gemini-bg[data-gemini-palette="sky"] .chat-gemini-orb-d {
+  background: radial-gradient(
+    circle,
+    color-mix(in oklab, #a5f3fc 48%, transparent) 0%,
+    transparent 76%
+  );
+}
+
+.chat-gemini-bg[data-gemini-palette="aqua"] .chat-gemini-orb-a {
+  background: radial-gradient(
+    circle,
+    color-mix(in oklab, #67e8f9 56%, transparent) 0%,
+    transparent 72%
+  );
+}
+
+.chat-gemini-bg[data-gemini-palette="aqua"] .chat-gemini-orb-b {
+  background: radial-gradient(
+    circle,
+    color-mix(in oklab, #22d3ee 50%, transparent) 0%,
+    transparent 70%
+  );
+}
+
+.chat-gemini-bg[data-gemini-palette="aqua"] .chat-gemini-orb-c {
+  background: radial-gradient(
+    circle,
+    color-mix(in oklab, #99f6e4 42%, transparent) 0%,
+    transparent 74%
+  );
+}
+
+.chat-gemini-bg[data-gemini-palette="aqua"] .chat-gemini-orb-d {
+  background: radial-gradient(
+    circle,
+    color-mix(in oklab, #a5f3fc 46%, transparent) 0%,
+    transparent 76%
+  );
+}
+
+.chat-gemini-bg[data-gemini-palette="mint"] .chat-gemini-mesh-active .chat-gemini-orb-a {
+  background: radial-gradient(
+    circle,
+    color-mix(in oklab, #34d399 64%, transparent) 0%,
+    transparent 72%
+  );
+}
+
+.chat-gemini-bg[data-gemini-palette="mint"] .chat-gemini-mesh-active .chat-gemini-orb-b {
+  background: radial-gradient(
+    circle,
+    color-mix(in oklab, #2dd4bf 58%, transparent) 0%,
+    transparent 70%
+  );
+}
+
+.chat-gemini-bg[data-gemini-palette="sky"] .chat-gemini-mesh-active .chat-gemini-orb-a {
+  background: radial-gradient(
+    circle,
+    color-mix(in oklab, #60a5fa 64%, transparent) 0%,
+    transparent 72%
+  );
+}
+
+.chat-gemini-bg[data-gemini-palette="sky"] .chat-gemini-mesh-active .chat-gemini-orb-b {
+  background: radial-gradient(
+    circle,
+    color-mix(in oklab, #38bdf8 58%, transparent) 0%,
+    transparent 70%
+  );
+}
+
+.chat-gemini-bg[data-gemini-palette="aqua"] .chat-gemini-mesh-active .chat-gemini-orb-a {
+  background: radial-gradient(
+    circle,
+    color-mix(in oklab, #22d3ee 62%, transparent) 0%,
+    transparent 72%
+  );
+}
+
+.chat-gemini-bg[data-gemini-palette="aqua"] .chat-gemini-mesh-active .chat-gemini-orb-b {
+  background: radial-gradient(
+    circle,
+    color-mix(in oklab, #06b6d4 56%, transparent) 0%,
+    transparent 70%
   );
 }
 
 .chat-gemini-dots {
+  background-size: 10px 10px;
+  opacity: 0.46;
+  animation: gemini-dots-breathe 8s ease-in-out infinite;
+  mask-image: linear-gradient(to top, black 0%, black 34%, transparent 90%);
+  -webkit-mask-image: linear-gradient(to top, black 0%, black 34%, transparent 90%);
+}
+
+.chat-gemini-bg[data-gemini-palette="mint"] .chat-gemini-dots {
   background-image: radial-gradient(
     circle,
-    color-mix(in oklab, #0284c7 13%, transparent) 0.85px,
-    transparent 0.85px
+    color-mix(in oklab, #059669 12%, transparent) 0.8px,
+    transparent 0.8px
   );
-  background-size: 11px 11px;
-  opacity: 0.5;
-  animation: gemini-dots-breathe 7s ease-in-out infinite;
-  mask-image: linear-gradient(to top, black 0%, black 36%, transparent 92%);
-  -webkit-mask-image: linear-gradient(to top, black 0%, black 36%, transparent 92%);
+}
+
+.chat-gemini-bg[data-gemini-palette="sky"] .chat-gemini-dots {
+  background-image: radial-gradient(
+    circle,
+    color-mix(in oklab, #0284c7 12%, transparent) 0.8px,
+    transparent 0.8px
+  );
+}
+
+.chat-gemini-bg[data-gemini-palette="aqua"] .chat-gemini-dots {
+  background-image: radial-gradient(
+    circle,
+    color-mix(in oklab, #0891b2 12%, transparent) 0.8px,
+    transparent 0.8px
+  );
 }
 
 .chat-gemini-dots-active {
-  background-image: radial-gradient(
-    circle,
-    color-mix(in oklab, #0284c7 16%, transparent) 0.85px,
-    transparent 0.85px
-  );
-  animation-duration: 5s;
+  opacity: 0.56;
+  animation-duration: 5.5s;
 }
 
 .chat-gemini-dots-loading {
   animation-duration: 3.5s;
 }
 
-.dark .chat-gemini-orb-a {
+.dark .chat-gemini-bg[data-gemini-palette="mint"] .chat-gemini-orb-a {
   background: radial-gradient(
     circle,
-    color-mix(in oklab, #0369a1 50%, transparent) 0%,
-    transparent 70%
-  );
-}
-
-.dark .chat-gemini-orb-b {
-  background: radial-gradient(
-    circle,
-    color-mix(in oklab, #0284c7 44%, transparent) 0%,
-    transparent 68%
-  );
-}
-
-.dark .chat-gemini-orb-c {
-  background: radial-gradient(
-    circle,
-    color-mix(in oklab, #0ea5e9 36%, transparent) 0%,
+    color-mix(in oklab, #059669 46%, transparent) 0%,
     transparent 72%
   );
 }
 
-.dark .chat-gemini-orb-d {
+.dark .chat-gemini-bg[data-gemini-palette="mint"] .chat-gemini-orb-b {
   background: radial-gradient(
     circle,
-    color-mix(in oklab, #38bdf8 40%, transparent) 0%,
-    transparent 74%
+    color-mix(in oklab, #0d9488 40%, transparent) 0%,
+    transparent 70%
   );
 }
 
-.dark .chat-gemini-mesh-active .chat-gemini-orb-a {
+.dark .chat-gemini-bg[data-gemini-palette="sky"] .chat-gemini-orb-a {
   background: radial-gradient(
     circle,
-    color-mix(in oklab, #0ea5e9 56%, transparent) 0%,
+    color-mix(in oklab, #0369a1 46%, transparent) 0%,
+    transparent 72%
+  );
+}
+
+.dark .chat-gemini-bg[data-gemini-palette="sky"] .chat-gemini-orb-b {
+  background: radial-gradient(
+    circle,
+    color-mix(in oklab, #0284c7 40%, transparent) 0%,
+    transparent 70%
+  );
+}
+
+.dark .chat-gemini-bg[data-gemini-palette="aqua"] .chat-gemini-orb-a {
+  background: radial-gradient(
+    circle,
+    color-mix(in oklab, #0891b2 44%, transparent) 0%,
+    transparent 72%
+  );
+}
+
+.dark .chat-gemini-bg[data-gemini-palette="aqua"] .chat-gemini-orb-b {
+  background: radial-gradient(
+    circle,
+    color-mix(in oklab, #06b6d4 38%, transparent) 0%,
     transparent 70%
   );
 }
