@@ -13,7 +13,7 @@ import {
 
 import { ChatAccountFooter } from "@/components/app-shell/chat-account-footer"
 import { ChatMobileGeminiBackground } from "@/components/app-shell/chat-mobile-gemini-background"
-import { chatMobileScrollDownClass } from "@/components/app-shell/chat-mobile-gemini-styles"
+import { chatMobileScrollDownClass, chatMobileThreadClass } from "@/components/app-shell/chat-mobile-gemini-styles"
 import { ChatMobileHeader } from "@/components/app-shell/chat-mobile-header"
 import {
   ChatHistoryRail,
@@ -1508,9 +1508,9 @@ function ChatAside({
     >
       {isMobileOverlay ? (
         <ChatMobileGeminiBackground
-          active={mobileComposerFocused}
-          loading={sending}
-          intro={mobileIntroGlow}
+          active={mobileComposerFocused && messages.length === 0}
+          loading={sending && messages.length === 0}
+          intro={mobileIntroGlow && messages.length === 0}
         />
       ) : null}
       {historyRailVisible ? (
@@ -1748,7 +1748,8 @@ function ChatAside({
               ) : (
                 <div
                   className={cn(
-                    "mx-auto flex w-full min-w-0 flex-col px-4 py-4",
+                    "mx-auto flex w-full min-w-0 flex-col",
+                    isMobileOverlay ? chatMobileThreadClass : "px-4 py-4",
                     CHAT_CONTENT_MAX_WIDTH
                   )}
                 >
@@ -1841,7 +1842,7 @@ function ChatAside({
                     key={message.id}
                     className={cn(
                       "min-w-0",
-                      index > 0 && (sameRole ? "mt-2" : "mt-7")
+                      index > 0 && (sameRole ? "mt-3" : isMobileOverlay ? "mt-8" : "mt-7")
                     )}
                   >
                     <ChatUserTurn
@@ -1849,6 +1850,7 @@ function ChatAside({
                       conversationId={conversationId}
                       content={message.content}
                       disabled={sending}
+                      variant={isMobileOverlay ? "gemini" : "default"}
                       onEdit={() => handleEditUserMessage(message.id)}
                     />
                   </div>
@@ -1860,10 +1862,10 @@ function ChatAside({
                     key={message.id}
                     className={cn(
                       "min-w-0",
-                      index > 0 && (sameRole ? "mt-2" : "mt-7")
+                      index > 0 && (sameRole ? "mt-3" : isMobileOverlay ? "mt-8" : "mt-7")
                     )}
                   >
-                    <ChatSystemNote>
+                    <ChatSystemNote variant={isMobileOverlay ? "gemini" : "default"}>
                       <span className="block min-w-0 whitespace-pre-wrap wrap-anywhere">
                         {message.content}
                       </span>
@@ -1882,13 +1884,14 @@ function ChatAside({
                   key={message.id}
                   className={cn(
                     "group/turn min-w-0",
-                    index > 0 && (sameRole ? "mt-2" : "mt-7")
+                    index > 0 && (sameRole ? "mt-3" : isMobileOverlay ? "mt-8" : "mt-7")
                   )}
                 >
                   <ChatAssistantTurn
                     waiting={isWaiting}
                     compact={sameRole}
                     content={message.content}
+                    variant={isMobileOverlay ? "gemini" : "default"}
                     actions={hasAction ? actions : undefined}
                     toolbar={
                       showMessageActions ? (
@@ -1898,6 +1901,7 @@ function ChatAside({
                           content={message.content}
                           feedback={message.feedback}
                           disabled={sending}
+                          variant={isMobileOverlay ? "gemini" : "default"}
                           onFeedbackChange={(next) =>
                             setMessageFeedback(message.id, next)
                           }

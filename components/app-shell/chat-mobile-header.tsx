@@ -6,6 +6,7 @@ import {
   CheckIcon,
   ChevronDownIcon,
   EclipseIcon,
+  EllipsisVerticalIcon,
   LogOutIcon,
   MenuIcon,
   NewspaperIcon,
@@ -24,7 +25,6 @@ import {
   chatContextMenuSeparatorClass,
 } from "@/components/app-shell/chat-context-menu-styles"
 import {
-  chatMobileHeaderAvatarButtonClass,
   chatMobileHeaderButtonClass,
   chatMobileHeaderModelClass,
 } from "@/components/app-shell/chat-mobile-gemini-styles"
@@ -68,6 +68,128 @@ type ChatMobileHeaderProps = {
   className?: string
 }
 
+function AccountMoreMenu({
+  onOpenNews,
+}: {
+  onOpenNews: () => void
+}) {
+  const t = useTranslations("workspace")
+  const common = useTranslations("common")
+  const { user, isProUser, login, logout, loginPending } = useAuth()
+  const avatarUrl = useUserAvatarUrl(user)
+  const { resolvedTheme, setTheme } = useTheme()
+  const planName = user ? displayPlanName(user.tier) : "Free"
+
+  if (!user) {
+    return (
+      <Button
+        type="button"
+        variant="ghost"
+        size="icon"
+        className={chatMobileHeaderButtonClass}
+        aria-label={t("signIn")}
+        disabled={loginPending}
+        onClick={() => login({ source: "chat" })}
+      >
+        <Avatar className="size-7 rounded-full after:border-0">
+          <AvatarFallback className="bg-muted text-[11px] font-medium">
+            <GoogleGlyph className="size-3.5" />
+          </AvatarFallback>
+        </Avatar>
+      </Button>
+    )
+  }
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger
+        render={
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className={chatMobileHeaderButtonClass}
+            aria-label="More options"
+          />
+        }
+      >
+        <EllipsisVerticalIcon />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent
+        align="end"
+        sideOffset={10}
+        className={cn(chatContextMenuContentClass, "min-w-[17rem]")}
+      >
+        <DropdownMenuGroup>
+          <DropdownMenuLabel className={chatContextMenuHeaderClass}>
+            <div className="flex items-center gap-3">
+              <ChatAccountAvatar
+                user={user}
+                avatarUrl={avatarUrl}
+                isProUser={isProUser}
+                planName={planName}
+                showPlanBadge={false}
+                avatarClassName="size-9"
+              />
+              <div className="min-w-0">
+                <p className="truncate text-[15px] font-medium leading-tight">
+                  {userAccountLabel(user)}
+                </p>
+                {userAccountSubline(user) ? (
+                  <p className="truncate text-[13px] text-muted-foreground">
+                    {userAccountSubline(user)}
+                  </p>
+                ) : null}
+              </div>
+            </div>
+          </DropdownMenuLabel>
+        </DropdownMenuGroup>
+        {!isProUser ? (
+          <>
+            <DropdownMenuSeparator className={chatContextMenuSeparatorClass} />
+            <DropdownMenuItem
+              className={chatContextMenuItemClass}
+              nativeButton={false}
+              render={<Link href={UPGRADE_PATH} />}
+            >
+              <SparklesIcon className={chatContextMenuIconClass} />
+              {t("upgradeToPlus")}
+            </DropdownMenuItem>
+          </>
+        ) : null}
+        <DropdownMenuSeparator className={chatContextMenuSeparatorClass} />
+        <DropdownMenuItem
+          className={chatContextMenuItemClass}
+          onClick={onOpenNews}
+        >
+          <NewspaperIcon className={chatContextMenuIconClass} />
+          {t("news")}
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          className={chatContextMenuItemClass}
+          onClick={() =>
+            setTheme(resolvedTheme === "dark" ? "light" : "dark")
+          }
+        >
+          <EclipseIcon className={chatContextMenuIconClass} />
+          {resolvedTheme === "dark"
+            ? common("lightMode")
+            : common("darkMode")}
+        </DropdownMenuItem>
+        <DropdownMenuSeparator className={chatContextMenuSeparatorClass} />
+        <DropdownMenuItem
+          variant="destructive"
+          className={chatContextMenuDeleteClass}
+          onClick={() => void logout()}
+        >
+          <LogOutIcon className="size-[18px] shrink-0" />
+          {t("logOut")}
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  )
+}
+
 function ChatMobileHeader({
   onOpenHistory,
   historyOpen = false,
@@ -80,21 +202,16 @@ function ChatMobileHeader({
   className,
 }: ChatMobileHeaderProps) {
   const t = useTranslations("workspace")
-  const common = useTranslations("common")
-  const { user, isProUser, login, logout, loginPending } = useAuth()
-  const avatarUrl = useUserAvatarUrl(user)
-  const { resolvedTheme, setTheme } = useTheme()
   const effortLabel = effort ? chatEffortLabel(effort) : chatEffortLabel("instant")
-  const planName = user ? displayPlanName(user.tier) : "Free"
 
   return (
     <header
       className={cn(
-        "flex min-h-14 shrink-0 items-center justify-between gap-2 px-3 pt-[var(--app-safe-top,0px)]",
+        "grid shrink-0 grid-cols-[1fr_auto_1fr] items-center gap-1 px-2 pb-1 pt-[var(--app-safe-top,0px)]",
         className
       )}
     >
-      <div className="flex min-w-0 items-center gap-0.5">
+      <div className="flex min-w-0 items-center justify-start">
         {onOpenHistory ? (
           <Button
             type="button"
@@ -108,6 +225,9 @@ function ChatMobileHeader({
             <MenuIcon />
           </Button>
         ) : null}
+      </div>
+
+      <div className="flex min-w-0 items-center justify-center">
         {!hideEffort && effort && onEffortChange ? (
           <DropdownMenu>
             <DropdownMenuTrigger
@@ -121,11 +241,11 @@ function ChatMobileHeader({
                 />
               }
             >
-              <span className="truncate">{effortLabel}</span>
+              <span className="truncate">IRIS · {effortLabel}</span>
               <ChevronDownIcon className="size-4 shrink-0 text-muted-foreground" />
             </DropdownMenuTrigger>
             <DropdownMenuContent
-              align="start"
+              align="center"
               sideOffset={8}
               className={chatContextMenuContentClass}
             >
@@ -153,10 +273,14 @@ function ChatMobileHeader({
               </DropdownMenuGroup>
             </DropdownMenuContent>
           </DropdownMenu>
-        ) : null}
+        ) : (
+          <span className="truncate px-2 text-[17px] font-normal tracking-tight text-[#1f1f1f] dark:text-foreground">
+            IRIS
+          </span>
+        )}
       </div>
 
-      <div className="flex shrink-0 items-center gap-1 pb-0.5">
+      <div className="flex shrink-0 items-center justify-end gap-0.5">
         <Button
           type="button"
           variant="ghost"
@@ -168,118 +292,7 @@ function ChatMobileHeader({
         >
           <SquarePenIcon />
         </Button>
-        {user ? (
-          <DropdownMenu>
-            <DropdownMenuTrigger
-              render={
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className={chatMobileHeaderAvatarButtonClass}
-                  aria-label={`Account menu for ${userAccountLabel(user)}`}
-                />
-              }
-            >
-              <ChatAccountAvatar
-                user={user}
-                avatarUrl={avatarUrl}
-                isProUser={isProUser}
-                planName={planName}
-                compact
-                className="size-[2.125rem]"
-                avatarClassName="size-full rounded-full"
-              />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent
-              align="end"
-              sideOffset={10}
-              className={cn(chatContextMenuContentClass, "min-w-[17rem]")}
-            >
-              <DropdownMenuGroup>
-                <DropdownMenuLabel className={chatContextMenuHeaderClass}>
-                  <div className="flex items-center gap-3">
-                    <ChatAccountAvatar
-                      user={user}
-                      avatarUrl={avatarUrl}
-                      isProUser={isProUser}
-                      planName={planName}
-                      showPlanBadge={false}
-                      avatarClassName="size-9"
-                    />
-                    <div className="min-w-0">
-                      <p className="truncate text-[15px] font-medium leading-tight">
-                        {userAccountLabel(user)}
-                      </p>
-                      {userAccountSubline(user) ? (
-                        <p className="truncate text-[13px] text-muted-foreground">
-                          {userAccountSubline(user)}
-                        </p>
-                      ) : null}
-                    </div>
-                  </div>
-                </DropdownMenuLabel>
-              </DropdownMenuGroup>
-              {!isProUser ? (
-                <>
-                  <DropdownMenuSeparator className={chatContextMenuSeparatorClass} />
-                  <DropdownMenuItem
-                    className={chatContextMenuItemClass}
-                    nativeButton={false}
-                    render={<Link href={UPGRADE_PATH} />}
-                  >
-                    <SparklesIcon className={chatContextMenuIconClass} />
-                    {t("upgradeToPlus")}
-                  </DropdownMenuItem>
-                </>
-              ) : null}
-              <DropdownMenuSeparator className={chatContextMenuSeparatorClass} />
-              <DropdownMenuItem
-                className={chatContextMenuItemClass}
-                onClick={onOpenNews}
-              >
-                <NewspaperIcon className={chatContextMenuIconClass} />
-                {t("news")}
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                className={chatContextMenuItemClass}
-                onClick={() =>
-                  setTheme(resolvedTheme === "dark" ? "light" : "dark")
-                }
-              >
-                <EclipseIcon className={chatContextMenuIconClass} />
-                {resolvedTheme === "dark"
-                  ? common("lightMode")
-                  : common("darkMode")}
-              </DropdownMenuItem>
-              <DropdownMenuSeparator className={chatContextMenuSeparatorClass} />
-              <DropdownMenuItem
-                variant="destructive"
-                className={chatContextMenuDeleteClass}
-                onClick={() => void logout()}
-              >
-                <LogOutIcon className="size-[18px] shrink-0" />
-                {t("logOut")}
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        ) : (
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            className={chatMobileHeaderAvatarButtonClass}
-            aria-label={t("signIn")}
-            disabled={loginPending}
-            onClick={() => login({ source: "chat" })}
-          >
-            <Avatar className="size-full rounded-full after:border-0">
-              <AvatarFallback className="bg-muted text-[11px] font-medium">
-                <GoogleGlyph className="size-3.5" />
-              </AvatarFallback>
-            </Avatar>
-          </Button>
-        )}
+        <AccountMoreMenu onOpenNews={onOpenNews} />
       </div>
     </header>
   )

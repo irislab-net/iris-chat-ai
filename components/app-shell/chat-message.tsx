@@ -7,6 +7,7 @@ import Image from "next/image"
 import { chatUserBubbleClass } from "@/components/app-shell/chat-turn-actions"
 import { TypingDots } from "@/components/app-shell/chat-typing"
 import { cn } from "@/lib/utils"
+import { chatMobileAssistantClass } from "@/components/app-shell/chat-mobile-gemini-styles"
 
 const AIMessageRenderer = dynamic(
   () =>
@@ -87,6 +88,7 @@ function ChatAssistantTurn({
   actions,
   toolbar,
   className,
+  variant = "default",
 }: {
   /** Assistant reply — rendered as GFM markdown (tables, lists, code). */
   content?: string
@@ -96,16 +98,23 @@ function ChatAssistantTurn({
   actions?: ReactNode
   toolbar?: ReactNode
   className?: string
+  variant?: "default" | "gemini"
 }) {
+  const isGemini = variant === "gemini"
   const hasBody =
     waiting || Boolean(content?.trim()) || Boolean(children)
 
   return (
-    <div className={cn("w-full min-w-0 px-2 sm:px-3", className)}>
+    <div className={cn("w-full min-w-0", isGemini ? "px-0" : "px-2 sm:px-3", className)}>
       {hasBody ? (
         <div
           dir="auto"
-          className="min-w-0 cursor-text select-text chat-bidi text-[14px] leading-[1.6] text-foreground/92 sm:text-[13px] [&::selection]:bg-primary/20"
+          className={cn(
+            "min-w-0 cursor-text select-text chat-bidi [&::selection]:bg-primary/20",
+            isGemini
+              ? chatMobileAssistantClass
+              : "text-[14px] leading-[1.6] text-foreground/92 sm:text-[13px]"
+          )}
           data-chat-assistant-bubble=""
         >
           {waiting ? (
@@ -120,7 +129,7 @@ function ChatAssistantTurn({
           )}
         </div>
       ) : null}
-      {toolbar ? <div className="mt-1">{toolbar}</div> : null}
+      {toolbar ? <div className={cn(isGemini ? "mt-0.5" : "mt-1")}>{toolbar}</div> : null}
       {actions ? (
         <div className="mt-3 flex w-full flex-col items-start gap-2">{actions}</div>
       ) : null}
@@ -131,10 +140,29 @@ function ChatAssistantTurn({
 function ChatSystemNote({
   children,
   className,
+  variant = "default",
 }: {
   children: ReactNode
   className?: string
+  variant?: "default" | "gemini"
 }) {
+  if (variant === "gemini") {
+    return (
+      <div
+        className={cn(
+          "flex min-w-0 items-center gap-3 py-1 text-center",
+          className
+        )}
+      >
+        <div className="h-px min-w-0 flex-1 bg-border/70" aria-hidden />
+        <p className="shrink-0 text-[12px] leading-5 text-muted-foreground">
+          {children}
+        </p>
+        <div className="h-px min-w-0 flex-1 bg-border/70" aria-hidden />
+      </div>
+    )
+  }
+
   return (
     <p
       className={cn(

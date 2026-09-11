@@ -28,6 +28,7 @@ type ChatMessageActionsProps = {
   onFeedbackChange: (feedback: ChatMessageFeedback | undefined) => void
   disabled?: boolean
   className?: string
+  variant?: "default" | "gemini"
 }
 
 function ChatMessageActions({
@@ -38,9 +39,11 @@ function ChatMessageActions({
   onFeedbackChange,
   disabled,
   className,
+  variant = "default",
 }: ChatMessageActionsProps) {
   const [copied, setCopied] = React.useState(false)
   const copyTimerRef = React.useRef(0)
+  const isGemini = variant === "gemini"
 
   React.useEffect(() => {
     return () => window.clearTimeout(copyTimerRef.current)
@@ -74,13 +77,35 @@ function ChatMessageActions({
     })
   }
 
+  const buttonClass = cn(
+    chatTurnActionButtonClass,
+    isGemini &&
+      "size-8 rounded-full text-[#444746] hover:bg-black/[0.04] dark:text-muted-foreground dark:hover:bg-white/[0.06]"
+  )
+
   return (
     <div className={cn(chatTurnActionsClass, "justify-start", className)}>
       <Button
         type="button"
         variant="ghost"
         size="icon-sm"
-        className={chatTurnActionButtonClass}
+        className={buttonClass}
+        aria-label={copied ? "Copied response" : "Copy response"}
+        title={copied ? "Copied" : "Copy"}
+        disabled={disabled || !content.trim()}
+        onClick={() => void onCopy()}
+      >
+        {copied ? (
+          <CheckIcon className={cn("text-emerald-600", isGemini && "size-[18px]")} />
+        ) : (
+          <CopyIcon className={isGemini ? "size-[18px]" : undefined} />
+        )}
+      </Button>
+      <Button
+        type="button"
+        variant="ghost"
+        size="icon-sm"
+        className={buttonClass}
         aria-label="Helpful response"
         title="Helpful"
         aria-pressed={feedback === "up"}
@@ -88,7 +113,7 @@ function ChatMessageActions({
         onClick={() => onReaction("up")}
       >
         <ThumbsUpIcon
-          className={feedback === "up" ? "text-foreground" : undefined}
+          className={cn(isGemini && "size-[18px]", feedback === "up" ? "text-foreground" : undefined)}
           fill={feedback === "up" ? "currentColor" : "none"}
         />
       </Button>
@@ -96,7 +121,7 @@ function ChatMessageActions({
         type="button"
         variant="ghost"
         size="icon-sm"
-        className={chatTurnActionButtonClass}
+        className={buttonClass}
         aria-label="Unhelpful response"
         title="Not helpful"
         aria-pressed={feedback === "down"}
@@ -104,25 +129,9 @@ function ChatMessageActions({
         onClick={() => onReaction("down")}
       >
         <ThumbsDownIcon
-          className={feedback === "down" ? "text-foreground" : undefined}
+          className={cn(isGemini && "size-[18px]", feedback === "down" ? "text-foreground" : undefined)}
           fill={feedback === "down" ? "currentColor" : "none"}
         />
-      </Button>
-      <Button
-        type="button"
-        variant="ghost"
-        size="icon-sm"
-        className={chatTurnActionButtonClass}
-        aria-label={copied ? "Copied response" : "Copy response"}
-        title={copied ? "Copied" : "Copy"}
-        disabled={disabled || !content.trim()}
-        onClick={() => void onCopy()}
-      >
-        {copied ? (
-          <CheckIcon className="text-emerald-600" />
-        ) : (
-          <CopyIcon />
-        )}
       </Button>
     </div>
   )

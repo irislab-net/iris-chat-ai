@@ -5,7 +5,6 @@ import {
   ArrowUpIcon,
   CheckIcon,
   ChevronDownIcon,
-  MicIcon,
   PlusIcon,
   XIcon,
 } from "lucide-react"
@@ -471,27 +470,7 @@ function ChatComposer({
               >
                 <ArrowUpIcon className="size-[18px]" />
               </Button>
-            ) : (
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon-sm"
-                aria-label="Voice input"
-                title="Voice input"
-                disabled={disabled}
-                className={chatMobileComposerIconButtonClass}
-                onClick={(event) => {
-                  event.stopPropagation()
-                  if (deferMobileKeyboard && !mobileKeyboardReady) {
-                    enableMobileKeyboard()
-                    return
-                  }
-                  localRef.current?.focus()
-                }}
-              >
-                <MicIcon className="size-5" />
-              </Button>
-            )}
+            ) : null}
           </div>
         ) : null}
         {!isFloating ? (

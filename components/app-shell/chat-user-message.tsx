@@ -9,6 +9,9 @@ import {
   chatContextMenuItemClass,
 } from "@/components/app-shell/chat-context-menu-styles"
 import {
+  chatMobileUserBubbleClass,
+} from "@/components/app-shell/chat-mobile-gemini-styles"
+import {
   chatTurnActionsClass,
   chatUserBubbleClass,
   chatUserBubbleExpandToggleClass,
@@ -33,6 +36,7 @@ type ChatUserTurnProps = {
   onEdit?: () => void
   disabled?: boolean
   className?: string
+  variant?: "default" | "gemini"
 }
 
 function ChatUserTurn({
@@ -42,6 +46,7 @@ function ChatUserTurn({
   onEdit,
   disabled,
   className,
+  variant = "default",
 }: ChatUserTurnProps) {
   const [copied, setCopied] = React.useState(false)
   const [expanded, setExpanded] = React.useState(false)
@@ -76,6 +81,24 @@ function ChatUserTurn({
     } catch {
       setCopied(false)
     }
+  }
+
+  if (variant === "gemini") {
+    return (
+      <div className={cn("flex w-full min-w-0 justify-end", className)}>
+        <div
+          dir="auto"
+          className={cn(
+            "chat-bidi min-w-0 overflow-hidden wrap-anywhere",
+            chatMobileUserBubbleClass
+          )}
+        >
+          <span className="block min-w-0 whitespace-pre-wrap wrap-anywhere">
+            {trimmed}
+          </span>
+        </div>
+      </div>
+    )
   }
 
   return (
