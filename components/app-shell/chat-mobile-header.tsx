@@ -143,7 +143,7 @@ function AccountAvatarMenu({
       <DropdownMenuContent
         align="end"
         sideOffset={10}
-        className={cn(chatContextMenuContentClass, "min-w-[17rem]")}
+        className={cn(chatContextMenuContentClass, "min-w-68")}
       >
         <DropdownMenuGroup>
           <DropdownMenuLabel className={chatContextMenuHeaderClass}>
@@ -207,7 +207,7 @@ function AccountAvatarMenu({
           className={chatContextMenuDeleteClass}
           onClick={() => void logout()}
         >
-          <LogOutIcon className="size-[18px] shrink-0" />
+          <LogOutIcon className="size-4.5 shrink-0" />
           {t("logOut")}
         </DropdownMenuItem>
       </DropdownMenuContent>

@@ -48,7 +48,7 @@ function ChartPaneToolbar({
       <div
         role="tablist"
         aria-label="Market view"
-        className="relative grid h-7 w-[7.5rem] shrink-0 grid-cols-2 rounded-lg bg-muted/40 p-0.5 ring-1 ring-border/35 lg:hidden"
+        className="relative grid h-7 w-(7.5rem) shrink-0 grid-cols-2 rounded-lg bg-muted/40 p-0.5 ring-1 ring-border/35 lg:hidden"
       >
         <span
           aria-hidden

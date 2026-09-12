@@ -1,7 +1,6 @@
 "use client"
 
 import * as React from "react"
-import Image from "next/image"
 import {
   ChevronDownIcon,
   EclipseIcon,
@@ -17,6 +16,7 @@ import { Link, usePathname } from "@/i18n/navigation"
 
 import { useAuth } from "@/components/auth/auth-provider"
 import { GoogleGlyph } from "@/components/auth/google-glyph"
+import { IrisLabLogo } from "@/components/brand/iris-lab-logo"
 import { useUserAvatarUrl } from "@/hooks/use-user-avatar-url"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
@@ -152,10 +152,10 @@ function WebsiteToolbar({
   return (
     <header
       data-slot="website-toolbar"
-        className={cn(
-          "flex min-h-[var(--mobile-toolbar-height,3rem)] shrink-0 items-center gap-1.5 bg-background px-3 pt-[var(--app-safe-top,0px)] sm:gap-2 sm:px-4 sm:pt-0",
-          className
-        )}
+      className={cn(
+        "flex min-h-(--mobile-toolbar-height,3rem) shrink-0 items-center gap-1.5 bg-background px-3 pt-(--app-safe-top,0px) sm:gap-2 sm:px-4 sm:pt-0",
+        className
+      )}
     >
       <div className="flex h-full min-w-0 flex-1 items-center gap-1.5 sm:gap-2">
         {onCloseToChat ? (
@@ -167,7 +167,7 @@ function WebsiteToolbar({
             aria-label={t("backToChat")}
             onClick={onCloseToChat}
           >
-            <XIcon className="size-[18px]" />
+            <XIcon className="size-4.5" />
           </Button>
         ) : null}
         <Link
@@ -179,12 +179,10 @@ function WebsiteToolbar({
             onCloseToChat && "hidden lg:block"
           )}
         >
-          <Image
-            src="/Logo.png"
+          <IrisLabLogo
             alt="IRIS Chat AI"
-            width={32}
-            height={32}
-            className="block size-8 rounded-md"
+            size={32}
+            className="size-8 rounded-md"
             priority
           />
         </Link>

@@ -22,6 +22,7 @@ import {
   DESK_FRAME_CLASS,
   DESK_TICKER_H,
 } from "@/components/landing/hero-desk-frame"
+import { IrisLabAvatar } from "@/components/brand/iris-lab-avatar"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Slider } from "@/components/ui/slider"
@@ -703,19 +704,7 @@ const DeskTicketForm = React.memo(function DeskTicketForm({
 })
 
 function IrisAvatar() {
-  return (
-    <Avatar size="sm" className="bg-card">
-      <AvatarImage
-        src="/Logo.png"
-        alt="IRIS AI"
-        loading="lazy"
-        decoding="async"
-      />
-      <AvatarFallback className="text-[8px] font-black tracking-tight">
-        IR
-      </AvatarFallback>
-    </Avatar>
-  )
+  return <IrisLabAvatar />
 }
 
 function UserAvatar() {

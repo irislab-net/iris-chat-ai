@@ -1,10 +1,10 @@
 "use client"
 
 import * as React from "react"
-import Image from "next/image"
 import { ExternalLinkIcon } from "lucide-react"
 
 import { GoogleGlyph } from "@/components/auth/google-glyph"
+import { IrisLabLogo } from "@/components/brand/iris-lab-logo"
 import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
 import {
@@ -117,12 +117,10 @@ function LoginConsentBrand({ compact = false }: { compact?: boolean }) {
         compact ? "px-5 pb-1" : "pb-2"
       )}
     >
-      <Image
-        src="/Logo.png"
-        alt=""
-        width={40}
-        height={40}
-        className="block size-10 shrink-0 rounded-xl"
+      <IrisLabLogo
+        decorative
+        size={40}
+        className="size-10 shrink-0 rounded-xl"
         priority
       />
       <div className="min-w-0">
@@ -215,7 +213,7 @@ function LoginConsentBody({
         </ConsentCheck>
       </div>
 
-      <div className="rounded-2xl border border-black/[0.06] bg-white/70 px-3.5 py-3 dark:border-border/40 dark:bg-muted/15">
+      <div className="rounded-2xl border border-black/6 bg-white/70 px-3.5 py-3 dark:border-border/40 dark:bg-muted/15">
         <p className="text-pretty text-[13px] leading-relaxed text-muted-foreground">
           {DISCLAIMER}
         </p>
@@ -266,7 +264,7 @@ function LoginConsentDialog({
     return (
       <Dialog open={open} onOpenChange={handleOpenChange}>
         <DialogContent
-          className="gap-0 overflow-hidden rounded-[1.35rem] border border-border/40 bg-background p-0 shadow-xl ring-0 sm:max-w-[26rem]"
+          className="gap-0 overflow-hidden rounded-[1.35rem] border border-border/40 bg-background p-0 shadow-xl ring-0 sm:max-w-104"
           showCloseButton={!confirming}
         >
           <div className="flex flex-col gap-5 px-6 pt-6 pb-2">

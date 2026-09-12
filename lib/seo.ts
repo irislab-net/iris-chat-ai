@@ -33,7 +33,10 @@ export const SOCIAL_LINKS = {
   telegram: "https://t.me/theIrisLab",
 } as const
 
-/** Square mark for Google Search / Knowledge Panel (min 112×112). UI still uses /Logo.png. */
+/** Default brand mark for sitemap / metadata (light theme SVG). */
+export const IRIS_LAB_LOGO_MARK = "/iris-lab-logo-light.svg"
+
+/** Square mark for Google Search / Knowledge Panel (min 112×112). */
 export const ORGANIZATION_LOGO = {
   path: "/organization-logo.png",
   width: 512,
@@ -106,13 +109,13 @@ export const INDEXABLE_ROUTES = [
     path: "/",
     changeFrequency: "hourly" as const,
     priority: 1,
-    images: [ORGANIZATION_LOGO.path, "/Logo.png"] as const,
+    images: [ORGANIZATION_LOGO.path, IRIS_LAB_LOGO_MARK] as const,
   },
   {
     path: "/home",
     changeFrequency: "weekly" as const,
     priority: 0.95,
-    images: ["/home-bg-header.webp", "/Logo.png", "/opengraph-image"] as const,
+    images: ["/home-bg-header.webp", IRIS_LAB_LOGO_MARK, "/opengraph-image"] as const,
   },
   {
     path: "/about",

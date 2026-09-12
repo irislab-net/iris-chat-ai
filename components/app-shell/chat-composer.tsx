@@ -117,8 +117,15 @@ function ChatComposer({
 
   React.useEffect(() => {
     if (!deferMobileKeyboard) return
-    setUserUnlockedKeyboard(false)
-    keyboardUnlockAllowedAtRef.current = Date.now() + 500
+    let cancelled = false
+    queueMicrotask(() => {
+      if (cancelled) return
+      setUserUnlockedKeyboard(false)
+      keyboardUnlockAllowedAtRef.current = Date.now() + 500
+    })
+    return () => {
+      cancelled = true
+    }
   }, [deferMobileKeyboard])
 
   React.useEffect(() => {
@@ -368,7 +375,7 @@ function ChatComposer({
           isFloating
             ? chatMobileComposerPillClass
             : cn(
-                "grid grid-cols-[auto_1fr_auto] rounded-2xl border border-foreground/[0.06] bg-muted/25 px-1 pb-1.5",
+                "grid grid-cols-[auto_1fr_auto] rounded-2xl border border-foreground/6 bg-muted/25 px-1 pb-1.5",
                 "shadow-[inset_0_1px_0_0_color-mix(in_oklch,var(--foreground)_7%,transparent),0_10px_28px_-20px_color-mix(in_oklch,var(--foreground)_14%,transparent)]",
                 "[grid-template-areas:'primary_primary_primary'_'leading_._trailing']",
                 "focus-within:border-foreground/10 focus-within:bg-muted/38",
@@ -479,7 +486,7 @@ function ChatComposer({
             }}
             dir={textDir}
             className={cn(
-              "chat-bidi min-w-[8rem] flex-1 field-sizing-content resize-none rounded-none border-0 bg-transparent p-0 text-start shadow-none focus-visible:border-transparent focus-visible:ring-0 dark:bg-transparent",
+              "chat-bidi min-w-32 flex-1 field-sizing-content resize-none rounded-none border-0 bg-transparent p-0 text-start shadow-none focus-visible:border-transparent focus-visible:ring-0 dark:bg-transparent",
               isFloating
                 ? "max-h-40 min-h-11 py-2.5 text-[16px] leading-6 text-foreground placeholder:text-muted-foreground"
                 : "min-h-6 text-[16px] leading-6 sm:text-[14px] sm:leading-[1.45]"
@@ -497,7 +504,7 @@ function ChatComposer({
                 title="Send · Enter"
                 className={chatMobileComposerSendClass}
               >
-                <ArrowUpIcon className="size-[18px]" />
+                <ArrowUpIcon className="size-4.5" />
               </Button>
             ) : null}
           </div>

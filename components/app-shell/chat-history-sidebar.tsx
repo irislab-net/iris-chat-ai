@@ -17,11 +17,11 @@ import {
   Trash2Icon,
   XIcon,
 } from "lucide-react"
-import Image from "next/image"
 import { useTranslations } from "next-intl"
 import { useTheme } from "@wrksz/themes/client/use-theme"
 
 import { ChatAccountAvatar } from "@/components/app-shell/chat-account-avatar"
+import { IrisLabLogo } from "@/components/brand/iris-lab-logo"
 import { useAuth } from "@/components/auth/auth-provider"
 import { displayPlanName } from "@/lib/billing/catalog"
 import { GoogleGlyph } from "@/components/auth/google-glyph"
@@ -112,7 +112,7 @@ function HistoryNewsNav({
       <NewspaperIcon
         className={cn(
           "shrink-0 text-muted-foreground",
-          isMobileDrawer ? "size-[18px]" : "size-4"
+          isMobileDrawer ? "size-4.5" : "size-4"
         )}
       />
       <span className="min-w-0 flex-1 truncate text-start">{t("news")}</span>
@@ -226,7 +226,7 @@ function MobileHistoryDrawerFooter({
             />
           }
         >
-          <Settings className="size-[18px]" />
+          <Settings className="size-4.5" />
         </DropdownMenuTrigger>
         <DropdownMenuContent
           align="end"
@@ -260,7 +260,7 @@ function MobileHistoryDrawerFooter({
                 className={chatContextMenuDeleteClass}
                 onClick={() => void logout()}
               >
-                <LogOutIcon className="size-[18px] shrink-0" />
+                <LogOutIcon className="size-4.5 shrink-0" />
                 {t("logOut")}
               </DropdownMenuItem>
             </>
@@ -343,20 +343,14 @@ function ChatHistorySidebar({
                 aria-label={t("closeChatHistory")}
                 onClick={onClose}
               >
-                <XIcon className="size-[18px]" />
+                <XIcon className="size-4.5" />
               </Button>
             ) : null}
           </header>
         ) : showBrandHeader ? (
           <header className="flex shrink-0 items-center gap-1 px-2 py-2.5">
             <div className="flex min-w-0 flex-1 items-center gap-2 px-1">
-              <Image
-                src="/Logo.png"
-                alt=""
-                width={28}
-                height={28}
-                className="block size-7 shrink-0 rounded-md"
-              />
+              <IrisLabLogo decorative size={28} className="size-7 shrink-0 rounded-md" />
               <span className="min-w-0 truncate text-sm font-semibold tracking-tight">
                 IRIS
               </span>
@@ -400,7 +394,7 @@ function ChatHistorySidebar({
                 <SquarePenIcon
                   className={cn(
                     "shrink-0 text-foreground",
-                    isMobileDrawer ? "size-[18px]" : "size-4"
+                    isMobileDrawer ? "size-4.5" : "size-4"
                   )}
                 />
                 {t("newChat")}
@@ -578,7 +572,7 @@ function ChatConversationOptionsItems({
         className={chatContextMenuDeleteClass}
         onClick={onDelete}
       >
-        <Trash2Icon className="size-[18px] shrink-0" />
+        <Trash2Icon className="size-4.5 shrink-0" />
         {t("deleteChat")}
       </Item>
     </>
@@ -664,7 +658,7 @@ function ConversationRow({
             />
           }
         >
-          <MoreHorizontalIcon className="size-[18px]" />
+          <MoreHorizontalIcon className="size-4.5" />
         </DropdownMenuTrigger>
         <DropdownMenuContent
           align="end"

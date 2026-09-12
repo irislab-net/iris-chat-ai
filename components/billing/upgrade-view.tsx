@@ -1,11 +1,11 @@
 "use client"
 
 import * as React from "react"
-import Image from "next/image"
 import { Link, useRouter } from "@/i18n/navigation"
 import { Clock3Icon, XIcon } from "lucide-react"
 
 import { useAuth } from "@/components/auth/auth-provider"
+import { IrisLabLogo } from "@/components/brand/iris-lab-logo"
 import type { CryptoCheckoutRequest } from "@/components/billing/crypto-payment-sheet"
 import { CryptoPaymentSheet } from "@/components/billing/crypto-payment-sheet"
 import { UpgradePlanCard } from "@/components/billing/upgrade-plan-card"
@@ -175,14 +175,7 @@ function UpgradeView() {
   return (
     <div className="flex min-h-dvh flex-col bg-background text-foreground">
       <header className="flex h-14 shrink-0 items-center gap-3 border-b border-border/60 px-4 sm:px-6">
-        <Image
-          src="/Logo.png"
-          alt="IRIS Lab"
-          width={32}
-          height={32}
-          className="size-8 rounded-md"
-          priority
-        />
+        <IrisLabLogo alt="IRIS Lab" size={32} className="size-8 rounded-md" priority />
         <div className="min-w-0 flex-1">
           <p className="text-sm font-medium leading-none">Upgrade</p>
           <p className="mt-0.5 truncate text-xs text-muted-foreground">

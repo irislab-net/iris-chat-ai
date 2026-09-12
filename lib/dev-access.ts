@@ -46,10 +46,18 @@ export function devProxyAction(input: {
 }
 
 export function listLanIpv4Addresses(
-  interfaces: NodeJS.Dict<NetworkInterfaceInfo[]> = networkInterfaces()
+  interfaces?: NodeJS.Dict<NetworkInterfaceInfo[]>
 ): string[] {
+  let resolved = interfaces
+  if (!resolved) {
+    try {
+      resolved = networkInterfaces()
+    } catch {
+      return []
+    }
+  }
   const ips: string[] = []
-  for (const addrs of Object.values(interfaces)) {
+  for (const addrs of Object.values(resolved)) {
     for (const addr of addrs ?? []) {
       const isV4 = addr.family === "IPv4" || (addr.family as unknown) === 4
       if (isV4 && !addr.internal) ips.push(addr.address)

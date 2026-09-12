@@ -6,6 +6,7 @@ import { NewspaperIcon, SendHorizonalIcon, SparklesIcon } from "lucide-react"
 import { useTranslations } from "next-intl"
 
 import { IrisMark } from "@/components/app-shell/chat-message"
+import { IrisLabAvatar } from "@/components/brand/iris-lab-avatar"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -130,14 +131,7 @@ function NewsRow({
 }
 
 function IrisAvatar() {
-  return (
-    <Avatar size="sm" className="bg-card">
-      <AvatarImage src="/Logo.png" alt="IRIS" loading="lazy" decoding="async" />
-      <AvatarFallback className="text-[8px] font-black tracking-tight">
-        IR
-      </AvatarFallback>
-    </Avatar>
-  )
+  return <IrisLabAvatar />
 }
 
 function UserAvatar() {

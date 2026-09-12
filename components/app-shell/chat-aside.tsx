@@ -1,7 +1,6 @@
 "use client"
 
 import * as React from "react"
-import Image from "next/image"
 import { Link, usePathname, useRouter } from "@/i18n/navigation"
 import { useTranslations } from "next-intl"
 import {
@@ -12,6 +11,7 @@ import {
 } from "lucide-react"
 
 import { ChatAccountFooter } from "@/components/app-shell/chat-account-footer"
+import { IrisLabLogo } from "@/components/brand/iris-lab-logo"
 import { ChatMobileGeminiBackground } from "@/components/app-shell/chat-mobile-gemini-background"
 import { chatMobileScrollDownClass, chatMobileThreadBottomFadeClass, chatMobileThreadBottomSpacerClass, chatMobileThreadClass, chatMobileThreadScrollMaskClass, chatMobileEmptyHeroContentClass, chatMobileEmptyHeroMarkClass, chatMobileEmptyHeroTitleClass, chatMobileEmptyHeroWrapClass } from "@/components/app-shell/chat-mobile-gemini-styles"
 import { ChatMobileHeader } from "@/components/app-shell/chat-mobile-header"
@@ -1567,12 +1567,10 @@ function ChatAside({
           aria-label={common("brand")}
           className="shrink-0 rounded-md outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
         >
-          <Image
-            src="/Logo.png"
-            alt=""
-            width={32}
-            height={32}
-            className="block size-7 shrink-0 rounded-md"
+          <IrisLabLogo
+            decorative
+            size={32}
+            className="size-7 shrink-0 rounded-md"
             priority
           />
         </Link>

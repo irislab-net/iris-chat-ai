@@ -473,7 +473,7 @@ function ModelDistanceSection({
               </div>
               <div
                 className={cn(
-                  "relative overflow-hidden rounded-full bg-foreground/[0.06]",
+                  "relative overflow-hidden rounded-full bg-foreground/6",
                   compact ? "h-1.5" : "h-2"
                 )}
               >
@@ -581,7 +581,7 @@ function RiskMetricsSection({ prediction }: { prediction: Prediction }) {
           <span>Downside (MAE)</span>
           <span>Upside (MFE)</span>
         </div>
-        <div className="flex h-2.5 overflow-hidden rounded-full bg-foreground/[0.06]">
+        <div className="flex h-2.5 overflow-hidden rounded-full bg-foreground/6">
           <div className="h-full bg-red-500/55" style={{ width: `${(mae / tot) * 100}%` }} />
           <div className="h-full bg-emerald-500/55" style={{ width: `${(mfe / tot) * 100}%` }} />
         </div>

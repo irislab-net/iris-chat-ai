@@ -2,9 +2,6 @@
 const chatMobileGlassSurfaceClass =
   "border-0 bg-white/78 shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_75%,transparent),0_1px_2px_color-mix(in_oklch,var(--foreground)_4%,transparent),0_8px_24px_-10px_color-mix(in_oklch,var(--foreground)_9%,transparent)] backdrop-blur-2xl backdrop-saturate-[180%] supports-[backdrop-filter]:bg-white/62 dark:bg-white/[0.08] dark:shadow-[inset_0_1px_0_0_color-mix(in_oklch,var(--foreground)_10%,transparent),0_8px_28px_-12px_color-mix(in_oklch,black_35%,transparent)] dark:supports-[backdrop-filter]:bg-white/[0.06]"
 
-const chatMobileGlassSurfaceFocusClass =
-  "focus-within:bg-white/88 focus-within:shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_85%,transparent),0_2px_4px_color-mix(in_oklch,var(--foreground)_5%,transparent),0_12px_32px_-10px_color-mix(in_oklch,var(--foreground)_11%,transparent)] dark:focus-within:bg-white/[0.12]"
-
 /** Composer — floating iOS bar with softer lift and no hard edge. */
 const chatMobileComposerGlassClass =
   "border-0 bg-white/80 shadow-[inset_0_0.5px_0_0_color-mix(in_oklch,white_90%,transparent),inset_0_1px_0_0_color-mix(in_oklch,white_70%,transparent),0_2px_6px_-2px_color-mix(in_oklch,var(--foreground)_6%,transparent),0_12px_40px_-14px_color-mix(in_oklch,var(--foreground)_10%,transparent)] backdrop-blur-[32px] backdrop-saturate-[190%] supports-[backdrop-filter]:bg-white/68 dark:bg-white/[0.1] dark:shadow-[inset_0_1px_0_0_color-mix(in_oklch,var(--foreground)_12%,transparent),0_10px_36px_-14px_color-mix(in_oklch,black_45%,transparent)] dark:supports-[backdrop-filter]:bg-white/[0.07]"

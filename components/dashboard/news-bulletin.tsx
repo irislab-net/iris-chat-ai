@@ -163,7 +163,7 @@ function NewsTapeWindowTile({
         {Math.round(slot.volume)}
       </p>
       <p className="mt-0.5 text-[10px] text-muted-foreground">headlines</p>
-      <p className="mt-1.5 inline-flex items-center justify-center rounded-md bg-foreground/[0.04] px-1.5 py-0.5 font-mono text-[10px] tabular-nums text-muted-foreground">
+      <p className="mt-1.5 inline-flex items-center justify-center rounded-md bg-foreground/4 px-1.5 py-0.5 font-mono text-[10px] tabular-nums text-muted-foreground">
         Impact {slot.impact.toFixed(1)}
       </p>
     </div>

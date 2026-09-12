@@ -1,7 +1,7 @@
-import Image from "next/image"
 import { ArrowRightIcon, MailIcon } from "lucide-react"
 import { getTranslations } from "next-intl/server"
 
+import { IrisLabLogo } from "@/components/brand/iris-lab-logo"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { Link } from "@/i18n/navigation"
@@ -142,13 +142,7 @@ export async function SiteFooter() {
               aria-label={SITE_NAME}
               className="inline-flex w-fit items-center gap-3 transition-opacity hover:opacity-80"
             >
-              <Image
-                src="/Logo.png"
-                alt=""
-                width={40}
-                height={40}
-                className="size-10 rounded-lg"
-              />
+              <IrisLabLogo decorative size={40} className="size-10 rounded-lg" />
               <span className="text-base font-semibold tracking-tight text-foreground">
                 {SITE_NAME}
               </span>

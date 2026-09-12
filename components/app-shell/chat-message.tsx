@@ -2,8 +2,8 @@
 
 import type { ReactNode } from "react"
 import dynamic from "next/dynamic"
-import Image from "next/image"
 
+import { IrisLabLogo } from "@/components/brand/iris-lab-logo"
 import { chatUserBubbleClass } from "@/components/app-shell/chat-turn-actions"
 import { TypingDots } from "@/components/app-shell/chat-typing"
 import { cn } from "@/lib/utils"
@@ -43,17 +43,11 @@ function IrisMark({
         className
       )}
     >
-      <Image
-        src="/Logo.png"
-        alt=""
-        width={isHero ? 144 : 24}
-        height={isHero ? 144 : 24}
+      <IrisLabLogo
+        decorative
+        size={isHero ? 144 : 28}
         priority={isHero}
-        sizes={isHero ? "4.5rem" : "1.75rem"}
-        className={cn(
-          "object-contain",
-          isHero ? "size-full" : "size-[65%]"
-        )}
+        className={isHero ? "size-full" : "size-[65%]"}
       />
     </div>
   )
