@@ -55,7 +55,7 @@ const chatMobileEmptyHeroMarkClass =
   "relative size-full rounded-none bg-transparent shadow-none ring-0"
 
 const chatMobileEmptyHeroTitleClass =
-  "chat-empty-hero-title max-w-[20rem] text-balance text-[1.75rem] font-semibold leading-[1.22] tracking-[-0.028em] text-foreground"
+  "chat-empty-hero-title max-w-[20rem] text-balance text-[1.75rem] font-normal leading-[1.22] tracking-[-0.028em] text-foreground"
 
 const chatMobileThreadClass = "px-4 pt-3 pb-2 sm:px-5"
 
