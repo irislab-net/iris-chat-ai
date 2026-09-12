@@ -166,7 +166,11 @@ function ChatComposer({
       if (isDesktop !== true && !options?.force) return
       if (deferMobileKeyboard && !mobileKeyboardReady && !options?.force) return
       try {
-        el.focus({ preventScroll: true })
+        if (isDesktop === true) {
+          el.focus({ preventScroll: true })
+        } else {
+          el.focus()
+        }
       } catch {
         el.focus()
       }

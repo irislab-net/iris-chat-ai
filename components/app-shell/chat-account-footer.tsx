@@ -7,11 +7,14 @@ import {
   LogOutIcon,
   SparklesIcon,
 } from "lucide-react"
+import { useTranslations } from "next-intl"
 import { useTheme } from "@wrksz/themes/client/use-theme"
 
 import { ChatAccountAvatar } from "@/components/app-shell/chat-account-avatar"
 import { useAuth } from "@/components/auth/auth-provider"
+import { GoogleGlyph } from "@/components/auth/google-glyph"
 import { useUserAvatarUrl } from "@/hooks/use-user-avatar-url"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -52,12 +55,54 @@ function AccountPlanBadge({
   )
 }
 
-function ChatAccountFooter({ className }: { className?: string }) {
-  const { user, isProUser, logout } = useAuth()
+function ChatAccountFooter({
+  className,
+  collapsed = false,
+}: {
+  className?: string
+  collapsed?: boolean
+}) {
+  const t = useTranslations("workspace")
+  const { user, isProUser, login, logout, loginPending } = useAuth()
   const avatarUrl = useUserAvatarUrl(user)
   const { resolvedTheme, setTheme } = useTheme()
 
-  if (!user) return null
+  if (!user) {
+    return (
+      <div
+        className={cn(
+          "flex shrink-0 items-center gap-2 border-t border-border/60 p-2",
+          collapsed && "justify-center p-1.5",
+          className
+        )}
+      >
+        <Button
+          type="button"
+          variant="ghost"
+          size={collapsed ? "icon" : "default"}
+          className={
+            collapsed
+              ? "size-9 rounded-lg hover:bg-muted/40"
+              : "h-auto min-w-0 flex-1 justify-start gap-2 rounded-lg px-2 py-2 hover:bg-muted/40"
+          }
+          aria-label={loginPending ? t("connecting") : t("signIn")}
+          disabled={loginPending}
+          onClick={() => login({ source: "chat" })}
+        >
+          <Avatar className="size-8 after:border-0">
+            <AvatarFallback className="bg-muted text-[11px]">
+              <GoogleGlyph className="size-3.5" />
+            </AvatarFallback>
+          </Avatar>
+          {!collapsed ? (
+            <span className="min-w-0 flex-1 truncate text-left text-[13px] font-medium">
+              {loginPending ? t("connecting") : t("signIn")}
+            </span>
+          ) : null}
+        </Button>
+      </div>
+    )
+  }
 
   const planName = displayPlanName(user.tier)
   const subline = userAccountSubline(user)
@@ -65,6 +110,7 @@ function ChatAccountFooter({ className }: { className?: string }) {
     <div
       className={cn(
         "flex shrink-0 items-center gap-2 border-t border-border/60 p-2",
+        collapsed && "justify-center p-1.5",
         className
       )}
     >
@@ -74,7 +120,12 @@ function ChatAccountFooter({ className }: { className?: string }) {
             <Button
               type="button"
               variant="ghost"
-              className="h-auto min-w-0 flex-1 justify-start gap-2 rounded-lg px-2 py-2 hover:bg-muted/40"
+              size={collapsed ? "icon" : "default"}
+              className={
+                collapsed
+                  ? "size-9 rounded-lg hover:bg-muted/40"
+                  : "h-auto min-w-0 flex-1 justify-start gap-2 rounded-lg px-2 py-2 hover:bg-muted/40"
+              }
               aria-label={`Account menu for ${userAccountLabel(user)}`}
             />
           }
@@ -86,14 +137,16 @@ function ChatAccountFooter({ className }: { className?: string }) {
             planName={planName}
             compact
           />
-          <span className="min-w-0 flex-1 text-left">
-            <span className="block truncate text-[13px] font-medium leading-tight">
-              {userAccountLabel(user)}
+          {!collapsed ? (
+            <span className="min-w-0 flex-1 text-left">
+              <span className="block truncate text-[13px] font-medium leading-tight">
+                {userAccountLabel(user)}
+              </span>
+              <span className="block truncate text-[11px] text-muted-foreground">
+                {planName}
+              </span>
             </span>
-            <span className="block truncate text-[11px] text-muted-foreground">
-              {planName}
-            </span>
-          </span>
+          ) : null}
         </DropdownMenuTrigger>
         <DropdownMenuContent side="top" align="start" className="min-w-60">
           <DropdownMenuGroup>
@@ -157,7 +210,7 @@ function ChatAccountFooter({ className }: { className?: string }) {
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-      {!isProUser ? (
+      {!collapsed && !isProUser ? (
         <Button
           size="sm"
           variant="outline"

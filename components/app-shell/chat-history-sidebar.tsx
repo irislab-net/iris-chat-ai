@@ -6,9 +6,10 @@ import {
   EclipseIcon,
   LogOutIcon,
   MessageSquareIcon,
-  Minimize2Icon,
   MoreHorizontalIcon,
   NewspaperIcon,
+  PanelLeftCloseIcon,
+  PanelLeftOpenIcon,
   PencilIcon,
   PinIcon,
   PinOffIcon,
@@ -53,7 +54,6 @@ import {
   chatMobileDrawerUpgradeClass,
   chatMobileHeaderButtonClass,
 } from "@/components/app-shell/chat-mobile-gemini-styles"
-import { ChatDeskToolsBanner } from "@/components/app-shell/chat-desk-tools-banner"
 import { ChatRenameDialog } from "@/components/app-shell/chat-rename-dialog"
 import {
   DropdownMenu,
@@ -72,9 +72,15 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
 import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
+import {
   sortConversations,
   type StoredConversation,
 } from "@/lib/chat-storage"
+import { CHAT_HISTORY_RAIL_COLLAPSED_WIDTH } from "@/lib/chat-history-rail-prefs"
 import { UPGRADE_PATH } from "@/lib/site"
 import {
   userAccountLabel,
@@ -82,20 +88,77 @@ import {
 } from "@/lib/user-profile"
 import { cn } from "@/lib/utils"
 
-const headerIconClass =
-  "size-8 text-muted-foreground hover:bg-muted hover:text-foreground [&_svg:not([class*='size-'])]:size-4"
-
 const rowMenuButtonClass =
   "size-8 shrink-0 rounded-full text-muted-foreground hover:bg-muted/60 hover:text-foreground opacity-100 [@media(hover:hover)]:opacity-0 [@media(hover:hover)]:group-hover/item:opacity-100 [@media(hover:hover)]:group-focus-within/item:opacity-100"
+
+const historyRailIconButtonClass =
+  "size-9 shrink-0 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground"
+
+function HistoryRailToggleButton({
+  collapsed,
+  onToggle,
+}: {
+  collapsed: boolean
+  onToggle: () => void
+}) {
+  const t = useTranslations("workspace")
+  const label = collapsed ? t("expandChatHistory") : t("collapseChatHistory")
+  const Icon = collapsed ? PanelLeftOpenIcon : PanelLeftCloseIcon
+
+  return (
+    <Tooltip>
+      <TooltipTrigger
+        render={
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon-sm"
+            className={historyRailIconButtonClass}
+            aria-label={label}
+            aria-expanded={!collapsed}
+            onClick={onToggle}
+          />
+        }
+      >
+        <Icon className="size-4" />
+      </TooltipTrigger>
+      <TooltipContent side="right">{label}</TooltipContent>
+    </Tooltip>
+  )
+}
 
 function HistoryNewsNav({
   onOpenNews,
   isMobileDrawer = false,
+  minimal = false,
 }: {
   onOpenNews: () => void
   isMobileDrawer?: boolean
+  minimal?: boolean
 }) {
   const t = useTranslations("workspace")
+
+  if (minimal) {
+    return (
+      <Tooltip>
+        <TooltipTrigger
+          render={
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className={historyRailIconButtonClass}
+              aria-label={t("news")}
+              onClick={onOpenNews}
+            />
+          }
+        >
+          <NewspaperIcon className="size-4.5" />
+        </TooltipTrigger>
+        <TooltipContent side="right">{t("news")}</TooltipContent>
+      </Tooltip>
+    )
+  }
 
   return (
     <Button
@@ -137,12 +200,13 @@ type ChatHistorySidebarProps = {
   onRename: (id: string, title: string) => void
   onTogglePin: (id: string) => void
   onNewChat?: () => void
-  onDock?: () => void
   onClose?: () => void
   onOpenNews?: () => void
   footer?: React.ReactNode
   showBrandHeader?: boolean
   variant?: "panel" | "mobile-drawer"
+  collapsed?: boolean
+  onToggleCollapsed?: () => void
   className?: string
 }
 
@@ -204,7 +268,7 @@ function MobileHistoryDrawerFooter({
           {loginPending ? t("connecting") : t("signIn")}
         </Button>
       )}
-      {!isProUser ? (
+      {user && !isProUser ? (
         <Button
           size="sm"
           className={chatMobileDrawerUpgradeClass}
@@ -281,12 +345,13 @@ function ChatHistorySidebar({
   onRename,
   onTogglePin,
   onNewChat,
-  onDock,
   onClose,
   onOpenNews,
   footer,
   showBrandHeader = true,
   variant = "panel",
+  collapsed = false,
+  onToggleCollapsed,
   className,
 }: ChatHistorySidebarProps) {
   const t = useTranslations("workspace")
@@ -348,25 +413,32 @@ function ChatHistorySidebar({
             ) : null}
           </header>
         ) : showBrandHeader ? (
-          <header className="flex shrink-0 items-center gap-1 px-2 py-2.5">
-            <div className="flex min-w-0 flex-1 items-center gap-2 px-1">
+          <header
+            className={cn(
+              "flex shrink-0 items-center gap-1 py-2.5",
+              collapsed ? "flex-col px-1" : "px-2"
+            )}
+          >
+            <div
+              className={cn(
+                "flex min-w-0 items-center gap-2",
+                collapsed
+                  ? "justify-center px-0"
+                  : "flex-1 px-1"
+              )}
+            >
               <IrisLabLogo decorative size={28} className="size-7 shrink-0 rounded-md" />
-              <span className="min-w-0 truncate text-sm font-semibold tracking-tight">
-                IRIS
-              </span>
+              {!collapsed ? (
+                <span className="min-w-0 truncate text-sm font-semibold tracking-tight">
+                  IRIS
+                </span>
+              ) : null}
             </div>
-            {onDock ? (
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                className={headerIconClass}
-                aria-label={t("dockChat")}
-                title={t("dockChat")}
-                onClick={onDock}
-              >
-                <Minimize2Icon />
-              </Button>
+            {onToggleCollapsed ? (
+              <HistoryRailToggleButton
+                collapsed={collapsed}
+                onToggle={onToggleCollapsed}
+              />
             ) : null}
           </header>
         ) : null}
@@ -379,35 +451,57 @@ function ChatHistorySidebar({
             )}
           >
             {onNewChat ? (
-              <Button
-                type="button"
-                variant="ghost"
-                disabled={sending}
-                className={cn(
-                  "justify-start gap-3 text-sm font-normal shadow-none",
-                  isMobileDrawer
-                    ? cn("mb-1", chatMobileDrawerNavItemClass)
-                    : "h-9 w-full rounded-lg px-3 hover:bg-muted/50"
-                )}
-                onClick={onNewChat}
-              >
-                <SquarePenIcon
+              collapsed && !isMobileDrawer ? (
+                <Tooltip>
+                  <TooltipTrigger
+                    render={
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        disabled={sending}
+                        className={cn(historyRailIconButtonClass, "mx-auto")}
+                        aria-label={t("newChat")}
+                        onClick={onNewChat}
+                      />
+                    }
+                  >
+                    <SquarePenIcon className="size-4.5" />
+                  </TooltipTrigger>
+                  <TooltipContent side="right">{t("newChat")}</TooltipContent>
+                </Tooltip>
+              ) : (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  disabled={sending}
                   className={cn(
-                    "shrink-0 text-foreground",
-                    isMobileDrawer ? "size-4.5" : "size-4"
+                    "justify-start gap-3 text-sm font-normal shadow-none",
+                    isMobileDrawer
+                      ? cn("mb-1", chatMobileDrawerNavItemClass)
+                      : "h-9 w-full rounded-lg px-3 hover:bg-muted/50"
                   )}
-                />
-                {t("newChat")}
-              </Button>
+                  onClick={onNewChat}
+                >
+                  <SquarePenIcon
+                    className={cn(
+                      "shrink-0 text-foreground",
+                      isMobileDrawer ? "size-4.5" : "size-4"
+                    )}
+                  />
+                  {t("newChat")}
+                </Button>
+              )
             ) : null}
             {onOpenNews ? (
               <HistoryNewsNav
                 onOpenNews={onOpenNews}
                 isMobileDrawer={isMobileDrawer}
+                minimal={collapsed && !isMobileDrawer}
               />
             ) : null}
 
-            {conversations.length === 0 ? (
+            {collapsed && !isMobileDrawer ? null : conversations.length === 0 ? (
               <Empty className="mx-1 mt-4 border-0 p-4">
                 <EmptyHeader>
                   <EmptyMedia variant="icon">
@@ -455,8 +549,6 @@ function ChatHistorySidebar({
             )}
           </div>
         </ScrollArea>
-
-        {onDock ? <ChatDeskToolsBanner onDock={onDock} /> : null}
 
         {isMobileDrawer ? (
           <MobileHistoryDrawerFooter onOpenNews={onOpenNews} />
@@ -706,10 +798,11 @@ function ChatHistoryRail({
   onRename,
   onTogglePin,
   onNewChat,
-  onDock,
   onOpenNews,
   footer,
   sidebarWidth,
+  collapsed = false,
+  onToggleCollapsed,
   className,
 }: ChatHistorySidebarProps & {
   sidebarWidth: string
@@ -718,11 +811,12 @@ function ChatHistoryRail({
   return (
     <aside
       className={cn(
-        "relative flex h-full min-h-0 shrink-0 flex-col overflow-hidden border-r border-border/60 bg-sidebar text-sidebar-foreground",
+        "relative flex h-full min-h-0 shrink-0 flex-col overflow-hidden border-r border-border/60 bg-sidebar text-sidebar-foreground transition-[width] duration-200 ease-out",
         className
       )}
-      style={{ width: sidebarWidth }}
+      style={{ width: collapsed ? CHAT_HISTORY_RAIL_COLLAPSED_WIDTH : sidebarWidth }}
       aria-label={t("chatHistory")}
+      data-collapsed={collapsed ? "true" : undefined}
     >
       <ChatHistorySidebar
         conversations={conversations}
@@ -733,9 +827,10 @@ function ChatHistoryRail({
         onRename={onRename}
         onTogglePin={onTogglePin}
         onNewChat={onNewChat}
-        onDock={onDock}
         onOpenNews={onOpenNews}
         footer={footer}
+        collapsed={collapsed}
+        onToggleCollapsed={onToggleCollapsed}
         className="min-h-0 flex-1"
       />
     </aside>

@@ -4,17 +4,25 @@ import * as React from "react"
 import { Link, usePathname, useRouter } from "@/i18n/navigation"
 import { useTranslations } from "next-intl"
 import {
+  ActivityIcon,
+  BitcoinIcon,
   ChevronDownIcon,
+  EyeIcon,
   HistoryIcon,
   Maximize2Icon,
   MessageSquarePlusIcon,
 } from "lucide-react"
 
 import { ChatAccountFooter } from "@/components/app-shell/chat-account-footer"
+import { ChatAccountMenu } from "@/components/app-shell/chat-account-menu"
 import { IrisLabLogo } from "@/components/brand/iris-lab-logo"
 import { ChatMobileGeminiBackground } from "@/components/app-shell/chat-mobile-gemini-background"
 import { chatMobileScrollDownClass, chatMobileThreadBottomFadeClass, chatMobileThreadBottomSpacerClass, chatMobileThreadClass, chatMobileThreadScrollMaskClass, chatMobileEmptyHeroContentClass, chatMobileEmptyHeroMarkClass, chatMobileEmptyHeroMarkShellClass, chatMobileEmptyHeroTitleClass, chatMobileEmptyHeroWrapClass } from "@/components/app-shell/chat-mobile-gemini-styles"
 import { ChatMobileHeader } from "@/components/app-shell/chat-mobile-header"
+import {
+  ChatNewsMobileSheet,
+  ChatNewsSidePanel,
+} from "@/components/app-shell/chat-news-panel"
 import {
   ChatHistoryRail,
   ChatHistorySidebar,
@@ -49,8 +57,6 @@ import {
 } from "@/lib/api/chat"
 import {
   dispatchCopilotGhostTrade,
-  dispatchDismissMobileChat,
-  dispatchDockChat,
   subscribeCopilotChatPrefill,
 } from "@/lib/paper-trading/copilot-client"
 import { submitChatMessageFeedback } from "@/lib/api/chat-feedback"
@@ -62,10 +68,6 @@ import {
 } from "@/lib/chat-history-sync"
 import { displayPlanName } from "@/lib/billing/catalog"
 import { isAppDeskPath, UPGRADE_PATH } from "@/lib/site"
-import {
-  WORKSPACE_TAB_NEWS,
-  workspaceTabHref,
-} from "@/lib/workspace-tab"
 import { resolveUserDisplayName } from "@/lib/user-profile"
 import type { CoPilotHistoryMessage, TrialInfo } from "@/lib/api/types"
 import {
@@ -116,9 +118,14 @@ import { SESSION_RESET_EVENT } from "@/lib/session-reset"
 import type { ChatDisplayMode } from "@/lib/shell-layout-prefs"
 import { SHELL_SIDEBAR_COMPACT_FALLBACK } from "@/lib/shell-sidebar-layout"
 import { resolvePaperTicketFromChatTurn } from "@/lib/chat/parse-trade-setup"
+import { stripUnrequestedIrisSetupFromReply } from "@/lib/chat/strip-paper-setup"
 import { summarizeSignalUserMessage } from "@/lib/chat/composer-mentions"
-import { isPaperTradeIntent } from "@/lib/iris-paper-trade/intent"
+import { shouldRunPaperTradePipeline } from "@/lib/iris-paper-trade/routing"
 import { IRIS_SAMPLE_PROMPTS } from "@/lib/iris-paper-trade/types"
+import {
+  readHistoryRailCollapsed,
+  writeHistoryRailCollapsed,
+} from "@/lib/chat-history-rail-prefs"
 import { cn } from "@/lib/utils"
 
 type ChatAsideProps = {
@@ -235,6 +242,12 @@ function IrisFollowUpPrompts({
   )
 }
 
+const SAMPLE_PROMPT_ICONS = {
+  "btc-signal": BitcoinIcon,
+  "market-pulse": ActivityIcon,
+  "wait-or-watch": EyeIcon,
+} as const
+
 function IrisSamplePrompts({
   disabled,
   onEdit,
@@ -242,35 +255,51 @@ function IrisSamplePrompts({
   disabled?: boolean
   onEdit: (text: string) => void
 }) {
+  const t = useTranslations("workspace")
+
   return (
-    <div className="flex flex-col gap-2">
+    <div className="mt-6 flex flex-col gap-2">
       <p className="px-0.5 text-[10px] font-medium tracking-wide text-muted-foreground uppercase">
-        Starters
+        {t("samplePromptsLabel")}
       </p>
-      {IRIS_SAMPLE_PROMPTS.map((prompt) => (
-        <Button
-          key={prompt.title}
-          type="button"
-          variant="ghost"
-          disabled={disabled}
-          aria-label={`Use prompt: ${prompt.title}`}
-          className="h-auto w-full items-stretch justify-start rounded-xl bg-muted/20 px-3 py-2.5 text-left whitespace-normal shadow-none transition-colors hover:bg-muted/35 active:scale-[0.99]"
-          onPointerEnter={() => {
-            void import("@/lib/chat/parse-trade-setup")
-            void import("@/components/paper-trading/paper-trading-workspace")
-          }}
-          onClick={() => onEdit(prompt.text)}
-        >
-          <span className="flex w-full flex-col items-start gap-1 whitespace-normal">
-            <span className="text-[13px] font-medium text-foreground">
-              {prompt.title}
-            </span>
-            <span className="line-clamp-2 text-[11px] leading-5 text-muted-foreground">
-              {prompt.text}
-            </span>
-          </span>
-        </Button>
-      ))}
+      <div className="flex flex-col gap-1.5">
+        {IRIS_SAMPLE_PROMPTS.map((prompt) => {
+          const Icon =
+            SAMPLE_PROMPT_ICONS[
+              prompt.id as keyof typeof SAMPLE_PROMPT_ICONS
+            ] ?? ActivityIcon
+
+          return (
+            <Button
+              key={prompt.id}
+              type="button"
+              variant="ghost"
+              disabled={disabled}
+              aria-label={`Use prompt: ${prompt.title}`}
+              className="h-auto w-full items-stretch justify-start rounded-xl border border-transparent bg-muted/20 px-3 py-2.5 text-left whitespace-normal shadow-none transition-[background-color,border-color,transform] hover:border-border/60 hover:bg-muted/35 active:scale-[0.99]"
+              onPointerEnter={() => {
+                void import("@/lib/chat/parse-trade-setup")
+                void import("@/components/paper-trading/paper-trading-workspace")
+              }}
+              onClick={() => onEdit(prompt.text)}
+            >
+              <span className="flex w-full items-start gap-2.5 whitespace-normal">
+                <span className="mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-lg bg-background/70 text-muted-foreground">
+                  <Icon className="size-3.5" aria-hidden />
+                </span>
+                <span className="flex min-w-0 flex-col items-start gap-0.5">
+                  <span className="text-[13px] font-medium text-foreground">
+                    {prompt.title}
+                  </span>
+                  <span className="text-[11px] leading-5 text-muted-foreground">
+                    {prompt.description}
+                  </span>
+                </span>
+              </span>
+            </Button>
+          )
+        })}
+      </div>
     </div>
   )
 }
@@ -355,6 +384,8 @@ function ChatAside({
     []
   )
   const [sending, setSending] = React.useState(false)
+  const [newsOpen, setNewsOpen] = React.useState(false)
+  const [historyRailCollapsed, setHistoryRailCollapsed] = React.useState(false)
   const [historyOpen, setHistoryOpen] = React.useState(
     () => displayMode === "focused"
   )
@@ -776,7 +807,7 @@ function ChatAside({
     abortRef.current = controller
     let partialContent = ""
 
-    if (isPaperTradeIntent(userMessage)) {
+    if (shouldRunPaperTradePipeline(userMessage, historySnapshot)) {
       try {
         const { runIrisPaperTradeRequest } = await import(
           "@/lib/iris-paper-trade/run"
@@ -942,7 +973,11 @@ function ChatAside({
         setGuestTrial(result.trial)
       }
 
-      const fullText = (result.message || "").trim()
+      let fullText = (result.message || "").trim()
+      if (!fullText) {
+        throw new Error("IRIS returned an empty reply. Please try again.")
+      }
+      fullText = stripUnrequestedIrisSetupFromReply(fullText)
       if (!fullText) {
         throw new Error("IRIS returned an empty reply. Please try again.")
       }
@@ -997,7 +1032,10 @@ function ChatAside({
         ChatUiMessage,
         "clientActionSummaries" | "pendingBracket" | "paperTicket" | "action"
       > => {
-        const parsedTicket = isPaperTradeIntent(userMessage)
+        const parsedTicket = shouldRunPaperTradePipeline(
+          userMessage,
+          historySnapshot
+        )
           ? resolvePaperTicketFromChatTurn({
               userMessage,
               assistantMessage: fullText,
@@ -1376,11 +1414,11 @@ function ChatAside({
 
   const isFocusedLayout = displayMode === "focused" && !onClose
   const isMobileOverlay = Boolean(onClose)
-  const canEmbedHistoryRail =
-    isAuthenticated && !isMobileOverlay && isDesktop === true
+  const canEmbedHistoryRail = !isMobileOverlay && isDesktop === true
   const historyRailVisible = canEmbedHistoryRail
   const showFocusedMainHeader = isFocusedLayout && !isAuthenticated
   const showMainHeader = showFocusedMainHeader || !isFocusedLayout
+  const showMainColumnHeader = showMainHeader && !historyRailVisible
   const showMobileHistoryOverlay = isMobileOverlay && historyOpen
   const showHistoryPanel =
     !historyRailVisible &&
@@ -1394,9 +1432,9 @@ function ChatAside({
   )
   const threadHasUserMessages = hasUserMessages(messages)
   const showThreadToolbarInHeader =
-    showThread && threadHasUserMessages && showMainHeader
+    showThread && threadHasUserMessages && showMainColumnHeader
   const showStandaloneThreadToolbar =
-    showThread && threadHasUserMessages && !showMainHeader
+    showThread && threadHasUserMessages && !showMainColumnHeader
   const threadTitle =
     activeConversation?.title ??
     conversationTitleFromMessages(messages)
@@ -1446,10 +1484,7 @@ function ChatAside({
 
   function openNewsFromChat() {
     setHistoryOpen(false)
-    dispatchDismissMobileChat()
-    onClose?.()
-    dispatchDockChat()
-    router.replace(workspaceTabHref(WORKSPACE_TAB_NEWS), { scroll: false })
+    setNewsOpen(true)
   }
 
   const mobileGreetingName = resolveUserDisplayName(user)
@@ -1467,10 +1502,22 @@ function ChatAside({
   const [mobileComposerFocused, setMobileComposerFocused] = React.useState(false)
 
   React.useEffect(() => {
+    setHistoryRailCollapsed(readHistoryRailCollapsed())
+  }, [])
+
+  React.useEffect(() => {
     if (displayMode === "focused" && isAuthenticated) {
       setHistoryOpen(true)
     }
   }, [displayMode, isAuthenticated])
+
+  function toggleHistoryRailCollapsed() {
+    setHistoryRailCollapsed((prev) => {
+      const next = !prev
+      writeHistoryRailCollapsed(next)
+      return next
+    })
+  }
 
   if (showDeskSkeleton) {
     return (
@@ -1515,12 +1562,11 @@ function ChatAside({
           onTogglePin={toggleConversationPin}
           onNewChat={startNewChat}
           sidebarWidth={shellSidebars.chat.minSize}
-          footer={<ChatAccountFooter />}
-          onDock={
-            showDesktopLayoutControls && isFocusedLayout
-              ? () => onDisplayModeChange?.("docked")
-              : undefined
+          footer={
+            <ChatAccountFooter collapsed={historyRailCollapsed} />
           }
+          collapsed={historyRailCollapsed}
+          onToggleCollapsed={toggleHistoryRailCollapsed}
           onOpenNews={openNewsFromChat}
         />
       ) : null}
@@ -1566,7 +1612,7 @@ function ChatAside({
           />
         </div>
       ) : null}
-      {!isMobileOverlay && (showFocusedMainHeader || !isFocusedLayout) ? (
+      {showMainColumnHeader ? (
       <header
         className={cn(
           "flex min-h-12 shrink-0 items-center gap-1 px-2 sm:gap-2 sm:px-3",
@@ -1599,9 +1645,21 @@ function ChatAside({
                   : t("copilotGuestTry")}
           </span>
         </div>
-        {showThreadToolbarInHeader && !isMobileOverlay && !isProUser ? (
+        {!isMobileOverlay ? (
+          <ChatAccountMenu
+            variant="desktop"
+            onOpenNews={openNewsFromChat}
+          />
+        ) : null}
+        {showThreadToolbarInHeader &&
+        !isMobileOverlay &&
+        isAuthenticated &&
+        !isProUser ? (
           <ChatThreadUpgradeButton />
-        ) : !showThreadToolbarInHeader && !isMobileOverlay && !isProUser ? (
+        ) : !showThreadToolbarInHeader &&
+          !isMobileOverlay &&
+          isAuthenticated &&
+          !isProUser ? (
           <Button
             size="xs"
             variant="outline"
@@ -1612,7 +1670,9 @@ function ChatAside({
             {t("upgrade")}
           </Button>
         ) : null}
-        {showDesktopLayoutControls && !isFocusedLayout ? (
+        {showDesktopLayoutControls &&
+        !isFocusedLayout &&
+        !historyRailVisible ? (
           <ChatHeaderIconButton
             label={t("fullScreenChat")}
             onClick={() => onDisplayModeChange?.("focused")}
@@ -1652,13 +1712,16 @@ function ChatAside({
       </header>
       ) : null}
 
-      <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
+      <div className="flex min-h-0 min-w-0 flex-1 overflow-hidden">
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
           {showStandaloneThreadToolbar ? (
             <ChatThreadToolbar
               title={threadTitle}
               pinned={Boolean(activeConversation?.pinned)}
               disabled={sending}
-              showUpgrade={!isMobileOverlay && !isProUser}
+              showUpgrade={
+                !isMobileOverlay && isAuthenticated && !isProUser
+              }
               onShare={shareCurrentConversation}
               onRename={(title) => renameConversation(conversationId, title)}
               onTogglePin={() => toggleConversationPin(conversationId)}
@@ -1961,7 +2024,7 @@ function ChatAside({
                 "mx-auto w-full shrink-0",
                 isMobileOverlay
                   ? "bg-transparent"
-                  : "border-t border-border/50 bg-sidebar/95 backdrop-blur-md supports-backdrop-filter:bg-sidebar/90",
+                  : "bg-sidebar/95 backdrop-blur-md supports-backdrop-filter:bg-sidebar/90",
                 CHAT_CONTENT_MAX_WIDTH
               )}
             >
@@ -2003,6 +2066,12 @@ function ChatAside({
             </div>
           ) : null}
         </div>
+        {!isMobileOverlay ? (
+          <ChatNewsSidePanel open={newsOpen} onOpenChange={setNewsOpen} />
+        ) : (
+          <ChatNewsMobileSheet open={newsOpen} onOpenChange={setNewsOpen} />
+        )}
+      </div>
       </div>
     </aside>
   )

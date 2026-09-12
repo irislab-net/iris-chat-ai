@@ -91,8 +91,14 @@ function footerHint({
 function UpgradeView() {
   const router = useRouter()
   const isDesktop = useIsDesktop()
-  const { user, isAuthenticated, isProUser, login, loginPending, refresh } =
-    useAuth()
+  const {
+    user,
+    isAuthenticated,
+    isProUser,
+    login,
+    loginPending,
+    refreshAfterUpgrade,
+  } = useAuth()
   const [billing, setBilling] = React.useState<BillingCycle>("monthly")
   const [selected, setSelected] = React.useState<PlanKey>("plus")
   const [checkout, setCheckout] = React.useState<CryptoCheckoutRequest | null>(
@@ -108,14 +114,19 @@ function UpgradeView() {
   const prices = BILLING_PRICES[billing]
   const canTrackPendingPayment = isAuthenticated && !isProUser
 
+  const paidHandledRef = React.useRef(false)
+
   const handleInvoicePaid = React.useCallback(async () => {
+    if (paidHandledRef.current) return
+    paidHandledRef.current = true
+
     if (checkout?.billing) {
       trackPurchase({ billing: checkout.billing })
     }
-    await refresh()
+    await refreshAfterUpgrade()
     setPaymentOpen(false)
     router.push(APP_NEWS_PATH)
-  }, [checkout, refresh, router])
+  }, [checkout, refreshAfterUpgrade, router])
 
   const pendingInvoice = usePendingPaymentInvoice({
     enabled: canTrackPendingPayment,

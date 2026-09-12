@@ -8,6 +8,7 @@ import {
   AUTH_SESSION_EXPIRED_EVENT,
   AUTH_SUCCESS_MESSAGE,
   bootstrapSession,
+  establishSession,
   getStoredAccessToken,
   isPro,
   logoutRemote,
@@ -43,6 +44,8 @@ type AuthContextValue = {
   login: (options?: LoginOptions) => void
   logout: () => Promise<void>
   refresh: () => Promise<void>
+  /** Mint a fresh access token and reload profile (e.g. after plan upgrade). */
+  refreshAfterUpgrade: () => Promise<void>
 }
 
 const AuthContext = React.createContext<AuthContextValue | null>(null)
@@ -68,8 +71,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
   const loginSourceRef = React.useRef<LoginSource | undefined>(undefined)
   const pendingLoginRef = React.useRef<LoginOptions | undefined>(undefined)
 
-  const refresh = React.useCallback(async () => {
-    const session = await bootstrapSession()
+  const applySession = React.useCallback((session: { user: User | null }) => {
     setUser(session.user)
     setChatRegisteredUserId(session.user?.id ?? null)
     if (session.user) {
@@ -79,6 +81,14 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
       setAnalyticsUser(null)
     }
   }, [])
+
+  const refresh = React.useCallback(async () => {
+    applySession(await bootstrapSession())
+  }, [applySession])
+
+  const refreshAfterUpgrade = React.useCallback(async () => {
+    applySession(await establishSession())
+  }, [applySession])
 
   /** After popup closes / success ping — retry cookie race, then clear connecting. */
   const completeLoginAttempt = React.useCallback(async () => {
@@ -263,8 +273,9 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
       login,
       logout,
       refresh,
+      refreshAfterUpgrade,
     }),
-    [user, loading, loginPending, login, logout, refresh]
+    [user, loading, loginPending, login, logout, refresh, refreshAfterUpgrade]
   )
 
   return (

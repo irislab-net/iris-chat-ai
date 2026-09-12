@@ -108,6 +108,7 @@
       3rem + max(0.5rem, env(safe-area-inset-bottom, 0px))
     );
     --app-height: 100dvh;
+    --app-offset-top: 0px;
     --app-safe-top: env(safe-area-inset-top, 0px);
     --app-safe-bottom: env(safe-area-inset-bottom, 0px);
     --mobile-toolbar-height: calc(3rem + var(--app-safe-top));
@@ -853,13 +854,24 @@
   unicode-bidi: plaintext;
 }
 
-html[data-app-shell="true"],
+html[data-app-shell="true"] {
+  height: 100%;
+  overflow: hidden;
+  background-color: var(--background);
+}
+
 html[data-app-shell="true"] body {
+  position: fixed;
+  left: 0;
+  right: 0;
+  width: 100%;
+  top: var(--app-offset-top);
   height: var(--app-height);
-  min-height: var(--app-height);
   max-height: var(--app-height);
+  min-height: 0;
   overflow: hidden;
   overscroll-behavior: none;
+  touch-action: manipulation;
   background-color: var(--background);
 }
 

@@ -47,7 +47,7 @@ async function proxyChatRequest(
     return Response.json(
       {
         code: "upstream_unreachable",
-        error: `Chat API at ${origin} is not reachable.`,
+        error: "Chat service is temporarily unavailable.",
         success: "false",
       },
       {

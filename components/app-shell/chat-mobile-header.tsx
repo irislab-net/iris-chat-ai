@@ -1,52 +1,28 @@
 "use client"
 
 import * as React from "react"
-import { Link } from "@/i18n/navigation"
 import {
   CheckIcon,
   ChevronDownIcon,
-  EclipseIcon,
-  LogOutIcon,
-  NewspaperIcon,
-  SparklesIcon,
   SquarePenIcon,
 } from "lucide-react"
 import { useTranslations } from "next-intl"
-import { useTheme } from "@wrksz/themes/client/use-theme"
 
 import { ChatGeminiMenuIcon } from "@/components/app-shell/chat-gemini-menu-icon"
 
+import { chatContextMenuContentClass } from "@/components/app-shell/chat-context-menu-styles"
 import {
-  chatContextMenuContentClass,
-  chatContextMenuDeleteClass,
-  chatContextMenuHeaderClass,
-  chatContextMenuIconClass,
-  chatContextMenuItemClass,
-  chatContextMenuSeparatorClass,
-} from "@/components/app-shell/chat-context-menu-styles"
-import {
-  chatMobileHeaderAvatarButtonClass,
-  chatMobileHeaderAvatarClass,
   chatMobileHeaderButtonClass,
   chatMobileHeaderModelClass,
   chatMobileHeaderNewChatClass,
-  chatMobileHeaderPlanBadgeClass,
 } from "@/components/app-shell/chat-mobile-gemini-styles"
-import { ChatAccountAvatar } from "@/components/app-shell/chat-account-avatar"
-import { useAuth } from "@/components/auth/auth-provider"
-import { GoogleGlyph } from "@/components/auth/google-glyph"
-import { useUserAvatarUrl } from "@/hooks/use-user-avatar-url"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
-import { displayPlanName } from "@/lib/billing/catalog"
+import { ChatAccountMenu } from "@/components/app-shell/chat-account-menu"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import {
@@ -54,11 +30,6 @@ import {
   chatEffortLabel,
   type ChatEffort,
 } from "@/lib/chat-effort"
-import { UPGRADE_PATH } from "@/lib/site"
-import {
-  userAccountLabel,
-  userAccountSubline,
-} from "@/lib/user-profile"
 import { cn } from "@/lib/utils"
 
 type ChatMobileHeaderProps = {
@@ -71,146 +42,6 @@ type ChatMobileHeaderProps = {
   onOpenNews: () => void
   sending?: boolean
   className?: string
-}
-
-function AccountAvatarMenu({
-  onOpenNews,
-}: {
-  onOpenNews: () => void
-}) {
-  const t = useTranslations("workspace")
-  const common = useTranslations("common")
-  const { user, isProUser, login, logout, loginPending } = useAuth()
-  const avatarUrl = useUserAvatarUrl(user)
-  const { resolvedTheme, setTheme } = useTheme()
-  const planName = user ? displayPlanName(user.tier) : "Free"
-
-  if (!user) {
-    return (
-      <Button
-        type="button"
-        variant="ghost"
-        className={chatMobileHeaderAvatarButtonClass}
-        aria-label={t("signIn")}
-        disabled={loginPending}
-        onClick={() => login({ source: "chat" })}
-      >
-        <span className="relative inline-flex shrink-0">
-          <Avatar className={chatMobileHeaderAvatarClass}>
-            <AvatarFallback className="bg-muted text-[11px] font-medium text-muted-foreground">
-              <GoogleGlyph className="size-3.5" />
-            </AvatarFallback>
-          </Avatar>
-          <Badge
-            className={cn(
-              "absolute bottom-0 left-1/2 z-10 min-w-0 -translate-x-1/2 rounded-full border border-border/50 bg-background text-muted-foreground",
-              chatMobileHeaderPlanBadgeClass
-            )}
-            aria-hidden
-          >
-            Free
-          </Badge>
-        </span>
-      </Button>
-    )
-  }
-
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger
-        render={
-          <Button
-            type="button"
-            variant="ghost"
-            className={chatMobileHeaderAvatarButtonClass}
-            aria-label={`Account menu for ${userAccountLabel(user)}`}
-          />
-        }
-      >
-        <ChatAccountAvatar
-          user={user}
-          avatarUrl={avatarUrl}
-          isProUser={isProUser}
-          planName={planName}
-          compact
-          showPlanBadge
-          planBadgeClassName={chatMobileHeaderPlanBadgeClass}
-          avatarClassName={chatMobileHeaderAvatarClass}
-        />
-      </DropdownMenuTrigger>
-      <DropdownMenuContent
-        align="end"
-        sideOffset={10}
-        className={cn(chatContextMenuContentClass, "min-w-68")}
-      >
-        <DropdownMenuGroup>
-          <DropdownMenuLabel className={chatContextMenuHeaderClass}>
-            <div className="flex items-center gap-3">
-              <ChatAccountAvatar
-                user={user}
-                avatarUrl={avatarUrl}
-                isProUser={isProUser}
-                planName={planName}
-                showPlanBadge={false}
-                avatarClassName="size-9"
-              />
-              <div className="min-w-0">
-                <p className="truncate text-[15px] font-medium leading-tight">
-                  {userAccountLabel(user)}
-                </p>
-                {userAccountSubline(user) ? (
-                  <p className="truncate text-[13px] text-muted-foreground">
-                    {userAccountSubline(user)}
-                  </p>
-                ) : null}
-              </div>
-            </div>
-          </DropdownMenuLabel>
-        </DropdownMenuGroup>
-        {!isProUser ? (
-          <>
-            <DropdownMenuSeparator className={chatContextMenuSeparatorClass} />
-            <DropdownMenuItem
-              className={chatContextMenuItemClass}
-              nativeButton={false}
-              render={<Link href={UPGRADE_PATH} />}
-            >
-              <SparklesIcon className={chatContextMenuIconClass} />
-              {t("upgradeToPlus")}
-            </DropdownMenuItem>
-          </>
-        ) : null}
-        <DropdownMenuSeparator className={chatContextMenuSeparatorClass} />
-        <DropdownMenuItem
-          className={chatContextMenuItemClass}
-          onClick={onOpenNews}
-        >
-          <NewspaperIcon className={chatContextMenuIconClass} />
-          {t("news")}
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          className={chatContextMenuItemClass}
-          onClick={() =>
-            setTheme(resolvedTheme === "dark" ? "light" : "dark")
-          }
-        >
-          <EclipseIcon className={chatContextMenuIconClass} />
-          {resolvedTheme === "dark"
-            ? common("lightMode")
-            : common("darkMode")}
-        </DropdownMenuItem>
-        <DropdownMenuSeparator className={chatContextMenuSeparatorClass} />
-        <DropdownMenuItem
-          variant="destructive"
-          className={chatContextMenuDeleteClass}
-          onClick={() => void logout()}
-        >
-          <LogOutIcon className="size-4.5 shrink-0" />
-          {t("logOut")}
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  )
 }
 
 function ChatMobileHeader({
@@ -233,7 +64,7 @@ function ChatMobileHeader({
   )
 
   const effortControl =
-    onEffortChange ? (
+    onEffortChange && !hideEffort ? (
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger
           render={
@@ -316,7 +147,7 @@ function ChatMobileHeader({
         >
           <SquarePenIcon />
         </Button>
-        <AccountAvatarMenu onOpenNews={onOpenNews} />
+        <ChatAccountMenu onOpenNews={onOpenNews} variant="mobile" />
       </div>
     </header>
   )

@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest"
 
 import type { MarketContextPacket } from "@/lib/iris-paper-trade/types"
-import { ETH_SIGNAL_SAMPLE_PROMPT } from "@/lib/iris-paper-trade/signal-prompts"
+import { BTC_SIGNAL_SAMPLE_PROMPT } from "@/lib/iris-paper-trade/signal-prompts"
 import { emptyPaperState, marketFillFee } from "@/lib/paper-trading"
 import {
   getPaperSnapshot,
@@ -122,7 +122,7 @@ describe("runIrisPaperTradeRequest propose → confirm", () => {
     expect(result.message).toContain("No paper trade is open yet")
   })
 
-  it("falls back to a local proposal when the API returns tool failure prose", async () => {
+  it("rejects when the API returns tool failure prose without a structured decision", async () => {
     const mark = 2484.3
     const packet = livePacket(mark)
     packet.insight = {
@@ -150,17 +150,15 @@ describe("runIrisPaperTradeRequest propose → confirm", () => {
     })
 
     const result = await runIrisPaperTradeRequest({
-      userMessage: ETH_SIGNAL_SAMPLE_PROMPT,
+      userMessage: BTC_SIGNAL_SAMPLE_PROMPT,
       conversationId: "c1",
       history: [],
     })
 
-    expect(result.status).toBe("proposed")
-    if (result.status !== "proposed") return
-    expect(result.ticket.side).toBe("SHORT")
-    expect(result.ticket.stopLoss).toBeGreaterThan(mark)
-    expect(result.ticket.takeProfit).toBeLessThan(mark)
-    expect(result.message).toContain("No paper trade is open yet")
+    expect(result.status).toBe("rejected")
+    if (result.status !== "rejected") return
+    expect(result.reason).toBe("STRUCTURED_OUTPUT_INVALID")
+    expect(result.message).toContain("valid structured decision")
   })
 
   it("opens the position only after confirmIrisPaperProposal", async () => {

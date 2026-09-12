@@ -6,7 +6,6 @@ import {
   formatOpenedChatMessage,
   formatProposedChatMessage,
 } from "@/lib/iris-paper-trade/execute"
-import { synthesizePaperDecisionFromContext } from "@/lib/iris-paper-trade/fallback-decision"
 import { parsePaperDecision } from "@/lib/iris-paper-trade/parse"
 import { planIrisPaperTrade } from "@/lib/iris-paper-trade/plan"
 import {
@@ -158,14 +157,6 @@ export async function runIrisPaperTradeRequest(input: {
       status: "proposed",
       ticket: proseTicket,
       message: assistantText,
-    }
-  }
-
-  const fallbackDecision = synthesizePaperDecisionFromContext(built.packet)
-  if (fallbackDecision) {
-    const fallbackResult = planDecision(fallbackDecision, built.packet, state)
-    if (fallbackResult?.status === "proposed") {
-      return fallbackResult
     }
   }
 

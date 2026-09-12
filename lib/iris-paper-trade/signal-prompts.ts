@@ -33,8 +33,14 @@ Rules:
 Output a concrete trade the user can execute — not analysis-only refusal.`
 }
 
+export const BTC_SIGNAL_SAMPLE_PROMPT = buildActionSignalPrompt("BTC")
+
+export const BTC_SIGNAL_SAMPLE_PROMPT_FA = buildActionSignalPrompt("بیت‌کوین")
+
+/** @deprecated Legacy ETH starter — kept for intent matching. */
 export const ETH_SIGNAL_SAMPLE_PROMPT = buildActionSignalPrompt("ETH")
 
+/** @deprecated Legacy Persian ETH starter — kept for intent matching. */
 export const ETH_SIGNAL_SAMPLE_PROMPT_FA = buildActionSignalPrompt("اتریوم")
 
 export type IrisComposerQuickPrompt = {
@@ -45,18 +51,18 @@ export type IrisComposerQuickPrompt = {
 
 export const IRIS_COMPOSER_QUICK_PROMPTS: IrisComposerQuickPrompt[] = [
   {
-    id: "eth-signal",
-    label: "ETH signal",
-    text: ETH_SIGNAL_SAMPLE_PROMPT,
+    id: "btc-signal",
+    label: "BTC signal",
+    text: BTC_SIGNAL_SAMPLE_PROMPT,
   },
   {
-    id: "eth-signal-fa",
-    label: "سیگنال ETH",
-    text: ETH_SIGNAL_SAMPLE_PROMPT_FA,
+    id: "btc-signal-fa",
+    label: "سیگنال BTC",
+    text: BTC_SIGNAL_SAMPLE_PROMPT_FA,
   },
   {
     id: "market-pulse",
     label: "Market pulse",
-    text: "What is IRIS stance, model bias, and the news pulse on ETH right now? Signal only if a setup is clear — otherwise analysis only.",
+    text: "What is IRIS stance, model bias, and the news pulse on BTC right now? Signal only if a setup is clear — otherwise analysis only.",
   },
 ]

@@ -1,21 +1,38 @@
 import type { PaperSide } from "@/lib/paper-trading"
-import { ETH_SIGNAL_SAMPLE_PROMPT } from "@/lib/iris-paper-trade/signal-prompts"
+import {
+  BTC_SIGNAL_SAMPLE_PROMPT,
+  ETH_SIGNAL_SAMPLE_PROMPT,
+} from "@/lib/iris-paper-trade/signal-prompts"
 
-export const PAPER_TRADE_SAMPLE_PROMPT = ETH_SIGNAL_SAMPLE_PROMPT
+export const PAPER_TRADE_SAMPLE_PROMPT = BTC_SIGNAL_SAMPLE_PROMPT
+
+export type IrisSamplePrompt = {
+  id: string
+  title: string
+  description: string
+  text: string
+}
 
 /** Empty-state starters — signal first (regular chat), not auto paper-trade pipeline. */
-export const IRIS_SAMPLE_PROMPTS = [
+export const IRIS_SAMPLE_PROMPTS: readonly IrisSamplePrompt[] = [
   {
-    title: "ETH signal",
-    text: ETH_SIGNAL_SAMPLE_PROMPT,
+    id: "btc-signal",
+    title: "BTC signal",
+    description:
+      "Live price, models, stance & news — one actionable paper trade.",
+    text: BTC_SIGNAL_SAMPLE_PROMPT,
   },
   {
+    id: "market-pulse",
     title: "Market pulse",
-    text: "What is IRIS stance, model bias, and the news pulse on ETH right now? Keep it factual — do not propose a trade.",
+    description: "Stance, bias, and news pulse — analysis only, no trade.",
+    text: "What is IRIS stance, model bias, and the news pulse on BTC right now? Keep it factual — do not propose a trade.",
   },
   {
+    id: "wait-or-watch",
     title: "Wait or watch",
-    text: "From live ETH trend and volatility, should I wait on the sidelines or is a setup forming? Analysis only — do not open a paper trade.",
+    description: "Trend and volatility read — should you sit out or watch?",
+    text: "From live BTC trend and volatility, should I wait on the sidelines or is a setup forming? Analysis only — do not open a paper trade.",
   },
 ] as const
 
@@ -32,6 +49,7 @@ export const PAPER_TRADE_SAMPLE_PROMPT_FA =
 
 export const PAPER_TRADE_INTENT_PROMPTS = [
   PAPER_TRADE_SAMPLE_PROMPT,
+  ETH_SIGNAL_SAMPLE_PROMPT,
   PAPER_TRADE_SAMPLE_PROMPT_EN_PREV,
   PAPER_TRADE_SAMPLE_PROMPT_EN_LEGACY,
   PAPER_TRADE_SAMPLE_PROMPT_FA,

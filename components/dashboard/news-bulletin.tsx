@@ -695,11 +695,14 @@ function NewsCard({
   item,
   featured = false,
   mobile = false,
+  sidebar = false,
   className,
 }: {
   item: NewsItem
   featured?: boolean
   mobile?: boolean
+  /** Chat news sidebar — selectable body copy, title stays the link. */
+  sidebar?: boolean
   className?: string
 }) {
   const summary = item.summary?.trim()
@@ -776,6 +779,62 @@ function NewsCard({
   }
 
   const summaryDesktop = summary
+  const trackArticleClick = () =>
+    trackNewsArticleClick({
+      article_id: item.id,
+      source: item.source ?? "unknown",
+      impact_score: item.metrics.impact_score,
+    })
+
+  if (sidebar) {
+    return (
+      <article
+        className={cn(
+          "group/news flex select-text items-start gap-3 rounded-2xl transition-colors",
+          featured
+            ? cn(toneSurfaceClass(tone, true), "p-4 sm:p-5")
+            : cn(toneSurfaceClass(tone, false), "px-2 py-3 sm:px-3"),
+          className
+        )}
+      >
+        <NewsSourceIcon url={item.url} size={featured ? "lg" : "sm"} />
+        <div className="min-w-0 flex-1">
+          <NewsMeta item={item} featured={featured} />
+          <a
+            href={item.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-1.5 block font-semibold tracking-tight text-foreground underline-offset-2 hover:underline"
+            onClick={trackArticleClick}
+          >
+            <h3
+              className={cn(
+                featured
+                  ? "text-lg leading-snug sm:text-xl"
+                  : "text-[15px] leading-snug"
+              )}
+            >
+              {item.title}
+            </h3>
+          </a>
+          {summaryDesktop ? (
+            <p
+              className={cn(
+                "mt-1.5 whitespace-pre-wrap leading-relaxed text-muted-foreground",
+                featured ? "text-sm" : "text-[13px]"
+              )}
+            >
+              {summaryDesktop}
+            </p>
+          ) : null}
+        </div>
+        <div className="shrink-0">
+          <NewsSpeakButton item={item} />
+        </div>
+      </article>
+    )
+  }
+
   return (
     <div
       className={cn(
@@ -794,13 +853,7 @@ function NewsCard({
         target="_blank"
         rel="noopener noreferrer"
         className="flex min-w-0 flex-1 items-start gap-3"
-        onClick={() =>
-          trackNewsArticleClick({
-            article_id: item.id,
-            source: item.source ?? "unknown",
-            impact_score: item.metrics.impact_score,
-          })
-        }
+        onClick={trackArticleClick}
       >
         <NewsSourceIcon url={item.url} size={featured ? "lg" : "sm"} />
         <div className="min-w-0 flex-1">
@@ -847,6 +900,7 @@ function NewsHeadlineList({
   analytics,
   loading = false,
   mobile = false,
+  sidebar = false,
   isAuthenticated = true,
   authLoading = false,
 }: {
@@ -854,6 +908,7 @@ function NewsHeadlineList({
   analytics: NewsAnalytics | null
   loading?: boolean
   mobile?: boolean
+  sidebar?: boolean
   isAuthenticated?: boolean
   authLoading?: boolean
 }) {
@@ -898,12 +953,12 @@ function NewsHeadlineList({
         </div>
       ) : null}
       <NewsTape analytics={analytics} mobile={mobile} />
-      <NewsCard item={lead} featured mobile={mobile} />
+      <NewsCard item={lead} featured mobile={mobile} sidebar={sidebar} />
       {rest.length > 0 ? (
         mobile ? (
           <div className="flex flex-col gap-2">
             {rest.map((item) => (
-              <NewsCard key={item.id} item={item} mobile />
+              <NewsCard key={item.id} item={item} mobile sidebar={sidebar} />
             ))}
           </div>
         ) : (
@@ -916,7 +971,7 @@ function NewsHeadlineList({
             </div>
             <div className="flex flex-col gap-2">
               {rest.map((item) => (
-                <NewsCard key={item.id} item={item} />
+                <NewsCard key={item.id} item={item} sidebar={sidebar} />
               ))}
             </div>
           </div>
@@ -935,6 +990,7 @@ function NewsBulletin({
   embedded = false,
   active = true,
   mobile = false,
+  sidebar = false,
   isAuthenticated = true,
   authLoading = false,
 }: {
@@ -946,6 +1002,8 @@ function NewsBulletin({
   freshnessLabel: string
   /** When true, omit outer Card / duplicate News title (tab workspace). */
   embedded?: boolean
+  /** Chat news sidebar — full scroll + text selection. */
+  sidebar?: boolean
   /** False when the News tab is hidden — stop read-aloud. */
   active?: boolean
   mobile?: boolean
@@ -971,6 +1029,7 @@ function NewsBulletin({
         analytics={analytics}
         loading={loading}
         mobile={mobile}
+        sidebar={sidebar}
         isAuthenticated={isAuthenticated}
         authLoading={authLoading}
       />

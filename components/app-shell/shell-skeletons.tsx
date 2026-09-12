@@ -213,18 +213,18 @@ function ChatAsideSkeleton({
   className?: string
   variant?: ChatAsideSkeletonVariant
   sidebarWidth?: string
-  /** Guests never get the history rail in focused layout. */
   isAuthenticated?: boolean
 }) {
   const mobile = variant === "mobile"
   const focused = variant === "focused"
   const guest = !isAuthenticated
-  const showHistoryRail = isAuthenticated && (focused || !mobile)
+  const showHistoryRail = focused || !mobile
   const showHeader = !focused || guest
+  const showMainColumnHeader = showHeader && !showHistoryRail
 
   const mainColumn = (
     <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-sidebar text-sidebar-foreground">
-      {showHeader ? (
+      {showMainColumnHeader ? (
         <ChatHeaderSkeleton
           mobile={mobile}
           guestSubtitle={guest}

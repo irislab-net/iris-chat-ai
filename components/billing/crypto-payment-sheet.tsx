@@ -60,7 +60,7 @@ type CryptoPaymentSheetProps = {
   checkout: CryptoCheckoutRequest | null
   open: boolean
   onOpenChange: (open: boolean) => void
-  onPaid: () => void
+  onPaid: () => void | Promise<void>
 }
 
 function planSummary(billing: BillingCycle) {
@@ -333,7 +333,7 @@ export function CryptoPaymentSheet({
             }
             return next
           })
-          if (next.status === "paid") onPaid()
+          if (next.status === "paid") void Promise.resolve(onPaid())
         })
         .catch(() => {
           // keep polling through transient failures

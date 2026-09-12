@@ -15,7 +15,8 @@ import {
   ResizablePanelGroup,
 } from "@/components/ui/resizable"
 import { useIsDesktop } from "@/hooks/use-media-query"
-import { usePathname } from "@/i18n/navigation"
+import { usePathname, useRouter } from "@/i18n/navigation"
+import { useAuth } from "@/components/auth/auth-provider"
 import { useWorkspacePageIntro } from "@/hooks/use-mobile-workspace-page-intro"
 import { useShellSidebarLayout } from "@/hooks/use-shell-sidebar-layout"
 import {
@@ -60,10 +61,39 @@ function AppShell(props: AppShellProps) {
 
 function AppShellWithTab(props: AppShellProps) {
   const pathname = usePathname()
+  const router = useRouter()
   const searchParams = useSearchParams()
+  const { refreshAfterUpgrade, isAuthenticated } = useAuth()
+  const checkoutHandledRef = React.useRef(false)
   const workspaceTab = isAppDeskPath(pathname)
     ? resolveWorkspaceTab(searchParams.get("tab"))
     : null
+
+  React.useEffect(() => {
+    if (searchParams.get("checkout") !== "success") return
+    if (checkoutHandledRef.current) return
+    checkoutHandledRef.current = true
+
+    void (async () => {
+      try {
+        if (isAuthenticated) {
+          await refreshAfterUpgrade()
+        }
+      } finally {
+        const params = new URLSearchParams(searchParams.toString())
+        params.delete("checkout")
+        const qs = params.toString()
+        router.replace(qs ? `${pathname}?${qs}` : pathname)
+      }
+    })()
+  }, [
+    isAuthenticated,
+    pathname,
+    refreshAfterUpgrade,
+    router,
+    searchParams,
+  ])
+
   return (
     <AppShellInner {...props} workspaceTab={workspaceTab} />
   )
