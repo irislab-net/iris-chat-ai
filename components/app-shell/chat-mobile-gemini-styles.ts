@@ -45,13 +45,17 @@ const chatMobileHeaderModelSecondaryClass = "text-muted-foreground"
 const chatMobileEmptyHeroWrapClass =
   "flex min-h-full flex-col items-center justify-center px-5 pb-6 pt-4"
 
-const chatMobileEmptyHeroContentClass = "flex flex-col items-center gap-3 text-center"
+const chatMobileEmptyHeroContentClass =
+  "chat-empty-hero flex flex-col items-center gap-5 text-center"
+
+const chatMobileEmptyHeroMarkShellClass =
+  "chat-empty-hero-mark relative flex size-[4.25rem] items-center justify-center"
 
 const chatMobileEmptyHeroMarkClass =
-  "size-8 rounded-none bg-transparent shadow-none ring-0"
+  "relative z-[1] size-12 rounded-none bg-transparent shadow-none ring-0"
 
 const chatMobileEmptyHeroTitleClass =
-  "max-w-[19rem] text-[1.625rem] font-normal leading-[1.28] tracking-[-0.02em] text-foreground"
+  "chat-empty-hero-title max-w-[20rem] text-balance text-[1.75rem] font-medium leading-[1.22] tracking-[-0.028em] text-foreground"
 
 const chatMobileThreadClass = "px-4 pt-3 pb-2 sm:px-5"
 
@@ -156,6 +160,7 @@ export {
   chatMobileComposerShellClass,
   chatMobileEmptyHeroContentClass,
   chatMobileEmptyHeroMarkClass,
+  chatMobileEmptyHeroMarkShellClass,
   chatMobileEmptyHeroTitleClass,
   chatMobileEmptyHeroWrapClass,
   chatMobileDrawerFooterBarClass,

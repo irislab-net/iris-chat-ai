@@ -299,7 +299,7 @@
     "composerMobilePlaceholder": "اسأل IRIS",
     "composerVoiceInput": "إدخال صوتي",
     "composerVoiceMode": "الوضع الصوتي",
-    "mobileGreeting": "كيف يمكنني مساعدتك، {name}؟",
+    "mobileGreeting": "كيف يمكنني مساعدتك، <highlight>{name}</highlight>؟",
     "mobileGreetingGuest": "كيف يمكنني مساعدتك؟",
     "composerSignalMenu": "طلب إشارة",
     "composerMentionMenu": "أدوات IRIS",
