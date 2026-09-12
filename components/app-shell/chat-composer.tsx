@@ -6,11 +6,9 @@ import {
   CheckIcon,
   ChevronDownIcon,
   PlusIcon,
-  XIcon,
 } from "lucide-react"
 import { useLocale, useTranslations } from "next-intl"
 
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -29,15 +27,12 @@ import {
 } from "@/lib/chat-effort"
 import {
   applyMentionSelection,
-  expandComposerDraft,
   expandComposerMentions,
   filterMentionOptions,
+  insertToolMentionAtCursor,
   IRIS_MENTION_OPTIONS,
-  parseComposerToolTag,
   parseMentionPalette,
   type IrisMentionOption,
-  type IrisMentionTool,
-  type MentionPaletteState,
 } from "@/lib/chat/composer-mentions"
 import { localeDirection } from "@/lib/i18n/locale"
 import { mergeRefs } from "@/lib/merge-refs"
@@ -95,22 +90,22 @@ function ChatComposer({
   /** Ignore ghost taps when chat mounts under the finger (click retargeting). */
   const keyboardUnlockAllowedAtRef = React.useRef(0)
   const [uncontrolled, setUncontrolled] = React.useState("")
-  const [activeTool, setActiveTool] = React.useState<IrisMentionTool | null>(null)
   const [mentionIndex, setMentionIndex] = React.useState(0)
   const [cursor, setCursor] = React.useState(0)
   const localRef = React.useRef<HTMLTextAreaElement>(null)
   const isControlled = valueProp !== undefined
   const value = isControlled ? valueProp : uncontrolled
   const canSend = !disabled && value.trim().length > 0
+  const hasInlineSignal = /(?:^|[\s\n])@signal(?:\s|$)/u.test(value)
   const textareaNodeRef = React.useMemo(
     () => mergeRefs(localRef, textareaRef),
     [textareaRef]
   )
 
-  const mentionPalette = React.useMemo(() => {
-    if (activeTool) return null
-    return parseMentionPalette(value, cursor)
-  }, [activeTool, value, cursor])
+  const mentionPalette = React.useMemo(
+    () => parseMentionPalette(value, cursor),
+    [value, cursor]
+  )
 
   const mentionOptions = React.useMemo(
     () =>
@@ -182,7 +177,6 @@ function ChatComposer({
   }, [deferMobileKeyboard, focusComposer])
 
   function syncMentionIndex(nextValue: string, selectionStart: number) {
-    if (activeTool) return
     const nextPalette = parseMentionPalette(nextValue, selectionStart)
     const prevPalette = parseMentionPalette(value, cursor)
     if (nextPalette?.query !== prevPalette?.query) {
@@ -196,85 +190,54 @@ function ChatComposer({
   }
 
   function setValue(next: string) {
-    const parsed = parseComposerToolTag(next)
-    if (parsed) {
-      setActiveTool(parsed.tool)
-      if (!isControlled) setUncontrolled(parsed.text)
-      onValueChange?.(parsed.text)
-      return
-    }
-
     if (!isControlled) setUncontrolled(next)
     onValueChange?.(next)
   }
 
+  function placeCursor(nextCursor: number) {
+    queueMicrotask(() => {
+      const el = localRef.current
+      if (!el) return
+      el.setSelectionRange(nextCursor, nextCursor)
+      setCursor(nextCursor)
+      focusComposer({ force: true })
+    })
+  }
+
   function send() {
     if (disabled) return
-    const expanded = activeTool
-      ? expandComposerDraft({ tool: activeTool, text: value.trim() })
-      : expandComposerMentions(value.trim())
+    const expanded = expandComposerMentions(value.trim())
     if (!expanded) return
     onSend?.(expanded)
-    setActiveTool(null)
     if (!isControlled) setUncontrolled("")
     onValueChange?.("")
   }
 
-  function activateTool(tool: IrisMentionTool, palette?: MentionPaletteState | null) {
-    if (palette) {
-      const { nextText, nextCursor } = applyMentionSelection({
-        text: value,
-        replaceStart: palette.replaceStart,
-        replaceEnd: palette.replaceEnd,
-      })
-      setValue(nextText)
-      queueMicrotask(() => {
-        const el = localRef.current
-        if (!el) return
-        el.setSelectionRange(nextCursor, nextCursor)
-        setCursor(nextCursor)
-        focusComposer()
-      })
-    }
-    setActiveTool(tool)
-    if (isDesktop === true) {
-      queueMicrotask(() => focusComposer())
-    }
-  }
-
-  function clearActiveTool() {
-    setActiveTool(null)
-    if (isDesktop === true) focusComposer()
-  }
-
   function insertMentionToken(option: IrisMentionOption) {
     const end = localRef.current?.selectionEnd ?? cursor
-    const before = value.slice(0, cursor)
-    const after = value.slice(end)
-    const trimmedBefore = before.replace(/@(?:[\w\u0600-\u06FF\s.-]*)?$/u, "")
-    const nextText = `${trimmedBefore}${after}`
-    if (!isControlled) setUncontrolled(nextText)
-    onValueChange?.(nextText)
-    setActiveTool(option.tool)
+    const { nextText, nextCursor } = insertToolMentionAtCursor({
+      text: value,
+      cursor,
+      selectionEnd: end,
+      tool: option.tool,
+    })
+    setValue(nextText)
+    placeCursor(nextCursor)
   }
 
   function applyMention(option: IrisMentionOption) {
     if (!mentionPalette) return
-    activateTool(option.tool, mentionPalette)
+    const { nextText, nextCursor } = applyMentionSelection({
+      text: value,
+      replaceStart: mentionPalette.replaceStart,
+      replaceEnd: mentionPalette.replaceEnd,
+      tool: option.tool,
+    })
+    setValue(nextText)
+    placeCursor(nextCursor)
   }
 
   function onKeyDown(event: React.KeyboardEvent<HTMLTextAreaElement>) {
-    if (
-      event.key === "Backspace" &&
-      activeTool &&
-      value.length === 0 &&
-      cursor === 0
-    ) {
-      event.preventDefault()
-      clearActiveTool()
-      return
-    }
-
     if (mentionOpen) {
       if (event.key === "ArrowDown") {
         event.preventDefault()
@@ -432,22 +395,6 @@ function ChatComposer({
               : "[grid-area:primary] flex min-h-11 flex-wrap items-start gap-1.5 px-3.5 pt-3.5 pb-1.5 sm:min-h-10"
           )}
         >
-          {activeTool ? (
-            <Badge
-              variant="secondary"
-              className="mt-0.5 h-6 shrink-0 gap-1 rounded-md border border-primary/15 bg-primary/10 px-2 py-0 text-[12px] font-medium text-primary"
-            >
-              {activeTool}
-              <button
-                type="button"
-                aria-label={t("composerRemoveTool")}
-                className="rounded-sm text-primary/70 transition-colors hover:text-primary"
-                onClick={clearActiveTool}
-              >
-                <XIcon className="size-3" />
-              </button>
-            </Badge>
-          ) : null}
           <Textarea
             ref={textareaNodeRef}
             value={value}
@@ -463,7 +410,7 @@ function ChatComposer({
             onClick={syncCursor}
             onSelect={syncCursor}
             placeholder={
-              activeTool
+              hasInlineSignal
                 ? t("composerToolSignalPlaceholder")
                 : isFloating
                   ? t("composerMobilePlaceholder")
