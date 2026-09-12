@@ -1539,7 +1539,6 @@ function ChatAside({
           onOpenHistory={() => setHistoryOpen((open) => !open)}
           effort={effort}
           onEffortChange={onEffortChange}
-          hideEffort={!isAuthenticated}
           onNewChat={startNewChat}
           onOpenNews={openNewsFromChat}
           sending={sending}
@@ -1993,7 +1992,6 @@ function ChatAside({
                 textareaRef={composerRef}
                 effort={effort}
                 onEffortChange={onEffortChange}
-                hideEffort={!isAuthenticated}
                 onSend={handleSend}
                 disabled={sending}
                 layout={isMobileOverlay ? "floating" : "default"}
