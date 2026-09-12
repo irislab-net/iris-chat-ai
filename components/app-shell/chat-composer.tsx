@@ -32,6 +32,7 @@ import {
   expandComposerDraft,
   expandComposerMentions,
   filterMentionOptions,
+  findIrisMentionOption,
   IRIS_MENTION_OPTIONS,
   parseComposerToolTag,
   parseMentionPalette,
@@ -45,6 +46,16 @@ import {
   chatMobileComposerIconButtonClass,
   chatMobileComposerPillClass,
   chatMobileComposerSendClass,
+  chatDesktopComposerBodyClass,
+  chatDesktopComposerEffortButtonClass,
+  chatDesktopComposerIconButtonClass,
+  chatDesktopComposerSendClass,
+  chatDesktopComposerSendDisabledClass,
+  chatDesktopComposerShellClass,
+  chatDesktopComposerToolChipClass,
+  chatDesktopComposerToolChipCloseClass,
+  chatMobileComposerToolChipClass,
+  chatMobileComposerToolChipCloseClass,
   chatMobileComposerShellClass,
   chatMobileToolsMenuClass,
   chatMobileToolsMenuItemClass,
@@ -101,16 +112,26 @@ function ChatComposer({
   const localRef = React.useRef<HTMLTextAreaElement>(null)
   const isControlled = valueProp !== undefined
   const value = isControlled ? valueProp : uncontrolled
-  const canSend = !disabled && value.trim().length > 0
+  const toolTagDraft = React.useMemo(
+    () => (activeTool ? null : parseComposerToolTag(value)),
+    [activeTool, value]
+  )
+  const effectiveActiveTool = activeTool ?? toolTagDraft?.tool ?? null
+  const composerValue = toolTagDraft ? toolTagDraft.text : value
+  const activeToolOption = effectiveActiveTool
+    ? findIrisMentionOption(effectiveActiveTool)
+    : undefined
+  const floatingToolActive = isFloating && Boolean(effectiveActiveTool)
+  const canSend = !disabled && composerValue.trim().length > 0
   const textareaNodeRef = React.useMemo(
     () => mergeRefs(localRef, textareaRef),
     [textareaRef]
   )
 
   const mentionPalette = React.useMemo(() => {
-    if (activeTool) return null
-    return parseMentionPalette(value, cursor)
-  }, [activeTool, value, cursor])
+    if (effectiveActiveTool) return null
+    return parseMentionPalette(composerValue, cursor)
+  }, [composerValue, cursor, effectiveActiveTool])
 
   const mentionOptions = React.useMemo(
     () =>
@@ -186,16 +207,16 @@ function ChatComposer({
   }, [deferMobileKeyboard, focusComposer])
 
   function syncMentionIndex(nextValue: string, selectionStart: number) {
-    if (activeTool) return
+    if (effectiveActiveTool) return
     const nextPalette = parseMentionPalette(nextValue, selectionStart)
-    const prevPalette = parseMentionPalette(value, cursor)
+    const prevPalette = parseMentionPalette(composerValue, cursor)
     if (nextPalette?.query !== prevPalette?.query) {
       setMentionIndex(0)
     }
   }
 
   function syncCursor() {
-    const next = localRef.current?.selectionStart ?? value.length
+    const next = localRef.current?.selectionStart ?? composerValue.length
     setCursor(next)
   }
 
@@ -214,9 +235,12 @@ function ChatComposer({
 
   function send() {
     if (disabled) return
-    const expanded = activeTool
-      ? expandComposerDraft({ tool: activeTool, text: value.trim() })
-      : expandComposerMentions(value.trim())
+    const expanded = effectiveActiveTool
+      ? expandComposerDraft({
+          tool: effectiveActiveTool,
+          text: composerValue.trim(),
+        })
+      : expandComposerMentions(composerValue.trim())
     if (!expanded) return
     onSend?.(expanded)
     setActiveTool(null)
@@ -248,6 +272,11 @@ function ChatComposer({
 
   function clearActiveTool() {
     setActiveTool(null)
+    const parsed = parseComposerToolTag(value)
+    if (parsed) {
+      if (!isControlled) setUncontrolled(parsed.text)
+      onValueChange?.(parsed.text)
+    }
     if (isDesktop === true) focusComposer()
   }
 
@@ -270,8 +299,8 @@ function ChatComposer({
   function onKeyDown(event: React.KeyboardEvent<HTMLTextAreaElement>) {
     if (
       event.key === "Backspace" &&
-      activeTool &&
-      value.length === 0 &&
+      effectiveActiveTool &&
+      composerValue.length === 0 &&
       cursor === 0
     ) {
       event.preventDefault()
@@ -328,9 +357,7 @@ function ChatComposer({
       data-slot="chat-composer"
       className={cn(
         "relative shrink-0",
-        isFloating
-          ? chatMobileComposerShellClass
-          : "bg-linear-to-t from-sidebar via-sidebar to-sidebar/80 px-3 pt-3 pb-[max(0.625rem,env(safe-area-inset-bottom))]",
+        isFloating ? chatMobileComposerShellClass : chatDesktopComposerShellClass,
         className
       )}
       onSubmit={(event) => {
@@ -377,84 +404,160 @@ function ChatComposer({
 
       <div
         data-composer-body=""
+        data-composer-expanded={floatingToolActive ? "" : undefined}
         className={cn(
           "cursor-text transition-[background-color,box-shadow,border-color]",
           isFloating
-            ? chatMobileComposerPillClass
-            : cn(
-                "grid grid-cols-[auto_1fr_auto] rounded-2xl border border-foreground/6 bg-muted/25 px-1 pb-1.5",
-                "shadow-[inset_0_1px_0_0_color-mix(in_oklch,var(--foreground)_7%,transparent),0_10px_28px_-20px_color-mix(in_oklch,var(--foreground)_14%,transparent)]",
-                "[grid-template-areas:'primary_primary_primary'_'leading_._trailing']",
-                "focus-within:border-foreground/10 focus-within:bg-muted/38",
-                "focus-within:shadow-[inset_0_1px_0_0_color-mix(in_oklch,var(--foreground)_11%,transparent),0_14px_36px_-18px_color-mix(in_oklch,var(--foreground)_18%,transparent)]"
-              )
+            ? cn(chatMobileComposerPillClass, "flex flex-col items-stretch gap-0.5")
+            : chatDesktopComposerBodyClass
         )}
         onClick={focusField}
       >
         {isFloating ? (
-          <DropdownMenu modal={false}>
-            <DropdownMenuTrigger
-              render={
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon-sm"
-                  aria-label={t("composerToolsMenu")}
-                  title={t("composerToolsMenu")}
-                  disabled={disabled}
-                  className={chatMobileComposerIconButtonClass}
-                />
+          <>
+            <Textarea
+              ref={textareaNodeRef}
+              value={composerValue}
+              onChange={(event) => {
+                const next = event.target.value
+                const start = event.target.selectionStart
+                syncMentionIndex(next, start)
+                setValue(next)
+                setCursor(start)
+              }}
+              onKeyDown={onKeyDown}
+              onKeyUp={syncCursor}
+              onClick={syncCursor}
+              onSelect={syncCursor}
+              placeholder={
+                effectiveActiveTool
+                  ? t("composerToolSignalPlaceholder")
+                  : t("composerMobilePlaceholder")
               }
-            >
-              <PlusIcon className="size-5" />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" side="top" className={cn(chatMobileToolsMenuClass, "min-w-[13.5rem] border-0 p-1.5 shadow-none ring-0 !bg-white/78 dark:!bg-white/[0.08]")}>
-              <DropdownMenuGroup>
-                <DropdownMenuLabel className={chatMobileToolsMenuLabelClass}>
-                  {t("composerToolsMenu")}
-                </DropdownMenuLabel>
-                {IRIS_MENTION_OPTIONS.map((option) => (
-                  <DropdownMenuItem
-                    key={option.id}
-                    className={cn(chatMobileToolsMenuItemClass, "py-2.5")}
-                    onClick={() => insertMentionToken(option)}
+              rows={1}
+              disabled={disabled}
+              readOnly={deferMobileKeyboard && !mobileKeyboardReady}
+              tabIndex={deferMobileKeyboard && !mobileKeyboardReady ? -1 : 0}
+              inputMode={
+                deferMobileKeyboard && !mobileKeyboardReady ? "none" : "text"
+              }
+              enterKeyHint="send"
+              onFocus={(event) => {
+                if (deferMobileKeyboard && !mobileKeyboardReady) {
+                  event.currentTarget.blur()
+                  return
+                }
+                onFloatingFocusChange?.(true)
+              }}
+              onBlur={() => {
+                onFloatingFocusChange?.(false)
+              }}
+              dir={textDir}
+              className="chat-bidi min-h-12 w-full min-w-0 max-h-40 flex-1 field-sizing-content resize-none rounded-none border-0 bg-transparent px-2.5 py-2.5 text-[16px] leading-6 break-words text-foreground shadow-none placeholder:text-muted-foreground focus-visible:border-transparent focus-visible:ring-0 dark:bg-transparent"
+            />
+            <div className="flex min-w-0 items-center gap-0.5 px-0.5 pb-0.5">
+              <DropdownMenu modal={false}>
+                <DropdownMenuTrigger
+                  render={
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon-sm"
+                      aria-label={t("composerToolsMenu")}
+                      title={t("composerToolsMenu")}
+                      disabled={disabled}
+                      className={chatMobileComposerIconButtonClass}
+                    />
+                  }
+                >
+                  <PlusIcon className="size-5" />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  align="start"
+                  side="top"
+                  className={cn(
+                    chatMobileToolsMenuClass,
+                    "min-w-[13.5rem] border-0 p-1.5 shadow-none ring-0 !bg-white/78 dark:!bg-white/[0.08]"
+                  )}
+                >
+                  <DropdownMenuGroup>
+                    <DropdownMenuLabel className={chatMobileToolsMenuLabelClass}>
+                      {t("composerToolsMenu")}
+                    </DropdownMenuLabel>
+                    {IRIS_MENTION_OPTIONS.map((option) => (
+                      <DropdownMenuItem
+                        key={option.id}
+                        className={cn(chatMobileToolsMenuItemClass, "py-2.5")}
+                        onClick={() => insertMentionToken(option)}
+                      >
+                        <span className={chatMobileToolsMenuItemTitleClass}>
+                          {option.label}
+                        </span>
+                        <span
+                          className={cn(
+                            chatMobileToolsMenuItemDescClass,
+                            "line-clamp-2"
+                          )}
+                        >
+                          {t("composerToolSignalDesc")}
+                        </span>
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuGroup>
+                </DropdownMenuContent>
+              </DropdownMenu>
+              {effectiveActiveTool ? (
+                <Badge
+                  variant="outline"
+                  className={chatMobileComposerToolChipClass}
+                >
+                  {activeToolOption?.label ?? effectiveActiveTool}
+                  <button
+                    type="button"
+                    aria-label={t("composerRemoveTool")}
+                    className={chatMobileComposerToolChipCloseClass}
+                    onClick={clearActiveTool}
                   >
-                    <span className={chatMobileToolsMenuItemTitleClass}>{option.label}</span>
-                    <span className={cn(chatMobileToolsMenuItemDescClass, "line-clamp-2")}>
-                      {t("composerToolSignalDesc")}
-                    </span>
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuGroup>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        ) : null}
-        <div
-          className={cn(
-            isFloating
-              ? "flex min-w-0 flex-1 items-end gap-1 px-0.5 pb-0.5"
-              : "[grid-area:primary] flex min-h-11 flex-wrap items-start gap-1.5 px-3.5 pt-3.5 pb-1.5 sm:min-h-10"
-          )}
-        >
-          {activeTool ? (
+                    <XIcon className="size-2.5 stroke-[2.25]" />
+                  </button>
+                </Badge>
+              ) : null}
+              <div className="min-w-0 flex-1" aria-hidden />
+              {canSend ? (
+                <Button
+                  type="submit"
+                  size="icon-sm"
+                  variant="default"
+                  aria-label="Send message"
+                  title="Send · Enter"
+                  className={chatMobileComposerSendClass}
+                >
+                  <ArrowUpIcon className="size-4.5" />
+                </Button>
+              ) : null}
+            </div>
+          </>
+        ) : (
+        <div className="[grid-area:primary] flex min-h-11 flex-wrap items-start gap-1.5 px-3.5 pt-3.5 pb-1.5 sm:min-h-10">
+          {effectiveActiveTool ? (
             <Badge
-              variant="secondary"
-              className="mt-0.5 h-6 shrink-0 gap-1 rounded-md border border-primary/15 bg-primary/10 px-2 py-0 text-[12px] font-medium text-primary"
+              variant="outline"
+              className={chatDesktopComposerToolChipClass}
             >
-              {activeTool}
+              {activeToolOption?.label ?? effectiveActiveTool}
               <button
                 type="button"
                 aria-label={t("composerRemoveTool")}
-                className="rounded-sm text-primary/70 transition-colors hover:text-primary"
+                className={chatDesktopComposerToolChipCloseClass}
                 onClick={clearActiveTool}
               >
-                <XIcon className="size-3" />
+                <XIcon className="size-3 stroke-[2.25]" />
               </button>
             </Badge>
           ) : null}
           <Textarea
             ref={textareaNodeRef}
-            value={value}
+            value={composerValue}
           onChange={(event) => {
             const next = event.target.value
             const start = event.target.selectionStart
@@ -467,11 +570,9 @@ function ChatComposer({
             onClick={syncCursor}
             onSelect={syncCursor}
             placeholder={
-              activeTool
+              effectiveActiveTool
                 ? t("composerToolSignalPlaceholder")
-                : isFloating
-                  ? t("composerMobilePlaceholder")
-                  : t("composerPlaceholder")
+                : t("composerPlaceholder")
             }
             rows={1}
             disabled={disabled}
@@ -486,36 +587,12 @@ function ChatComposer({
                 event.currentTarget.blur()
                 return
               }
-              if (isFloating) onFloatingFocusChange?.(true)
-            }}
-            onBlur={() => {
-              if (isFloating) onFloatingFocusChange?.(false)
             }}
             dir={textDir}
-            className={cn(
-              "chat-bidi min-w-32 flex-1 field-sizing-content resize-none rounded-none border-0 bg-transparent p-0 text-start shadow-none focus-visible:border-transparent focus-visible:ring-0 dark:bg-transparent",
-              isFloating
-                ? "max-h-40 min-h-12 py-3 text-[16px] leading-6 text-foreground placeholder:text-muted-foreground"
-                : "min-h-6 text-[16px] leading-6 sm:text-[14px] sm:leading-[1.45]"
-            )}
+            className="chat-bidi min-h-6 min-w-32 flex-1 field-sizing-content resize-none rounded-none border-0 bg-transparent p-0 text-start text-[16px] leading-6 shadow-none focus-visible:border-transparent focus-visible:ring-0 sm:text-[14px] sm:leading-[1.45] dark:bg-transparent"
           />
         </div>
-        {isFloating ? (
-          <div className="flex shrink-0 items-end pb-0.5 pe-0.5">
-            {canSend ? (
-              <Button
-                type="submit"
-                size="icon-sm"
-                variant="default"
-                aria-label="Send message"
-                title="Send · Enter"
-                className={chatMobileComposerSendClass}
-              >
-                <ArrowUpIcon className="size-4.5" />
-              </Button>
-            ) : null}
-          </div>
-        ) : null}
+        )}
         {!isFloating ? (
         <div className="[grid-area:leading] flex items-center gap-0.5 px-0.5 pb-0.5">
           <DropdownMenu modal={isMobile ? false : undefined}>
@@ -528,7 +605,7 @@ function ChatComposer({
                   aria-label={t("composerToolsMenu")}
                   title={t("composerToolsMenu")}
                   disabled={disabled}
-                  className="size-9 rounded-lg text-muted-foreground hover:bg-muted/50 hover:text-foreground sm:size-8"
+                  className={chatDesktopComposerIconButtonClass}
                 />
               }
             >
@@ -563,7 +640,7 @@ function ChatComposer({
                     variant="ghost"
                     size="sm"
                     aria-label={`Response depth: ${chatEffortLabel(effort)}`}
-                    className="h-9 gap-1 rounded-lg bg-muted/35 px-2.5 text-[12px] text-muted-foreground hover:bg-muted/50 hover:text-foreground sm:h-8"
+                    className={chatDesktopComposerEffortButtonClass}
                   />
                 }
               >
@@ -611,12 +688,13 @@ function ChatComposer({
             aria-label="Send message"
             title="Send · Enter"
             disabled={!canSend}
-            className={cn(
-              "size-10 rounded-full transition-transform sm:size-9",
-              canSend && "shadow-sm"
-            )}
+            className={
+              canSend
+                ? chatDesktopComposerSendClass
+                : chatDesktopComposerSendDisabledClass
+            }
           >
-            <ArrowUpIcon />
+            <ArrowUpIcon className={canSend ? undefined : "opacity-50"} />
           </Button>
         </div>
         ) : null}

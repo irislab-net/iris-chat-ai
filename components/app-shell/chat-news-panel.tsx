@@ -92,7 +92,7 @@ function ChatNewsPanelBody({
     <div className={cn("flex h-full min-h-0 flex-col", className)}>
       <header
         className={cn(
-          "flex shrink-0 items-start justify-between gap-3 border-b border-border/60 px-4 py-3",
+          "flex shrink-0 items-start justify-between gap-3 px-4 py-3",
           headerClassName
         )}
       >
@@ -158,7 +158,7 @@ function ChatNewsSidePanel({ open, onOpenChange }: ChatNewsSidePanelProps) {
   return (
     <aside
       data-slot="chat-news-panel"
-      className="flex h-full min-h-0 w-[min(36rem,48vw)] min-w-104 shrink-0 flex-col overflow-hidden border-l border-border/60 bg-sidebar text-sidebar-foreground"
+      className="flex h-full min-h-0 w-[min(36rem,48vw)] min-w-104 shrink-0 flex-col overflow-hidden bg-sidebar text-sidebar-foreground"
       aria-label="News"
     >
       <ChatNewsPanelBody onClose={() => onOpenChange(false)} />

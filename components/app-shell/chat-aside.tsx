@@ -17,7 +17,7 @@ import { ChatAccountFooter } from "@/components/app-shell/chat-account-footer"
 import { ChatAccountMenu } from "@/components/app-shell/chat-account-menu"
 import { IrisLabLogo } from "@/components/brand/iris-lab-logo"
 import { ChatMobileGeminiBackground } from "@/components/app-shell/chat-mobile-gemini-background"
-import { chatMobileScrollDownClass, chatMobileThreadBottomFadeClass, chatMobileThreadBottomSpacerClass, chatMobileThreadClass, chatMobileThreadScrollMaskClass, chatMobileEmptyHeroContentClass, chatMobileEmptyHeroMarkClass, chatMobileEmptyHeroMarkShellClass, chatMobileEmptyHeroTitleClass, chatMobileEmptyHeroWrapClass } from "@/components/app-shell/chat-mobile-gemini-styles"
+import { chatMobileScrollDownClass, chatMobileThreadBottomFadeClass, chatMobileThreadBottomSpacerClass, chatMobileThreadClass, chatMobileThreadScrollMaskClass, chatMobileEmptyHeroContentClass, chatMobileEmptyHeroMarkClass, chatMobileEmptyHeroMarkShellClass, chatMobileEmptyHeroTitleClass, chatMobileEmptyHeroWrapClass, chatSamplePromptButtonClass, chatSamplePromptIconClass } from "@/components/app-shell/chat-mobile-gemini-styles"
 import { ChatMobileHeader } from "@/components/app-shell/chat-mobile-header"
 import {
   ChatNewsMobileSheet,
@@ -237,11 +237,11 @@ function IrisSamplePrompts({
   const t = useTranslations("workspace")
 
   return (
-    <div className="mt-6 flex flex-col gap-2">
+    <div className="mt-6 flex flex-col items-center gap-2">
       <p className="px-0.5 text-[10px] font-medium tracking-wide text-muted-foreground uppercase">
         {t("samplePromptsLabel")}
       </p>
-      <div className="flex flex-col gap-1.5">
+      <div className="flex w-full flex-col items-center gap-1.5">
         {IRIS_SAMPLE_PROMPTS.map((prompt) => {
           const Icon =
             SAMPLE_PROMPT_ICONS[
@@ -255,15 +255,15 @@ function IrisSamplePrompts({
               variant="ghost"
               disabled={disabled}
               aria-label={`Use prompt: ${prompt.title}`}
-              className="h-auto w-full items-stretch justify-start rounded-xl border border-transparent bg-muted/20 px-3 py-2.5 text-left whitespace-normal shadow-none transition-[background-color,border-color,transform] hover:border-border/60 hover:bg-muted/35 active:scale-[0.99]"
+              className={chatSamplePromptButtonClass}
               onPointerEnter={() => {
                 void import("@/lib/chat/parse-trade-setup")
                 void import("@/components/paper-trading/paper-trading-workspace")
               }}
               onClick={() => onEdit(prompt.text)}
             >
-              <span className="flex w-full items-start gap-2.5 whitespace-normal">
-                <span className="mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-lg bg-background/70 text-muted-foreground">
+              <span className="flex items-start gap-2.5 whitespace-normal">
+                <span className={chatSamplePromptIconClass}>
                   <Icon className="size-3.5" aria-hidden />
                 </span>
                 <span className="flex min-w-0 flex-col items-start gap-0.5">
@@ -1420,7 +1420,8 @@ function ChatAside({
   const historyRailVisible = canEmbedHistoryRail
   const showFocusedMainHeader = isFocusedLayout && !isAuthenticated
   const showMainHeader = showFocusedMainHeader || !isFocusedLayout
-  const showMainColumnHeader = showMainHeader && !historyRailVisible
+  const showMainColumnHeader =
+    showMainHeader && !historyRailVisible && !isMobileOverlay
   const showMobileHistoryOverlay = isMobileOverlay && historyOpen
   const showHistoryPanel =
     !historyRailVisible &&
@@ -1578,7 +1579,7 @@ function ChatAside({
           "relative z-10 flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden",
           isMobileOverlay
             ? "bg-transparent text-foreground"
-            : "bg-sidebar text-sidebar-foreground"
+            : "bg-background text-foreground"
         )}
       >
       {isMobileOverlay ? (
@@ -2026,7 +2027,7 @@ function ChatAside({
                 "mx-auto w-full shrink-0",
                 isMobileOverlay
                   ? "bg-transparent"
-                  : "bg-sidebar/95 backdrop-blur-md supports-backdrop-filter:bg-sidebar/90",
+                  : "bg-background/95 backdrop-blur-md supports-backdrop-filter:bg-background/90",
                 CHAT_CONTENT_MAX_WIDTH
               )}
             >

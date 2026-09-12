@@ -5,6 +5,7 @@ import { Link } from "@/i18n/navigation"
 import {
   EclipseIcon,
   LogOutIcon,
+  SettingsIcon,
   SparklesIcon,
 } from "lucide-react"
 import { useTranslations } from "next-intl"
@@ -71,7 +72,7 @@ function ChatAccountFooter({
     return (
       <div
         className={cn(
-          "flex shrink-0 items-center gap-2 border-t border-border/60 p-2",
+          "flex shrink-0 items-center gap-2 p-2",
           collapsed && "justify-center p-1.5",
           className
         )}
@@ -109,7 +110,7 @@ function ChatAccountFooter({
   return (
     <div
       className={cn(
-        "flex shrink-0 items-center gap-2 border-t border-border/60 p-2",
+        "flex shrink-0 items-center gap-2 p-2",
         collapsed && "justify-center p-1.5",
         className
       )}
@@ -138,14 +139,20 @@ function ChatAccountFooter({
             compact
           />
           {!collapsed ? (
-            <span className="min-w-0 flex-1 text-left">
-              <span className="block truncate text-[13px] font-medium leading-tight">
-                {userAccountLabel(user)}
+            <>
+              <span className="min-w-0 flex-1 text-left">
+                <span className="block truncate text-[13px] font-medium leading-tight">
+                  {userAccountLabel(user)}
+                </span>
+                <span className="block truncate text-[11px] text-muted-foreground">
+                  {planName}
+                </span>
               </span>
-              <span className="block truncate text-[11px] text-muted-foreground">
-                {planName}
-              </span>
-            </span>
+              <SettingsIcon
+                className="size-4 shrink-0 text-muted-foreground"
+                aria-hidden
+              />
+            </>
           ) : null}
         </DropdownMenuTrigger>
         <DropdownMenuContent side="top" align="start" className="min-w-60">

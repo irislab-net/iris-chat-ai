@@ -30,6 +30,12 @@ export const IRIS_MENTION_OPTIONS: IrisMentionOption[] = [
   },
 ]
 
+export function findIrisMentionOption(
+  tool: IrisMentionTool
+): IrisMentionOption | undefined {
+  return IRIS_MENTION_OPTIONS.find((option) => option.tool === tool)
+}
+
 function normalizeMentionQuery(query: string): string {
   return query.trim().toLowerCase().replace(/\s+/g, " ")
 }

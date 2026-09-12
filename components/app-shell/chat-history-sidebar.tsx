@@ -396,9 +396,17 @@ function ChatHistorySidebar({
       >
         {isMobileDrawer ? (
           <header className="flex shrink-0 items-center justify-between gap-3 px-4 pb-2 pt-[max(0.75rem,var(--app-safe-top,0px))]">
-            <h2 className="text-[1.75rem] font-normal leading-none tracking-tight text-foreground">
-              {t("iris")}
-            </h2>
+            <div className="flex min-w-0 items-center gap-2">
+              <IrisLabLogo
+                decorative
+                priority
+                size={28}
+                className="size-7 shrink-0 rounded-md"
+              />
+              <h2 className="text-[1.75rem] font-normal leading-none tracking-tight text-foreground">
+                {t("iris")}
+              </h2>
+            </div>
             {onClose ? (
               <Button
                 type="button"
@@ -811,7 +819,7 @@ function ChatHistoryRail({
   return (
     <aside
       className={cn(
-        "relative flex h-full min-h-0 shrink-0 flex-col overflow-hidden border-r border-border/60 bg-sidebar text-sidebar-foreground transition-[width] duration-200 ease-out",
+        "relative flex h-full min-h-0 shrink-0 flex-col overflow-hidden bg-sidebar text-sidebar-foreground transition-[width] duration-200 ease-out",
         className
       )}
       style={{ width: collapsed ? CHAT_HISTORY_RAIL_COLLAPSED_WIDTH : sidebarWidth }}

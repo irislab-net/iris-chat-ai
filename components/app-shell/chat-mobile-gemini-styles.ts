@@ -82,8 +82,59 @@ const chatMobileComposerShellClass =
 const chatMobileComposerPillClass =
   `flex min-h-16 items-end gap-0.5 rounded-[26px] px-2.5 py-2.5 text-foreground transition-[box-shadow,background-color] duration-300 ease-out ${chatMobileComposerGlassClass} ${chatMobileComposerGlassFocusClass}`
 
+/** Desktop/web composer — iOS liquid glass shell and controls. */
+const chatDesktopComposerGlassBorderClass =
+  "ring-1 ring-inset ring-white/65 dark:ring-white/12"
+
+const chatDesktopComposerShellClass =
+  "relative shrink-0 bg-transparent pt-3 pb-[max(0.625rem,env(safe-area-inset-bottom))]"
+
+const chatDesktopComposerBodyClass =
+  `isolate grid grid-cols-[auto_1fr_auto] overflow-hidden rounded-[22px] px-1.5 pb-1.5 pt-0.5 text-foreground transition-[box-shadow,background-color,ring-color] duration-300 ease-out [grid-template-areas:'primary_primary_primary'_'leading_._trailing'] ${chatMobileComposerGlassClass} ${chatDesktopComposerGlassBorderClass} ${chatMobileComposerGlassFocusClass} focus-within:ring-white/80 dark:focus-within:ring-white/16`
+
+const chatDesktopComposerControlClass =
+  "border-0 bg-white/55 ring-1 ring-inset ring-white/55 shadow-[inset_0_0.5px_0_0_color-mix(in_oklch,white_90%,transparent),0_1px_2px_color-mix(in_oklch,var(--foreground)_4%,transparent)] backdrop-blur-xl backdrop-saturate-[190%] transition-[background-color,box-shadow,transform,color,ring-color] hover:bg-white/68 hover:ring-white/70 active:scale-[0.98] dark:bg-white/[0.1] dark:ring-white/10 dark:hover:bg-white/[0.14] dark:hover:ring-white/14"
+
+const chatDesktopComposerIconButtonClass =
+  `${chatDesktopComposerControlClass} size-9 rounded-xl text-muted-foreground hover:text-foreground sm:size-8 [&_svg]:stroke-[1.75]`
+
+const chatDesktopComposerEffortButtonClass =
+  `${chatDesktopComposerControlClass} h-9 gap-1 rounded-xl px-2.5 text-[12px] font-medium text-muted-foreground hover:text-foreground sm:h-8 [&_svg]:opacity-70`
+
+const chatDesktopComposerSendClass =
+  "size-10 rounded-full border-0 bg-primary text-primary-foreground shadow-[0_2px_8px_-2px_color-mix(in_oklch,var(--foreground)_18%,transparent)] transition-[transform,background-color,box-shadow] hover:bg-primary/90 active:scale-[0.96] sm:size-9"
+
+const chatDesktopComposerSendDisabledClass =
+  `${chatDesktopComposerControlClass} size-10 rounded-full text-muted-foreground/70 sm:size-9`
+
+/** Empty-state sample prompt cards — white surface, shadow on hover. */
+const chatSamplePromptButtonClass =
+  "h-auto w-fit max-w-[18rem] items-stretch justify-start rounded-xl border-0 bg-white px-3 py-2.5 text-left whitespace-normal shadow-none transition-[background-color,box-shadow,transform] hover:bg-white hover:shadow-[0_4px_18px_-6px_color-mix(in_oklch,var(--foreground)_11%,transparent),0_2px_8px_-2px_color-mix(in_oklch,var(--foreground)_5%,transparent)] active:scale-[0.99] dark:bg-white/[0.08] dark:hover:bg-white/[0.11] dark:hover:shadow-[0_8px_28px_-10px_color-mix(in_oklch,black_32%,transparent)] sm:max-w-[20rem]"
+
+const chatSamplePromptIconClass =
+  "mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-lg bg-foreground/[0.05] text-muted-foreground"
+
 const chatMobileComposerIconButtonClass =
   "size-10 shrink-0 rounded-full text-muted-foreground transition-colors hover:bg-foreground/[0.05] hover:text-foreground [&_svg]:stroke-[1.75]"
+
+/** Active tool chip — dark liquid glass (shared base). */
+const chatComposerToolChipClass =
+  "shrink-0 border-0 bg-foreground/88 font-medium text-background shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_16%,transparent),0_2px_8px_-2px_color-mix(in_oklch,var(--foreground)_28%,transparent)] backdrop-blur-xl backdrop-saturate-[180%] supports-[backdrop-filter]:bg-foreground/82 dark:bg-foreground/92 dark:text-background dark:shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_12%,transparent),0_2px_10px_-2px_color-mix(in_oklch,black_35%,transparent)]"
+
+const chatComposerToolChipCloseClass =
+  "flex shrink-0 items-center justify-center rounded-full text-background/65 transition-[color,background-color] hover:bg-background/14 hover:text-background active:scale-95"
+
+const chatMobileComposerToolChipClass =
+  `${chatComposerToolChipClass} h-7 gap-1.5 rounded-full px-2.5 py-0 text-[13px] tracking-[-0.01em]`
+
+const chatDesktopComposerToolChipClass =
+  `${chatComposerToolChipClass} mt-0.5 h-6 gap-1 rounded-lg px-2 py-0 text-[12px]`
+
+const chatMobileComposerToolChipCloseClass =
+  `${chatComposerToolChipCloseClass} size-4`
+
+const chatDesktopComposerToolChipCloseClass =
+  `${chatComposerToolChipCloseClass} size-3.5`
 
 const chatMobileComposerSendClass =
   "size-10 rounded-full border-0 bg-primary text-primary-foreground shadow-[0_2px_8px_-2px_color-mix(in_oklch,var(--foreground)_18%,transparent)] transition-[transform,background-color,box-shadow] hover:bg-primary/90 active:scale-[0.96] active:shadow-[0_1px_4px_-1px_color-mix(in_oklch,var(--foreground)_14%,transparent)]"
@@ -173,6 +224,16 @@ export {
   chatMobileComposerIconButtonClass,
   chatMobileComposerPillClass,
   chatMobileComposerSendClass,
+  chatDesktopComposerBodyClass,
+  chatDesktopComposerEffortButtonClass,
+  chatDesktopComposerIconButtonClass,
+  chatDesktopComposerSendClass,
+  chatDesktopComposerSendDisabledClass,
+  chatDesktopComposerShellClass,
+  chatDesktopComposerToolChipClass,
+  chatDesktopComposerToolChipCloseClass,
+  chatMobileComposerToolChipClass,
+  chatMobileComposerToolChipCloseClass,
   chatMobileComposerShellClass,
   chatMobileEmptyHeroContentClass,
   chatMobileEmptyHeroMarkClass,
@@ -196,6 +257,8 @@ export {
   chatMobileHeaderModelSecondaryClass,
   chatMobilePrimaryButtonClass,
   chatMobileScrollDownClass,
+  chatSamplePromptButtonClass,
+  chatSamplePromptIconClass,
   chatMobileSheetBodyClass,
   chatMobileSheetCardClass,
   chatMobileSheetConsentCheckedClass,

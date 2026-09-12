@@ -93,12 +93,12 @@ function ChatPromptsSkeleton() {
           <Bone className="mt-3 h-3.5 w-32" />
           <Bone className="mt-2 h-2.5 w-44" />
         </div>
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col items-center gap-2">
           <Bone className="h-2.5 w-12" />
           {[56, 64, 48].map((title) => (
             <div
               key={title}
-              className="space-y-1.5 rounded-xl bg-muted/20 px-3 py-2.5"
+              className="w-full max-w-[18rem] space-y-1.5 rounded-xl bg-white px-3 py-2.5 shadow-[0_1px_2px_color-mix(in_oklch,var(--foreground)_4%,transparent)] sm:max-w-[20rem] dark:bg-white/[0.08]"
             >
               <Bone className="h-3" style={{ width: title }} />
               <Bone className="h-2 w-full" />
@@ -166,7 +166,7 @@ function ChatHistoryRailSkeleton({
   return (
     <aside
       className={cn(
-        "relative flex h-full min-h-0 shrink-0 flex-col overflow-hidden border-r border-border/60 bg-sidebar text-sidebar-foreground",
+        "relative flex h-full min-h-0 shrink-0 flex-col overflow-hidden bg-sidebar text-sidebar-foreground",
         className
       )}
       style={{ width: sidebarWidth }}
@@ -190,7 +190,7 @@ function ChatHistoryRailSkeleton({
           </div>
         ))}
       </div>
-      <div className="flex shrink-0 items-center gap-2 border-t border-border/60 p-2">
+      <div className="flex shrink-0 items-center gap-2 p-2">
         <Bone className="size-8 shrink-0 rounded-full" />
         <div className="min-w-0 flex-1 space-y-1.5">
           <Bone className="h-2.5 w-20" />
@@ -220,10 +220,10 @@ function ChatAsideSkeleton({
   const guest = !isAuthenticated
   const showHistoryRail = focused || !mobile
   const showHeader = !focused || guest
-  const showMainColumnHeader = showHeader && !showHistoryRail
+  const showMainColumnHeader = showHeader && !showHistoryRail && !mobile
 
   const mainColumn = (
-    <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-sidebar text-sidebar-foreground">
+    <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-background text-foreground">
       {showMainColumnHeader ? (
         <ChatHeaderSkeleton
           mobile={mobile}
