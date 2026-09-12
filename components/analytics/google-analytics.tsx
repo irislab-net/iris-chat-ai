@@ -4,7 +4,11 @@ import * as React from "react"
 import { usePathname } from "next/navigation"
 import Script from "next/script"
 
-import { GA_MEASUREMENT_ID, trackPageView } from "@/lib/analytics"
+import {
+  GA_MEASUREMENT_ID,
+  isAnalyticsEnabled,
+  trackPageView,
+} from "@/lib/analytics"
 
 function GoogleAnalytics() {
   const pathname = usePathname()
@@ -22,15 +26,15 @@ function GoogleAnalytics() {
     trackPageView(pathname)
   }, [pathname])
 
-  if (!GA_MEASUREMENT_ID) return null
+  if (!isAnalyticsEnabled()) return null
 
   return (
     <>
       <Script
         src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
-        strategy="lazyOnload"
+        strategy="afterInteractive"
       />
-      <Script id="google-analytics" strategy="lazyOnload">
+      <Script id="google-analytics" strategy="afterInteractive">
         {`
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}

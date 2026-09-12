@@ -3,6 +3,7 @@ import Image from "next/image"
 import { Link } from "@/i18n/navigation"
 
 import { AppShell } from "@/components/app-shell/app-shell"
+import { TrackedContactLink } from "@/components/analytics/tracked-contact-link"
 import { JsonLd } from "@/components/seo/json-ld"
 import { Button } from "@/components/ui/button"
 import {
@@ -188,8 +189,9 @@ function AboutPage() {
               size="lg"
               className="h-auto gap-2 rounded-2xl border-0 px-4 py-3 shadow-none"
               render={
-                <a
+                <TrackedContactLink
                   href={SOCIAL_X_URL}
+                  channel="x"
                   target="_blank"
                   rel="noopener noreferrer"
                 />
@@ -226,14 +228,15 @@ function AboutPage() {
             </Button>
           </div>
           <p className="text-xs text-muted-foreground">
-            <a
+            <TrackedContactLink
               href={SOCIAL_X_URL}
+              channel="x"
               target="_blank"
               rel="noopener noreferrer"
               className="underline-offset-4 hover:underline"
             >
               {SOCIAL_X_URL}
-            </a>
+            </TrackedContactLink>
             {" · "}
             <Link
               href="/privacy"

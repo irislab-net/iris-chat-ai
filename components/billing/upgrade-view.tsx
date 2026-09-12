@@ -32,6 +32,13 @@ import { usePendingPaymentInvoice } from "@/hooks/use-pending-payment-invoice"
 import { APP_NEWS_PATH, SOCIAL_X_URL } from "@/lib/site"
 import { chatMobileSheetFooterBarClass, chatMobileSheetPrimaryButtonClass } from "@/components/app-shell/chat-mobile-gemini-styles"
 import { useIsDesktop } from "@/hooks/use-media-query"
+import {
+  trackCheckoutStart,
+  trackContactClick,
+  trackPurchase,
+  trackUpgradePlanSelect,
+  trackUpgradeView,
+} from "@/lib/analytics"
 import { cn } from "@/lib/utils"
 
 function continueLabel(
@@ -93,15 +100,22 @@ function UpgradeView() {
   )
   const [paymentOpen, setPaymentOpen] = React.useState(false)
 
+  React.useEffect(() => {
+    trackUpgradeView()
+  }, [])
+
   const currentPlan = displayPlanName(user?.tier)
   const prices = BILLING_PRICES[billing]
   const canTrackPendingPayment = isAuthenticated && !isProUser
 
   const handleInvoicePaid = React.useCallback(async () => {
+    if (checkout?.billing) {
+      trackPurchase({ billing: checkout.billing })
+    }
     await refresh()
     setPaymentOpen(false)
     router.push(APP_NEWS_PATH)
-  }, [refresh, router])
+  }, [checkout, refresh, router])
 
   const pendingInvoice = usePendingPaymentInvoice({
     enabled: canTrackPendingPayment,
@@ -113,6 +127,7 @@ function UpgradeView() {
     : 0
 
   function beginPlusCheckout(cycle: BillingCycle) {
+    trackCheckoutStart({ billing: cycle })
     setCheckout({ billing: cycle })
     setPaymentOpen(true)
   }
@@ -141,6 +156,7 @@ function UpgradeView() {
         router.push(APP_NEWS_PATH)
         return
       }
+      trackContactClick("x")
       window.open(SOCIAL_X_URL, "_blank", "noopener,noreferrer")
       return
     }
@@ -261,7 +277,12 @@ function UpgradeView() {
               isCurrent={isCurrentPlan(plan.key, currentPlan)}
               badge={"badge" in plan ? plan.badge : undefined}
               featured={"featured" in plan ? plan.featured : undefined}
-              onSelect={() => setSelected(plan.key)}
+              onSelect={() => {
+                if (selected !== plan.key) {
+                  trackUpgradePlanSelect({ plan: plan.key })
+                }
+                setSelected(plan.key)
+              }}
             />
           ))}
         </div>

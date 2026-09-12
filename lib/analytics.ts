@@ -1,7 +1,20 @@
 import type { User } from "@/lib/api/types"
+import type { BillingCycle, PlanKey } from "@/lib/billing/catalog"
 
 export const GA_MEASUREMENT_ID =
-  process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID ?? "G-DRGS2R74V9"
+  process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID ?? "G-GLTQZ1G6RX"
+
+/** Production always loads GA; local dev only when NEXT_PUBLIC_GA_MEASUREMENT_ID is set. */
+export function isAnalyticsEnabled() {
+  if (!GA_MEASUREMENT_ID) return false
+  if (process.env.NODE_ENV === "production") return true
+  return Boolean(process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID)
+}
+
+const PLUS_USD_VALUE: Record<BillingCycle, number> = {
+  monthly: 49,
+  annual: 492,
+}
 
 export type LoginSource =
   | "toolbar"
@@ -167,4 +180,37 @@ export function trackContactClick(channel: "x" | "telegram") {
 
 export function trackThemeToggle(theme: "light" | "dark") {
   trackEvent("theme_toggle", { theme })
+}
+
+export function trackUpgradeView() {
+  trackEvent("upgrade_view")
+}
+
+export function trackUpgradePlanSelect(params: { plan: PlanKey }) {
+  trackEvent("upgrade_plan_select", { plan: params.plan })
+}
+
+export function trackCheckoutStart(params: { billing: BillingCycle }) {
+  trackEvent("begin_checkout", {
+    billing: params.billing,
+    plan: "plus",
+    currency: "USD",
+    value: PLUS_USD_VALUE[params.billing],
+  })
+}
+
+export function trackPurchase(params: {
+  billing: BillingCycle
+  currency?: string
+  value?: number
+}) {
+  const value = params.value ?? PLUS_USD_VALUE[params.billing]
+  trackEvent("purchase", {
+    billing: params.billing,
+    plan: "plus",
+    currency: params.currency ?? "USD",
+    value,
+    item_id: `plus_${params.billing}`,
+    item_name: "Plus",
+  })
 }

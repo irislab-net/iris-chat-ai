@@ -2,6 +2,7 @@ import { ArrowRightIcon, MailIcon } from "lucide-react"
 import { getTranslations } from "next-intl/server"
 
 import { IrisLabLogo } from "@/components/brand/iris-lab-logo"
+import { TrackedContactLink } from "@/components/analytics/tracked-contact-link"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { Link } from "@/i18n/navigation"
@@ -157,8 +158,9 @@ export async function SiteFooter() {
                 className="rounded-xl"
                 nativeButton={false}
                 render={
-                  <a
+                  <TrackedContactLink
                     href={SOCIAL_X_URL}
+                    channel="x"
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="IRIS Lab on X"

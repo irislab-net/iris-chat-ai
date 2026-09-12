@@ -4,6 +4,7 @@ import * as React from "react"
 import { useTheme } from "@wrksz/themes/client/use-theme"
 
 import { BrowserChromeSync } from "@/components/browser-chrome-sync"
+import { trackThemeToggle } from "@/lib/analytics"
 
 function isTypingTarget(target: EventTarget | null) {
   if (!(target instanceof HTMLElement)) {
@@ -22,10 +23,29 @@ function isTypingTarget(target: EventTarget | null) {
 function ThemeExtras() {
   return (
     <>
+      <ThemeAnalytics />
       <ThemeHotkey />
       <BrowserChromeSync />
     </>
   )
+}
+
+function ThemeAnalytics() {
+  const { resolvedTheme } = useTheme()
+  const ready = React.useRef(false)
+
+  React.useEffect(() => {
+    if (!resolvedTheme) return
+    if (!ready.current) {
+      ready.current = true
+      return
+    }
+    if (resolvedTheme === "light" || resolvedTheme === "dark") {
+      trackThemeToggle(resolvedTheme)
+    }
+  }, [resolvedTheme])
+
+  return null
 }
 
 function ThemeHotkey() {

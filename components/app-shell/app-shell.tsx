@@ -28,6 +28,7 @@ import {
 import { SHELL_SIDEBAR_COMPACT_FALLBACK } from "@/lib/shell-sidebar-layout"
 import { isAppDeskPath } from "@/lib/site"
 import { cn } from "@/lib/utils"
+import { trackChatToggle } from "@/lib/analytics"
 import type { Layout } from "react-resizable-panels"
 import {
   resolveWorkspaceTab,
@@ -92,6 +93,11 @@ function AppShellInner({
   const [panelTierHydrated, setPanelTierHydrated] = React.useState<string | null>(
     null
   )
+  const chatToggleAnalyticsReady = React.useRef(false)
+
+  React.useEffect(() => {
+    chatToggleAnalyticsReady.current = true
+  }, [])
 
   if (isDesktop === false && shellMediaHydrated !== "mobile") {
     setShellMediaHydrated("mobile")
@@ -123,6 +129,9 @@ function AppShellInner({
   function persistChatOpen(next: boolean) {
     setChatOpen(next)
     writeShellLayoutPrefs({ chatOpen: next })
+    if (chatToggleAnalyticsReady.current) {
+      trackChatToggle(next)
+    }
   }
 
   const resolvedChatOpen =
@@ -134,8 +143,7 @@ function AppShellInner({
 
   React.useEffect(() => {
     return subscribeDismissMobileChat(() => {
-      setChatOpen(false)
-      writeShellLayoutPrefs({ chatOpen: false })
+      persistChatOpen(false)
     })
   }, [])
 
