@@ -299,7 +299,7 @@
     "composerMobilePlaceholder": "Ask IRIS",
     "composerVoiceInput": "Voice input",
     "composerVoiceMode": "Voice mode",
-    "mobileGreeting": "What can I help with, {name}?",
+    "mobileGreeting": "What can I help with, <highlight>{name}</highlight>?",
     "mobileGreetingGuest": "What can I help with?",
     "composerSignalMenu": "Request signal",
     "composerMentionMenu": "IRIS tools",

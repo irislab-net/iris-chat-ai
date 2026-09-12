@@ -13,7 +13,7 @@ import {
 import { ChatAccountFooter } from "@/components/app-shell/chat-account-footer"
 import { IrisLabLogo } from "@/components/brand/iris-lab-logo"
 import { ChatMobileGeminiBackground } from "@/components/app-shell/chat-mobile-gemini-background"
-import { chatMobileScrollDownClass, chatMobileThreadBottomFadeClass, chatMobileThreadBottomSpacerClass, chatMobileThreadClass, chatMobileThreadScrollMaskClass, chatMobileEmptyHeroContentClass, chatMobileEmptyHeroMarkClass, chatMobileEmptyHeroTitleClass, chatMobileEmptyHeroWrapClass } from "@/components/app-shell/chat-mobile-gemini-styles"
+import { chatMobileScrollDownClass, chatMobileThreadBottomFadeClass, chatMobileThreadBottomSpacerClass, chatMobileThreadClass, chatMobileThreadScrollMaskClass, chatMobileEmptyHeroContentClass, chatMobileEmptyHeroMarkClass, chatMobileEmptyHeroMarkShellClass, chatMobileEmptyHeroTitleClass, chatMobileEmptyHeroWrapClass } from "@/components/app-shell/chat-mobile-gemini-styles"
 import { ChatMobileHeader } from "@/components/app-shell/chat-mobile-header"
 import {
   ChatHistoryRail,
@@ -1448,8 +1448,15 @@ function ChatAside({
   }
 
   const mobileGreetingName = resolveUserDisplayName(user)
-  const mobileGreeting = mobileGreetingName
-    ? t("mobileGreeting", { name: mobileGreetingName.split(/\s+/)[0] ?? mobileGreetingName })
+  const mobileGreetingFirstName =
+    mobileGreetingName?.split(/\s+/)[0] ?? mobileGreetingName
+  const mobileGreeting = mobileGreetingFirstName
+    ? t.rich("mobileGreeting", {
+        name: mobileGreetingFirstName,
+        highlight: (chunks) => (
+          <span className="chat-empty-hero-name">{chunks}</span>
+        ),
+      })
     : t("mobileGreetingGuest")
   const showMobileEmptyGeminiBg = isMobileOverlay && messages.length === 0
   const [mobileComposerFocused, setMobileComposerFocused] = React.useState(false)
@@ -1686,14 +1693,19 @@ function ChatAside({
                           : "mb-5 flex flex-col items-center text-center"
                       )}
                     >
-                      <IrisMark
-                        variant={isMobileOverlay ? "hero" : "default"}
-                        className={cn(
-                          isMobileOverlay
-                            ? chatMobileEmptyHeroMarkClass
-                            : "size-10 rounded-xl"
-                        )}
-                      />
+                      {isMobileOverlay ? (
+                        <div className={chatMobileEmptyHeroMarkShellClass}>
+                          <IrisMark
+                            variant="hero"
+                            className={chatMobileEmptyHeroMarkClass}
+                          />
+                        </div>
+                      ) : (
+                        <IrisMark
+                          variant="default"
+                          className="size-10 rounded-xl"
+                        />
+                      )}
                       <h2
                         className={cn(
                           isMobileOverlay

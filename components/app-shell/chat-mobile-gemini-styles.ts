@@ -36,7 +36,7 @@ const chatMobileHeaderPlanBadgeClass =
   "h-3.5 translate-y-[48%] px-1.5 text-[8px] font-semibold shadow-[0_1px_2px_color-mix(in_oklch,var(--foreground)_8%,transparent)]"
 
 const chatMobileHeaderModelClass =
-  "h-10 max-w-[12rem] gap-0.5 rounded-full px-2.5 text-[17px] font-normal tracking-[-0.01em] text-foreground hover:bg-accent [&_svg]:size-[18px] [&_svg]:text-muted-foreground"
+  `inline-flex h-10 shrink-0 items-center gap-1.5 rounded-full px-3.5 text-[15px] font-medium tracking-[-0.015em] text-foreground ${chatMobileGlassSurfaceClass} ${chatMobileHeaderShadowClass} ${chatMobileHeaderShadowHoverClass} transition-[transform,background-color,box-shadow] active:scale-[0.98] hover:bg-white/88 dark:hover:bg-white/[0.12] [&_svg:not([class*='size-'])]:size-3.5 [&_svg]:opacity-65 [&_svg]:text-foreground`
 
 const chatMobileHeaderModelPrimaryClass = "text-foreground"
 
@@ -45,13 +45,17 @@ const chatMobileHeaderModelSecondaryClass = "text-muted-foreground"
 const chatMobileEmptyHeroWrapClass =
   "flex min-h-full flex-col items-center justify-center px-5 pb-6 pt-4"
 
-const chatMobileEmptyHeroContentClass = "flex flex-col items-center gap-3 text-center"
+const chatMobileEmptyHeroContentClass =
+  "chat-empty-hero flex flex-col items-center gap-5 text-center"
+
+const chatMobileEmptyHeroMarkShellClass =
+  "chat-empty-hero-mark relative flex size-[6.5rem] items-center justify-center"
 
 const chatMobileEmptyHeroMarkClass =
-  "size-8 rounded-none bg-transparent shadow-none ring-0"
+  "relative z-[1] size-[4.5rem] rounded-none bg-transparent shadow-none ring-0"
 
 const chatMobileEmptyHeroTitleClass =
-  "max-w-[19rem] text-[1.625rem] font-normal leading-[1.28] tracking-[-0.02em] text-foreground"
+  "chat-empty-hero-title max-w-[20rem] text-balance text-[1.75rem] font-medium leading-[1.22] tracking-[-0.028em] text-foreground"
 
 const chatMobileThreadClass = "px-4 pt-3 pb-2 sm:px-5"
 
@@ -76,7 +80,7 @@ const chatMobileComposerShellClass =
   "relative shrink-0 bg-transparent px-4 pt-1.5 pb-[max(1rem,env(safe-area-inset-bottom,0px))]"
 
 const chatMobileComposerPillClass =
-  `flex min-h-[3.25rem] items-end gap-0.5 rounded-[24px] px-2.5 py-1.5 text-foreground transition-[box-shadow,background-color] duration-300 ease-out ${chatMobileComposerGlassClass} ${chatMobileComposerGlassFocusClass}`
+  `flex min-h-16 items-end gap-0.5 rounded-[26px] px-2.5 py-2.5 text-foreground transition-[box-shadow,background-color] duration-300 ease-out ${chatMobileComposerGlassClass} ${chatMobileComposerGlassFocusClass}`
 
 const chatMobileComposerIconButtonClass =
   "size-10 shrink-0 rounded-full text-muted-foreground transition-colors hover:bg-foreground/[0.05] hover:text-foreground [&_svg]:stroke-[1.75]"
@@ -156,6 +160,7 @@ export {
   chatMobileComposerShellClass,
   chatMobileEmptyHeroContentClass,
   chatMobileEmptyHeroMarkClass,
+  chatMobileEmptyHeroMarkShellClass,
   chatMobileEmptyHeroTitleClass,
   chatMobileEmptyHeroWrapClass,
   chatMobileDrawerFooterBarClass,

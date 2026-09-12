@@ -29,8 +29,6 @@ import {
   chatMobileHeaderAvatarClass,
   chatMobileHeaderButtonClass,
   chatMobileHeaderModelClass,
-  chatMobileHeaderModelPrimaryClass,
-  chatMobileHeaderModelSecondaryClass,
   chatMobileHeaderNewChatClass,
   chatMobileHeaderPlanBadgeClass,
 } from "@/components/app-shell/chat-mobile-gemini-styles"
@@ -229,14 +227,75 @@ function ChatMobileHeader({
   const t = useTranslations("workspace")
   const effortLabel = effort ? chatEffortLabel(effort) : chatEffortLabel("instant")
 
+  const effortTriggerClass = cn(
+    chatMobileHeaderModelClass,
+    "min-w-[6.25rem] justify-between hover:bg-white/88 aria-expanded:bg-white/90 dark:hover:bg-white/[0.12] dark:aria-expanded:bg-white/[0.14]"
+  )
+
+  const effortControl =
+    !hideEffort && effort && onEffortChange ? (
+      <DropdownMenu>
+        <DropdownMenuTrigger
+          render={
+            <Button
+              type="button"
+              variant="ghost"
+              aria-label={`Response depth: ${effortLabel}`}
+              aria-haspopup="menu"
+              className={effortTriggerClass}
+            />
+          }
+        >
+          <span className="truncate">{effortLabel}</span>
+          <ChevronDownIcon className="shrink-0 opacity-70" aria-hidden />
+        </DropdownMenuTrigger>
+        <DropdownMenuContent
+          align="start"
+          sideOffset={8}
+          className={cn(chatContextMenuContentClass, "min-w-44")}
+        >
+          <DropdownMenuGroup>
+            <p className="px-2.5 pb-1 pt-1.5 text-[10px] font-medium tracking-wide text-muted-foreground uppercase">
+              Response depth
+            </p>
+            {CHAT_EFFORT_OPTIONS.map((item) => (
+              <DropdownMenuItem
+                key={item.value}
+                className="items-start py-2"
+                onClick={() => onEffortChange(item.value)}
+              >
+                <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+                  <span className="text-[13px] font-medium">{item.label}</span>
+                  <span className="text-[11px] text-muted-foreground">
+                    {item.hint}
+                  </span>
+                </span>
+                {effort === item.value ? (
+                  <CheckIcon className="mt-0.5 size-3.5" />
+                ) : null}
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuGroup>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    ) : (
+      <span
+        className={cn(effortTriggerClass, "pointer-events-none")}
+        aria-label={`Response depth: ${effortLabel}`}
+      >
+        <span className="truncate">{effortLabel}</span>
+        <ChevronDownIcon className="shrink-0 opacity-55" aria-hidden />
+      </span>
+    )
+
   return (
     <header
       className={cn(
-        "grid shrink-0 grid-cols-[1fr_auto_1fr] items-center gap-2 bg-transparent px-3 pb-2 pt-[max(0.375rem,var(--app-safe-top,0px))]",
+        "flex shrink-0 items-center justify-between gap-2 bg-transparent px-3 pb-2 pt-[max(0.375rem,var(--app-safe-top,0px))]",
         className
       )}
     >
-      <div className="flex min-w-0 items-center justify-start">
+      <div className="flex min-w-0 items-center justify-start gap-3">
         {onOpenHistory ? (
           <Button
             type="button"
@@ -250,65 +309,7 @@ function ChatMobileHeader({
             <ChatGeminiMenuIcon />
           </Button>
         ) : null}
-      </div>
-
-      <div className="flex min-w-0 items-center justify-center">
-        {!hideEffort && effort && onEffortChange ? (
-          <DropdownMenu>
-            <DropdownMenuTrigger
-              render={
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  aria-label={`Response depth: ${effortLabel}`}
-                  className={chatMobileHeaderModelClass}
-                />
-              }
-            >
-              <span className="truncate">
-                <span className={chatMobileHeaderModelPrimaryClass}>IRIS</span>
-                <span className={chatMobileHeaderModelSecondaryClass}>
-                  {" "}
-                  {effortLabel}
-                </span>
-              </span>
-              <ChevronDownIcon className="shrink-0" />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent
-              align="center"
-              sideOffset={8}
-              className={chatContextMenuContentClass}
-            >
-              <DropdownMenuGroup>
-                <p className="px-2 pb-1 pt-1.5 text-[10px] font-medium tracking-wide text-muted-foreground uppercase">
-                  Response depth
-                </p>
-                {CHAT_EFFORT_OPTIONS.map((item) => (
-                  <DropdownMenuItem
-                    key={item.value}
-                    className="items-start py-2"
-                    onClick={() => onEffortChange(item.value)}
-                  >
-                    <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-                      <span className="text-[13px]">{item.label}</span>
-                      <span className="text-[11px] text-muted-foreground">
-                        {item.hint}
-                      </span>
-                    </span>
-                    {effort === item.value ? (
-                      <CheckIcon className="mt-0.5 size-3.5" />
-                    ) : null}
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuGroup>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        ) : (
-          <span className="truncate px-2 text-[17px] font-normal tracking-tight text-foreground">
-            IRIS
-          </span>
-        )}
+        {effortControl}
       </div>
 
       <div className="flex shrink-0 items-center justify-end gap-2">
@@ -327,6 +328,7 @@ function ChatMobileHeader({
       </div>
     </header>
   )
+
 }
 
 export { ChatMobileHeader }
