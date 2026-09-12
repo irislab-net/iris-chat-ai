@@ -36,7 +36,7 @@ const chatMobileHeaderPlanBadgeClass =
   "h-3.5 translate-y-[48%] px-1.5 text-[8px] font-semibold shadow-[0_1px_2px_color-mix(in_oklch,var(--foreground)_8%,transparent)]"
 
 const chatMobileHeaderModelClass =
-  "h-10 max-w-[12rem] gap-0.5 rounded-full px-2.5 text-[17px] font-normal tracking-[-0.01em] text-foreground hover:bg-accent [&_svg]:size-[18px] [&_svg]:text-muted-foreground"
+  `inline-flex h-10 shrink-0 items-center gap-1.5 rounded-full px-3.5 text-[15px] font-medium tracking-[-0.015em] text-foreground ${chatMobileGlassSurfaceClass} ${chatMobileHeaderShadowClass} ${chatMobileHeaderShadowHoverClass} transition-[transform,background-color,box-shadow] active:scale-[0.98] hover:bg-white/88 dark:hover:bg-white/[0.12] [&_svg:not([class*='size-'])]:size-3.5 [&_svg]:opacity-65 [&_svg]:text-foreground`
 
 const chatMobileHeaderModelPrimaryClass = "text-foreground"
 
