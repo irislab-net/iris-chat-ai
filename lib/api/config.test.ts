@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 
-import { loginWithGoogleUrl } from "@/lib/api/config"
+import { isChatAppHost, loginWithGoogleUrl } from "@/lib/api/config"
 
 describe("loginWithGoogleUrl", () => {
   it("hits the Google login host with destination and legal accept flags", () => {
@@ -18,6 +18,11 @@ describe("loginWithGoogleUrl", () => {
     )
     expect(url.searchParams.get("terms")).toBe("accepted")
     expect(url.searchParams.get("privacy_notice")).toBe("accepted")
+  })
+
+  it("detects chat.irislab.info as the chat app host", () => {
+    expect(isChatAppHost("chat.irislab.info")).toBe(true)
+    expect(isChatAppHost("intel.irislab.info")).toBe(false)
   })
 
   it("uses app=chat for chat OAuth without destination", () => {

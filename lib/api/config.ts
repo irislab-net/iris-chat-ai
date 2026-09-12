@@ -7,8 +7,27 @@ export { CHAT_API_ORIGIN } from "@/lib/api/origins"
 
 export const API_BASE = "https://api.irislab.info"
 
-/** Auth cookie calls must be same-origin (via Next rewrite) so Domain=.irislab.info cookies are sent. */
+const CHAT_APP_HOST = "chat.irislab.info"
+
+/** Auth cookie calls must be same-origin (via app route proxy) so Domain=.irislab.info cookies are sent. */
 export const AUTH_API_BASE = ""
+
+/** Chat deployment uses `app=chat` OAuth on api.irislab.info (not destination=). */
+export function isChatAppHost(hostname?: string | null) {
+  if (hostname) return hostname === CHAT_APP_HOST
+  const fromEnv = process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "")
+  if (fromEnv) {
+    try {
+      return new URL(fromEnv).hostname === CHAT_APP_HOST
+    } catch {
+      /* fall through */
+    }
+  }
+  if (typeof window !== "undefined") {
+    return window.location.hostname === CHAT_APP_HOST
+  }
+  return true
+}
 
 /** Where Google OAuth should send the browser after login. */
 export function getAuthDestination() {
@@ -19,7 +38,7 @@ export function getAuthDestination() {
     return `${window.location.origin}/auth/success`
   }
 
-  return "https://intel.irislab.info/auth/success"
+  return "https://chat.irislab.info/auth/success"
 }
 
 export function loginWithGoogleUrl(

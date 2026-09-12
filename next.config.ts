@@ -52,12 +52,12 @@ const nextConfig: NextConfig = {
       )
       console.log("[iris] Trading API stub (paper/demo trading only)")
     }
-    // /v1/chat is handled by app/v1/chat/[[...path]]/route.ts (CHAT_API_ORIGIN).
+    // /v1/chat → app/v1/chat; /v1/auth, /v1/me → app route handlers (cookie proxy).
     // /v1/wallets, /v1/trading, /v1/wallet, /v1/entitlements use app route handlers too.
     return [
       {
         source:
-          "/v1/:path((?!chat(?:/|$)|wallets|entitlements|trading(?:/|$)|wallet(?:/|$)).*)",
+          "/v1/:path((?!chat(?:/|$)|auth(?:/|$)|me(?:/|$)|wallets|entitlements|trading(?:/|$)|wallet(?:/|$)).*)",
         destination: `${IRIS_API_ORIGIN}/v1/:path`,
       },
     ]

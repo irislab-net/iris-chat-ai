@@ -1,4 +1,9 @@
-import { authUrl, getAuthDestination, loginWithGoogleUrl } from "@/lib/api/config"
+import {
+  authUrl,
+  getAuthDestination,
+  isChatAppHost,
+  loginWithGoogleUrl,
+} from "@/lib/api/config"
 import type { TokenPair, User } from "@/lib/api/types"
 import { normalizeUser } from "@/lib/user-avatar"
 
@@ -48,14 +53,21 @@ export function startLoginWithGoogle(options?: {
     sessionStorage.setItem(AUTH_RETURN_TO_KEY, options.returnTo)
   }
 
-  const destination = options?.app ? null : getAuthDestination()
+  const app = options?.app ?? (isChatAppHost() ? "chat" : undefined)
+  const destination = app ? null : getAuthDestination()
   const url = loginWithGoogleUrl(destination, {
     ref: options?.ref,
     legalAccepted: options?.legalAccepted ?? true,
-    app: options?.app,
+    app,
   })
 
-  // Open API login as the FIRST document in a new browsing context so pkce cookies stick.
+  // app=chat: API redirects back to chat after Google — full navigation, not popup.
+  if (app) {
+    window.location.assign(url)
+    return
+  }
+
+  // destination= flow: popup keeps pkce cookies on api.irislab.info before callback.
   const popup = window.open(url, "iris-google-auth")
   if (!popup) {
     window.location.assign(url)
