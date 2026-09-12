@@ -1,19 +1,24 @@
-/** Gemini-style floating menus — shared by message, history, and account menus. */
+/** iOS liquid-glass floating menus — account, history, and message actions. */
 const chatContextMenuContentClass =
-  "w-auto min-w-[12.5rem] max-w-[min(100vw-1.5rem,17.5rem)] overflow-hidden !rounded-3xl border border-white/65 !bg-white/74 !p-2 !shadow-[0_14px_48px_-16px_rgba(15,23,42,0.24)] !ring-0 backdrop-blur-2xl backdrop-saturate-150 supports-[backdrop-filter]:!bg-white/58 dark:border-white/10 dark:!bg-popover/84 dark:supports-[backdrop-filter]:!bg-popover/68 dark:!shadow-[0_16px_48px_-18px_rgba(0,0,0,0.55)]"
+  "z-50 w-auto min-w-[13.5rem] max-w-[min(100vw-1.5rem,17.5rem)] overflow-hidden !rounded-2xl !border-0 !bg-white/78 !p-1.5 !text-foreground !shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_75%,transparent),0_12px_40px_-16px_color-mix(in_oklch,var(--foreground)_18%,transparent)] !ring-0 backdrop-blur-2xl backdrop-saturate-[180%] supports-[backdrop-filter]:!bg-white/62 dark:!bg-white/[0.08] dark:!shadow-[inset_0_1px_0_0_color-mix(in_oklch,var(--foreground)_10%,transparent),0_12px_40px_-16px_color-mix(in_oklch,black_45%,transparent)] dark:supports-[backdrop-filter]:!bg-white/[0.06]"
 
 const chatContextMenuItemClass =
-  "min-h-11 gap-3.5 rounded-2xl px-3.5 py-2.5 text-[15px] font-normal leading-none focus:bg-black/[0.04] focus:text-foreground dark:focus:bg-muted/40"
+  "min-h-10 gap-3 rounded-xl px-2.5 py-2.5 text-[14px] font-medium tracking-[-0.01em] text-foreground focus:bg-foreground/[0.05] focus:text-foreground data-[highlighted]:bg-foreground/[0.05] dark:focus:bg-foreground/[0.08]"
 
-const chatContextMenuIconClass = "size-[18px] shrink-0 text-muted-foreground"
+const chatContextMenuIconClass =
+  "size-4 shrink-0 text-muted-foreground"
 
 const chatContextMenuDeleteClass =
-  "min-h-11 gap-3.5 rounded-2xl px-3.5 py-2.5 text-[15px] font-normal text-destructive focus:bg-destructive/10 focus:text-destructive [&_svg]:text-destructive!"
+  "min-h-10 gap-3 rounded-xl px-2.5 py-2.5 text-[14px] font-medium text-destructive focus:bg-destructive/10 focus:text-destructive data-[highlighted]:bg-destructive/10 [&_svg]:text-destructive!"
 
-const chatContextMenuSeparatorClass = "-mx-0 my-1.5 h-px bg-black/[0.06] dark:bg-border/50"
+const chatContextMenuSeparatorClass =
+  "-mx-0.5 my-1.5 h-px bg-foreground/[0.06] dark:bg-white/[0.08]"
 
 const chatContextMenuHeaderClass =
-  "px-3.5 py-2.5 text-[15px] font-normal leading-normal text-foreground"
+  "px-2.5 py-2 text-[14px] font-normal leading-normal text-foreground"
+
+const chatContextMenuSectionLabelClass =
+  "px-2.5 pb-1 pt-1.5 text-[11px] font-medium tracking-[0.04em] text-muted-foreground"
 
 export {
   chatContextMenuContentClass,
@@ -21,5 +26,6 @@ export {
   chatContextMenuHeaderClass,
   chatContextMenuIconClass,
   chatContextMenuItemClass,
+  chatContextMenuSectionLabelClass,
   chatContextMenuSeparatorClass,
 }

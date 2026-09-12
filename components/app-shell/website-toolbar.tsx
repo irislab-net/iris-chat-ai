@@ -22,6 +22,14 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
+  chatContextMenuContentClass,
+  chatContextMenuDeleteClass,
+  chatContextMenuHeaderClass,
+  chatContextMenuIconClass,
+  chatContextMenuItemClass,
+  chatContextMenuSeparatorClass,
+} from "@/components/app-shell/chat-context-menu-styles"
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
@@ -234,28 +242,27 @@ function WebsiteToolbar({
             </DropdownMenuTrigger>
             <DropdownMenuContent
               align="end"
-              className="min-w-60 shadow-md"
+              sideOffset={10}
+              className={cn(chatContextMenuContentClass, "min-w-60")}
             >
               <DropdownMenuGroup>
-                <DropdownMenuLabel className="font-normal">
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex min-w-0 items-center gap-2.5">
-                      <AccountAvatar
-                        user={user}
-                        avatarUrl={accountAvatarUrl}
-                        isProUser={isProUser}
-                        planName={accountPlanName}
-                      />
-                      <div className="min-w-0 flex flex-col gap-0.5">
-                        <span className="truncate text-sm font-medium text-foreground">
-                          {userAccountLabel(user)}
-                        </span>
-                        {accountSubline ? (
-                          <span className="truncate text-xs text-muted-foreground">
-                            {accountSubline}
-                          </span>
-                        ) : null}
-                      </div>
+                <DropdownMenuLabel className={chatContextMenuHeaderClass}>
+                  <div className="flex items-center gap-3">
+                    <AccountAvatar
+                      user={user}
+                      avatarUrl={accountAvatarUrl}
+                      isProUser={isProUser}
+                      planName={accountPlanName}
+                    />
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-[14px] font-medium leading-tight tracking-[-0.01em]">
+                        {userAccountLabel(user)}
+                      </p>
+                      {accountSubline ? (
+                        <p className="truncate text-[12px] leading-snug text-muted-foreground">
+                          {accountSubline}
+                        </p>
+                      ) : null}
                     </div>
                     <AccountPlanBadge
                       planName={accountPlanName}
@@ -263,37 +270,37 @@ function WebsiteToolbar({
                     />
                   </div>
                 </DropdownMenuLabel>
-                {!isProUser ? (
-                  <div className="px-2 pb-1">
-                    <Button
-                      size="xs"
-                      className="h-7 w-full"
-                      nativeButton={false}
-                      render={<Link href={UPGRADE_PATH} />}
-                    >
-                      {t("upgradeToPlus")}
-                    </Button>
-                  </div>
-                ) : null}
               </DropdownMenuGroup>
-              <DropdownMenuSeparator />
-              <DropdownMenuGroup>
-                <DropdownMenuItem
-                  className="min-h-9 gap-2"
-                  onClick={() =>
-                    setTheme(resolvedTheme === "dark" ? "light" : "dark")
-                  }
-                >
-                  <EclipseIcon />
-                  {resolvedTheme === "dark" ? common("lightMode") : common("darkMode")}
-                </DropdownMenuItem>
-              </DropdownMenuGroup>
-              <DropdownMenuSeparator />
+              {!isProUser ? (
+                <>
+                  <DropdownMenuSeparator className={chatContextMenuSeparatorClass} />
+                  <DropdownMenuItem
+                    className={chatContextMenuItemClass}
+                    nativeButton={false}
+                    render={<Link href={UPGRADE_PATH} />}
+                  >
+                    <SparklesIcon className={chatContextMenuIconClass} />
+                    {t("upgradeToPlus")}
+                  </DropdownMenuItem>
+                </>
+              ) : null}
+              <DropdownMenuSeparator className={chatContextMenuSeparatorClass} />
+              <DropdownMenuItem
+                className={chatContextMenuItemClass}
+                onClick={() =>
+                  setTheme(resolvedTheme === "dark" ? "light" : "dark")
+                }
+              >
+                <EclipseIcon className={chatContextMenuIconClass} />
+                {resolvedTheme === "dark" ? common("lightMode") : common("darkMode")}
+              </DropdownMenuItem>
+              <DropdownMenuSeparator className={chatContextMenuSeparatorClass} />
               <DropdownMenuItem
                 variant="destructive"
+                className={chatContextMenuDeleteClass}
                 onClick={() => void logout()}
               >
-                <LogOutIcon />
+                <LogOutIcon className={chatContextMenuIconClass} />
                 {t("logOut")}
               </DropdownMenuItem>
             </DropdownMenuContent>
