@@ -94,10 +94,20 @@ export function expandComposerDraft(input: ComposerDraft): string {
   return body
 }
 
-/** Legacy/plain-text expansion for drafts that still contain @signal tokens. */
+/**
+ * Expand `@signal` tokens in the composer draft.
+ * Whole-draft `@signal <asset…>` keeps a multi-word asset; mid-text uses the next token.
+ */
 export function expandComposerMentions(text: string): string {
   const trimmed = text.trim()
   if (!trimmed) return ""
+
+  const whole = trimmed.match(/^@signal(?:\s+([\s\S]+))?$/u)
+  if (whole) {
+    const asset = (whole[1] ?? "").trim()
+    if (!asset || isLowSignalUserMessage(asset)) return trimmed
+    return buildSignalPrompt(asset)
+  }
 
   const inline = trimmed.match(/@signal\s+([^\s@]+)/u)
   if (inline) {
@@ -109,19 +119,41 @@ export function expandComposerMentions(text: string): string {
   return trimmed
 }
 
+/** Replace an `@…` palette fragment with an inline `@tool ` token. */
 export function applyMentionSelection(input: {
   text: string
   replaceStart: number
   replaceEnd: number
+  tool?: IrisMentionTool
 }): { nextText: string; nextCursor: number } {
+  const tool = input.tool ?? "signal"
   const before = input.text.slice(0, input.replaceStart)
   const after = input.text.slice(input.replaceEnd)
-  const nextText = `${before}${after}`
-  const nextCursor = before.length
+  const token = `@${tool} `
+  const nextText = `${before}${token}${after}`
+  const nextCursor = before.length + token.length
   return { nextText, nextCursor }
 }
 
-/** Convert a typed `@signal …` draft into chip + continuation text. */
+/** Insert `@tool ` at the caret so the tag lives in the message text. */
+export function insertToolMentionAtCursor(input: {
+  text: string
+  cursor: number
+  selectionEnd?: number
+  tool: IrisMentionTool
+}): { nextText: string; nextCursor: number } {
+  const end = input.selectionEnd ?? input.cursor
+  const before = input.text.slice(0, input.cursor)
+  const after = input.text.slice(end)
+  const token = `@${input.tool} `
+  const needsSpace = before.length > 0 && !/[\s\n]$/u.test(before)
+  const insertion = `${needsSpace ? " " : ""}${token}`
+  const nextText = `${before}${insertion}${after}`
+  const nextCursor = before.length + insertion.length
+  return { nextText, nextCursor }
+}
+
+/** @deprecated Sticky chip mode removed — tags stay inline as `@signal`. */
 export function parseComposerToolTag(text: string): ComposerDraft | null {
   const match = text.match(/^@signal(?:\s+([\s\S]*))?$/u)
   if (!match) return null

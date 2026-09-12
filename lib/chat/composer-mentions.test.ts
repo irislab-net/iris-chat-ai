@@ -6,6 +6,7 @@ import {
   expandComposerDraft,
   expandComposerMentions,
   filterMentionOptions,
+  insertToolMentionAtCursor,
   parseComposerToolTag,
   parseMentionPalette,
   summarizeSignalUserMessage,
@@ -38,27 +39,52 @@ describe("composer mentions", () => {
     expect(expanded).toContain("Trading desk request for SOL")
   })
 
-  it("expands legacy @signal inline text", () => {
+  it("expands @signal inline anywhere in the message", () => {
     const expanded = expandComposerMentions("Please run @signal ETH now")
     expect(expanded).toContain("Trading desk request for ETH")
     expect(expanded).not.toContain("@signal ETH")
   })
 
-  it("parses typed @signal into chip draft", () => {
+  it("expands whole-draft @signal with a multi-word asset", () => {
+    const expanded = expandComposerMentions("@signal Bitcoin Cash")
+    expect(expanded).toContain("Trading desk request for Bitcoin Cash")
+  })
+
+  it("parses typed @signal into a draft shape (legacy)", () => {
     expect(parseComposerToolTag("@signal ETH")).toEqual({
       tool: "signal",
       text: "ETH",
     })
   })
 
-  it("applies mention selection by removing @ fragment", () => {
+  it("applies mention selection by inserting @signal at the @ fragment", () => {
     const result = applyMentionSelection({
       text: "check @sig",
       replaceStart: 6,
       replaceEnd: 10,
+      tool: "signal",
     })
-    expect(result.nextText).toBe("check ")
-    expect(result.nextCursor).toBe(6)
+    expect(result.nextText).toBe("check @signal ")
+    expect(result.nextCursor).toBe(14)
+  })
+
+  it("inserts @signal at the caret, with a leading space when needed", () => {
+    expect(
+      insertToolMentionAtCursor({
+        text: "hello",
+        cursor: 5,
+        tool: "signal",
+      })
+    ).toEqual({ nextText: "hello @signal ", nextCursor: 14 })
+
+    expect(
+      insertToolMentionAtCursor({
+        text: "before after",
+        cursor: 7,
+        selectionEnd: 7,
+        tool: "signal",
+      })
+    ).toEqual({ nextText: "before @signal after", nextCursor: 15 })
   })
 
   it("summarizes expanded desk prompts for history", () => {
