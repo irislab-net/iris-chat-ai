@@ -45,7 +45,7 @@ function IrisMark({
     >
       <IrisLabLogo
         decorative
-        size={isHero ? 144 : 28}
+        size={isHero ? 192 : 28}
         priority={isHero}
         className={isHero ? "size-full" : "size-[65%]"}
       />

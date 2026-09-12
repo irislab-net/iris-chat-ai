@@ -792,7 +792,7 @@
 .chat-empty-hero-mark::before {
   content: "";
   position: absolute;
-  inset: -28%;
+  inset: -32%;
   border-radius: 50%;
   background: radial-gradient(
     circle,

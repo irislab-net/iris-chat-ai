@@ -488,7 +488,7 @@ function ChatComposer({
             className={cn(
               "chat-bidi min-w-32 flex-1 field-sizing-content resize-none rounded-none border-0 bg-transparent p-0 text-start shadow-none focus-visible:border-transparent focus-visible:ring-0 dark:bg-transparent",
               isFloating
-                ? "max-h-40 min-h-11 py-2.5 text-[16px] leading-6 text-foreground placeholder:text-muted-foreground"
+                ? "max-h-40 min-h-12 py-3 text-[16px] leading-6 text-foreground placeholder:text-muted-foreground"
                 : "min-h-6 text-[16px] leading-6 sm:text-[14px] sm:leading-[1.45]"
             )}
           />
