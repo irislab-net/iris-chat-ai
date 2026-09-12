@@ -46,6 +46,11 @@ import {
   chatMobileComposerPillClass,
   chatMobileComposerSendClass,
   chatMobileComposerShellClass,
+  chatMobileToolsMenuClass,
+  chatMobileToolsMenuItemClass,
+  chatMobileToolsMenuItemDescClass,
+  chatMobileToolsMenuItemTitleClass,
+  chatMobileToolsMenuLabelClass,
 } from "@/components/app-shell/chat-mobile-gemini-styles"
 import { useIsDesktop } from "@/hooks/use-media-query"
 import { cn } from "@/lib/utils"
@@ -331,11 +336,11 @@ function ChatComposer({
     >
       {mentionOpen ? (
         <div
-          className="absolute inset-x-3 bottom-full z-20 mb-2 overflow-hidden rounded-xl border border-border/70 bg-popover shadow-lg"
+          className={cn("absolute inset-x-3 bottom-full z-20 mb-2", chatMobileToolsMenuClass)}
           role="listbox"
           aria-label={t("composerMentionMenu")}
         >
-          <p className="border-b border-border/50 px-3 py-2 text-[10px] font-medium tracking-wide text-muted-foreground uppercase">
+          <p className={chatMobileToolsMenuLabelClass}>
             {t("composerMentionMenu")}
           </p>
           <ul className="max-h-48 overflow-y-auto p-1">
@@ -347,18 +352,16 @@ function ChatComposer({
                   role="option"
                   aria-selected={index === mentionIndex}
                   className={cn(
-                    "flex w-full flex-col items-start gap-0.5 rounded-lg px-2.5 py-2 text-left transition-colors",
-                    index === mentionIndex
-                      ? "bg-accent text-accent-foreground"
-                      : "hover:bg-muted/60"
+                    chatMobileToolsMenuItemClass,
+                    index === mentionIndex && "bg-foreground/[0.07]"
                   )}
                   onMouseDown={(event) => {
                     event.preventDefault()
                     applyMention(option)
                   }}
                 >
-                  <span className="text-[13px] font-medium">{option.label}</span>
-                  <span className="text-[11px] text-muted-foreground">
+                  <span className={chatMobileToolsMenuItemTitleClass}>{option.label}</span>
+                  <span className={chatMobileToolsMenuItemDescClass}>
                     {t("composerToolSignalDesc")}
                   </span>
                 </button>
@@ -401,19 +404,19 @@ function ChatComposer({
             >
               <PlusIcon className="size-5" />
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="min-w-52" side="top">
+            <DropdownMenuContent align="start" side="top" className={cn(chatMobileToolsMenuClass, "min-w-[13.5rem] border-0 p-1.5 shadow-none ring-0 !bg-white/78 dark:!bg-white/[0.08]")}>
               <DropdownMenuGroup>
-                <DropdownMenuLabel className="text-[10px] font-medium tracking-wide uppercase">
+                <DropdownMenuLabel className={chatMobileToolsMenuLabelClass}>
                   {t("composerToolsMenu")}
                 </DropdownMenuLabel>
                 {IRIS_MENTION_OPTIONS.map((option) => (
                   <DropdownMenuItem
                     key={option.id}
-                    className="flex-col items-start gap-0.5 py-2"
+                    className={cn(chatMobileToolsMenuItemClass, "py-2.5")}
                     onClick={() => insertMentionToken(option)}
                   >
-                    <span className="text-[13px] font-medium">{option.label}</span>
-                    <span className="line-clamp-2 text-[11px] text-muted-foreground">
+                    <span className={chatMobileToolsMenuItemTitleClass}>{option.label}</span>
+                    <span className={cn(chatMobileToolsMenuItemDescClass, "line-clamp-2")}>
                       {t("composerToolSignalDesc")}
                     </span>
                   </DropdownMenuItem>
@@ -527,19 +530,19 @@ function ChatComposer({
             >
               <PlusIcon className="size-4" />
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="min-w-52" side="top">
+            <DropdownMenuContent align="start" side="top" className={cn(chatMobileToolsMenuClass, "min-w-[13.5rem] border-0 p-1.5 shadow-none ring-0 !bg-white/78 dark:!bg-white/[0.08]")}>
               <DropdownMenuGroup>
-                <DropdownMenuLabel className="text-[10px] font-medium tracking-wide uppercase">
+                <DropdownMenuLabel className={chatMobileToolsMenuLabelClass}>
                   {t("composerToolsMenu")}
                 </DropdownMenuLabel>
                 {IRIS_MENTION_OPTIONS.map((option) => (
                   <DropdownMenuItem
                     key={option.id}
-                    className="flex-col items-start gap-0.5 py-2"
+                    className={cn(chatMobileToolsMenuItemClass, "py-2.5")}
                     onClick={() => insertMentionToken(option)}
                   >
-                    <span className="text-[13px] font-medium">{option.label}</span>
-                    <span className="line-clamp-2 text-[11px] text-muted-foreground">
+                    <span className={chatMobileToolsMenuItemTitleClass}>{option.label}</span>
+                    <span className={cn(chatMobileToolsMenuItemDescClass, "line-clamp-2")}>
                       {t("composerToolSignalDesc")}
                     </span>
                   </DropdownMenuItem>

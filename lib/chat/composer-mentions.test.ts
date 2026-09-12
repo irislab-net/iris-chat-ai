@@ -8,6 +8,7 @@ import {
   filterMentionOptions,
   parseComposerToolTag,
   parseMentionPalette,
+  summarizeSignalUserMessage,
 } from "@/lib/chat/composer-mentions"
 
 describe("composer mentions", () => {
@@ -58,5 +59,14 @@ describe("composer mentions", () => {
     })
     expect(result.nextText).toBe("check ")
     expect(result.nextCursor).toBe(6)
+  })
+
+  it("summarizes expanded desk prompts for history", () => {
+    expect(summarizeSignalUserMessage(buildSignalPrompt("ETH"))).toBe(
+      "Signal · ETH"
+    )
+    expect(summarizeSignalUserMessage("What is ETH doing today?")).toBe(
+      "What is ETH doing today?"
+    )
   })
 })

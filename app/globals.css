@@ -769,17 +769,6 @@
   }
 }
 
-@keyframes chat-empty-hero-glow-pulse {
-  0%,
-  100% {
-    opacity: 0.55;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.85;
-    transform: scale(1.08);
-  }
-}
 
 .chat-empty-hero-mark {
   animation: chat-empty-hero-mark-in 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
@@ -789,29 +778,6 @@
   animation: chat-empty-hero-mark-breathe 5.5s ease-in-out 0.7s infinite;
 }
 
-.chat-empty-hero-mark::before {
-  content: "";
-  position: absolute;
-  inset: -32%;
-  border-radius: 50%;
-  background: radial-gradient(
-    circle,
-    color-mix(in oklab, var(--foreground) 10%, transparent) 0%,
-    color-mix(in oklab, #7dd3fc 22%, transparent) 38%,
-    transparent 72%
-  );
-  animation: chat-empty-hero-glow-pulse 5.5s ease-in-out 0.7s infinite;
-  pointer-events: none;
-}
-
-.dark .chat-empty-hero-mark::before {
-  background: radial-gradient(
-    circle,
-    color-mix(in oklab, var(--foreground) 14%, transparent) 0%,
-    color-mix(in oklab, #38bdf8 28%, transparent) 40%,
-    transparent 74%
-  );
-}
 
 .chat-empty-hero-title {
   animation: chat-empty-hero-title-in 0.75s cubic-bezier(0.22, 1, 0.36, 1) 0.12s both;
@@ -842,7 +808,6 @@
   .chat-gemini-dots,
   .chat-empty-hero-mark,
   .chat-empty-hero-mark > :last-child,
-  .chat-empty-hero-mark::before,
   .chat-empty-hero-title {
     animation: none !important;
   }
