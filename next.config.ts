@@ -5,7 +5,7 @@ import type { NextConfig } from "next"
 import createNextIntlPlugin from "next-intl/plugin"
 
 import { allowedDevOrigins } from "./lib/dev-access"
-import { CHAT_API_ORIGIN, IRIS_API_ORIGIN } from "./lib/api/origins"
+import { CHAT_API_ORIGIN } from "./lib/api/origins"
 
 const withNextIntl = createNextIntlPlugin("./i18n/request.ts")
 
@@ -37,11 +37,10 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  // Same-origin /v1 proxy so Path=/v1/auth refresh cookies on *.irislab.info work
+  // /v1/* is handled by app/v1/[...path]/route.ts (Cloudflare-safe proxy dispatch).
   async rewrites() {
-    const chatOrigin = CHAT_API_ORIGIN
     if (process.env.NODE_ENV === "development") {
-      console.log(`[iris] Chat API route → ${chatOrigin}`)
+      console.log(`[iris] Chat API route → ${CHAT_API_ORIGIN}`)
       if (process.env.CHAT_API_GUEST_FALLBACK_ORIGIN) {
         console.log(
           `[iris] Guest fallback → ${process.env.CHAT_API_GUEST_FALLBACK_ORIGIN}`
@@ -52,15 +51,7 @@ const nextConfig: NextConfig = {
       )
       console.log("[iris] Trading API stub (paper/demo trading only)")
     }
-    // /v1/chat → app/v1/chat; /v1/auth, /v1/me → app route handlers (cookie proxy).
-    // /v1/wallets, /v1/trading, /v1/wallet, /v1/entitlements, /v1/payments use app route handlers too.
-    return [
-      {
-        source:
-          "/v1/:path((?!chat(?:/|$)|auth(?:/|$)|me(?:/|$)|wallets|entitlements|trading(?:/|$)|wallet(?:/|$)|payments(?:/|$)).*)",
-        destination: `${IRIS_API_ORIGIN}/v1/:path`,
-      },
-    ]
+    return []
   },
   async headers() {
     return [

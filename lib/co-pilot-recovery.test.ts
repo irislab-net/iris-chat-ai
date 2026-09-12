@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest"
 import {
   COPILOT_AUTH_MESSAGE,
   COPILOT_CREDIT_MESSAGE,
+  COPILOT_PRO_SESSION_REFRESH_MESSAGE,
   COPILOT_RECOVERY_MESSAGE,
   COPILOT_TIMEOUT_MESSAGE,
   COPILOT_TRIAL_EXHAUSTED_MESSAGE,
@@ -47,11 +48,13 @@ describe("co-pilot recovery helpers", () => {
   })
 
   it("maps 402 credit exhaustion to upgrade copy", () => {
+    const err = Object.assign(new Error("insufficient credit balance"), {
+      status: 402,
+    })
+    expect(coPilotUserFacingError(err)).toBe(COPILOT_CREDIT_MESSAGE)
     expect(
-      coPilotUserFacingError(
-        Object.assign(new Error("insufficient credit balance"), { status: 402 })
-      )
-    ).toBe(COPILOT_CREDIT_MESSAGE)
+      coPilotUserFacingError(err, { isProUser: true })
+    ).toBe(COPILOT_PRO_SESSION_REFRESH_MESSAGE)
     expect(COPILOT_CREDIT_MESSAGE.toLowerCase()).toContain("upgrade")
     expect(COPILOT_CREDIT_MESSAGE).not.toMatch(/402|HTTP/i)
   })

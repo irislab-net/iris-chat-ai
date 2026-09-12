@@ -132,6 +132,45 @@ export type StreamCoPilotChatHandlers = {
   signal?: AbortSignal
 }
 
+export type CoPilotSessionRefresh = {
+  refreshSession?: () => Promise<void>
+  refreshAfterUpgrade?: () => Promise<void>
+}
+
+export async function sendCoPilotChatWithSessionRetry(
+  input: Parameters<typeof sendCoPilotChat>[0],
+  session?: CoPilotSessionRefresh
+): Promise<CoPilotChatJsonResponse> {
+  try {
+    return await sendCoPilotChat(input)
+  } catch (error) {
+    const status = (error as { status?: number } | null)?.status
+    const code = (error as { code?: string } | null)?.code
+    if (status === 403 && code === "login_required") throw error
+
+    if (
+      status === 402 &&
+      !isGuestChatSession() &&
+      session?.refreshAfterUpgrade
+    ) {
+      await session.refreshAfterUpgrade()
+      return await sendCoPilotChat(input)
+    }
+
+    if (status !== 401) throw error
+
+    if (isGuestChatSession()) {
+      await ensureGuestSession()
+    } else if (getStoredAccessToken() && session?.refreshSession) {
+      await session.refreshSession()
+      if (!getStoredAccessToken()) throw error
+    } else {
+      await ensureGuestSession()
+    }
+    return await sendCoPilotChat(input)
+  }
+}
+
 export async function sendCoPilotChat(input: {
   message: string
   conversationId: string
@@ -205,16 +244,20 @@ export async function streamCoPilotChat(
     effort?: CoPilotChatRequest["effort"]
     clientContext?: ChatClientContext
   },
-  handlers: StreamCoPilotChatHandlers = {}
+  handlers: StreamCoPilotChatHandlers = {},
+  session?: CoPilotSessionRefresh
 ) {
-  const data = await sendCoPilotChat({
+  const data = await sendCoPilotChatWithSessionRetry(
+    {
     message: input.message,
     conversationId: input.conversationId,
     history: input.history,
     effort: input.effort,
     clientContext: input.clientContext,
     signal: handlers.signal,
-  })
+    },
+    session
+  )
 
   const conversationId = data.conversation_id || input.conversationId
   if (data.usage || data.conversation_id) {

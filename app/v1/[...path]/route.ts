@@ -1,15 +1,10 @@
-import { proxyIrisApiRequest } from "@/lib/api/iris-api-route"
+import { handleV1ApiRoute } from "@/lib/api/v1-route"
 
-type RouteContext = { params: Promise<{ path?: string[] }> }
-
-function paymentsApiPath(segments?: string[]): string {
-  if (!segments?.length) return "/v1/payments"
-  return `/v1/payments/${segments.join("/")}`
-}
+type RouteContext = { params: Promise<{ path: string[] }> }
 
 async function route(req: Request, context: RouteContext) {
   const { path } = await context.params
-  return proxyIrisApiRequest(req, paymentsApiPath(path))
+  return handleV1ApiRoute(req, path)
 }
 
 export async function GET(req: Request, context: RouteContext) {

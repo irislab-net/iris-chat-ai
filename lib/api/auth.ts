@@ -37,6 +37,21 @@ export const AUTH_SUCCESS_MESSAGE = "iris-auth-success"
 export const AUTH_POPUP_CLOSED_EVENT = "iris-auth-popup-closed"
 export const AUTH_SESSION_EXPIRED_EVENT = "iris-auth-session-expired"
 export const AUTH_RETURN_TO_KEY = "iris-auth-return-to"
+export const PLAN_UPGRADE_PENDING_REFRESH_KEY = "iris-plan-upgrade-pending-refresh"
+
+export function markPlanUpgradePendingRefresh() {
+  if (typeof window === "undefined") return
+  sessionStorage.setItem(PLAN_UPGRADE_PENDING_REFRESH_KEY, "true")
+}
+
+export function consumePlanUpgradePendingRefresh(): boolean {
+  if (typeof window === "undefined") return false
+  if (sessionStorage.getItem(PLAN_UPGRADE_PENDING_REFRESH_KEY) !== "true") {
+    return false
+  }
+  sessionStorage.removeItem(PLAN_UPGRADE_PENDING_REFRESH_KEY)
+  return true
+}
 
 export function notifyAuthSessionExpired(): void {
   if (typeof window === "undefined") return

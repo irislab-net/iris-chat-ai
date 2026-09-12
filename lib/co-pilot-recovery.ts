@@ -10,6 +10,9 @@ export const COPILOT_TIMEOUT_MESSAGE =
 export const COPILOT_CREDIT_MESSAGE =
   "You've used this period's chat credits. Upgrade to continue."
 
+export const COPILOT_PRO_SESSION_REFRESH_MESSAGE =
+  "Your Plus plan is active, but this session needs a refresh. Try again."
+
 export const COPILOT_AUTH_MESSAGE =
   "Sign in with Google to get answers from IRIS — you can explore prompts and typing first."
 
@@ -48,7 +51,19 @@ function coPilotErrorCode(error: unknown): string | undefined {
   return body?.code
 }
 
-export function coPilotUserFacingError(error: unknown): string {
+export function isCreditExhaustedError(error: unknown): boolean {
+  const status = (error as { status?: number } | null)?.status
+  if (status === 402) return true
+  if (error instanceof Error && /insufficient credit/i.test(error.message)) {
+    return true
+  }
+  return false
+}
+
+export function coPilotUserFacingError(
+  error: unknown,
+  options?: { isProUser?: boolean }
+): string {
   if (isTimeoutError(error)) return COPILOT_TIMEOUT_MESSAGE
   if (isAbortError(error)) return ""
   const status = (error as { status?: number } | null)?.status
@@ -57,11 +72,19 @@ export function coPilotUserFacingError(error: unknown): string {
     return COPILOT_TRIAL_EXHAUSTED_MESSAGE
   }
   if (status === 401) return COPILOT_AUTH_MESSAGE
-  if (status === 402) return COPILOT_CREDIT_MESSAGE
+  if (isCreditExhaustedError(error)) {
+    return options?.isProUser
+      ? COPILOT_PRO_SESSION_REFRESH_MESSAGE
+      : COPILOT_CREDIT_MESSAGE
+  }
   // Known empty-completion path uses a friendly Error already — keep if it matches product tone.
   if (error instanceof Error) {
     const msg = error.message.trim()
-    if (/insufficient credit/i.test(msg)) return COPILOT_CREDIT_MESSAGE
+    if (/insufficient credit/i.test(msg)) {
+      return options?.isProUser
+        ? COPILOT_PRO_SESSION_REFRESH_MESSAGE
+        : COPILOT_CREDIT_MESSAGE
+    }
     if (msg === "IRIS returned an empty reply. Please try again.") {
       return COPILOT_RECOVERY_MESSAGE
     }

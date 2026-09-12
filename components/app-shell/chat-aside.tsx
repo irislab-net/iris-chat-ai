@@ -61,7 +61,10 @@ import {
 } from "@/lib/paper-trading/copilot-client"
 import { submitChatMessageFeedback } from "@/lib/api/chat-feedback"
 import { streamCoPilotChat } from "@/lib/api/co-pilot"
-import { getStoredAccessToken } from "@/lib/api/auth"
+import {
+  consumePlanUpgradePendingRefresh,
+  getStoredAccessToken,
+} from "@/lib/api/auth"
 import {
   refreshSessionInStore,
   syncChatHistoryFromServer,
@@ -74,7 +77,6 @@ import {
   trackChatMessageBlockedGuest,
   trackChatMessageSent,
 } from "@/lib/analytics"
-import { isGuestChatSession } from "@/lib/chat-auth-session"
 import {
   ensureGuestSession,
   formatGuestTrialLabel,
@@ -88,6 +90,7 @@ import {
   prepareMessagesForRetry,
   removeEmptyAssistantTurn,
   COPILOT_CREDIT_MESSAGE,
+  COPILOT_PRO_SESSION_REFRESH_MESSAGE,
   COPILOT_RECOVERY_MESSAGE,
   coPilotUserFacingError,
   coPilotFailureAction,
@@ -181,30 +184,6 @@ function blankConversation(id = crypto.randomUUID()): {
     id,
     messages: [],
     history: [],
-  }
-}
-
-async function streamCoPilotChatWithAuthRetry(
-  input: Parameters<typeof streamCoPilotChat>[0],
-  handlers: Parameters<typeof streamCoPilotChat>[1],
-  refreshSession: () => Promise<void>
-) {
-  try {
-    return await streamCoPilotChat(input, handlers)
-  } catch (error) {
-    const status = (error as { status?: number } | null)?.status
-    const code = (error as { code?: string } | null)?.code
-    if (status === 403 && code === "login_required") throw error
-    if (status !== 401) throw error
-    if (isGuestChatSession()) {
-      await ensureGuestSession()
-    } else if (getStoredAccessToken()) {
-      await refreshSession()
-      if (!getStoredAccessToken()) throw error
-    } else {
-      await ensureGuestSession()
-    }
-    return await streamCoPilotChat(input, handlers)
   }
 }
 
@@ -330,8 +309,23 @@ function ChatAside({
     loading: authLoading,
     login,
     refresh,
+    refreshAfterUpgrade,
     user,
   } = useAuth()
+
+  const coPilotSessionRefresh = React.useMemo(
+    () => ({
+      refreshSession: refresh,
+      refreshAfterUpgrade,
+    }),
+    [refresh, refreshAfterUpgrade]
+  )
+
+  React.useEffect(() => {
+    if (authLoading || !isAuthenticated) return
+    if (!consumePlanUpgradePendingRefresh()) return
+    void refreshAfterUpgrade()
+  }, [authLoading, isAuthenticated, refreshAfterUpgrade])
   const showDeskSkeleton =
     waitForDesk &&
     displayMode === "docked" &&
@@ -921,7 +915,7 @@ function ChatAside({
                     ...m,
                     content: failed.content || m.content,
                     error: true as const,
-                  errorText: coPilotUserFacingError(error),
+                  errorText: coPilotUserFacingError(error, { isProUser }),
                   action: coPilotFailureAction(error),
                   retryUserMessage: failed.retryUserMessage,
                   }
@@ -942,7 +936,7 @@ function ChatAside({
     }
 
     try {
-      const result = await streamCoPilotChatWithAuthRetry(
+      const result = await streamCoPilotChat(
         {
           message: userMessage,
           conversationId: activeId,
@@ -958,7 +952,7 @@ function ChatAside({
             }
           },
         },
-        refresh
+        coPilotSessionRefresh
       )
 
       if (controller.signal.aborted) {
@@ -1155,7 +1149,7 @@ function ChatAside({
                   ...m,
                   content: failed.content || m.content,
                   error: true as const,
-                  errorText: coPilotUserFacingError(error),
+                  errorText: coPilotUserFacingError(error, { isProUser }),
                   action: coPilotFailureAction(error),
                   retryUserMessage: failed.retryUserMessage,
                 }
@@ -1394,6 +1388,14 @@ function ChatAside({
     const target = messages.find((m) => m.id === assistantId)
     const userMessage = getRetryUserMessage(target)
     if (!userMessage || !target?.error) return
+
+    if (
+      isAuthenticated &&
+      (target.errorText === COPILOT_CREDIT_MESSAGE ||
+        target.errorText === COPILOT_PRO_SESSION_REFRESH_MESSAGE)
+    ) {
+      await refreshAfterUpgrade()
+    }
 
     // History for retry = API history before this failed turn (do not include partial).
     // Current `history` state was not advanced on failure — safe to reuse.
@@ -1856,7 +1858,7 @@ function ChatAside({
                       Try again
                     </Button>
                   ) : null}
-                  {message.errorText === COPILOT_CREDIT_MESSAGE ? (
+                  {message.errorText === COPILOT_CREDIT_MESSAGE && !isProUser ? (
                     <Button
                       type="button"
                       size="sm"

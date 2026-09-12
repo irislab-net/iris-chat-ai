@@ -53,6 +53,27 @@ describe("proxyIrisApiRequest", () => {
     })
   })
 
+  it("proxies news requests to IRIS_API_ORIGIN", async () => {
+    fetchMock.mockResolvedValue(
+      new Response(JSON.stringify({ data: [] }), {
+        status: 200,
+        headers: { "content-type": "application/json" },
+      })
+    )
+
+    const res = await proxyIrisApiRequest(
+      new Request("https://chat.irislab.info/v1/news/latest"),
+      "/v1/news/latest"
+    )
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      "https://api.irislab.info/v1/news/latest",
+      expect.objectContaining({ method: "GET" })
+    )
+    expect(res.status).toBe(200)
+    expect(await res.json()).toEqual({ data: [] })
+  })
+
   it("proxies payment invoice requests to IRIS_API_ORIGIN", async () => {
     fetchMock.mockResolvedValue(
       new Response(JSON.stringify({ invoices: [] }), {

@@ -17,6 +17,7 @@ import {
 import { useIsDesktop } from "@/hooks/use-media-query"
 import { usePathname, useRouter } from "@/i18n/navigation"
 import { useAuth } from "@/components/auth/auth-provider"
+import { markPlanUpgradePendingRefresh } from "@/lib/api/auth"
 import { useWorkspacePageIntro } from "@/hooks/use-mobile-workspace-page-intro"
 import { useShellSidebarLayout } from "@/hooks/use-shell-sidebar-layout"
 import {
@@ -77,6 +78,7 @@ function AppShellWithTab(props: AppShellProps) {
     void (async () => {
       try {
         if (isAuthenticated) {
+          markPlanUpgradePendingRefresh()
           await refreshAfterUpgrade()
         }
       } finally {

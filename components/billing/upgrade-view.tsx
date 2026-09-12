@@ -5,6 +5,7 @@ import { Link, useRouter } from "@/i18n/navigation"
 import { Clock3Icon, XIcon } from "lucide-react"
 
 import { useAuth } from "@/components/auth/auth-provider"
+import { markPlanUpgradePendingRefresh } from "@/lib/api/auth"
 import { IrisLabLogo } from "@/components/brand/iris-lab-logo"
 import type { CryptoCheckoutRequest } from "@/components/billing/crypto-payment-sheet"
 import { CryptoPaymentSheet } from "@/components/billing/crypto-payment-sheet"
@@ -123,6 +124,7 @@ function UpgradeView() {
     if (checkout?.billing) {
       trackPurchase({ billing: checkout.billing })
     }
+    markPlanUpgradePendingRefresh()
     await refreshAfterUpgrade()
     setPaymentOpen(false)
     router.push(APP_NEWS_PATH)
