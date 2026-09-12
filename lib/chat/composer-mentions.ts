@@ -26,7 +26,7 @@ export const IRIS_MENTION_OPTIONS: IrisMentionOption[] = [
   {
     id: "signal",
     tool: "signal",
-    label: "signal",
+    label: "Signal",
   },
 ]
 
@@ -74,6 +74,17 @@ export function filterMentionOptions(query: string): IrisMentionOption[] {
 }
 
 /** Expand tool tag + user text before send. */
+
+/** Short history/UI label for expanded desk prompts so follow-ups are not re-primed. */
+export function summarizeSignalUserMessage(text: string): string {
+  const trimmed = text.trim()
+  const en = trimmed.match(/^Trading desk request for\s+(.+?)\./u)
+  if (en?.[1]) return `Signal · ${en[1].trim()}`
+  const fa = trimmed.match(/^درخواست\s+میز\s+معاملاتی\s+برای\s+(.+?)\./u)
+  if (fa?.[1]) return `Signal · ${fa[1].trim()}`
+  return trimmed
+}
+
 export function expandComposerDraft(input: ComposerDraft): string {
   const body = input.text.trim()
   if (input.tool === "signal") {

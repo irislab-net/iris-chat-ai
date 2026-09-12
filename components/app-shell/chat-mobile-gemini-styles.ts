@@ -49,13 +49,13 @@ const chatMobileEmptyHeroContentClass =
   "chat-empty-hero flex flex-col items-center gap-5 text-center"
 
 const chatMobileEmptyHeroMarkShellClass =
-  "chat-empty-hero-mark relative flex size-[6.5rem] items-center justify-center"
+  "chat-empty-hero-mark relative flex size-[4.5rem] items-center justify-center"
 
 const chatMobileEmptyHeroMarkClass =
-  "relative z-[1] size-[4.5rem] rounded-none bg-transparent shadow-none ring-0"
+  "relative size-full rounded-none bg-transparent shadow-none ring-0"
 
 const chatMobileEmptyHeroTitleClass =
-  "chat-empty-hero-title max-w-[20rem] text-balance text-[1.75rem] font-medium leading-[1.22] tracking-[-0.028em] text-foreground"
+  "chat-empty-hero-title max-w-[20rem] text-balance text-[1.75rem] font-semibold leading-[1.22] tracking-[-0.028em] text-foreground"
 
 const chatMobileThreadClass = "px-4 pt-3 pb-2 sm:px-5"
 
@@ -152,6 +152,22 @@ const chatMobileSheetConsentCheckedClass =
 const chatMobileSheetConsentUncheckedClass =
   "border-border/50 bg-card/60 hover:border-border hover:bg-card/80"
 
+const chatMobileToolsMenuClass =
+  `z-30 min-w-[13.5rem] overflow-hidden rounded-2xl p-1.5 text-foreground ${chatMobileGlassSurfaceClass} ${chatMobileHeaderShadowClass} shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_75%,transparent),0_12px_40px_-16px_color-mix(in_oklch,var(--foreground)_18%,transparent)] dark:shadow-[inset_0_1px_0_0_color-mix(in_oklch,var(--foreground)_10%,transparent),0_12px_40px_-16px_color-mix(in_oklch,black_45%,transparent)]`
+
+const chatMobileToolsMenuLabelClass =
+  "px-2.5 pb-1 pt-1.5 text-[11px] font-medium tracking-[0.04em] text-muted-foreground"
+
+const chatMobileToolsMenuItemClass =
+  "flex w-full flex-col items-start gap-0.5 rounded-xl px-2.5 py-2.5 text-left transition-colors hover:bg-foreground/[0.05] data-[highlighted]:bg-foreground/[0.05] data-[selected=true]:bg-foreground/[0.07]"
+
+const chatMobileToolsMenuItemTitleClass =
+  "text-[14px] font-medium tracking-[-0.01em] text-foreground"
+
+const chatMobileToolsMenuItemDescClass =
+  "text-[12px] leading-snug text-muted-foreground"
+
+
 export {
   chatMobileAssistantClass,
   chatMobileComposerIconButtonClass,
@@ -198,5 +214,10 @@ export {
   chatMobileThreadBottomSpacerClass,
   chatMobileThreadBottomFadeClass,
   chatMobileThreadScrollMaskClass,
+  chatMobileToolsMenuClass,
+  chatMobileToolsMenuItemClass,
+  chatMobileToolsMenuItemDescClass,
+  chatMobileToolsMenuItemTitleClass,
+  chatMobileToolsMenuLabelClass,
   chatMobileUserBubbleClass,
 }

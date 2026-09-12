@@ -116,6 +116,7 @@ import { SESSION_RESET_EVENT } from "@/lib/session-reset"
 import type { ChatDisplayMode } from "@/lib/shell-layout-prefs"
 import { SHELL_SIDEBAR_COMPACT_FALLBACK } from "@/lib/shell-sidebar-layout"
 import { resolvePaperTicketFromChatTurn } from "@/lib/chat/parse-trade-setup"
+import { summarizeSignalUserMessage } from "@/lib/chat/composer-mentions"
 import { isPaperTradeIntent } from "@/lib/iris-paper-trade/intent"
 import { IRIS_SAMPLE_PROMPTS } from "@/lib/iris-paper-trade/types"
 import { cn } from "@/lib/utils"
@@ -765,6 +766,7 @@ function ChatAside({
     activeId: string
   }) {
     const { userMessage, historySnapshot, assistantId, activeId } = input
+    const displayUserMessage = summarizeSignalUserMessage(userMessage)
 
     setSending(true)
     setPendingAssistantId(assistantId)
@@ -816,7 +818,7 @@ function ChatAside({
               })
         const finalHistory: CoPilotHistoryMessage[] = [
           ...historySnapshot,
-          { role: "user", content: userMessage },
+          { role: "user", content: displayUserMessage },
           { role: "assistant", content: fullText },
         ]
         setHistory(finalHistory)
@@ -947,7 +949,7 @@ function ChatAside({
 
       const finalHistory: CoPilotHistoryMessage[] = [
         ...historySnapshot,
-        { role: "user", content: userMessage },
+        { role: "user", content: displayUserMessage },
         { role: "assistant", content: fullText },
       ]
       setHistory(finalHistory)
@@ -995,10 +997,12 @@ function ChatAside({
         ChatUiMessage,
         "clientActionSummaries" | "pendingBracket" | "paperTicket" | "action"
       > => {
-        const parsedTicket = resolvePaperTicketFromChatTurn({
-          userMessage,
-          assistantMessage: fullText,
-        })
+        const parsedTicket = isPaperTradeIntent(userMessage)
+          ? resolvePaperTicketFromChatTurn({
+              userMessage,
+              assistantMessage: fullText,
+            })
+          : null
         const hasGhostAction = clientResult.summaries.some(
           (item) => item.tool === "preview_ghost_trade" && item.applied
         )
@@ -1322,9 +1326,10 @@ function ChatAside({
     const historySnapshot = history
     const activeId = conversationId
 
+    const displayUserMessage = summarizeSignalUserMessage(userMessage)
     const withUser: ChatUiMessage[] = [
       ...messages,
-      { id: crypto.randomUUID(), role: "user", content: userMessage },
+      { id: crypto.randomUUID(), role: "user", content: displayUserMessage },
       { id: assistantId, role: "assistant", content: "" },
     ]
     setMessages(withUser)

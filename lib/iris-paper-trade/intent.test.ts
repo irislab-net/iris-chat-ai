@@ -39,4 +39,11 @@ describe("isPaperTradeIntent", () => {
     expect(isPaperTradeIntent("Should I long ETH this candle?")).toBe(false)
     expect(isPaperTradeIntent("What is the news pulse on ETH?")).toBe(false)
   })
+
+  it("does not treat follow-up questions as new signal requests", () => {
+    expect(isPaperTradeIntent("What does that mean?")).toBe(false)
+    expect(isPaperTradeIntent("Why this entry?")).toBe(false)
+    expect(isPaperTradeIntent("Explain the stop loss")).toBe(false)
+    expect(isPaperTradeIntent("ok thanks")).toBe(false)
+  })
 })
