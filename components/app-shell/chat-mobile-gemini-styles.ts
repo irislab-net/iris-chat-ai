@@ -49,10 +49,10 @@ const chatMobileEmptyHeroContentClass =
   "chat-empty-hero flex flex-col items-center gap-5 text-center"
 
 const chatMobileEmptyHeroMarkShellClass =
-  "chat-empty-hero-mark relative flex size-[6.5rem] items-center justify-center"
+  "chat-empty-hero-mark relative flex size-[4.5rem] items-center justify-center"
 
 const chatMobileEmptyHeroMarkClass =
-  "relative z-[1] size-[4.5rem] rounded-none bg-transparent shadow-none ring-0"
+  "relative size-full rounded-none bg-transparent shadow-none ring-0"
 
 const chatMobileEmptyHeroTitleClass =
   "chat-empty-hero-title max-w-[20rem] text-balance text-[1.75rem] font-medium leading-[1.22] tracking-[-0.028em] text-foreground"
