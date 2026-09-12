@@ -175,7 +175,7 @@ function MobileBottomNav({
                 {isChat && showIrisBadge && !chatActive ? (
                   <span
                     aria-hidden
-                    className="pointer-events-none absolute top-2 end-3 flex size-2"
+                    className="pointer-events-none absolute top-2 inset-e-3 flex size-2"
                   >
                     <span className="absolute inline-flex size-full animate-ping rounded-full bg-foreground opacity-60" />
                     <span className="relative inline-flex size-2 rounded-full bg-foreground ring-2 ring-background" />
