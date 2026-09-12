@@ -233,8 +233,8 @@ function ChatMobileHeader({
   )
 
   const effortControl =
-    !hideEffort && effort && onEffortChange ? (
-      <DropdownMenu>
+    onEffortChange ? (
+      <DropdownMenu modal={false}>
         <DropdownMenuTrigger
           render={
             <Button
@@ -270,7 +270,7 @@ function ChatMobileHeader({
                     {item.hint}
                   </span>
                 </span>
-                {effort === item.value ? (
+                {(effort ?? "instant") === item.value ? (
                   <CheckIcon className="mt-0.5 size-3.5" />
                 ) : null}
               </DropdownMenuItem>
@@ -278,15 +278,7 @@ function ChatMobileHeader({
           </DropdownMenuGroup>
         </DropdownMenuContent>
       </DropdownMenu>
-    ) : (
-      <span
-        className={cn(effortTriggerClass, "pointer-events-none")}
-        aria-label={`Response depth: ${effortLabel}`}
-      >
-        <span className="truncate">{effortLabel}</span>
-        <ChevronDownIcon className="shrink-0 opacity-55" aria-hidden />
-      </span>
-    )
+    ) : null
 
   return (
     <header
