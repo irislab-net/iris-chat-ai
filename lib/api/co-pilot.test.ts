@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from "vitest"
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
 vi.mock("@/lib/chat-auth-session", () => ({
   isGuestChatSession: vi.fn(() => false),
@@ -13,43 +13,43 @@ vi.mock("@/lib/api/auth", () => ({
   getStoredAccessToken: vi.fn(() => "access-token"),
 }))
 
-vi.mock("@/lib/api/client", () => ({
-  apiFetch: vi.fn(),
-}))
-
 import { getStoredAccessToken } from "@/lib/api/auth"
-import { apiFetch } from "@/lib/api/client"
 import { sendCoPilotChatWithSessionRetry } from "@/lib/api/co-pilot"
 
+function jsonResponse(status: number, body: unknown) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { "content-type": "application/json" },
+  })
+}
+
 describe("sendCoPilotChatWithSessionRetry", () => {
-  const fetchMock = vi.mocked(apiFetch)
+  const fetchMock = vi.fn()
 
   beforeEach(() => {
+    vi.stubEnv("NEXT_PUBLIC_CHAT_API_ORIGIN", "https://chat.example")
+    vi.stubGlobal("fetch", fetchMock)
     fetchMock.mockReset()
     vi.mocked(getStoredAccessToken).mockReturnValue("access-token")
+  })
+
+  afterEach(() => {
+    vi.unstubAllEnvs()
+    vi.unstubAllGlobals()
   })
 
   it("refreshes the session and retries after a 402 for signed-in users", async () => {
     fetchMock
       .mockResolvedValueOnce(
-        new Response(JSON.stringify({ error: "insufficient credit balance" }), {
-          status: 402,
-          headers: { "content-type": "application/json" },
-        })
+        jsonResponse(402, { error: "insufficient credit balance" })
       )
       .mockResolvedValueOnce(
-        new Response(
-          JSON.stringify({
-            data: {
-              session_id: "s1",
-              output_text: "Hello",
-            },
-          }),
-          {
-            status: 200,
-            headers: { "content-type": "application/json" },
-          }
-        )
+        jsonResponse(200, {
+          data: {
+            session_id: "s1",
+            output_text: "Hello",
+          },
+        })
       )
 
     const refreshAfterUpgrade = vi.fn(async () => undefined)
@@ -65,6 +65,9 @@ describe("sendCoPilotChatWithSessionRetry", () => {
 
     expect(refreshAfterUpgrade).toHaveBeenCalledTimes(1)
     expect(fetchMock).toHaveBeenCalledTimes(2)
+    expect(fetchMock.mock.calls[0]?.[0]).toBe(
+      "https://chat.example/v1/chat/message"
+    )
     expect(result.message).toBe("Hello")
   })
 })

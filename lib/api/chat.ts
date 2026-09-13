@@ -19,6 +19,7 @@ import type { DeskContextSnapshot } from "@/lib/paper-trading/desk-context"
 import { WORKSPACE_TAB_NEWS, workspaceTabHref } from "@/lib/workspace-tab"
 import type { WorkspaceTab } from "@/lib/workspace-tab"
 
+/** @deprecated Legacy same-origin path — browser chat uses `chatApiUrl()` instead. */
 export const CHAT_API_BASE = "/v1/chat"
 
 export {
@@ -27,7 +28,25 @@ export {
   type ChatClientActionHandlers,
 } from "@/lib/chat/client-tools"
 
-/** Same-origin chat paths — proxied to CHAT_API_ORIGIN in next.config rewrites. */
+/** Direct chat API host for browser calls (NEXT_PUBLIC_CHAT_API_ORIGIN or CHAT_API_ORIGIN). */
+export function getChatClientOrigin(): string {
+  return (
+    process.env.NEXT_PUBLIC_CHAT_API_ORIGIN?.replace(/\/$/, "") ??
+    process.env.CHAT_API_ORIGIN?.replace(/\/$/, "") ??
+    ""
+  )
+}
+
+export function chatApiUrl(subpath: string): string {
+  const origin = getChatClientOrigin()
+  if (!origin) {
+    throw new Error(
+      "Set NEXT_PUBLIC_CHAT_API_ORIGIN or CHAT_API_ORIGIN for direct chat API calls."
+    )
+  }
+  const path = subpath.startsWith("/") ? subpath : `/${subpath}`
+  return `${origin}/v1/chat${path}`
+}
 
 export function toChatApiEffort(effort?: CoPilotEffort): ChatApiEffort {
   if (effort === "instant" || effort === undefined) return "normal"

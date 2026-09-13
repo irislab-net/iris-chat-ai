@@ -1,5 +1,5 @@
-import { apiFetch } from "@/lib/api/client"
-import { CHAT_API_BASE, unwrapChatPayload } from "@/lib/api/chat"
+import { chatApiFetch } from "@/lib/api/chat-client"
+import { unwrapChatPayload } from "@/lib/api/chat"
 import type { CoPilotHistoryMessage } from "@/lib/api/types"
 import { serverMessageId } from "@/lib/chat-message-id"
 
@@ -53,7 +53,7 @@ export async function fetchCoPilotHistoryPage(input?: {
   params.set("offset", String(input?.offset ?? 0))
   if (input?.sessionId) params.set("session_id", input.sessionId)
 
-  const res = await apiFetch(`${CHAT_API_BASE}/history?${params}`, {
+  const res = await chatApiFetch(`/history?${params}`, {
     signal: input?.signal,
   })
   const body = await res.json().catch(() => ({}))

@@ -1,5 +1,4 @@
-import { apiFetch } from "@/lib/api/client"
-import { CHAT_API_BASE } from "@/lib/api/chat"
+import { chatApiFetch } from "@/lib/api/chat-client"
 import { parseServerMessageId } from "@/lib/chat-message-id"
 import type { ChatMessageFeedback } from "@/lib/chat-storage"
 
@@ -13,7 +12,7 @@ export async function submitChatMessageFeedback(input: {
   const messageId = parseServerMessageId(input.messageId)
   if (!messageId) return false
 
-  const res = await apiFetch(`${CHAT_API_BASE}/feedback`, {
+  const res = await chatApiFetch("/feedback", {
     method: "POST",
     body: JSON.stringify({
       session_id: input.sessionId,

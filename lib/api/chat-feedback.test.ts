@@ -24,6 +24,8 @@ describe("submitChatMessageFeedback", () => {
   })
 
   it("posts feedback for server-backed message ids", async () => {
+    vi.stubEnv("NEXT_PUBLIC_CHAT_API_ORIGIN", "https://chat.example")
+
     const fetchMock = vi.fn().mockResolvedValue({
       ok: true,
       status: 200,
@@ -39,7 +41,7 @@ describe("submitChatMessageFeedback", () => {
 
     expect(ok).toBe(true)
     expect(fetchMock).toHaveBeenCalledWith(
-      "/v1/chat/feedback",
+      "https://chat.example/v1/chat/feedback",
       expect.objectContaining({
         method: "POST",
         body: JSON.stringify({

@@ -1,7 +1,6 @@
 import { getStoredAccessToken } from "@/lib/api/auth"
-import { apiFetch } from "@/lib/api/client"
+import { chatApiFetch } from "@/lib/api/chat-client"
 import {
-  CHAT_API_BASE,
   adaptChatMessageResponse,
   creditsToUsageResponse,
   toChatApiEffort,
@@ -18,10 +17,7 @@ import type {
   TrialInfo,
 } from "@/lib/api/types"
 import { isGuestChatSession } from "@/lib/chat-auth-session"
-import {
-  ensureGuestSession,
-  getStoredGuestToken,
-} from "@/lib/guest-chat"
+import { ensureGuestSession } from "@/lib/guest-chat"
 
 /** Abort chat POSTs that hang without a response body. */
 export const CHAT_REQUEST_TIMEOUT_MS = 90_000
@@ -70,40 +66,6 @@ function chatErrorPayload(raw: unknown) {
     code: payload.code ?? (raw as { code?: string }).code,
     trial: payload.trial ?? (raw as { trial?: TrialInfo }).trial,
   }
-}
-
-async function guestChatFetch(path: string, init: RequestInit = {}) {
-  let token = getStoredGuestToken()
-  if (!token) {
-    const session = await ensureGuestSession()
-    token = session.guest_token
-  }
-
-  const doFetch = (guestToken: string) =>
-    fetch(`${CHAT_API_BASE}${path}`, {
-      ...init,
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-        ...(init.headers as Record<string, string> | undefined),
-        Authorization: `Bearer ${guestToken}`,
-      },
-    })
-
-  let res = await doFetch(token)
-  if (res.status === 401) {
-    const session = await ensureGuestSession()
-    res = await doFetch(session.guest_token)
-  }
-  return res
-}
-
-async function chatApiFetch(path: string, init: RequestInit = {}) {
-  const accessToken = getStoredAccessToken()
-  if (!isGuestChatSession() && accessToken) {
-    return apiFetch(`${CHAT_API_BASE}${path}`, init)
-  }
-  return guestChatFetch(path, init)
 }
 
 export async function fetchCoPilotUsage() {
