@@ -127,7 +127,7 @@ function ChatMobileHeader({
   return (
     <header
       className={cn(
-        "flex shrink-0 items-center justify-between gap-2 bg-transparent px-3 pb-2 pt-[max(0.375rem,var(--app-safe-top,0px))]",
+        "app-mobile-safe-header flex shrink-0 items-center justify-between gap-2 bg-transparent px-3 pb-2",
         className
       )}
     >

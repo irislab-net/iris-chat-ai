@@ -395,7 +395,7 @@ function ChatHistorySidebar({
         )}
       >
         {isMobileDrawer ? (
-          <header className="flex shrink-0 items-center justify-between gap-3 px-4 pb-2 pt-[max(0.75rem,var(--app-safe-top,0px))]">
+          <header className="app-mobile-safe-header flex shrink-0 items-center justify-between gap-3 px-4 pb-2">
             <div className="flex min-w-0 items-center gap-2">
               <IrisLabLogo
                 decorative

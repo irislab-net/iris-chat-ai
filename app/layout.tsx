@@ -91,7 +91,7 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     title: SITE_SHORT_NAME,
-    statusBarStyle: "black-translucent",
+    statusBarStyle: "default",
   },
   other: {
     "mobile-web-app-capable": "yes",

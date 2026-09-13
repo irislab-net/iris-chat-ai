@@ -92,7 +92,7 @@ function ChatNewsPanelBody({
     <div className={cn("flex h-full min-h-0 flex-col", className)}>
       <header
         className={cn(
-          "flex shrink-0 items-start justify-between gap-3 px-4 py-3",
+          "app-mobile-safe-header flex shrink-0 items-start justify-between gap-3 px-4 pb-3",
           headerClassName
         )}
       >
@@ -179,6 +179,7 @@ function ChatNewsMobileSheet({ open, onOpenChange }: ChatNewsMobileSheetProps) {
       <SheetContent
         side="right"
         showCloseButton={false}
+        data-slot="sheet-content"
         className="gap-0 p-0 data-[side=right]:w-full data-[side=right]:max-w-none"
       >
         <SheetHeader className="sr-only">

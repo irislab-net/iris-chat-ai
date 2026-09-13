@@ -838,6 +838,10 @@
   }
 }
 
+.app-mobile-safe-header {
+  padding-top: max(0.5rem, var(--app-safe-top));
+}
+
 /* /app workspace — fill visible viewport; JS syncs --app-height on mobile browsers. */
 @utility h-app {
   height: var(--app-height);
@@ -899,6 +903,24 @@ html[data-app-shell="true"]::after {
 
 html.display-standalone[data-app-shell="true"] {
   background-color: var(--background);
+}
+
+/* Installed PWA: keep shell content below the iOS status bar / home indicator. */
+html.display-standalone[data-app-shell="true"] [data-slot="app-shell"] {
+  box-sizing: border-box;
+  padding-top: var(--app-safe-top);
+}
+
+html.display-standalone[data-app-shell="true"] .app-mobile-safe-header {
+  padding-top: 0;
+}
+
+html.display-standalone[data-app-shell="true"] [data-slot="website-toolbar"] {
+  min-height: 3rem;
+}
+
+html.display-standalone[data-app-shell="true"] [data-slot="sheet-content"] .app-mobile-safe-header {
+  padding-top: max(0.75rem, var(--app-safe-top));
 }
 
 /* RTL layout helpers — prefer logical properties in new UI. */

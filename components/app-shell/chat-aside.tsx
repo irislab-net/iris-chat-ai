@@ -1636,7 +1636,7 @@ function ChatAside({
       <header
         className={cn(
           "flex min-h-12 shrink-0 items-center gap-1 px-2 sm:gap-2 sm:px-3",
-          onClose && "pt-(--app-safe-top,0px)"
+          onClose && "app-mobile-safe-header"
         )}
       >
         <Link

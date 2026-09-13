@@ -161,7 +161,7 @@ function WebsiteToolbar({
     <header
       data-slot="website-toolbar"
       className={cn(
-        "flex min-h-(--mobile-toolbar-height,3rem) shrink-0 items-center gap-1.5 bg-background px-3 pt-(--app-safe-top,0px) sm:gap-2 sm:px-4 sm:pt-0",
+        "app-mobile-safe-header flex min-h-[var(--mobile-toolbar-height,3rem)] shrink-0 items-center gap-1.5 bg-background px-3 sm:min-h-12 sm:gap-2 sm:px-4 sm:pt-0",
         className
       )}
     >
