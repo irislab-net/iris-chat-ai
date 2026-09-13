@@ -17,6 +17,7 @@ import {
   chatMobileHeaderNewChatClass,
 } from "@/components/app-shell/chat-mobile-gemini-styles"
 import { ChatAccountMenu } from "@/components/app-shell/chat-account-menu"
+import { ChatThreadOptionsMenu } from "@/components/app-shell/chat-thread-toolbar"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -32,6 +33,16 @@ import {
 } from "@/lib/chat-effort"
 import { cn } from "@/lib/utils"
 
+type ChatMobileThreadMenuProps = {
+  title: string
+  pinned: boolean
+  disabled?: boolean
+  onShare: () => void | Promise<void>
+  onRename: (title: string) => void
+  onTogglePin: () => void
+  onDelete: () => void
+}
+
 type ChatMobileHeaderProps = {
   onOpenHistory?: () => void
   historyOpen?: boolean
@@ -41,6 +52,7 @@ type ChatMobileHeaderProps = {
   onNewChat: () => void
   onOpenNews: () => void
   sending?: boolean
+  threadMenu?: ChatMobileThreadMenuProps
   className?: string
 }
 
@@ -53,6 +65,7 @@ function ChatMobileHeader({
   onNewChat,
   onOpenNews,
   sending = false,
+  threadMenu,
   className,
 }: ChatMobileHeaderProps) {
   const t = useTranslations("workspace")
@@ -147,7 +160,14 @@ function ChatMobileHeader({
         >
           <SquarePenIcon />
         </Button>
-        <ChatAccountMenu onOpenNews={onOpenNews} variant="mobile" />
+        {threadMenu ? (
+          <ChatThreadOptionsMenu
+            {...threadMenu}
+            className={cn(chatMobileHeaderButtonClass, "border-0 shadow-none")}
+          />
+        ) : (
+          <ChatAccountMenu onOpenNews={onOpenNews} variant="mobile" />
+        )}
       </div>
     </header>
   )

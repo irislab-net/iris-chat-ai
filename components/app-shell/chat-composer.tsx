@@ -45,7 +45,12 @@ import { mergeRefs } from "@/lib/merge-refs"
 import {
   chatMobileComposerIconButtonClass,
   chatMobileComposerPillClass,
+  chatMobileComposerPillCompactClass,
+  chatMobileComposerPillExpandedClass,
   chatMobileComposerSendClass,
+  chatMobileComposerTextareaClass,
+  chatMobileComposerTextareaCompactClass,
+  chatMobileComposerTextareaExpandedClass,
   chatDesktopComposerBodyClass,
   chatDesktopComposerEffortButtonClass,
   chatDesktopComposerIconButtonClass,
@@ -122,7 +127,26 @@ function ChatComposer({
     ? findIrisMentionOption(effectiveActiveTool)
     : undefined
   const floatingToolActive = isFloating && Boolean(effectiveActiveTool)
+  const [floatingPastSingleLine, setFloatingPastSingleLine] =
+    React.useState(false)
+  const floatingComposerExpanded =
+    floatingToolActive || floatingPastSingleLine
   const canSend = !disabled && composerValue.trim().length > 0
+
+  const syncFloatingComposerLayout = React.useCallback(() => {
+    if (!isFloating) return
+    const el = localRef.current
+    if (!el) return
+    const style = window.getComputedStyle(el)
+    const lineHeight = Number.parseFloat(style.lineHeight) || 24
+    const paddingY =
+      Number.parseFloat(style.paddingTop) +
+      Number.parseFloat(style.paddingBottom)
+    setFloatingPastSingleLine(
+      el.scrollHeight > lineHeight + paddingY + 1 ||
+        composerValue.includes("\n")
+    )
+  }, [composerValue, isFloating])
   const textareaNodeRef = React.useMemo(
     () => mergeRefs(localRef, textareaRef),
     [textareaRef]
@@ -140,6 +164,15 @@ function ChatComposer({
   )
 
   const mentionOpen = Boolean(mentionPalette && mentionOptions.length > 0)
+
+  React.useEffect(() => {
+    if (!isFloating) return
+    const el = localRef.current
+    if (!el || typeof ResizeObserver === "undefined") return
+    const observer = new ResizeObserver(() => syncFloatingComposerLayout())
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [isFloating, syncFloatingComposerLayout])
 
   React.useEffect(() => {
     if (!deferMobileKeyboard) return
@@ -404,11 +437,22 @@ function ChatComposer({
 
       <div
         data-composer-body=""
-        data-composer-expanded={floatingToolActive ? "" : undefined}
+        data-composer-expanded={
+          floatingComposerExpanded ? "" : undefined
+        }
+        data-composer-multiline={
+          floatingPastSingleLine ? "" : undefined
+        }
         className={cn(
           "cursor-text transition-[background-color,box-shadow,border-color]",
           isFloating
-            ? cn(chatMobileComposerPillClass, "flex flex-col items-stretch gap-0.5")
+            ? cn(
+                chatMobileComposerPillClass,
+                "flex flex-col items-stretch gap-0.5",
+                floatingComposerExpanded
+                  ? chatMobileComposerPillExpandedClass
+                  : chatMobileComposerPillCompactClass
+              )
             : chatDesktopComposerBodyClass
         )}
         onClick={focusField}
@@ -424,6 +468,7 @@ function ChatComposer({
                 syncMentionIndex(next, start)
                 setValue(next)
                 setCursor(start)
+                requestAnimationFrame(syncFloatingComposerLayout)
               }}
               onKeyDown={onKeyDown}
               onKeyUp={syncCursor}
@@ -448,12 +493,18 @@ function ChatComposer({
                   return
                 }
                 onFloatingFocusChange?.(true)
+                syncFloatingComposerLayout()
               }}
               onBlur={() => {
                 onFloatingFocusChange?.(false)
               }}
               dir={textDir}
-              className="chat-bidi min-h-12 w-full min-w-0 max-h-40 flex-1 field-sizing-content resize-none rounded-none border-0 bg-transparent px-2.5 py-2.5 text-[16px] leading-6 break-words text-foreground shadow-none placeholder:text-muted-foreground focus-visible:border-transparent focus-visible:ring-0 dark:bg-transparent"
+              className={cn(
+                chatMobileComposerTextareaClass,
+                floatingComposerExpanded
+                  ? chatMobileComposerTextareaExpandedClass
+                  : chatMobileComposerTextareaCompactClass
+              )}
             />
             <div className="flex min-w-0 items-center gap-0.5 px-0.5 pb-0.5">
               <DropdownMenu modal={false}>

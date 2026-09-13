@@ -1437,7 +1437,10 @@ function ChatAside({
   const showThreadToolbarInHeader =
     showThread && threadHasUserMessages && showMainColumnHeader
   const showStandaloneThreadToolbar =
-    showThread && threadHasUserMessages && !showMainColumnHeader
+    showThread &&
+    threadHasUserMessages &&
+    !showMainColumnHeader &&
+    !isMobileOverlay
   const threadTitle =
     activeConversation?.title ??
     conversationTitleFromMessages(messages)
@@ -1591,6 +1594,20 @@ function ChatAside({
           onNewChat={startNewChat}
           onOpenNews={openNewsFromChat}
           sending={sending}
+          threadMenu={
+            showThread && threadHasUserMessages
+              ? {
+                  title: threadTitle,
+                  pinned: Boolean(activeConversation?.pinned),
+                  disabled: sending,
+                  onShare: shareCurrentConversation,
+                  onRename: (title) =>
+                    renameConversation(conversationId, title),
+                  onTogglePin: () => toggleConversationPin(conversationId),
+                  onDelete: deleteCurrentConversation,
+                }
+              : undefined
+          }
         />
       ) : null}
       {showMobileHistoryOverlay ? (

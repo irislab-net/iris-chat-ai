@@ -231,11 +231,6 @@ function AppShellInner({
     workspaceTab,
     mobileIrisTab: isDesktop === false && resolvedChatOpen,
   })
-  const mobileShellClearance =
-    isDesktop === false && showMobileChat
-      ? "calc(0.5rem + env(safe-area-inset-bottom, 0px))"
-      : null
-
   const deskChatBooting = onDesk && isDesktop === null
 
   if (deskChatBooting) {
@@ -271,13 +266,6 @@ function AppShellInner({
           </>
         )}
       </div>
-      {mobileShellClearance ? (
-        <div
-          aria-hidden
-          className="shrink-0 lg:hidden"
-          style={{ height: mobileShellClearance }}
-        />
-      ) : null}
     </div>
   )
 

@@ -80,7 +80,22 @@ const chatMobileComposerShellClass =
   "relative shrink-0 bg-transparent px-4 pt-1.5 pb-[max(1rem,env(safe-area-inset-bottom,0px))]"
 
 const chatMobileComposerPillClass =
-  `flex min-h-16 items-end gap-0.5 rounded-[26px] px-2.5 py-2.5 text-foreground transition-[box-shadow,background-color] duration-300 ease-out ${chatMobileComposerGlassClass} ${chatMobileComposerGlassFocusClass}`
+  `flex gap-0.5 rounded-[26px] px-2.5 py-2.5 text-foreground transition-[box-shadow,background-color,min-height] duration-200 ease-out ${chatMobileComposerGlassClass} ${chatMobileComposerGlassFocusClass}`
+
+/** Compact single-line shell (~80px) — Gemini simplified-input-area. */
+const chatMobileComposerPillCompactClass = "min-h-[5rem]"
+
+/** Grows with content once text wraps past one line. */
+const chatMobileComposerPillExpandedClass = "min-h-0"
+
+const chatMobileComposerTextareaClass =
+  "chat-bidi w-full min-w-0 flex-1 field-sizing-content resize-none rounded-none border-0 bg-transparent px-2.5 text-[16px] leading-6 break-words text-foreground shadow-none transition-[max-height,padding] duration-200 ease-out placeholder:text-muted-foreground focus-visible:border-transparent focus-visible:ring-0 dark:bg-transparent"
+
+const chatMobileComposerTextareaCompactClass =
+  "min-h-10 py-2 overflow-x-auto overflow-y-hidden"
+
+const chatMobileComposerTextareaExpandedClass =
+  "min-h-10 max-h-40 py-2.5 overflow-y-auto"
 
 /** Desktop/web composer — iOS liquid glass shell and controls. */
 const chatDesktopComposerGlassBorderClass =
@@ -223,6 +238,11 @@ export {
   chatMobileAssistantClass,
   chatMobileComposerIconButtonClass,
   chatMobileComposerPillClass,
+  chatMobileComposerPillCompactClass,
+  chatMobileComposerPillExpandedClass,
+  chatMobileComposerTextareaClass,
+  chatMobileComposerTextareaCompactClass,
+  chatMobileComposerTextareaExpandedClass,
   chatMobileComposerSendClass,
   chatDesktopComposerBodyClass,
   chatDesktopComposerEffortButtonClass,
