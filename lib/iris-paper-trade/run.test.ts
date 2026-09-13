@@ -122,7 +122,7 @@ describe("runIrisPaperTradeRequest propose → confirm", () => {
     expect(result.message).toContain("No paper trade is open yet")
   })
 
-  it("rejects when the API returns tool failure prose without a structured decision", async () => {
+  it("falls back to a deterministic setup when the API returns tool failure prose", async () => {
     const mark = 2484.3
     const packet = livePacket(mark)
     packet.insight = {
@@ -155,10 +155,11 @@ describe("runIrisPaperTradeRequest propose → confirm", () => {
       history: [],
     })
 
-    expect(result.status).toBe("rejected")
-    if (result.status !== "rejected") return
-    expect(result.reason).toBe("STRUCTURED_OUTPUT_INVALID")
-    expect(result.message).toContain("valid structured decision")
+    expect(result.status).toBe("proposed")
+    if (result.status !== "proposed") return
+    expect(result.ticket.side).toBe("SHORT")
+    expect(result.ticket.symbol).toBe("ETH")
+    expect(result.message).toContain("No paper trade is open yet")
   })
 
   it("opens the position only after confirmIrisPaperProposal", async () => {

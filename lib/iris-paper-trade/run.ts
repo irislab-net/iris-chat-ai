@@ -1,6 +1,7 @@
 import { parsePaperTicketFromAssistantText } from "@/lib/chat/parse-trade-setup"
 import type { CoPilotEffort, CoPilotHistoryMessage } from "@/lib/api/types"
 import { buildMarketContextPacket } from "@/lib/iris-paper-trade/build-context"
+import { synthesizePaperDecisionFromContext } from "@/lib/iris-paper-trade/fallback-decision"
 import { extractTradeSymbolFromMessage } from "@/lib/iris-paper-trade/extract-symbol"
 import {
   formatOpenedChatMessage,
@@ -158,6 +159,11 @@ export async function runIrisPaperTradeRequest(input: {
       ticket: proseTicket,
       message: assistantText,
     }
+  }
+
+  const fallbackDecision = synthesizePaperDecisionFromContext(built.packet)
+  if (fallbackDecision) {
+    return planDecision(fallbackDecision, built.packet, state)
   }
 
   const reason =
