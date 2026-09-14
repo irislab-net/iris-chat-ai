@@ -251,7 +251,7 @@ function ChatAsideSkeleton({
           className
         )}
         aria-busy="true"
-        aria-label="Loading IRIS AI"
+        aria-label="Loading Exur"
       >
         {showHistoryRail ? (
           <ChatHistoryRailSkeleton sidebarWidth={sidebarWidth} />
@@ -270,7 +270,7 @@ function ChatAsideSkeleton({
         className
       )}
       aria-busy="true"
-      aria-label="Loading IRIS AI"
+      aria-label="Loading Exur"
     >
       {mainColumn}
     </div>

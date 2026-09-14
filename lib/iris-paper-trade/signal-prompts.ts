@@ -9,7 +9,7 @@ export function buildActionSignalPrompt(asset: string): string {
   if (!trimmed) return ""
 
   if (hasPersianScript(trimmed)) {
-    return `درخواست میز معاملاتی برای ${trimmed}. از تمام شواهد IRIS استفاده کن: قیمت زنده، روند چند تایم‌فریم، نوسان، پیش‌بینی مدل‌ها (1m/1h/1d)، stance، bias و اخبار. همه را ترکیب کن — وقتی داده داری، به «کنار بمان» یا «صبر کن» پیش‌فرض نرو.
+    return `درخواست میز معاملاتی برای ${trimmed}. از تمام شواهد Exur استفاده کن: قیمت زنده، روند چند تایم‌فریم، نوسان، پیش‌بینی مدل‌ها (1m/1h/1d)، stance، bias و اخبار. همه را ترکیب کن — وقتی داده داری، به «کنار بمان» یا «صبر کن» پیش‌فرض نرو.
 
 وظیفه: بهترین ستاپ قابل اجرا را پیدا کن و یک paper trade با open_paper_trade پیشنهاد بده: جهت (LONG یا SHORT)، stop loss، take profit، leverage، نام ستاپ و thesis مبتنی بر شواهد.
 
@@ -21,7 +21,7 @@ export function buildActionSignalPrompt(asset: string): string {
 خروجی باید معامله مشخص و قابل اجرا باشد — نه فقط تحلیل منفی.`
   }
 
-  return `Trading desk request for ${trimmed}. Use ALL available IRIS evidence: live price, multi-timeframe trend, volatility, model predictions (1m/1h/1d), stance, bias, and news. Synthesize everything — do not default to "stand aside" or "wait" when data exists.
+  return `Trading desk request for ${trimmed}. Use ALL available Exur evidence: live price, multi-timeframe trend, volatility, model predictions (1m/1h/1d), stance, bias, and news. Synthesize everything — do not default to "stand aside" or "wait" when data exists.
 
 Your job: find the BEST actionable setup right now and propose ONE paper trade via open_paper_trade with direction (LONG or SHORT), stop loss, take profit, leverage, setup name, and thesis tied to the evidence.
 
@@ -63,6 +63,6 @@ export const IRIS_COMPOSER_QUICK_PROMPTS: IrisComposerQuickPrompt[] = [
   {
     id: "market-pulse",
     label: "Market pulse",
-    text: "What is IRIS stance, model bias, and the news pulse on BTC right now? Signal only if a setup is clear — otherwise analysis only.",
+    text: "What is Exur stance, model bias, and the news pulse on BTC right now? Signal only if a setup is clear — otherwise analysis only.",
   },
 ]

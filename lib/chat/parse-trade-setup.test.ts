@@ -1,8 +1,10 @@
 import { describe, expect, it } from "vitest"
 
 import {
+  isStructuredSignalSetupContent,
   parsePaperTicketFromAssistantText,
   parseTradeSetupFromText,
+  resolvePaperTicketForAssistantMessage,
 } from "@/lib/chat/parse-trade-setup"
 
 describe("parseTradeSetupFromText", () => {
@@ -58,6 +60,44 @@ describe("parseTradeSetupFromText", () => {
     expect(ticket?.side).toBe("SHORT")
     expect(ticket?.leverage).toBe(10)
     expect(ticket?.quantity).toBeGreaterThan(0)
+  })
+
+  it("flags explicit setup blocks but not casual SL/TP mentions", () => {
+    expect(
+      isStructuredSignalSetupContent(
+        "Exur setup — not a profit guarantee.\n\nETH SHORT\nSetup: fade\nEntry 2473\nSL 2487\nTP 2441"
+      )
+    ).toBe(true)
+    expect(
+      isStructuredSignalSetupContent(
+        "ETH SHORT Setup: Model short edge fade Entry 2,473.8 SL 2,487 TP 2,441.9 Leverage 5x"
+      )
+    ).toBe(true)
+    expect(
+      isStructuredSignalSetupContent(
+        "The SL at 2487 is tight. TP 2441.9 looks reasonable for this ETH short."
+      )
+    ).toBe(false)
+    expect(
+      resolvePaperTicketForAssistantMessage({
+        content: "SL 2487 and TP 2441.9 on ETH short look fine.",
+      })
+    ).toBeNull()
+  })
+
+  it("parses compact inline ETH SHORT setup prose", () => {
+    const setup = parseTradeSetupFromText(
+      "ETH SHORT Setup: Model short edge fade Entry 2,473.8 (market; fees and slippage apply if you open) SL 2,487 TP 2,441.9 Leverage 5x Size 37.8787 (risk ~$500.00 = 0.5% of demo equity)"
+    )
+
+    expect(setup).not.toBeNull()
+    expect(setup?.symbol).toBe("ETH")
+    expect(setup?.side).toBe("SHORT")
+    expect(setup?.setup).toBe("Model short edge fade")
+    expect(setup?.entryPrice).toBe(2473.8)
+    expect(setup?.stopLoss).toBe(2487)
+    expect(setup?.takeProfit).toBe(2441.9)
+    expect(setup?.leverage).toBe(5)
   })
 
   it("builds a paper ticket when margin allows", () => {

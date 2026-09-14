@@ -27,7 +27,6 @@ describe("sendCoPilotChatWithSessionRetry", () => {
   const fetchMock = vi.fn()
 
   beforeEach(() => {
-    vi.stubEnv("NEXT_PUBLIC_CHAT_API_ORIGIN", "https://chat.example")
     vi.stubGlobal("fetch", fetchMock)
     fetchMock.mockReset()
     vi.mocked(getStoredAccessToken).mockReturnValue("access-token")
@@ -65,9 +64,7 @@ describe("sendCoPilotChatWithSessionRetry", () => {
 
     expect(refreshAfterUpgrade).toHaveBeenCalledTimes(1)
     expect(fetchMock).toHaveBeenCalledTimes(2)
-    expect(fetchMock.mock.calls[0]?.[0]).toBe(
-      "https://chat.example/v1/chat/message"
-    )
+    expect(fetchMock.mock.calls[0]?.[0]).toBe("/v1/chat/message")
     expect(result.message).toBe("Hello")
   })
 })

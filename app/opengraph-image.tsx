@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og"
 
-export const alt = "IRIS Lab — AI Trading Signals & Crypto Market Co-Pilot"
+export const alt = "Exur — AI Trading Signals & Crypto Market Co-Pilot"
 export const size = { width: 1200, height: 630 }
 export const contentType = "image/png"
 
@@ -54,7 +54,7 @@ export default function OpenGraphImage() {
               letterSpacing: "-0.03em",
             }}
           >
-            IRIS Lab
+            Exur
           </div>
         </div>
 
@@ -78,7 +78,7 @@ export default function OpenGraphImage() {
               lineHeight: 1.35,
             }}
           >
-            Crypto market intelligence and IRIS guidance in one desk.
+            Crypto market intelligence and Exur guidance in one desk.
           </div>
         </div>
 

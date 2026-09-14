@@ -91,7 +91,7 @@ function DemoBudgetDialog({
             Demo budget
           </DialogTitle>
           <DialogDescription className="text-xs leading-relaxed">
-            Set your paper trading capital. IRIS sizes signals at{" "}
+            Set your paper trading capital. Exur sizes signals at{" "}
             {(PAPER_AI_RISK_FRACTION * 100).toFixed(1)}% of equity per trade.
           </DialogDescription>
         </DialogHeader>
@@ -114,7 +114,7 @@ function DemoBudgetDialog({
             />
             {previewRisk != null ? (
               <p className="text-[11px] text-muted-foreground">
-                Risk per IRIS signal: ~$
+                Risk per Exur signal: ~$
                 {previewRisk.toFixed(2)} USDC
               </p>
             ) : null}

@@ -50,9 +50,9 @@ type LoginConsentDialogProps = {
 
 const TITLE = "Before you connect"
 const DESCRIPTION =
-  "Review and accept IRIS Lab's legal terms to continue with Google."
+  "Review and accept Exur's legal terms to continue with Google."
 const DISCLAIMER =
-  "By continuing, you confirm that you are at least 18 years old, are not a U.S. Person or resident of a sanctioned jurisdiction, and acknowledge that IRIS Intel provides analytics for informational purposes only, not financial advice."
+  "By continuing, you confirm that you are at least 18 years old, are not a U.S. Person or resident of a sanctioned jurisdiction, and acknowledge that Exur Intel provides analytics for informational purposes only, not financial advice."
 
 function ConsentCheck({
   id,
@@ -120,12 +120,12 @@ function LoginConsentBrand({ compact = false }: { compact?: boolean }) {
       <IrisLabLogo
         decorative
         size={40}
-        className="size-10 shrink-0 rounded-xl"
+        className="size-10 shrink-0 rounded-full"
         priority
       />
       <div className="min-w-0">
         <p className="text-[15px] font-medium leading-none tracking-tight text-foreground">
-          IRIS Lab
+          Exur
         </p>
         <p className="mt-1 text-[13px] leading-snug text-muted-foreground">
           Secure sign-in with Google

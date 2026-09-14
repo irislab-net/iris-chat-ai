@@ -5,7 +5,7 @@ export const COPILOT_RECOVERY_MESSAGE =
   "Something went wrong while receiving the response."
 
 export const COPILOT_TIMEOUT_MESSAGE =
-  "IRIS took too long to respond. Check your connection and try again."
+  "Exur took too long to respond. Check your connection and try again."
 
 export const COPILOT_CREDIT_MESSAGE =
   "You've used this period's chat credits. Upgrade to continue."
@@ -14,7 +14,7 @@ export const COPILOT_PRO_SESSION_REFRESH_MESSAGE =
   "Your Plus plan is active, but this session needs a refresh. Try again."
 
 export const COPILOT_AUTH_MESSAGE =
-  "Sign in with Google to get answers from IRIS — you can explore prompts and typing first."
+  "Sign in with Google to get answers from Exur — you can explore prompts and typing first."
 
 export const COPILOT_TRIAL_EXHAUSTED_MESSAGE =
   "Your free messages this week are used up. Sign in to continue."
@@ -85,7 +85,7 @@ export function coPilotUserFacingError(
         ? COPILOT_PRO_SESSION_REFRESH_MESSAGE
         : COPILOT_CREDIT_MESSAGE
     }
-    if (msg === "IRIS returned an empty reply. Please try again.") {
+    if (msg === "Exur returned an empty reply. Please try again.") {
       return COPILOT_RECOVERY_MESSAGE
     }
     // Drop technical transport messages (HTTP 502, Failed to fetch, etc.)

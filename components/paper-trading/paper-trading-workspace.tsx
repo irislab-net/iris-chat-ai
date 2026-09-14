@@ -785,7 +785,7 @@ function PaperTradingWorkspace({
     () => [
       {
         id: "ghost",
-        label: "IRIS setup overlay",
+        label: "Exur setup overlay",
         available: ghostOverlayLines.length > 0,
         enabled: overlayEnabled.ghost,
         onToggle: () =>

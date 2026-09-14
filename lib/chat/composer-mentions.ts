@@ -91,6 +91,14 @@ export function summarizeSignalUserMessage(text: string): string {
   return trimmed
 }
 
+/** Re-expand a summarized signal label back into a desk prompt when needed. */
+export function expandSummarizedSignalUserMessage(text: string): string {
+  const trimmed = text.trim()
+  const summarized = trimmed.match(/^Signal · (.+)$/u)
+  if (summarized?.[1]) return buildSignalPrompt(summarized[1].trim())
+  return trimmed
+}
+
 export function expandComposerDraft(input: ComposerDraft): string {
   const body = input.text.trim()
   if (input.tool === "signal") {

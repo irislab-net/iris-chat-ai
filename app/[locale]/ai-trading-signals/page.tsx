@@ -58,9 +58,9 @@ function AiTradingSignalsPage() {
         intro={
           <>
             <LegalP>
-              IRIS Lab is an AI trading-signal tool for crypto. The public desk
+              Exur is an AI trading-signal tool for crypto. The public desk
               shows market pulse, model context, and news bullets for the candle
-              you select. Signed-in users can ask the IRIS co-pilot in plain
+              you select. Signed-in users can ask the Exur co-pilot in plain
               language. This is analysis support — not brokerage execution and
               not a promise of profit.
             </LegalP>
@@ -70,7 +70,7 @@ function AiTradingSignalsPage() {
       >
         <LegalSection id="signals-what" title="What the signals are">
           <LegalP>
-            IRIS organizes market information into a readable stance: headline
+            Exur organizes market information into a readable stance: headline
             pulse, how models sit relative to each other, payoff shape, and
             short news bullets with source context. That package is the trading
             signal — a structured read of the current candle, not a raw feed and

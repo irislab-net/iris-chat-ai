@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 
 export const metadata: Metadata = {
   title: "Signing in",
-  description: "Completing your IRIS Lab sign-in with Google.",
+  description: "Completing your Exur sign-in with Google.",
   robots: {
     index: false,
     follow: false,

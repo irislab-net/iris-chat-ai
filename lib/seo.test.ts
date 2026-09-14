@@ -66,7 +66,7 @@ describe("search / AI citation identity", () => {
       "@type": "ImageObject",
       width: ORGANIZATION_LOGO.width,
       height: ORGANIZATION_LOGO.height,
-      caption: "IRIS Lab",
+      caption: "Exur",
     })
     expect(String(org.logo.url)).toContain(ORGANIZATION_LOGO.path)
   })

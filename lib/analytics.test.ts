@@ -18,7 +18,7 @@ describe("analytics", () => {
       gtag,
       location: { href: "https://chat.irislab.info/" },
     })
-    vi.stubGlobal("document", { title: "IRIS Chat AI" })
+    vi.stubGlobal("document", { title: "Exur" })
   })
 
   afterEach(() => {

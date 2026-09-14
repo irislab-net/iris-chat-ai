@@ -1,22 +1,22 @@
-export const SITE_NAME = "IRIS Lab"
-export const SITE_SHORT_NAME = "IRIS"
+export const SITE_NAME = "Exur"
+export const SITE_SHORT_NAME = "Exur"
 export const SITE_URL =
   process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "") ??
   "https://intel.irislab.info"
 
-export const SITE_TITLE = "IRIS Lab — AI Trading Signals & Crypto Market Co-Pilot"
-export const SITE_TITLE_TEMPLATE = "%s · IRIS Lab"
+export const SITE_TITLE = "Exur — AI Trading Signals & Crypto Market Co-Pilot"
+export const SITE_TITLE_TEMPLATE = "%s · Exur"
 
 export const SITE_DESCRIPTION =
-  "IRIS Lab is an AI trading-signal and market-intelligence co-pilot for crypto. Read ETH pulse, model context, news analytics, and Trade Desk guidance — analysis tools, not guaranteed profits."
+  "Exur is an AI trading-signal and market-intelligence co-pilot for crypto. Read ETH pulse, model context, news analytics, and Trade Desk guidance — analysis tools, not guaranteed profits."
 
 export const AI_SIGNALS_PATH = "/ai-trading-signals"
 export const AI_SIGNALS_TITLE = "AI Trading Signals for Crypto"
 export const AI_SIGNALS_DESCRIPTION =
-  "IRIS Lab is an AI crypto trading-signal tool: public market pulse, model boards, news analytics, and an IRIS co-pilot. Decision support for traders — not a broker and not a promise of profit."
+  "Exur is an AI crypto trading-signal tool: public market pulse, model boards, news analytics, and an Exur co-pilot. Decision support for traders — not a broker and not a promise of profit."
 
 export const SITE_KEYWORDS = [
-  "IRIS Lab",
+  "Exur",
   "AI trading signals",
   "AI trading signal tool",
   "crypto trading signals",
@@ -34,14 +34,14 @@ export const SOCIAL_LINKS = {
 } as const
 
 /** Default brand mark for sitemap / metadata (light theme SVG). */
-export const IRIS_LAB_LOGO_MARK = "/iris-lab-logo-light.svg"
+export const Exur_LAB_LOGO_MARK = "/iris-lab-logo-light.svg"
 
 /** Square mark for Google Search / Knowledge Panel (min 112×112). */
 export const ORGANIZATION_LOGO = {
   path: "/organization-logo.png",
   width: 512,
   height: 512,
-  caption: "IRIS Lab",
+  caption: "Exur",
 } as const
 
 /** Live-retrieval and training crawlers that should see public pages. */
@@ -64,35 +64,35 @@ export const PRODUCT_FEATURE_LIST = [
   "AI trading signals and market pulse for crypto",
   "ETH insight and model-board context",
   "Crypto news analytics (distilled headlines, not a raw wire)",
-  "IRIS AI co-pilot chat for signed-in users",
+  "Exur co-pilot chat for signed-in users",
   "Paper-trading practice desk",
 ] as const
 
 export const AI_SIGNALS_FAQS = [
   {
-    question: "What is IRIS Lab?",
+    question: "What is Exur?",
     answer:
-      "IRIS Lab is an AI market-intelligence desk and trading-signal co-pilot for cryptocurrency. The public homepage shows market pulse, model context, and news bullets. Signed-in users can talk to the IRIS co-pilot in plain language.",
+      "Exur is an AI market-intelligence desk and trading-signal co-pilot for cryptocurrency. The public homepage shows market pulse, model context, and news bullets. Signed-in users can talk to the Exur co-pilot in plain language.",
   },
   {
-    question: "Is IRIS Lab an AI trading signal tool?",
+    question: "Is Exur an AI trading signal tool?",
     answer:
-      "Yes. IRIS Lab is an AI trading-signal tool for crypto: it organizes stance, model context, and Trade Desk guidance for the candle you are looking at. It is decision support for analysis, not a substitute for your own judgment.",
+      "Yes. Exur is an AI trading-signal tool for crypto: it organizes stance, model context, and Trade Desk guidance for the candle you are looking at. It is decision support for analysis, not a substitute for your own judgment.",
   },
   {
-    question: "Does IRIS Lab execute live trades?",
+    question: "Does Exur execute live trades?",
     answer:
       "No. This site does not execute brokerage orders. Paper trading is a practice desk. Turn-by-turn Trade Desk guidance is product direction, not live order execution here.",
   },
   {
-    question: "Is IRIS Lab free to use?",
+    question: "Is Exur free to use?",
     answer:
       "The public market-intelligence homepage is available without an account. Co-pilot chat and member tools require connecting an account.",
   },
   {
-    question: "Does IRIS Lab guarantee trading profits?",
+    question: "Does Exur guarantee trading profits?",
     answer:
-      "No. Insights and co-pilot replies are tools for analysis. Nothing on IRIS Lab promises profit, risk-free trades, or guaranteed accuracy.",
+      "No. Insights and co-pilot replies are tools for analysis. Nothing on Exur promises profit, risk-free trades, or guaranteed accuracy.",
   },
 ] as const
 
@@ -109,13 +109,13 @@ export const INDEXABLE_ROUTES = [
     path: "/",
     changeFrequency: "hourly" as const,
     priority: 1,
-    images: [ORGANIZATION_LOGO.path, IRIS_LAB_LOGO_MARK] as const,
+    images: [ORGANIZATION_LOGO.path, Exur_LAB_LOGO_MARK] as const,
   },
   {
     path: "/home",
     changeFrequency: "weekly" as const,
     priority: 0.95,
-    images: ["/home-bg-header.webp", IRIS_LAB_LOGO_MARK, "/opengraph-image"] as const,
+    images: ["/home-bg-header.webp", Exur_LAB_LOGO_MARK, "/opengraph-image"] as const,
   },
   {
     path: "/about",
@@ -186,7 +186,7 @@ export function organizationJsonLd() {
     "@context": "https://schema.org",
     "@type": "Organization",
     name: SITE_NAME,
-    alternateName: ["IRIS", "IRIS Intel", "IRIS Lab AI"],
+    alternateName: ["Exur", "Exur", "Exur AI"],
     url: SITE_URL,
     logo,
     image: logo,
@@ -206,7 +206,7 @@ export function websiteJsonLd() {
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: SITE_NAME,
-    alternateName: ["IRIS", "intel.irislab.info"],
+    alternateName: ["Exur", "intel.irislab.info"],
     url: SITE_URL,
     description: SITE_DESCRIPTION,
     publisher: {
@@ -270,7 +270,7 @@ export function llmsTxt() {
     "",
     `> ${SITE_DESCRIPTION}`,
     "",
-    `${SITE_NAME} (also called IRIS or IRIS Intel) is an AI trading-signal and crypto market-intelligence co-pilot at ${SITE_URL}.`,
+    `${SITE_NAME} (also called Exur or Exur) is an AI trading-signal and crypto market-intelligence co-pilot at ${SITE_URL}.`,
     "",
     "## Pages",
     "",

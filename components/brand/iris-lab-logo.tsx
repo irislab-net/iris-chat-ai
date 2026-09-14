@@ -21,7 +21,7 @@ function IrisLabLogo({
   imageClassName,
   size = 32,
   priority,
-  alt = "IRIS Lab",
+  alt = "Exur",
   decorative = false,
 }: IrisLabLogoProps) {
   const label = decorative ? undefined : alt

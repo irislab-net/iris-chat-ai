@@ -37,11 +37,11 @@ export function formatProposedChatMessage(input: {
       : `Size ${input.quantity} (risk-based)`
 
   return [
-    `IRIS setup — not a profit guarantee. No paper trade is open yet.`,
+    `Exur setup — not a profit guarantee. No paper trade is open yet.`,
     ``,
     `${input.symbol} ${input.side}`,
     `Setup: ${input.setup}`,
-    `Entry ${formatPaperPrice(input.entryPrice)} (market; fees and slippage apply if you open)`,
+    `Entry ${formatPaperPrice(input.entryPrice)}`,
     `SL ${formatPaperPrice(input.stopLoss)}`,
     `TP ${formatPaperPrice(input.takeProfit)}`,
     `Leverage ${input.leverage}x`,
@@ -67,7 +67,7 @@ export function formatOpenedChatMessage(input: {
   const tp =
     input.takeProfit != null ? formatPaperPrice(input.takeProfit) : "—"
   return [
-    `Paper trade opened from an IRIS setup (not a profit guarantee).`,
+    `Paper trade opened from an Exur setup (not a profit guarantee).`,
     ``,
     `${input.symbol} ${input.side}`,
     `Setup: ${input.setup}`,
@@ -78,8 +78,6 @@ export function formatOpenedChatMessage(input: {
     `Size ${input.quantity} (risk-based)`,
     ``,
     input.thesis,
-    ``,
-    `View Paper Trade`,
   ].join("\n")
 }
 

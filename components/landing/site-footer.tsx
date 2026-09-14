@@ -143,7 +143,7 @@ export async function SiteFooter() {
               aria-label={SITE_NAME}
               className="inline-flex w-fit items-center gap-3 transition-opacity hover:opacity-80"
             >
-              <IrisLabLogo decorative size={40} className="size-10 rounded-lg" />
+              <IrisLabLogo decorative size={40} className="size-10 rounded-full" />
               <span className="text-base font-semibold tracking-tight text-foreground">
                 {SITE_NAME}
               </span>
@@ -163,7 +163,7 @@ export async function SiteFooter() {
                     channel="x"
                     target="_blank"
                     rel="noopener noreferrer"
-                    aria-label="IRIS Lab on X"
+                    aria-label="Exur on X"
                   />
                 }
               >
@@ -177,7 +177,7 @@ export async function SiteFooter() {
                 render={
                   <a
                     href="mailto:support@irislab.info"
-                    aria-label="Email IRIS Lab support"
+                    aria-label="Email Exur support"
                   />
                 }
               >

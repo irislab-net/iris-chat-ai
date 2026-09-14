@@ -4,7 +4,7 @@ import { AUTH_SUCCESS_ROBOTS } from "@/lib/site"
 
 export const metadata: Metadata = {
   title: "Connecting…",
-  description: "Completing IRIS Lab sign-in.",
+  description: "Completing Exur sign-in.",
   robots: AUTH_SUCCESS_ROBOTS,
 }
 

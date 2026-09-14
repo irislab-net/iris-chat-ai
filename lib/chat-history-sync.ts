@@ -6,6 +6,8 @@ import {
   sortHistoryItemsAsc,
   type ConversationHistoryItem,
 } from "@/lib/api/chat-history"
+import { summarizeSignalUserMessage } from "@/lib/chat/composer-mentions"
+import { isStructuredSignalSetupContent } from "@/lib/chat/parse-trade-setup"
 import { parseServerMessageId, serverMessageId } from "@/lib/chat-message-id"
 import {
   conversationTitleFromMessages,
@@ -19,7 +21,32 @@ import {
 } from "@/lib/chat-storage"
 
 function messageMatchKey(message: Pick<ChatUiMessage, "role" | "content">) {
-  return `${message.role}:${message.content.trim()}`
+  const content =
+    message.role === "user"
+      ? summarizeSignalUserMessage(message.content)
+      : message.content.trim()
+  return `${message.role}:${content}`
+}
+
+function overlayLocalFields(
+  serverMessage: ChatUiMessage,
+  local?: ChatUiMessage
+): ChatUiMessage {
+  if (!local) return serverMessage
+
+  const preferLocalContent =
+    Boolean(local.paperTicket) &&
+    Boolean(local.content.trim()) &&
+    (!isStructuredSignalSetupContent(serverMessage.content) ||
+      isStructuredSignalSetupContent(local.content))
+
+  return {
+    ...serverMessage,
+    content: preferLocalContent ? local.content : serverMessage.content,
+    feedback: local.feedback ?? serverMessage.feedback,
+    suggestedPrompts: local.suggestedPrompts ?? serverMessage.suggestedPrompts,
+    paperTicket: local.paperTicket ?? serverMessage.paperTicket,
+  }
 }
 
 function overlayLocalMessageFields(
@@ -28,6 +55,9 @@ function overlayLocalMessageFields(
 ): ChatUiMessage[] {
   const localByServerId = new Map<number, ChatUiMessage>()
   const localByKey = new Map<string, ChatUiMessage>()
+  const localAssistants = localMessages.filter(
+    (message) => message.role === "assistant" && message.content.trim()
+  )
 
   for (const message of localMessages) {
     const serverId = parseServerMessageId(message.id)
@@ -37,26 +67,37 @@ function overlayLocalMessageFields(
     }
   }
 
+  let assistantOrdinal = 0
+
   const merged = serverMessages.map((message) => {
     const serverId = parseServerMessageId(message.id)
-    const local =
+    let local =
       (serverId ? localByServerId.get(serverId) : undefined) ??
       localByKey.get(messageMatchKey(message))
-    if (!local) return message
 
-    return {
-      ...message,
-      feedback: local.feedback,
-      suggestedPrompts: local.suggestedPrompts,
-      paperTicket: local.paperTicket,
+    if (!local && message.role === "assistant") {
+      const candidate = localAssistants[assistantOrdinal]
+      if (
+        candidate &&
+        (candidate.paperTicket ||
+          candidate.feedback ||
+          Boolean(candidate.suggestedPrompts?.length))
+      ) {
+        local = candidate
+      }
     }
+
+    if (message.role === "assistant") {
+      assistantOrdinal += 1
+    }
+
+    return overlayLocalFields(message, local)
   })
 
   const serverKeys = new Set(serverMessages.map(messageMatchKey))
   for (const message of localMessages) {
     const isUiOnly =
       message.error ||
-      message.paperTicket ||
       message.action === "retry" ||
       message.action === "connect" ||
       Boolean(message.suggestedPrompts?.length)
@@ -151,7 +192,17 @@ export function remapMessagesWithServerHistory(
     const remote = sorted[index]
     if (!remote) break
     if (local.role !== remote.role) continue
-    if (local.content.trim() !== remote.content.trim()) continue
+
+    const localContent =
+      local.role === "user"
+        ? summarizeSignalUserMessage(local.content.trim())
+        : local.content.trim()
+    const remoteContent =
+      remote.role === "user"
+        ? summarizeSignalUserMessage(remote.content.trim())
+        : remote.content.trim()
+
+    if (localContent !== remoteContent) continue
     idMap.set(local.id, serverMessageId(remote.id))
   }
 

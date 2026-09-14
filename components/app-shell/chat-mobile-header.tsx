@@ -1,20 +1,17 @@
 "use client"
 
 import * as React from "react"
-import {
-  CheckIcon,
-  ChevronDownIcon,
-  SquarePenIcon,
-} from "lucide-react"
+import { CheckIcon, ChevronDownIcon } from "lucide-react"
 import { useTranslations } from "next-intl"
 
 import { ChatGeminiMenuIcon } from "@/components/app-shell/chat-gemini-menu-icon"
+import { ChatGeminiNewChatIcon } from "@/components/app-shell/chat-gemini-new-chat-icon"
 
 import { chatContextMenuContentClass } from "@/components/app-shell/chat-context-menu-styles"
 import {
   chatMobileHeaderButtonClass,
   chatMobileHeaderModelClass,
-  chatMobileHeaderNewChatClass,
+  chatMobileHeaderScrimClass,
 } from "@/components/app-shell/chat-mobile-gemini-styles"
 import { ChatAccountMenu } from "@/components/app-shell/chat-account-menu"
 import { ChatThreadOptionsMenu } from "@/components/app-shell/chat-thread-toolbar"
@@ -125,51 +122,54 @@ function ChatMobileHeader({
     ) : null
 
   return (
-    <header
-      className={cn(
-        "app-mobile-safe-header flex shrink-0 items-center justify-between gap-2 bg-transparent px-3 pb-2",
-        className
-      )}
-    >
-      <div className="flex min-w-0 items-center justify-start gap-3">
-        {onOpenHistory ? (
+    <div className="relative shrink-0">
+      <div aria-hidden className={chatMobileHeaderScrimClass} />
+      <header
+        className={cn(
+          "app-mobile-safe-header relative z-[1] flex items-center justify-between gap-2 bg-transparent px-6 pb-2",
+          className
+        )}
+      >
+        <div className="flex min-w-0 items-center justify-start gap-3">
+          {onOpenHistory ? (
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className={chatMobileHeaderButtonClass}
+              aria-label={t("chatHistory")}
+              aria-pressed={historyOpen}
+              onClick={onOpenHistory}
+            >
+              <ChatGeminiMenuIcon />
+            </Button>
+          ) : null}
+          {effortControl}
+        </div>
+
+        <div className="flex shrink-0 items-center justify-end gap-2">
           <Button
             type="button"
             variant="ghost"
             size="icon"
             className={chatMobileHeaderButtonClass}
-            aria-label={t("chatHistory")}
-            aria-pressed={historyOpen}
-            onClick={onOpenHistory}
+            aria-label={t("newChat")}
+            disabled={sending}
+            onClick={onNewChat}
           >
-            <ChatGeminiMenuIcon />
+            <ChatGeminiNewChatIcon />
           </Button>
-        ) : null}
-        {effortControl}
-      </div>
-
-      <div className="flex shrink-0 items-center justify-end gap-2">
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          className={chatMobileHeaderNewChatClass}
-          aria-label={t("newChat")}
-          disabled={sending}
-          onClick={onNewChat}
-        >
-          <SquarePenIcon />
-        </Button>
-        {threadMenu ? (
-          <ChatThreadOptionsMenu
-            {...threadMenu}
-            className={cn(chatMobileHeaderButtonClass, "border-0 shadow-none")}
-          />
-        ) : (
-          <ChatAccountMenu onOpenNews={onOpenNews} variant="mobile" />
-        )}
-      </div>
-    </header>
+          {threadMenu ? (
+            <ChatThreadOptionsMenu
+              {...threadMenu}
+              className={cn(chatMobileHeaderButtonClass, "border-0 shadow-none")}
+            />
+          ) : (
+            <ChatAccountMenu onOpenNews={onOpenNews} variant="mobile" />
+          )}
+        </div>
+      </header>
+    </div>
   )
 
 }

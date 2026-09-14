@@ -1,4 +1,4 @@
-import { chatApiUrl, unwrapChatPayload } from "@/lib/api/chat"
+import { chatApiPath, unwrapChatPayload } from "@/lib/api/chat"
 import type { TrialInfo } from "@/lib/api/types"
 
 export const STORAGE_GUEST_TOKEN = "iris_guest_token"
@@ -61,9 +61,9 @@ export function formatGuestTrialLabel(trial: TrialInfo): string {
 
 export async function ensureGuestSession(): Promise<GuestSessionResponse> {
   const existing = getStoredGuestToken()
-  const res = await fetch(chatApiUrl("/guest/session"), {
+  const res = await fetch(chatApiPath("/guest/session"), {
     method: "POST",
-    credentials: "omit",
+    credentials: "include",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(existing ? { guest_token: existing } : {}),
   })
@@ -94,9 +94,9 @@ export async function mergeGuestAccount(
   const guestUserId = getStoredGuestUserId()
   if (!guestToken || !guestUserId) return null
 
-  const res = await fetch(chatApiUrl("/account/merge"), {
+  const res = await fetch(chatApiPath("/account/merge"), {
     method: "POST",
-    credentials: "omit",
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${userJWT}`,

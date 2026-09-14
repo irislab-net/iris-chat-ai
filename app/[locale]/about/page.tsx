@@ -75,12 +75,12 @@ function AboutPage() {
                 {SITE_NAME}
               </p>
               <h1 className="text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
-                What is IRIS Lab?
+                What is Exur?
               </h1>
               <p className="mt-4 text-base leading-relaxed text-muted-foreground">
-                IRIS Lab is a market-intel desk: public insight for the current
+                Exur is a market-intel desk: public insight for the current
                 candle, model context, news bullets (distilled headlines and
-                summaries — not a raw wire), and an IRIS co-pilot you can talk
+                summaries — not a raw wire), and an Exur co-pilot you can talk
                 to in plain language when you connect an account.
               </p>
             </div>
@@ -92,13 +92,13 @@ function AboutPage() {
             id="about-what"
             className="text-lg font-semibold tracking-tight text-foreground"
           >
-            What IRIS Lab is
+            What Exur is
           </h2>
           <p className="text-sm leading-relaxed text-muted-foreground">
             We&apos;re building a tool away from marketing theater — no slides,
             no empty promises, just the product. The homepage is the desk: pulse
             stance, model board, payoff geometry, and news bullets in one place,
-            with IRIS AI available as a co-pilot for signed-in users.
+            with Exur available as a co-pilot for signed-in users.
           </p>
         </section>
 
@@ -130,10 +130,10 @@ function AboutPage() {
             id="about-helps"
             className="text-lg font-semibold tracking-tight text-foreground"
           >
-            How IRIS helps
+            How Exur helps
           </h2>
           <p className="text-sm leading-relaxed text-muted-foreground">
-            IRIS organizes market information for the candle you&apos;re looking
+            Exur organizes market information for the candle you&apos;re looking
             at: headline stance, how models sit relative to each other, payoff
             shape, and news bullets — short distilled stories with source
             context, not a raw news feed. The co-pilot is there to answer
@@ -169,7 +169,7 @@ function AboutPage() {
             Markets change. Timestamps describe when available content was
             generated or published. Insights and co-pilot replies are tools for
             analysis and decision-making — not guaranteed outcomes. Nothing on
-            IRIS Lab promises profit, risk-free trades, or guaranteed accuracy.
+            Exur promises profit, risk-free trades, or guaranteed accuracy.
           </p>
         </section>
 

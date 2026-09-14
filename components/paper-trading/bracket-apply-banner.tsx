@@ -34,7 +34,7 @@ function BracketApplyBanner({
         <SparklesIcon className="mt-0.5 size-4 shrink-0 text-primary" />
         <div className="min-w-0">
           <p className="truncate text-xs font-medium">
-            IRIS suggests bracket update · {pending.symbol}
+            Exur suggests bracket update · {pending.symbol}
           </p>
           <p className="text-[11px] text-muted-foreground">
             {pending.stopLoss != null

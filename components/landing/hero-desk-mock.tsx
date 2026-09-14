@@ -34,11 +34,11 @@ import { cn } from "@/lib/utils"
  * long and a short.
  *
  * Desktop (lg+):
- * 1. Watch IRIS signal on chart → click marker → IRIS chat → bracket plan
- * 2. IRIS fills ticket → place order → price resolves to TP → toast
+ * 1. Watch Exur signal on chart → click marker → Exur chat → bracket plan
+ * 2. Exur fills ticket → place order → price resolves to TP → toast
  *
  * Phone (< sm):
- * 1. Chart tab with signal → Trade tab → full-screen IRIS chat
+ * 1. Chart tab with signal → Trade tab → full-screen Exur chat
  * 2. User types → plan streams → chat closes → form fills → order sends
  * 3. Chart tab with live PnL → Book tab flash → toast → repeat
  */
@@ -154,7 +154,7 @@ const CANDLE_LEFT = 22
 const CANDLE_STEP = 5.7
 const CANDLE_TOP = 24
 const CANDLE_BOTTOM = 150
-/** Series drifts back toward the IRIS entry level so the signal stays framed. */
+/** Series drifts back toward the Exur entry level so the signal stays framed. */
 const CANDLE_ANCHOR = 78
 
 type Candle = { o: number; c: number; h: number; l: number; vol: number }
@@ -291,7 +291,7 @@ const CandleTape = React.memo(function CandleTape({
 const ENTRY_PRICE = 3400
 const POSITION_SIZE = 0.42
 const LEVERAGE = 10
-/** Where the ticket's size slider lands once IRIS sets the size. */
+/** Where the ticket's size slider lands once Exur sets the size. */
 const SIZE_PCT = 42
 
 const TRADES = {
@@ -316,7 +316,7 @@ function tradeLevels(side: Side) {
     dash: string
   }[] = [
     { key: "tp", label: "TP", price: TRADES[side].tp, dash: "3 2" },
-    { key: "entry", label: "IRIS Entry", price: ENTRY_PRICE, dash: "4 2.5" },
+    { key: "entry", label: "Exur Entry", price: ENTRY_PRICE, dash: "4 2.5" },
     { key: "sl", label: "SL", price: TRADES[side].sl, dash: "3 2" },
   ]
   return rows
@@ -343,7 +343,7 @@ const STOP_PROGRESS =
 const userPrompt = (side: Side) =>
   `Take the ETH ${side} from the signal?`
 
-/** Ticket rows, revealed one at a time as IRIS fills the form. */
+/** Ticket rows, revealed one at a time as Exur fills the form. */
 function planRows(side: Side) {
   return [
     { label: "Side", value: TRADES[side].label },
@@ -404,7 +404,7 @@ const BOOK_BIDS = [
 
 /**
  * Hyperliquid-style ticket input: muted box, label on the left, value and
- * unit on the right. Stays blank until IRIS writes the plan into it.
+ * unit on the right. Stays blank until Exur writes the plan into it.
  */
 function TicketField({
   label,
@@ -808,7 +808,7 @@ function IrisCoPilotHeader({ className }: { className?: string }) {
         <span className="relative text-[9px] font-black tracking-tight">IR</span>
       </span>
       <div className="min-w-0">
-        <p className="text-[11px] font-semibold tracking-tight">IRIS AI</p>
+        <p className="text-[11px] font-semibold tracking-tight">Exur AI</p>
         <p className="text-[10px] text-muted-foreground">Desk co-pilot</p>
       </div>
     </div>
@@ -888,7 +888,7 @@ function IrisChatComposer({
               <SparklesIcon className="size-2.5" />
             </span>
             <span className="truncate text-foreground/80">
-              Ask IRIS for a trade plan...
+              Ask Exur for a trade plan...
             </span>
           </span>
           <Button
@@ -1025,17 +1025,17 @@ function MobileHeroNav({
 
   const label = chatOpen
     ? phase === "typing"
-      ? "Type your question to IRIS"
-      : "IRIS co-pilot"
+      ? "Type your question to Exur"
+      : "Exur co-pilot"
     : pane === "chart"
       ? phase === "running" || phase === "settling"
         ? "Position running toward target"
         : signalHot
-          ? "IRIS signal on the chart"
+          ? "Exur signal on the chart"
           : "Watch the live chart"
       : pane === "trade"
         ? phase === "filling"
-          ? "IRIS fills the order ticket"
+          ? "Exur fills the order ticket"
           : ticketArmed || phase === "clickTicket"
             ? "Place the order"
             : "Open the trade ticket"
@@ -1259,7 +1259,7 @@ function HeroChartPlot({
               signalHot ? "text-foreground/80" : "text-muted-foreground/70"
             )}
           >
-            IRIS Signal · {TRADES[side].label} · Entry {fmtPrice(ENTRY_PRICE)} ·{" "}
+            Exur Signal · {TRADES[side].label} · Entry {fmtPrice(ENTRY_PRICE)} ·{" "}
             SL {fmtPrice(TRADES[side].sl)} · TP {fmtPrice(TRADES[side].tp)}
           </p>
         </div>
@@ -1275,7 +1275,7 @@ function HeroChartPlot({
         )}
         style={{ top: pctY(priceToY(ENTRY_PRICE)) }}
       >
-        IRIS {TRADES[side].label}
+        Exur {TRADES[side].label}
       </div>
     </>
   )
@@ -1316,7 +1316,7 @@ function MobileIrisOverlay({
           <div className="flex min-h-full flex-col justify-end gap-2 py-1">
             {!userMsg && !aiMsg && !aiThinking ? (
               <p className="py-2 text-center text-[10px] leading-relaxed text-muted-foreground/80">
-                Ask about the live signal — IRIS drafts the bracket on your
+                Ask about the live signal — Exur drafts the bracket on your
                 ticket.
               </p>
             ) : null}
@@ -1700,7 +1700,7 @@ export function HeroDeskMock({ className }: { className?: string }) {
 
   /** Alternates each loop so the desk shows both directions. */
   const side: Side = loop % 2 === 0 ? "long" : "short"
-  /** How many ticket fields IRIS has filled so far (0–4). */
+  /** How many ticket fields Exur has filled so far (0–4). */
   const [filledState, setFilled] = React.useState(0)
   /** 0 = at entry, 1 = at take-profit. Wanders before it gets there. */
   const [progressState, setProgress] = React.useState(0)
@@ -1848,7 +1848,7 @@ export function HeroDeskMock({ className }: { className?: string }) {
         setPlanOpen(true)
         await wait(600, signal)
 
-        // IRIS pushes the plan into the order ticket, field by field.
+        // Exur pushes the plan into the order ticket, field by field.
         setPhase("toTicket")
         await moveCursor(ticketRef.current, signal)
         setPhase("filling")

@@ -19,34 +19,19 @@ import type { DeskContextSnapshot } from "@/lib/paper-trading/desk-context"
 import { WORKSPACE_TAB_NEWS, workspaceTabHref } from "@/lib/workspace-tab"
 import type { WorkspaceTab } from "@/lib/workspace-tab"
 
-/** @deprecated Legacy same-origin path — browser chat uses `chatApiUrl()` instead. */
+/** Same-origin chat proxy base — browser calls go through app/v1/[...path]/route.ts. */
 export const CHAT_API_BASE = "/v1/chat"
+
+export function chatApiPath(subpath: string): string {
+  const path = subpath.startsWith("/") ? subpath : `/${subpath}`
+  return `${CHAT_API_BASE}${path}`
+}
 
 export {
   createChatClientActionHandlers,
   executeChatClientActions,
   type ChatClientActionHandlers,
 } from "@/lib/chat/client-tools"
-
-/** Direct chat API host for browser calls (NEXT_PUBLIC_CHAT_API_ORIGIN or CHAT_API_ORIGIN). */
-export function getChatClientOrigin(): string {
-  return (
-    process.env.NEXT_PUBLIC_CHAT_API_ORIGIN?.replace(/\/$/, "") ??
-    process.env.CHAT_API_ORIGIN?.replace(/\/$/, "") ??
-    ""
-  )
-}
-
-export function chatApiUrl(subpath: string): string {
-  const origin = getChatClientOrigin()
-  if (!origin) {
-    throw new Error(
-      "Set NEXT_PUBLIC_CHAT_API_ORIGIN or CHAT_API_ORIGIN for direct chat API calls."
-    )
-  }
-  const path = subpath.startsWith("/") ? subpath : `/${subpath}`
-  return `${origin}/v1/chat${path}`
-}
 
 export function toChatApiEffort(effort?: CoPilotEffort): ChatApiEffort {
   if (effort === "instant" || effort === undefined) return "normal"

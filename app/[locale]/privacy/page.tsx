@@ -45,11 +45,11 @@ function PrivacyPage() {
           <p>Effective Date: August 11, 2026</p>
           <p>Version: 1.0.0</p>
           <p>
-            Scope: IRIS Intel (
+            Scope: Exur (
             <span className="font-mono text-foreground/90">
               intel.irislab.info
             </span>
-            ), a product module of the IRIS Lab ecosystem (
+            ), a product module of the Exur ecosystem (
             <span className="font-mono text-foreground/90">irislab.info</span>
             ).
           </p>
@@ -57,7 +57,7 @@ function PrivacyPage() {
       }
       intro={
         <LegalP>
-          At <span className="font-medium text-foreground">IRIS Lab</span>{" "}
+          At <span className="font-medium text-foreground">Exur</span>{" "}
           (“we”, “us”, or “our”), accessible via{" "}
           <span className="font-mono text-foreground/90">
             intel.irislab.info
@@ -65,7 +65,7 @@ function PrivacyPage() {
           , we are committed to protecting your privacy and managing your
           personal data transparently. This Privacy Policy explains how we
           collect, use, process, and safeguard your personal data when you
-          interact with the IRIS Intel platform.
+          interact with the Exur platform.
         </LegalP>
       }
       footerLinks={<LegalNavButtons showPrivacy={false} />}
@@ -73,8 +73,8 @@ function PrivacyPage() {
       <LegalSection id="privacy-controller" title="1. Operator & Controller Notice">
         <LegalP>
           Pending formal corporate entity incorporation,{" "}
-          <span className="font-medium text-foreground">IRIS Intel</span> and
-          the <span className="font-medium text-foreground">IRIS Lab</span>{" "}
+          <span className="font-medium text-foreground">Exur</span> and
+          the <span className="font-medium text-foreground">Exur</span>{" "}
           platform are owned, operated, and maintained by{" "}
           <span className="font-medium text-foreground">
             Hamid Reza Hassani Yaqouti
@@ -139,7 +139,7 @@ function PrivacyPage() {
             <span className="font-medium text-foreground">
               Performance of a Contract:
             </span>{" "}
-            Providing access to the IRIS Intel dashboard, quantitative signal
+            Providing access to the Exur dashboard, quantitative signal
             analytics, historical market databases, and real-time alerts.
           </li>
           <li>
@@ -164,7 +164,7 @@ function PrivacyPage() {
       >
         <LegalP>
           We utilize trusted third-party infrastructure providers and analytics
-          services to operate IRIS Intel:
+          services to operate Exur:
         </LegalP>
         <LegalList>
           <li>
@@ -204,7 +204,7 @@ function PrivacyPage() {
               Image &amp; Profile Syncing:
             </span>{" "}
             Profile image URLs are referenced from Google. If you update or
-            delete your profile image on Google, the reference on IRIS Intel
+            delete your profile image on Google, the reference on Exur
             updates or clears automatically.
           </li>
           <li>

@@ -20,7 +20,7 @@ export function LandingNav() {
           className="flex items-center gap-3 text-foreground"
           aria-label={t("brand")}
         >
-          <IrisLabLogo decorative size={40} className="size-10 rounded-lg" priority />
+          <IrisLabLogo decorative size={40} className="size-10 rounded-full" priority />
           <span className="text-base font-semibold tracking-tight sm:text-lg">
             {t("brand")}
           </span>

@@ -180,7 +180,7 @@ function WebsiteToolbar({
         ) : null}
         <Link
           href={APP_NEWS_PATH}
-          aria-label="IRIS Chat AI news"
+          aria-label="Exur news"
           className={cn(
             "shrink-0 rounded-md outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50",
             isAppDeskPath(pathname) && "lg:hidden",
@@ -188,9 +188,9 @@ function WebsiteToolbar({
           )}
         >
           <IrisLabLogo
-            alt="IRIS Chat AI"
+            alt="Exur"
             size={32}
-            className="size-8 rounded-md"
+            className="size-8 rounded-full"
             priority
           />
         </Link>

@@ -40,11 +40,11 @@ function TermsPage() {
           <p>Effective Date: August 11, 2026</p>
           <p>Version: 1.0.0</p>
           <p>
-            Scope: IRIS Intel (
+            Scope: Exur (
             <span className="font-mono text-foreground/90">
               intel.irislab.info
             </span>
-            ), a product module of the IRIS Lab ecosystem (
+            ), a product module of the Exur ecosystem (
             <span className="font-mono text-foreground/90">irislab.info</span>
             ).
           </p>
@@ -54,7 +54,7 @@ function TermsPage() {
         <>
           <LegalP>
             Welcome to{" "}
-            <span className="font-medium text-foreground">IRIS Intel</span>{" "}
+            <span className="font-medium text-foreground">Exur</span>{" "}
             (accessible via{" "}
             <span className="font-mono text-foreground/90">
               intel.irislab.info
@@ -66,7 +66,7 @@ function TermsPage() {
           </LegalP>
           <LegalP>
             The Service is operated and owned by{" "}
-            <span className="font-medium text-foreground">IRIS Lab</span>{" "}
+            <span className="font-medium text-foreground">Exur</span>{" "}
             (managed by{" "}
             <span className="font-medium text-foreground">
               Hamid Reza Hassani Yaqouti
@@ -98,7 +98,7 @@ function TermsPage() {
             .
           </li>
           <li>
-            IRIS Lab is not a registered investment advisor, broker-dealer,
+            Exur is not a registered investment advisor, broker-dealer,
             financial analyst, or commodities trader under any regulatory
             authority.
           </li>
@@ -106,7 +106,7 @@ function TermsPage() {
             Trading cryptocurrencies, digital assets, and derivatives involves
             substantial risk of loss and is not suitable for every investor. You
             are solely responsible for your own trading decisions and financial
-            risks. IRIS Lab and its operator shall not be liable for any losses,
+            risks. Exur and its operator shall not be liable for any losses,
             damages, or claims arising from reliance on information provided by
             the Service.
           </li>
@@ -184,7 +184,7 @@ function TermsPage() {
       <LegalSection id="terms-ip" title="5. Intellectual Property">
         <LegalP>
           All software code, user interface designs, proprietary algorithm
-          outputs, logos, and branding related to IRIS Lab and IRIS Intel are
+          outputs, logos, and branding related to Exur and Exur are
           the intellectual property of the operator. You are granted a limited,
           non-exclusive, non-transferable license to access the Service for
           personal or internal business use.
@@ -193,7 +193,7 @@ function TermsPage() {
 
       <LegalSection id="terms-liability" title="6. Limitation of Liability">
         <LegalP>
-          To the maximum extent permitted by applicable law, IRIS Lab and its
+          To the maximum extent permitted by applicable law, Exur and its
           operator shall not be liable for any indirect, incidental, special,
           consequential, or punitive damages, including loss of profits, trading
           losses, data loss, service interruption, or system failure resulting

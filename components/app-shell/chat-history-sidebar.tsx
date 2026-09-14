@@ -14,7 +14,6 @@ import {
   PinIcon,
   PinOffIcon,
   Settings,
-  SquarePenIcon,
   Trash2Icon,
   XIcon,
 } from "lucide-react"
@@ -22,6 +21,7 @@ import { useTranslations } from "next-intl"
 import { useTheme } from "@wrksz/themes/client/use-theme"
 
 import { ChatAccountAvatar } from "@/components/app-shell/chat-account-avatar"
+import { ChatGeminiNewChatIcon } from "@/components/app-shell/chat-gemini-new-chat-icon"
 import { IrisLabLogo } from "@/components/brand/iris-lab-logo"
 import { useAuth } from "@/components/auth/auth-provider"
 import { displayPlanName } from "@/lib/billing/catalog"
@@ -400,10 +400,10 @@ function ChatHistorySidebar({
               <IrisLabLogo
                 decorative
                 priority
-                size={28}
-                className="size-7 shrink-0 rounded-md"
+                size={36}
+                className="size-9 shrink-0 rounded-full"
               />
-              <h2 className="text-[1.75rem] font-normal leading-none tracking-tight text-foreground">
+              <h2 className="text-base font-normal leading-none tracking-tight text-foreground">
                 {t("iris")}
               </h2>
             </div>
@@ -435,10 +435,10 @@ function ChatHistorySidebar({
                   : "flex-1 px-1"
               )}
             >
-              <IrisLabLogo decorative size={28} className="size-7 shrink-0 rounded-md" />
+              <IrisLabLogo decorative size={36} className="size-9 shrink-0 rounded-full" />
               {!collapsed ? (
-                <span className="min-w-0 truncate text-sm font-semibold tracking-tight">
-                  IRIS
+                <span className="min-w-0 truncate text-[13px] font-normal leading-none tracking-tight text-sidebar-foreground/90">
+                  {t("iris")}
                 </span>
               ) : null}
             </div>
@@ -474,7 +474,7 @@ function ChatHistorySidebar({
                       />
                     }
                   >
-                    <SquarePenIcon className="size-4.5" />
+                    <ChatGeminiNewChatIcon className="size-4.5" />
                   </TooltipTrigger>
                   <TooltipContent side="right">{t("newChat")}</TooltipContent>
                 </Tooltip>
@@ -491,9 +491,9 @@ function ChatHistorySidebar({
                   )}
                   onClick={onNewChat}
                 >
-                  <SquarePenIcon
+                  <ChatGeminiNewChatIcon
                     className={cn(
-                      "shrink-0 text-foreground",
+                      "text-foreground",
                       isMobileDrawer ? "size-4.5" : "size-4"
                     )}
                   />

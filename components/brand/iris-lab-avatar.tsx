@@ -23,7 +23,7 @@ function IrisLabAvatar({ className, size = "sm" }: IrisLabAvatarProps) {
 
   return (
     <Avatar size={size} className={cn("bg-card", className)}>
-      <AvatarImage src={src} alt="IRIS" className="object-contain p-0.5" />
+      <AvatarImage src={src} alt="Exur" className="object-contain p-0.5" />
       <AvatarFallback className="text-[8px] font-black tracking-tight">
         IR
       </AvatarFallback>

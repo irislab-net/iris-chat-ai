@@ -8,14 +8,13 @@ import {
   chatContextMenuIconClass,
   chatContextMenuItemClass,
 } from "@/components/app-shell/chat-context-menu-styles"
-import {
-  chatMobileUserBubbleClass,
-} from "@/components/app-shell/chat-mobile-gemini-styles"
+import { chatMobileUserBubbleInteractiveClass } from "@/components/app-shell/chat-mobile-gemini-styles"
 import {
   chatTurnActionsClass,
   chatUserBubbleClass,
   chatUserBubbleExpandToggleClass,
   chatUserBubbleInlineActionClass,
+  chatUserTurnActionsRevealClass,
 } from "@/components/app-shell/chat-turn-actions"
 import { Button } from "@/components/ui/button"
 import {
@@ -51,6 +50,7 @@ function ChatUserTurn({
   const [copied, setCopied] = React.useState(false)
   const [expanded, setExpanded] = React.useState(false)
   const copyTimerRef = React.useRef(0)
+  const isGemini = variant === "gemini"
 
   const trimmed = content.trim()
   const collapsible = trimmed.length > COLLAPSE_CHAR_LIMIT
@@ -83,36 +83,60 @@ function ChatUserTurn({
     }
   }
 
-  if (variant === "gemini") {
-    return (
-      <div className={cn("flex w-full min-w-0 justify-end", className)}>
-        <div
-          dir="auto"
-          className={cn(
-            "chat-bidi min-w-0 overflow-hidden wrap-anywhere",
-            chatMobileUserBubbleClass
-          )}
+  const actionButtons = (
+    <div className={cn(chatTurnActionsClass, "shrink-0")}>
+      <Button
+        type="button"
+        variant="ghost"
+        size="icon-sm"
+        className={chatUserBubbleInlineActionClass}
+        aria-label={copied ? "Copied message" : "Copy message"}
+        title={copied ? "Copied" : "Copy"}
+        disabled={disabled || !trimmed}
+        onClick={() => void copyMessage()}
+      >
+        {copied ? (
+          <CheckIcon className="text-emerald-400 dark:text-emerald-600" />
+        ) : (
+          <CopyIcon />
+        )}
+      </Button>
+      {onEdit ? (
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon-sm"
+          className={chatUserBubbleInlineActionClass}
+          aria-label="Edit message"
+          title="Edit"
+          disabled={disabled}
+          onClick={onEdit}
         >
-          <span className="block min-w-0 whitespace-pre-wrap wrap-anywhere">
-            {trimmed}
-          </span>
-        </div>
-      </div>
-    )
-  }
+          <PencilIcon />
+        </Button>
+      ) : null}
+    </div>
+  )
 
   return (
     <ContextMenu>
       <ContextMenuTrigger
         render={
           <div
-            className={cn("group/user-turn w-full min-w-0", className)}
+            className={cn(
+              "group/user-turn w-full min-w-0",
+              isGemini && "flex justify-end",
+              className
+            )}
           >
             <div
               dir="auto"
+              tabIndex={0}
               className={cn(
-                "chat-bidi w-full min-w-0 cursor-text select-text wrap-anywhere",
-                chatUserBubbleClass
+                "chat-bidi min-w-0 cursor-text select-text overflow-hidden wrap-anywhere outline-none",
+                isGemini
+                  ? chatMobileUserBubbleInteractiveClass
+                  : cn("w-full", chatUserBubbleClass)
               )}
             >
               <span className="block min-w-0 whitespace-pre-wrap wrap-anywhere">
@@ -121,6 +145,7 @@ function ChatUserTurn({
               <div
                 className={cn(
                   chatTurnActionsClass,
+                  chatUserTurnActionsRevealClass,
                   "mt-2 w-full justify-between"
                 )}
               >
@@ -143,38 +168,7 @@ function ChatUserTurn({
                 ) : (
                   <span aria-hidden className="shrink-0" />
                 )}
-                <div className={cn(chatTurnActionsClass, "shrink-0")}>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon-sm"
-                    className={chatUserBubbleInlineActionClass}
-                    aria-label={copied ? "Copied message" : "Copy message"}
-                    title={copied ? "Copied" : "Copy"}
-                    disabled={disabled || !trimmed}
-                    onClick={() => void copyMessage()}
-                  >
-                    {copied ? (
-                      <CheckIcon className="text-emerald-400 dark:text-emerald-600" />
-                    ) : (
-                      <CopyIcon />
-                    )}
-                  </Button>
-                  {onEdit ? (
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon-sm"
-                      className={chatUserBubbleInlineActionClass}
-                      aria-label="Edit message"
-                      title="Edit"
-                      disabled={disabled}
-                      onClick={onEdit}
-                    >
-                      <PencilIcon />
-                    </Button>
-                  ) : null}
-                </div>
+                {actionButtons}
               </div>
             </div>
           </div>

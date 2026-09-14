@@ -224,7 +224,7 @@ export function HeroAppMock({ className }: { className?: string }) {
             <span className="size-2 rounded-full border border-border dark:border-white/10 dark:bg-white/10" />
           </span>
           <span className="truncate text-[11px] font-semibold tracking-tight">
-            IRIS Chat AI
+            Exur
           </span>
         </div>
         <div className="flex shrink-0 items-center gap-2">
@@ -272,7 +272,7 @@ export function HeroAppMock({ className }: { className?: string }) {
               <IrisMark className="size-4" />
             </span>
             <div className="min-w-0">
-              <p className="text-[11px] font-semibold tracking-tight">IRIS</p>
+              <p className="text-[11px] font-semibold tracking-tight">Exur</p>
               <p className="text-[10px] text-muted-foreground">{t("chatSubtitle")}</p>
             </div>
           </div>

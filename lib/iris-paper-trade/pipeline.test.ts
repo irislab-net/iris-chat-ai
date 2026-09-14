@@ -517,7 +517,7 @@ describe("confirmIrisPaperProposal", () => {
     expect(snap.positions[0]?.entryPrice).toBe(price)
     expect(snap.positions[0]?.entryPrice).toBeGreaterThan(mark)
     expect(snap.fills[0]?.fee).toBeCloseTo(fee)
-    expect(result.message).toContain("View Paper Trade")
+    expect(result.message).toContain("Paper trade opened")
   })
 
   it("rejects confirm when a position already exists", () => {

@@ -41,7 +41,7 @@ describe("co-pilot recovery helpers", () => {
         Object.assign(new Error("Chat request timed out"), { name: "TimeoutError" })
       )
     ).toBe(COPILOT_TIMEOUT_MESSAGE)
-    expect(coPilotUserFacingError(new Error("IRIS returned an empty reply. Please try again."))).toBe(
+    expect(coPilotUserFacingError(new Error("Exur returned an empty reply. Please try again."))).toBe(
       COPILOT_RECOVERY_MESSAGE
     )
     expect(COPILOT_RECOVERY_MESSAGE).not.toMatch(/HTTP|502|SSE|FetchError/i)

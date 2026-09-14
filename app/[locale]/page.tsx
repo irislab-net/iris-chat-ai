@@ -69,10 +69,10 @@ export default async function AppNewsPage({
               <Link href={APP_PATH}>Market news</Link>
             </li>
             <li>
-              <Link href={LANDING_PATH}>IRIS Chat AI landing</Link>
+              <Link href={LANDING_PATH}>Exur landing</Link>
             </li>
             <li>
-              <Link href="/about">About IRIS Chat AI</Link>
+              <Link href="/about">About Exur</Link>
             </li>
             <li>
               <Link href="/terms">Terms of Service</Link>
@@ -81,7 +81,7 @@ export default async function AppNewsPage({
               <Link href="/privacy">Privacy Policy</Link>
             </li>
             <li>
-              <a href="https://x.com/TheIrisLab">IRIS Lab on X</a>
+              <a href="https://x.com/TheIrisLab">Exur on X</a>
             </li>
           </ul>
         </nav>

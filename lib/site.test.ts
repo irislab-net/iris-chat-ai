@@ -57,7 +57,7 @@ describe("public SEO site policy (S1/S2)", () => {
   })
 
   it("keeps homepage meta description aligned with quiet orientation copy (UI-01)", () => {
-    expect(SITE_DESCRIPTION).toContain("Market news and IRIS co-pilot")
+    expect(SITE_DESCRIPTION).toContain("Market news and Exur co-pilot")
     expect(SITE_DESCRIPTION.toLowerCase()).toContain(
       "scored headlines and ai chat for the market you select"
     )

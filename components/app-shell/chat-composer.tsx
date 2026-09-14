@@ -44,7 +44,10 @@ import { localeDirection } from "@/lib/i18n/locale"
 import { mergeRefs } from "@/lib/merge-refs"
 import {
   chatMobileComposerIconButtonClass,
+  chatMobileComposerIconButtonCompactClass,
+  chatMobileComposerLeadingClass,
   chatMobileComposerPillClass,
+  chatMobileComposerTrailingClass,
   chatMobileComposerPillCompactClass,
   chatMobileComposerPillExpandedClass,
   chatMobileComposerSendClass,
@@ -115,6 +118,8 @@ function ChatComposer({
   const [mentionIndex, setMentionIndex] = React.useState(0)
   const [cursor, setCursor] = React.useState(0)
   const localRef = React.useRef<HTMLTextAreaElement>(null)
+  /** Stable compact column width — expanded layout is full-width and must not drive collapse. */
+  const compactFieldWidthRef = React.useRef(0)
   const isControlled = valueProp !== undefined
   const value = isControlled ? valueProp : uncontrolled
   const toolTagDraft = React.useMemo(
@@ -126,27 +131,92 @@ function ChatComposer({
   const activeToolOption = effectiveActiveTool
     ? findIrisMentionOption(effectiveActiveTool)
     : undefined
-  const floatingToolActive = isFloating && Boolean(effectiveActiveTool)
   const [floatingPastSingleLine, setFloatingPastSingleLine] =
     React.useState(false)
-  const floatingComposerExpanded =
-    floatingToolActive || floatingPastSingleLine
+  const floatingExpandedRef = React.useRef(false)
+  const floatingComposerExpanded = floatingPastSingleLine
+
+  React.useEffect(() => {
+    floatingExpandedRef.current = floatingPastSingleLine
+  }, [floatingPastSingleLine])
   const canSend = !disabled && composerValue.trim().length > 0
+
+  const measureFloatingComposerLines = React.useCallback(
+    (el: HTMLTextAreaElement, text: string, width: number) => {
+      if (!text) return 1
+      if (text.includes("\n")) return text.split("\n").length
+
+      const lineHeight = 32
+      const paddingY = 8
+      const style = window.getComputedStyle(el)
+      const mirror = document.createElement("textarea")
+      mirror.value = text
+      mirror.readOnly = true
+      mirror.tabIndex = -1
+      mirror.setAttribute("aria-hidden", "true")
+      Object.assign(mirror.style, {
+        position: "absolute",
+        visibility: "hidden",
+        pointerEvents: "none",
+        height: "auto",
+        maxHeight: "none",
+        width: `${width}px`,
+        overflow: "hidden",
+        border: "0",
+        padding: "4px 10px",
+        font: style.font,
+        letterSpacing: style.letterSpacing,
+        lineHeight: "32px",
+        whiteSpace: "pre-wrap",
+        wordWrap: "break-word",
+        boxSizing: "border-box",
+      })
+      el.parentElement?.appendChild(mirror)
+      const lineCount = Math.max(
+        1,
+        Math.round((mirror.scrollHeight - paddingY) / lineHeight)
+      )
+      mirror.remove()
+      return lineCount
+    },
+    []
+  )
 
   const syncFloatingComposerLayout = React.useCallback(() => {
     if (!isFloating) return
     const el = localRef.current
     if (!el) return
-    const style = window.getComputedStyle(el)
-    const lineHeight = Number.parseFloat(style.lineHeight) || 24
-    const paddingY =
-      Number.parseFloat(style.paddingTop) +
-      Number.parseFloat(style.paddingBottom)
-    setFloatingPastSingleLine(
-      el.scrollHeight > lineHeight + paddingY + 1 ||
-        composerValue.includes("\n")
+
+    if (!floatingExpandedRef.current && el.clientWidth > 0) {
+      compactFieldWidthRef.current = el.clientWidth
+    }
+
+    const measureWidth =
+      compactFieldWidthRef.current > 0
+        ? compactFieldWidthRef.current
+        : el.clientWidth
+    if (measureWidth <= 0) return
+
+    if (
+      !floatingExpandedRef.current &&
+      composerValue.length > 0 &&
+      el.scrollWidth > el.clientWidth + 2
+    ) {
+      setFloatingPastSingleLine(true)
+      return
+    }
+
+    const lineCount = measureFloatingComposerLines(
+      el,
+      composerValue,
+      measureWidth
     )
-  }, [composerValue, isFloating])
+
+    setFloatingPastSingleLine(() => {
+      if (composerValue.trim() === "") return false
+      return lineCount >= 2
+    })
+  }, [composerValue, isFloating, measureFloatingComposerLines])
   const textareaNodeRef = React.useMemo(
     () => mergeRefs(localRef, textareaRef),
     [textareaRef]
@@ -173,6 +243,11 @@ function ChatComposer({
     observer.observe(el)
     return () => observer.disconnect()
   }, [isFloating, syncFloatingComposerLayout])
+
+  React.useEffect(() => {
+    if (!isFloating) return
+    syncFloatingComposerLayout()
+  }, [composerValue, isFloating, syncFloatingComposerLayout])
 
   React.useEffect(() => {
     if (!deferMobileKeyboard) return
@@ -448,7 +523,6 @@ function ChatComposer({
           isFloating
             ? cn(
                 chatMobileComposerPillClass,
-                "flex flex-col items-stretch gap-0.5",
                 floatingComposerExpanded
                   ? chatMobileComposerPillExpandedClass
                   : chatMobileComposerPillCompactClass
@@ -459,54 +533,7 @@ function ChatComposer({
       >
         {isFloating ? (
           <>
-            <Textarea
-              ref={textareaNodeRef}
-              value={composerValue}
-              onChange={(event) => {
-                const next = event.target.value
-                const start = event.target.selectionStart
-                syncMentionIndex(next, start)
-                setValue(next)
-                setCursor(start)
-                requestAnimationFrame(syncFloatingComposerLayout)
-              }}
-              onKeyDown={onKeyDown}
-              onKeyUp={syncCursor}
-              onClick={syncCursor}
-              onSelect={syncCursor}
-              placeholder={
-                effectiveActiveTool
-                  ? t("composerToolSignalPlaceholder")
-                  : t("composerMobilePlaceholder")
-              }
-              rows={1}
-              disabled={disabled}
-              readOnly={deferMobileKeyboard && !mobileKeyboardReady}
-              tabIndex={deferMobileKeyboard && !mobileKeyboardReady ? -1 : 0}
-              inputMode={
-                deferMobileKeyboard && !mobileKeyboardReady ? "none" : "text"
-              }
-              enterKeyHint="send"
-              onFocus={(event) => {
-                if (deferMobileKeyboard && !mobileKeyboardReady) {
-                  event.currentTarget.blur()
-                  return
-                }
-                onFloatingFocusChange?.(true)
-                syncFloatingComposerLayout()
-              }}
-              onBlur={() => {
-                onFloatingFocusChange?.(false)
-              }}
-              dir={textDir}
-              className={cn(
-                chatMobileComposerTextareaClass,
-                floatingComposerExpanded
-                  ? chatMobileComposerTextareaExpandedClass
-                  : chatMobileComposerTextareaCompactClass
-              )}
-            />
-            <div className="flex min-w-0 items-center gap-0.5 px-0.5 pb-0.5">
+            <div className={chatMobileComposerLeadingClass}>
               <DropdownMenu modal={false}>
                 <DropdownMenuTrigger
                   render={
@@ -517,7 +544,11 @@ function ChatComposer({
                       aria-label={t("composerToolsMenu")}
                       title={t("composerToolsMenu")}
                       disabled={disabled}
-                      className={chatMobileComposerIconButtonClass}
+                      className={
+                        floatingComposerExpanded
+                          ? chatMobileComposerIconButtonClass
+                          : chatMobileComposerIconButtonCompactClass
+                      }
                     />
                   }
                 >
@@ -573,19 +604,71 @@ function ChatComposer({
                   </button>
                 </Badge>
               ) : null}
-              <div className="min-w-0 flex-1" aria-hidden />
-              {canSend ? (
-                <Button
-                  type="submit"
-                  size="icon-sm"
-                  variant="default"
-                  aria-label="Send message"
-                  title="Send · Enter"
-                  className={chatMobileComposerSendClass}
-                >
-                  <ArrowUpIcon className="size-4.5" />
-                </Button>
-              ) : null}
+            </div>
+            <Textarea
+              ref={textareaNodeRef}
+              value={composerValue}
+              onChange={(event) => {
+                const next = event.target.value
+                const start = event.target.selectionStart
+                syncMentionIndex(next, start)
+                setValue(next)
+                setCursor(start)
+                requestAnimationFrame(syncFloatingComposerLayout)
+              }}
+              onKeyDown={onKeyDown}
+              onKeyUp={syncCursor}
+              onClick={syncCursor}
+              onSelect={syncCursor}
+              placeholder={
+                effectiveActiveTool
+                  ? t("composerToolSignalPlaceholder")
+                  : t("composerMobilePlaceholder")
+              }
+              rows={1}
+              disabled={disabled}
+              readOnly={deferMobileKeyboard && !mobileKeyboardReady}
+              tabIndex={deferMobileKeyboard && !mobileKeyboardReady ? -1 : 0}
+              inputMode={
+                deferMobileKeyboard && !mobileKeyboardReady ? "none" : "text"
+              }
+              enterKeyHint="send"
+              onFocus={(event) => {
+                if (deferMobileKeyboard && !mobileKeyboardReady) {
+                  event.currentTarget.blur()
+                  return
+                }
+                onFloatingFocusChange?.(true)
+                syncFloatingComposerLayout()
+              }}
+              onBlur={() => {
+                onFloatingFocusChange?.(false)
+              }}
+              dir={textDir}
+              className={cn(
+                chatMobileComposerTextareaClass,
+                "[grid-area:field] min-w-0",
+                floatingComposerExpanded
+                  ? chatMobileComposerTextareaExpandedClass
+                  : chatMobileComposerTextareaCompactClass
+              )}
+            />
+            <div className={chatMobileComposerTrailingClass}>
+              <Button
+                type="submit"
+                size="icon-sm"
+                variant={canSend ? "default" : "ghost"}
+                aria-label="Send message"
+                title="Send · Enter"
+                disabled={!canSend}
+                className={
+                  canSend
+                    ? chatMobileComposerSendClass
+                    : chatDesktopComposerSendDisabledClass
+                }
+              >
+                <ArrowUpIcon className={cn("size-4.5", !canSend && "opacity-50")} />
+              </Button>
             </div>
           </>
         ) : (
@@ -640,7 +723,7 @@ function ChatComposer({
               }
             }}
             dir={textDir}
-            className="chat-bidi min-h-6 min-w-32 flex-1 field-sizing-content resize-none rounded-none border-0 bg-transparent p-0 text-start text-[16px] leading-6 shadow-none focus-visible:border-transparent focus-visible:ring-0 sm:text-[14px] sm:leading-[1.45] dark:bg-transparent"
+            className="chat-bidi min-h-6 min-w-32 flex-1 field-sizing-content resize-none rounded-none border-0 bg-transparent p-0 text-start text-[16px] leading-6 shadow-none placeholder:text-muted-foreground/35 focus-visible:border-transparent focus-visible:ring-0 dark:bg-transparent dark:placeholder:text-muted-foreground/30 sm:text-[14px] sm:leading-[1.45]"
           />
         </div>
         )}

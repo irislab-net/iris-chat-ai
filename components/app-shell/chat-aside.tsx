@@ -17,7 +17,7 @@ import { ChatAccountFooter } from "@/components/app-shell/chat-account-footer"
 import { ChatAccountMenu } from "@/components/app-shell/chat-account-menu"
 import { IrisLabLogo } from "@/components/brand/iris-lab-logo"
 import { ChatMobileGeminiBackground } from "@/components/app-shell/chat-mobile-gemini-background"
-import { chatMobileScrollDownClass, chatMobileThreadBottomFadeClass, chatMobileThreadBottomSpacerClass, chatMobileThreadClass, chatMobileThreadScrollMaskClass, chatMobileEmptyHeroContentClass, chatMobileEmptyHeroMarkClass, chatMobileEmptyHeroMarkShellClass, chatMobileEmptyHeroTitleClass, chatMobileEmptyHeroWrapClass, chatSamplePromptButtonClass, chatSamplePromptIconClass } from "@/components/app-shell/chat-mobile-gemini-styles"
+import { chatMobileScrollDownClass, chatMobileThreadBottomFadeClass, chatMobileThreadBottomSpacerClass, chatMobileThreadClass, chatMobileThreadFirstTurnClass, chatMobileThreadScrollMaskClass, chatMobileEmptyHeroContentClass, chatMobileEmptyHeroMarkClass, chatMobileEmptyHeroMarkShellClass, chatMobileEmptyHeroTitleClass, chatMobileEmptyHeroWrapClass, chatSamplePromptButtonClass, chatSamplePromptIconClass } from "@/components/app-shell/chat-mobile-gemini-styles"
 import { ChatMobileHeader } from "@/components/app-shell/chat-mobile-header"
 import {
   ChatNewsMobileSheet,
@@ -34,6 +34,12 @@ import {
   ChatSystemNote,
   IrisMark,
 } from "@/components/app-shell/chat-message"
+import { AIMessageRenderer } from "@/components/app-shell/ai-message-renderer"
+import { ChatSignalCard } from "@/components/app-shell/chat-signal-card"
+import {
+  enrichPaperTicketsOnMessages,
+  splitSignalAssistantMessage,
+} from "@/lib/chat/signal-setup"
 import {
   ChatThreadOptionsMenu,
   ChatThreadToolbar,
@@ -124,12 +130,40 @@ import { resolvePaperTicketFromChatTurn } from "@/lib/chat/parse-trade-setup"
 import { stripUnrequestedIrisSetupFromReply } from "@/lib/chat/strip-paper-setup"
 import { summarizeSignalUserMessage } from "@/lib/chat/composer-mentions"
 import { shouldRunPaperTradePipeline } from "@/lib/iris-paper-trade/routing"
+import { tryRecoverProposedPaperTradeFromToolFailure } from "@/lib/iris-paper-trade/run"
+import { findToolFailureSignalRecoveryTargets } from "@/lib/iris-paper-trade/tool-failure"
 import { IRIS_SAMPLE_PROMPTS } from "@/lib/iris-paper-trade/types"
 import {
   readHistoryRailCollapsed,
   writeHistoryRailCollapsed,
 } from "@/lib/chat-history-rail-prefs"
 import { cn } from "@/lib/utils"
+
+function historyWithRecoveredAssistant(
+  history: CoPilotHistoryMessage[],
+  messages: ChatUiMessage[],
+  messageId: string,
+  turnText: string
+): CoPilotHistoryMessage[] {
+  const messageIndex = messages.findIndex((message) => message.id === messageId)
+  if (messageIndex === -1) return history
+
+  let assistantOrdinal = 0
+  for (let index = 0; index < messageIndex; index += 1) {
+    if (messages[index]?.role === "assistant") assistantOrdinal += 1
+  }
+
+  let seenAssistants = 0
+  return history.map((item) => {
+    if (item.role !== "assistant") return item
+    if (seenAssistants === assistantOrdinal) {
+      seenAssistants += 1
+      return { ...item, content: turnText }
+    }
+    seenAssistants += 1
+    return item
+  })
+}
 
 type ChatAsideProps = {
   className?: string
@@ -411,6 +445,7 @@ function ChatAside({
   const abortRef = React.useRef<AbortController | null>(null)
   const persistTimer = React.useRef(0)
   const historySyncRef = React.useRef(0)
+  const signalRecoveryAttemptedRef = React.useRef(new Set<string>())
   const [session, setSession] = React.useState<string>("pending")
   const [guestTrial, setGuestTrial] = React.useState<TrialInfo | null>(null)
   const [guestUnavailable, setGuestUnavailable] = React.useState(false)
@@ -463,7 +498,11 @@ function ChatAside({
   const applyStoredConversation = React.useCallback(
     (conversation: StoredConversation) => {
       setConversationId(conversation.id)
-      setMessages(restoreMessages(conversation.messages, conversation.history))
+      setMessages(
+        enrichPaperTicketsOnMessages(
+          restoreMessages(conversation.messages, conversation.history)
+        )
+      )
       setHistory(conversation.history)
     },
     []
@@ -479,7 +518,11 @@ function ChatAside({
         if (!updated) return
         setConversationId((currentId) => {
           if (currentId !== sessionId) return currentId
-          setMessages(restoreMessages(updated.messages, updated.history))
+          setMessages(
+            enrichPaperTicketsOnMessages(
+              restoreMessages(updated.messages, updated.history)
+            )
+          )
           setHistory(updated.history)
           return currentId
         })
@@ -489,6 +532,83 @@ function ChatAside({
     },
     [chatOwnerId, sending]
   )
+
+  React.useEffect(() => {
+    signalRecoveryAttemptedRef.current.clear()
+  }, [conversationId])
+
+  React.useEffect(() => {
+    if (sending) return
+
+    const targets = findToolFailureSignalRecoveryTargets(messages).filter(
+      (target) => !signalRecoveryAttemptedRef.current.has(target.messageId)
+    )
+    if (targets.length === 0) return
+
+    let cancelled = false
+
+    void (async () => {
+      for (const target of targets) {
+        signalRecoveryAttemptedRef.current.add(target.messageId)
+        const current = messages.find((message) => message.id === target.messageId)
+        if (!current || current.paperTicket) continue
+
+        const recovered = await tryRecoverProposedPaperTradeFromToolFailure({
+          userMessage: target.userMessage,
+          assistantMessage: current.content,
+        })
+        if (cancelled || !recovered) continue
+
+        const turnText = recovered.message.trim()
+        dispatchCopilotGhostTrade({
+          id: `iris:${recovered.ticket.symbol}:${Date.now()}`,
+          symbol: recovered.ticket.symbol,
+          side: recovered.ticket.side,
+          entryPrice: recovered.ticket.markPrice,
+          quantity: recovered.ticket.quantity,
+          stopLoss: recovered.ticket.stopLoss,
+          takeProfit: recovered.ticket.takeProfit,
+          label: "Exur proposal",
+          clearPrevious: true,
+        })
+
+        setMessagesAndPersist(
+          (prev) =>
+            prev.map((message) =>
+              message.id === target.messageId
+                ? {
+                    ...message,
+                    content: turnText,
+                    paperTicket: recovered.ticket,
+                  }
+                : message
+            ),
+          {
+            id: conversationId,
+            history: historyWithRecoveredAssistant(
+              history,
+              messages,
+              target.messageId,
+              turnText
+            ),
+            ownerId: chatOwnerId,
+          }
+        )
+        setHistory((prev) =>
+          historyWithRecoveredAssistant(
+            prev,
+            messages,
+            target.messageId,
+            turnText
+          )
+        )
+      }
+    })()
+
+    return () => {
+      cancelled = true
+    }
+  }, [messages, sending, conversationId, history, chatOwnerId])
 
   const persistCurrent = React.useEffectEvent(
     (next: {
@@ -648,7 +768,7 @@ function ChatAside({
     }
   ) {
     setMessages((prev) => {
-      const next = update(prev)
+      const next = enrichPaperTicketsOnMessages(update(prev))
       queueMicrotask(() => persistCurrent({ ...persist, messages: next }))
       return next
     })
@@ -835,12 +955,7 @@ function ChatAside({
         const finalId = activeId
         const fullText = result.message.trim()
         const parsedTicket =
-          result.status === "proposed"
-            ? result.ticket
-            : resolvePaperTicketFromChatTurn({
-                userMessage,
-                assistantMessage: fullText,
-              })
+          result.status === "proposed" ? result.ticket : undefined
         const finalHistory: CoPilotHistoryMessage[] = [
           ...historySnapshot,
           { role: "user", content: displayUserMessage },
@@ -879,7 +994,7 @@ function ChatAside({
             quantity: parsedTicket.quantity,
             stopLoss: parsedTicket.stopLoss,
             takeProfit: parsedTicket.takeProfit,
-            label: "IRIS proposal",
+            label: "Exur proposal",
             clearPrevious: true,
           })
         }
@@ -969,17 +1084,41 @@ function ChatAside({
 
       let fullText = (result.message || "").trim()
       if (!fullText) {
-        throw new Error("IRIS returned an empty reply. Please try again.")
+        throw new Error("Exur returned an empty reply. Please try again.")
       }
       fullText = stripUnrequestedIrisSetupFromReply(fullText)
       if (!fullText) {
-        throw new Error("IRIS returned an empty reply. Please try again.")
+        throw new Error("Exur returned an empty reply. Please try again.")
+      }
+
+      const recovered = await tryRecoverProposedPaperTradeFromToolFailure({
+        userMessage,
+        assistantMessage: fullText,
+        signal: controller.signal,
+      })
+
+      let turnText = fullText
+      const recoveredTicket = recovered?.ticket
+
+      if (recovered) {
+        turnText = recovered.message.trim()
+        dispatchCopilotGhostTrade({
+          id: `iris:${recovered.ticket.symbol}:${Date.now()}`,
+          symbol: recovered.ticket.symbol,
+          side: recovered.ticket.side,
+          entryPrice: recovered.ticket.markPrice,
+          quantity: recovered.ticket.quantity,
+          stopLoss: recovered.ticket.stopLoss,
+          takeProfit: recovered.ticket.takeProfit,
+          label: "Exur proposal",
+          clearPrevious: true,
+        })
       }
 
       const finalHistory: CoPilotHistoryMessage[] = [
         ...historySnapshot,
         { role: "user", content: displayUserMessage },
-        { role: "assistant", content: fullText },
+        { role: "assistant", content: turnText },
       ]
       setHistory(finalHistory)
 
@@ -1002,7 +1141,10 @@ function ChatAside({
                     content: text,
                     error: false,
                     action: extras?.action,
-                    paperTicket: extras?.paperTicket,
+                    paperTicket:
+                      extras && "paperTicket" in extras
+                        ? extras.paperTicket
+                        : undefined,
                     pendingBracket: extras?.pendingBracket,
                     clientActionSummaries: extras?.clientActionSummaries,
                     retryUserMessage: undefined,
@@ -1021,25 +1163,26 @@ function ChatAside({
       }
 
       const buildTurnExtras = (
-        clientResult: ReturnType<typeof executeChatClientActions>
+        clientResult: ReturnType<typeof executeChatClientActions>,
+        assistantText: string,
+        ticketOverride?: ChatUiMessage["paperTicket"]
       ): Pick<
         ChatUiMessage,
         "clientActionSummaries" | "pendingBracket" | "paperTicket" | "action"
       > => {
-        const parsedTicket = shouldRunPaperTradePipeline(
-          userMessage,
-          historySnapshot
-        )
-          ? resolvePaperTicketFromChatTurn({
-              userMessage,
-              assistantMessage: fullText,
-            })
-          : null
+        const parsedTicket =
+          ticketOverride ??
+          (shouldRunPaperTradePipeline(userMessage, historySnapshot)
+            ? resolvePaperTicketFromChatTurn({
+                userMessage,
+                assistantMessage: assistantText,
+              })
+            : null)
         const hasGhostAction = clientResult.summaries.some(
           (item) => item.tool === "preview_ghost_trade" && item.applied
         )
 
-        if (parsedTicket && !hasGhostAction) {
+        if (parsedTicket && !hasGhostAction && !ticketOverride) {
           dispatchCopilotGhostTrade({
             id: `chat:${parsedTicket.symbol}:${Date.now()}`,
             symbol: parsedTicket.symbol,
@@ -1048,7 +1191,7 @@ function ChatAside({
             quantity: parsedTicket.quantity,
             stopLoss: parsedTicket.stopLoss,
             takeProfit: parsedTicket.takeProfit,
-            label: "IRIS setup",
+            label: "Exur setup",
             clearPrevious: true,
           })
         }
@@ -1067,20 +1210,26 @@ function ChatAside({
         }
       }
 
+      const completeCoPilotTurn = (
+        clientResult: ReturnType<typeof executeChatClientActions>
+      ) => {
+        finalizeSuccess(
+          turnText,
+          result.suggestedPrompts,
+          buildTurnExtras(clientResult, turnText, recoveredTicket)
+        )
+      }
+
       // Skip typewriter when stream already painted content via onDelta.
       if (partialContent.trim()) {
         const clientResult = executeChatClientActions(
           result.clientActions,
           chatClientActions
         )
-        finalizeSuccess(
-          fullText,
-          result.suggestedPrompts,
-          buildTurnExtras(clientResult)
-        )
+        completeCoPilotTurn(clientResult)
       } else {
         await typewriterReveal(
-          fullText,
+          turnText,
           (partial) => {
             partialContent = partial
             setMessages((prev) =>
@@ -1109,11 +1258,7 @@ function ChatAside({
           result.clientActions,
           chatClientActions
         )
-        finalizeSuccess(
-          fullText,
-          result.suggestedPrompts,
-          buildTurnExtras(clientResult)
-        )
+        completeCoPilotTurn(clientResult)
       }
     } catch (error) {
       if (isAbortError(error)) {
@@ -1647,13 +1792,13 @@ function ChatAside({
           <IrisLabLogo
             decorative
             size={32}
-            className="size-7 shrink-0 rounded-md"
+            className="size-7 shrink-0 rounded-full"
             priority
           />
         </Link>
         <div className="min-w-0 flex-1">
           <span className="block text-sm font-medium leading-none tracking-tight">
-            IRIS
+            {t("iris")}
           </span>
           <span className="mt-0.5 block truncate text-xs text-muted-foreground">
             {isAuthenticated
@@ -1922,6 +2067,7 @@ function ChatAside({
                     key={message.id}
                     className={cn(
                       "min-w-0",
+                      index === 0 && isMobileOverlay && chatMobileThreadFirstTurnClass,
                       index > 0 && (sameRole ? "mt-3" : isMobileOverlay ? "mt-8" : "mt-7")
                     )}
                   >
@@ -1942,6 +2088,7 @@ function ChatAside({
                     key={message.id}
                     className={cn(
                       "min-w-0",
+                      index === 0 && isMobileOverlay && chatMobileThreadFirstTurnClass,
                       index > 0 && (sameRole ? "mt-3" : isMobileOverlay ? "mt-8" : "mt-7")
                     )}
                   >
@@ -1954,9 +2101,17 @@ function ChatAside({
                   </div>
                 )
               }
+              const signalParts =
+                !isWaiting && message.content?.trim()
+                  ? splitSignalAssistantMessage({
+                      content: message.content,
+                      paperTicket: message.paperTicket,
+                    })
+                  : null
               const showMessageActions =
                 !isWaiting &&
-                Boolean(message.content?.trim()) &&
+                (Boolean(message.content?.trim()) ||
+                  Boolean(signalParts?.ticket)) &&
                 message.action !== "connect"
 
               return (
@@ -1964,13 +2119,16 @@ function ChatAside({
                   key={message.id}
                   className={cn(
                     "group/turn min-w-0",
+                    index === 0 && isMobileOverlay && chatMobileThreadFirstTurnClass,
                     index > 0 && (sameRole ? "mt-3" : isMobileOverlay ? "mt-8" : "mt-7")
                   )}
                 >
                   <ChatAssistantTurn
                     waiting={isWaiting}
                     compact={sameRole}
-                    content={message.content}
+                    content={
+                      signalParts?.ticket ? undefined : message.content
+                    }
                     variant={isMobileOverlay ? "gemini" : "default"}
                     actions={hasAction ? actions : undefined}
                     toolbar={
@@ -1989,6 +2147,15 @@ function ChatAside({
                       ) : undefined
                     }
                   >
+                    {signalParts?.ticket ? (
+                      <ChatSignalCard ticket={signalParts.ticket} />
+                    ) : null}
+                    {signalParts?.ticket && signalParts.tailText ? (
+                      <AIMessageRenderer
+                        content={signalParts.tailText}
+                        className="mt-3"
+                      />
+                    ) : null}
                     {errorNote}
                   </ChatAssistantTurn>
                 </div>

@@ -24,8 +24,7 @@ const chatMobileHeaderCircleClass =
 const chatMobileHeaderButtonClass =
   `size-10 shrink-0 ${chatMobileHeaderCircleClass} ${chatMobileHeaderShadowClass} ${chatMobileHeaderShadowHoverClass} [&_svg:not([class*='size-'])]:size-[22px] [&_svg]:stroke-[1.75]`
 
-const chatMobileHeaderNewChatClass =
-  `size-10 shrink-0 ${chatMobileHeaderCircleClass} ${chatMobileHeaderShadowClass} ${chatMobileHeaderShadowHoverClass} text-foreground [&_svg:not([class*='size-'])]:size-5 [&_svg]:stroke-[1.75]`
+const chatMobileHeaderNewChatClass = chatMobileHeaderButtonClass
 
 const chatMobileHeaderAvatarButtonClass =
   `flex size-10 shrink-0 items-center justify-center overflow-visible p-0 ${chatMobileHeaderCircleClass} ${chatMobileHeaderShadowClass} ${chatMobileHeaderShadowHoverClass}`
@@ -43,7 +42,7 @@ const chatMobileHeaderModelPrimaryClass = "text-foreground"
 const chatMobileHeaderModelSecondaryClass = "text-muted-foreground"
 
 const chatMobileEmptyHeroWrapClass =
-  "flex min-h-full flex-col items-center justify-center px-5 pb-6 pt-4"
+  "flex min-h-full flex-col items-center justify-center px-6 pb-6 pt-4"
 
 const chatMobileEmptyHeroContentClass =
   "chat-empty-hero flex flex-col items-center gap-5 text-center"
@@ -57,42 +56,60 @@ const chatMobileEmptyHeroMarkClass =
 const chatMobileEmptyHeroTitleClass =
   "chat-empty-hero-title max-w-[20rem] text-balance text-[1.75rem] font-normal leading-[1.22] tracking-[-0.028em] text-foreground"
 
-const chatMobileThreadClass = "px-4 pt-3 pb-2 sm:px-5"
+const chatMobileThreadClass = "px-6 pt-5 pb-2"
 
-/** Scroll tail room so the last turn clears the bottom fade + composer. */
-const chatMobileThreadBottomSpacerClass = "h-40 shrink-0"
+/** Extra breathing room below the header fade for the first turn. */
+const chatMobileThreadFirstTurnClass = "mt-8 sm:mt-10"
 
-/** Soft bottom fade — masks scroll content opacity. */
+/** Scroll tail room so the last turn clears the composer. */
+const chatMobileThreadBottomSpacerClass = "h-20 shrink-0"
+
+/** Soft bottom fade — only the last slice of scroll content. */
 const chatMobileThreadScrollMaskClass =
-  "[&_[data-slot=scroll-area-viewport]]:mask-[linear-gradient(to_bottom,black_0%,black_52%,rgba(0,0,0,0.88)_68%,rgba(0,0,0,0.45)_82%,transparent_100%)] [&_[data-slot=scroll-area-viewport]]:[-webkit-mask-image:linear-gradient(to_bottom,black_0%,black_52%,rgba(0,0,0,0.88)_68%,rgba(0,0,0,0.45)_82%,transparent_100%)]"
+  "[&_[data-slot=scroll-area-viewport]]:mask-[linear-gradient(to_bottom,black_0%,black_82%,rgba(0,0,0,0.75)_90%,rgba(0,0,0,0.35)_96%,transparent_100%)] [&_[data-slot=scroll-area-viewport]]:[-webkit-mask-image:linear-gradient(to_bottom,black_0%,black_82%,rgba(0,0,0,0.75)_90%,rgba(0,0,0,0.35)_96%,transparent_100%)]"
 
-/** Bottom blur + fade overlay — masked so the top edge stays invisible. */
+/** Bottom blur + fade overlay — short strip above composer. */
 const chatMobileThreadBottomFadeClass =
-  "pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-36 bg-gradient-to-t from-background from-0% via-background/55 via-40% to-transparent to-100% backdrop-blur-md backdrop-saturate-150 [mask-image:linear-gradient(to_top,black_0%,black_38%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_top,black_0%,black_38%,transparent_100%)] supports-[backdrop-filter]:from-background/92 supports-[backdrop-filter]:via-background/30 supports-[backdrop-filter]:to-transparent"
+  "pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-14 bg-gradient-to-t from-background from-0% via-background/60 via-55% to-transparent to-100% backdrop-blur-sm backdrop-saturate-150 [mask-image:linear-gradient(to_top,black_0%,black_28%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_top,black_0%,black_28%,transparent_100%)] supports-[backdrop-filter]:from-background/90 supports-[backdrop-filter]:via-background/25 supports-[backdrop-filter]:to-transparent"
+
+/** Single scrim behind mobile chat header — solid at bottom, transparent at top. */
+const chatMobileHeaderScrimClass =
+  "pointer-events-none absolute inset-x-0 top-0 -bottom-2 z-0 bg-gradient-to-b from-transparent from-20% via-background/90 via-[72%] to-background to-100% dark:via-background/85"
 
 const chatMobileUserBubbleClass =
   "max-w-[88%] rounded-[24px] border border-transparent bg-secondary px-4 py-3 text-[15px] leading-[1.55] text-secondary-foreground dark:border-border/50"
+
+const chatMobileUserBubbleInteractiveClass =
+  `${chatMobileUserBubbleClass} outline-none transition-[background-color] duration-150 hover:bg-secondary/90 focus-within:bg-secondary/90 dark:hover:bg-secondary/75 dark:focus-within:bg-secondary/75`
 
 const chatMobileAssistantClass =
   "text-[15px] leading-[1.65] text-foreground [&_p]:mb-3 [&_p:last-child]:mb-0"
 
 const chatMobileComposerShellClass =
-  "relative shrink-0 bg-transparent px-4 pt-1.5 pb-[max(1rem,env(safe-area-inset-bottom,0px))]"
+  "relative shrink-0 bg-transparent px-6 pt-1.5 pb-[max(1rem,env(safe-area-inset-bottom,0px))]"
 
 const chatMobileComposerPillClass =
-  `flex gap-0.5 rounded-[26px] px-2.5 py-2.5 text-foreground transition-[box-shadow,background-color,min-height] duration-200 ease-out ${chatMobileComposerGlassClass} ${chatMobileComposerGlassFocusClass}`
+  `grid rounded-[26px] text-foreground transition-[box-shadow,background-color] duration-200 ease-out ${chatMobileComposerGlassClass} ${chatMobileComposerGlassFocusClass}`
 
-/** Compact single-line shell (~80px) — Gemini simplified-input-area. */
-const chatMobileComposerPillCompactClass = "min-h-[5rem]"
+/** Compact single-line shell — + and input on one row (Gemini simplified-input-area). */
+const chatMobileComposerPillCompactClass =
+  "min-h-16 w-full grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-2 px-4 py-3 [grid-template-areas:'leading_field_trailing']"
 
 /** Grows with content once text wraps past one line. */
-const chatMobileComposerPillExpandedClass = "min-h-0"
+const chatMobileComposerPillExpandedClass =
+  "min-h-0 w-full grid-cols-[auto_minmax(0,1fr)_auto] grid-rows-[auto_auto] items-end gap-x-0.5 gap-y-0.5 px-2.5 py-2.5 [grid-template-areas:'field_field_field'_'leading_._trailing']"
+
+const chatMobileComposerLeadingClass =
+  "[grid-area:leading] flex min-w-0 items-center gap-1"
+
+const chatMobileComposerTrailingClass =
+  "[grid-area:trailing] flex shrink-0 items-center justify-end"
 
 const chatMobileComposerTextareaClass =
-  "chat-bidi w-full min-w-0 flex-1 field-sizing-content resize-none rounded-none border-0 bg-transparent px-2.5 text-[16px] leading-6 break-words text-foreground shadow-none transition-[max-height,padding] duration-200 ease-out placeholder:text-muted-foreground focus-visible:border-transparent focus-visible:ring-0 dark:bg-transparent"
+  "chat-bidi w-full min-w-0 flex-1 field-sizing-content resize-none rounded-none border-0 bg-transparent px-2.5 text-[16px] leading-6 break-words text-foreground shadow-none placeholder:text-muted-foreground/35 focus-visible:border-transparent focus-visible:ring-0 dark:bg-transparent dark:placeholder:text-muted-foreground/30"
 
 const chatMobileComposerTextareaCompactClass =
-  "min-h-10 py-2 overflow-x-auto overflow-y-hidden"
+  "min-h-8 max-h-8 w-full py-1 overflow-hidden leading-8 [field-sizing:fixed]"
 
 const chatMobileComposerTextareaExpandedClass =
   "min-h-10 max-h-40 py-2.5 overflow-y-auto"
@@ -130,6 +147,9 @@ const chatSamplePromptIconClass =
   "mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-lg bg-foreground/[0.05] text-muted-foreground"
 
 const chatMobileComposerIconButtonClass =
+  "size-10 shrink-0 rounded-full text-muted-foreground transition-colors hover:bg-foreground/[0.05] hover:text-foreground [&_svg]:stroke-[1.75]"
+
+const chatMobileComposerIconButtonCompactClass =
   "size-10 shrink-0 rounded-full text-muted-foreground transition-colors hover:bg-foreground/[0.05] hover:text-foreground [&_svg]:stroke-[1.75]"
 
 /** Active tool chip — dark liquid glass (shared base). */
@@ -233,13 +253,35 @@ const chatMobileToolsMenuItemTitleClass =
 const chatMobileToolsMenuItemDescClass =
   "text-[12px] leading-snug text-muted-foreground"
 
+/** Trade signal card — liquid glass, no border. */
+const chatSignalCardClass =
+  `overflow-hidden rounded-[1.25rem] border-0 text-foreground ${chatMobileGlassSurfaceClass} shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_72%,transparent),0_14px_44px_-20px_color-mix(in_oklch,var(--foreground)_14%,transparent)] dark:shadow-[inset_0_1px_0_0_color-mix(in_oklch,var(--foreground)_12%,transparent),0_16px_48px_-22px_color-mix(in_oklch,black_48%,transparent)]`
+
+const chatSignalCardInsetClass =
+  "rounded-2xl border-0 bg-white/45 shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_82%,transparent)] backdrop-blur-xl backdrop-saturate-150 supports-[backdrop-filter]:bg-white/32 dark:bg-white/[0.07] dark:shadow-[inset_0_1px_0_0_color-mix(in_oklch,var(--foreground)_10%,transparent)] dark:supports-[backdrop-filter]:bg-white/[0.05]"
+
+const chatSignalCardChipClass =
+  "inline-flex items-center gap-1 rounded-full border-0 bg-white/55 px-2.5 py-1 text-[11px] font-medium tracking-[0.03em] text-muted-foreground shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_80%,transparent)] backdrop-blur-md supports-[backdrop-filter]:bg-white/40 dark:bg-white/[0.1] dark:supports-[backdrop-filter]:bg-white/[0.08]"
+
+const chatSignalCardIconShellClass =
+  "flex size-7 shrink-0 items-center justify-center rounded-full border-0 bg-white/50 shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_75%,transparent)] backdrop-blur-sm supports-[backdrop-filter]:bg-white/35 dark:bg-white/[0.09] dark:supports-[backdrop-filter]:bg-white/[0.07]"
+
+const chatSignalCardEntryShellClass =
+  "rounded-xl border-0 bg-white/62 px-3 py-2.5 shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_88%,transparent),0_4px_16px_-12px_color-mix(in_oklch,var(--foreground)_8%,transparent)] backdrop-blur-md supports-[backdrop-filter]:bg-white/48 dark:bg-white/[0.11] dark:shadow-[inset_0_1px_0_0_color-mix(in_oklch,var(--foreground)_12%,transparent),0_4px_16px_-12px_color-mix(in_oklch,black_30%,transparent)] dark:supports-[backdrop-filter]:bg-white/[0.08]"
+
+const chatSignalCardMetricTileClass =
+  "rounded-xl border-0 bg-white/50 shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_78%,transparent),0_3px_14px_-10px_color-mix(in_oklch,var(--foreground)_9%,transparent)] backdrop-blur-md backdrop-saturate-150 supports-[backdrop-filter]:bg-white/36 dark:bg-white/[0.08] dark:shadow-[inset_0_1px_0_0_color-mix(in_oklch,var(--foreground)_10%,transparent),0_4px_16px_-12px_color-mix(in_oklch,black_32%,transparent)] dark:supports-[backdrop-filter]:bg-white/[0.06]"
+
 
 export {
   chatMobileAssistantClass,
   chatMobileComposerIconButtonClass,
+  chatMobileComposerIconButtonCompactClass,
   chatMobileComposerPillClass,
   chatMobileComposerPillCompactClass,
   chatMobileComposerPillExpandedClass,
+  chatMobileComposerLeadingClass,
+  chatMobileComposerTrailingClass,
   chatMobileComposerTextareaClass,
   chatMobileComposerTextareaCompactClass,
   chatMobileComposerTextareaExpandedClass,
@@ -268,6 +310,7 @@ export {
   chatMobileDrawerSurfaceClass,
   chatMobileDrawerUpgradeClass,
   chatMobileHeaderButtonClass,
+  chatMobileHeaderScrimClass,
   chatMobileHeaderModelClass,
   chatMobileHeaderNewChatClass,
   chatMobileHeaderAvatarButtonClass,
@@ -276,6 +319,12 @@ export {
   chatMobileHeaderModelPrimaryClass,
   chatMobileHeaderModelSecondaryClass,
   chatMobilePrimaryButtonClass,
+  chatSignalCardChipClass,
+  chatSignalCardClass,
+  chatSignalCardEntryShellClass,
+  chatSignalCardIconShellClass,
+  chatSignalCardInsetClass,
+  chatSignalCardMetricTileClass,
   chatMobileScrollDownClass,
   chatSamplePromptButtonClass,
   chatSamplePromptIconClass,
@@ -294,6 +343,7 @@ export {
   chatMobileSheetSectionLabelClass,
   chatMobileSheetTitleClass,
   chatMobileThreadClass,
+  chatMobileThreadFirstTurnClass,
   chatMobileThreadBottomSpacerClass,
   chatMobileThreadBottomFadeClass,
   chatMobileThreadScrollMaskClass,
@@ -303,4 +353,5 @@ export {
   chatMobileToolsMenuItemTitleClass,
   chatMobileToolsMenuLabelClass,
   chatMobileUserBubbleClass,
+  chatMobileUserBubbleInteractiveClass,
 }

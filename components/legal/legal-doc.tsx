@@ -149,7 +149,7 @@ function LegalNavButtons({
         nativeButton={false}
         render={<Link href="/about" />}
       >
-        About IRIS Lab
+        About Exur
       </Button>
     </>
   )

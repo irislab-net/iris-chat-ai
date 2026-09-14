@@ -122,6 +122,44 @@ describe("runIrisPaperTradeRequest propose → confirm", () => {
     expect(result.message).toContain("No paper trade is open yet")
   })
 
+  it("falls back when the API returns unknown-tool failure prose", async () => {
+    const mark = 2484.3
+    const packet = livePacket(mark)
+    packet.insight = {
+      stance: "WAIT",
+      bias: "SHORT",
+      headline: "Short signal",
+      calmness: "calm",
+      rewardRisk: 5.5,
+      expectedMovePct: 1.29,
+      generatedAt: packet.asOf,
+    }
+    packet.models = {
+      long: { p: 0.31, edge: -0.35, signal: true },
+      short: { p: 0.76, edge: 0.07, signal: true },
+      breakout: { p: 0.62, edge: -0.17, signal: true },
+      fast: { p: 0.61, edge: -0.12, signal: true },
+    }
+    packet.volatility = { rangePct: 0.012, atrPct: 0.002 }
+
+    mockedBuild.mockResolvedValue({ ok: true, packet })
+    mockedRequest.mockResolvedValue({
+      message:
+        "I am unable to execute the open_paper_trade function. It appears to be an unknown tool.",
+      tool_calls: [],
+    })
+
+    const result = await runIrisPaperTradeRequest({
+      userMessage: BTC_SIGNAL_SAMPLE_PROMPT,
+      conversationId: "c1",
+      history: [],
+    })
+
+    expect(result.status).toBe("proposed")
+    if (result.status !== "proposed") return
+    expect(result.message).toContain("No paper trade is open yet")
+  })
+
   it("falls back to a deterministic setup when the API returns tool failure prose", async () => {
     const mark = 2484.3
     const packet = livePacket(mark)

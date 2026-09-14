@@ -18,10 +18,6 @@ const hasTradingViewLibrary = existsSync(TRADINGVIEW_LIBRARY_ENTRY)
 const nextConfig: NextConfig = {
   env: {
     NEXT_PUBLIC_TRADINGVIEW_LIBRARY: hasTradingViewLibrary ? "1" : "0",
-    NEXT_PUBLIC_CHAT_API_ORIGIN:
-      process.env.NEXT_PUBLIC_CHAT_API_ORIGIN?.replace(/\/$/, "") ??
-      process.env.CHAT_API_ORIGIN?.replace(/\/$/, "") ??
-      "",
   },
   poweredByHeader: false,
   devIndicators: {
@@ -44,11 +40,7 @@ const nextConfig: NextConfig = {
   // /v1/* is handled by app/v1/[...path]/route.ts (Cloudflare-safe proxy dispatch).
   async rewrites() {
     if (process.env.NODE_ENV === "development") {
-      const chatClientOrigin =
-        process.env.NEXT_PUBLIC_CHAT_API_ORIGIN?.replace(/\/$/, "") ??
-        process.env.CHAT_API_ORIGIN?.replace(/\/$/, "") ??
-        CHAT_API_ORIGIN
-      console.log(`[iris] Chat API client → ${chatClientOrigin}`)
+      console.log(`[iris] Chat API proxy → ${CHAT_API_ORIGIN}`)
       if (process.env.CHAT_API_GUEST_FALLBACK_ORIGIN) {
         console.log(
           `[iris] Guest fallback → ${process.env.CHAT_API_GUEST_FALLBACK_ORIGIN}`

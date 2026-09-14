@@ -26,7 +26,7 @@ export const IRIS_SAMPLE_PROMPTS: readonly IrisSamplePrompt[] = [
     id: "market-pulse",
     title: "Market pulse",
     description: "Stance, bias, and news pulse — analysis only, no trade.",
-    text: "What is IRIS stance, model bias, and the news pulse on BTC right now? Keep it factual — do not propose a trade.",
+    text: "What is Exur stance, model bias, and the news pulse on BTC right now? Keep it factual — do not propose a trade.",
   },
   {
     id: "wait-or-watch",
@@ -38,14 +38,14 @@ export const IRIS_SAMPLE_PROMPTS: readonly IrisSamplePrompt[] = [
 
 /** Legacy samples — still recognized as paper-trade intent. */
 export const PAPER_TRADE_SAMPLE_PROMPT_EN_PREV =
-  "Based on live price, trend, volatility, news, and current IRIS analysis: if a valid setup exists right now, propose one Paper Trade with Entry, SL, and TP. If conditions are not sufficient, do not propose a trade."
+  "Based on live price, trend, volatility, news, and current Exur analysis: if a valid setup exists right now, propose one Paper Trade with Entry, SL, and TP. If conditions are not sufficient, do not propose a trade."
 
 export const PAPER_TRADE_SAMPLE_PROMPT_EN_LEGACY =
-  "Use live price, trend, volatility, news, and current IRIS analysis. If a valid setup exists right now, propose one Paper Trade with Entry, SL, and TP. If conditions are not sufficient, do not open a trade."
+  "Use live price, trend, volatility, news, and current Exur analysis. If a valid setup exists right now, propose one Paper Trade with Entry, SL, and TP. If conditions are not sufficient, do not open a trade."
 
 /** Legacy Persian sample — still recognized as paper-trade intent. */
 export const PAPER_TRADE_SAMPLE_PROMPT_FA =
-  "بازار اتریوم را با قیمت زنده، روند، نوسان، اخبار و مدل‌های IRIS بررسی کن. اگر الان ستاپ معتبر داری، یک Paper Trade با entry، stop loss و take profit پیشنهاد بده. اگر شرایط کافی نیست، معامله باز نکن."
+  "بازار اتریوم را با قیمت زنده، روند، نوسان، اخبار و مدل‌های Exur بررسی کن. اگر الان ستاپ معتبر داری، یک Paper Trade با entry، stop loss و take profit پیشنهاد بده. اگر شرایط کافی نیست، معامله باز نکن."
 
 export const PAPER_TRADE_INTENT_PROMPTS = [
   PAPER_TRADE_SAMPLE_PROMPT,

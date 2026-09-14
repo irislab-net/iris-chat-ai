@@ -1,6 +1,7 @@
 import { chatApiFetch } from "@/lib/api/chat-client"
 import { unwrapChatPayload } from "@/lib/api/chat"
 import type { CoPilotHistoryMessage } from "@/lib/api/types"
+import { summarizeSignalUserMessage } from "@/lib/chat/composer-mentions"
 import { serverMessageId } from "@/lib/chat-message-id"
 
 export type ConversationHistoryItem = {
@@ -134,6 +135,9 @@ export function historyItemsToUiMessages(items: ConversationHistoryItem[]) {
     .map((item) => ({
       id: serverMessageId(item.id),
       role: item.role as "user" | "assistant",
-      content: item.content,
+      content:
+        item.role === "user"
+          ? summarizeSignalUserMessage(item.content)
+          : item.content,
     }))
 }

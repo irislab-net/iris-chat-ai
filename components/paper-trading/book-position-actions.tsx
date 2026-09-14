@@ -121,7 +121,7 @@ function PositionActionMenuItems({
         </Label>
         <Item onClick={() => askIris(buildPositionChatPrompt(position, mark))}>
           <SparklesIcon />
-          Ask IRIS
+          Ask Exur
         </Item>
         {!readOnly && onSelect ? (
           <Item onClick={() => onSelect(position.id)}>
@@ -192,7 +192,7 @@ function PositionIrisButton({
               "shrink-0 text-muted-foreground hover:text-foreground",
               className
             )}
-            aria-label="Ask IRIS about this position"
+            aria-label="Ask Exur about this position"
             onClick={(event) => {
               event.stopPropagation()
               askIris(buildPositionChatPrompt(position, mark))
@@ -202,7 +202,7 @@ function PositionIrisButton({
           </Button>
         }
       />
-      <TooltipContent side="top">Ask IRIS</TooltipContent>
+      <TooltipContent side="top">Ask Exur</TooltipContent>
     </Tooltip>
   )
 }
@@ -383,7 +383,7 @@ function ClosedTradeContextMenu({
             onClick={() => askIris(buildClosedTradeChatPrompt(trade))}
           >
             <SparklesIcon />
-            Ask IRIS
+            Ask Exur
           </ContextMenuItem>
         <TraceWithAiMenuItem Item={ContextMenuItem} trade={trade} />
           <ContextMenuItem

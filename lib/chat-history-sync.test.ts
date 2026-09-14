@@ -104,6 +104,140 @@ describe("chat history sync", () => {
     expect(syncedA?.messages[1]?.feedback).toBe("up")
   })
 
+  it("keeps paperTicket on the matching assistant turn after server sync", () => {
+    const setupContent = [
+      "Exur setup — not a profit guarantee.",
+      "",
+      "ETH SHORT",
+      "Setup: fade",
+      "Entry 2,473.8",
+      "SL 2,487",
+      "TP 2,441.9",
+      "Leverage 5x",
+    ].join("\n")
+
+    const built = buildStoredConversationFromHistory(
+      sessionA,
+      [
+        historyItem(
+          1,
+          sessionA,
+          "user",
+          "Trading desk request for eth. Use ALL available Exur evidence.",
+          "2026-01-02T09:59:00Z"
+        ),
+        historyItem(2, sessionA, "assistant", setupContent, "2026-01-02T10:00:00Z"),
+        historyItem(3, sessionA, "user", "Why this entry?", "2026-01-02T10:01:00Z"),
+        historyItem(
+          4,
+          sessionA,
+          "assistant",
+          "The stop sits above entry because this is a short.",
+          "2026-01-02T10:02:00Z"
+        ),
+      ],
+      {
+        id: sessionA,
+        title: "Signal",
+        createdAt: "2026-01-02T09:59:00Z",
+        updatedAt: "2026-01-02T10:02:00Z",
+        messages: [
+          { id: "u-local", role: "user", content: "Signal · eth" },
+          {
+            id: "a-local",
+            role: "assistant",
+            content: setupContent,
+            paperTicket: {
+              symbol: "ETH",
+              side: "SHORT",
+              quantity: 1,
+              markPrice: 2473.8,
+              stopLoss: 2487,
+              takeProfit: 2441.9,
+              leverage: 5,
+              setup: "fade",
+              thesis: "Short bias",
+            },
+          },
+          { id: "u2-local", role: "user", content: "Why this entry?" },
+          {
+            id: "a2-local",
+            role: "assistant",
+            content: "The stop sits above entry because this is a short.",
+          },
+        ],
+        history: [],
+      }
+    )
+
+    expect(built?.messages).toHaveLength(4)
+    expect(built?.messages[0]?.content).toBe("Signal · eth")
+    expect(built?.messages[1]?.paperTicket?.symbol).toBe("ETH")
+    expect(built?.messages[3]?.paperTicket).toBeUndefined()
+  })
+
+  it("prefers local formatted setup content when paperTicket is preserved", () => {
+    const localSetup = [
+      "Exur setup — not a profit guarantee.",
+      "",
+      "ETH SHORT",
+      "Setup: fade",
+      "Entry 2,473.8",
+      "SL 2,487",
+      "TP 2,441.9",
+      "Leverage 5x",
+    ].join("\n")
+
+    const built = buildStoredConversationFromHistory(
+      sessionA,
+      [
+        historyItem(
+          1,
+          sessionA,
+          "user",
+          "Signal · eth",
+          "2026-01-02T09:59:00Z"
+        ),
+        historyItem(
+          2,
+          sessionA,
+          "assistant",
+          "I am unable to execute the open_paper_trade function. It appears to be an unknown tool.",
+          "2026-01-02T10:00:00Z"
+        ),
+      ],
+      {
+        id: sessionA,
+        title: "Signal",
+        createdAt: "2026-01-02T09:59:00Z",
+        updatedAt: "2026-01-02T10:00:00Z",
+        messages: [
+          { id: "u-local", role: "user", content: "Signal · eth" },
+          {
+            id: "a-local",
+            role: "assistant",
+            content: localSetup,
+            paperTicket: {
+              symbol: "ETH",
+              side: "SHORT",
+              quantity: 1,
+              markPrice: 2473.8,
+              stopLoss: 2487,
+              takeProfit: 2441.9,
+              leverage: 5,
+              setup: "fade",
+              thesis: "Short bias",
+            },
+          },
+        ],
+        history: [],
+      }
+    )
+
+    expect(built?.messages[1]?.content).toBe(localSetup)
+    expect(built?.messages[1]?.paperTicket?.symbol).toBe("ETH")
+  })
+
   it("remaps local message ids onto server ids by turn order", () => {
     const remapped = remapMessagesWithServerHistory(
       [
@@ -124,5 +258,27 @@ describe("chat history sync", () => {
     expect(remapped[0]?.id).toBe(serverMessageId(10))
     expect(remapped[1]?.id).toBe(serverMessageId(11))
     expect(remapped[1]?.feedback).toBe("down")
+  })
+
+  it("remaps summarized signal user labels onto full server prompts", () => {
+    const remapped = remapMessagesWithServerHistory(
+      [
+        { id: "u-local", role: "user", content: "Signal · eth" },
+        { id: "a-local", role: "assistant", content: "Stand aside." },
+      ],
+      [
+        historyItem(
+          10,
+          sessionA,
+          "user",
+          "Trading desk request for eth. Use ALL available Exur evidence.",
+          "2026-01-02T09:59:00Z"
+        ),
+        historyItem(11, sessionA, "assistant", "Stand aside.", "2026-01-02T10:00:00Z"),
+      ]
+    )
+
+    expect(remapped[0]?.id).toBe(serverMessageId(10))
+    expect(remapped[1]?.id).toBe(serverMessageId(11))
   })
 })

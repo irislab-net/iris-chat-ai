@@ -5,14 +5,14 @@ import {
   refreshAccessToken,
   storeTokenPair,
 } from "@/lib/api/auth"
-import { chatApiUrl } from "@/lib/api/chat"
+import { chatApiPath } from "@/lib/api/chat"
 import { isGuestChatSession } from "@/lib/chat-auth-session"
 import {
   ensureGuestSession,
   getStoredGuestToken,
 } from "@/lib/guest-chat"
 
-/** Browser chat calls hit CHAT_API_ORIGIN directly (Bearer auth, no same-origin proxy). */
+/** Browser chat calls use same-origin /v1/chat proxy (see app/v1/[...path]/route.ts). */
 export async function chatApiFetch(path: string, init: RequestInit = {}) {
   const accessToken = getStoredAccessToken()
   if (!isGuestChatSession() && accessToken) {
@@ -29,9 +29,9 @@ async function guestChatFetch(path: string, init: RequestInit = {}) {
   }
 
   const doFetch = (guestToken: string) =>
-    fetch(chatApiUrl(path), {
+    fetch(chatApiPath(path), {
       ...init,
-      credentials: "omit",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
         ...(init.headers as Record<string, string> | undefined),
@@ -49,9 +49,9 @@ async function guestChatFetch(path: string, init: RequestInit = {}) {
 
 async function authedChatFetch(path: string, init: RequestInit = {}) {
   const doFetch = (token: string | null) =>
-    fetch(chatApiUrl(path), {
+    fetch(chatApiPath(path), {
       ...init,
-      credentials: "omit",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
         ...(init.headers || {}),

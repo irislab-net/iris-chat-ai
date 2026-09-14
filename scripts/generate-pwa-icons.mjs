@@ -20,7 +20,7 @@ const BG = "#252525"
 function buildIconSvg({ size, padRatio, bg }) {
   const innerSize = size * (1 - padRatio * 2)
   const offset = (size - innerSize) / 2
-  const scale = innerSize / 512
+  const scale = innerSize / 68
   return `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
   <rect width="${size}" height="${size}" fill="${bg}"/>

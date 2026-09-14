@@ -10,19 +10,19 @@ export function getSiteOrigin(): string {
   return PRODUCTION_ORIGIN
 }
 
-export const SITE_NAME = "IRIS Chat AI"
+export const SITE_NAME = "Exur"
 
 export const SITE_DESCRIPTION =
-  "Market news and IRIS co-pilot — scored headlines and AI chat for the market you select."
+  "Market news and Exur co-pilot — scored headlines and AI chat for the market you select."
 
 export const ABOUT_DESCRIPTION =
-  "IRIS Chat AI is a focused market-intelligence app: curated news bullets and an IRIS co-pilot when you connect an account."
+  "Exur is a focused market-intelligence app: curated news bullets and an Exur co-pilot when you connect an account."
 
 export const PRIVACY_DESCRIPTION =
-  "How IRIS Lab / IRIS Intel collects, uses, and protects personal data — Privacy Policy & GDPR Notice."
+  "How Exur / Exur collects, uses, and protects personal data — Privacy Policy & GDPR Notice."
 
 export const TERMS_DESCRIPTION =
-  "Terms of Service for IRIS Intel: eligibility, no financial advice, accounts, liability, and contact."
+  "Terms of Service for Exur: eligibility, no financial advice, accounts, liability, and contact."
 
 /** Verified public contact from product UI (`website-toolbar` CONTACT.x). */
 export const SOCIAL_X_URL = "https://x.com/TheIrisLab"

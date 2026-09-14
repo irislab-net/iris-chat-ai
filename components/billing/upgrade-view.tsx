@@ -204,7 +204,7 @@ function UpgradeView() {
   return (
     <div className="flex min-h-dvh flex-col bg-background text-foreground">
       <header className="flex h-14 shrink-0 items-center gap-3 border-b border-border/60 px-4 sm:px-6">
-        <IrisLabLogo alt="IRIS Lab" size={32} className="size-8 rounded-md" priority />
+        <IrisLabLogo alt="Exur" size={32} className="size-8 rounded-full" priority />
         <div className="min-w-0 flex-1">
           <p className="text-sm font-medium leading-none">Upgrade</p>
           <p className="mt-0.5 truncate text-xs text-muted-foreground">

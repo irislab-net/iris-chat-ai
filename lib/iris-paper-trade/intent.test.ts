@@ -57,7 +57,7 @@ describe("isPaperTradeIntent", () => {
     ).toBe(false)
     expect(
       isPaperTradeIntent(
-        "What is IRIS stance, model bias, and the news pulse on ETH right now? Signal only if a setup is clear — otherwise analysis only."
+        "What is Exur stance, model bias, and the news pulse on ETH right now? Signal only if a setup is clear — otherwise analysis only."
       )
     ).toBe(false)
   })

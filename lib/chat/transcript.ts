@@ -8,7 +8,7 @@ function formatConversationTranscript(messages: ChatUiMessage[]): string {
         (message.role === "user" || message.role === "assistant")
     )
     .map((message) => {
-      const speaker = message.role === "user" ? "You" : "IRIS"
+      const speaker = message.role === "user" ? "You" : "Exur"
       return `${speaker}:\n${message.content.trim()}`
     })
     .join("\n\n")

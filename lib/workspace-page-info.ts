@@ -47,7 +47,7 @@ export const WORKSPACE_PAGE_INFO: Record<WorkspacePageId, WorkspacePageInfo> = {
     ],
   },
   iris: {
-    title: "IRIS",
+    title: "Exur",
     summary:
       "AI co-pilot grounded in your desk — tape, funding, and model context in plain language.",
     audience:

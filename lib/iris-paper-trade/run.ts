@@ -3,6 +3,8 @@ import type { CoPilotEffort, CoPilotHistoryMessage } from "@/lib/api/types"
 import { buildMarketContextPacket } from "@/lib/iris-paper-trade/build-context"
 import { synthesizePaperDecisionFromContext } from "@/lib/iris-paper-trade/fallback-decision"
 import { extractTradeSymbolFromMessage } from "@/lib/iris-paper-trade/extract-symbol"
+import { isPaperTradeIntent } from "@/lib/iris-paper-trade/intent"
+import { isOpenPaperTradeToolFailureProse } from "@/lib/iris-paper-trade/tool-failure"
 import {
   formatOpenedChatMessage,
   formatProposedChatMessage,
@@ -101,6 +103,36 @@ function planDecision(
 }
 
 /**
+ * When the chat API returns open_paper_trade tool failure prose, synthesize a
+ * deterministic desk proposal from live market context (same as run.ts fallback).
+ */
+export async function tryRecoverProposedPaperTradeFromToolFailure(input: {
+  userMessage: string
+  assistantMessage: string
+  signal?: AbortSignal
+}): Promise<Extract<IrisPaperTradeChatResult, { status: "proposed" }> | null> {
+  if (!isOpenPaperTradeToolFailureProse(input.assistantMessage)) return null
+  if (!isPaperTradeIntent(input.userMessage)) return null
+
+  const symbol = extractTradeSymbolFromMessage(input.userMessage)
+  const built = await buildMarketContextPacket({
+    signal: input.signal,
+    symbol,
+  })
+  if (!built.ok) return null
+
+  const fallbackDecision = synthesizePaperDecisionFromContext(built.packet)
+  if (!fallbackDecision) return null
+
+  const result = planDecision(
+    fallbackDecision,
+    built.packet,
+    getPaperSnapshot()
+  )
+  return result.status === "proposed" ? result : null
+}
+
+/**
  * One user request → at most one paper-trade proposal.
  * Does not mutate paper state. Opening requires confirmIrisPaperProposal.
  */
@@ -152,7 +184,9 @@ export async function runIrisPaperTradeRequest(input: {
     return planDecision(parsed.decision, built.packet, state)
   }
 
-  const proseTicket = parsePaperTicketFromAssistantText(assistantText)
+  const proseTicket = isOpenPaperTradeToolFailureProse(assistantText)
+    ? null
+    : parsePaperTicketFromAssistantText(assistantText)
   if (proseTicket) {
     return {
       status: "proposed",
@@ -177,7 +211,7 @@ export async function runIrisPaperTradeRequest(input: {
     reason,
     detail: parsed.ok ? "PLAN_REJECTED" : parsed.error,
     message: formatRejectedChatMessage(
-      "IRIS did not return a valid structured decision."
+      "Exur did not return a valid structured decision."
     ),
   }
 }

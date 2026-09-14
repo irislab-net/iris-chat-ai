@@ -13,7 +13,7 @@ function PublicHomeIntro() {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
         <div className="min-w-0">
           <p className="mb-0.5 text-[11px] font-medium tracking-[0.16em] text-muted-foreground uppercase">
-            IRIS Lab
+            Exur
           </p>
           <h1
             id="iris-home-heading"
