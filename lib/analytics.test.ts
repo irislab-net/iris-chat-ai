@@ -3,6 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import {
   GA_MEASUREMENT_ID,
   isAnalyticsEnabled,
+  isChatAnalyticsPath,
   trackCheckoutStart,
   trackEvent,
   trackPurchase,
@@ -71,5 +72,17 @@ describe("analytics", () => {
     vi.stubEnv("NODE_ENV", "development")
     vi.stubEnv("NEXT_PUBLIC_GA_MEASUREMENT_ID", "")
     expect(isAnalyticsEnabled()).toBe(false)
+  })
+
+  it("scopes GTM to chat routes only", () => {
+    expect(isChatAnalyticsPath("/")).toBe(true)
+    expect(isChatAnalyticsPath("/app")).toBe(true)
+    expect(isChatAnalyticsPath("/upgrade")).toBe(true)
+    expect(isChatAnalyticsPath("/auth/success")).toBe(true)
+    expect(isChatAnalyticsPath("/ar/upgrade")).toBe(true)
+    expect(isChatAnalyticsPath("/home")).toBe(false)
+    expect(isChatAnalyticsPath("/ar/home")).toBe(false)
+    expect(isChatAnalyticsPath("/about")).toBe(false)
+    expect(isChatAnalyticsPath("/ai-trading-signals")).toBe(false)
   })
 })

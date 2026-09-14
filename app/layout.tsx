@@ -1,14 +1,17 @@
 import type { Metadata, Viewport } from "next"
+import { headers } from "next/headers"
 import { getLocale } from "next-intl/server"
 
 import "./globals.css"
 import { GoogleAnalytics } from "@/components/analytics/google-analytics"
+import { GoogleTagManager } from "@/components/analytics/google-tag-manager"
 import { AuthProvider } from "@/components/auth/auth-provider"
 import { JsonLd } from "@/components/seo/json-ld"
 import { ThemeExtras } from "@/components/theme-provider"
 import { Toaster } from "@/components/ui/sonner"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { ThemeProvider } from "@wrksz/themes/next"
+import { isChatGtmEnabled } from "@/lib/analytics"
 import {
   BROWSER_CHROME_COLORS,
   BROWSER_CHROME_INIT_SCRIPT,
@@ -120,6 +123,8 @@ export default async function RootLayout({
 }>) {
   const locale = await getLocale()
   const dir = localeDirection(locale)
+  const pathname = (await headers()).get("x-pathname") ?? "/"
+  const chatGtmEnabled = isChatGtmEnabled(pathname)
 
   return (
     <html
@@ -129,6 +134,7 @@ export default async function RootLayout({
       className="font-sans antialiased"
     >
       <body>
+        <GoogleTagManager enabled={chatGtmEnabled} />
         <script
           suppressHydrationWarning
           dangerouslySetInnerHTML={{ __html: BROWSER_CHROME_INIT_SCRIPT }}

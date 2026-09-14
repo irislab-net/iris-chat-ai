@@ -4,11 +4,40 @@ import type { BillingCycle, PlanKey } from "@/lib/billing/catalog"
 export const GA_MEASUREMENT_ID =
   process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID ?? "G-GLTQZ1G6RX"
 
+export const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID ?? "GTM-KMGLCNZD"
+
 /** Production always loads GA; local dev only when NEXT_PUBLIC_GA_MEASUREMENT_ID is set. */
 export function isAnalyticsEnabled() {
   if (!GA_MEASUREMENT_ID) return false
   if (process.env.NODE_ENV === "production") return true
   return Boolean(process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID)
+}
+
+/** Production always loads GTM; local dev only when NEXT_PUBLIC_GTM_ID is set. */
+export function isGtmEnabled() {
+  if (!GTM_ID) return false
+  if (process.env.NODE_ENV === "production") return true
+  return Boolean(process.env.NEXT_PUBLIC_GTM_ID)
+}
+
+function normalizeAnalyticsPath(pathname: string): string {
+  const path = pathname.split("?")[0]?.split("#")[0] ?? "/"
+  return path.replace(/^\/(en|ar)(?=\/|$)/, "") || "/"
+}
+
+/** GTM container is for the chat app — not marketing / landing routes. */
+export function isChatAnalyticsPath(pathname: string): boolean {
+  const path = normalizeAnalyticsPath(pathname)
+  return (
+    path === "/" ||
+    path === "/app" ||
+    path.startsWith("/upgrade") ||
+    path.startsWith("/auth/")
+  )
+}
+
+export function isChatGtmEnabled(pathname: string): boolean {
+  return isGtmEnabled() && isChatAnalyticsPath(pathname)
 }
 
 const PLUS_USD_VALUE: Record<BillingCycle, number> = {

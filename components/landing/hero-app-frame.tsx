@@ -1,11 +1,17 @@
 import { Skeleton } from "@/components/ui/skeleton"
 import { cn } from "@/lib/utils"
 
-const APP_CHROME_H = "h-10"
-const APP_MAIN_H = "h-[22rem] sm:h-[24rem] lg:h-[26rem]"
+const APP_CHROME_H = "h-10 sm:h-11"
+const APP_MAIN_H = "h-[24rem] sm:h-[26rem] lg:h-[26rem]"
 
-const APP_FRAME_CLASS =
-  "relative w-full overflow-hidden rounded-xl border border-border/50 bg-card/80 text-card-foreground shadow-none backdrop-blur-md contain-layout contain-style"
+const APP_FRAME_CLASS = cn(
+  "relative w-full overflow-hidden rounded-[1.75rem]",
+  "border border-border/50 bg-card/90 text-card-foreground",
+  "shadow-[0_2px_8px_-2px_rgba(0,0,0,0.12),0_18px_40px_-18px_rgba(0,0,0,0.28)]",
+  "dark:shadow-[0_2px_10px_-2px_rgba(255,255,255,0.06),0_20px_48px_-16px_rgba(255,255,255,0.16)]",
+  "ring-1 ring-border/30 backdrop-blur-xl backdrop-saturate-150",
+  "contain-layout contain-style"
+)
 
 function HeroAppSkeleton({ className }: { className?: string }) {
   return (
@@ -13,32 +19,19 @@ function HeroAppSkeleton({ className }: { className?: string }) {
       <div
         className={cn(
           APP_CHROME_H,
-          "flex items-center justify-between border-b border-border/70 px-3 sm:px-4"
+          "flex items-center justify-between gap-3 border-b border-border/50 px-3 sm:px-4"
         )}
       >
-        <Skeleton className="h-3 w-28" />
-        <Skeleton className="h-5 w-24 rounded-full" />
+        <Skeleton className="h-6 w-12 rounded-full" />
+        <Skeleton className="h-7 w-28 rounded-full" />
       </div>
 
-      <div
-        className={cn(
-          APP_MAIN_H,
-          "grid min-h-0 grid-cols-1 lg:grid-cols-[minmax(0,1fr)_17rem]"
-        )}
-      >
-        <div className="flex min-h-0 flex-col border-b border-border/60 lg:border-b-0 lg:border-r">
-          <Skeleton className="mx-3 mt-3 h-3 w-24 sm:mx-4" />
-          <div className="space-y-2 px-3 py-3 sm:px-4">
-            <Skeleton className="h-14 w-full rounded-xl" />
-            <Skeleton className="h-14 w-full rounded-xl" />
-            <Skeleton className="h-14 w-full rounded-xl" />
-            <Skeleton className="hidden h-14 w-full rounded-xl sm:block" />
-          </div>
-        </div>
-        <div className="flex min-h-0 flex-col">
-          <Skeleton className="mx-3 mt-3 h-8 w-32" />
-          <Skeleton className="mx-3 mt-auto mb-3 h-10 w-full rounded-2xl" />
-        </div>
+      <div className={cn(APP_MAIN_H, "flex min-h-0 flex-col p-3 sm:p-4")}>
+        <Skeleton className="h-8 w-32" />
+        <Skeleton className="mt-3 h-24 w-full rounded-2xl" />
+        <Skeleton className="mt-2 h-3 w-16" />
+        <Skeleton className="mt-2 h-14 w-full rounded-2xl" />
+        <Skeleton className="mt-2 h-14 w-full rounded-2xl" />
       </div>
     </div>
   )
