@@ -47,17 +47,11 @@ const chatMobileEmptyHeroWrapClass =
 const chatMobileEmptyHeroContentClass =
   "chat-empty-hero flex flex-col items-center gap-5 text-center"
 
-const chatMobileEmptyHeroMarkShellClass =
-  `chat-empty-hero-mark relative flex size-16 items-center justify-center overflow-hidden rounded-full ${chatMobileGlassSurfaceClass} ${chatMobileHeaderShadowClass}`
-
 const chatMobileEmptyHeroMarkClass =
-  "relative flex size-11 shrink-0 items-center justify-center rounded-full bg-transparent p-0 shadow-none ring-0"
+  `chat-empty-hero-mark relative flex size-14 shrink-0 items-center justify-center overflow-hidden rounded-full p-0 ring-0 ${chatMobileGlassSurfaceClass} ${chatMobileHeaderShadowClass}`
 
 const chatMobileEmptyHeroMarkLogoClass =
-  "size-full object-contain object-center"
-
-const chatMobileEmptyHeroMarkGlassOverlayClass =
-  "pointer-events-none absolute inset-0 rounded-full bg-gradient-to-br from-white/35 via-white/8 to-transparent shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_72%,transparent)] dark:from-white/14 dark:via-white/4"
+  "size-full object-contain object-center rounded-full"
 
 const chatMobileEmptyHeroTitleClass =
   "chat-empty-hero-title max-w-[20rem] text-balance text-[1.75rem] font-light leading-[1.22] tracking-[-0.028em] text-foreground"
@@ -145,12 +139,34 @@ const chatDesktopComposerSendClass =
 const chatDesktopComposerSendDisabledClass =
   `${chatDesktopComposerControlClass} size-10 rounded-full text-muted-foreground/70 sm:size-9`
 
-/** Empty-state sample prompt cards — white surface, shadow on hover. */
+/** Empty-state sample prompt cards — liquid glass, Apple-like inset padding. */
 const chatSamplePromptButtonClass =
-  "h-auto w-fit max-w-[18rem] items-stretch justify-start rounded-xl border-0 bg-white px-3 py-2.5 text-left whitespace-normal shadow-none transition-[background-color,box-shadow,transform] hover:bg-white hover:shadow-[0_4px_18px_-6px_color-mix(in_oklch,var(--foreground)_11%,transparent),0_2px_8px_-2px_color-mix(in_oklch,var(--foreground)_5%,transparent)] active:scale-[0.99] dark:bg-white/[0.08] dark:hover:bg-white/[0.11] dark:hover:shadow-[0_8px_28px_-10px_color-mix(in_oklch,black_32%,transparent)] sm:max-w-[20rem]"
+  `flex h-auto w-full min-w-0 items-start justify-start rounded-[20px] border-0 px-[18px] py-4 text-left transition-[background-color,box-shadow,transform] active:scale-[0.985] sm:rounded-[22px] sm:px-5 sm:py-[18px] ${chatMobileGlassSurfaceClass} ${chatMobileHeaderShadowClass} ${chatMobileHeaderShadowHoverClass}`
 
 const chatSamplePromptIconClass =
-  "mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-lg bg-foreground/[0.05] text-muted-foreground"
+  "mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-[14px] bg-white/50 shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_82%,transparent),0_1px_2px_color-mix(in_oklch,var(--foreground)_4%,transparent)] backdrop-blur-md backdrop-saturate-150 text-muted-foreground dark:bg-white/[0.1] sm:size-9 sm:rounded-[15px]"
+
+const chatSamplePromptTextClass =
+  "flex min-w-0 flex-1 flex-col items-start gap-1 text-start"
+
+const chatSamplePromptTitleClass =
+  "w-full text-[13px] font-medium leading-snug text-foreground sm:text-sm"
+
+const chatSamplePromptDescriptionClass =
+  "w-full text-pretty text-[11px] leading-5 break-words text-muted-foreground sm:text-xs sm:leading-5"
+
+const chatEmptyHeroPromptsClass =
+  "chat-empty-hero-prompts mt-1 flex w-full min-w-0 self-stretch flex-col items-stretch gap-2"
+
+const chatSamplePromptCarouselClass =
+  "w-full min-w-0 touch-pan-y [&_[data-slot=carousel-content]]:overflow-x-clip [&_[data-slot=carousel-content]]:px-1.5 [&_[data-slot=carousel-content]]:py-2.5"
+
+const chatSamplePromptCarouselContentClass = "-ml-5 w-full items-stretch"
+
+const chatSamplePromptCarouselItemClass =
+  "min-w-0 basis-[88%] shrink-0 grow-0 self-stretch pl-5 sm:basis-[86%]"
+
+const chatSamplePromptCarouselDotsClass = "mt-2.5"
 
 const chatMobileComposerIconButtonClass =
   "size-10 shrink-0 rounded-full text-muted-foreground transition-colors hover:bg-foreground/[0.05] hover:text-foreground [&_svg]:stroke-[1.75]"
@@ -306,9 +322,7 @@ export {
   chatMobileComposerShellClass,
   chatMobileEmptyHeroContentClass,
   chatMobileEmptyHeroMarkClass,
-  chatMobileEmptyHeroMarkGlassOverlayClass,
   chatMobileEmptyHeroMarkLogoClass,
-  chatMobileEmptyHeroMarkShellClass,
   chatMobileEmptyHeroTitleClass,
   chatMobileEmptyHeroWrapClass,
   chatMobileDrawerFooterBarClass,
@@ -335,8 +349,16 @@ export {
   chatSignalCardInsetClass,
   chatSignalCardMetricTileClass,
   chatMobileScrollDownClass,
+  chatEmptyHeroPromptsClass,
   chatSamplePromptButtonClass,
+  chatSamplePromptCarouselClass,
+  chatSamplePromptCarouselContentClass,
+  chatSamplePromptCarouselDotsClass,
+  chatSamplePromptCarouselItemClass,
+  chatSamplePromptDescriptionClass,
   chatSamplePromptIconClass,
+  chatSamplePromptTextClass,
+  chatSamplePromptTitleClass,
   chatMobileSheetBodyClass,
   chatMobileSheetCardClass,
   chatMobileSheetConsentCheckedClass,

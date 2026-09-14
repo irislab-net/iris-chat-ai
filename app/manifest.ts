@@ -11,10 +11,22 @@ export default function manifest(): MetadataRoute.Manifest {
     scope: "/",
     display: "standalone",
     display_override: ["standalone", "minimal-ui"],
-    background_color: "#252525",
-    theme_color: "#252525",
+    background_color: "#f5f5f5",
+    theme_color: "#f5f5f5",
     lang: "en",
     icons: [
+      {
+        src: "/favicon-48.png",
+        sizes: "48x48",
+        type: "image/png",
+        purpose: "any",
+      },
+      {
+        src: "/apple-touch-icon.png",
+        sizes: "180x180",
+        type: "image/png",
+        purpose: "any",
+      },
       {
         src: "/icon-192.png",
         sizes: "192x192",
@@ -32,11 +44,6 @@ export default function manifest(): MetadataRoute.Manifest {
         sizes: "512x512",
         type: "image/png",
         purpose: "maskable",
-      },
-      {
-        src: "/favicon.ico",
-        sizes: "48x48",
-        type: "image/x-icon",
       },
     ],
   }

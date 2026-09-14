@@ -1,5 +1,24 @@
 import type { ComponentProps } from "react"
 
+import { ChatMobileGeminiBackground } from "@/components/app-shell/chat-mobile-gemini-background"
+import {
+  chatEmptyHeroPromptsClass,
+  chatMobileComposerLeadingClass,
+  chatMobileComposerPillClass,
+  chatMobileComposerPillCompactClass,
+  chatMobileComposerShellClass,
+  chatMobileComposerTrailingClass,
+  chatMobileEmptyHeroContentClass,
+  chatMobileEmptyHeroMarkClass,
+  chatMobileEmptyHeroWrapClass,
+  chatMobileHeaderButtonClass,
+  chatMobileHeaderModelClass,
+  chatMobileHeaderScrimClass,
+  chatSamplePromptButtonClass,
+  chatSamplePromptCarouselDotsClass,
+  chatSamplePromptIconClass,
+  chatSamplePromptTextClass,
+} from "@/components/app-shell/chat-mobile-gemini-styles"
 import { Skeleton } from "@/components/ui/skeleton"
 import { cn } from "@/lib/utils"
 
@@ -7,6 +26,26 @@ function Bone({ className, ...props }: ComponentProps<"div">) {
   return (
     <Skeleton
       className={cn("rounded-sm bg-foreground/7", className)}
+      {...props}
+    />
+  )
+}
+
+function MobileBone({
+  className,
+  stagger,
+  ...props
+}: ComponentProps<"div"> & { stagger?: 1 | 2 | 3 }) {
+  return (
+    <div
+      aria-hidden
+      className={cn(
+        "chat-skeleton-shimmer",
+        stagger === 1 && "chat-mobile-skeleton-stagger-1",
+        stagger === 2 && "chat-mobile-skeleton-stagger-2",
+        stagger === 3 && "chat-mobile-skeleton-stagger-3",
+        className
+      )}
       {...props}
     />
   )
@@ -87,26 +126,85 @@ function ChatComposerSkeleton({ className }: { className?: string }) {
 function ChatMobileHeaderSkeleton() {
   return (
     <div className="relative shrink-0">
+      <div aria-hidden className={chatMobileHeaderScrimClass} />
       <header className="app-mobile-safe-header relative z-[1] flex items-center justify-between gap-2 bg-transparent px-6 pb-2">
         <div className="flex min-w-0 items-center gap-3">
-          <Bone className="size-10 shrink-0 rounded-full" />
-          <Bone className="h-10 w-[6.25rem] shrink-0 rounded-full" />
+          <div
+            aria-hidden
+            className={cn(chatMobileHeaderButtonClass, "size-10 shrink-0")}
+          />
+          <div
+            aria-hidden
+            className={cn(
+              chatMobileHeaderModelClass,
+              "h-10 w-[6.25rem] shrink-0"
+            )}
+          />
         </div>
         <div className="flex shrink-0 items-center gap-2">
-          <Bone className="size-10 shrink-0 rounded-full" />
-          <Bone className="size-10 shrink-0 rounded-full" />
+          <div
+            aria-hidden
+            className={cn(chatMobileHeaderButtonClass, "size-10 shrink-0")}
+          />
+          <div
+            aria-hidden
+            className={cn(chatMobileHeaderButtonClass, "size-10 shrink-0")}
+          />
         </div>
       </header>
     </div>
   )
 }
 
+function ChatMobileStarterCardSkeleton() {
+  return (
+    <div className={cn(chatSamplePromptButtonClass, "pointer-events-none")}>
+      <div className="flex w-full min-w-0 items-start gap-2.5 sm:gap-3">
+        <MobileBone
+          stagger={2}
+          className={cn(chatSamplePromptIconClass, "bg-transparent shadow-none")}
+        />
+        <div className={chatSamplePromptTextClass}>
+          <MobileBone stagger={2} className="h-3.5 w-24 rounded-full" />
+          <MobileBone stagger={3} className="h-2.5 w-full rounded-full" />
+          <MobileBone stagger={3} className="h-2.5 w-[88%] rounded-full" />
+        </div>
+      </div>
+    </div>
+  )
+}
+
 function ChatMobileEmptyHeroSkeleton() {
   return (
-    <div className="flex min-h-0 flex-1 flex-col items-center justify-center px-6 pb-6 pt-4">
-      <div className="flex w-full max-w-3xl flex-col items-center gap-5 text-center">
-        <Bone className="size-16 shrink-0 rounded-full border border-border/20 bg-muted/20 shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_75%,transparent),0_8px_24px_-10px_color-mix(in_oklch,var(--foreground)_8%,transparent)]" />
-        <Bone className="h-7 w-[min(20rem,88%)] max-w-[20rem] rounded-full" />
+    <div
+      className={cn(
+        chatMobileEmptyHeroWrapClass,
+        "chat-empty-hero-shell chat-mobile-skeleton-hero min-h-0 flex-1"
+      )}
+    >
+      <div className="mx-auto w-full max-w-3xl">
+        <div className={chatMobileEmptyHeroContentClass}>
+          <MobileBone
+            stagger={1}
+            className={cn(chatMobileEmptyHeroMarkClass, "bg-transparent shadow-none")}
+          />
+          <MobileBone
+            stagger={2}
+            className="h-7 w-[min(18rem,78%)] max-w-[18rem] rounded-full"
+          />
+          <div className={chatEmptyHeroPromptsClass}>
+            <MobileBone
+              stagger={2}
+              className="h-2.5 w-12 self-center rounded-full opacity-80"
+            />
+            <ChatMobileStarterCardSkeleton />
+            <div className={cn("flex items-center justify-center gap-1.5", chatSamplePromptCarouselDotsClass)}>
+              <MobileBone className="size-1.5 rounded-full bg-muted-foreground/25" />
+              <MobileBone className="size-1.5 rounded-full bg-muted-foreground/38" />
+              <MobileBone className="size-1.5 rounded-full bg-muted-foreground/25" />
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   )
@@ -114,13 +212,37 @@ function ChatMobileEmptyHeroSkeleton() {
 
 function ChatMobileComposerSkeleton() {
   return (
-    <div className="relative shrink-0 bg-transparent px-6 pt-1.5 pb-[max(1rem,env(safe-area-inset-bottom,0px))]">
-      <div className="grid min-h-16 w-full grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-2 rounded-[26px] border border-border/35 bg-muted/25 px-4 py-3">
-        <Bone className="size-8 shrink-0 rounded-full" />
-        <Bone className="h-4 w-full max-w-[11rem] rounded-full" />
-        <Bone className="size-10 shrink-0 rounded-full" />
+    <form
+      data-slot="chat-composer"
+      aria-hidden
+      className={cn("relative mx-auto w-full max-w-3xl shrink-0", chatMobileComposerShellClass)}
+    >
+      <div
+        className={cn(
+          chatMobileComposerPillClass,
+          chatMobileComposerPillCompactClass
+        )}
+      >
+        <div className={chatMobileComposerLeadingClass}>
+          <MobileBone
+            stagger={3}
+            className="size-10 shrink-0 rounded-full bg-foreground/[0.07]"
+          />
+        </div>
+        <div className="[grid-area:field] flex min-h-8 min-w-0 items-center px-2.5">
+          <MobileBone
+            stagger={3}
+            className="h-3 w-[4.75rem] rounded-full opacity-80"
+          />
+        </div>
+        <div className={chatMobileComposerTrailingClass}>
+          <MobileBone
+            stagger={3}
+            className="size-10 shrink-0 rounded-full bg-foreground/[0.07]"
+          />
+        </div>
       </div>
-    </div>
+    </form>
   )
 }
 
@@ -135,10 +257,13 @@ function ChatMobileAsideSkeleton({ className }: { className?: string }) {
       aria-busy="true"
       aria-label="Loading Exur"
     >
-      <div className="relative z-10 flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-transparent">
-        <ChatMobileHeaderSkeleton />
-        <ChatMobileEmptyHeroSkeleton />
-        <ChatMobileComposerSkeleton />
+      <ChatMobileGeminiBackground visible intro />
+      <div className="relative z-10 flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-transparent text-foreground chat-mobile-gemini-empty">
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
+          <ChatMobileHeaderSkeleton />
+          <ChatMobileEmptyHeroSkeleton />
+          <ChatMobileComposerSkeleton />
+        </div>
       </div>
     </aside>
   )
@@ -146,25 +271,18 @@ function ChatMobileAsideSkeleton({ className }: { className?: string }) {
 
 function ChatPromptsSkeleton() {
   return (
-    <div className="flex min-h-0 flex-1 flex-col justify-center px-4 py-10">
-      <div className="mx-auto w-full max-w-3xl">
-        <div className="mb-5 flex flex-col items-center text-center">
-          <Bone className="size-10 rounded-xl" />
-          <Bone className="mt-3 h-3.5 w-32" />
-          <Bone className="mt-2 h-2.5 w-44" />
-        </div>
-        <div className="flex flex-col items-center gap-2">
-          <Bone className="h-2.5 w-12" />
-          {[56, 64, 48].map((title) => (
-            <div
-              key={title}
-              className="w-full max-w-[18rem] space-y-1.5 rounded-xl bg-white px-3 py-2.5 shadow-[0_1px_2px_color-mix(in_oklch,var(--foreground)_4%,transparent)] sm:max-w-[20rem] dark:bg-white/[0.08]"
-            >
-              <Bone className="h-3" style={{ width: title }} />
-              <Bone className="h-2 w-full" />
-              <Bone className="h-2 w-5/6" />
-            </div>
-          ))}
+    <div className="flex min-h-0 flex-1 flex-col items-center justify-center px-4 py-10">
+      <div className="mx-auto flex w-full max-w-3xl flex-col items-center gap-5 text-center">
+        <Bone className="size-16 rounded-2xl" />
+        <Bone className="h-7 w-[min(20rem,88%)] max-w-[20rem] rounded-full" />
+        <div className="flex w-full flex-col items-stretch gap-2">
+          <Bone className="h-2.5 w-12 self-center rounded-full" />
+          <Bone className="min-h-[4.75rem] w-full rounded-[20px] border border-border/15 bg-muted/15 shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_75%,transparent),0_8px_24px_-10px_color-mix(in_oklch,var(--foreground)_8%,transparent)] sm:rounded-[22px]" />
+          <div className="mt-2.5 flex items-center justify-center gap-1.5">
+            <Bone className="size-1.5 rounded-full" />
+            <Bone className="size-1.5 rounded-full" />
+            <Bone className="size-1.5 rounded-full" />
+          </div>
         </div>
       </div>
     </div>

@@ -14,6 +14,13 @@ import {
 } from "lucide-react"
 import { useTranslations } from "next-intl"
 
+import {
+  chatContextMenuContentClass,
+  chatContextMenuDeleteClass,
+  chatContextMenuIconClass,
+  chatContextMenuItemClass,
+  chatContextMenuSeparatorClass,
+} from "@/components/app-shell/chat-context-menu-styles"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -148,22 +155,36 @@ function ChatConversationToolbar({
             >
               <MoreHorizontalIcon className="size-4" />
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="min-w-44 rounded-xl">
-              <DropdownMenuItem className="gap-2" onClick={onTogglePin}>
-                {pinned ? <PinOffIcon /> : <PinIcon />}
+            <DropdownMenuContent
+              align="end"
+              sideOffset={8}
+              className={cn(chatContextMenuContentClass, "min-w-44")}
+            >
+              <DropdownMenuItem
+                className={chatContextMenuItemClass}
+                onClick={onTogglePin}
+              >
+                {pinned ? (
+                  <PinOffIcon className={chatContextMenuIconClass} />
+                ) : (
+                  <PinIcon className={chatContextMenuIconClass} />
+                )}
                 {pinned ? t("unpinChat") : t("pinChat")}
               </DropdownMenuItem>
-              <DropdownMenuItem className="gap-2" onClick={openRename}>
-                <PencilIcon />
+              <DropdownMenuItem
+                className={chatContextMenuItemClass}
+                onClick={openRename}
+              >
+                <PencilIcon className={chatContextMenuIconClass} />
                 {t("renameChat")}
               </DropdownMenuItem>
-              <DropdownMenuSeparator />
+              <DropdownMenuSeparator className={chatContextMenuSeparatorClass} />
               <DropdownMenuItem
                 variant="destructive"
-                className="gap-2"
+                className={chatContextMenuDeleteClass}
                 onClick={onDelete}
               >
-                <Trash2Icon />
+                <Trash2Icon className={chatContextMenuIconClass} />
                 {t("deleteChat")}
               </DropdownMenuItem>
             </DropdownMenuContent>

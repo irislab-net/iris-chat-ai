@@ -1,5 +1,5 @@
 /**
- * Rebuild square PWA / Apple touch icons from the brand SVG mark.
+ * Rebuild square PWA / Apple touch icons from the circular brand SVG mark.
  * Usage: node scripts/generate-pwa-icons.mjs
  */
 import { readFileSync, writeFileSync } from "node:fs"
@@ -8,16 +8,24 @@ import { fileURLToPath } from "node:url"
 import { Resvg } from "@resvg/resvg-js"
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..")
-const markSvg = readFileSync(join(root, "public/iris-lab-logo-dark.svg"), "utf8")
-const inner = markSvg
-  .replace(/<\?xml[^>]*>/i, "")
-  .replace(/<svg[^>]*>/i, "")
-  .replace(/<\/svg>\s*$/i, "")
-  .trim()
+const markSvg = readFileSync(
+  join(root, "public/iris-lab-logo-light.svg"),
+  "utf8"
+)
 
-const BG = "#252525"
+/** Matches PWA / browser chrome light background. */
+const LIGHT_BG = "#f5f5f5"
 
-function buildIconSvg({ size, padRatio, bg }) {
+function extractInner(svg) {
+  return svg
+    .replace(/<\?xml[^>]*>/i, "")
+    .replace(/<svg[^>]*>/i, "")
+    .replace(/<\/svg>\s*$/i, "")
+    .trim()
+}
+
+function buildLogoSvg({ size, padRatio = 0, bg = LIGHT_BG }) {
+  const inner = extractInner(markSvg)
   const innerSize = size * (1 - padRatio * 2)
   const offset = (size - innerSize) / 2
   const scale = innerSize / 68
@@ -36,20 +44,48 @@ function render(svg, outPath) {
   console.log(`wrote ${outPath} (${png.byteLength} bytes)`)
 }
 
-/** Modest inset so iOS / Android masks do not clip the mark. */
-const ANY_PAD = 0.12
+/** Full-bleed circular mark — home screen / install sheet. */
+const ANY_PAD = 0
 /** Maskable safe zone ≈ center 80%. */
-const MASK_PAD = 0.2
+const MASK_PAD = 0.1
 
-render(buildIconSvg({ size: 512, padRatio: ANY_PAD, bg: BG }), join(root, "public/icon-512.png"))
-render(buildIconSvg({ size: 192, padRatio: ANY_PAD, bg: BG }), join(root, "public/icon-192.png"))
-render(buildIconSvg({ size: 180, padRatio: ANY_PAD, bg: BG }), join(root, "public/apple-touch-icon.png"))
 render(
-  buildIconSvg({ size: 512, padRatio: MASK_PAD, bg: BG }),
+  buildLogoSvg({ size: 512, padRatio: ANY_PAD }),
+  join(root, "public/icon-512.png")
+)
+render(
+  buildLogoSvg({ size: 192, padRatio: ANY_PAD }),
+  join(root, "public/icon-192.png")
+)
+render(
+  buildLogoSvg({ size: 180, padRatio: ANY_PAD }),
+  join(root, "public/apple-touch-icon.png")
+)
+render(
+  buildLogoSvg({ size: 512, padRatio: MASK_PAD }),
   join(root, "public/icon-512-maskable.png")
 )
 render(
-  buildIconSvg({ size: 512, padRatio: ANY_PAD, bg: BG }),
+  buildLogoSvg({ size: 32, padRatio: ANY_PAD }),
+  join(root, "public/favicon-32.png")
+)
+render(
+  buildLogoSvg({ size: 48, padRatio: ANY_PAD }),
+  join(root, "public/favicon-48.png")
+)
+render(
+  buildLogoSvg({ size: 512, padRatio: ANY_PAD }),
+  join(root, "app/icon.png")
+)
+render(
+  buildLogoSvg({ size: 180, padRatio: ANY_PAD }),
+  join(root, "app/apple-icon.png")
+)
+render(
+  buildLogoSvg({ size: 512, padRatio: ANY_PAD }),
   join(root, "public/organization-logo.png")
 )
-render(buildIconSvg({ size: 512, padRatio: ANY_PAD, bg: BG }), join(root, "public/Logo.png"))
+render(
+  buildLogoSvg({ size: 512, padRatio: ANY_PAD }),
+  join(root, "public/Logo.png")
+)

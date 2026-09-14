@@ -1,8 +1,10 @@
 "use client"
 
 import * as React from "react"
+import Autoplay from "embla-carousel-autoplay"
 import { Link, usePathname, useRouter } from "@/i18n/navigation"
 import { useTranslations } from "next-intl"
+import { useReducedMotion } from "motion/react"
 import {
   ActivityIcon,
   BitcoinIcon,
@@ -16,7 +18,7 @@ import { ChatAccountFooter } from "@/components/app-shell/chat-account-footer"
 import { ChatAccountMenu } from "@/components/app-shell/chat-account-menu"
 import { IrisLabLogo } from "@/components/brand/iris-lab-logo"
 import { ChatMobileGeminiBackground } from "@/components/app-shell/chat-mobile-gemini-background"
-import { chatMobileScrollDownClass, chatMobileThreadBottomFadeClass, chatMobileThreadBottomSpacerClass, chatMobileThreadClass, chatMobileThreadFirstTurnClass, chatMobileThreadScrollMaskClass, chatMobileEmptyHeroContentClass, chatMobileEmptyHeroMarkClass, chatMobileEmptyHeroMarkGlassOverlayClass, chatMobileEmptyHeroMarkLogoClass, chatMobileEmptyHeroMarkShellClass, chatMobileEmptyHeroTitleClass, chatMobileEmptyHeroWrapClass, chatSamplePromptButtonClass, chatSamplePromptIconClass } from "@/components/app-shell/chat-mobile-gemini-styles"
+import { chatEmptyHeroPromptsClass, chatMobileScrollDownClass, chatMobileThreadBottomFadeClass, chatMobileThreadBottomSpacerClass, chatMobileThreadClass, chatMobileThreadFirstTurnClass, chatMobileThreadScrollMaskClass, chatMobileEmptyHeroContentClass, chatMobileEmptyHeroMarkClass, chatMobileEmptyHeroMarkLogoClass, chatMobileEmptyHeroTitleClass, chatMobileEmptyHeroWrapClass, chatSamplePromptButtonClass, chatSamplePromptCarouselClass, chatSamplePromptCarouselContentClass, chatSamplePromptCarouselDotsClass, chatSamplePromptCarouselItemClass, chatSamplePromptDescriptionClass, chatSamplePromptIconClass, chatSamplePromptTextClass, chatSamplePromptTitleClass } from "@/components/app-shell/chat-mobile-gemini-styles"
 import { ChatMobileHeader } from "@/components/app-shell/chat-mobile-header"
 import {
   ChatNewsMobileSheet,
@@ -56,6 +58,12 @@ import { useIsDesktop } from "@/hooks/use-media-query"
 import { useShellSidebarLayout } from "@/hooks/use-shell-sidebar-layout"
 import { useChatClientContext, useDeskContextSnapshot } from "@/hooks/use-chat-client-context"
 import { Button } from "@/components/ui/button"
+import {
+  Carousel,
+  CarouselContent,
+  CarouselDots,
+  CarouselItem,
+} from "@/components/ui/carousel"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import {
   createChatClientActionHandlers,
@@ -266,6 +274,82 @@ const SAMPLE_PROMPT_ICONS = {
   "wait-or-watch": EyeIcon,
 } as const
 
+const SAMPLE_PROMPT_TAP_SLOP_PX = 8
+
+function IrisSamplePromptCard({
+  prompt,
+  disabled,
+  onEdit,
+}: {
+  prompt: (typeof IRIS_SAMPLE_PROMPTS)[number]
+  disabled?: boolean
+  onEdit: (text: string) => void
+}) {
+  const Icon =
+    SAMPLE_PROMPT_ICONS[prompt.id as keyof typeof SAMPLE_PROMPT_ICONS] ??
+    ActivityIcon
+  const pointerStartRef = React.useRef<{ x: number; y: number } | null>(null)
+
+  function handlePointerDown(event: React.PointerEvent<HTMLDivElement>) {
+    if (disabled) return
+    pointerStartRef.current = { x: event.clientX, y: event.clientY }
+  }
+
+  function handlePointerUp(event: React.PointerEvent<HTMLDivElement>) {
+    const start = pointerStartRef.current
+    pointerStartRef.current = null
+    if (!start || disabled) return
+
+    const dx = Math.abs(event.clientX - start.x)
+    const dy = Math.abs(event.clientY - start.y)
+    if (dx <= SAMPLE_PROMPT_TAP_SLOP_PX && dy <= SAMPLE_PROMPT_TAP_SLOP_PX) {
+      onEdit(prompt.text)
+    }
+  }
+
+  return (
+    <div
+      role="button"
+      tabIndex={disabled ? -1 : 0}
+      aria-disabled={disabled || undefined}
+      aria-label={`Use prompt: ${prompt.title}`}
+      className={cn(
+        chatSamplePromptButtonClass,
+        "cursor-pointer select-none",
+        disabled && "pointer-events-none opacity-50"
+      )}
+      onPointerDown={handlePointerDown}
+      onPointerUp={handlePointerUp}
+      onPointerCancel={() => {
+        pointerStartRef.current = null
+      }}
+      onKeyDown={(event) => {
+        if (disabled) return
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault()
+          onEdit(prompt.text)
+        }
+      }}
+      onPointerEnter={() => {
+        void import("@/lib/chat/parse-trade-setup")
+        void import("@/components/paper-trading/paper-trading-workspace")
+      }}
+    >
+      <span className="flex w-full min-w-0 items-start gap-2.5 sm:gap-3">
+        <span className={chatSamplePromptIconClass}>
+          <Icon className="size-3.5 sm:size-4" aria-hidden />
+        </span>
+        <span className={chatSamplePromptTextClass}>
+          <span className={chatSamplePromptTitleClass}>{prompt.title}</span>
+          <span className={chatSamplePromptDescriptionClass}>
+            {prompt.description}
+          </span>
+        </span>
+      </span>
+    </div>
+  )
+}
+
 function IrisSamplePrompts({
   disabled,
   onEdit,
@@ -274,50 +358,50 @@ function IrisSamplePrompts({
   onEdit: (text: string) => void
 }) {
   const t = useTranslations("workspace")
+  const reduceMotion = useReducedMotion()
+  const autoplayPlugin = React.useMemo(
+    () =>
+      Autoplay({
+        delay: 4800,
+        playOnInit: true,
+        stopOnInteraction: false,
+        stopOnMouseEnter: true,
+      }),
+    []
+  )
 
   return (
-    <div className="mt-6 flex flex-col items-center gap-2">
-      <p className="px-0.5 text-[10px] font-medium tracking-wide text-muted-foreground uppercase">
+    <div className={chatEmptyHeroPromptsClass}>
+      <p className="self-center px-0.5 text-[10px] font-medium tracking-wide text-muted-foreground uppercase">
         {t("samplePromptsLabel")}
       </p>
-      <div className="flex w-full flex-col items-center gap-1.5">
-        {IRIS_SAMPLE_PROMPTS.map((prompt) => {
-          const Icon =
-            SAMPLE_PROMPT_ICONS[
-              prompt.id as keyof typeof SAMPLE_PROMPT_ICONS
-            ] ?? ActivityIcon
-
-          return (
-            <Button
+      <Carousel
+        className={chatSamplePromptCarouselClass}
+        opts={{
+          align: "center",
+          loop: true,
+          dragFree: false,
+          duration: 32,
+          skipSnaps: false,
+        }}
+        plugins={reduceMotion ? undefined : [autoplayPlugin]}
+      >
+        <CarouselContent className={chatSamplePromptCarouselContentClass}>
+          {IRIS_SAMPLE_PROMPTS.map((prompt) => (
+            <CarouselItem
               key={prompt.id}
-              type="button"
-              variant="ghost"
-              disabled={disabled}
-              aria-label={`Use prompt: ${prompt.title}`}
-              className={chatSamplePromptButtonClass}
-              onPointerEnter={() => {
-                void import("@/lib/chat/parse-trade-setup")
-                void import("@/components/paper-trading/paper-trading-workspace")
-              }}
-              onClick={() => onEdit(prompt.text)}
+              className={chatSamplePromptCarouselItemClass}
             >
-              <span className="flex items-start gap-2.5 whitespace-normal">
-                <span className={chatSamplePromptIconClass}>
-                  <Icon className="size-3.5" aria-hidden />
-                </span>
-                <span className="flex min-w-0 flex-col items-start gap-0.5">
-                  <span className="text-[13px] font-medium text-foreground">
-                    {prompt.title}
-                  </span>
-                  <span className="text-[11px] leading-5 text-muted-foreground">
-                    {prompt.description}
-                  </span>
-                </span>
-              </span>
-            </Button>
-          )
-        })}
-      </div>
+              <IrisSamplePromptCard
+                prompt={prompt}
+                disabled={disabled}
+                onEdit={onEdit}
+              />
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+        <CarouselDots className={chatSamplePromptCarouselDotsClass} />
+      </Carousel>
     </div>
   )
 }
@@ -430,8 +514,7 @@ function ChatAside({
   const stickToBottomRef = React.useRef(true)
   const [showScrollDown, setShowScrollDown] = React.useState(false)
   const composerRef = React.useRef<HTMLTextAreaElement>(null)
-  const focusComposerOnDesktop = React.useCallback(() => {
-    if (isDesktop !== true) return
+  const focusComposer = React.useCallback(() => {
     queueMicrotask(() => {
       const el = composerRef.current
       if (!el) return
@@ -441,7 +524,7 @@ function ChatAside({
         el.focus()
       }
     })
-  }, [isDesktop])
+  }, [])
   const [draft, setDraft] = React.useState("")
   const [effort, setEffort] = React.useState<ChatEffort>(DEFAULT_CHAT_EFFORT)
   React.useEffect(() => {
@@ -736,10 +819,10 @@ function ChatAside({
     return subscribeCopilotChatPrefill((input) => {
       setDraft(input.text)
       if (input.focus !== false) {
-        focusComposerOnDesktop()
+        focusComposer()
       }
     })
-  }, [focusComposerOnDesktop])
+  }, [focusComposer])
 
   React.useEffect(() => {
     function onSessionReset() {
@@ -1685,9 +1768,13 @@ function ChatAside({
       setShowMobileEmptyHero(true)
       return
     }
+    if (!isMobileOverlay) {
+      setShowMobileEmptyHero(false)
+      return
+    }
     const timer = window.setTimeout(() => setShowMobileEmptyHero(false), 360)
     return () => window.clearTimeout(timer)
-  }, [messages.length])
+  }, [isMobileOverlay, messages.length])
 
   React.useEffect(() => {
     setHistoryRailCollapsed(readHistoryRailCollapsed())
@@ -1951,66 +2038,52 @@ function ChatAside({
                   chatMobileThreadScrollMaskClass
               )}
             >
-              {isMobileOverlay && showMobileEmptyHero ? (
+              {showMobileEmptyHero ? (
                 <div
                   className={cn(
-                    chatMobileEmptyHeroWrapClass,
+                    isMobileOverlay
+                      ? chatMobileEmptyHeroWrapClass
+                      : "flex min-h-full flex-col items-center justify-center px-4 py-10",
                     "chat-empty-hero-shell",
                     messages.length > 0 &&
                       cn(
                         "chat-empty-hero-shell-exiting",
-                        "pointer-events-none absolute inset-x-0 top-0 z-[1] min-h-0 justify-start pb-0"
+                        isMobileOverlay &&
+                          "pointer-events-none absolute inset-x-0 top-0 z-[1] min-h-0 justify-start pb-0"
                       )
                   )}
                 >
                   <div className={cn("mx-auto w-full", CHAT_CONTENT_MAX_WIDTH)}>
                     <div className={chatMobileEmptyHeroContentClass}>
-                      <div className={chatMobileEmptyHeroMarkShellClass}>
+                      {isMobileOverlay ? (
                         <IrisMark
                           variant="hero"
                           className={chatMobileEmptyHeroMarkClass}
                           imageClassName={chatMobileEmptyHeroMarkLogoClass}
                         />
-                        <div
-                          aria-hidden
-                          className={chatMobileEmptyHeroMarkGlassOverlayClass}
+                      ) : (
+                        <IrisMark
+                          variant="hero"
+                          className="size-16 rounded-2xl"
                         />
-                      </div>
-                      <h2 className={chatMobileEmptyHeroTitleClass}>
+                      )}
+                      <h2
+                        className={cn(
+                          isMobileOverlay
+                            ? chatMobileEmptyHeroTitleClass
+                            : "max-w-[20rem] text-balance text-[1.75rem] font-light leading-[1.22] tracking-[-0.028em] text-foreground"
+                        )}
+                      >
                         {mobileGreeting}
                       </h2>
-                    </div>
-                  </div>
-                </div>
-              ) : null}
-              {messages.length === 0 && !isMobileOverlay ? (
-                <div className="flex min-h-full flex-col justify-center px-4 py-10">
-                  <div
-                    className={cn("mx-auto w-full", CHAT_CONTENT_MAX_WIDTH)}
-                  >
-                    <div className="mb-5 flex flex-col items-center text-center">
-                      <IrisMark
-                        variant="hero"
-                        className="size-16 rounded-2xl"
+                      <IrisSamplePrompts
+                        disabled={sending}
+                        onEdit={(text) => {
+                          setDraft(text)
+                          focusComposer()
+                        }}
                       />
-                      <h2 className="mt-3 text-[15px] font-semibold tracking-tight text-foreground">
-                        How can I help?
-                      </h2>
-                      <p className="mt-1.5 max-w-[16rem] text-[12px] leading-5 text-muted-foreground">
-                        {isAuthenticated
-                          ? t("emptySignedIn")
-                          : guestUnavailable
-                            ? t("emptyGuestUnavailable")
-                            : t("emptyGuestTrial")}
-                      </p>
                     </div>
-                    <IrisSamplePrompts
-                      disabled={sending}
-                      onEdit={(text) => {
-                        setDraft(text)
-                        focusComposerOnDesktop()
-                      }}
-                    />
                   </div>
                 </div>
               ) : null}
@@ -2093,7 +2166,7 @@ function ChatAside({
                       disabled={sending}
                       onSelect={(text) => {
                         setDraft(text)
-                        focusComposerOnDesktop()
+                        focusComposer()
                       }}
                     />
                   ) : null}

@@ -14,6 +14,13 @@ import {
 } from "lucide-react"
 import { useTranslations } from "next-intl"
 
+import {
+  chatContextMenuContentClass,
+  chatContextMenuDeleteClass,
+  chatContextMenuIconClass,
+  chatContextMenuItemClass,
+  chatContextMenuSeparatorClass,
+} from "@/components/app-shell/chat-context-menu-styles"
 import { ChatRenameDialog } from "@/components/app-shell/chat-rename-dialog"
 import { Button } from "@/components/ui/button"
 import {
@@ -123,34 +130,48 @@ function ChatThreadOptionsMenu({
         >
           <MoreHorizontalIcon className="size-4" />
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="min-w-44">
+        <DropdownMenuContent
+          align="end"
+          sideOffset={8}
+          className={cn(chatContextMenuContentClass, "min-w-44")}
+        >
           <DropdownMenuItem
-            className="gap-2"
+            className={chatContextMenuItemClass}
             disabled={disabled}
             onClick={() => void handleShare()}
           >
             {shared ? (
-              <CheckIcon className="text-emerald-600" />
+              <CheckIcon className="size-4 shrink-0 text-emerald-600" />
             ) : (
-              <ShareIcon />
+              <ShareIcon className={chatContextMenuIconClass} />
             )}
             {shared ? t("sharedChat") : t("shareChat")}
           </DropdownMenuItem>
-          <DropdownMenuItem className="gap-2" onClick={openRename}>
-            <PencilIcon />
+          <DropdownMenuItem
+            className={chatContextMenuItemClass}
+            onClick={openRename}
+          >
+            <PencilIcon className={chatContextMenuIconClass} />
             {t("renameChat")}
           </DropdownMenuItem>
-          <DropdownMenuItem className="gap-2" onClick={onTogglePin}>
-            {pinned ? <PinOffIcon /> : <PinIcon />}
+          <DropdownMenuItem
+            className={chatContextMenuItemClass}
+            onClick={onTogglePin}
+          >
+            {pinned ? (
+              <PinOffIcon className={chatContextMenuIconClass} />
+            ) : (
+              <PinIcon className={chatContextMenuIconClass} />
+            )}
             {pinned ? t("unpinChat") : t("pinChat")}
           </DropdownMenuItem>
-          <DropdownMenuSeparator />
+          <DropdownMenuSeparator className={chatContextMenuSeparatorClass} />
           <DropdownMenuItem
             variant="destructive"
-            className="gap-2"
+            className={chatContextMenuDeleteClass}
             onClick={onDelete}
           >
-            <Trash2Icon />
+            <Trash2Icon className={chatContextMenuIconClass} />
             {t("deleteChat")}
           </DropdownMenuItem>
         </DropdownMenuContent>

@@ -19,12 +19,30 @@ export function useAppViewportHeight(enabled = true) {
     let syncFrame = 0
     const resyncTimers = new Set<number>()
 
+    function isStandaloneDisplay() {
+      return (
+        root.classList.contains("display-standalone") ||
+        window.matchMedia("(display-mode: standalone)").matches ||
+        window.matchMedia("(display-mode: fullscreen)").matches ||
+        (window.navigator as Navigator & { standalone?: boolean }).standalone ===
+          true
+      )
+    }
+
     function syncViewport() {
       cancelAnimationFrame(syncFrame)
       syncFrame = requestAnimationFrame(() => {
         const viewport = window.visualViewport
-        const height = Math.round(viewport?.height ?? window.innerHeight)
-        const offsetTop = Math.round(viewport?.offsetTop ?? 0)
+        const layoutHeight = window.innerHeight
+        const visualHeight = Math.round(viewport?.height ?? layoutHeight)
+        const standalone = isStandaloneDisplay()
+        // Installed iOS PWA: visualViewport can sit above the home-indicator gutter.
+        const height = standalone
+          ? Math.max(layoutHeight, visualHeight)
+          : visualHeight
+        const offsetTop = standalone
+          ? 0
+          : Math.round(viewport?.offsetTop ?? 0)
 
         root.style.setProperty("--app-height", `${height}px`)
         root.style.setProperty("--app-offset-top", `${offsetTop}px`)
@@ -55,12 +73,7 @@ export function useAppViewportHeight(enabled = true) {
     }
 
     function syncDisplayMode() {
-      const standalone =
-        window.matchMedia("(display-mode: standalone)").matches ||
-        window.matchMedia("(display-mode: fullscreen)").matches ||
-        (window.navigator as Navigator & { standalone?: boolean }).standalone ===
-          true
-      root.classList.toggle("display-standalone", standalone)
+      root.classList.toggle("display-standalone", isStandaloneDisplay())
     }
 
     function onViewportChange() {
@@ -78,8 +91,8 @@ export function useAppViewportHeight(enabled = true) {
     }
 
     root.dataset.appShell = "true"
-    syncViewport()
     syncDisplayMode()
+    syncViewport()
 
     const viewport = window.visualViewport
     viewport?.addEventListener("resize", onViewportChange)
