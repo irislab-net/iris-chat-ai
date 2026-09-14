@@ -15,7 +15,7 @@ function forwardSetCookie(upstream: Headers, downstream: Headers) {
   if (single) downstream.set("set-cookie", single)
 }
 
-/** Same-origin proxy to api.irislab.info — forwards auth cookies both ways. */
+/** Same-origin proxy to api.exur.ai — forwards auth cookies both ways. */
 export async function proxyIrisApiRequest(
   req: Request,
   apiPath: string

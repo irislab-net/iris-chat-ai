@@ -36,7 +36,7 @@ describe("proxyIrisApiRequest", () => {
     )
 
     expect(fetchMock).toHaveBeenCalledWith(
-      "https://api.irislab.info/v1/auth/refresh",
+      "https://api.exur.ai/v1/auth/refresh",
       expect.objectContaining({
         method: "POST",
         body: "{}",
@@ -67,7 +67,7 @@ describe("proxyIrisApiRequest", () => {
     )
 
     expect(fetchMock).toHaveBeenCalledWith(
-      "https://api.irislab.info/v1/news/latest",
+      "https://api.exur.ai/v1/news/latest",
       expect.objectContaining({ method: "GET" })
     )
     expect(res.status).toBe(200)
@@ -90,7 +90,7 @@ describe("proxyIrisApiRequest", () => {
     )
 
     expect(fetchMock).toHaveBeenLastCalledWith(
-      "https://api.irislab.info/v1/payments/invoices",
+      "https://api.exur.ai/v1/payments/invoices",
       expect.objectContaining({ method: "GET" })
     )
     const upstreamInit = fetchMock.mock.calls.at(-1)?.[1] as RequestInit

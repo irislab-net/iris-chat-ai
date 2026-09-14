@@ -44,21 +44,23 @@ function render(svg, outPath) {
   console.log(`wrote ${outPath} (${png.byteLength} bytes)`)
 }
 
-/** Full-bleed circular mark — home screen / install sheet. */
-const ANY_PAD = 0
+/** iOS home screen + install sheet — ~80% safe area (Apple squircle inset). */
+const HOME_SCREEN_PAD = 0.1
 /** Maskable safe zone ≈ center 80%. */
 const MASK_PAD = 0.1
+/** Favicons stay tighter for legibility at small sizes. */
+const FAVICON_PAD = 0.06
 
 render(
-  buildLogoSvg({ size: 512, padRatio: ANY_PAD }),
+  buildLogoSvg({ size: 512, padRatio: HOME_SCREEN_PAD }),
   join(root, "public/icon-512.png")
 )
 render(
-  buildLogoSvg({ size: 192, padRatio: ANY_PAD }),
+  buildLogoSvg({ size: 192, padRatio: HOME_SCREEN_PAD }),
   join(root, "public/icon-192.png")
 )
 render(
-  buildLogoSvg({ size: 180, padRatio: ANY_PAD }),
+  buildLogoSvg({ size: 180, padRatio: HOME_SCREEN_PAD }),
   join(root, "public/apple-touch-icon.png")
 )
 render(
@@ -66,26 +68,26 @@ render(
   join(root, "public/icon-512-maskable.png")
 )
 render(
-  buildLogoSvg({ size: 32, padRatio: ANY_PAD }),
+  buildLogoSvg({ size: 32, padRatio: FAVICON_PAD }),
   join(root, "public/favicon-32.png")
 )
 render(
-  buildLogoSvg({ size: 48, padRatio: ANY_PAD }),
+  buildLogoSvg({ size: 48, padRatio: FAVICON_PAD }),
   join(root, "public/favicon-48.png")
 )
 render(
-  buildLogoSvg({ size: 512, padRatio: ANY_PAD }),
+  buildLogoSvg({ size: 512, padRatio: HOME_SCREEN_PAD }),
   join(root, "app/icon.png")
 )
 render(
-  buildLogoSvg({ size: 180, padRatio: ANY_PAD }),
+  buildLogoSvg({ size: 180, padRatio: HOME_SCREEN_PAD }),
   join(root, "app/apple-icon.png")
 )
 render(
-  buildLogoSvg({ size: 512, padRatio: ANY_PAD }),
+  buildLogoSvg({ size: 512, padRatio: HOME_SCREEN_PAD }),
   join(root, "public/organization-logo.png")
 )
 render(
-  buildLogoSvg({ size: 512, padRatio: ANY_PAD }),
+  buildLogoSvg({ size: 512, padRatio: HOME_SCREEN_PAD }),
   join(root, "public/Logo.png")
 )

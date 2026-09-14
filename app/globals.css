@@ -109,6 +109,8 @@
     );
     --app-height: 100dvh;
     --app-offset-top: 0px;
+    --keyboard-inset-bottom: 0px;
+    --browser-chrome-color: #f5f5f5;
     --app-safe-top: env(safe-area-inset-top, 0px);
     --app-safe-bottom: env(safe-area-inset-bottom, 0px);
     --mobile-toolbar-height: calc(3rem + var(--app-safe-top));
@@ -120,6 +122,7 @@
 }
 
 .dark {
+    --browser-chrome-color: #252525;
     --background: oklch(0.145 0 0);
     --foreground: oklch(0.985 0 0);
     --card: oklch(0.205 0 0);
@@ -167,7 +170,8 @@
     color-scheme: light dark;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply text-foreground;
+    background-color: var(--browser-chrome-color, var(--background));
   }
   button:not(:disabled), [role="button"]:not(:disabled) {
     cursor: pointer;
@@ -977,7 +981,7 @@
 html[data-app-shell="true"] {
   height: 100%;
   overflow: hidden;
-  background-color: var(--background);
+  background-color: var(--browser-chrome-color, var(--background));
 }
 
 html[data-app-shell="true"] body {
@@ -986,13 +990,25 @@ html[data-app-shell="true"] body {
   right: 0;
   width: 100%;
   top: var(--app-offset-top);
-  height: var(--app-height);
-  max-height: var(--app-height);
+  bottom: var(--keyboard-inset-bottom);
+  height: auto;
   min-height: 0;
+  max-height: none;
   overflow: hidden;
   overscroll-behavior: none;
   touch-action: manipulation;
   background-color: var(--background);
+}
+
+html[data-app-shell="true"] .h-app,
+html[data-app-shell="true"] [data-slot="app-shell"] {
+  height: 100%;
+  max-height: 100%;
+  min-height: 0;
+}
+
+html[data-keyboard-open="true"] [data-slot="chat-composer"] {
+  padding-bottom: 0.625rem;
 }
 
 /* Paint notch + home-indicator gutters with app background in mobile browsers. */
@@ -1004,7 +1020,7 @@ html[data-app-shell="true"]::after {
   right: 0;
   z-index: 30;
   pointer-events: none;
-  background-color: var(--background);
+  background-color: var(--browser-chrome-color, var(--background));
 }
 
 html[data-app-shell="true"]::before {
@@ -1018,18 +1034,29 @@ html[data-app-shell="true"]::after {
 }
 
 html.display-standalone[data-app-shell="true"] {
-  min-height: 100%;
   height: 100%;
-  background-color: var(--background);
+  min-height: 100dvh;
+  min-height: -webkit-fill-available;
+  background-color: var(--browser-chrome-color, var(--background));
 }
 
-/* Installed PWA: pin the shell to the physical screen (Safari omits home-indicator in visualViewport). */
+/* Installed PWA: fill the physical screen; avoid JS viewport height (causes bottom gap). */
 html.display-standalone[data-app-shell="true"] body {
-  top: 0;
-  bottom: 0;
-  height: auto;
-  min-height: 100%;
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 100dvh;
+  min-height: -webkit-fill-available;
   max-height: none;
+  top: auto;
+  bottom: auto;
+  background-color: var(--browser-chrome-color, var(--background));
+}
+
+html.display-standalone[data-app-shell="true"]::before,
+html.display-standalone[data-app-shell="true"]::after {
+  display: none;
 }
 
 html.display-standalone[data-app-shell="true"] .h-app,
@@ -1039,10 +1066,15 @@ html.display-standalone[data-app-shell="true"] [data-slot="app-shell"] {
   max-height: none;
 }
 
-/* Installed PWA: keep shell content below the iOS status bar / home indicator. */
+/* Installed PWA: safe-area padding on the shell so gutters match theme background. */
 html.display-standalone[data-app-shell="true"] [data-slot="app-shell"] {
   box-sizing: border-box;
   padding-top: var(--app-safe-top);
+  padding-bottom: var(--app-safe-bottom);
+}
+
+html.display-standalone[data-app-shell="true"] [data-slot="chat-composer"] {
+  padding-bottom: 1rem;
 }
 
 html.display-standalone[data-app-shell="true"] .app-mobile-safe-header {

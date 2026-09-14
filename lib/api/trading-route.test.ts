@@ -49,7 +49,7 @@ describe("handleTradingApiRoute", () => {
     )
 
     expect(fetchMock).toHaveBeenCalledWith(
-      "https://api.irislab.info/v1/wallets",
+      "https://api.exur.ai/v1/wallets",
       expect.objectContaining({
         method: "GET",
         headers: expect.any(Headers),

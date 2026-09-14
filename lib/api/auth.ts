@@ -82,7 +82,7 @@ export function startLoginWithGoogle(options?: {
     return
   }
 
-  // destination= flow: popup keeps pkce cookies on api.irislab.info before callback.
+  // destination= flow: popup keeps pkce cookies on api.exur.ai before callback.
   const popup = window.open(url, "iris-google-auth")
   if (!popup) {
     window.location.assign(url)
@@ -126,7 +126,7 @@ export async function refreshAccessToken(): Promise<TokenPair> {
 }
 
 export async function getMe(accessToken: string): Promise<User> {
-  // Same-origin rewrite avoids CORS blocks on api.irislab.info/v1/me
+  // Same-origin rewrite avoids CORS blocks on api.exur.ai/v1/me
   const res = await fetch(authUrl("/v1/me"), {
     headers: { Authorization: `Bearer ${accessToken}` },
   })

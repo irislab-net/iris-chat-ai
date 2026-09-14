@@ -11,7 +11,7 @@ describe("loginWithGoogleUrl", () => {
     )
 
     expect(url.origin + url.pathname).toBe(
-      "https://api.irislab.info/v1/auth/google/login"
+      "https://api.exur.ai/v1/auth/google/login"
     )
     expect(url.searchParams.get("destination")).toBe(
       "https://intel.irislab.info/auth/success"

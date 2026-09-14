@@ -48,7 +48,7 @@ const chatMobileEmptyHeroContentClass =
   "chat-empty-hero flex flex-col items-center gap-5 text-center"
 
 const chatMobileEmptyHeroMarkClass =
-  `chat-empty-hero-mark relative flex size-14 shrink-0 items-center justify-center overflow-hidden rounded-full p-0 ring-0 ${chatMobileGlassSurfaceClass} ${chatMobileHeaderShadowClass}`
+  `chat-empty-hero-mark relative flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-full p-0 ring-0 ${chatMobileGlassSurfaceClass} ${chatMobileHeaderShadowClass}`
 
 const chatMobileEmptyHeroMarkLogoClass =
   "size-full object-contain object-center rounded-full"

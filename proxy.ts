@@ -8,7 +8,7 @@ import { routing } from "@/i18n/routing"
 const handleI18nRouting = createMiddleware(routing)
 
 /**
- * Auth cookies need same-site with api.irislab.info (https + *.irislab.info).
+ * Auth cookies need same-site with api.exur.ai (https + shared parent domain).
  * Loopback stays on local.irislab.info; LAN devices keep their Host and only upgrade HTTP.
  */
 export function proxy(request: NextRequest) {

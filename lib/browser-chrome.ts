@@ -4,6 +4,9 @@ export const BROWSER_CHROME_COLORS = {
   dark: "#252525",
 } as const
 
+/** Runs before React so installed PWA / Safari chrome matches stored theme. */
+export const BROWSER_CHROME_INIT_SCRIPT = `(function(){try{var k="theme",s=localStorage.getItem(k),m=matchMedia("(prefers-color-scheme: dark)").matches,d=s==="dark"||(s!=="light"&&m),c=d?"${BROWSER_CHROME_COLORS.dark}":"${BROWSER_CHROME_COLORS.light}",r=document.documentElement;r.style.colorScheme=d?"dark":"light";r.style.setProperty("--browser-chrome-color",c);document.querySelectorAll('meta[name="theme-color"]').forEach(function(n){n.remove()});var meta=document.createElement("meta");meta.name="theme-color";meta.content=c;document.head.appendChild(meta);var apple=document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]');if(!apple){apple=document.createElement("meta");apple.name="apple-mobile-web-app-status-bar-style";document.head.appendChild(apple);}apple.content=d?"black-translucent":"default";}catch(e){}})();`
+
 export type BrowserChromeTheme = keyof typeof BROWSER_CHROME_COLORS
 
 export function resolveBrowserChromeTheme(
@@ -16,24 +19,68 @@ export function browserChromeColor(resolvedTheme: string | undefined): string {
   return BROWSER_CHROME_COLORS[resolveBrowserChromeTheme(resolvedTheme)]
 }
 
+function readThemeFromDocument(): BrowserChromeTheme {
+  if (typeof document === "undefined") return "dark"
+  return document.documentElement.classList.contains("dark") ? "dark" : "light"
+}
+
+function syncAppleStatusBarStyle(theme: BrowserChromeTheme) {
+  if (typeof document === "undefined") return
+
+  let meta = document.querySelector(
+    'meta[name="apple-mobile-web-app-status-bar-style"]'
+  )
+
+  if (!meta) {
+    meta = document.createElement("meta")
+    meta.setAttribute("name", "apple-mobile-web-app-status-bar-style")
+    document.head.appendChild(meta)
+  }
+
+  meta.setAttribute("content", theme === "dark" ? "black-translucent" : "default")
+}
+
+/** Replace media-query theme-color tags with one value that matches the site theme. */
 export function syncBrowserChromeTheme(resolvedTheme: string | undefined) {
   if (typeof document === "undefined") return
 
-  const theme = resolveBrowserChromeTheme(resolvedTheme)
+  const theme = resolvedTheme
+    ? resolveBrowserChromeTheme(resolvedTheme)
+    : readThemeFromDocument()
   const color = BROWSER_CHROME_COLORS[theme]
+  const root = document.documentElement
 
-  document.documentElement.style.colorScheme = theme
+  root.style.colorScheme = theme
+  root.style.setProperty("--browser-chrome-color", color)
 
-  const metas = document.querySelectorAll('meta[name="theme-color"]')
-  if (metas.length === 0) {
-    const meta = document.createElement("meta")
-    meta.setAttribute("name", "theme-color")
-    meta.setAttribute("content", color)
-    document.head.appendChild(meta)
-    return
-  }
-
-  metas.forEach((meta) => {
-    meta.setAttribute("content", color)
+  // Next.js / Safari can emit multiple media-query metas; iOS PWA picks by OS theme.
+  document.querySelectorAll('meta[name="theme-color"]').forEach((meta) => {
+    meta.remove()
   })
+
+  const meta = document.createElement("meta")
+  meta.setAttribute("name", "theme-color")
+  meta.setAttribute("content", color)
+  document.head.appendChild(meta)
+
+  syncAppleStatusBarStyle(theme)
+
+  // Safari / installed PWA recalculate safe-area chrome after theme-color changes.
+  window.dispatchEvent(new Event("resize"))
+}
+
+export function observeBrowserChromeTheme() {
+  if (typeof document === "undefined") return () => {}
+
+  const root = document.documentElement
+  const observer = new MutationObserver(() => {
+    syncBrowserChromeTheme(undefined)
+  })
+
+  observer.observe(root, {
+    attributes: true,
+    attributeFilter: ["class"],
+  })
+
+  return () => observer.disconnect()
 }

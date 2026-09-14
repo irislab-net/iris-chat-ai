@@ -5,14 +5,14 @@ import {
 
 export { CHAT_API_ORIGIN } from "@/lib/api/origins"
 
-export const API_BASE = "https://api.irislab.info"
+export const API_BASE = "https://api.exur.ai"
 
 const CHAT_APP_HOST = "chat.irislab.info"
 
 /** Auth cookie calls must be same-origin (via app route proxy) so Domain=.irislab.info cookies are sent. */
 export const AUTH_API_BASE = ""
 
-/** Chat deployment uses `app=chat` OAuth on api.irislab.info (not destination=). */
+/** Chat deployment uses `app=chat` OAuth on api.exur.ai (not destination=). */
 export function isChatAppHost(hostname?: string | null) {
   if (hostname) return hostname === CHAT_APP_HOST
   const fromEnv = process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "")
@@ -51,7 +51,7 @@ export function loginWithGoogleUrl(
     app?: string
   }
 ) {
-  // Login MUST hit the API host so pkce_verifier_google + destination cookies are set on api.irislab.info
+  // Login MUST hit the API host so pkce_verifier_google + destination cookies are set on api.exur.ai
   const url = new URL(`${API_BASE}/v1/auth/google/login`)
   if (options?.app) {
     url.searchParams.set("app", options.app)

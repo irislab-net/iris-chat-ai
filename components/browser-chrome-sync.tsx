@@ -3,14 +3,19 @@
 import * as React from "react"
 import { useTheme } from "@wrksz/themes/client/use-theme"
 
-import { syncBrowserChromeTheme } from "@/lib/browser-chrome"
+import {
+  observeBrowserChromeTheme,
+  syncBrowserChromeTheme,
+} from "@/lib/browser-chrome"
 
 function BrowserChromeSync() {
   const { resolvedTheme } = useTheme()
 
-  React.useEffect(() => {
+  React.useLayoutEffect(() => {
     syncBrowserChromeTheme(resolvedTheme)
   }, [resolvedTheme])
+
+  React.useEffect(() => observeBrowserChromeTheme(), [])
 
   return null
 }

@@ -12,5 +12,6 @@ describe("browser chrome colors", () => {
     expect(resolveBrowserChromeTheme("dark")).toBe("dark")
     expect(resolveBrowserChromeTheme(undefined)).toBe("dark")
     expect(browserChromeColor("light")).toBe(BROWSER_CHROME_COLORS.light)
+    expect(browserChromeColor("dark")).toBe(BROWSER_CHROME_COLORS.dark)
   })
 })

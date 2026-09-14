@@ -22,7 +22,7 @@ function normalizeApiPath(path: string): string {
 }
 
 function readIrisApiOrigin(): string {
-  return process.env.IRIS_API_ORIGIN?.replace(/\/$/, "") ?? "https://api.irislab.info"
+  return process.env.IRIS_API_ORIGIN?.replace(/\/$/, "") ?? "https://api.exur.ai"
 }
 
 function resolveUpstream(): string | "stub" {

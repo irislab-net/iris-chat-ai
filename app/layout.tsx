@@ -9,6 +9,10 @@ import { ThemeExtras } from "@/components/theme-provider"
 import { Toaster } from "@/components/ui/sonner"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { ThemeProvider } from "@wrksz/themes/next"
+import {
+  BROWSER_CHROME_COLORS,
+  BROWSER_CHROME_INIT_SCRIPT,
+} from "@/lib/browser-chrome"
 import { localeDirection } from "@/lib/i18n/locale"
 import {
   organizationJsonLd,
@@ -94,7 +98,7 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     title: SITE_SHORT_NAME,
-    statusBarStyle: "default",
+    statusBarStyle: "black-translucent",
   },
   other: {
     "mobile-web-app-capable": "yes",
@@ -106,10 +110,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   viewportFit: "cover",
   interactiveWidget: "resizes-content",
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f5f5f5" },
-    { media: "(prefers-color-scheme: dark)", color: "#252525" },
-  ],
+  themeColor: BROWSER_CHROME_COLORS.dark,
 }
 
 export default async function RootLayout({
@@ -128,14 +129,23 @@ export default async function RootLayout({
       className="font-sans antialiased"
     >
       <body>
+        <script
+          suppressHydrationWarning
+          dangerouslySetInnerHTML={{ __html: BROWSER_CHROME_INIT_SCRIPT }}
+        />
         <JsonLd data={organizationJsonLd()} />
         <JsonLd data={websiteJsonLd()} />
         <JsonLd data={webApplicationJsonLd()} />
         <ThemeProvider
           attribute="class"
+          themes={["light", "dark"]}
           defaultTheme="light"
           enableSystem
           disableTransitionOnChange
+          themeColor={{
+            light: BROWSER_CHROME_COLORS.light,
+            dark: BROWSER_CHROME_COLORS.dark,
+          }}
         >
           <ThemeExtras />
           <TooltipProvider>
