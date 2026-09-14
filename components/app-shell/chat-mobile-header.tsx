@@ -157,7 +157,7 @@ function ChatMobileHeader({
             disabled={sending}
             onClick={onNewChat}
           >
-            <ChatGeminiNewChatIcon />
+            <ChatGeminiNewChatIcon strokeWidth={1.5} />
           </Button>
           {threadMenu ? (
             <ChatThreadOptionsMenu

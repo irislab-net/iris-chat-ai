@@ -28,9 +28,11 @@ const AIMessageRenderer = dynamic(
 
 function IrisMark({
   className,
+  imageClassName,
   variant = "default",
 }: {
   className?: string
+  imageClassName?: string
   /** Large empty-state mark — requests a sharper src than the inline default. */
   variant?: "default" | "hero"
 }) {
@@ -48,6 +50,7 @@ function IrisMark({
         size={isHero ? 192 : 28}
         priority={isHero}
         className={isHero ? "size-full" : "size-[65%]"}
+        imageClassName={imageClassName}
       />
     </div>
   )

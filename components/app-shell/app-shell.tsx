@@ -242,7 +242,7 @@ function AppShellInner({
           className={cn("flex h-app overflow-hidden bg-background", className)}
         >
           <ChatAsideSkeleton
-            variant="focused"
+            variant={isDesktop === true ? "focused" : "mobile"}
             className="min-h-0 flex-1 rounded-none"
             sidebarWidth={shellSidebars.chat.minSize}
           />

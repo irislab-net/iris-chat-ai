@@ -48,13 +48,19 @@ const chatMobileEmptyHeroContentClass =
   "chat-empty-hero flex flex-col items-center gap-5 text-center"
 
 const chatMobileEmptyHeroMarkShellClass =
-  "chat-empty-hero-mark relative flex size-[4.5rem] items-center justify-center"
+  `chat-empty-hero-mark relative flex size-16 items-center justify-center overflow-hidden rounded-full ${chatMobileGlassSurfaceClass} ${chatMobileHeaderShadowClass}`
 
 const chatMobileEmptyHeroMarkClass =
-  "relative size-full rounded-none bg-transparent shadow-none ring-0"
+  "relative flex size-11 shrink-0 items-center justify-center rounded-full bg-transparent p-0 shadow-none ring-0"
+
+const chatMobileEmptyHeroMarkLogoClass =
+  "size-full object-contain object-center"
+
+const chatMobileEmptyHeroMarkGlassOverlayClass =
+  "pointer-events-none absolute inset-0 rounded-full bg-gradient-to-br from-white/35 via-white/8 to-transparent shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_72%,transparent)] dark:from-white/14 dark:via-white/4"
 
 const chatMobileEmptyHeroTitleClass =
-  "chat-empty-hero-title max-w-[20rem] text-balance text-[1.75rem] font-normal leading-[1.22] tracking-[-0.028em] text-foreground"
+  "chat-empty-hero-title max-w-[20rem] text-balance text-[1.75rem] font-light leading-[1.22] tracking-[-0.028em] text-foreground"
 
 const chatMobileThreadClass = "px-6 pt-5 pb-2"
 
@@ -188,13 +194,14 @@ const chatMobileDrawerSectionLabelClass =
 const chatMobileDrawerUpgradeClass =
   `h-9 shrink-0 rounded-full px-5 text-[14px] font-medium ${chatMobilePrimaryButtonClass}`
 
-const chatMobileDrawerFooterWrapClass = "relative z-10 -mt-14 shrink-0"
+const chatMobileDrawerFooterWrapClass = "relative z-10 shrink-0"
 
+/** Short fade above drawer footer — blur only at the edge, no shadow band. */
 const chatMobileDrawerFooterFadeClass =
-  "pointer-events-none absolute inset-x-0 bottom-full h-14 bg-linear-to-b from-transparent from-0% via-background/20 via-40% to-background to-100%"
+  "pointer-events-none absolute inset-x-0 bottom-full h-6 bg-gradient-to-b from-transparent to-background backdrop-blur-[2px] backdrop-saturate-150 [mask-image:linear-gradient(to_bottom,transparent_0%,black_85%)] [-webkit-mask-image:linear-gradient(to_bottom,transparent_0%,black_85%)] supports-[backdrop-filter]:to-background/95"
 
 const chatMobileDrawerFooterBarClass =
-  "relative bg-background/92 pt-3 shadow-[0_-8px_24px_-16px_color-mix(in_oklch,var(--foreground)_10%,transparent)] backdrop-blur-2xl backdrop-saturate-150 supports-[backdrop-filter]:bg-background/78"
+  "relative bg-background/88 py-2 backdrop-blur-xl backdrop-saturate-150 supports-[backdrop-filter]:bg-background/72"
 
 /** Shared mobile bottom sheets — guide, privacy, checkout. */
 const chatMobileSheetContentClass =
@@ -299,6 +306,8 @@ export {
   chatMobileComposerShellClass,
   chatMobileEmptyHeroContentClass,
   chatMobileEmptyHeroMarkClass,
+  chatMobileEmptyHeroMarkGlassOverlayClass,
+  chatMobileEmptyHeroMarkLogoClass,
   chatMobileEmptyHeroMarkShellClass,
   chatMobileEmptyHeroTitleClass,
   chatMobileEmptyHeroWrapClass,

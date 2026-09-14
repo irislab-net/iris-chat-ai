@@ -10,14 +10,13 @@ import {
   EyeIcon,
   HistoryIcon,
   Maximize2Icon,
-  MessageSquarePlusIcon,
 } from "lucide-react"
 
 import { ChatAccountFooter } from "@/components/app-shell/chat-account-footer"
 import { ChatAccountMenu } from "@/components/app-shell/chat-account-menu"
 import { IrisLabLogo } from "@/components/brand/iris-lab-logo"
 import { ChatMobileGeminiBackground } from "@/components/app-shell/chat-mobile-gemini-background"
-import { chatMobileScrollDownClass, chatMobileThreadBottomFadeClass, chatMobileThreadBottomSpacerClass, chatMobileThreadClass, chatMobileThreadFirstTurnClass, chatMobileThreadScrollMaskClass, chatMobileEmptyHeroContentClass, chatMobileEmptyHeroMarkClass, chatMobileEmptyHeroMarkShellClass, chatMobileEmptyHeroTitleClass, chatMobileEmptyHeroWrapClass, chatSamplePromptButtonClass, chatSamplePromptIconClass } from "@/components/app-shell/chat-mobile-gemini-styles"
+import { chatMobileScrollDownClass, chatMobileThreadBottomFadeClass, chatMobileThreadBottomSpacerClass, chatMobileThreadClass, chatMobileThreadFirstTurnClass, chatMobileThreadScrollMaskClass, chatMobileEmptyHeroContentClass, chatMobileEmptyHeroMarkClass, chatMobileEmptyHeroMarkGlassOverlayClass, chatMobileEmptyHeroMarkLogoClass, chatMobileEmptyHeroMarkShellClass, chatMobileEmptyHeroTitleClass, chatMobileEmptyHeroWrapClass, chatSamplePromptButtonClass, chatSamplePromptIconClass } from "@/components/app-shell/chat-mobile-gemini-styles"
 import { ChatMobileHeader } from "@/components/app-shell/chat-mobile-header"
 import {
   ChatNewsMobileSheet,
@@ -27,6 +26,7 @@ import {
   ChatHistoryRail,
   ChatHistorySidebar,
 } from "@/components/app-shell/chat-history-sidebar"
+import { ChatGeminiNewChatIcon } from "@/components/app-shell/chat-gemini-new-chat-icon"
 import { ChatComposer } from "@/components/app-shell/chat-composer"
 import { ChatMessageActions } from "@/components/app-shell/chat-message-actions"
 import {
@@ -129,6 +129,11 @@ import { SHELL_SIDEBAR_COMPACT_FALLBACK } from "@/lib/shell-sidebar-layout"
 import { resolvePaperTicketFromChatTurn } from "@/lib/chat/parse-trade-setup"
 import { stripUnrequestedIrisSetupFromReply } from "@/lib/chat/strip-paper-setup"
 import { summarizeSignalUserMessage } from "@/lib/chat/composer-mentions"
+import {
+  isMobileGeminiBackgroundActive,
+  isMobileGeminiBackgroundVisible,
+  resolveMobileGeminiVisualPhase,
+} from "@/lib/chat/mobile-gemini-visual-state"
 import { shouldRunPaperTradePipeline } from "@/lib/iris-paper-trade/routing"
 import { tryRecoverProposedPaperTradeFromToolFailure } from "@/lib/iris-paper-trade/run"
 import { findToolFailureSignalRecoveryTargets } from "@/lib/iris-paper-trade/tool-failure"
@@ -1649,8 +1654,40 @@ function ChatAside({
         ),
       })
     : t("mobileGreetingGuest")
-  const showMobileEmptyGeminiBg = isMobileOverlay && messages.length === 0
   const [mobileComposerFocused, setMobileComposerFocused] = React.useState(false)
+  const [mobileHeroIntro, setMobileHeroIntro] = React.useState(true)
+  const [showMobileEmptyHero, setShowMobileEmptyHero] = React.useState(
+    messages.length === 0
+  )
+
+  const mobileGeminiPhase = resolveMobileGeminiVisualPhase({
+    isMobileOverlay,
+    messageCount: messages.length,
+    composerFocused: mobileComposerFocused,
+    sending,
+  })
+  const mobileGeminiBackgroundVisible = isMobileGeminiBackgroundVisible(
+    mobileGeminiPhase,
+    messages.length
+  )
+  const mobileGeminiBackgroundActive = isMobileGeminiBackgroundActive(
+    mobileGeminiPhase
+  )
+
+  React.useEffect(() => {
+    if (isMobileOverlay && messages.length === 0) {
+      setMobileHeroIntro(true)
+    }
+  }, [conversationId, isMobileOverlay, messages.length])
+
+  React.useEffect(() => {
+    if (messages.length === 0) {
+      setShowMobileEmptyHero(true)
+      return
+    }
+    const timer = window.setTimeout(() => setShowMobileEmptyHero(false), 360)
+    return () => window.clearTimeout(timer)
+  }, [messages.length])
 
   React.useEffect(() => {
     setHistoryRailCollapsed(readHistoryRailCollapsed())
@@ -1670,7 +1707,9 @@ function ChatAside({
     })
   }
 
-  if (showDeskSkeleton) {
+  const showMobileSkeleton = Boolean(onClose) && (authLoading || !hydrated)
+
+  if (showDeskSkeleton || showMobileSkeleton) {
     return (
       <ChatAsideSkeleton
         className={className}
@@ -1695,11 +1734,12 @@ function ChatAside({
         className
       )}
     >
-      {showMobileEmptyGeminiBg ? (
+      {isMobileOverlay ? (
         <ChatMobileGeminiBackground
-          active={mobileComposerFocused}
-          loading={sending}
-          intro
+          visible={mobileGeminiBackgroundVisible}
+          active={mobileGeminiBackgroundActive}
+          loading={sending && messages.length === 0}
+          intro={mobileHeroIntro && messages.length === 0}
         />
       ) : null}
       {historyRailVisible ? (
@@ -1727,8 +1767,15 @@ function ChatAside({
           "relative z-10 flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden",
           isMobileOverlay
             ? "bg-transparent text-foreground"
-            : "bg-background text-foreground"
+            : "bg-background text-foreground",
+          isMobileOverlay &&
+            (mobileGeminiPhase === "empty" ||
+              mobileGeminiPhase === "focused" ||
+              mobileGeminiPhase === "streaming") &&
+            "chat-mobile-gemini-empty",
+          isMobileOverlay && mobileGeminiPhase === "threaded" && "chat-mobile-gemini-threaded"
         )}
+        data-gemini-phase={mobileGeminiPhase ?? undefined}
       >
       {isMobileOverlay ? (
         <ChatMobileHeader
@@ -1860,7 +1907,7 @@ function ChatAside({
             onClick={startNewChat}
             disabled={sending}
           >
-            <MessageSquarePlusIcon />
+            <ChatGeminiNewChatIcon className="h-4" />
           </ChatHeaderIconButton>
         ) : null}
         {showThreadToolbarInHeader ? (
@@ -1904,73 +1951,70 @@ function ChatAside({
                   chatMobileThreadScrollMaskClass
               )}
             >
-              {messages.length === 0 ? (
+              {isMobileOverlay && showMobileEmptyHero ? (
                 <div
                   className={cn(
-                    isMobileOverlay
-                      ? chatMobileEmptyHeroWrapClass
-                      : "flex min-h-full flex-col justify-center px-4 py-10"
+                    chatMobileEmptyHeroWrapClass,
+                    "chat-empty-hero-shell",
+                    messages.length > 0 &&
+                      cn(
+                        "chat-empty-hero-shell-exiting",
+                        "pointer-events-none absolute inset-x-0 top-0 z-[1] min-h-0 justify-start pb-0"
+                      )
                   )}
                 >
-                  <div
-                    className={cn(
-                      "mx-auto w-full",
-                      CHAT_CONTENT_MAX_WIDTH
-                    )}
-                  >
-                    <div
-                      className={cn(
-                        isMobileOverlay
-                          ? chatMobileEmptyHeroContentClass
-                          : "mb-5 flex flex-col items-center text-center"
-                      )}
-                    >
-                      {isMobileOverlay ? (
-                        <div className={chatMobileEmptyHeroMarkShellClass}>
-                          <IrisMark
-                            variant="hero"
-                            className={chatMobileEmptyHeroMarkClass}
-                          />
-                        </div>
-                      ) : (
+                  <div className={cn("mx-auto w-full", CHAT_CONTENT_MAX_WIDTH)}>
+                    <div className={chatMobileEmptyHeroContentClass}>
+                      <div className={chatMobileEmptyHeroMarkShellClass}>
                         <IrisMark
-                          variant="default"
-                          className="size-10 rounded-xl"
+                          variant="hero"
+                          className={chatMobileEmptyHeroMarkClass}
+                          imageClassName={chatMobileEmptyHeroMarkLogoClass}
                         />
-                      )}
-                      <h2
-                        className={cn(
-                          isMobileOverlay
-                            ? chatMobileEmptyHeroTitleClass
-                            : "mt-3 text-[15px] font-semibold tracking-tight text-foreground"
-                        )}
-                      >
-                        {isMobileOverlay
-                          ? mobileGreeting
-                          : "How can I help?"}
+                        <div
+                          aria-hidden
+                          className={chatMobileEmptyHeroMarkGlassOverlayClass}
+                        />
+                      </div>
+                      <h2 className={chatMobileEmptyHeroTitleClass}>
+                        {mobileGreeting}
                       </h2>
-                      {!isMobileOverlay ? (
-                        <p className="mt-1.5 max-w-[16rem] text-[12px] leading-5 text-muted-foreground">
-                          {isAuthenticated
-                            ? t("emptySignedIn")
-                            : guestUnavailable
-                              ? t("emptyGuestUnavailable")
-                              : t("emptyGuestTrial")}
-                        </p>
-                      ) : null}
                     </div>
-                    {!isMobileOverlay ? (
-                      <IrisSamplePrompts
-                        disabled={sending}
-                        onEdit={(text) => {
-                          setDraft(text)
-                          focusComposerOnDesktop()
-                        }}
-                      />
-                    ) : null}
                   </div>
                 </div>
-              ) : (
+              ) : null}
+              {messages.length === 0 && !isMobileOverlay ? (
+                <div className="flex min-h-full flex-col justify-center px-4 py-10">
+                  <div
+                    className={cn("mx-auto w-full", CHAT_CONTENT_MAX_WIDTH)}
+                  >
+                    <div className="mb-5 flex flex-col items-center text-center">
+                      <IrisMark
+                        variant="hero"
+                        className="size-16 rounded-2xl"
+                      />
+                      <h2 className="mt-3 text-[15px] font-semibold tracking-tight text-foreground">
+                        How can I help?
+                      </h2>
+                      <p className="mt-1.5 max-w-[16rem] text-[12px] leading-5 text-muted-foreground">
+                        {isAuthenticated
+                          ? t("emptySignedIn")
+                          : guestUnavailable
+                            ? t("emptyGuestUnavailable")
+                            : t("emptyGuestTrial")}
+                      </p>
+                    </div>
+                    <IrisSamplePrompts
+                      disabled={sending}
+                      onEdit={(text) => {
+                        setDraft(text)
+                        focusComposerOnDesktop()
+                      }}
+                    />
+                  </div>
+                </div>
+              ) : null}
+              {messages.length > 0 ? (
                 <div
                   className={cn(
                     "mx-auto flex w-full min-w-0 flex-col",
@@ -2166,7 +2210,7 @@ function ChatAside({
               className={cn(isMobileOverlay && chatMobileThreadBottomSpacerClass)}
             />
                 </div>
-              )}
+              ) : null}
             </ScrollArea>
             {isMobileOverlay && messages.length > 0 ? (
               <div aria-hidden className={chatMobileThreadBottomFadeClass} />
@@ -2246,7 +2290,7 @@ function ChatAside({
                 disabled={sending}
                 layout={isMobileOverlay ? "floating" : "default"}
                 onFloatingFocusChange={
-                  showMobileEmptyGeminiBg ? setMobileComposerFocused : undefined
+                  isMobileOverlay ? setMobileComposerFocused : undefined
                 }
                 className={isMobileOverlay ? undefined : "px-3 sm:px-4"}
               />

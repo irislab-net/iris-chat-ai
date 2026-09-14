@@ -227,7 +227,7 @@ function MobileHistoryDrawerFooter({
       <div
         className={cn(
           chatMobileDrawerFooterBarClass,
-          "flex items-center gap-2 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom,0px))]"
+          "flex items-center gap-2 px-4 pb-[max(0.5rem,env(safe-area-inset-bottom,0px))]"
         )}
       >
       {user ? (
@@ -400,8 +400,8 @@ function ChatHistorySidebar({
               <IrisLabLogo
                 decorative
                 priority
-                size={36}
-                className="size-9 shrink-0 rounded-full"
+                size={28}
+                className="size-7 shrink-0 rounded-full"
               />
               <h2 className="text-base font-normal leading-none tracking-tight text-foreground">
                 {t("iris")}
@@ -435,7 +435,7 @@ function ChatHistorySidebar({
                   : "flex-1 px-1"
               )}
             >
-              <IrisLabLogo decorative size={36} className="size-9 shrink-0 rounded-full" />
+              <IrisLabLogo decorative size={28} className="size-7 shrink-0 rounded-full" />
               {!collapsed ? (
                 <span className="min-w-0 truncate text-[13px] font-normal leading-none tracking-tight text-sidebar-foreground/90">
                   {t("iris")}
@@ -455,7 +455,9 @@ function ChatHistorySidebar({
           <div
             className={cn(
               "flex flex-col",
-              isMobileDrawer ? "px-2 pb-20 pt-0" : "px-2 pb-2"
+              isMobileDrawer
+                ? "px-2 pb-[calc(3.25rem+env(safe-area-inset-bottom,0px))] pt-0"
+                : "px-2 pb-2"
             )}
           >
             {onNewChat ? (
@@ -474,7 +476,7 @@ function ChatHistorySidebar({
                       />
                     }
                   >
-                    <ChatGeminiNewChatIcon className="size-4.5" />
+                    <ChatGeminiNewChatIcon className="h-4.5" />
                   </TooltipTrigger>
                   <TooltipContent side="right">{t("newChat")}</TooltipContent>
                 </Tooltip>
@@ -494,7 +496,7 @@ function ChatHistorySidebar({
                   <ChatGeminiNewChatIcon
                     className={cn(
                       "text-foreground",
-                      isMobileDrawer ? "size-4.5" : "size-4"
+                      isMobileDrawer ? "h-4.5" : "h-4"
                     )}
                   />
                   {t("newChat")}

@@ -1,23 +1,33 @@
 import { cn } from "@/lib/utils"
 
-function ChatGeminiNewChatIcon({ className }: { className?: string }) {
+type ChatGeminiNewChatIconProps = {
+  className?: string
+  strokeWidth?: number
+}
+
+function ChatGeminiNewChatIcon({
+  className,
+  strokeWidth = 2,
+}: ChatGeminiNewChatIconProps) {
   return (
     <svg
-      viewBox="0 0 24 19"
+      viewBox="0 0 25 20"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden
-      className={cn("size-[22px] shrink-0", className)}
+      className={cn("h-4 w-auto shrink-0", className)}
     >
       <path
-        d="M16.8412 1.5048L10.7336 7.6124C10.1528 8.1932 9.74079 8.92092 9.54158 9.71777C9.11683 11.4168 8.34537 12.9273 10.0628 12.5844C10.7877 12.4396 11.6314 12.2154 12.4558 11.8935C13.0564 11.6589 13.5785 11.2676 14.0344 10.8116L20.0912 4.7548C21.0378 3.80822 20.9782 2.25615 19.9618 1.38496C19.0501 0.60346 17.6903 0.65568 16.8412 1.5048Z"
+        d="M17.3412 1.67277L11.2336 7.78037C10.6528 8.36117 10.2408 9.08889 10.0416 9.88574C9.61683 11.5848 8.84537 13.0953 10.5628 12.7523C11.2877 12.6076 12.1314 12.3834 12.9558 12.0614C13.5564 11.8269 14.0785 11.4355 14.5344 10.9796L20.5912 4.92277C21.5378 3.97619 21.4782 2.42412 20.4618 1.55292C19.5501 0.771428 18.1903 0.823648 17.3412 1.67277Z"
         stroke="currentColor"
-        strokeWidth="1"
+        strokeWidth={strokeWidth}
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
-        d="M9.5 1.5H9C4.30558 1.5 0.5 5.30558 0.5 10C0.5 14.6944 4.30558 18.5 9 18.5H15C19.6944 18.5 23.5 14.6944 23.5 10"
+        d="M10 1.66797H9.5C4.80558 1.66797 1 5.47355 1 10.168C1 14.8624 4.80558 18.668 9.5 18.668H15.5C20.1944 18.668 24 14.8624 24 10.168"
         stroke="currentColor"
-        strokeWidth="1"
+        strokeWidth={strokeWidth}
         strokeLinecap="round"
       />
     </svg>

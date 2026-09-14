@@ -84,6 +84,66 @@ function ChatComposerSkeleton({ className }: { className?: string }) {
   )
 }
 
+function ChatMobileHeaderSkeleton() {
+  return (
+    <div className="relative shrink-0">
+      <header className="app-mobile-safe-header relative z-[1] flex items-center justify-between gap-2 bg-transparent px-6 pb-2">
+        <div className="flex min-w-0 items-center gap-3">
+          <Bone className="size-10 shrink-0 rounded-full" />
+          <Bone className="h-10 w-[6.25rem] shrink-0 rounded-full" />
+        </div>
+        <div className="flex shrink-0 items-center gap-2">
+          <Bone className="size-10 shrink-0 rounded-full" />
+          <Bone className="size-10 shrink-0 rounded-full" />
+        </div>
+      </header>
+    </div>
+  )
+}
+
+function ChatMobileEmptyHeroSkeleton() {
+  return (
+    <div className="flex min-h-0 flex-1 flex-col items-center justify-center px-6 pb-6 pt-4">
+      <div className="flex w-full max-w-3xl flex-col items-center gap-5 text-center">
+        <Bone className="size-16 shrink-0 rounded-full border border-border/20 bg-muted/20 shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_75%,transparent),0_8px_24px_-10px_color-mix(in_oklch,var(--foreground)_8%,transparent)]" />
+        <Bone className="h-7 w-[min(20rem,88%)] max-w-[20rem] rounded-full" />
+      </div>
+    </div>
+  )
+}
+
+function ChatMobileComposerSkeleton() {
+  return (
+    <div className="relative shrink-0 bg-transparent px-6 pt-1.5 pb-[max(1rem,env(safe-area-inset-bottom,0px))]">
+      <div className="grid min-h-16 w-full grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-2 rounded-[26px] border border-border/35 bg-muted/25 px-4 py-3">
+        <Bone className="size-8 shrink-0 rounded-full" />
+        <Bone className="h-4 w-full max-w-[11rem] rounded-full" />
+        <Bone className="size-10 shrink-0 rounded-full" />
+      </div>
+    </div>
+  )
+}
+
+function ChatMobileAsideSkeleton({ className }: { className?: string }) {
+  return (
+    <aside
+      data-slot="chat-aside"
+      className={cn(
+        "relative flex h-full min-h-0 w-full flex-col overflow-hidden bg-background text-foreground",
+        className
+      )}
+      aria-busy="true"
+      aria-label="Loading Exur"
+    >
+      <div className="relative z-10 flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-transparent">
+        <ChatMobileHeaderSkeleton />
+        <ChatMobileEmptyHeroSkeleton />
+        <ChatMobileComposerSkeleton />
+      </div>
+    </aside>
+  )
+}
+
 function ChatPromptsSkeleton() {
   return (
     <div className="flex min-h-0 flex-1 flex-col justify-center px-4 py-10">
@@ -222,6 +282,10 @@ function ChatAsideSkeleton({
   const showHeader = !focused || guest
   const showMainColumnHeader = showHeader && !showHistoryRail && !mobile
 
+  if (mobile) {
+    return <ChatMobileAsideSkeleton className={className} />
+  }
+
   const mainColumn = (
     <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-background text-foreground">
       {showMainColumnHeader ? (
@@ -265,8 +329,7 @@ function ChatAsideSkeleton({
     <div
       data-slot="chat-aside"
       className={cn(
-        "relative flex h-full min-h-0 w-full flex-col overflow-hidden bg-sidebar text-sidebar-foreground",
-        mobile ? "rounded-none" : "rounded-r-2xl",
+        "relative flex h-full min-h-0 w-full flex-col overflow-hidden bg-sidebar text-sidebar-foreground rounded-r-2xl",
         className
       )}
       aria-busy="true"

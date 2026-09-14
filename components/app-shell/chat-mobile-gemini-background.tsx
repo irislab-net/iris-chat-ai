@@ -3,6 +3,7 @@
 import { cn } from "@/lib/utils"
 
 type ChatMobileGeminiBackgroundProps = {
+  visible?: boolean
   active?: boolean
   loading?: boolean
   intro?: boolean
@@ -10,6 +11,7 @@ type ChatMobileGeminiBackgroundProps = {
 }
 
 function ChatMobileGeminiBackground({
+  visible = true,
   active = false,
   loading = false,
   intro = false,
@@ -20,7 +22,7 @@ function ChatMobileGeminiBackground({
       aria-hidden
       className={cn(
         "chat-gemini-bg pointer-events-none absolute inset-0 overflow-hidden",
-        intro && "chat-gemini-bg-intro",
+        visible ? "chat-gemini-bg-visible" : "chat-gemini-bg-hidden",
         active && "chat-gemini-bg-active",
         loading && "chat-gemini-bg-loading",
         className
@@ -36,21 +38,16 @@ function ChatMobileGeminiBackground({
         <div className="chat-gemini-orb chat-gemini-orb-c" />
         <div className="chat-gemini-orb chat-gemini-orb-d" />
       </div>
-      <div className="chat-gemini-pattern absolute inset-x-0 bottom-0 h-[52%]">
-        <div
-          className={cn(
-            "chat-gemini-grid absolute inset-0",
-            active && "chat-gemini-grid-active",
-            loading && "chat-gemini-grid-loading"
-          )}
-        />
-        <div
-          className={cn(
-            "chat-gemini-dots absolute inset-0",
-            active && "chat-gemini-dots-active",
-            loading && "chat-gemini-dots-loading"
-          )}
-        />
+      <div
+        className={cn(
+          "chat-gemini-pattern absolute inset-x-0 bottom-0 h-[52%]",
+          active && "chat-gemini-pattern-active",
+          loading && "chat-gemini-pattern-loading"
+        )}
+      >
+        <div className="chat-gemini-dots chat-gemini-dots-layer-a absolute inset-0" />
+        <div className="chat-gemini-dots chat-gemini-dots-layer-b absolute inset-0" />
+        <div className="chat-gemini-dots chat-gemini-dots-layer-c absolute inset-0" />
       </div>
     </div>
   )
