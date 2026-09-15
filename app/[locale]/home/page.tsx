@@ -1,15 +1,7 @@
 import type { Metadata } from "next"
-import { getTranslations, setRequestLocale } from "next-intl/server"
+import { setRequestLocale } from "next-intl/server"
 
-import { LandingComingSoon } from "@/components/landing/coming-soon"
-import { LandingCopilot } from "@/components/landing/copilot"
-import { LandingFaq } from "@/components/landing/faq"
-import { LandingFeatures } from "@/components/landing/features"
-import { LandingHero } from "@/components/landing/hero"
-import { LandingNav } from "@/components/landing/nav"
-import { LandingPricing } from "@/components/landing/pricing"
-import { LandingTestimonials } from "@/components/landing/testimonial-lazy"
-import { SiteFooter } from "@/components/landing/site-footer"
+import { ModernLandingPage } from "@/components/landing/modern/landing-page"
 import { JsonLd } from "@/components/seo/json-ld"
 import { openGraphLocale } from "@/lib/i18n/locale"
 import { SITE_DESCRIPTION, SITE_URL } from "@/lib/seo"
@@ -22,14 +14,17 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
-  const t = await getTranslations({ locale, namespace: "metadata" })
+
+  const title = "Exur — Your Financial Brain"
+  const description =
+    "The intelligence layer between you and the financial world. Exur understands the markets, learns your financial life, and helps you make better decisions."
 
   const canonical =
     locale === "en" ? `${SITE_URL}/home` : `${SITE_URL}/ar/home`
 
   return {
-    title: { absolute: t("homeTitle") },
-    description: t("homeDescription"),
+    title: { absolute: title },
+    description,
     robots: ROOT_ROBOTS,
     alternates: {
       canonical,
@@ -44,13 +39,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       locale: openGraphLocale(locale),
       url: canonical,
       siteName: SITE_NAME,
-      title: t("homeTitle"),
-      description: t("homeOg"),
+      title,
+      description,
     },
     twitter: {
       card: "summary_large_image",
-      title: t("homeTitle"),
-      description: t("homeOg"),
+      title,
+      description,
     },
   }
 }
@@ -64,7 +59,7 @@ export default async function LandingPage({ params }: Props) {
   const landingLd = {
     "@context": "https://schema.org",
     "@type": "WebPage",
-    name: SITE_NAME,
+    name: "Exur — Your Financial Brain",
     url: landingUrl,
     description: SITE_DESCRIPTION,
     inLanguage: locale,
@@ -84,21 +79,9 @@ export default async function LandingPage({ params }: Props) {
   }
 
   return (
-    <div className="relative w-full overflow-x-hidden bg-background selection:bg-foreground/15">
+    <>
       <JsonLd data={landingLd} />
-      <LandingNav />
-
-      <main className="relative z-10 w-full rounded-b-3xl border-b border-border/40 bg-background">
-        <LandingHero />
-        <LandingFeatures />
-        <LandingCopilot />
-        <LandingComingSoon />
-        <LandingPricing />
-        <LandingTestimonials />
-        <LandingFaq />
-      </main>
-
-      <SiteFooter />
-    </div>
+      <ModernLandingPage />
+    </>
   )
 }

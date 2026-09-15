@@ -1449,3 +1449,68 @@ html.display-standalone[data-app-shell="true"] [data-slot="sheet-content"] .app-
     opacity: 0;
   }
 }
+
+/* Modern landing (Emergent-style) */
+@keyframes landing-pulse-dot {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.45;
+    transform: scale(0.8);
+  }
+}
+
+@keyframes landing-float-slow {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
+
+@keyframes landing-node-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.2;
+    transform: scale(1.12);
+  }
+}
+
+.landing-modern .animate-pulse-dot {
+  animation: landing-pulse-dot 2.2s ease-in-out infinite;
+}
+
+.landing-modern .animate-float-slow {
+  animation: landing-float-slow 7s ease-in-out infinite;
+}
+
+.landing-modern .market-node-pulse {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: landing-node-pulse 2.4s ease-in-out infinite;
+}
+
+.landing-modern .font-mono {
+  font-family: var(--font-mono-modern), ui-monospace, monospace;
+}
+
+.landing-modern [class*="--font-display"] {
+  font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-modern .animate-pulse-dot,
+  .landing-modern .animate-float-slow,
+  .landing-modern .market-node-pulse {
+    animation: none;
+  }
+}
