@@ -4,6 +4,8 @@ import { cn } from "@/lib/utils"
 
 export const IRIS_LAB_LOGO_LIGHT_SRC = "/iris-lab-logo-light.svg"
 export const IRIS_LAB_LOGO_DARK_SRC = "/iris-lab-logo-dark.svg"
+export const IRIS_LAB_LOGO_BRAND_SRC = "/iris-lab-logo-brand.svg"
+export const IRIS_LAB_LOGO_MARK_WHITE_SRC = "/iris-lab-logo-mark-white.svg"
 
 type IrisLabLogoProps = {
   className?: string
@@ -14,6 +16,8 @@ type IrisLabLogoProps = {
   alt?: string
   /** Hide from assistive tech when parent link/button already names the brand. */
   decorative?: boolean
+  /** `on-hero` = white mark on transparent; `on-light` = black mark; `brand` = blue mark. */
+  variant?: "auto" | "on-hero" | "on-light" | "on-dark" | "brand"
 }
 
 function IrisLabLogo({
@@ -23,33 +27,64 @@ function IrisLabLogo({
   priority,
   alt = "Exur",
   decorative = false,
+  variant = "auto",
 }: IrisLabLogoProps) {
   const label = decorative ? undefined : alt
   const shared = cn("h-auto w-full max-w-full object-contain", imageClassName)
+  const showThemePair = variant === "auto"
 
   return (
     <span
       className={cn("relative inline-flex aspect-square shrink-0", className)}
       {...(label ? { role: "img", "aria-label": label } : { "aria-hidden": true })}
     >
-      <Image
-        src={IRIS_LAB_LOGO_LIGHT_SRC}
-        alt=""
-        width={size}
-        height={size}
-        priority={priority}
-        sizes={`${size}px`}
-        className={cn(shared, "dark:hidden")}
-      />
-      <Image
-        src={IRIS_LAB_LOGO_DARK_SRC}
-        alt=""
-        width={size}
-        height={size}
-        priority={priority}
-        sizes={`${size}px`}
-        className={cn(shared, "absolute inset-0 hidden dark:block")}
-      />
+      {(variant === "auto" || variant === "on-dark") && (
+        <Image
+          src={IRIS_LAB_LOGO_LIGHT_SRC}
+          alt=""
+          width={size}
+          height={size}
+          priority={priority}
+          sizes={`${size}px`}
+          className={cn(shared, showThemePair && "dark:hidden")}
+        />
+      )}
+      {variant === "on-hero" && (
+        <Image
+          src={IRIS_LAB_LOGO_MARK_WHITE_SRC}
+          alt=""
+          width={size}
+          height={size}
+          priority={priority}
+          sizes={`${size}px`}
+          className={shared}
+        />
+      )}
+      {variant === "brand" && (
+        <Image
+          src={IRIS_LAB_LOGO_BRAND_SRC}
+          alt=""
+          width={size}
+          height={size}
+          priority={priority}
+          sizes={`${size}px`}
+          className={shared}
+        />
+      )}
+      {(variant === "auto" || variant === "on-light") && (
+        <Image
+          src={IRIS_LAB_LOGO_DARK_SRC}
+          alt=""
+          width={size}
+          height={size}
+          priority={priority}
+          sizes={`${size}px`}
+          className={cn(
+            shared,
+            showThemePair ? "absolute inset-0 hidden dark:block" : undefined
+          )}
+        />
+      )}
     </span>
   )
 }

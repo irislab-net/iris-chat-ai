@@ -1,176 +1,128 @@
 "use client"
 
-import { ArrowRightIcon, ChevronDownIcon } from "lucide-react"
-import { motion } from "motion/react"
+import { ArrowUpIcon, GlobeIcon, PaperclipIcon } from "lucide-react"
+import { useRouter } from "@/i18n/navigation"
 import { useState } from "react"
 
-import { MarketNetwork } from "@/components/landing/modern/market-network"
+import { LandingBadge } from "@/components/landing/modern/sphere-ui"
 import { Button } from "@/components/ui/button"
-import { MARKET_NODES, scrollToSection } from "@/lib/landing-modern-data"
-import { LANDING_EASE } from "@/lib/landing-modern-styles"
+import { Input } from "@/components/ui/input"
+import { HERO, HERO_CHIPS, TRUSTED_LOGOS } from "@/lib/landing-modern-data"
+import { landingGlass, landingInner } from "@/lib/landing-modern-styles"
+import { APP_NEWS_PATH } from "@/lib/site"
 import { cn } from "@/lib/utils"
 
-function NodeDetailCard({
-  node,
-  className,
-}: {
-  node: (typeof MARKET_NODES)[number]
-  className?: string
-}) {
-  return (
-    <motion.div
-      key={node.id}
-      initial={{ opacity: 0, y: 14 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -10 }}
-      transition={{ duration: 0.4, ease: LANDING_EASE }}
-      className={cn(
-        "rounded-2xl border border-black/[0.06] bg-white/85 p-5 shadow-[0_16px_40px_rgba(15,23,42,0.10)] backdrop-blur-xl",
-        className
-      )}
-    >
-      <div className="mb-2 flex items-center gap-2">
-        <span className="size-1.5 animate-pulse-dot rounded-full bg-[#2563EB]" />
-        <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.2em] text-[#2563EB]">
-          {node.label}
-        </span>
-      </div>
-      <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <p className="font-[family-name:var(--font-display)] text-xl font-bold text-[#0F172A]">
-          {node.title}
-        </p>
-        <span className="rounded-full bg-[#7C3AED]/10 px-2.5 py-0.5 font-mono text-[10px] font-semibold text-[#7C3AED]">
-          {node.delta}
-        </span>
-      </div>
-      <p className="mt-2 text-[13px] leading-snug text-[#525866]">{node.desc}</p>
-    </motion.div>
-  )
-}
-
 export function HeroSection() {
-  const [activeNode, setActiveNode] = useState(MARKET_NODES[0])
+  const router = useRouter()
+  const [query, setQuery] = useState("")
+
+  function handleAsk() {
+    const q = query.trim()
+    router.push(q ? `${APP_NEWS_PATH}&q=${encodeURIComponent(q)}` : APP_NEWS_PATH)
+  }
 
   return (
-    <section className="relative overflow-hidden pb-16 pt-32 sm:pb-24 sm:pt-44 lg:pb-32">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 h-[720px] bg-[radial-gradient(ellipse_at_top,rgba(37,99,235,0.09),transparent_60%)]"
-      />
+    <section className="relative pb-16 pt-4 sm:pb-20 lg:pb-24">
+      <div className={cn(landingInner, "relative pt-8 text-center sm:pt-12 lg:pt-14")}>
+        <LandingBadge light>{HERO.badge}</LandingBadge>
 
-      <div className="relative mx-auto grid max-w-7xl grid-cols-1 items-center gap-12 px-6 sm:gap-16 sm:px-12 lg:grid-cols-12 lg:gap-8 lg:px-20">
-        <motion.div
-          initial="hidden"
-          animate="show"
-          variants={{
-            hidden: {},
-            show: { transition: { staggerChildren: 0.12 } },
-          }}
-          className="lg:col-span-6"
+        <h1
+          className="mt-8 font-[family-name:var(--font-display)] text-4xl font-normal leading-[1.08] tracking-tight text-white sm:text-5xl lg:text-[3.5rem]"
         >
-          <motion.p
-            variants={{
-              hidden: { opacity: 0, y: 24 },
-              show: { opacity: 1, y: 0, transition: { duration: 0.8, ease: LANDING_EASE } },
-            }}
-            className="mb-8 font-mono text-[11px] font-semibold uppercase tracking-[0.3em] text-[#2563EB]"
-          >
-            The intelligence layer between you and the financial world
-          </motion.p>
+          {HERO.titleBefore} {HERO.titleAfter}
+        </h1>
 
-          <h1 className="font-[family-name:var(--font-display)] text-4xl font-bold leading-[1.02] tracking-tight text-[#0F172A] sm:text-7xl lg:text-[5.4rem]">
-            <motion.span
-              variants={{
-                hidden: { opacity: 0, y: 40 },
-                show: { opacity: 1, y: 0, transition: { duration: 0.9, ease: LANDING_EASE } },
-              }}
-              className="block overflow-hidden pb-1"
-            >
-              Your Financial
-            </motion.span>
-            <motion.span
-              variants={{
-                hidden: { opacity: 0, y: 40 },
-                show: { opacity: 1, y: 0, transition: { duration: 0.9, ease: LANDING_EASE } },
-              }}
-              className="block overflow-hidden pb-2"
-            >
-              Brain<span className="text-[#2563EB]">.</span>
-            </motion.span>
-          </h1>
+        <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-white/80 sm:text-lg">
+          {HERO.subtitle}
+        </p>
 
-          <motion.p
-            variants={{
-              hidden: { opacity: 0, y: 24 },
-              show: { opacity: 1, y: 0, transition: { duration: 0.8, ease: LANDING_EASE } },
-            }}
-            className="mt-8 max-w-xl text-base leading-relaxed text-[#525866] sm:text-lg"
-          >
-            Exur understands the markets, learns your financial life, and helps you make
-            better decisions with your money — today, and eventually on your behalf.
-          </motion.p>
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-2.5 sm:gap-3">
+          {HERO_CHIPS.map((chip) => {
+            const Icon = chip.icon
+            return (
+              <Button
+                key={chip.label}
+                type="button"
+                variant="ghost"
+                className={cn(
+                  "h-auto gap-2 rounded-full px-4 py-2 text-sm font-medium text-white/90",
+                  landingGlass,
+                  "hover:bg-white/18 hover:text-white"
+                )}
+              >
+                <Icon className="size-4" strokeWidth={1.75} />
+                {chip.label}
+              </Button>
+            )
+          })}
+        </div>
 
-          <motion.div
-            variants={{
-              hidden: { opacity: 0, y: 24 },
-              show: { opacity: 1, y: 0, transition: { duration: 0.8, ease: LANDING_EASE } },
-            }}
-            className="mt-10 flex flex-wrap items-center gap-3 sm:gap-4"
-          >
+        <div
+          className={cn(
+            "mx-auto mt-8 flex max-w-2xl items-center gap-2 rounded-full p-2 sm:mt-10 sm:p-2.5",
+            landingGlass,
+            "shadow-[0_20px_60px_rgba(15,23,42,0.15)]"
+          )}
+        >
+          <div className="flex items-center gap-1 pl-2 sm:pl-3">
             <Button
               type="button"
-              onClick={() => scrollToSection("meet-exur")}
-              className="group h-auto gap-2 rounded-full bg-[#2563EB] px-6 py-3 text-sm font-semibold text-white shadow-[0_8px_30px_rgba(37,99,235,0.35)] hover:bg-[#1D4ED8] sm:px-7 sm:py-3.5"
+              variant="ghost"
+              size="icon"
+              className="size-8 rounded-full text-white/70 hover:bg-white/10 hover:text-white"
+              aria-label="Attach"
             >
-              Meet Exur
-              <ArrowRightIcon className="size-4 transition-transform duration-300 group-hover:translate-x-1" />
+              <PaperclipIcon className="size-4" />
             </Button>
             <Button
               type="button"
-              variant="outline"
-              onClick={() => scrollToSection("how-it-works")}
-              className="group h-auto gap-2 rounded-full border-black/15 bg-transparent px-6 py-3 text-sm font-semibold text-[#0F172A] hover:border-[#2563EB]/50 hover:bg-transparent hover:text-[#2563EB] sm:px-7 sm:py-3.5"
+              variant="ghost"
+              size="icon"
+              className="size-8 rounded-full text-white/70 hover:bg-white/10 hover:text-white"
+              aria-label="Web"
             >
-              See How It Works
-              <ChevronDownIcon className="size-4 transition-transform duration-300 group-hover:translate-y-0.5" />
+              <GlobeIcon className="size-4" />
             </Button>
-          </motion.div>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, scale: 0.94 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1.2, delay: 0.5, ease: LANDING_EASE }}
-          className="lg:col-span-6"
-        >
-          <div className="mx-auto w-full max-w-[560px]">
-            <div className="relative aspect-square">
-              <div className="absolute top-1 left-1 z-20 font-mono text-[10px] uppercase tracking-[0.25em] text-[#868C98]">
-                Exur Core · Live
-              </div>
-              <div className="absolute top-1 right-1 z-20 flex items-center gap-1.5">
-                <span className="size-1.5 animate-pulse-dot rounded-full bg-[#2563EB]" />
-                <span className="font-mono text-[10px] uppercase tracking-[0.25em] text-[#868C98]">
-                  Watching
-                </span>
-              </div>
-
-              <MarketNetwork active={activeNode} onSelect={setActiveNode} />
-
-              <div className="absolute right-1 bottom-2 z-20 hidden font-mono text-[10px] uppercase tracking-[0.25em] text-[#868C98] lg:block">
-                Hover the nodes
-              </div>
-
-              <div className="absolute -bottom-2 -left-4 z-20 hidden w-[min(100%,300px)] lg:block">
-                <NodeDetailCard node={activeNode} />
-              </div>
-            </div>
-
-            <div className="mt-4 lg:hidden">
-              <NodeDetailCard node={activeNode} />
-            </div>
           </div>
-        </motion.div>
+
+          <Input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleAsk()}
+            placeholder={HERO.inputPlaceholder}
+            className="h-10 flex-1 border-0 bg-transparent px-1 text-base text-white shadow-none placeholder:text-white/55 focus-visible:ring-0 md:text-base"
+          />
+
+          <Button
+            type="button"
+            size="icon"
+            onClick={handleAsk}
+            className="size-10 shrink-0 rounded-full bg-white text-[#2563EB] hover:bg-white/90"
+            aria-label="Ask Exur"
+          >
+            <ArrowUpIcon className="size-4" />
+          </Button>
+        </div>
+
+        <div className="mt-14 sm:mt-16">
+          <p className="text-sm font-medium text-white/70">{HERO.socialProof}</p>
+          <div className="mt-6 flex flex-wrap items-center justify-center gap-x-8 gap-y-4">
+            {TRUSTED_LOGOS.map((logo, index) => {
+              const Icon = logo.icon
+              return (
+                <div key={logo.name} className="flex items-center gap-8">
+                  <div className="flex items-center gap-2 text-white/85">
+                    <Icon className="size-4" strokeWidth={1.75} />
+                    <span className="text-sm font-medium">{logo.name}</span>
+                  </div>
+                  {index < TRUSTED_LOGOS.length - 1 && (
+                    <span className="hidden h-5 w-px bg-white/20 sm:block" aria-hidden />
+                  )}
+                </div>
+              )
+            })}
+          </div>
+        </div>
       </div>
     </section>
   )

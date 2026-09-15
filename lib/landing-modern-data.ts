@@ -1,127 +1,68 @@
 import type { LucideIcon } from "lucide-react"
 import {
   Activity,
-  BrainCircuit,
-  Crosshair,
-  Eye,
-  Fingerprint,
-  Handshake,
+  Globe,
+  GraduationCap,
   Layers,
+  LineChart,
+  Link2,
+  MoreHorizontal,
   Scale,
-  ShieldCheck,
-  SlidersHorizontal,
+  Sparkles,
   Unplug,
   Volume2,
+  Wallet,
+  Zap,
 } from "lucide-react"
 
-export type MarketNode = {
-  id: string
-  label: string
-  title: string
-  delta: string
-  desc: string
-  pos: [number, number]
-  size: number
-}
-
-export type ProblemCard = {
-  icon: LucideIcon
-  title: string
-  desc: string
-}
-
-export type Pillar = {
-  num: string
-  icon: LucideIcon
-  title: string
-  desc: string
-}
-
-export type DemoScenario = {
-  id: string
-  label: string
-  signal: string
-  verdict: string
-  detail: string
-}
-
-export type VoiceExchange = {
-  q: string
-  a: string
-}
-
-export type RoadmapStage = {
-  icon: LucideIcon
-  name: string
-  status: "Live Now" | "Next" | "The Path" | "Vision"
-  desc: string
-  tag: string
-}
-
 export const NAV_LINKS = [
-  { label: "Intelligence", id: "intelligence" },
+  { label: "Intelligence", id: "features" },
   { label: "How It Works", id: "how-it-works" },
-  { label: "Roadmap", id: "future" },
+  { label: "Pricing", id: "pricing" },
 ] as const
 
-export const MARKET_NODES: MarketNode[] = [
-  {
-    id: "btc",
-    label: "BTC · Price",
-    title: "$124,380",
-    delta: "+2.4% today",
-    desc: "Momentum building above the 123K shelf. Buyers stay in control while 121.8K holds.",
-    pos: [63, 16],
-    size: 72,
-  },
-  {
-    id: "xau",
-    label: "XAU · News",
-    title: "Gold at record high",
-    delta: "Safe-haven bid",
-    desc: "Real yields slipped after the Fed minutes. Exur flags rising gold-to-equity correlation.",
-    pos: [16, 30],
-    size: 60,
-  },
-  {
-    id: "liq",
-    label: "BTC · Liquidity Wall",
-    title: "$420M sell wall",
-    delta: "At $126.5K",
-    desc: "A dense ask cluster caps the next leg. Expect chop until it clears or pulls.",
-    pos: [82, 52],
-    size: 78,
-  },
-  {
-    id: "eth",
-    label: "ETH · Funding",
-    title: "Funding flips negative",
-    delta: "-0.012%",
-    desc: "Crowded shorts are fuel for a squeeze. Watch open interest on the next impulse.",
-    pos: [26, 74],
-    size: 56,
-  },
-  {
-    id: "macro",
-    label: "Macro · CPI",
-    title: "CPI tomorrow 14:30",
-    delta: "Consensus 2.9%",
-    desc: "Volatility window opens. Exur suggests no new risk until the print lands.",
-    pos: [68, 85],
-    size: 62,
-  },
-  {
-    id: "dxy",
-    label: "DXY · Dollar",
-    title: "Dollar fades 0.8%",
-    delta: "3-week low",
-    desc: "A softer dollar supports risk assets and metals. Trend intact below 103.",
-    pos: [10, 55],
-    size: 54,
-  },
-]
+export const HERO = {
+  badge: "The intelligence layer between you and the financial world",
+  titleBefore: "Your Financial",
+  titleAfter: "Brain.",
+  subtitle:
+    "Exur understands the markets, learns your financial life, and helps you make better decisions with your money — today, and eventually on your behalf.",
+  inputPlaceholder: "What is BTC doing right now?",
+  socialProof: "Join thousands already growing with Exur",
+} as const
 
-export const PROBLEM_CARDS: ProblemCard[] = [
+export const HERO_CHIPS = [
+  { label: "Markets", icon: LineChart },
+  { label: "Portfolio", icon: Wallet },
+  { label: "Macro", icon: Globe },
+  { label: "Advice", icon: GraduationCap },
+  { label: "More", icon: MoreHorizontal },
+] as const
+
+export const TRUSTED_LOGOS = [
+  { name: "Arcline", icon: Zap },
+  { name: "Vault", icon: Layers },
+  { name: "Northstar", icon: Sparkles },
+  { name: "Ledger", icon: Link2 },
+  { name: "Pulse", icon: Activity },
+] as const
+
+export const FEATURES_SECTION = {
+  badge: "Chapter 01 / The Noise",
+  title: "Your money shouldn't require a team of experts.",
+  subtitle:
+    "Institutions solved this years ago — with analysts, risk managers, data scientists, and infrastructure watching their capital around the clock. Individuals got apps, charts, and notifications.",
+  highlight:
+    "Exur compresses that institutional capability into one intelligent personal system. Institutional-grade financial intelligence — personal, conversational, autonomous, always available.",
+} as const
+
+export type GoalCard = {
+  icon: LucideIcon
+  title: string
+  desc: string
+}
+
+export const GOAL_CARDS: GoalCard[] = [
   {
     icon: Volume2,
     title: "Information Overload",
@@ -131,8 +72,7 @@ export const PROBLEM_CARDS: ProblemCard[] = [
   {
     icon: Unplug,
     title: "Fragmented Reality",
-    desc:
-      "Brokers, banks, exchanges, wallets, taxes — none of them speak to each other.",
+    desc: "Brokers, banks, exchanges, wallets, taxes — none of them speak to each other.",
   },
   {
     icon: Scale,
@@ -142,145 +82,196 @@ export const PROBLEM_CARDS: ProblemCard[] = [
   },
 ]
 
-export const PILLARS: Pillar[] = [
+export const MEET_EXUR_SECTION = {
+  badge: "Autonomous Personal Finance",
+  title: "Meet Your Financial Brain.",
+  subtitle:
+    "The intelligence is ready. Not a chatbot. Not a trading bot. An always-on financial intelligence that observes, understands, protects, and decides — for one person.",
+  quote: "I am the intelligent layer responsible for your financial life.",
+  tagline: "You + Your Money + The Markets + The World",
+} as const
+
+export const ARCHITECTURE_SECTION = {
+  badge: "Chapter 02 / The Architecture",
+  title: "How Exur thinks.",
+} as const
+
+export type PillarCard = {
+  num: string
+  title: string
+  desc: string
+}
+
+export const PILLAR_CARDS: PillarCard[] = [
   {
     num: "01",
-    icon: Eye,
     title: "Exur sees the market",
     desc:
-      "Price, liquidity, order books, derivatives positioning, news, and macro — across BTC, ETH, and Gold, from 15-minute pulses to long-term structure.",
+      "Price, liquidity, order books, derivatives, news, and macro — across BTC, ETH, and Gold. The full picture, always on.",
   },
   {
     num: "02",
-    icon: SlidersHorizontal,
     title: "Models are engines. Not the product.",
     desc:
-      "Layered machine intelligence turns a thousand signals into one calm, human sentence you can act on. No charts. No jargon. Just clarity.",
+      "Layered intelligence turns raw signals into a calm, human sentence — not a dashboard, not a model card.",
   },
   {
     num: "03",
-    icon: ShieldCheck,
     title: "Flat is a valid decision",
     desc:
-      "Exur never manufactures a trade. When the market lacks a real edge, the honest answer is: do nothing. Protecting capital is the objective.",
+      "Exur never manufactures a trade. When there is no edge, the honest answer is: do nothing.",
   },
 ]
+
+export type DemoScenario = {
+  id: string
+  label: string
+  trigger: string
+  verdict: string
+}
 
 export const DEMO_SCENARIOS: DemoScenario[] = [
   {
     id: "spike",
     label: "Market Spike",
-    signal: "VOLATILITY +212% · LIQUIDITY THINNING",
-    verdict: "Do nothing.",
-    detail:
-      "The move is driven by leveraged momentum, not fundamentals. Your allocation is built for this range. Exur is watching the support zone.",
+    trigger: "BTC breaks above 125K with heavy volume.",
+    verdict:
+      "Momentum is real but stretched. No new entry — if you're already positioned, hold with a trailing stop. If flat, wait for a pullback to structure.",
   },
   {
     id: "inflation",
     label: "Inflation Shock",
-    signal: "CPI PRINT ABOVE CONSENSUS",
-    verdict: "Rebalance 4%.",
-    detail:
-      "Real yields are repricing. Shifting a small sleeve to short-duration treasuries protects purchasing power without changing your long-term plan.",
+    trigger: "CPI comes in hot. Risk assets sell off across the board.",
+    verdict:
+      "Macro regime shift, not a trade. Reduce risk exposure by 15–20%, increase cash. This is protection, not panic.",
   },
   {
-    id: "subscription",
+    id: "subscriptions",
     label: "Subscription Audit",
-    signal: "RECURRING OUTFLOW ANOMALY DETECTED",
-    verdict: "Save $214/mo.",
-    detail:
-      "Three overlapping subscriptions found. Cancelling two redirects $2,568 a year toward your liquidity goal — no lifestyle change required.",
+    trigger: "User asks: where is my money actually going each month?",
+    verdict:
+      "Found $340/mo in recurring charges you haven't used in 90+ days. Cancel 4 services, redirect $180/mo to your savings goal.",
   },
   {
-    id: "liquidity",
+    id: "rebalance",
     label: "Liquidity Rebalance",
-    signal: "CASH DRAG DETECTED · 6.1% IDLE",
-    verdict: "Deploy gradually.",
-    detail:
-      "Idle cash exceeds your three-month buffer. Exur suggests staged deployment over six weeks to smooth entry risk.",
+    trigger: "Portfolio is 80% crypto. User wants to buy a house in 18 months.",
+    verdict:
+      "Goal changed the strategy. Shift 30% to stable liquidity over the next 6 weeks. Your down payment is now the priority.",
   },
 ]
+
+export const BENTO_INTEGRATION = {
+  title: "Exur sees the market",
+  desc:
+    "Price, liquidity, order books, derivatives, news, and macro — unified across BTC, ETH, and Gold into one always-on intelligence layer.",
+  icons: ["BTC", "ETH", "XAU", "CPI", "DXY"],
+}
+
+export const BENTO_MULTIMODAL = {
+  title: "Models are engines. Not the product.",
+  desc:
+    "Layered intelligence turns raw signals into a calm, human sentence — from quick questions to long-term planning.",
+}
+
+export const COMPANION_SECTION = {
+  badge: "Chapter 03 / The Relationship",
+  title: "Not a terminal. A companion.",
+  subtitle:
+    "You will never see a model name, an API, or a data pipeline. You talk. Exur understands the infrastructure underneath — and answers like an intelligent friend who happens to watch every market, all the time.",
+  quote: "Exur is watching this for me.",
+  quoteAttribution: "how it should feel, every day",
+} as const
+
+export type VoiceExchange = {
+  question: string
+  answer: string
+}
 
 export const VOICE_EXCHANGES: VoiceExchange[] = [
   {
-    q: "What is BTC doing right now?",
-    a:
+    question: "What is BTC doing right now?",
+    answer:
       "BTC is losing momentum, but sellers haven't taken control yet. I'm not seeing enough edge to enter here — keep an eye on the current support zone. If it breaks, the situation changes.",
   },
   {
-    q: "I want to buy a house next year.",
-    a:
+    question: "I want to buy a house next year.",
+    answer:
       "Then we protect the down payment. I'd increase liquidity and lower portfolio volatility starting this quarter — your goal changes the strategy, not the other way around.",
   },
   {
-    q: "What should I do?",
-    a: "Do nothing. You're fine.",
+    question: "What should I do?",
+    answer: "Do nothing. You're fine.",
   },
 ]
 
-export const ROADMAP_STAGES: RoadmapStage[] = [
-  {
-    icon: Activity,
-    name: "AI Market Analyst",
-    status: "Live Now",
-    desc:
-      "Multi-horizon intelligence across BTC, ETH, and Gold — the system running today, watching every pulse of the market.",
-    tag: "Observe",
-  },
-  {
-    icon: Crosshair,
-    name: "Personal Market Intelligence",
-    status: "Next",
-    desc:
-      "Market understanding tuned to your watchlist, your assets, your world — not the average investor's.",
-    tag: "Personalize",
-  },
-  {
-    icon: Fingerprint,
-    name: "Financial Twin",
-    status: "The Path",
-    desc:
-      "Exur learns you: assets, income, goals, risk tolerance, and the history of your decisions. Market model meets user model.",
-    tag: "Understand",
-  },
-  {
-    icon: Handshake,
-    name: "Financial Agent",
-    status: "The Path",
-    desc:
-      "From advice to action. Exur recommends, asks permission, and acts — always inside boundaries you define.",
-    tag: "Act",
-  },
-  {
-    icon: Layers,
-    name: "Personal Wealth OS",
-    status: "Vision",
-    desc:
-      "Earn, save, protect, invest, borrow, spend — one intelligence responsible for your entire financial layer.",
-    tag: "Expand",
-  },
-  {
-    icon: BrainCircuit,
-    name: "Financial OS for Individuals",
-    status: "Vision",
-    desc:
-      "The end state: the intelligent layer responsible for your financial life. Banks and brokers become infrastructure underneath.",
-    tag: "Autonomy",
-  },
-]
-
-export function roadmapStatusClass(status: RoadmapStage["status"]) {
-  switch (status) {
-    case "Live Now":
-      return "bg-[#2563EB] text-white"
-    case "Next":
-      return "border border-[#2563EB]/40 text-[#2563EB]"
-    case "Vision":
-      return "border border-[#7C3AED]/40 text-[#7C3AED]"
-    default:
-      return "border border-black/10 text-[#868C98]"
-  }
+export type PricingPlan = {
+  key: string
+  name: string
+  price: string
+  desc: string
+  cta: string
+  features: string[]
+  featured?: boolean
+  badge?: string
 }
+
+export const PRICING_PLANS: PricingPlan[] = [
+  {
+    key: "starter",
+    name: "Starter Plan",
+    price: "Free",
+    desc: "Start watching the markets with Exur's core intelligence.",
+    cta: "Start for Free",
+    features: [
+      "Market news & scored headlines",
+      "Exur co-pilot chat",
+      "BTC, ETH & Gold coverage",
+      "Community support",
+      "1 user seat",
+    ],
+  },
+  {
+    key: "pro",
+    name: "Pro Plan",
+    price: "$49",
+    desc: "Full intelligence for active investors who want depth and speed.",
+    cta: "Upgrade to Pro",
+    featured: true,
+    badge: "Popular",
+    features: [
+      "Unlimited co-pilot sessions",
+      "Priority market signals",
+      "Paper trading desk",
+      "Priority email support",
+      "Up to 5 user seats",
+      "Saved watchlists & history",
+    ],
+  },
+  {
+    key: "ultimate",
+    name: "Ultimate Plan",
+    price: "Custom",
+    desc: "Enterprise depth for teams and desks that need custom limits and a direct line to us.",
+    cta: "Contact Us",
+    badge: "Teams",
+    features: [
+      "Everything in Pro",
+      "Custom intelligence limits",
+      "Team workspaces & onboarding",
+      "Dedicated support line",
+      "Unlimited seats",
+      "Custom integrations",
+    ],
+  },
+]
+
+export const FOOTER_CTA = {
+  title: "Meet Your Financial Brain.",
+  subtitle:
+    "The intelligence is ready. Not a chatbot. Not a trading bot. An always-on financial intelligence that observes, understands, protects, and decides — for one person.",
+  tagline: "You + Your Money + The Markets + The World",
+} as const
 
 export function scrollToSection(id: string) {
   document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" })

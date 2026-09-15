@@ -1450,7 +1450,84 @@ html.display-standalone[data-app-shell="true"] [data-slot="sheet-content"] .app-
   }
 }
 
-/* Modern landing (Emergent-style) */
+/* Modern landing (SphereAI-style) */
+.sphere-hero-bg {
+  background: linear-gradient(160deg, #1e40af 0%, #2563eb 38%, #3b82f6 72%, #60a5fa 100%);
+}
+
+.sphere-hero-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 70% 50% at 50% 28%, rgba(254, 243, 199, 0.14), transparent 58%),
+    radial-gradient(ellipse 55% 45% at 50% 100%, rgba(29, 78, 216, 0.4), transparent 62%);
+  pointer-events: none;
+}
+
+@keyframes hero-fluid-drift-a {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(3%, -2.5%, 0) scale(1.04);
+  }
+}
+
+@keyframes hero-fluid-drift-b {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(-2.5%, 2%, 0) scale(1.03);
+  }
+}
+
+@keyframes hero-fluid-drift-c {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(1.5%, -1.5%, 0) scale(1.02);
+  }
+}
+
+@keyframes hero-fluid-glow {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.82;
+  }
+}
+
+.landing-modern .hero-fluid-wave {
+  transform-box: fill-box;
+  transform-origin: center;
+  will-change: transform;
+}
+
+.landing-modern .hero-fluid-wave-a {
+  animation: hero-fluid-drift-a 22s ease-in-out infinite;
+}
+
+.landing-modern .hero-fluid-wave-b {
+  animation: hero-fluid-drift-b 26s ease-in-out infinite;
+}
+
+.landing-modern .hero-fluid-wave-c {
+  animation: hero-fluid-drift-c 19s ease-in-out infinite;
+}
+
+.landing-modern .hero-fluid-glow {
+  animation: hero-fluid-glow 16s ease-in-out infinite;
+}
+
+/* Modern landing utilities */
 @keyframes landing-pulse-dot {
   0%,
   100% {
@@ -1508,6 +1585,11 @@ html.display-standalone[data-app-shell="true"] [data-slot="sheet-content"] .app-
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .landing-modern .hero-fluid-wave,
+  .landing-modern .hero-fluid-glow {
+    animation: none;
+  }
+
   .landing-modern .animate-pulse-dot,
   .landing-modern .animate-float-slow,
   .landing-modern .market-node-pulse {

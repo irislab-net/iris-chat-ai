@@ -1,18 +1,17 @@
 "use client"
 
-import { FutureSection } from "@/components/landing/modern/future-section"
+import { AboutSection } from "@/components/landing/modern/about-section"
+import { BentoSection } from "@/components/landing/modern/bento-section"
+import { GoalsSection } from "@/components/landing/modern/goals-section"
+import { HeroFluidBg } from "@/components/landing/modern/hero-fluid-bg"
 import { HeroSection } from "@/components/landing/modern/hero-section"
-import { HowItWorksSection } from "@/components/landing/modern/how-it-works-section"
-import { IntelligenceSection } from "@/components/landing/modern/intelligence-section"
 import { LandingNav } from "@/components/landing/modern/landing-nav"
-import { MeetExurSection } from "@/components/landing/modern/meet-exur-section"
 import { ModernFooter } from "@/components/landing/modern/modern-footer"
-import { VoicesSection } from "@/components/landing/modern/voices-section"
+import { PricingSection } from "@/components/landing/modern/pricing-section"
+import { TestimonialsSection } from "@/components/landing/modern/testimonials-section"
 import { jetbrainsMono, plusJakarta } from "@/components/landing/modern/fonts"
+import { landingHeroCard, landingMainStack, landingPageStack, landingShell } from "@/lib/landing-modern-styles"
 import { cn } from "@/lib/utils"
-
-const NOISE_BG =
-  "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")"
 
 export function ModernLandingPage() {
   return (
@@ -26,23 +25,31 @@ export function ModernLandingPage() {
       )}
     >
       <div
-        aria-hidden
-        className="pointer-events-none fixed inset-0 z-[90] opacity-[0.035]"
-        style={{ backgroundImage: NOISE_BG }}
-      />
+        className={cn(
+          landingShell,
+          landingPageStack,
+          "relative z-10 pb-3 sm:pb-5 lg:pb-8"
+        )}
+      >
+        <div className={cn(landingHeroCard, "text-white")}>
+            <div aria-hidden className="sphere-hero-bg pointer-events-none absolute inset-0 z-0" />
+            <HeroFluidBg />
+            <div className="relative z-10">
+              <LandingNav />
+              <HeroSection />
+            </div>
+          </div>
 
-      <LandingNav />
+          <main className={landingMainStack}>
+            <GoalsSection />
+            <AboutSection />
+            <BentoSection />
+            <PricingSection />
+            <TestimonialsSection />
+          </main>
 
-      <main className="relative z-10">
-        <HeroSection />
-        <IntelligenceSection />
-        <HowItWorksSection />
-        <VoicesSection />
-        <FutureSection />
-        <MeetExurSection />
-      </main>
-
-      <ModernFooter />
+        <ModernFooter />
+      </div>
     </div>
   )
 }
