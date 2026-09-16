@@ -108,10 +108,10 @@ export function LandingNav() {
           <SphereCta
             href={APP_NEWS_PATH}
             variant="glass"
-            iconClassName="max-md:hidden"
-            className="shrink-0 px-3.5 py-2 text-xs sm:px-5 sm:py-2.5 sm:text-sm"
+            iconClassName="max-md:hidden size-6"
+            className="min-h-8 shrink-0 px-3 py-1.5 text-xs sm:px-3.5 sm:py-1.5"
           >
-            Try Free
+            Start Free
           </SphereCta>
 
           <Sheet open={open} onOpenChange={setOpen}>

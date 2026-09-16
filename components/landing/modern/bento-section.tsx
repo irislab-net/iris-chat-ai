@@ -26,7 +26,6 @@ export function BentoSection() {
       <div className={landingInner}>
         <ScrollReveal>
           <SectionHeader
-            badge={ARCHITECTURE_SECTION.badge}
             title={ARCHITECTURE_SECTION.title}
             subtitle={ARCHITECTURE_SECTION.subtitle}
           />

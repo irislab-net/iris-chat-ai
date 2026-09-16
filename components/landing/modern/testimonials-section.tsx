@@ -52,7 +52,6 @@ export function TestimonialsSection() {
       <div className={landingInner}>
         <ScrollReveal>
           <SectionHeader
-            badge={COMPANION_SECTION.badge}
             title={COMPANION_SECTION.title}
             subtitle={COMPANION_SECTION.subtitle}
           />

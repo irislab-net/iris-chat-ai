@@ -27,7 +27,7 @@ function readThemeFromDocument(): BrowserChromeTheme {
 function syncAppleStatusBarStyle(theme: BrowserChromeTheme) {
   if (typeof document === "undefined") return
 
-  let meta = document.querySelector(
+  const meta = document.querySelector(
     'meta[name="apple-mobile-web-app-status-bar-style"]'
   )
 

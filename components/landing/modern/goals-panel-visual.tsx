@@ -80,12 +80,12 @@ function PanelLogoMark() {
     <span
       className={cn(
         landingGlassNavIcon,
-        "relative flex size-8 items-center justify-center overflow-hidden rounded-full bg-white/52 p-1"
+        "relative flex size-10 items-center justify-center overflow-hidden rounded-full bg-white/52 p-1.5"
       )}
       aria-hidden
     >
       <GlassSheen className="rounded-full" />
-      <IrisLabLogo decorative size={22} variant="on-light" className="relative z-10 size-5" />
+      <IrisLabLogo decorative size={28} variant="on-light" className="relative z-10 size-7" />
     </span>
   )
 }
@@ -103,7 +103,7 @@ function ExurPanelShell({
   const motionProps = enabled ? reveal(0) : { initial: false, animate: { opacity: 1, y: 0 } }
 
   return (
-    <motion.div key={`shell-${cycle}`} className="w-full max-w-[21rem] sm:max-w-88" {...motionProps}>
+    <motion.div key={`shell-${cycle}`} className="w-full max-w-84 sm:max-w-88" {...motionProps}>
       <div
         className={cn(
           landingGlassSurface,

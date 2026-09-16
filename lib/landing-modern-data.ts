@@ -119,7 +119,6 @@ export const TRUSTED_LOGOS = [
 ] as const
 
 export const FEATURES_SECTION = {
-  badge: "Why Exur",
   title: "One brain for your money.",
   subtitle: "Less noise. Clearer answers.",
 } as const
@@ -224,7 +223,6 @@ export const FEATURE_SCROLL_STEPS: FeatureScrollStep[] = [
 ]
 
 export const MEET_EXUR_SECTION = {
-  badge: "About Exur",
   title: "Meet your financial brain.",
   subtitle:
     "Not a chatbot. Not a trading bot. Just someone who watches your money and the markets, and explains what matters.",
@@ -233,7 +231,6 @@ export const MEET_EXUR_SECTION = {
 } as const
 
 export const ARCHITECTURE_SECTION = {
-  badge: "How it works",
   title: "How Exur thinks.",
   subtitle: "Watch the market. Understand it. Move only when it makes sense.",
 } as const
@@ -309,7 +306,6 @@ export const DEMO_SCENARIOS: DemoScenario[] = [
 ]
 
 export const COMPANION_SECTION = {
-  badge: "Stories",
   title: "Real questions. Real answers.",
   subtitle: "No dashboards. Just a conversation when you need one.",
   quote: "Exur's watching this for me.",
@@ -354,7 +350,6 @@ export type PricingPlan = {
 }
 
 export const PRICING_SECTION = {
-  badge: "Pricing",
   title: "Simple plans.",
   subtitle: "Start free. Upgrade when you want more depth.",
 } as const

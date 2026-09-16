@@ -122,7 +122,7 @@ export function SphereCta({
       <Button
         nativeButton={false}
         render={<Link href={href} />}
-        className={cn(buttonClass, isGlass && "h-auto min-h-10", className)}
+        className={cn(buttonClass, isGlass && "h-auto min-h-8", className)}
       >
         {content}
       </Button>
@@ -133,7 +133,7 @@ export function SphereCta({
     <Button
       type="button"
       onClick={onClick}
-      className={cn(buttonClass, isGlass && "h-auto min-h-10", className)}
+        className={cn(buttonClass, isGlass && "h-auto min-h-8", className)}
     >
       {content}
     </Button>
@@ -159,7 +159,7 @@ export function SectionHeader({
   className,
   light,
 }: {
-  badge: string
+  badge?: string
   title: ReactNode
   subtitle?: string
   className?: string
@@ -167,10 +167,11 @@ export function SectionHeader({
 }) {
   return (
     <div className={cn("mx-auto max-w-3xl text-center", className)}>
-      <LandingBadge light={light}>{badge}</LandingBadge>
+      {badge ? <LandingBadge light={light}>{badge}</LandingBadge> : null}
       <h2
         className={cn(
-          "mt-6 font-(family-name:--font-display) text-3xl font-semibold leading-[1.15] tracking-tight sm:text-4xl lg:text-[2.75rem]",
+          "font-(family-name:--font-display) text-3xl font-semibold leading-[1.15] tracking-tight sm:text-4xl lg:text-[2.75rem]",
+          badge ? "mt-6" : "mt-0",
           light ? "text-white" : "text-[#0F172A]"
         )}
       >

@@ -117,7 +117,6 @@ export function PricingSection() {
       <div className={landingInner}>
         <ScrollReveal>
           <SectionHeader
-            badge={PRICING_SECTION.badge}
             title={PRICING_SECTION.title}
             subtitle={PRICING_SECTION.subtitle}
           />

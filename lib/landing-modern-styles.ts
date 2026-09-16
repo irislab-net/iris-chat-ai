@@ -72,7 +72,7 @@ export const landingGlassNavIcon =
 
 /** Nav CTA — blue liquid glass */
 export const landingGlassNavCta =
-  "group relative isolate inline-flex h-auto min-h-10 items-center overflow-hidden rounded-full bg-[#2563EB]/90 font-semibold text-white shadow-[0_12px_40px_rgba(37,99,235,0.34),inset_0_1px_1px_rgba(255,255,255,0.38),inset_0_-1px_2px_rgba(29,78,216,0.28)] backdrop-blur-2xl transition-all hover:bg-[#2563EB]/96 hover:shadow-[0_16px_48px_rgba(37,99,235,0.42)]"
+  "group relative isolate inline-flex h-auto min-h-8 items-center overflow-hidden rounded-full bg-[#2563EB]/90 font-semibold text-white shadow-[0_12px_40px_rgba(37,99,235,0.34),inset_0_1px_1px_rgba(255,255,255,0.38),inset_0_-1px_2px_rgba(29,78,216,0.28)] backdrop-blur-2xl transition-all hover:bg-[#2563EB]/96 hover:shadow-[0_16px_48px_rgba(37,99,235,0.42)]"
 
 export const landingGlassBlueSheen =
   "pointer-events-none absolute inset-0 bg-[linear-gradient(145deg,rgba(255,255,255,0.42)_0%,rgba(255,255,255,0.14)_40%,rgba(255,255,255,0.05)_62%,transparent_100%)]"

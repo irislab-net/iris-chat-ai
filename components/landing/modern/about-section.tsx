@@ -15,7 +15,6 @@ export function AboutSection() {
       <div className={landingInner}>
         <ScrollReveal>
           <SectionHeader
-            badge={MEET_EXUR_SECTION.badge}
             title={MEET_EXUR_SECTION.title}
             subtitle={MEET_EXUR_SECTION.subtitle}
           />
