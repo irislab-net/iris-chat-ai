@@ -1527,6 +1527,68 @@ html.display-standalone[data-app-shell="true"] [data-slot="sheet-content"] .app-
   animation: hero-fluid-glow 16s ease-in-out infinite;
 }
 
+@keyframes hero-liquid-drift-1 {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(4%, -3%, 0) scale(1.06);
+  }
+}
+
+@keyframes hero-liquid-drift-2 {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(-5%, 4%, 0) scale(1.05);
+  }
+}
+
+@keyframes hero-liquid-drift-3 {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(3%, 5%, 0) scale(1.04);
+  }
+}
+
+@keyframes hero-liquid-drift-4 {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(-3%, -4%, 0) scale(1.03);
+  }
+}
+
+.landing-modern .hero-liquid-orb {
+  transform-box: fill-box;
+  transform-origin: center;
+  will-change: transform;
+}
+
+.landing-modern .hero-liquid-orb-a {
+  animation: hero-liquid-drift-1 24s ease-in-out infinite;
+}
+
+.landing-modern .hero-liquid-orb-b {
+  animation: hero-liquid-drift-2 28s ease-in-out infinite;
+}
+
+.landing-modern .hero-liquid-orb-c {
+  animation: hero-liquid-drift-3 22s ease-in-out infinite;
+}
+
+.landing-modern .hero-liquid-orb-d {
+  animation: hero-liquid-drift-4 20s ease-in-out infinite;
+}
+
 /* Modern landing utilities */
 @keyframes landing-pulse-dot {
   0%,
@@ -1586,7 +1648,8 @@ html.display-standalone[data-app-shell="true"] [data-slot="sheet-content"] .app-
 
 @media (prefers-reduced-motion: reduce) {
   .landing-modern .hero-fluid-wave,
-  .landing-modern .hero-fluid-glow {
+  .landing-modern .hero-fluid-glow,
+  .landing-modern .hero-liquid-orb {
     animation: none;
   }
 

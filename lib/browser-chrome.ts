@@ -5,7 +5,7 @@ export const BROWSER_CHROME_COLORS = {
 } as const
 
 /** Runs before React so installed PWA / Safari chrome matches stored theme. */
-export const BROWSER_CHROME_INIT_SCRIPT = `(function(){try{var k="theme",s=localStorage.getItem(k),m=matchMedia("(prefers-color-scheme: dark)").matches,d=s==="dark"||(s!=="light"&&m),c=d?"${BROWSER_CHROME_COLORS.dark}":"${BROWSER_CHROME_COLORS.light}",r=document.documentElement;r.style.colorScheme=d?"dark":"light";r.style.setProperty("--browser-chrome-color",c);document.querySelectorAll('meta[name="theme-color"]').forEach(function(n){n.remove()});var meta=document.createElement("meta");meta.name="theme-color";meta.content=c;document.head.appendChild(meta);var apple=document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]');if(!apple){apple=document.createElement("meta");apple.name="apple-mobile-web-app-status-bar-style";document.head.appendChild(apple);}apple.content=d?"black-translucent":"default";}catch(e){}})();`
+export const BROWSER_CHROME_INIT_SCRIPT = `(function(){try{var k="theme",s=localStorage.getItem(k),m=matchMedia("(prefers-color-scheme: dark)").matches,d=s==="dark"||(s!=="light"&&m),c=d?"${BROWSER_CHROME_COLORS.dark}":"${BROWSER_CHROME_COLORS.light}",r=document.documentElement;r.style.colorScheme=d?"dark":"light";r.style.setProperty("--browser-chrome-color",c);var metas=document.querySelectorAll('meta[name="theme-color"]');if(metas.length){for(var i=0;i<metas.length;i++)metas[i].setAttribute("content",c);}else{var meta=document.createElement("meta");meta.setAttribute("name","theme-color");meta.setAttribute("content",c);document.head.appendChild(meta);}var apple=document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]');if(!apple){apple=document.createElement("meta");apple.setAttribute("name","apple-mobile-web-app-status-bar-style");document.head.appendChild(apple);}apple.setAttribute("content",d?"black-translucent":"default");}catch(e){}})();`
 
 export type BrowserChromeTheme = keyof typeof BROWSER_CHROME_COLORS
 
@@ -31,16 +31,12 @@ function syncAppleStatusBarStyle(theme: BrowserChromeTheme) {
     'meta[name="apple-mobile-web-app-status-bar-style"]'
   )
 
-  if (!meta) {
-    meta = document.createElement("meta")
-    meta.setAttribute("name", "apple-mobile-web-app-status-bar-style")
-    document.head.appendChild(meta)
+  if (meta) {
+    meta.setAttribute("content", theme === "dark" ? "black-translucent" : "default")
   }
-
-  meta.setAttribute("content", theme === "dark" ? "black-translucent" : "default")
 }
 
-/** Replace media-query theme-color tags with one value that matches the site theme. */
+/** Sync CSS chrome tokens after hydration. Theme-color metas are owned by ThemeProvider. */
 export function syncBrowserChromeTheme(resolvedTheme: string | undefined) {
   if (typeof document === "undefined") return
 
@@ -52,35 +48,6 @@ export function syncBrowserChromeTheme(resolvedTheme: string | undefined) {
 
   root.style.colorScheme = theme
   root.style.setProperty("--browser-chrome-color", color)
-
-  // Next.js / Safari can emit multiple media-query metas; iOS PWA picks by OS theme.
-  document.querySelectorAll('meta[name="theme-color"]').forEach((meta) => {
-    meta.remove()
-  })
-
-  const meta = document.createElement("meta")
-  meta.setAttribute("name", "theme-color")
-  meta.setAttribute("content", color)
-  document.head.appendChild(meta)
-
   syncAppleStatusBarStyle(theme)
-
-  // Safari / installed PWA recalculate safe-area chrome after theme-color changes.
-  window.dispatchEvent(new Event("resize"))
 }
 
-export function observeBrowserChromeTheme() {
-  if (typeof document === "undefined") return () => {}
-
-  const root = document.documentElement
-  const observer = new MutationObserver(() => {
-    syncBrowserChromeTheme(undefined)
-  })
-
-  observer.observe(root, {
-    attributes: true,
-    attributeFilter: ["class"],
-  })
-
-  return () => observer.disconnect()
-}

@@ -7,6 +7,7 @@ import { Link } from "@/i18n/navigation"
 import { FOOTER_CTA, NAV_LINKS, scrollToSection } from "@/lib/landing-modern-data"
 import { SITE_NAME } from "@/lib/site"
 import {
+  landingCard,
   landingDisplay,
   landingFooterCard,
   landingInner,
@@ -25,13 +26,7 @@ export function ModernFooter() {
   const year = new Date().getFullYear()
 
   return (
-    <footer className={cn(landingFooterCard, "text-white")}>
-      <div aria-hidden className="sphere-hero-bg absolute inset-0 z-0" />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(ellipse_120%_80%_at_0%_0%,rgba(255,255,255,0.2),transparent_55%),radial-gradient(ellipse_70%_60%_at_100%_20%,rgba(255,255,255,0.12),transparent_50%)]"
-      />
-
+    <footer className={cn(landingFooterCard, landingCard, "bg-white text-[#0F172A]")}>
       <div className="relative z-10 py-8 sm:py-10 lg:py-12">
         <div className={cn(landingInner, "flex flex-col gap-10 sm:gap-12")}>
           <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
@@ -40,13 +35,13 @@ export function ModernFooter() {
               variant="ghost"
               onClick={() => scrollToSection("top")}
               aria-label={SITE_NAME}
-              className="h-auto w-fit gap-2.5 rounded-full px-0 py-0 text-white hover:bg-white/10"
+              className="h-auto w-fit gap-2.5 rounded-full px-0 py-0 text-[#0F172A] hover:bg-[#F1F5F9]"
             >
-              <IrisLabLogo decorative size={56} variant="on-hero" className="size-14 shrink-0" />
+              <IrisLabLogo decorative size={56} variant="on-light" className="size-14 shrink-0" />
               <span
                 className={cn(
                   landingDisplay,
-                  "text-2xl font-semibold tracking-tight text-white sm:text-3xl"
+                  "text-2xl font-semibold tracking-tight text-[#0F172A] sm:text-3xl"
                 )}
               >
                 {SITE_NAME}
@@ -61,23 +56,19 @@ export function ModernFooter() {
                       key={link.id}
                       type="button"
                       onClick={() => scrollToSection(link.id)}
-                      className="text-sm font-medium text-white/90 transition-colors hover:text-white"
+                      className="text-sm font-medium text-[#64748B] transition-colors hover:text-[#0F172A]"
                     >
                       {link.label}
                     </button>
                   ))}
                 </nav>
-                <SphereCta
-                  href={`mailto:${CONTACT_EMAIL}`}
-                  className="shrink-0 rounded-full bg-black px-5 py-2.5 text-sm shadow-[0_0_0_1px_rgba(255,255,255,0.12)] hover:bg-black/90"
-                  iconClassName="bg-white/15 text-white"
-                >
+                <SphereCta href={`mailto:${CONTACT_EMAIL}`} className="shrink-0 rounded-full px-5 py-2.5 text-sm">
                   Contact Us
                 </SphereCta>
               </div>
               <a
                 href={`mailto:${CONTACT_EMAIL}`}
-                className="text-sm text-white/70 transition-colors hover:text-white"
+                className="text-sm text-[#94A3B8] transition-colors hover:text-[#0F172A]"
               >
                 {CONTACT_EMAIL}
               </a>
@@ -87,21 +78,21 @@ export function ModernFooter() {
           <h2
             className={cn(
               landingDisplay,
-              "max-w-3xl text-[1.65rem] font-semibold leading-[1.2] tracking-tight sm:text-3xl lg:text-[2.25rem] lg:leading-[1.12]"
+              "max-w-3xl text-[1.65rem] font-semibold leading-[1.2] tracking-tight text-[#0F172A] sm:text-3xl lg:text-[2.25rem] lg:leading-[1.12]"
             )}
           >
             {FOOTER_CTA.title}
           </h2>
 
-          <div className="flex flex-col gap-6 border-t border-white/10 pt-8 text-sm text-white/75 lg:flex-row lg:items-end lg:justify-between lg:gap-8">
+          <div className="flex flex-col gap-6 rounded-[1.5rem] bg-[#F8FAFC] p-6 text-sm text-[#64748B] sm:p-8 lg:flex-row lg:items-end lg:justify-between lg:gap-8">
             <div className="max-w-xl text-left lg:max-w-2xl">
-              <p className="text-sm leading-relaxed text-white/90 sm:text-base">
+              <p className="text-sm leading-relaxed text-[#475569] sm:text-base">
                 {FOOTER_CTA.subtitle}
               </p>
-              <p className="mt-4 font-mono text-[10px] uppercase tracking-[0.25em] text-white/50">
+              <p className="mt-4 font-mono text-[10px] uppercase tracking-[0.25em] text-[#94A3B8]">
                 {FOOTER_CTA.tagline}
               </p>
-              <p className="mt-4 shrink-0 text-white/65">
+              <p className="mt-4 shrink-0 text-[#94A3B8]">
                 © {year} {SITE_NAME}. All rights reserved.
               </p>
             </div>
@@ -110,7 +101,7 @@ export function ModernFooter() {
                 <Link
                   key={link.label}
                   href={link.href}
-                  className="underline decoration-white/40 underline-offset-4 transition-colors hover:text-white hover:decoration-white/75"
+                  className="underline decoration-black/20 underline-offset-4 transition-colors hover:text-[#0F172A] hover:decoration-black/40"
                 >
                   {link.label}
                 </Link>

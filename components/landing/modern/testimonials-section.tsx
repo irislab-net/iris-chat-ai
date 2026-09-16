@@ -1,14 +1,54 @@
 "use client"
 
 import { ScrollReveal } from "@/components/landing/modern/scroll-reveal"
-import { SectionHeader } from "@/components/landing/modern/sphere-ui"
-import { COMPANION_SECTION, VOICE_EXCHANGES } from "@/lib/landing-modern-data"
-import { landingCard, landingInner, landingSection, landingSectionBody } from "@/lib/landing-modern-styles"
+import { SectionHeader, SphereOrb } from "@/components/landing/modern/sphere-ui"
+import { Separator } from "@/components/ui/separator"
+import {
+  COMPANION_SECTION,
+  VOICE_EXCHANGES,
+  type VoiceExchange,
+} from "@/lib/landing-modern-data"
+import {
+  landingGlassBubbleAi,
+  landingGlassBubbleUser,
+  landingInner,
+  landingSection,
+  landingSectionBody,
+} from "@/lib/landing-modern-styles"
 import { cn } from "@/lib/utils"
+
+function StoryExchange({ exchange }: { exchange: VoiceExchange }) {
+  return (
+    <article className="flex h-full flex-col">
+      <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.25em] text-[#94A3B8]">
+        {exchange.topic}
+      </p>
+
+      <div className="mt-4 flex flex-1 flex-col gap-3 sm:mt-5">
+        <div className="ml-auto w-fit max-w-full sm:max-w-[92%]">
+          <div className={cn("px-4 py-3 sm:px-5 sm:py-3.5", landingGlassBubbleUser)}>
+            <p className="text-sm leading-relaxed text-[#0F172A] sm:text-[0.9375rem]">
+              {exchange.question}
+            </p>
+          </div>
+        </div>
+
+        <div className="flex max-w-full items-start gap-2.5 sm:max-w-[92%]">
+          <SphereOrb size="sm" className="mt-0.5 shrink-0" />
+          <div className={cn("min-w-0 flex-1 px-4 py-3 sm:px-5 sm:py-3.5", landingGlassBubbleAi)}>
+            <p className="text-sm leading-relaxed text-[#64748B] sm:text-[0.9375rem]">
+              {exchange.answer}
+            </p>
+          </div>
+        </div>
+      </div>
+    </article>
+  )
+}
 
 export function TestimonialsSection() {
   return (
-    <section className={cn(landingSection, landingSectionBody)}>
+    <section id="testimonials" className={cn(landingSection, landingSectionBody)}>
       <div className={landingInner}>
         <ScrollReveal>
           <SectionHeader
@@ -16,31 +56,27 @@ export function TestimonialsSection() {
             title={COMPANION_SECTION.title}
             subtitle={COMPANION_SECTION.subtitle}
           />
-          <div className="mx-auto mt-8 max-w-2xl text-center">
-            <p className="font-[family-name:var(--font-display)] text-lg font-semibold text-[#0F172A] sm:text-xl">
-              &ldquo;{COMPANION_SECTION.quote}&rdquo;
-            </p>
-            <p className="mt-2 text-sm text-[#94A3B8]">— {COMPANION_SECTION.quoteAttribution}</p>
-          </div>
         </ScrollReveal>
 
-        <div className="mt-14 grid grid-cols-1 gap-6 lg:mt-16 lg:grid-cols-3 lg:gap-8">
+        <ScrollReveal delay={0.06} className="mx-auto mt-10 max-w-2xl text-center sm:mt-12">
+          <blockquote>
+            <p className="font-(family-name:--font-display) text-2xl font-medium leading-snug tracking-tight text-[#0F172A] sm:text-[1.75rem]">
+              {COMPANION_SECTION.quote}
+            </p>
+            <footer className="mt-4 font-mono text-[10px] font-medium uppercase tracking-[0.25em] text-[#94A3B8]">
+              {COMPANION_SECTION.quoteAttribution}
+            </footer>
+          </blockquote>
+        </ScrollReveal>
+
+        <ScrollReveal delay={0.1} className="mx-auto mt-10 max-w-3xl sm:mt-12">
+          <Separator className="bg-linear-to-r from-transparent via-[#E2E8F0] to-transparent" />
+        </ScrollReveal>
+
+        <div className="mt-10 grid grid-cols-1 gap-12 sm:mt-12 sm:gap-14 lg:mt-14 lg:grid-cols-3 lg:gap-8">
           {VOICE_EXCHANGES.map((exchange, index) => (
-            <ScrollReveal key={exchange.question} delay={0.08 * index}>
-              <article className={cn("flex h-full flex-col p-6 sm:p-8", landingCard)}>
-                <div className="ml-auto w-fit max-w-full rounded-3xl rounded-br-md bg-[#F5F5F7] px-5 py-4">
-                  <p className="text-sm font-medium text-[#0F172A]">{exchange.question}</p>
-                </div>
-                <div className="mt-3 flex items-start gap-3">
-                  <span className="mt-2 size-2 shrink-0 rounded-full bg-[#2563EB]" aria-hidden />
-                  <div className="rounded-3xl rounded-tl-md bg-white px-5 py-4 shadow-[0_8px_30px_rgba(15,23,42,0.05)]">
-                    <p className="mb-1 font-mono text-[9px] font-semibold uppercase tracking-[0.25em] text-[#2563EB]">
-                      Exur
-                    </p>
-                    <p className="text-sm leading-relaxed text-[#64748B]">{exchange.answer}</p>
-                  </div>
-                </div>
-              </article>
+            <ScrollReveal key={exchange.question} delay={0.08 + index * 0.06}>
+              <StoryExchange exchange={exchange} />
             </ScrollReveal>
           ))}
         </div>

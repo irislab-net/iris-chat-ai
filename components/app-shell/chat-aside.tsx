@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import Autoplay from "embla-carousel-autoplay"
+import { useSearchParams } from "next/navigation"
 import { Link, usePathname, useRouter } from "@/i18n/navigation"
 import { useTranslations } from "next-intl"
 import { useReducedMotion } from "motion/react"
@@ -84,6 +85,7 @@ import {
   syncChatHistoryFromServer,
 } from "@/lib/chat-history-sync"
 import { displayPlanName } from "@/lib/billing/catalog"
+import { LANDING_CHAT_QUERY_PARAM } from "@/lib/landing-chat-handoff"
 import { isAppDeskPath, UPGRADE_PATH } from "@/lib/site"
 import { resolveUserDisplayName } from "@/lib/user-profile"
 import type { CoPilotHistoryMessage, TrialInfo } from "@/lib/api/types"
@@ -416,6 +418,7 @@ function ChatAside({
   const common = useTranslations("common")
   const router = useRouter()
   const pathname = usePathname()
+  const searchParams = useSearchParams()
   const isDesktop = useIsDesktop()
   const shellSidebars = useShellSidebarLayout() ?? SHELL_SIDEBAR_COMPACT_FALLBACK
   const ticketSlot = useTicketSlot()
@@ -1607,6 +1610,25 @@ function ChatAside({
     })
   }
 
+  const handleSendRef = React.useRef(handleSend)
+  handleSendRef.current = handleSend
+  const landingChatQueryHandledRef = React.useRef(false)
+
+  React.useEffect(() => {
+    const question = searchParams.get(LANDING_CHAT_QUERY_PARAM)?.trim()
+    if (!question || landingChatQueryHandledRef.current) return
+    if (authLoading || !hydrated) return
+
+    landingChatQueryHandledRef.current = true
+
+    const params = new URLSearchParams(searchParams.toString())
+    params.delete(LANDING_CHAT_QUERY_PARAM)
+    const qs = params.toString()
+    router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false })
+
+    void handleSendRef.current(question)
+  }, [authLoading, hydrated, pathname, router, searchParams])
+
   async function handleRetry(assistantId: string) {
     if (sending || authLoading) return
 
@@ -2049,7 +2071,7 @@ function ChatAside({
                       cn(
                         "chat-empty-hero-shell-exiting",
                         isMobileOverlay &&
-                          "pointer-events-none absolute inset-x-0 top-0 z-[1] min-h-0 justify-start pb-0"
+                          "pointer-events-none absolute inset-x-0 top-0 z-1 min-h-0 justify-start pb-0"
                       )
                   )}
                 >
