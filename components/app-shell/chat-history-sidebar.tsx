@@ -16,6 +16,7 @@ import {
   Settings,
   Trash2Icon,
   XIcon,
+  HouseIcon,
 } from "lucide-react"
 import { useTranslations } from "next-intl"
 import { useTheme } from "@wrksz/themes/client/use-theme"
@@ -82,7 +83,7 @@ import {
   type StoredConversation,
 } from "@/lib/chat-storage"
 import { CHAT_HISTORY_RAIL_COLLAPSED_WIDTH } from "@/lib/chat-history-rail-prefs"
-import { UPGRADE_PATH } from "@/lib/site"
+import { LANDING_PATH, UPGRADE_PATH } from "@/lib/site"
 import {
   userAccountLabel,
   userAccountSubline,
@@ -176,7 +177,7 @@ function HistoryNewsNav({
         "relative justify-start gap-3 text-sm font-normal shadow-none",
         isMobileDrawer
           ? cn("mb-1", chatMobileDrawerNavItemClass)
-          : "mb-2 h-9 w-full rounded-lg px-3 hover:bg-muted/50"
+          : "mb-1 h-9 w-full rounded-lg px-3 hover:bg-muted/50"
       )}
       onClick={onOpenNews}
     >
@@ -198,6 +199,60 @@ function HistoryNewsNav({
       {showSpotlight ? (
         <AttentionPulseDot className="top-1 inset-e-2.5" />
       ) : null}
+    </Button>
+  )
+}
+
+function HistoryHomeNav({
+  isMobileDrawer = false,
+  minimal = false,
+}: {
+  isMobileDrawer?: boolean
+  minimal?: boolean
+}) {
+  const t = useTranslations("workspace")
+
+  if (minimal) {
+    return (
+      <Tooltip>
+        <TooltipTrigger
+          render={
+            <Button
+              variant="ghost"
+              size="icon"
+              className={historyRailIconButtonClass}
+              aria-label={t("home")}
+              render={<Link href={LANDING_PATH} />}
+            >
+              <HouseIcon className="size-4.5" />
+            </Button>
+          }
+        >
+          <HouseIcon className="size-4.5" />
+        </TooltipTrigger>
+        <TooltipContent side="right">{t("home")}</TooltipContent>
+      </Tooltip>
+    )
+  }
+
+  return (
+    <Button
+      variant="ghost"
+      className={cn(
+        "justify-start gap-3 text-sm font-normal shadow-none",
+        isMobileDrawer
+          ? cn("mb-1", chatMobileDrawerNavItemClass)
+          : "mb-2 h-9 w-full rounded-lg px-3 hover:bg-muted/50"
+      )}
+      render={<Link href={LANDING_PATH} />}
+    >
+      <HouseIcon
+        className={cn(
+          "shrink-0 text-muted-foreground",
+          isMobileDrawer ? "size-4.5" : "size-4"
+        )}
+      />
+      <span className="min-w-0 flex-1 truncate text-start">{t("home")}</span>
     </Button>
   )
 }
@@ -408,7 +463,7 @@ function ChatHistorySidebar({
         )}
       >
         {isMobileDrawer ? (
-          <header className="app-mobile-safe-header flex shrink-0 items-center justify-between gap-3 px-4 pb-2">
+          <header className="app-mobile-safe-header flex shrink-0 items-center justify-between gap-3 px-4 pb-3">
             <div className="flex min-w-0 items-center gap-2.5">
               <IrisLabLogo
                 decorative
@@ -437,7 +492,7 @@ function ChatHistorySidebar({
         ) : showBrandHeader ? (
           <header
             className={cn(
-              "flex shrink-0 items-center gap-1 py-2.5",
+              "flex shrink-0 items-center gap-1 pt-2.5 pb-1",
               collapsed ? "flex-col px-1" : "px-2"
             )}
           >
@@ -475,8 +530,10 @@ function ChatHistorySidebar({
             className={cn(
               "flex flex-col",
               isMobileDrawer
-                ? "px-2 pb-[calc(3.25rem+env(safe-area-inset-bottom,0px))] pt-0"
-                : "px-2 pb-2"
+                ? "px-2 pb-[calc(3.25rem+env(safe-area-inset-bottom,0px))] pt-3"
+                : showBrandHeader
+                  ? "px-2 pb-2 pt-3"
+                  : "px-2 pb-2 pt-1"
             )}
           >
             {onNewChat ? (
@@ -530,6 +587,10 @@ function ChatHistorySidebar({
                 showSpotlight={showNewsSpotlight}
               />
             ) : null}
+            <HistoryHomeNav
+              isMobileDrawer={isMobileDrawer}
+              minimal={collapsed && !isMobileDrawer}
+            />
 
             {collapsed && !isMobileDrawer ? null : conversations.length === 0 ? (
               <Empty className="mx-1 mt-4 border-0 p-4">
