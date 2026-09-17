@@ -1,7 +1,8 @@
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
 	"main": ".open-next/worker.js",
-	"name": "intel-front",
+	// Must match the Cloudflare Workers Builds project / dashboard Worker name.
+	"name": "iris-chat-ai",
 	"account_id": "aed1f0c586e05927873b8b79db136dd4",
 	"compatibility_date": "2026-08-10",
 	"compatibility_flags": [
@@ -17,7 +18,7 @@
 			// Self-reference service binding, the service name must match the worker name
 			// see https://opennext.js.org/cloudflare/caching
 			"binding": "WORKER_SELF_REFERENCE",
-			"service": "intel-front"
+			"service": "iris-chat-ai"
 		}
 	],
 	"r2_buckets": [
