@@ -32,6 +32,7 @@ type GoogleIdConfiguration = {
   callback: (response: GoogleCredentialResponse) => void
   auto_select?: boolean
   cancel_on_tap_outside?: boolean
+  color_scheme?: "light" | "dark"
   context?: "signin" | "signup" | "use"
   itp_support?: boolean
   use_fedcm_for_prompt?: boolean

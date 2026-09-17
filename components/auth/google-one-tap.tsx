@@ -2,8 +2,13 @@
 
 import { usePathname } from "next/navigation"
 import * as React from "react"
+import { useTheme } from "@wrksz/themes/client/use-theme"
 
 import { getGoogleClientId, isGoogleOneTapConfigured } from "@/lib/api/config"
+import {
+  syncDocumentColorScheme,
+  type BrowserChromeTheme,
+} from "@/lib/browser-chrome"
 import {
   cancelGoogleOneTap,
   isGoogleOneTapDismissed,
@@ -21,11 +26,103 @@ function isAuthRoute(pathname: string) {
   return normalized.startsWith("/auth/")
 }
 
+function resolveGoogleOneTapColorScheme(
+  resolvedTheme: string | undefined
+): BrowserChromeTheme {
+  if (typeof document !== "undefined") {
+    return document.documentElement.classList.contains("dark") ? "dark" : "light"
+  }
+  if (resolvedTheme === "dark") return "dark"
+  return "light"
+}
+
+function logOneTapDebug(
+  location: string,
+  message: string,
+  data: Record<string, unknown>,
+  hypothesisId: string
+) {
+  // #region agent log
+  fetch("http://127.0.0.1:7720/ingest/3be29a1b-f239-4020-9d2c-1ec85b598a76", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Debug-Session-Id": "1e9208",
+    },
+    body: JSON.stringify({
+      sessionId: "1e9208",
+      runId: "theme-verify-2",
+      location,
+      message,
+      data,
+      timestamp: Date.now(),
+      hypothesisId,
+    }),
+  }).catch(() => {})
+  // #endregion
+}
+
+function handlePromptMoment(notification: GooglePromptMomentNotification) {
+  if (notification.isSkippedMoment()) {
+    const reason = notification.getSkippedReason()
+    if (reason === "user_cancel" || reason === "tap_outside") {
+      markGoogleOneTapDismissed()
+    }
+  }
+}
+
+function runGoogleOneTapPrompt(
+  clientId: string,
+  colorScheme: BrowserChromeTheme,
+  onCredential: (credential: string) => void
+) {
+  if (!window.google?.accounts?.id) return
+
+  syncDocumentColorScheme(colorScheme)
+
+  window.google.accounts.id.initialize({
+    client_id: clientId,
+    callback: (response) => {
+      const credential = response.credential?.trim()
+      if (!credential) return
+      onCredential(credential)
+    },
+    auto_select: false,
+    cancel_on_tap_outside: true,
+    color_scheme: colorScheme,
+    context: "signin",
+    itp_support: true,
+    use_fedcm_for_prompt: false,
+  })
+
+  const metaContent = document
+    .querySelector('meta[name="color-scheme"]')
+    ?.getAttribute("content")
+
+  logOneTapDebug(
+    "google-one-tap.tsx:initialize",
+    "GIS initialize",
+    {
+      colorScheme,
+      htmlHasDarkClass: document.documentElement.classList.contains("dark"),
+      htmlColorScheme: document.documentElement.style.colorScheme,
+      metaColorScheme: metaContent,
+      prefersDark: window.matchMedia("(prefers-color-scheme: dark)").matches,
+    },
+    "T2"
+  )
+
+  window.google.accounts.id.prompt(handlePromptMoment)
+}
+
 export function GoogleOneTap({ enabled, onCredential }: GoogleOneTapProps) {
   const pathname = usePathname()
+  const { resolvedTheme } = useTheme()
   const clientId = getGoogleClientId()
-  const promptedRef = React.useRef(false)
   const onCredentialRef = React.useRef(onCredential)
+  const promptedRef = React.useRef(false)
+  const themePromptTimerRef = React.useRef<number | null>(null)
+  const lastColorSchemeRef = React.useRef<BrowserChromeTheme | null>(null)
 
   React.useEffect(() => {
     onCredentialRef.current = onCredential
@@ -37,41 +134,22 @@ export function GoogleOneTap({ enabled, onCredential }: GoogleOneTapProps) {
     !isAuthRoute(pathname) &&
     !isGoogleOneTapDismissed()
 
+  const colorScheme = resolveGoogleOneTapColorScheme(resolvedTheme)
+  const themeReady = resolvedTheme === "light" || resolvedTheme === "dark"
+
   React.useEffect(() => {
-    if (!shouldRun || !clientId) return
+    if (!shouldRun || !clientId || !themeReady || promptedRef.current) return
 
     let cancelled = false
+    const scheme = resolveGoogleOneTapColorScheme(resolvedTheme)
 
     void loadGoogleIdentityScript()
       .then(() => {
-        if (cancelled || !window.google?.accounts?.id) return
-        if (promptedRef.current) return
-
-        window.google.accounts.id.initialize({
-          client_id: clientId,
-          callback: (response) => {
-            const credential = response.credential?.trim()
-            if (!credential) return
-            onCredentialRef.current(credential)
-          },
-          auto_select: false,
-          cancel_on_tap_outside: true,
-          context: "signin",
-          itp_support: true,
-          use_fedcm_for_prompt: true,
-        })
-
+        if (cancelled || promptedRef.current) return
         promptedRef.current = true
-        window.google.accounts.id.prompt((notification) => {
-          if (notification.isDismissedMoment()) {
-            const reason = notification.getDismissedReason()
-            if (reason !== "credential_returned") {
-              markGoogleOneTapDismissed()
-            }
-          }
-          if (notification.isSkippedMoment()) {
-            markGoogleOneTapDismissed()
-          }
+        lastColorSchemeRef.current = scheme
+        runGoogleOneTapPrompt(clientId, scheme, (credential) => {
+          onCredentialRef.current(credential)
         })
       })
       .catch(() => {
@@ -80,15 +158,51 @@ export function GoogleOneTap({ enabled, onCredential }: GoogleOneTapProps) {
 
     return () => {
       cancelled = true
-      cancelGoogleOneTap()
     }
-  }, [shouldRun, clientId, pathname])
+  }, [shouldRun, clientId, pathname, themeReady, resolvedTheme])
+
+  React.useEffect(() => {
+    if (!shouldRun || !clientId || !themeReady || !promptedRef.current) return
+    if (lastColorSchemeRef.current === colorScheme) return
+
+    if (themePromptTimerRef.current !== null) {
+      window.clearTimeout(themePromptTimerRef.current)
+    }
+
+    themePromptTimerRef.current = window.setTimeout(() => {
+      themePromptTimerRef.current = null
+      if (!shouldRun || isGoogleOneTapDismissed()) return
+
+      lastColorSchemeRef.current = colorScheme
+      cancelGoogleOneTap()
+
+      void loadGoogleIdentityScript().then(() => {
+        runGoogleOneTapPrompt(clientId, colorScheme, (credential) => {
+          onCredentialRef.current(credential)
+        })
+      })
+    }, 400)
+
+    return () => {
+      if (themePromptTimerRef.current !== null) {
+        window.clearTimeout(themePromptTimerRef.current)
+        themePromptTimerRef.current = null
+      }
+    }
+  }, [colorScheme, shouldRun, clientId, themeReady])
 
   React.useEffect(() => {
     if (!enabled) {
       cancelGoogleOneTap()
     }
   }, [enabled])
+
+  React.useEffect(() => {
+    if (!shouldRun) {
+      promptedRef.current = false
+      lastColorSchemeRef.current = null
+    }
+  }, [shouldRun])
 
   return null
 }

@@ -310,6 +310,13 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     setLoginPending(false)
   }, [user?.id])
 
+  const oneTapEnabled =
+    !loading &&
+    !user &&
+    !loginPending &&
+    !consentOpen &&
+    !isOAuthPopupCallback
+
   const value = React.useMemo<AuthContextValue>(
     () => ({
       user,
@@ -329,13 +336,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     <AuthContext.Provider value={value}>
       {children}
       <GoogleOneTap
-        enabled={
-          !loading &&
-          !user &&
-          !loginPending &&
-          !consentOpen &&
-          !isOAuthPopupCallback
-        }
+        enabled={oneTapEnabled}
         onCredential={handleOneTapCredential}
       />
       <LoginConsentDialog

@@ -153,7 +153,10 @@ function HistoryNewsNav({
               size="icon"
               className={cn(historyRailIconButtonClass, "relative")}
               aria-label={t("news")}
-              onClick={onOpenNews}
+              onClick={(event) => {
+                event.stopPropagation()
+                onOpenNews()
+              }}
             >
               <NewspaperIcon className="size-4.5" />
               {showSpotlight ? (
@@ -179,7 +182,10 @@ function HistoryNewsNav({
           ? cn("mb-1", chatMobileDrawerNavItemClass)
           : "mb-1 h-9 w-full rounded-lg px-3 hover:bg-muted/50"
       )}
-      onClick={onOpenNews}
+      onClick={(event) => {
+        event.stopPropagation()
+        onOpenNews()
+      }}
     >
       <NewspaperIcon
         className={cn(
@@ -222,6 +228,7 @@ function HistoryHomeNav({
               size="icon"
               className={historyRailIconButtonClass}
               aria-label={t("home")}
+              nativeButton={false}
               render={<Link href={LANDING_PATH} />}
             >
               <HouseIcon className="size-4.5" />
@@ -244,6 +251,7 @@ function HistoryHomeNav({
           ? cn("mb-1", chatMobileDrawerNavItemClass)
           : "mb-2 h-9 w-full rounded-lg px-3 hover:bg-muted/50"
       )}
+      nativeButton={false}
       render={<Link href={LANDING_PATH} />}
     >
       <HouseIcon

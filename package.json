@@ -9,7 +9,7 @@
     "build:next": "next build",
     "build:worker": "opennextjs-cloudflare build",
     "certs": "node scripts/generate-dev-certs.mjs",
-    "dev": "node scripts/generate-dev-certs.mjs && node scripts/print-lan-url.mjs && next dev --experimental-https --experimental-https-key ./certificates/localhost-key.pem --experimental-https-cert ./certificates/localhost.pem --hostname 0.0.0.0 --port 3000",
+    "dev": "node scripts/sync-dev-public-env.mjs && node scripts/generate-dev-certs.mjs && node scripts/print-lan-url.mjs && next dev --experimental-https --experimental-https-key ./certificates/localhost-key.pem --experimental-https-cert ./certificates/localhost.pem --hostname 0.0.0.0 --port 3000",
     "dev:http": "node scripts/print-lan-url.mjs && next dev --hostname 0.0.0.0 --port 3000",
     "start": "next start",
     "lint": "eslint",

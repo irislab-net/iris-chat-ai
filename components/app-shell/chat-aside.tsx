@@ -1763,7 +1763,10 @@ function ChatAside({
   function openNewsFromChat() {
     dismissNewsSpotlight()
     setHistoryOpen(false)
-    setNewsOpen(true)
+    // Defer so the history overlay click doesn't dismiss the sheet on open.
+    window.setTimeout(() => {
+      setNewsOpen(true)
+    }, 0)
   }
 
   const mobileGreetingName = resolveUserDisplayName(user)

@@ -1,4 +1,4 @@
-import { existsSync } from "node:fs"
+import { existsSync, readFileSync } from "node:fs"
 import { join } from "node:path"
 
 import type { NextConfig } from "next"
@@ -15,9 +15,55 @@ const TRADINGVIEW_LIBRARY_ENTRY = join(
 )
 const hasTradingViewLibrary = existsSync(TRADINGVIEW_LIBRARY_ENTRY)
 
+function readDevVarsFile(): Record<string, string> {
+  const devVarsPath = join(process.cwd(), ".dev.vars")
+  if (!existsSync(devVarsPath)) return {}
+
+  const env: Record<string, string> = {}
+  for (const line of readFileSync(devVarsPath, "utf8").split(/\r?\n/)) {
+    const trimmed = line.trim()
+    if (!trimmed || trimmed.startsWith("#")) continue
+    const separator = trimmed.indexOf("=")
+    if (separator === -1) continue
+    const key = trimmed.slice(0, separator).trim()
+    const value = trimmed.slice(separator + 1).trim()
+    if (key) env[key] = value
+  }
+  return env
+}
+
+/** Bridge Cloudflare `.dev.vars` into Next for NEXT_PUBLIC_* when not in production. */
+function publicEnvFromDevVars(): Record<string, string> {
+  if (process.env.NODE_ENV === "production") return {}
+
+  const fromFile = readDevVarsFile()
+  const merged: Record<string, string> = {}
+
+  for (const [key, value] of Object.entries(fromFile)) {
+    if (!key.startsWith("NEXT_PUBLIC_")) continue
+    if (process.env[key]?.trim()) continue
+    merged[key] = value
+  }
+
+  return merged
+}
+
+const devPublicEnv = publicEnvFromDevVars()
+
+for (const [key, value] of Object.entries(devPublicEnv)) {
+  process.env[key] ??= value
+}
+
+if (devPublicEnv.NEXT_PUBLIC_GOOGLE_CLIENT_ID) {
+  console.log(
+    `[iris] Google One Tap client ID loaded from .dev.vars (${devPublicEnv.NEXT_PUBLIC_GOOGLE_CLIENT_ID.slice(0, 8)}…)`
+  )
+}
+
 const nextConfig: NextConfig = {
   env: {
     NEXT_PUBLIC_TRADINGVIEW_LIBRARY: hasTradingViewLibrary ? "1" : "0",
+    ...devPublicEnv,
   },
   poweredByHeader: false,
   devIndicators: {

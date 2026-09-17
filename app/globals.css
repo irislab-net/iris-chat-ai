@@ -167,7 +167,10 @@
   }
   html {
     @apply bg-background font-sans;
-    color-scheme: light dark;
+    color-scheme: light;
+  }
+  html.dark {
+    color-scheme: dark;
   }
   body {
     @apply text-foreground;

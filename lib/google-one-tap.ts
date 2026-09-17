@@ -1,10 +1,13 @@
 export const GOOGLE_IDENTITY_SCRIPT_SRC = "https://accounts.google.com/gsi/client"
-export const GOOGLE_ONE_TAP_DISMISSED_KEY = "iris-google-one-tap-dismissed"
+export const GOOGLE_ONE_TAP_DISMISSED_KEY = "iris-google-one-tap-dismissed-v2"
+const LEGACY_ONE_TAP_DISMISSED_KEY = "iris-google-one-tap-dismissed"
 
 let scriptPromise: Promise<void> | null = null
 
 export function isGoogleOneTapDismissed() {
   if (typeof window === "undefined") return true
+  // Older builds stored dismiss on FedCM skip / programmatic cancel — reset once.
+  sessionStorage.removeItem(LEGACY_ONE_TAP_DISMISSED_KEY)
   return sessionStorage.getItem(GOOGLE_ONE_TAP_DISMISSED_KEY) === "1"
 }
 
