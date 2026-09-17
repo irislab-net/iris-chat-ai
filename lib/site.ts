@@ -13,13 +13,13 @@ export function getSiteOrigin(): string {
 export const SITE_NAME = "Exur"
 
 export const SITE_DESCRIPTION =
-  "Market news and Exur co-pilot — scored headlines and AI chat for the market you select."
+  "Exur is your AI financial assistant. Ask about spending, savings, and what’s next."
 
 export const ABOUT_DESCRIPTION =
-  "Exur is a focused market-intelligence app: curated news bullets and an Exur co-pilot when you connect an account."
+  "Exur is an AI financial assistant. Ask about spending, savings, and what’s next, in your own words."
 
 export const PRIVACY_DESCRIPTION =
-  "How Exur / Exur collects, uses, and protects personal data — Privacy Policy & GDPR Notice."
+  "How Exur collects, uses, and protects personal data. Privacy Policy and GDPR Notice."
 
 export const TERMS_DESCRIPTION =
   "Terms of Service for Exur: eligibility, no financial advice, accounts, liability, and contact."

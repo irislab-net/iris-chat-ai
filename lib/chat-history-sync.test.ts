@@ -106,7 +106,7 @@ describe("chat history sync", () => {
 
   it("keeps paperTicket on the matching assistant turn after server sync", () => {
     const setupContent = [
-      "Exur setup — not a profit guarantee.",
+      "Exur setup. Not a profit guarantee.",
       "",
       "ETH SHORT",
       "Setup: fade",
@@ -178,7 +178,7 @@ describe("chat history sync", () => {
 
   it("prefers local formatted setup content when paperTicket is preserved", () => {
     const localSetup = [
-      "Exur setup — not a profit guarantee.",
+      "Exur setup. Not a profit guarantee.",
       "",
       "ETH SHORT",
       "Setup: fade",

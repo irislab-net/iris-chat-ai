@@ -1,7 +1,6 @@
 import type { LucideIcon } from "lucide-react"
 import {
   Activity,
-  Globe,
   GraduationCap,
   Layers,
   LineChart,
@@ -29,71 +28,103 @@ export const LANDING_DOT_SECTIONS = [
   { id: "how-it-works", label: "How it works" },
   { id: "about", label: "About" },
   { id: "testimonials", label: "Stories" },
+  { id: "faq", label: "FAQ" },
   { id: "pricing", label: "Pricing" },
 ] as const
 
 export const HERO = {
-  badge: "Markets, money, and you in one place",
-  titleBefore: "Your Financial",
-  titleAfter: "Brain.",
-  subtitle: "Ask anything about your money or the markets. Get a clear answer.",
-  inputPlaceholder: "What is BTC doing right now?",
-  socialProof: "Thousands already use Exur",
+  badge: "Your AI financial assistant",
+  titleBefore: "Your money,",
+  titleAfter: "handled.",
+  subtitle:
+    "Ask about spending, savings, and what’s next, in your own words.",
+  inputPlaceholder: "Where is my money going this month?",
+  socialProof: "Thousands of people already use it",
 } as const
 
 export const HERO_DEMO_EXCHANGES = [
   {
-    question: "What is BTC doing right now?",
-    answer:
-      "Up 2.4% today, breaking resistance on volume. Momentum looks real. Hold if you're in, wait for a dip if you're not.",
+    question: "Can you watch my accounts this week?",
+    answer: "Yes. I’ll ping you only if something actually needs you.",
   },
   {
-    question: "CPI came in hot. What now?",
-    answer:
-      "Dial back risk and keep more cash. It's protection, not panic.",
+    question: "Where is my money going?",
+    answer: "$340/mo in unused subscriptions. Cut those first.",
   },
   {
-    question: "Where is my money going each month?",
-    answer:
-      "About $340/mo in subscriptions you haven't touched in 90 days. Cut those first.",
+    question: "Can I afford this apartment?",
+    answer: "Not yet. Keep 6 months of rent in cash, then look.",
   },
   {
-    question: "Still hold ETH after this rally?",
-    answer:
-      "Yes, but stay measured. Support held near $3.2K. Add on dips, don't chase.",
+    question: "What should I do with my savings?",
+    answer: "Keep 3 months in cash. Put the rest in a simple index fund.",
   },
   {
-    question: "Summarize today in one line.",
-    answer:
-      "Risk-on, with yields ticking up. Small, selective moves beat big bets today.",
+    question: "Am I overspending on dining?",
+    answer: "Yes. 22% of spend. Cap it at 12% and you’re fine.",
   },
   {
-    question: "80% tech. Too concentrated?",
-    answer:
-      "A bit heavy. Spread across a core index, some cash, and a few names you know well.",
+    question: "Help me buy a house in 2 years.",
+    answer: "Protect the down payment. Less risk, more cash, until you’re close.",
   },
   {
-    question: "Fed tomorrow. How do I position?",
-    answer:
-      "Trade smaller before the print. Let the first move settle, then decide.",
+    question: "Is my emergency fund enough?",
+    answer: "Almost. You’re at 4 months. Get to 6, then invest the rest.",
   },
   {
-    question: "AAPL earnings tonight. What's the move?",
-    answer:
-      "It's a coin flip. Size down, or wait for guidance after the call.",
+    question: "Should I pay the card or invest?",
+    answer: "Pay the 19% card first. Then invest what’s left.",
   },
   {
-    question: "Move cash into gold now?",
-    answer:
-      "Only as a small hedge, maybe 5-10% max. Insurance, not your main bet.",
+    question: "Summarize my money in one line.",
+    answer: "You’re fine. Save more, spend a little less, don’t chase anything.",
+  },
+  {
+    question: "What needs my attention today?",
+    answer: "Nothing urgent. I’ll tell you the moment that changes.",
+  },
+] as const
+
+export const HERO_DEMO_AVATARS = [
+  {
+    src: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=96&h=96&q=80",
+    initials: "AL",
+  },
+  {
+    src: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=96&h=96&q=80",
+    initials: "JN",
+  },
+  {
+    src: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=96&h=96&q=80",
+    initials: "MR",
+  },
+  {
+    src: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=96&h=96&q=80",
+    initials: "DK",
+  },
+  {
+    src: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=96&h=96&q=80",
+    initials: "SP",
+  },
+  {
+    src: "https://images.unsplash.com/photo-1541534401786-2077eed87a72?auto=format&fit=crop&w=96&h=96&q=80",
+    initials: "TW",
+  },
+  {
+    src: "https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?auto=format&fit=crop&w=96&h=96&q=80",
+    initials: "NL",
+  },
+  {
+    src: "https://images.unsplash.com/photo-1544723795-3fb6469f5b39?auto=format&fit=crop&w=96&h=96&q=80",
+    initials: "RK",
   },
 ] as const
 
 export const HERO_VIDEO = {
   src:
     "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260514_135830_bb6491d1-9b66-4aec-9722-13b4dfe3fb46.mp4",
-  heading: "YOUR FINANCIAL BRAIN.",
-  subtext: "Clear answers about money and markets. No jargon.",
+  heading: "YOUR MONEY, HANDLED.",
+  subtext: "Ask once. See the full picture.",
 } as const
 
 export const ABOUT_DEMO_VIDEO = {
@@ -103,10 +134,10 @@ export const ABOUT_DEMO_VIDEO = {
 } as const
 
 export const HERO_CHIPS = [
-  { label: "Markets", icon: LineChart },
-  { label: "Portfolio", icon: Wallet },
-  { label: "Macro", icon: Globe },
-  { label: "Advice", icon: GraduationCap },
+  { label: "Spend", icon: Wallet },
+  { label: "Savings", icon: LineChart },
+  { label: "Goals", icon: GraduationCap },
+  { label: "Ask", icon: Sparkles },
   { label: "More", icon: MoreHorizontal },
 ] as const
 
@@ -119,8 +150,8 @@ export const TRUSTED_LOGOS = [
 ] as const
 
 export const FEATURES_SECTION = {
-  title: "One brain for your money.",
-  subtitle: "Less noise. Clearer answers.",
+  title: "Your money is scattered.",
+  subtitle: "Exur puts it in one place, then tells you what to do.",
 } as const
 
 export type FeatureScrollVisual = "noise" | "split" | "stress" | "exur"
@@ -138,8 +169,7 @@ export type FeatureScrollStep = {
   step: string
   label: string
   title: string
-  ask: string
-  panelTitle: string
+  /** One short line. Must read in under 3 seconds. */
   panelDesc: string
   icon: LucideIcon
   visual: FeatureScrollVisual
@@ -154,19 +184,16 @@ export const FEATURE_SCROLL_STEPS: FeatureScrollStep[] = [
     id: "noise",
     step: "01",
     label: "Noise",
-    title: "Too much information",
-    ask: "What's actually worth my attention today?",
-    panelTitle: "The feed never stops",
-    panelDesc:
-      "Charts, headlines, and alerts pile up fast. Most of it never changes what you should do.",
+    title: "Too much noise",
+    panelDesc: "Most of it never changes what you should do.",
     icon: Volume2,
     visual: "noise",
-    visualStatus: "47 signals",
-    visualOverflow: "+44 more today",
+    visualStatus: "47 today",
+    visualOverflow: "+44 more",
     visualRows: [
-      { title: "BTC breaks resistance on volume", meta: "2m ago", state: "active" },
-      { title: "Fed speaker at 2pm ET", meta: "14m ago", state: "muted" },
-      { title: "ETH funding rate spikes", meta: "28m ago", state: "muted" },
+      { title: "Rent is due Friday", meta: "2m", state: "active" },
+      { title: "New bank promo email", meta: "14m", state: "muted" },
+      { title: "Market headline dump", meta: "28m", state: "muted" },
     ],
   },
   {
@@ -174,17 +201,14 @@ export const FEATURE_SCROLL_STEPS: FeatureScrollStep[] = [
     step: "02",
     label: "Split",
     title: "Money everywhere",
-    ask: "Where is my money even sitting right now?",
-    panelTitle: "Everything lives in a different app",
-    panelDesc:
-      "Bank, broker, crypto, subscriptions. None of it talks to each other, so the full picture stays hidden.",
+    panelDesc: "Bank, cards, and savings don’t talk to each other.",
     icon: Unplug,
     visual: "split",
-    visualStatus: "3 accounts",
+    visualStatus: "3 apps",
     visualRows: [
-      { title: "Chase Checking", meta: "$4,280", state: "muted" },
-      { title: "Fidelity Brokerage", meta: "$128K", state: "muted" },
-      { title: "Coinbase", meta: "$12.4K", state: "muted" },
+      { title: "Checking", meta: "$4,280", state: "muted" },
+      { title: "Brokerage", meta: "$128K", state: "muted" },
+      { title: "Credit card", meta: "−$890", state: "muted" },
     ],
   },
   {
@@ -192,149 +216,145 @@ export const FEATURE_SCROLL_STEPS: FeatureScrollStep[] = [
     step: "03",
     label: "Stress",
     title: "Hard to decide",
-    ask: "Am I making the right call here?",
-    panelTitle: "Every choice feels heavy",
-    panelDesc:
-      "You end up playing trader, risk manager, and planner at once. That is a lot to hold in your head.",
+    panelDesc: "Every choice feels equally urgent.",
     icon: Scale,
     visual: "stress",
-    visualStatus: "No edge",
+    visualStatus: "Stuck",
     visualRows: [
-      { title: "Buy now", meta: "FOMO", state: "conflict" },
-      { title: "Sell everything", meta: "Fear", state: "conflict" },
-      { title: "Wait it out", meta: "Unclear", state: "conflict" },
+      { title: "Spend it", meta: "Now", state: "conflict" },
+      { title: "Save it", meta: "Later", state: "conflict" },
+      { title: "Wait", meta: "Unsure", state: "conflict" },
     ],
   },
   {
     id: "exur",
     step: "04",
     label: "Exur",
-    title: "One brain for your money",
-    ask: "What should I do about all of this?",
-    panelTitle: "Exur connects the dots",
-    panelDesc:
-      "It watches the market and your finances, then gives you a clear answer in plain language.",
+    title: "One place to ask",
+    panelDesc: "Your AI assistant. Plain answers, in your context.",
     icon: Sparkles,
     visual: "exur",
-    visualStatus: "1 action",
-    visualRows: [{ title: "Hold current position", meta: "Low risk", state: "resolved" }],
-    visualAnswer: "Hold steady. Your plan still makes sense.",
+    visualStatus: "1 answer",
+    visualRows: [{ title: "Keep the cash buffer", meta: "Safe", state: "resolved" }],
+    visualAnswer: "You’re fine. I’ll tell you the moment that changes.",
   },
 ]
 
 export const MEET_EXUR_SECTION = {
-  title: "Meet your financial brain.",
+  title: "We're still early.",
   subtitle:
-    "Not a chatbot. Not a trading bot. Just someone who watches your money and the markets, and explains what matters.",
-  quote: "Finally, finance that speaks human.",
-  tagline: "You, your money, and the market, connected",
+    "Exur is an AI financial assistant, not another chart, feed, or trading gimmick. It helps you see your money clearly, like a sharp friend who never sleeps.",
+  quote: "Most people don’t need more data. They need someone paying attention.",
+  tagline: "That’s what we’re building.",
 } as const
 
 export const ARCHITECTURE_SECTION = {
-  title: "How Exur thinks.",
-  subtitle: "Watch the market. Understand it. Move only when it makes sense.",
+  title: "What Exur does",
+  subtitle: "It watches. It explains. It helps when you ask.",
+  cta: "Try Exur free",
 } as const
 
 export const HOW_IT_WORKS_STEPS = [
   {
     step: "01",
-    title: "Watch",
-    headline: "Exur sees the market",
-    desc: "Prices, news, and the big picture. All in one place.",
+    title: "See",
+    headline: "Where your money is",
+    desc: "Accounts, spending, and savings in one view.",
   },
   {
     step: "02",
-    title: "Explain",
-    headline: "Plain answers",
-    desc: "No jargon. Just what changed and why it matters to you.",
+    title: "Ask",
+    headline: "In plain language",
+    desc: "What happened, and whether it actually affects you.",
   },
   {
     step: "03",
     title: "Decide",
-    headline: "Sometimes, wait",
-    desc: "If there's no good move, Exur says so. No fake urgency.",
+    headline: "What to do next",
+    desc: "If there’s a move worth making, Exur says so. If not, it says wait.",
   },
 ] as const
 
-export const BENTO_DEMO_SECTION = {
-  badge: "Live demo",
-  title: "See Exur in action",
-  subtitle: "Pick a situation. Get a straight answer.",
-  situationLabel: "Situation",
-  analyzing: "Exur is thinking…",
-  verdictLabel: "Answer",
-  verdictValue: "Clear and honest",
-  cta: "Try Exur free",
+export const COMPANION_SECTION = {
+  title: "People actually ask this.",
+  subtitle: "Real money questions. Short answers.",
 } as const
 
-export type DemoScenario = {
+export const FAQ_SECTION = {
+  title: "Frequently asked questions",
+  subtitle: "What Exur is and what it isn’t.",
+} as const
+
+export type FaqItem = {
   id: string
-  label: string
-  trigger: string
-  verdict: string
+  question: string
+  answer: string
 }
 
-export const DEMO_SCENARIOS: DemoScenario[] = [
+export const FAQ_ITEMS: FaqItem[] = [
   {
-    id: "spike",
-    label: "Market spike",
-    trigger: "BTC just broke above $125K on heavy volume.",
-    verdict:
-      "Momentum looks real, but it's stretched. If you're already in, hold. If you're not, wait for a pullback. Don't chase.",
+    id: "what",
+    question: "What is Exur?",
+    answer:
+      "Exur is an AI financial assistant. Ask about spending, savings, and what’s next, in your own words.",
   },
   {
-    id: "inflation",
-    label: "Hot CPI",
-    trigger: "Inflation came in higher than expected. Markets are selling off.",
-    verdict:
-      "This is a macro shift, not a quick trade. Trim risk a bit and keep more cash. Protection, not panic.",
+    id: "news",
+    question: "Does it need my accounts?",
+    answer:
+      "You can start with questions. Connect accounts when you want answers grounded in your real money.",
   },
   {
-    id: "subscriptions",
-    label: "Where's my money?",
-    trigger: "Where is my money actually going each month?",
-    verdict:
-      "About $340/mo in subscriptions you haven't used in 90 days. Cut four of them. That's $180/mo back in your pocket.",
+    id: "chatbot",
+    question: "Is this a generic chatbot?",
+    answer:
+      "No. Exur is built for personal finance with your context, not open-ended chat.",
   },
   {
-    id: "rebalance",
-    label: "Buying a home",
-    trigger: "I'm 80% in crypto and want to buy a house in 18 months.",
-    verdict:
-      "Your goal changed the plan. Move 30% into safer, liquid assets over the next few weeks. The down payment comes first.",
+    id: "ask",
+    question: "What can I ask?",
+    answer:
+      "Where money is going, what to cut, whether you can afford something, and what to do next.",
+  },
+  {
+    id: "account",
+    question: "Do I need an account?",
+    answer:
+      "Not to look around. Sign in to save history and get a co-pilot that remembers you.",
+  },
+  {
+    id: "free",
+    question: "How do Free and Plus differ?",
+    answer:
+      "Free lets you start. Plus raises limits if you use Exur every day.",
+  },
+  {
+    id: "profits",
+    question: "Is this financial advice?",
+    answer:
+      "No. Exur helps you see tradeoffs clearly. It is not a broker, and it does not promise returns.",
   },
 ]
 
-export const COMPANION_SECTION = {
-  title: "Real questions. Real answers.",
-  subtitle: "No dashboards. Just a conversation when you need one.",
-  quote: "Exur's watching this for me.",
-  quoteAttribution: "That's the point.",
-} as const
-
 export type VoiceExchange = {
-  topic: string
   question: string
   answer: string
 }
 
 export const VOICE_EXCHANGES: VoiceExchange[] = [
   {
-    topic: "Markets",
-    question: "What is BTC doing right now?",
+    question: "Can you watch my portfolio and only tell me when something's wrong?",
     answer:
-      "Losing a bit of steam, but sellers aren't in control yet. I'd wait and watch support. If it breaks, we'll talk again.",
+      "Yeah. I'll keep an eye on it and message you when there's something you actually need to decide.",
   },
   {
-    topic: "Life goals",
     question: "I want to buy a house next year.",
     answer:
-      "Then we protect the down payment first. More cash, less risk. Your goal sets the plan.",
+      "Then protect the down payment first. Keep more cash, take less risk, until you’re closer.",
   },
   {
-    topic: "Clarity",
-    question: "What should I do?",
-    answer: "Nothing right now. You're fine.",
+    question: "What should I do right now?",
+    answer: "Nothing for now. You're fine. I'll let you know if that changes.",
   },
 ]
 
@@ -351,7 +371,7 @@ export type PricingPlan = {
 
 export const PRICING_SECTION = {
   title: "Simple plans.",
-  subtitle: "Start free. Upgrade when you want more depth.",
+  subtitle: "Start free. Upgrade if you want more.",
 } as const
 
 export const PRICING_PLANS: PricingPlan[] = [
@@ -359,12 +379,12 @@ export const PRICING_PLANS: PricingPlan[] = [
     key: "starter",
     name: "Starter",
     price: "Free",
-    desc: "Follow the markets and chat with Exur.",
+    desc: "See your money. Ask anything.",
     cta: "Start free",
     features: [
-      "Market news & headlines",
+      "Spending & savings snapshot",
       "Exur chat",
-      "BTC, ETH & Gold",
+      "Goals in plain language",
       "Community support",
       "1 seat",
     ],
@@ -373,17 +393,17 @@ export const PRICING_PLANS: PricingPlan[] = [
     key: "pro",
     name: "Pro",
     price: "$49",
-    desc: "For people who want faster answers and more tools.",
+    desc: "For people who want faster answers and more room.",
     cta: "Go Pro",
     featured: true,
     badge: "Popular",
     features: [
       "Unlimited chat",
-      "Priority signals",
-      "Paper trading",
+      "Priority answers",
+      "Saved goals",
       "Email support",
       "Up to 5 seats",
-      "Saved watchlists",
+      "Account history",
     ],
   },
   {
@@ -405,10 +425,9 @@ export const PRICING_PLANS: PricingPlan[] = [
 ]
 
 export const FOOTER_CTA = {
-  title: "Your financial brain is ready.",
-  subtitle:
-    "Ask about your money or the markets. Get a clear answer. No dashboard required.",
-  tagline: "You, your money, and the market",
+  title: "Give it a try.",
+  subtitle: "Ask about your money. See if it clicks.",
+  tagline: "Exur",
 } as const
 
 export function scrollToSection(id: string) {

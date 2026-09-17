@@ -37,7 +37,7 @@ export function formatProposedChatMessage(input: {
       : `Size ${input.quantity} (risk-based)`
 
   return [
-    `Exur setup — not a profit guarantee. No paper trade is open yet.`,
+    `Exur setup. Not a profit guarantee. No paper trade is open yet.`,
     ``,
     `${input.symbol} ${input.side}`,
     `Setup: ${input.setup}`,

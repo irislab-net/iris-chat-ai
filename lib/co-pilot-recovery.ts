@@ -14,7 +14,7 @@ export const COPILOT_PRO_SESSION_REFRESH_MESSAGE =
   "Your Plus plan is active, but this session needs a refresh. Try again."
 
 export const COPILOT_AUTH_MESSAGE =
-  "Sign in with Google to get answers from Exur — you can explore prompts and typing first."
+  "Sign in with Google to get answers from Exur. You can explore prompts and typing first."
 
 export const COPILOT_TRIAL_EXHAUSTED_MESSAGE =
   "Your free messages this week are used up. Sign in to continue."

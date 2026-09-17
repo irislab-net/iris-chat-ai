@@ -1,6 +1,6 @@
 "use client"
 
-import { IrisLabLogo } from "@/components/brand/iris-lab-logo"
+import { AnimatedIrisLabLogo } from "@/components/brand/animated-iris-lab-logo"
 import { SphereCta } from "@/components/landing/modern/sphere-ui"
 import { Button } from "@/components/ui/button"
 import { Link } from "@/i18n/navigation"
@@ -8,9 +8,10 @@ import { FOOTER_CTA, NAV_LINKS, scrollToSection } from "@/lib/landing-modern-dat
 import { SITE_NAME } from "@/lib/site"
 import {
   landingCard,
-  landingDisplay,
   landingFooterCard,
   landingInner,
+  landingTitleFooter,
+  landingTitleFooterLg,
 } from "@/lib/landing-modern-styles"
 import { cn } from "@/lib/utils"
 
@@ -37,13 +38,8 @@ export function ModernFooter() {
               aria-label={SITE_NAME}
               className="h-auto w-fit gap-2.5 rounded-full px-0 py-0 text-[#0F172A] hover:bg-[#F1F5F9]"
             >
-              <IrisLabLogo decorative size={56} variant="on-light" className="size-14 shrink-0" />
-              <span
-                className={cn(
-                  landingDisplay,
-                  "text-2xl font-semibold tracking-tight text-[#0F172A] sm:text-3xl"
-                )}
-              >
+              <AnimatedIrisLabLogo scrollTrigger className="size-14 shrink-0" />
+              <span className={landingTitleFooter}>
                 {SITE_NAME}
               </span>
             </Button>
@@ -75,12 +71,7 @@ export function ModernFooter() {
             </div>
           </div>
 
-          <h2
-            className={cn(
-              landingDisplay,
-              "max-w-3xl text-[1.65rem] font-semibold leading-[1.2] tracking-tight text-[#0F172A] sm:text-3xl lg:text-[2.25rem] lg:leading-[1.12]"
-            )}
-          >
+          <h2 className={cn("max-w-3xl", landingTitleFooterLg)}>
             {FOOTER_CTA.title}
           </h2>
 

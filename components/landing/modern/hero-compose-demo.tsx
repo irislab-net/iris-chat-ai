@@ -1,29 +1,63 @@
 "use client"
 
+import { gsap } from "gsap"
+import { CustomEase } from "gsap/CustomEase"
 import { useReducedMotion } from "motion/react"
 import { ArrowUpIcon, SquareIcon } from "lucide-react"
 import { useRouter } from "@/i18n/navigation"
-import { useCallback, useEffect, useRef, useState } from "react"
+import {
+  useCallback,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type ReactNode,
+} from "react"
 
+import { IrisLabLogo } from "@/components/brand/iris-lab-logo"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { HERO, HERO_DEMO_EXCHANGES } from "@/lib/landing-modern-data"
+import {
+  HERO,
+  HERO_DEMO_AVATARS,
+  HERO_DEMO_EXCHANGES,
+} from "@/lib/landing-modern-data"
 import {
   landingGlassBubbleAi,
   landingGlassBubbleThinking,
   landingGlassBubbleUser,
+  landingGlassOrb,
   landingGlassPill,
   landingHeroComposeGrid,
 } from "@/lib/landing-modern-styles"
 import { buildLandingChatHref } from "@/lib/landing-chat-handoff"
 import { cn } from "@/lib/utils"
 
-const QUESTION_CHAR_MS = 38
-const ANSWER_CHAR_MS = 22
-const PAUSE_BEFORE_SEND_MS = 360
-const PAUSE_BEFORE_ANSWER_MS = 720
-const HOLD_AFTER_ANSWER_MS = 4200
-const FADE_OUT_MS = 420
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(CustomEase)
+  CustomEase.create("heroDemo", "0.16, 1, 0.3, 1")
+}
+
+const FPS = 60
+const frames = (count: number) => count / FPS
+
+const QUESTION_FRAMES_PER_CHAR = 2.25
+const ANSWER_FRAMES_PER_CHAR = 1.3
+const PRE_ROLL_FRAMES = 10
+const PAUSE_BEFORE_SEND_FRAMES = 22
+const BUBBLE_IN_FRAMES = 36
+const AVATAR_IN_FRAMES = 28
+const AVATAR_STAGGER_FRAMES = 6
+const THINK_HOLD_FRAMES = 44
+const SHOT_OUT_FRAMES = 20
+const HOLD_FRAMES = 252
+const FADE_FRAMES = 24
+const SEND_PUNCH_FRAMES = 7
+const DOT_CYCLE_FRAMES = 24
+const CARET_CYCLE_FRAMES = 28
+
+const USER_ORIGIN = "100% 100%"
+const AI_ORIGIN = "0% 0%"
 
 type DemoPhase =
   | "typing-question"
@@ -32,10 +66,20 @@ type DemoPhase =
   | "hold"
   | "fading"
 
-function sleep(ms: number) {
-  return new Promise<void>((resolve) => {
-    window.setTimeout(resolve, ms)
-  })
+type DemoStartAt = "type" | "send"
+
+type ChatShot = {
+  bubble: HTMLElement
+  avatar: HTMLElement
+}
+
+type DemoShotElements = {
+  user: ChatShot
+  thinking: ChatShot
+  answer: ChatShot
+  caret: HTMLElement
+  dots: HTMLElement[]
+  send: HTMLElement
 }
 
 function pickRandomScenarioIndex(exclude?: number) {
@@ -60,9 +104,430 @@ function GlassSheen({ className }: { className?: string }) {
   )
 }
 
+function GlassOrb({
+  children,
+  className,
+}: {
+  children: ReactNode
+  className?: string
+}) {
+  return (
+    <span
+      className={cn("inline-flex shrink-0", landingGlassOrb, className)}
+      aria-hidden
+    >
+      <GlassSheen className="rounded-full" />
+      <span className="relative z-10 flex size-full items-center justify-center">
+        {children}
+      </span>
+    </span>
+  )
+}
+
+function DemoUserAvatar({
+  src,
+  initials,
+}: {
+  src: string
+  initials: string
+}) {
+  return (
+    <GlassOrb className="p-0.5">
+      <Avatar size="sm" className="size-full after:hidden">
+        <AvatarImage src={src} alt="" />
+        <AvatarFallback className="bg-white/40 text-[9px] font-medium text-[#64748B]">
+          {initials}
+        </AvatarFallback>
+      </Avatar>
+    </GlassOrb>
+  )
+}
+
+function DemoSystemAvatar() {
+  return (
+    <GlassOrb className="mt-0.5 p-1.5">
+      <IrisLabLogo variant="on-light" size={20} className="size-full" decorative />
+    </GlassOrb>
+  )
+}
+
+function requiredEl(root: HTMLElement, selector: string) {
+  return root.querySelector<HTMLElement>(selector)
+}
+
+function collectDemoShots(root: HTMLElement): DemoShotElements | null {
+  const userBubble = requiredEl(root, "[data-demo-user-bubble]")
+  const userAvatar = requiredEl(root, "[data-demo-user-avatar]")
+  const thinkingBubble = requiredEl(root, "[data-demo-thinking-bubble]")
+  const thinkingAvatar = requiredEl(root, "[data-demo-thinking-avatar]")
+  const answerBubble = requiredEl(root, "[data-demo-answer-bubble]")
+  const answerAvatar = requiredEl(root, "[data-demo-answer-avatar]")
+  const caret = requiredEl(root, "[data-demo-caret]")
+  const send = requiredEl(root, "[data-demo-send]")
+  const dots = gsap.utils.toArray<HTMLElement>("[data-think-dot]", root)
+
+  if (
+    !userBubble ||
+    !userAvatar ||
+    !thinkingBubble ||
+    !thinkingAvatar ||
+    !answerBubble ||
+    !answerAvatar ||
+    !caret ||
+    !send
+  ) {
+    return null
+  }
+
+  return {
+    user: { bubble: userBubble, avatar: userAvatar },
+    thinking: { bubble: thinkingBubble, avatar: thinkingAvatar },
+    answer: { bubble: answerBubble, avatar: answerAvatar },
+    caret,
+    dots,
+    send,
+  }
+}
+
+function hideShot(shot: ChatShot, origin: string, fromX: number) {
+  gsap.set(shot.bubble, {
+    autoAlpha: 0,
+    x: fromX,
+    y: 16,
+    scale: 0.82,
+    transformOrigin: origin,
+  })
+  gsap.set(shot.avatar, {
+    autoAlpha: 0,
+    x: fromX * 0.35,
+    y: 10,
+    scale: 0.68,
+    transformOrigin: "50% 50%",
+  })
+}
+
+function resetDemoShots(elements: DemoShotElements) {
+  hideShot(elements.user, USER_ORIGIN, 14)
+  hideShot(elements.thinking, AI_ORIGIN, -14)
+  hideShot(elements.answer, AI_ORIGIN, -14)
+  gsap.set(elements.caret, { autoAlpha: 0 })
+  gsap.set(elements.dots, { y: 0, opacity: 1 })
+  gsap.set(elements.send, { scale: 1, transformOrigin: "50% 50%" })
+}
+
+function typeOnTicker(
+  timeline: gsap.core.Timeline,
+  text: string,
+  framesPerChar: number,
+  onFrame: (value: string) => void
+) {
+  const proxy = { n: 0 }
+  let painted = 0
+
+  timeline.to(proxy, {
+    n: text.length,
+    duration: frames(text.length * framesPerChar),
+    ease: "none",
+    snap: { n: 1 },
+    onUpdate: () => {
+      if (proxy.n === painted) return
+      painted = proxy.n
+      onFrame(text.slice(0, painted))
+    },
+    onComplete: () => onFrame(text),
+  })
+}
+
+function revealShot(
+  timeline: gsap.core.Timeline,
+  shot: ChatShot,
+  {
+    origin,
+    fromX,
+    at,
+    vis,
+  }: {
+    origin: string
+    fromX: number
+    at: string
+    vis: (count: number) => number
+  }
+) {
+  timeline.fromTo(
+    shot.bubble,
+    {
+      autoAlpha: 0,
+      x: fromX,
+      y: 16,
+      scale: 0.82,
+      transformOrigin: origin,
+    },
+    {
+      autoAlpha: 1,
+      x: 0,
+      y: 0,
+      scale: 1,
+      duration: vis(BUBBLE_IN_FRAMES),
+      ease: "heroDemo",
+      immediateRender: false,
+    },
+    at
+  )
+  timeline.fromTo(
+    shot.avatar,
+    {
+      autoAlpha: 0,
+      x: fromX * 0.35,
+      y: 10,
+      scale: 0.68,
+      transformOrigin: "50% 50%",
+    },
+    {
+      autoAlpha: 1,
+      x: 0,
+      y: 0,
+      scale: 1,
+      duration: vis(AVATAR_IN_FRAMES),
+      ease: "heroDemo",
+      immediateRender: false,
+    },
+    `${at}+=${vis(AVATAR_STAGGER_FRAMES)}`
+  )
+}
+
+function dismissShot(
+  timeline: gsap.core.Timeline,
+  shot: ChatShot,
+  {
+    toX,
+    toY,
+    at,
+    vis,
+  }: {
+    toX: number
+    toY: number
+    at: string
+    vis: (count: number) => number
+  }
+) {
+  timeline.to(
+    shot.bubble,
+    {
+      autoAlpha: 0,
+      x: toX,
+      y: toY,
+      scale: 0.92,
+      duration: vis(SHOT_OUT_FRAMES),
+      ease: "power2.in",
+    },
+    at
+  )
+  timeline.to(
+    shot.avatar,
+    {
+      autoAlpha: 0,
+      x: toX * 0.4,
+      y: toY * 0.7,
+      scale: 0.84,
+      duration: vis(16),
+      ease: "power2.in",
+    },
+    `${at}+=${vis(3)}`
+  )
+}
+
+function playHeroComposeTimeline({
+  elements,
+  question,
+  answer,
+  reducedMotion,
+  startAt,
+  onDraft,
+  onAnswer,
+  onPhase,
+  onUserText,
+  onComplete,
+  onDotsTween,
+  onCaretTween,
+}: {
+  elements: DemoShotElements
+  question: string
+  answer: string
+  reducedMotion: boolean
+  startAt: DemoStartAt
+  onDraft: (value: string) => void
+  onAnswer: (value: string) => void
+  onPhase: (phase: DemoPhase) => void
+  onUserText: (value: string) => void
+  onComplete: () => void
+  onDotsTween: (tween: gsap.core.Tween | null) => void
+  onCaretTween: (tween: gsap.core.Tween | null) => void
+}) {
+  const vis = (count: number) => (reducedMotion ? 0 : frames(count))
+  const timeline = gsap.timeline({
+    defaults: {
+      ease: "heroDemo",
+      overwrite: "auto",
+    },
+    onComplete,
+  })
+
+  resetDemoShots(elements)
+  onUserText(question)
+  onAnswer("")
+  onDraft("")
+  onPhase("typing-question")
+
+  if (startAt === "type") {
+    timeline.to({}, { duration: frames(PRE_ROLL_FRAMES) })
+
+    if (reducedMotion) {
+      timeline.call(() => onDraft(question))
+    } else {
+      typeOnTicker(timeline, question, QUESTION_FRAMES_PER_CHAR, onDraft)
+    }
+
+    timeline.to({}, { duration: frames(PAUSE_BEFORE_SEND_FRAMES) })
+  }
+
+  timeline.addLabel("send")
+  timeline.call(() => {
+    onDraft("")
+    onUserText(question)
+    onPhase("thinking")
+  })
+  timeline.to(
+    elements.send,
+    {
+      scale: reducedMotion ? 1 : 0.88,
+      duration: vis(SEND_PUNCH_FRAMES),
+      yoyo: true,
+      repeat: reducedMotion ? 0 : 1,
+      ease: "power2.inOut",
+    },
+    "send"
+  )
+  revealShot(timeline, elements.user, {
+    origin: USER_ORIGIN,
+    fromX: 14,
+    at: "send",
+    vis,
+  })
+
+  timeline.addLabel("think", `send+=${vis(12)}`)
+  revealShot(timeline, elements.thinking, {
+    origin: AI_ORIGIN,
+    fromX: -14,
+    at: "think",
+    vis,
+  })
+  timeline.call(
+    () => {
+      if (reducedMotion || elements.dots.length === 0) {
+        onDotsTween(null)
+        return
+      }
+
+      onDotsTween(
+        gsap.to(elements.dots, {
+          y: -3,
+          opacity: 0.38,
+          duration: frames(DOT_CYCLE_FRAMES),
+          ease: "sine.inOut",
+          stagger: { each: frames(8), repeat: -1, yoyo: true },
+        })
+      )
+    },
+    undefined,
+    "think"
+  )
+  timeline.to({}, { duration: frames(THINK_HOLD_FRAMES) })
+
+  timeline.addLabel("answer")
+  timeline.call(() => {
+    onDotsTween(null)
+    gsap.set(elements.dots, { y: 0, opacity: 1 })
+    onPhase("typing-answer")
+  })
+  dismissShot(timeline, elements.thinking, {
+    toX: -8,
+    toY: -12,
+    at: "answer",
+    vis,
+  })
+  revealShot(timeline, elements.answer, {
+    origin: AI_ORIGIN,
+    fromX: -10,
+    at: `answer+=${vis(6)}`,
+    vis,
+  })
+  timeline.call(
+    () => {
+      if (reducedMotion) {
+        onCaretTween(null)
+        return
+      }
+
+      gsap.set(elements.caret, { autoAlpha: 1 })
+      onCaretTween(
+        gsap.to(elements.caret, {
+          autoAlpha: 0,
+          duration: frames(CARET_CYCLE_FRAMES),
+          ease: "sine.inOut",
+          repeat: -1,
+          yoyo: true,
+        })
+      )
+    },
+    undefined,
+    `answer+=${vis(6)}`
+  )
+
+  if (reducedMotion) {
+    timeline.call(() => onAnswer(answer))
+  } else {
+    typeOnTicker(timeline, answer, ANSWER_FRAMES_PER_CHAR, onAnswer)
+  }
+
+  timeline.addLabel("hold")
+  timeline.call(() => {
+    onCaretTween(null)
+    gsap.set(elements.caret, { autoAlpha: 0 })
+    onPhase("hold")
+  })
+  timeline.to({}, { duration: frames(HOLD_FRAMES) })
+
+  timeline.addLabel("fade")
+  timeline.call(() => onPhase("fading"))
+  dismissShot(timeline, elements.user, {
+    toX: 10,
+    toY: -12,
+    at: "fade",
+    vis,
+  })
+  dismissShot(timeline, elements.answer, {
+    toX: -8,
+    toY: -12,
+    at: `fade+=${vis(5)}`,
+    vis,
+  })
+  timeline.to({}, { duration: vis(FADE_FRAMES) })
+
+  return timeline
+}
+
 export function HeroComposeDemo() {
   const router = useRouter()
-  const reducedMotion = useReducedMotion()
+  const reducedMotion = Boolean(useReducedMotion())
+
+  const rootRef = useRef<HTMLDivElement>(null)
+  const playDemoRef = useRef<(startAt: DemoStartAt, question?: string) => void>(
+    () => {}
+  )
+  const composerDraftRef = useRef("")
+  const dotsTweenRef = useRef<gsap.core.Tween | null>(null)
+  const caretTweenRef = useRef<gsap.core.Tween | null>(null)
+  const timelineRef = useRef<gsap.core.Timeline | null>(null)
 
   const [userQuery, setUserQuery] = useState("")
   const [isFocused, setIsFocused] = useState(false)
@@ -70,20 +535,18 @@ export function HeroComposeDemo() {
   const [userBubbleText, setUserBubbleText] = useState<string | null>(null)
   const [answerText, setAnswerText] = useState("")
   const [phase, setPhase] = useState<DemoPhase>("typing-question")
-  const [scenarioIndex, setScenarioIndex] = useState(() => pickRandomScenarioIndex())
-  const runIdRef = useRef(0)
+  const [scenarioIndex, setScenarioIndex] = useState(0)
 
   const demoActive = !isFocused && userQuery.length === 0
   const exchange = HERO_DEMO_EXCHANGES[scenarioIndex]
+  const demoAvatar = HERO_DEMO_AVATARS[scenarioIndex % HERO_DEMO_AVATARS.length]
 
   const isStreaming =
     phase === "thinking" || phase === "typing-answer" || phase === "hold"
-  const showUserBubble = userBubbleText !== null
-  const showAnswerBubble =
-    (phase === "typing-answer" || phase === "hold") && answerText.length > 0
-  const showChat = phase !== "fading"
-  const showThinking = phase === "thinking"
-  const isTypingAnswer = phase === "typing-answer" && answerText.length < exchange.answer.length
+  const userRevealed =
+    phase === "thinking" || phase === "typing-answer" || phase === "hold"
+  const thinkingRevealed = phase === "thinking"
+  const answerRevealed = phase === "typing-answer" || phase === "hold"
 
   const composerValue = demoActive
     ? phase === "typing-question"
@@ -91,13 +554,31 @@ export function HeroComposeDemo() {
       : ""
     : userQuery
 
+  const killDemoMotion = useCallback(() => {
+    dotsTweenRef.current?.kill()
+    caretTweenRef.current?.kill()
+    timelineRef.current?.kill()
+    dotsTweenRef.current = null
+    caretTweenRef.current = null
+    timelineRef.current = null
+  }, [])
+
+  const hideDemoShots = useCallback(() => {
+    const root = rootRef.current
+    if (!root) return
+    const elements = collectDemoShots(root)
+    if (elements) resetDemoShots(elements)
+  }, [])
+
   const enterInteractiveMode = useCallback(() => {
-    runIdRef.current += 1
+    killDemoMotion()
+    hideDemoShots()
+    composerDraftRef.current = ""
     setComposerDraft("")
     setUserBubbleText(null)
     setAnswerText("")
     setPhase("typing-question")
-  }, [])
+  }, [hideDemoShots, killDemoMotion])
 
   const stopDemo = useCallback(() => {
     enterInteractiveMode()
@@ -105,7 +586,7 @@ export function HeroComposeDemo() {
   }, [enterInteractiveMode])
 
   const handleSend = useCallback(() => {
-    const q = composerValue.trim()
+    const q = (demoActive ? composerDraftRef.current : userQuery).trim()
     if (!q) return
 
     if (!demoActive) {
@@ -113,11 +594,8 @@ export function HeroComposeDemo() {
       return
     }
 
-    setUserBubbleText(q)
-    setComposerDraft("")
-    setAnswerText("")
-    setPhase("thinking")
-  }, [composerValue, demoActive, router])
+    playDemoRef.current("send", q)
+  }, [demoActive, router, userQuery])
 
   const handleAction = useCallback(() => {
     if (isStreaming) {
@@ -127,161 +605,158 @@ export function HeroComposeDemo() {
     handleSend()
   }, [handleSend, isStreaming, stopDemo])
 
-  useEffect(() => {
-    if (!demoActive) return
+  useLayoutEffect(() => {
+    const root = rootRef.current
+    if (!root) return
 
-    const runId = ++runIdRef.current
-    const isStale = () => runId !== runIdRef.current
-
-    async function runDemo() {
-      setComposerDraft("")
-      setUserBubbleText(null)
-      setAnswerText("")
-      setPhase("typing-question")
-
-      if (reducedMotion) {
-        setComposerDraft(exchange.question)
-        await sleep(PAUSE_BEFORE_SEND_MS)
-        if (isStale()) return
-        setUserBubbleText(exchange.question)
-        setComposerDraft("")
-        setPhase("thinking")
-        await sleep(PAUSE_BEFORE_ANSWER_MS)
-        if (isStale()) return
-        setPhase("typing-answer")
-        setAnswerText(exchange.answer)
-        setPhase("hold")
-        await sleep(HOLD_AFTER_ANSWER_MS)
-        if (isStale()) return
-        setPhase("fading")
-        await sleep(FADE_OUT_MS)
-        if (isStale()) return
-        setScenarioIndex((current) => pickRandomScenarioIndex(current))
-        return
-      }
-
-      for (let i = 1; i <= exchange.question.length; i++) {
-        if (isStale()) return
-        setComposerDraft(exchange.question.slice(0, i))
-        await sleep(QUESTION_CHAR_MS)
-      }
-
-      await sleep(PAUSE_BEFORE_SEND_MS)
-      if (isStale()) return
-      setUserBubbleText(exchange.question)
-      setComposerDraft("")
-      setPhase("thinking")
-
-      await sleep(PAUSE_BEFORE_ANSWER_MS)
-      if (isStale()) return
-      setPhase("typing-answer")
-
-      for (let i = 1; i <= exchange.answer.length; i++) {
-        if (isStale()) return
-        setAnswerText(exchange.answer.slice(0, i))
-        await sleep(ANSWER_CHAR_MS)
-      }
-
-      setPhase("hold")
-      await sleep(HOLD_AFTER_ANSWER_MS)
-      if (isStale()) return
-
-      setPhase("fading")
-      await sleep(FADE_OUT_MS)
-      if (isStale()) return
-
-      setScenarioIndex((current) => pickRandomScenarioIndex(current))
+    const assignDots = (tween: gsap.core.Tween | null) => {
+      dotsTweenRef.current?.kill()
+      dotsTweenRef.current = tween
+    }
+    const assignCaret = (tween: gsap.core.Tween | null) => {
+      caretTweenRef.current?.kill()
+      caretTweenRef.current = tween
     }
 
-    void runDemo()
+    const playDemo = (startAt: DemoStartAt, sendQuestion?: string) => {
+      const elements = collectDemoShots(root)
+      if (!elements) return
+
+      killDemoMotion()
+
+      const question = sendQuestion ?? exchange.question
+
+      timelineRef.current = playHeroComposeTimeline({
+        elements,
+        question,
+        answer: exchange.answer,
+        reducedMotion,
+        startAt,
+        onDraft: (value) => {
+          composerDraftRef.current = value
+          setComposerDraft(value)
+        },
+        onAnswer: setAnswerText,
+        onPhase: setPhase,
+        onUserText: setUserBubbleText,
+        onDotsTween: assignDots,
+        onCaretTween: assignCaret,
+        onComplete: () => {
+          setScenarioIndex((current) => pickRandomScenarioIndex(current))
+        },
+      })
+    }
+
+    playDemoRef.current = playDemo
+
+    if (!demoActive) {
+      killDemoMotion()
+      hideDemoShots()
+      return
+    }
+
+    playDemo("type")
 
     return () => {
-      runIdRef.current += 1
+      playDemoRef.current = () => {}
+      killDemoMotion()
     }
-  }, [demoActive, exchange, reducedMotion, scenarioIndex])
-
-  const userVisible = showChat && showUserBubble && Boolean(userBubbleText)
-  const thinkingVisible = showChat && showThinking
-  const answerVisible = showChat && showAnswerBubble
+  }, [
+    demoActive,
+    exchange,
+    hideDemoShots,
+    killDemoMotion,
+    reducedMotion,
+    scenarioIndex,
+  ])
 
   return (
     <div
+      ref={rootRef}
       className="mx-auto w-full max-w-lg lg:max-w-2xl"
       aria-live="polite"
       aria-atomic="false"
     >
       <div className={cn(landingHeroComposeGrid, "isolate overflow-visible")}>
-        {/* Slot 1 — user (fixed height, opacity only) */}
         <div className="flex h-full min-h-0 items-end justify-end overflow-visible px-1 pb-1 pt-1">
           <div
-            className={cn(
-              "min-w-0 max-w-full transition-opacity duration-300 sm:max-w-[85%]",
-              userVisible ? "opacity-100" : "pointer-events-none opacity-0"
-            )}
-            aria-hidden={!userVisible}
+            className="pointer-events-none flex min-w-0 max-w-full items-end gap-2 sm:max-w-[90%] sm:gap-2.5"
+            aria-hidden={!userRevealed}
           >
-            <div className={cn("px-4 py-2.5 sm:px-5 sm:py-3", landingGlassBubbleUser)}>
+            <div
+              data-demo-user-bubble
+              className={cn(
+                "min-w-0 px-4 py-2.5 opacity-0 will-change-transform sm:px-5 sm:py-3",
+                landingGlassBubbleUser
+              )}
+            >
               <GlassSheen />
               <p className="relative z-10 line-clamp-2 text-left text-[0.8125rem] font-normal leading-snug text-[#0F172A] sm:text-base">
                 {userBubbleText ?? "\u00A0"}
               </p>
             </div>
+            <span data-demo-user-avatar className="inline-flex shrink-0 opacity-0 will-change-transform">
+              <DemoUserAvatar src={demoAvatar.src} initials={demoAvatar.initials} />
+            </span>
           </div>
         </div>
 
-        {/* Slot 2 — thinking + answer share one fixed box */}
         <div className="relative isolate h-full min-h-0 overflow-visible px-1 py-0.5">
           <div
-            className={cn(
-              "absolute inset-0 z-0 flex items-start gap-2 overflow-visible transition-opacity duration-300 sm:gap-3",
-              thinkingVisible
-                ? "opacity-100"
-                : "pointer-events-none opacity-0"
-            )}
-            aria-hidden={!thinkingVisible}
+            className="pointer-events-none absolute inset-0 z-0 flex items-start gap-2 overflow-visible sm:gap-3"
+            aria-hidden={!thinkingRevealed}
           >
-            <span className="mt-2.5 size-2 shrink-0 rounded-full bg-[#94A3B8]" aria-hidden />
+            <span data-demo-thinking-avatar className="inline-flex shrink-0 opacity-0 will-change-transform">
+              <DemoSystemAvatar />
+            </span>
             <div className="min-w-0 flex-1">
-              <div className={cn("inline-flex items-center gap-1.5 px-3.5 py-2.5 sm:px-4 sm:py-3", landingGlassBubbleThinking)}>
+              <div
+                data-demo-thinking-bubble
+                className={cn(
+                  "inline-flex items-center gap-1.5 px-3.5 py-2.5 opacity-0 will-change-transform sm:px-4 sm:py-3",
+                  landingGlassBubbleThinking
+                )}
+              >
                 <GlassSheen />
-                <span className="relative z-10 size-1.5 animate-pulse rounded-full bg-[#94A3B8]/80 [animation-delay:0ms]" />
-                <span className="relative z-10 size-1.5 animate-pulse rounded-full bg-[#94A3B8]/80 [animation-delay:150ms]" />
-                <span className="relative z-10 size-1.5 animate-pulse rounded-full bg-[#94A3B8]/80 [animation-delay:300ms]" />
+                <span data-think-dot className="relative z-10 size-1.5 rounded-full bg-[#94A3B8]/80" />
+                <span data-think-dot className="relative z-10 size-1.5 rounded-full bg-[#94A3B8]/80" />
+                <span data-think-dot className="relative z-10 size-1.5 rounded-full bg-[#94A3B8]/80" />
               </div>
             </div>
           </div>
 
           <div
-            className={cn(
-              "absolute inset-0 z-10 flex items-start gap-2 overflow-visible transition-opacity duration-300 sm:gap-3",
-              answerVisible
-                ? "opacity-100"
-                : "pointer-events-none opacity-0"
-            )}
-            aria-hidden={!answerVisible}
+            className="pointer-events-none absolute inset-0 z-10 flex items-start gap-2 overflow-visible sm:gap-3"
+            aria-hidden={!answerRevealed}
           >
-            <span className="mt-2.5 size-2 shrink-0 rounded-full bg-[#94A3B8]" aria-hidden />
+            <span data-demo-answer-avatar className="inline-flex shrink-0 opacity-0 will-change-transform">
+              <DemoSystemAvatar />
+            </span>
             <div className="min-w-0 flex-1">
-              <div className={cn("w-full px-4 py-2.5 sm:px-5 sm:py-3", landingGlassBubbleAi)}>
+              <div
+                data-demo-answer-bubble
+                className={cn(
+                  "w-full px-4 py-2.5 opacity-0 will-change-transform sm:px-5 sm:py-3",
+                  landingGlassBubbleAi
+                )}
+              >
                 <GlassSheen />
                 <p className="relative z-10 mb-0.5 font-mono text-[9px] font-medium uppercase tracking-[0.25em] text-[#94A3B8] sm:mb-1">
                   Exur
                 </p>
                 <p className="relative z-10 line-clamp-4 text-left text-[0.8125rem] font-normal leading-snug text-[#64748B] sm:text-base sm:leading-relaxed">
                   {answerText}
-                  {isTypingAnswer && (
-                    <span
-                      className="ml-0.5 inline-block h-[1.1em] w-0.5 animate-pulse bg-[#94A3B8] align-[-2px]"
-                      aria-hidden
-                    />
-                  )}
+                  <span
+                    data-demo-caret
+                    className="ml-0.5 inline-block h-[1.1em] w-0.5 bg-[#94A3B8] align-[-2px] opacity-0"
+                    aria-hidden
+                  />
                 </p>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Slot 3 — composer (fixed height) */}
         <div
           className={cn(
             "relative z-30 flex h-full min-h-0 shrink-0 items-center gap-2 overflow-visible px-2 py-2 sm:gap-2 sm:px-3 sm:py-2",
@@ -311,26 +786,26 @@ export function HeroComposeDemo() {
           className="relative z-10 h-10 min-w-0 flex-1 border-0 bg-transparent px-2 text-sm text-[#0F172A] shadow-none placeholder:text-[#94A3B8]/90 focus-visible:ring-0 read-only:cursor-default sm:px-3 sm:text-base"
         />
 
-        <Button
-          type="button"
-          size="icon"
-          onClick={handleAction}
-          className={cn(
-            "relative z-10 size-10 shrink-0 rounded-full text-white shadow-[0_8px_24px_rgba(37,99,235,0.32)] transition-[background-color,transform] duration-300",
-            isStreaming
-              ? "bg-[#0F172A] hover:bg-[#1E293B]"
-              : "bg-[#2563EB] hover:bg-[#1D4ED8]"
-          )}
-          aria-label={isStreaming ? "Stop" : "Ask Exur"}
-        >
-          <span className="flex items-center justify-center transition-transform duration-200">
+        <span data-demo-send className="relative z-10 inline-flex shrink-0">
+          <Button
+            type="button"
+            size="icon"
+            onClick={handleAction}
+            className={cn(
+              "size-10 shrink-0 rounded-full text-white shadow-[0_8px_24px_rgba(37,99,235,0.32)] transition-colors duration-300",
+              isStreaming
+                ? "bg-[#0F172A] hover:bg-[#1E293B]"
+                : "bg-[#2563EB] hover:bg-[#1D4ED8]"
+            )}
+            aria-label={isStreaming ? "Stop" : "Ask Exur"}
+          >
             {isStreaming ? (
               <SquareIcon className="size-3.5 fill-current" />
             ) : (
               <ArrowUpIcon className="size-4" />
             )}
-          </span>
-        </Button>
+          </Button>
+        </span>
         </div>
       </div>
     </div>

@@ -1465,6 +1465,36 @@ html.display-standalone[data-app-shell="true"] [data-slot="sheet-content"] .app-
   pointer-events: none;
 }
 
+@keyframes iris-logo-shimmer {
+  0% {
+    transform: translateX(-140%) skewX(-14deg);
+    opacity: 0;
+  }
+  18% {
+    opacity: 0.85;
+  }
+  50% {
+    opacity: 1;
+  }
+  82% {
+    opacity: 0.85;
+  }
+  100% {
+    transform: translateX(240%) skewX(-14deg);
+    opacity: 0;
+  }
+}
+
+.animate-iris-logo-shimmer {
+  animation: iris-logo-shimmer 2.8s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-iris-logo-shimmer {
+    animation: none;
+  }
+}
+
 @keyframes hero-fluid-drift-a {
   0%,
   100% {

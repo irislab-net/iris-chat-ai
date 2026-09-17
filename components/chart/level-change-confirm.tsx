@@ -41,7 +41,7 @@ function LevelChangeConfirm({ pending, onConfirm, onCancel }: LevelChangeConfirm
                     {pending.pnlUsd >= 0 ? "+" : ""}
                     {pending.pnlUsd.toFixed(2)}
                   </span>
-                  ). This updates order intent only — execution happens via the ticket.
+                  ). This updates order intent only. Execution happens via the ticket.
                 </>
               ) : (
                 <>That price is invalid for the current side and entry.</>

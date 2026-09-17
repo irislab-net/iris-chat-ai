@@ -5,6 +5,10 @@ import {
   loginWithGoogleUrl,
 } from "@/lib/api/config"
 import type { TokenPair, User } from "@/lib/api/types"
+import {
+  AUTH_PRIVACY_NOTICE_ACCEPTED,
+  AUTH_TERMS_ACCEPTED,
+} from "@/lib/legal"
 import { normalizeUser } from "@/lib/user-avatar"
 
 const ACCESS_KEY = "access_token"
@@ -56,6 +60,56 @@ export function consumePlanUpgradePendingRefresh(): boolean {
 export function notifyAuthSessionExpired(): void {
   if (typeof window === "undefined") return
   window.dispatchEvent(new Event(AUTH_SESSION_EXPIRED_EVENT))
+}
+
+export async function exchangeGoogleOneTapCredential(options: {
+  credential: string
+  legalAccepted?: boolean
+  app?: string
+}) {
+  const app = options.app ?? (isChatAppHost() ? "chat" : undefined)
+  const body: Record<string, string> = {
+    credential: options.credential,
+  }
+
+  if (options.legalAccepted) {
+    body.terms = AUTH_TERMS_ACCEPTED
+    body.privacy_notice = AUTH_PRIVACY_NOTICE_ACCEPTED
+  }
+  if (app) body.app = app
+
+  const res = await fetch(authUrl("/v1/auth/google/one-tap"), {
+    method: "POST",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  })
+
+  const payload = await res.json().catch(() => ({}))
+  if (!res.ok) {
+    throw Object.assign(
+      new Error(
+        typeof payload.error === "string"
+          ? payload.error
+          : "Google One Tap sign-in failed"
+      ),
+      { status: res.status }
+    )
+  }
+
+  if (
+    payload &&
+    typeof payload === "object" &&
+    "access_token" in payload &&
+    typeof payload.access_token === "string"
+  ) {
+    storeTokenPair(payload as TokenPair)
+    return payload as TokenPair
+  }
+
+  const pair = await refreshAccessToken()
+  storeTokenPair(pair)
+  return pair
 }
 
 export function startLoginWithGoogle(options?: {

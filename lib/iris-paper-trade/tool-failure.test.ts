@@ -17,7 +17,7 @@ describe("isOpenPaperTradeToolFailureProse", () => {
   it("ignores regular assistant replies", () => {
     expect(
       isOpenPaperTradeToolFailureProse(
-        "Exur setup — not a profit guarantee. No paper trade is open yet."
+        "Exur setup. Not a profit guarantee. No paper trade is open yet."
       )
     ).toBe(false)
   })

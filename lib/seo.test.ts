@@ -19,14 +19,14 @@ import {
 
 describe("search / AI citation identity", () => {
   it("names the product in the language people search", () => {
-    expect(SITE_TITLE.toLowerCase()).toContain("ai trading signals")
-    expect(SITE_DESCRIPTION.toLowerCase()).toContain("ai trading-signal")
-    expect(SITE_DESCRIPTION.toLowerCase()).toContain("crypto")
-    expect(SITE_KEYWORDS).toContain("AI trading signal tool")
+    expect(SITE_TITLE.toLowerCase()).toContain("ai financial assistant")
+    expect(SITE_DESCRIPTION.toLowerCase()).toContain("ai financial assistant")
+    expect(SITE_DESCRIPTION.toLowerCase()).not.toContain("crypto")
+    expect(SITE_KEYWORDS).toContain("AI financial assistant")
   })
 
   it("does not promise profits in public metadata", () => {
-    expect(SITE_DESCRIPTION.toLowerCase()).toContain("not guaranteed profits")
+    expect(SITE_DESCRIPTION.toLowerCase()).not.toContain("guaranteed profit")
   })
 
   it("indexes the AI trading-signals page in sitemap IA", () => {
@@ -51,10 +51,10 @@ describe("search / AI citation identity", () => {
     }
   })
 
-  it("describes a finance web app with an AI trading-signals category", () => {
+  it("describes a finance web app with an AI assistant category", () => {
     const app = webApplicationJsonLd()
     expect(app["@type"]).toEqual(["WebApplication", "SoftwareApplication"])
-    expect(app.applicationSubCategory).toBe("AI trading signals")
+    expect(app.applicationSubCategory).toBe("AI financial assistant")
     expect(app.isAccessibleForFree).toBe(true)
   })
 
@@ -77,6 +77,6 @@ describe("search / AI citation identity", () => {
     expect(AI_CRAWLER_USER_AGENTS).toContain("GPTBot")
     const txt = llmsTxt()
     expect(txt).toContain(AI_SIGNALS_PATH)
-    expect(txt.toLowerCase()).toContain("ai trading-signal")
+    expect(txt.toLowerCase()).toContain("ai financial assistant")
   })
 })

@@ -1,0 +1,40 @@
+"use client"
+
+import { ScrollReveal } from "@/components/landing/modern/scroll-reveal"
+import { SectionHeader } from "@/components/landing/modern/sphere-ui"
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"
+import { FAQ_ITEMS, FAQ_SECTION } from "@/lib/landing-modern-data"
+import { landingInner, landingSection, landingSectionBody } from "@/lib/landing-modern-styles"
+import { cn } from "@/lib/utils"
+
+export function FaqSection() {
+  return (
+    <section id="faq" className={cn(landingSection, landingSectionBody)}>
+      <div className={landingInner}>
+        <ScrollReveal>
+          <SectionHeader title={FAQ_SECTION.title} subtitle={FAQ_SECTION.subtitle} />
+        </ScrollReveal>
+
+        <ScrollReveal delay={0.08} className="mx-auto mt-10 max-w-2xl sm:mt-12">
+          <Accordion defaultValue={["what"]}>
+            {FAQ_ITEMS.map((faq) => (
+              <AccordionItem key={faq.id} value={faq.id} className="border-[#E2E8F0]">
+                <AccordionTrigger className="py-4 text-left text-sm font-normal text-[#0F172A] hover:no-underline sm:text-base">
+                  {faq.question}
+                </AccordionTrigger>
+                <AccordionContent className="pb-4 text-sm leading-relaxed text-[#64748B] sm:text-[0.9375rem]">
+                  {faq.answer}
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
+        </ScrollReveal>
+      </div>
+    </section>
+  )
+}

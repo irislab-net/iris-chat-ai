@@ -808,7 +808,7 @@ function TradeDeskLockCard({
           </div>
         </div>
         <p className="mt-3 text-sm leading-relaxed text-foreground">
-          This is the Pro signal pattern for the market you select — side, entry,
+          This is the Pro signal pattern for the market you select: side, entry,
           stop / take, and risk framing as professional trade guidance.
         </p>
         <p className="mt-2 text-sm leading-relaxed text-muted-foreground">

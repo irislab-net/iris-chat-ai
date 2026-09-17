@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 
+import { AnimatedIrisLabLogo } from "@/components/brand/animated-iris-lab-logo"
 import { IrisLabLogo } from "@/components/brand/iris-lab-logo"
 import { LocaleSwitcher } from "@/components/i18n/locale-switcher"
 import { SphereCta } from "@/components/landing/modern/sphere-ui"
@@ -17,10 +18,13 @@ import {
 import { useLandingActiveSection } from "@/components/landing/modern/landing-scroll-context"
 import { NAV_LINKS, scrollToSection } from "@/lib/landing-modern-data"
 import {
-  landingDisplay,
   landingGlassNavIcon,
+  landingTitleBrand,
   landingGlassSheen,
   landingInner,
+  landingNavLinkActive,
+  landingNavLinkInactive,
+  landingNavPill,
 } from "@/lib/landing-modern-styles"
 import { APP_NEWS_PATH } from "@/lib/site"
 import { cn } from "@/lib/utils"
@@ -60,23 +64,21 @@ export function LandingNav() {
           className="h-auto min-w-0 shrink-0 justify-self-start gap-2.5 rounded-full px-0 py-0 text-[#0F172A] hover:bg-[#F1F5F9]"
         >
           <span
-            className="flex size-11 shrink-0 items-center justify-center rounded-full bg-white p-0.5 shadow-[0_6px_18px_rgba(15,23,42,0.07)]"
+            className="flex size-11 shrink-0 items-center justify-center rounded-[14px] bg-white p-1 shadow-[0_6px_18px_rgba(15,23,42,0.06)]"
             aria-hidden
           >
-            <IrisLabLogo decorative size={36} variant="on-light" className="size-9" />
+            <AnimatedIrisLabLogo replayOnHover shimmer className="size-9" />
           </span>
-          <span
-            className={cn(
-              landingDisplay,
-              "hidden text-lg font-semibold tracking-tight text-[#0F172A] min-[420px]:inline"
-            )}
-          >
+          <span className={cn(landingTitleBrand, "hidden min-[420px]:inline")}>
             Exur
           </span>
         </Button>
 
         <div
-          className="hidden items-center justify-center gap-6 md:flex md:col-start-2 md:row-start-1 lg:gap-8"
+          className={cn(
+            landingNavPill,
+            "hidden md:col-start-2 md:row-start-1 md:flex"
+          )}
         >
           {NAV_LINKS.map((link) => {
             const isActive = activeSectionId === link.id
@@ -88,17 +90,11 @@ export function LandingNav() {
                 onClick={() => scrollToSection(link.id)}
                 aria-current={isActive ? "true" : undefined}
                 className={cn(
-                  "relative h-auto rounded-full px-0 py-0 text-[13px] font-medium tracking-[-0.01em] transition-colors hover:bg-transparent sm:text-sm",
-                  isActive ? "text-[#0F172A]" : "text-[#64748B] hover:text-[#0F172A]"
+                  "h-8 rounded-full px-3.5 py-0 text-[13px] tracking-[-0.01em] transition-all duration-200 lg:px-4",
+                  isActive ? landingNavLinkActive : landingNavLinkInactive
                 )}
               >
                 {link.label}
-                {isActive && (
-                  <span
-                    className="absolute -bottom-1.5 left-1/2 size-1 -translate-x-1/2 rounded-full bg-[#0F172A]"
-                    aria-hidden
-                  />
-                )}
               </Button>
             )
           })}
@@ -134,10 +130,7 @@ export function LandingNav() {
             <SheetContent side="right" className="w-[min(100vw-2rem,20rem)] border-0 bg-white p-0 shadow-[0_24px_80px_rgba(15,23,42,0.12)]">
               <SheetHeader className="bg-[#F8FAFC] px-5 py-4 text-left">
                 <SheetTitle
-                  className={cn(
-                    landingDisplay,
-                    "flex items-center gap-2.5 text-sm font-bold text-[#0F172A]"
-                  )}
+                  className={cn(landingTitleBrand, "flex items-center gap-2.5 text-sm")}
                 >
                   <IrisLabLogo
                     decorative
@@ -161,10 +154,10 @@ export function LandingNav() {
                           onClick={() => scrollAndClose(link.id, () => setOpen(false))}
                           aria-current={isActive ? "true" : undefined}
                           className={cn(
-                            "h-auto justify-start rounded-2xl px-4 py-3 text-sm font-medium hover:bg-[#F5F5F7]",
+                            "h-auto justify-start rounded-xl px-4 py-2.5 text-sm transition-colors",
                             isActive
-                              ? "bg-[#F1F5F9] text-[#0F172A] hover:text-[#0F172A]"
-                              : "text-[#525866] hover:text-[#0F172A]"
+                              ? "bg-white font-semibold text-[#0F172A] shadow-[0_2px_10px_rgba(15,23,42,0.06)] hover:text-[#0F172A]"
+                              : "font-medium text-[#94A3B8] hover:bg-white/60 hover:text-[#475569]"
                           )}
                         >
                           {link.label}

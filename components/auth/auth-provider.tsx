@@ -2,6 +2,7 @@
 
 import * as React from "react"
 
+import { GoogleOneTap } from "@/components/auth/google-one-tap"
 import { LoginConsentDialog } from "@/components/auth/login-consent-dialog"
 import {
   AUTH_POPUP_CLOSED_EVENT,
@@ -9,11 +10,13 @@ import {
   AUTH_SUCCESS_MESSAGE,
   bootstrapSession,
   establishSession,
+  exchangeGoogleOneTapCredential,
   getStoredAccessToken,
   isPro,
   logoutRemote,
   startLoginWithGoogle,
 } from "@/lib/api/auth"
+import { cancelGoogleOneTap, clearGoogleOneTapDismissed } from "@/lib/google-one-tap"
 import { setChatRegisteredUserId } from "@/lib/chat-auth-session"
 import { readChatStore } from "@/lib/chat-storage"
 import { mergeGuestAccount } from "@/lib/guest-chat"
@@ -70,6 +73,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
   const loginAttemptInFlight = React.useRef<Promise<void> | null>(null)
   const loginSourceRef = React.useRef<LoginSource | undefined>(undefined)
   const pendingLoginRef = React.useRef<LoginOptions | undefined>(undefined)
+  const pendingCredentialRef = React.useRef<string | null>(null)
 
   const applySession = React.useCallback((session: { user: User | null }) => {
     setUser(session.user)
@@ -221,33 +225,75 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = React.useCallback((options?: LoginOptions) => {
     if (loginPending) return
+    pendingCredentialRef.current = null
     pendingLoginRef.current = options
     setConsentOpen(true)
   }, [loginPending])
 
+  const handleOneTapCredential = React.useCallback(
+    (credential: string) => {
+      if (loginPending || user) return
+      pendingCredentialRef.current = credential
+      pendingLoginRef.current = { source: "one_tap" }
+      setConsentOpen(true)
+    },
+    [loginPending, user]
+  )
+
   const confirmLegalAndLogin = React.useCallback(() => {
     const options = pendingLoginRef.current
+    const credential = pendingCredentialRef.current
     pendingLoginRef.current = undefined
+    pendingCredentialRef.current = null
     setConsentOpen(false)
 
     loginSourceRef.current = options?.source
     trackLoginStart(options?.source, options?.ref)
     setLoginPending(true)
+
+    if (credential) {
+      void (async () => {
+        try {
+          await exchangeGoogleOneTapCredential({ credential, legalAccepted: true })
+          clearGoogleOneTapDismissed()
+          await completeLoginAttempt()
+        } catch (error) {
+          trackLoginFail(
+            error instanceof Error ? error.message : "one_tap_exchange_failed",
+            options?.source
+          )
+          startLoginWithGoogle({
+            ref: options?.ref,
+            legalAccepted: true,
+            returnTo: APP_PATH,
+          })
+        }
+      })()
+      return
+    }
+
     startLoginWithGoogle({
       ref: options?.ref,
       legalAccepted: true,
       returnTo: APP_PATH,
     })
-  }, [])
+  }, [completeLoginAttempt])
 
   const onConsentOpenChange = React.useCallback(
     (open: boolean) => {
       if (loginPending) return
       setConsentOpen(open)
-      if (!open) pendingLoginRef.current = undefined
+      if (!open) {
+        pendingLoginRef.current = undefined
+        pendingCredentialRef.current = null
+      }
     },
     [loginPending]
   )
+
+  React.useEffect(() => {
+    if (consentOpen) cancelGoogleOneTap()
+  }, [consentOpen])
 
   const logout = React.useCallback(async () => {
     const userId = user?.id
@@ -255,6 +301,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     loginAttemptInFlight.current = null
     loginSourceRef.current = undefined
     pendingLoginRef.current = undefined
+    pendingCredentialRef.current = null
     setConsentOpen(false)
     await logoutRemote()
     resetClientSessionOnLogout({ userId })
@@ -281,6 +328,16 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
   return (
     <AuthContext.Provider value={value}>
       {children}
+      <GoogleOneTap
+        enabled={
+          !loading &&
+          !user &&
+          !loginPending &&
+          !consentOpen &&
+          !isOAuthPopupCallback
+        }
+        onCredential={handleOneTapCredential}
+      />
       <LoginConsentDialog
         open={consentOpen}
         onOpenChange={onConsentOpenChange}

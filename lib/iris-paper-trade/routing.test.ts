@@ -9,7 +9,7 @@ const setupHistory: CoPilotHistoryMessage[] = [
   {
     role: "assistant",
     content:
-      "Exur setup — not a profit guarantee. No paper trade is open yet.\n\nETH LONG",
+      "Exur setup. Not a profit guarantee. No paper trade is open yet.\n\nETH LONG",
   },
 ]
 

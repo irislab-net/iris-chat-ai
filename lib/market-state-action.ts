@@ -92,14 +92,14 @@ export function getMarketStateActionPresentation(
         displayStatus: displayStatus === "—" ? "WAIT" : displayStatus,
         interpretation:
           "Models have not locked a clear long or short on this candle.",
-        nextAction: "Don't trade yet — wait for a clear signal.",
+        nextAction: "Don't trade yet. Wait for a clear signal.",
       }
     case "no_setup":
       return {
         kind,
         displayStatus,
         interpretation: "Nothing actionable is set up on this candle.",
-        nextAction: "Stay out — no setup to take.",
+        nextAction: "Stay out. No setup to take.",
       }
     case "long":
       return {
@@ -107,7 +107,7 @@ export function getMarketStateActionPresentation(
         displayStatus,
         interpretation:
           "Desk bias is long. This is a lean, not a buy order.",
-        nextAction: "Long bias — watch for your long entry.",
+        nextAction: "Long bias. Watch for your long entry.",
       }
     case "short":
       return {
@@ -115,7 +115,7 @@ export function getMarketStateActionPresentation(
         displayStatus,
         interpretation:
           "Desk bias is short. This is a lean, not a sell order.",
-        nextAction: "Short bias — watch for your short entry.",
+        nextAction: "Short bias. Watch for your short entry.",
       }
     case "unknown":
     default:
@@ -123,7 +123,7 @@ export function getMarketStateActionPresentation(
         kind: "unknown",
         displayStatus,
         interpretation: null,
-        nextAction: "Stance unclear — check Analysis first.",
+        nextAction: "Stance unclear. Check Analysis first.",
       }
   }
 }

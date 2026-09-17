@@ -56,8 +56,8 @@ function RealTradingWishlistDialog({
               Trade for real from this desk
             </DialogTitle>
             <DialogDescription className="max-w-sm text-center text-xs leading-relaxed">
-              Think you&apos;d open live positions here? Join the waitlist —
-              we&apos;ll turn on real trading in this workspace when the tools
+              Think you&apos;d open live positions here? Join the waitlist.
+              We&apos;ll turn on real trading in this workspace when the tools
               are ready.
             </DialogDescription>
           </DialogHeader>
@@ -94,7 +94,7 @@ function RealTradingWishlistDialog({
                 You&apos;re on the waitlist
               </Badge>
               <p className="text-center text-[11px] leading-relaxed text-muted-foreground">
-                We&apos;ll enable live trading here first — no spam, just the
+                We&apos;ll enable live trading here first. No spam, just the
                 launch note.
               </p>
               <Button

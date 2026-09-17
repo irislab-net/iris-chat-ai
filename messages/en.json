@@ -54,7 +54,7 @@
       "headline2": "Exchange reserves drop to lowest level since March",
       "headline3": "Stablecoin supply expands on major chains",
       "userQ": "Does the ETF headline matter for ETH today?",
-      "aiReply": "Yes — inflows usually lift beta first. Watch whether funding stays negative while spot leads."
+      "aiReply": "Yes. Inflows usually lift beta first. Watch whether funding stays negative while spot leads."
     },
     "features": {
       "eyebrow": "The app",
@@ -83,7 +83,7 @@
         "askTitle": "Ask",
         "askBody": "Follow up on a story or the wider tape.",
         "focusedTitle": "Focused",
-        "focusedBody": "Short answers — not endless chat."
+        "focusedBody": "Short answers, not endless chat."
       }
     },
     "demo": {
@@ -172,14 +172,14 @@
       "title": "From the feed",
       "items": {
         "0": { "text": "Scored headlines cut the scroll. I know what to read first.", "name": "Maya Carter", "role": "Execution Lead" },
-        "1": { "text": "News and Exur in one tab — finally.", "name": "Bilal Ahmed", "role": "Trading Ops" },
+        "1": { "text": "News and Exur in one tab. Finally.", "name": "Bilal Ahmed", "role": "Trading Ops" },
         "2": { "text": "Fast answers on the story I am already reading.", "name": "Saman Malik", "role": "Risk Analyst" },
         "3": { "text": "Team was productive in an afternoon. Simple and focused.", "name": "Omar Raza", "role": "Desk Manager" },
         "4": { "text": "The chat stays tied to the market I picked.", "name": "Zainab Hussain", "role": "Macro Trader" },
         "5": { "text": "Morning scan takes minutes. Built for readers, not dashboards.", "name": "Aliza Khan", "role": "Portfolio Associate" },
-        "6": { "text": "Calm UI. Read, ask, move on — no tab hopping.", "name": "Farhan Siddiqui", "role": "Market Research" },
+        "6": { "text": "Calm UI. Read, ask, move on. No tab hopping.", "name": "Farhan Siddiqui", "role": "Market Research" },
         "7": { "text": "Free tier is real. Plus unlocked exactly where we needed it.", "name": "Sana Sheikh", "role": "Strategy Lead" },
-        "8": { "text": "Keeps follow-ups grounded in the headlines — not random prompts.", "name": "Hassan Ali", "role": "Systems Trader" }
+        "8": { "text": "Keeps follow-ups grounded in the headlines, not random prompts.", "name": "Hassan Ali", "role": "Systems Trader" }
       }
     },
     "faq": {
@@ -190,9 +190,9 @@
         "whatQ": "What is Exur?",
         "whatA": "Exur is a focused market-intelligence app. Scored news bullets for the market you select, plus an Exur co-pilot when you connect an account. Browse headlines without signing in.",
         "newsQ": "What are news bullets?",
-        "newsA": "Curated headlines ranked for relevance to your selected market — so you can scan what matters instead of scrolling feeds.",
+        "newsA": "Curated headlines ranked for relevance to your selected market, so you can scan what matters instead of scrolling feeds.",
         "chatbotQ": "Is Exur a generic chatbot?",
-        "chatbotA": "No. Exur is built for market context. It reads the headlines and market you have open, then returns focused answers — not open-ended chat.",
+        "chatbotA": "No. Exur is built for market context. It reads the headlines and market you have open, then returns focused answers, not open-ended chat.",
         "askQ": "What can I ask Exur?",
         "askA": "Anything about the active market or a headline you are reading: why it matters, what to watch next, or how it fits the wider tape.",
         "accountQ": "Do I need an account?",
@@ -200,7 +200,7 @@
         "freeQ": "How do Free and Plus differ?",
         "freeA": "Free includes the full news feed with a daily co-pilot send cap and a weekly usage limit. Plus raises both for people who use Exur every session.",
         "profitsQ": "Does Exur guarantee trading profits?",
-        "profitsA": "No. News scores and co-pilot replies support your process — they are not promises of return, win rate, or accuracy. Exur is analysis, not financial advice."
+        "profitsA": "No. News scores and co-pilot replies support your process. They are not promises of return, win rate, or accuracy. Exur is analysis, not financial advice."
       }
     },
     "footer": {
@@ -266,13 +266,13 @@
     }
   },
   "metadata": {
-    "homeTitle": "Exur — Market News & AI Co-Pilot",
+    "homeTitle": "Exur: Market News & AI Co-Pilot",
     "homeDescription": "Scored crypto headlines and Exur co-pilot chat for the market you select.",
-    "homeOg": "News bullets and Exur chat — one focused app."
+    "homeOg": "News bullets and Exur chat in one focused app."
   },
   "notFound": {
     "title": "Page not found",
-    "body": "This route doesn't exist — or it moved. Head back to the desk."
+    "body": "This route doesn't exist, or it moved. Head back to the desk."
   },
   "workspace": {
     "desk": "Desk",
@@ -302,7 +302,7 @@
     "historyDrawerSubtitle": "AI market co-pilot",
     "dockChat": "Dock chat",
     "deskToolsBannerTitle": "Demo trading",
-    "deskToolsBannerBody": "Practice on live prices with chart, orders, and paper positions — no real funds.",
+    "deskToolsBannerBody": "Practice on live prices with chart, orders, and paper positions. No real funds.",
     "deskToolsBannerDismiss": "Dismiss",
     "fullScreenChat": "Full screen chat",
     "newChat": "New chat",
@@ -325,7 +325,7 @@
     "composerToolSignalDesc": "Get a trade setup for any asset",
     "composerToolSignalPlaceholder": "ETH, BTC, SOL…",
     "composerRemoveTool": "Remove tool",
-    "composerHint": "Exur provides market information only — not financial advice",
+    "composerHint": "Exur provides market information only, not financial advice",
     "lowSignalUserReply": "I didn't quite get that. Ask about ETH or BTC, market news, or describe the setup you want Exur to check.",
     "signalCardTitle": "Trade signal",
     "signalCardEntry": "Entry",
@@ -335,11 +335,11 @@
     "signalCardSize": "Size",
     "signalCardRisk": "Risk",
     "signalCardRewardRisk": "R:R",
-    "signalCardDisclaimer": "Analysis only — not financial advice. Not a profit guarantee.",
+    "signalCardDisclaimer": "Analysis only, not financial advice. Not a profit guarantee.",
     "samplePromptsLabel": "Starters",
     "emptySignedIn": "Start from a prompt or ask in plain language.",
-    "emptySignedOut": "Explore the chat — sign in when you want a real answer.",
-    "emptyGuestTrial": "Ask Exur anything — you get 3 free messages per week before signing in.",
+    "emptySignedOut": "Explore the chat. Sign in when you want a real answer.",
+    "emptyGuestTrial": "Ask Exur anything. You get 3 free messages per week before signing in.",
     "fetchingContext": "Fetching live market context…",
     "evaluatingSetup": "Evaluating setup against live evidence…",
     "chartSetLevel": "Click chart to set {level} · Esc cancel",

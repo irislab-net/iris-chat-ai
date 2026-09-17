@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     canonical: APP_PATH,
   },
   openGraph: {
-    title: `${SITE_TITLE} — News`,
+    title: `${SITE_TITLE} · News`,
     description: SITE_DESCRIPTION,
     url: APP_PATH,
     type: "website",

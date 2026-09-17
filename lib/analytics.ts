@@ -52,6 +52,7 @@ export type LoginSource =
   | "data_access_notice"
   | "data_access_banner"
   | "upgrade"
+  | "one_tap"
 
 type AnalyticsParams = Record<string, string | number | boolean | undefined>
 

@@ -74,7 +74,7 @@ function MarketContextWorkspaceInner({
                 News
               </h1>
               <p className="mt-1 max-w-xl text-sm text-muted-foreground">
-                Scored headlines and tape — not a raw wire.
+                Scored headlines and tape, not a raw wire.
               </p>
             </div>
             <div className="flex shrink-0 items-center gap-2">

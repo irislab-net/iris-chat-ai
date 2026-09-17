@@ -2,6 +2,7 @@
 
 import { AboutSection } from "@/components/landing/modern/about-section"
 import { BentoSection } from "@/components/landing/modern/bento-section"
+import { FaqSection } from "@/components/landing/modern/faq-section"
 import { GoalsSection } from "@/components/landing/modern/goals-section"
 import { HeroLiquidGlassBg } from "@/components/landing/modern/hero-liquid-glass-bg"
 import { HeroSection } from "@/components/landing/modern/hero-section"
@@ -15,6 +16,7 @@ import { jetbrainsMono, plusJakarta } from "@/components/landing/modern/fonts"
 import {
   landingHeroCard,
   landingHeroGlass,
+  landingHeroToMain,
   landingMainStack,
   landingPageStack,
   landingShell,
@@ -50,11 +52,12 @@ export function ModernLandingPage() {
             </div>
           </div>
 
-          <main className={landingMainStack}>
+          <main className={cn(landingMainStack, landingHeroToMain)}>
             <GoalsSection />
             <BentoSection />
             <AboutSection />
             <TestimonialsSection />
+            <FaqSection />
             <PricingSection />
           </main>
 

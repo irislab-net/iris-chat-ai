@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og"
 
-export const alt = "Exur — AI Trading Signals & Crypto Market Co-Pilot"
+export const alt = "Exur: AI Financial Assistant"
 export const size = { width: 1200, height: 630 }
 export const contentType = "image/png"
 
@@ -68,7 +68,7 @@ export default function OpenGraphImage() {
               maxWidth: 900,
             }}
           >
-            AI trading signals & co-pilot
+            Your money, handled.
           </div>
           <div
             style={{
@@ -78,7 +78,7 @@ export default function OpenGraphImage() {
               lineHeight: 1.35,
             }}
           >
-            Crypto market intelligence and Exur guidance in one desk.
+            AI financial assistant. Ask in plain language.
           </div>
         </div>
 

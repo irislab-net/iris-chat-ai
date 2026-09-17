@@ -98,7 +98,7 @@ export function splitSignalAssistantMessage(input: {
   }
 
   const headerLine =
-    content.match(/^(?:Exur|IRIS) setup —[^\n]*/i)?.[0]?.trim() ?? ""
+    content.match(/^(?:Exur|IRIS) setup[^\n]*/i)?.[0]?.trim() ?? ""
 
   let tailText = ticket.thesis?.trim() ?? ""
   if (isGenericThesis(tailText)) {

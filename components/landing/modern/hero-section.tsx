@@ -2,7 +2,7 @@
 
 import { HeroComposeDemo } from "@/components/landing/modern/hero-compose-demo"
 import { HERO } from "@/lib/landing-modern-data"
-import { landingInner } from "@/lib/landing-modern-styles"
+import { landingInner, landingTitleHero } from "@/lib/landing-modern-styles"
 import { cn } from "@/lib/utils"
 
 export function HeroSection() {
@@ -15,9 +15,7 @@ export function HeroSection() {
         )}
       >
         <div className="shrink-0 text-center">
-          <h1
-            className="font-(family-name:--font-display) text-[2.35rem] font-normal leading-[1.06] tracking-tight text-[#0F172A] sm:text-5xl lg:text-[3.25rem]"
-          >
+          <h1 className={landingTitleHero}>
             {HERO.titleBefore}
             <br className="sm:hidden" />
             {" "}

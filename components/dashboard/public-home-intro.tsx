@@ -19,11 +19,10 @@ function PublicHomeIntro() {
             id="iris-home-heading"
             className="text-base font-medium tracking-tight text-muted-foreground md:text-lg"
           >
-            Public market intelligence
+            Your AI financial assistant
           </h1>
           <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
-            Stance, context, and news bullets for the market you select — not a
-            raw news dump.
+            Ask what’s going on, and what it means for you.
           </p>
         </div>
         <TryPaperTradingButton className="self-start sm:self-center" />

@@ -1316,7 +1316,7 @@ function MobileIrisOverlay({
           <div className="flex min-h-full flex-col justify-end gap-2 py-1">
             {!userMsg && !aiMsg && !aiThinking ? (
               <p className="py-2 text-center text-[10px] leading-relaxed text-muted-foreground/80">
-                Ask about the live signal — Exur drafts the bracket on your
+                Ask about the live signal. Exur drafts the bracket on your
                 ticket.
               </p>
             ) : null}

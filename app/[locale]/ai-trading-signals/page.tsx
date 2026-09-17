@@ -23,10 +23,9 @@ export const metadata: Metadata = {
   title: AI_SIGNALS_TITLE,
   description: AI_SIGNALS_DESCRIPTION,
   keywords: [
-    "AI trading signals",
-    "AI trading signal tool",
-    "crypto trading signals",
-    "AI crypto trading",
+    "AI financial assistant",
+    "personal finance AI",
+    "money assistant",
     SITE_NAME,
   ],
   robots: ROOT_ROBOTS,
@@ -51,30 +50,26 @@ export const metadata: Metadata = {
 function AiTradingSignalsPage() {
   return (
     <>
-      <JsonLd data={faqPageJsonLd()} />
+      <JsonLd id="json-ld-ai-signals-faq" data={faqPageJsonLd()} />
       <LegalDocShell
         title={AI_SIGNALS_TITLE}
         meta={<p>Public product page · {SITE_NAME}</p>}
         intro={
           <>
             <LegalP>
-              Exur is an AI trading-signal tool for crypto. The public desk
-              shows market pulse, model context, and news bullets for the candle
-              you select. Signed-in users can ask the Exur co-pilot in plain
-              language. This is analysis support — not brokerage execution and
-              not a promise of profit.
+              Exur is an AI financial assistant. Ask about spending, savings,
+              and what’s next, in your own words. This is decision support,
+              not brokerage, and not a promise of profit.
             </LegalP>
           </>
         }
         footerLinks={<LegalNavButtons />}
       >
-        <LegalSection id="signals-what" title="What the signals are">
+        <LegalSection id="signals-what" title="What Exur is">
           <LegalP>
-            Exur organizes market information into a readable stance: headline
-            pulse, how models sit relative to each other, payoff shape, and
-            short news bullets with source context. That package is the trading
-            signal — a structured read of the current candle, not a raw feed and
-            not an automated order.
+            Exur helps you see where your money is going, spot what actually
+            matters, and ask for a next step in plain language. Not a raw feed.
+            Not an automated order.
           </LegalP>
           <LegalList>
             {PRODUCT_FEATURE_LIST.map((feature) => (
@@ -85,10 +80,9 @@ function AiTradingSignalsPage() {
 
         <LegalSection id="signals-who" title="Who it is for">
           <LegalP>
-            Traders who want an AI co-pilot on crypto markets — especially ETH
-            pulse today — without handing funds to a bot. Guests can use the
-            public desk at the site root. Connecting an account unlocks
-            co-pilot chat and member tools when available.
+            Anyone who wants a clear read on their money: spending, savings,
+            and tradeoffs, without another chart-heavy app. Sign in when you
+            want a co-pilot that remembers you.
           </LegalP>
         </LegalSection>
 

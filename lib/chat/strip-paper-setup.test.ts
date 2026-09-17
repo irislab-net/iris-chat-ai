@@ -8,7 +8,7 @@ describe("stripUnrequestedIrisSetupFromReply", () => {
 
 1. Bitcoin holds above $77k.
 
-Exur setup — not a profit guarantee. No paper trade is open yet.
+Exur setup. Not a profit guarantee. No paper trade is open yet.
 
 BTC LONG
 Setup: Model long continuation`

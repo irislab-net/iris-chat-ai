@@ -93,7 +93,7 @@ function StanceAlertsPermissionDialog() {
             <DialogDescription className="text-pretty text-base leading-relaxed">
               Get a soft chime and an OS notification when the desk flips to{" "}
               <span className="font-medium text-foreground">LONG</span> or{" "}
-              <span className="font-medium text-foreground">SHORT</span> — even
+              <span className="font-medium text-foreground">SHORT</span>, even
               if you&apos;re in another tab.
             </DialogDescription>
           </DialogHeader>

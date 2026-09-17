@@ -65,7 +65,7 @@ describe("parseTradeSetupFromText", () => {
   it("flags explicit setup blocks but not casual SL/TP mentions", () => {
     expect(
       isStructuredSignalSetupContent(
-        "Exur setup — not a profit guarantee.\n\nETH SHORT\nSetup: fade\nEntry 2473\nSL 2487\nTP 2441"
+        "Exur setup. Not a profit guarantee.\n\nETH SHORT\nSetup: fade\nEntry 2473\nSL 2487\nTP 2441"
       )
     ).toBe(true)
     expect(

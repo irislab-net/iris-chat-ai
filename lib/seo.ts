@@ -4,28 +4,26 @@ export const SITE_URL =
   process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "") ??
   "https://intel.irislab.info"
 
-export const SITE_TITLE = "Exur — AI Trading Signals & Crypto Market Co-Pilot"
+export const SITE_TITLE = "Exur: AI Financial Assistant"
 export const SITE_TITLE_TEMPLATE = "%s · Exur"
 
 export const SITE_DESCRIPTION =
-  "Exur is an AI trading-signal and market-intelligence co-pilot for crypto. Read ETH pulse, model context, news analytics, and Trade Desk guidance — analysis tools, not guaranteed profits."
+  "Exur is your AI financial assistant. See where your money is going, ask in plain language, and get a clear next step, not another feed."
 
 export const AI_SIGNALS_PATH = "/ai-trading-signals"
-export const AI_SIGNALS_TITLE = "AI Trading Signals for Crypto"
+export const AI_SIGNALS_TITLE = "Your AI financial assistant"
 export const AI_SIGNALS_DESCRIPTION =
-  "Exur is an AI crypto trading-signal tool: public market pulse, model boards, news analytics, and an Exur co-pilot. Decision support for traders — not a broker and not a promise of profit."
+  "Exur helps you see spending, savings, and tradeoffs in one place. Ask questions grounded in your money. Decision support, not a broker, not a promise of profit."
 
 export const SITE_KEYWORDS = [
   "Exur",
-  "AI trading signals",
-  "AI trading signal tool",
-  "crypto trading signals",
-  "AI crypto trading",
-  "ETH signals",
-  "crypto market intelligence",
-  "AI trading co-pilot",
-  "market pulse",
-  "Trade Desk",
+  "AI financial assistant",
+  "personal finance AI",
+  "money assistant",
+  "spending insights",
+  "savings plan",
+  "financial co-pilot",
+  "ask about your money",
 ] as const
 
 export const SOCIAL_LINKS = {
@@ -61,38 +59,38 @@ export const AI_CRAWLER_USER_AGENTS = [
 ] as const
 
 export const PRODUCT_FEATURE_LIST = [
-  "AI trading signals and market pulse for crypto",
-  "ETH insight and model-board context",
-  "Crypto news analytics (distilled headlines, not a raw wire)",
+  "AI financial assistant in plain language",
+  "See where your money is going",
+  "Spending, savings, and goals in one view",
   "Exur co-pilot chat for signed-in users",
-  "Paper-trading practice desk",
+  "Clear next steps, not another feed",
 ] as const
 
 export const AI_SIGNALS_FAQS = [
   {
     question: "What is Exur?",
     answer:
-      "Exur is an AI market-intelligence desk and trading-signal co-pilot for cryptocurrency. The public homepage shows market pulse, model context, and news bullets. Signed-in users can talk to the Exur co-pilot in plain language.",
+      "Exur is an AI financial assistant. Ask about spending, savings, and what’s next, in your own words.",
   },
   {
-    question: "Is Exur an AI trading signal tool?",
+    question: "Is Exur a trading-signal tool?",
     answer:
-      "Yes. Exur is an AI trading-signal tool for crypto: it organizes stance, model context, and Trade Desk guidance for the candle you are looking at. It is decision support for analysis, not a substitute for your own judgment.",
+      "No. Exur is built to help you understand your money and the tradeoffs in front of you. It is decision support, not a broker.",
   },
   {
-    question: "Does Exur execute live trades?",
+    question: "Does Exur move my money?",
     answer:
-      "No. This site does not execute brokerage orders. Paper trading is a practice desk. Turn-by-turn Trade Desk guidance is product direction, not live order execution here.",
+      "No. Exur does not execute trades or move funds. You stay in control.",
   },
   {
     question: "Is Exur free to use?",
     answer:
-      "The public market-intelligence homepage is available without an account. Co-pilot chat and member tools require connecting an account.",
+      "You can start without paying. Connect an account for a co-pilot that remembers you.",
   },
   {
-    question: "Does Exur guarantee trading profits?",
+    question: "Does Exur guarantee returns?",
     answer:
-      "No. Insights and co-pilot replies are tools for analysis. Nothing on Exur promises profit, risk-free trades, or guaranteed accuracy.",
+      "No. Insights help you see clearly. Nothing on Exur promises profit or guaranteed accuracy.",
   },
 ] as const
 
@@ -193,10 +191,10 @@ export function organizationJsonLd() {
     description: SITE_DESCRIPTION,
     sameAs: [SOCIAL_LINKS.x, SOCIAL_LINKS.telegram],
     knowsAbout: [
-      "AI trading signals",
-      "cryptocurrency",
-      "market intelligence",
-      "Ethereum",
+      "AI financial assistant",
+      "personal finance",
+      "spending insights",
+      "savings goals",
     ],
   }
 }
@@ -227,7 +225,7 @@ export function webApplicationJsonLd() {
     alternateName: SITE_TITLE,
     url: SITE_URL,
     applicationCategory: "FinanceApplication",
-    applicationSubCategory: "AI trading signals",
+    applicationSubCategory: "AI financial assistant",
     operatingSystem: "Any",
     browserRequirements: "Requires a modern web browser",
     description: SITE_DESCRIPTION,
@@ -270,13 +268,13 @@ export function llmsTxt() {
     "",
     `> ${SITE_DESCRIPTION}`,
     "",
-    `${SITE_NAME} (also called Exur or Exur) is an AI trading-signal and crypto market-intelligence co-pilot at ${SITE_URL}.`,
+    `${SITE_NAME} is an AI financial assistant at ${SITE_URL}.`,
     "",
     "## Pages",
     "",
     `- Landing: ${absoluteUrl("/home")}`,
     `- Market desk (Launch App): ${absoluteUrl("/")}`,
-    `- AI trading signals: ${absoluteUrl(AI_SIGNALS_PATH)}`,
+    `- AI financial assistant: ${absoluteUrl(AI_SIGNALS_PATH)}`,
     `- About: ${absoluteUrl("/about")}`,
     `- Terms: ${absoluteUrl("/terms")}`,
     `- Privacy: ${absoluteUrl("/privacy")}`,

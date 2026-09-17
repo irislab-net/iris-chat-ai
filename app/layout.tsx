@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next"
 import { headers } from "next/headers"
+import Script from "next/script"
 import { getLocale } from "next-intl/server"
 
 import "./globals.css"
@@ -135,13 +136,14 @@ export default async function RootLayout({
     >
       <body>
         <GoogleTagManager enabled={chatGtmEnabled} />
-        <script
-          suppressHydrationWarning
+        <Script
+          id="browser-chrome-init"
+          strategy="beforeInteractive"
           dangerouslySetInnerHTML={{ __html: BROWSER_CHROME_INIT_SCRIPT }}
         />
-        <JsonLd data={organizationJsonLd()} />
-        <JsonLd data={websiteJsonLd()} />
-        <JsonLd data={webApplicationJsonLd()} />
+        <JsonLd id="json-ld-organization" data={organizationJsonLd()} />
+        <JsonLd id="json-ld-website" data={websiteJsonLd()} />
+        <JsonLd id="json-ld-web-app" data={webApplicationJsonLd()} />
         <ThemeProvider
           attribute="class"
           themes={["light", "dark"]}

@@ -7,6 +7,15 @@ export { CHAT_API_ORIGIN } from "@/lib/api/origins"
 
 export const API_BASE = "https://api.exur.ai"
 
+/** Google OAuth web client ID — required for One Tap (GIS). */
+export function getGoogleClientId() {
+  return process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID?.trim() ?? ""
+}
+
+export function isGoogleOneTapConfigured() {
+  return Boolean(getGoogleClientId())
+}
+
 const CHAT_APP_HOST = "chat.irislab.info"
 
 /** Auth cookie calls must be same-origin (via app route proxy) so Domain=.irislab.info cookies are sent. */

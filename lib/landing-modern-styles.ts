@@ -2,16 +2,51 @@ export const LANDING_EASE = [0.16, 1, 0.3, 1] as const
 
 export const landingDisplay = "font-[family-name:var(--font-display)]"
 
+/** Apple-like display titles — regular weight, tight tracking, soft leading. */
+export const landingTitleHero =
+  `${landingDisplay} text-[2.35rem] font-normal leading-[1.06] tracking-[-0.025em] text-[#0F172A] sm:text-5xl lg:text-[3.25rem]`
+
+export const landingTitleSection =
+  `${landingDisplay} text-3xl font-normal leading-[1.08] tracking-[-0.025em] text-[#0F172A] sm:text-4xl lg:text-[2.75rem]`
+
+export const landingTitleCard =
+  `${landingDisplay} text-lg font-normal leading-snug tracking-[-0.015em] text-[#0F172A]`
+
+export const landingTitleCardLg =
+  `${landingDisplay} text-2xl font-normal leading-[1.12] tracking-[-0.02em] text-[#0F172A] sm:text-[1.75rem]`
+
+export const landingTitleBrand =
+  `${landingDisplay} text-lg font-normal tracking-[-0.02em] text-[#0F172A]`
+
+export const landingTitleFooter =
+  `${landingDisplay} text-2xl font-normal tracking-[-0.02em] text-[#0F172A] sm:text-3xl`
+
+export const landingTitleFooterLg =
+  `${landingDisplay} text-[1.65rem] font-normal leading-[1.12] tracking-[-0.025em] text-[#0F172A] sm:text-3xl lg:text-[2.25rem]`
+
+export const landingTitleQuote =
+  `${landingDisplay} text-lg font-normal leading-snug tracking-[-0.015em] text-[#0F172A] sm:text-xl`
+
+export const landingTitlePlan =
+  `${landingDisplay} text-xl font-normal tracking-[-0.02em] text-[#0F172A]`
+
+export const landingTitlePrice =
+  `${landingDisplay} text-5xl font-normal tracking-[-0.03em] text-[#0F172A]`
+
 export const landingSection = "scroll-mt-24"
 
 /** Rounded section shell + vertical padding (use on main content blocks). */
 export const landingSectionBody =
   "relative isolate overflow-hidden rounded-[2.5rem] py-16 sm:py-20 lg:py-24"
 
-/** White space between hero, sections, and footer. */
-export const landingMainStack = "flex flex-col gap-4 sm:gap-5 lg:gap-6"
+/** White space between sections inside main (min 50px). */
+export const landingMainStack = "flex flex-col gap-[50px] sm:gap-20 lg:gap-24"
 
-export const landingPageStack = `${landingMainStack}`
+/** White space between nav, hero, main, and footer (min 50px). */
+export const landingPageStack = "flex flex-col gap-[50px] sm:gap-16 lg:gap-20"
+
+/** Extra space between hero card and first section (on top of page stack gap). */
+export const landingHeroToMain = "mt-32 sm:mt-32 lg:mt-40"
 
 /** Viewport edge spacing — padding keeps mx-auto centering intact (margin gutters break it). */
 export const landingFrame = "px-4.5 sm:px-3 lg:px-4"
@@ -31,15 +66,14 @@ export const landingCardRadius = "rounded-[2.5rem]"
 export const landingCardShell = `relative isolate overflow-hidden ${landingCardRadius}`
 
 /** Hero card — no overflow clip so compose bubble shadows stay visible. */
-export const landingHeroCard = `relative isolate ${landingCardRadius} mt-3 sm:mt-5`
+export const landingHeroCard = `relative isolate ${landingCardRadius} mt-3 mb-6 sm:mt-5 sm:mb-0`
 
 export const landingFooterCard = `${landingCardShell} mb-3 sm:mb-5 lg:mb-8`
 
 export const landingBadge =
   "inline-flex items-center rounded-full bg-[#F1F5F9] px-4 py-1.5 text-sm font-medium text-[#64748B]"
 
-export const landingHeading =
-  `${landingDisplay} text-3xl font-semibold leading-[1.15] tracking-tight text-[#0F172A] sm:text-4xl lg:text-[2.75rem]`
+export const landingHeading = landingTitleSection
 
 export const landingSubheading =
   "mx-auto mt-5 max-w-2xl text-base leading-relaxed text-[#64748B] sm:text-lg"
@@ -66,6 +100,16 @@ export const landingGlassPill =
 export const landingGlassSheen =
   "pointer-events-none absolute inset-0 bg-[linear-gradient(145deg,rgba(255,255,255,0.72)_0%,rgba(255,255,255,0.18)_38%,rgba(255,255,255,0.04)_62%,rgba(255,255,255,0)_100%)]"
 
+/** Desktop nav link group — frosted pill */
+export const landingNavPill =
+  "flex items-center gap-0.5 rounded-full bg-white/42 p-1 shadow-[0_8px_28px_rgba(15,23,42,0.05),inset_0_1px_1px_rgba(255,255,255,0.85)] backdrop-blur-xl"
+
+export const landingNavLinkActive =
+  "bg-white font-semibold text-[#0F172A] shadow-[0_2px_10px_rgba(15,23,42,0.07)]"
+
+export const landingNavLinkInactive =
+  "font-medium text-[#94A3B8] hover:bg-white/45 hover:text-[#475569]"
+
 /** Nav icon button — liquid glass */
 export const landingGlassNavIcon =
   `${landingGlassSurface} size-10 shrink-0 rounded-full bg-white/50 shadow-[0_12px_36px_rgba(15,23,42,0.08),inset_0_1px_1px_rgba(255,255,255,0.95),inset_0_-1px_2px_rgba(255,255,255,0.32)]`
@@ -76,6 +120,10 @@ export const landingGlassNavCta =
 
 export const landingGlassBlueSheen =
   "pointer-events-none absolute inset-0 bg-[linear-gradient(145deg,rgba(255,255,255,0.42)_0%,rgba(255,255,255,0.14)_40%,rgba(255,255,255,0.05)_62%,transparent_100%)]"
+
+/** Circular liquid-glass chip — chat avatars beside hero bubbles. */
+export const landingGlassOrb =
+  `${landingGlassSurface} inline-flex size-8 items-center justify-center rounded-full bg-white/52 shadow-[0_10px_28px_rgba(15,23,42,0.08),inset_0_1px_1px_rgba(255,255,255,0.96),inset_0_-1px_2px_rgba(255,255,255,0.32)]`
 
 export const landingGlassBubbleUser =
   `${landingGlassSurface} rounded-3xl rounded-br-md bg-white/48`

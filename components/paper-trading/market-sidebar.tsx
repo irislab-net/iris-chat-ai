@@ -488,7 +488,7 @@ function VipSignalPanel({ summary }: { summary: InsightSummary }) {
           ) : (
             <>
               <p className="mt-2 text-[11px] leading-relaxed text-foreground">
-                Side, entry, stop / take, and risk framing — precise setups
+                Side, entry, stop / take, and risk framing: precise setups
                 matched to this market.
               </p>
               <p className="mt-1.5 text-[11px] leading-relaxed text-muted-foreground">

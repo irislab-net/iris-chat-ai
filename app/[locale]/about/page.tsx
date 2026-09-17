@@ -55,7 +55,7 @@ function AboutPage() {
   return (
     <AppShell defaultChatOpen={false}>
       <main className="mx-auto w-full max-w-7xl px-4 py-8 md:px-6 md:py-10">
-        <JsonLd data={aboutPageLd} />
+        <JsonLd id="json-ld-about" data={aboutPageLd} />
 
         <header className="relative mb-10 min-h-88 overflow-hidden rounded-xl md:min-h-104">
           <div className="absolute inset-0" aria-hidden>
@@ -80,7 +80,7 @@ function AboutPage() {
               <p className="mt-4 text-base leading-relaxed text-muted-foreground">
                 Exur is a market-intel desk: public insight for the current
                 candle, model context, news bullets (distilled headlines and
-                summaries — not a raw wire), and an Exur co-pilot you can talk
+                summaries, not a raw wire), and an Exur co-pilot you can talk
                 to in plain language when you connect an account.
               </p>
             </div>
@@ -95,7 +95,7 @@ function AboutPage() {
             What Exur is
           </h2>
           <p className="text-sm leading-relaxed text-muted-foreground">
-            We&apos;re building a tool away from marketing theater — no slides,
+            We&apos;re building a tool away from marketing theater: no slides,
             no empty promises, just the product. The homepage is the desk: pulse
             stance, model board, payoff geometry, and news bullets in one place,
             with Exur available as a co-pilot for signed-in users.
@@ -118,9 +118,9 @@ function AboutPage() {
               public desk
             </Link>{" "}
             and see market pulse, insights, model context, and news bullets
-            without signing in. Freshness labels use timestamps from the API —
-            such as when an insight was generated or when a story was published
-            — not login state. We do not treat authentication as proof of “live”
+            without signing in. Freshness labels use timestamps from the API,
+            such as when an insight was generated or when a story was published,
+            not login state. We do not treat authentication as proof of “live”
             or delayed data.
           </p>
         </section>
@@ -135,9 +135,9 @@ function AboutPage() {
           <p className="text-sm leading-relaxed text-muted-foreground">
             Exur organizes market information for the candle you&apos;re looking
             at: headline stance, how models sit relative to each other, payoff
-            shape, and news bullets — short distilled stories with source
+            shape, and news bullets: short distilled stories with source
             context, not a raw news feed. The co-pilot is there to answer
-            questions about that desk in plain English — support for analysis,
+            questions about that desk in plain English, as support for analysis,
             not a substitute for your own judgment.
           </p>
         </section>
@@ -152,7 +152,7 @@ function AboutPage() {
           <p className="text-sm leading-relaxed text-muted-foreground">
             Connecting with Google unlocks account features such as co-pilot chat.
             Trade Desk and related premium guidance are treated as private /
-            member capabilities when available — turn-by-turn desk guidance is
+            member capabilities when available. Turn-by-turn desk guidance is
             the product direction, not brokerage order execution on this site.
             Public pages do not expose private account data for search engines.
           </p>
@@ -168,7 +168,7 @@ function AboutPage() {
           <p className="text-sm leading-relaxed text-muted-foreground">
             Markets change. Timestamps describe when available content was
             generated or published. Insights and co-pilot replies are tools for
-            analysis and decision-making — not guaranteed outcomes. Nothing on
+            analysis and decision-making, not guaranteed outcomes. Nothing on
             Exur promises profit, risk-free trades, or guaranteed accuracy.
           </p>
         </section>

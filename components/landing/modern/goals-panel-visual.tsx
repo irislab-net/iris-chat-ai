@@ -4,7 +4,7 @@ import { motion, useReducedMotion } from "motion/react"
 import { UnlinkIcon } from "lucide-react"
 import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from "react"
 
-import { IrisLabLogo } from "@/components/brand/iris-lab-logo"
+import { AnimatedIrisLabLogo } from "@/components/brand/animated-iris-lab-logo"
 import type { FeatureScrollStep, FeatureVisualRow } from "@/lib/landing-modern-data"
 import {
   landingGlassBubbleAi,
@@ -17,6 +17,14 @@ import { cn } from "@/lib/utils"
 const EASE_OUT = [0.22, 1, 0.36, 1] as const
 /** Matches the Exur step panel — keep all goal visuals at the same height. */
 const GOALS_PANEL_SHELL_MIN_H = "min-h-[15.75rem]"
+const GOALS_PANEL_SHELL_COMPACT_MIN_H =
+  "min-h-[11rem] sm:min-h-[14rem] lg:min-h-[15.75rem]"
+
+const PanelCompactContext = createContext(false)
+
+function usePanelCompact() {
+  return useContext(PanelCompactContext)
+}
 
 type PanelMotionContextValue = {
   cycle: number
@@ -48,16 +56,20 @@ function useActivationCycle(isActive: boolean) {
 
 function PanelMotionProvider({
   isActive,
+  enableMotion = true,
   children,
 }: {
   isActive: boolean
+  enableMotion?: boolean
   children: ReactNode
 }) {
   const reduceMotion = useReducedMotion()
   const cycle = useActivationCycle(isActive)
 
   return (
-    <PanelMotionContext.Provider value={{ cycle, enabled: isActive && !reduceMotion }}>
+    <PanelMotionContext.Provider
+      value={{ cycle, enabled: enableMotion && isActive && !reduceMotion }}
+    >
       {children}
     </PanelMotionContext.Provider>
   )
@@ -76,16 +88,22 @@ function GlassSheen({ className }: { className?: string }) {
 }
 
 function PanelLogoMark() {
+  const { enabled } = usePanelMotion()
+
   return (
     <span
       className={cn(
         landingGlassNavIcon,
-        "relative flex size-10 items-center justify-center overflow-hidden rounded-full bg-white/52 p-1.5"
+        "relative flex size-8 items-center justify-center overflow-hidden rounded-full bg-white/52 p-1.5 sm:size-10"
       )}
       aria-hidden
     >
       <GlassSheen className="rounded-full" />
-      <IrisLabLogo decorative size={28} variant="on-light" className="relative z-10 size-7" />
+      <AnimatedIrisLabLogo
+        play={enabled}
+        replayOnHover
+        className="relative z-10 size-5 sm:size-7"
+      />
     </span>
   )
 }
@@ -100,6 +118,7 @@ function ExurPanelShell({
   footer?: ReactNode
 }) {
   const { enabled, cycle } = usePanelMotion()
+  const compact = usePanelCompact()
   const motionProps = enabled ? reveal(0) : { initial: false, animate: { opacity: 1, y: 0 } }
 
   return (
@@ -107,17 +126,17 @@ function ExurPanelShell({
       <div
         className={cn(
           landingGlassSurface,
-          GOALS_PANEL_SHELL_MIN_H,
-          "flex flex-col overflow-hidden rounded-[1.75rem] bg-white/42 shadow-[0_20px_56px_rgba(15,23,42,0.09),inset_0_1px_1px_rgba(255,255,255,0.95)]"
+          compact ? GOALS_PANEL_SHELL_COMPACT_MIN_H : GOALS_PANEL_SHELL_MIN_H,
+          "flex flex-col rounded-[1.75rem] bg-white/42 shadow-[0_20px_56px_rgba(15,23,42,0.09),inset_0_1px_1px_rgba(255,255,255,0.95)]"
         )}
       >
-        <GlassSheen />
+        <GlassSheen className="rounded-[1.75rem]" />
         <div
           aria-hidden
           className="pointer-events-none absolute -top-12 right-0 size-32 rounded-full bg-white/50 blur-3xl"
         />
 
-        <div className="relative z-10 flex shrink-0 items-center justify-between gap-3 px-5 py-4">
+        <div className="relative z-10 flex shrink-0 items-center justify-between gap-3 px-4 py-3 sm:px-5 sm:py-4">
           <div className="flex items-center gap-2.5">
             <PanelLogoMark />
             <span className="font-mono text-[9px] font-semibold uppercase tracking-[0.28em] text-[#64748B]">
@@ -134,12 +153,12 @@ function ExurPanelShell({
           </span>
         </div>
 
-        <div className="relative z-10 flex min-h-0 flex-1 flex-col justify-center px-5">
+        <div className="relative z-10 flex flex-1 flex-col justify-center px-4 sm:px-5">
           {children}
         </div>
 
         {footer && (
-          <div className="relative z-10 shrink-0 px-5 pb-4">
+          <div className="relative z-10 shrink-0 px-4 pb-3 sm:px-5 sm:pb-4">
             <div className="h-px bg-linear-to-r from-transparent via-white/70 to-transparent" />
             <div className="pt-3.5">{footer}</div>
           </div>
@@ -169,16 +188,18 @@ function FeaturedSignal({
       {...motionProps}
       className={cn(
         landingGlassSurface,
-        "relative overflow-hidden rounded-2xl bg-white/62 px-4 py-4 shadow-[0_10px_32px_rgba(15,23,42,0.07)]"
+        "relative overflow-hidden rounded-2xl bg-white/62 px-4 py-3 shadow-[0_10px_32px_rgba(15,23,42,0.07)] sm:py-4"
       )}
     >
       <GlassSheen className="rounded-2xl" />
       <div className="relative z-10">
         <p className="font-mono text-[9px] font-medium uppercase tracking-[0.22em] text-[#94A3B8]">
-          Worth watching
+          Only this matters
         </p>
-        <p className="mt-2 text-[15px] font-medium leading-snug text-[#0F172A]">{title}</p>
-        {meta && <p className="mt-1.5 font-mono text-[10px] text-[#94A3B8]">{meta}</p>}
+        <p className="mt-1.5 text-[15px] font-medium leading-snug text-[#0F172A] sm:mt-2">
+          {title}
+        </p>
+        {meta && <p className="mt-1 font-mono text-[10px] text-[#94A3B8] sm:mt-1.5">{meta}</p>}
       </div>
     </motion.div>
   )
@@ -188,12 +209,12 @@ function MutedFeedList({ rows }: { rows: readonly FeatureVisualRow[] }) {
   const { enabled, cycle } = usePanelMotion()
 
   return (
-    <div className="space-y-3 pt-1">
+    <div className="space-y-2 pt-1 sm:space-y-3">
       {rows.map((row, index) => (
         <motion.div
           key={`muted-${cycle}-${index}`}
           {...(enabled ? reveal(0.16 + index * 0.05) : { initial: false })}
-          className="flex items-baseline justify-between gap-4 border-b border-white/45 pb-3 last:border-b-0 last:pb-0"
+          className="flex items-baseline justify-between gap-4 border-b border-white/45 pb-2 last:border-b-0 last:pb-0 sm:pb-3"
         >
           <span className="min-w-0 text-[13px] leading-snug text-[#94A3B8]">{row.title}</span>
           {row.meta && (
@@ -222,7 +243,7 @@ function PanelRow({
       key={`row-${cycle}-${index}`}
       {...motionProps}
       className={cn(
-        "relative flex items-center gap-3 rounded-2xl px-4 py-3.5",
+        "relative flex items-center gap-3 rounded-2xl px-3.5 py-2.5 sm:px-4 sm:py-3.5",
         isHighlight
           ? cn(landingGlassSurface, "bg-white/62 shadow-[0_8px_28px_rgba(15,23,42,0.07)]")
           : state === "conflict"
@@ -301,7 +322,7 @@ function PanelRowList({
   stress?: boolean
 }) {
   return (
-    <div className="flex h-full flex-col justify-center gap-2.5">
+    <div className="flex h-full flex-col justify-center gap-2 sm:gap-2.5">
       {rows.map((row, index) => (
         <div key={`${row.title}-${index}`}>
           <PanelRow {...row} index={index} />
@@ -328,9 +349,9 @@ function NoisePanel({ step }: { step: FeatureScrollStep }) {
   return (
     <ExurPanelShell
       status={step.visualStatus ?? "Scanning"}
-      footer={<PanelFooterNote>One signal worth your time</PanelFooterNote>}
+      footer={<PanelFooterNote>1 of 47 matters</PanelFooterNote>}
     >
-      <div className="flex h-full flex-col justify-center gap-4">
+      <div className="flex h-full flex-col justify-center gap-3 sm:gap-4">
         {featured && <FeaturedSignal title={featured.title} meta={featured.meta} />}
         {muted.length > 0 && <MutedFeedList rows={muted} />}
         {step.visualOverflow && (
@@ -347,7 +368,7 @@ function SplitPanel({ step }: { step: FeatureScrollStep }) {
   return (
     <ExurPanelShell
       status={step.visualStatus ?? "Disconnected"}
-      footer={<PanelFooterNote>Accounts don&apos;t talk to each other</PanelFooterNote>}
+      footer={<PanelFooterNote>No overview anywhere</PanelFooterNote>}
     >
       <PanelRowList rows={rows} split />
     </ExurPanelShell>
@@ -360,7 +381,7 @@ function StressPanel({ step }: { step: FeatureScrollStep }) {
   return (
     <ExurPanelShell
       status={step.visualStatus ?? "Undecided"}
-      footer={<PanelFooterNote>Every option feels equally urgent</PanelFooterNote>}
+      footer={<PanelFooterNote>No clear winner</PanelFooterNote>}
     >
       <PanelRowList rows={rows} stress />
     </ExurPanelShell>
@@ -369,7 +390,7 @@ function StressPanel({ step }: { step: FeatureScrollStep }) {
 
 function ExurPanel({ step }: { step: FeatureScrollStep }) {
   const rows = step.visualRows ?? []
-  const answer = step.visualAnswer ?? "One clear answer. No dashboard required."
+  const answer = step.visualAnswer ?? "Got it. I'll keep an eye on this."
   const { enabled, cycle } = usePanelMotion()
   const verdictMotion = enabled
     ? reveal(0.22)
@@ -377,9 +398,9 @@ function ExurPanel({ step }: { step: FeatureScrollStep }) {
 
   return (
     <ExurPanelShell status={step.visualStatus ?? "Clear"}>
-      <div className="flex h-full flex-col justify-center gap-3">
+      <div className="flex h-full flex-col justify-center gap-2.5 sm:gap-3">
         {rows.length > 0 && (
-          <div className="space-y-2.5 opacity-45">
+          <div className="space-y-2 opacity-45 sm:space-y-2.5">
             {rows.map((row, index) => (
               <PanelRow key={`${row.title}-${index}`} {...row} index={index} />
             ))}
@@ -391,9 +412,9 @@ function ExurPanel({ step }: { step: FeatureScrollStep }) {
           className={cn("relative overflow-hidden rounded-2xl", landingGlassBubbleAi)}
         >
           <GlassSheen className="rounded-2xl" />
-          <div className="relative z-10 px-4 py-4 sm:px-5 sm:py-5">
-            <p className="mb-2 font-mono text-[9px] font-medium uppercase tracking-[0.25em] text-[#94A3B8]">
-              Verdict
+          <div className="relative z-10 px-4 py-3 sm:px-5 sm:py-5">
+            <p className="mb-1.5 font-mono text-[9px] font-medium uppercase tracking-[0.25em] text-[#94A3B8] sm:mb-2">
+              Answer
             </p>
             <p className="text-sm leading-relaxed text-[#475569] sm:text-[0.9375rem]">{answer}</p>
           </div>
@@ -413,14 +434,22 @@ function GoalsPanelContent({ step }: { step: FeatureScrollStep }) {
 export function GoalsPanelVisual({
   step,
   isActive = true,
+  enableMotion = true,
+  compact = false,
 }: {
   step: FeatureScrollStep
   isActive?: boolean
+  enableMotion?: boolean
+  compact?: boolean
 }) {
   return (
-    <PanelMotionProvider isActive={isActive}>
-      <GoalsPanelContent step={step} />
-    </PanelMotionProvider>
+    <div className="flex w-full justify-center">
+      <PanelCompactContext.Provider value={compact}>
+        <PanelMotionProvider isActive={isActive} enableMotion={enableMotion}>
+          <GoalsPanelContent step={step} />
+        </PanelMotionProvider>
+      </PanelCompactContext.Provider>
+    </div>
   )
 }
 
@@ -429,7 +458,7 @@ export function GoalsPanelBackdrop() {
     <>
       <div
         aria-hidden
-        className="pointer-events-none absolute top-1/2 left-1/2 size-56 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#E2E8F0]/40 blur-3xl sm:size-72"
+        className="pointer-events-none absolute top-1/2 left-1/2 size-44 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#E2E8F0]/40 blur-3xl sm:size-56 lg:size-72"
       />
       <div
         aria-hidden

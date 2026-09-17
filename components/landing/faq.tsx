@@ -60,7 +60,7 @@ export async function LandingFaq() {
       aria-labelledby="landing-faq-heading"
       className={cn("bg-background", LANDING_SECTION_PY)}
     >
-      <JsonLd data={faqLd} />
+      <JsonLd id="json-ld-landing-faq" data={faqLd} />
       <ScrollReveal className={LANDING_CONTAINER}>
         <div data-reveal className="mx-auto max-w-2xl text-center">
           <p className="mb-2 text-xs font-semibold tracking-[0.18em] text-muted-foreground uppercase">

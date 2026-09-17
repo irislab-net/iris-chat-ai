@@ -22,7 +22,7 @@ const sampleTicket: PaperTradeTicket = {
 describe("splitSignalAssistantMessage", () => {
   it("uses paperTicket and keeps thesis separate from the setup block", () => {
     const content = [
-      "Exur setup — not a profit guarantee. No paper trade is open yet.",
+      "Exur setup. Not a profit guarantee. No paper trade is open yet.",
       "",
       "ETH SHORT",
       "Setup: Model short edge fade",
@@ -58,7 +58,7 @@ describe("splitSignalAssistantMessage", () => {
 describe("enrichPaperTicketsOnMessages", () => {
   it("attaches paperTicket only to the first setup turn in a thread", () => {
     const setupContent = [
-      "Exur setup — not a profit guarantee. No paper trade is open yet.",
+      "Exur setup. Not a profit guarantee. No paper trade is open yet.",
       "",
       "ETH SHORT",
       "Setup: Model short edge fade",
@@ -93,7 +93,7 @@ describe("enrichPaperTicketsOnMessages", () => {
       {
         id: "a1",
         role: "assistant",
-        content: "Exur setup — not a profit guarantee.\n\nETH SHORT\nSetup: fade\nEntry 1\nSL 2\nTP 3\nLeverage 5x",
+        content: "Exur setup. Not a profit guarantee.\n\nETH SHORT\nSetup: fade\nEntry 1\nSL 2\nTP 3\nLeverage 5x",
         paperTicket: {
           symbol: "ETH",
           side: "SHORT",

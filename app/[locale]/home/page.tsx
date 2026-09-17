@@ -15,9 +15,9 @@ type Props = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
 
-  const title = "Exur — Your Financial Brain"
+  const title = "Exur: AI Financial Assistant"
   const description =
-    "The intelligence layer between you and the financial world. Exur understands the markets, learns your financial life, and helps you make better decisions."
+    "See where your money is going. Ask in plain language. Get a clear next step."
 
   const canonical =
     locale === "en" ? `${SITE_URL}/home` : `${SITE_URL}/ar/home`
@@ -59,7 +59,7 @@ export default async function LandingPage({ params }: Props) {
   const landingLd = {
     "@context": "https://schema.org",
     "@type": "WebPage",
-    name: "Exur — Your Financial Brain",
+    name: "Exur: AI Financial Assistant",
     url: landingUrl,
     description: SITE_DESCRIPTION,
     inLanguage: locale,
@@ -80,7 +80,7 @@ export default async function LandingPage({ params }: Props) {
 
   return (
     <>
-      <JsonLd data={landingLd} />
+      <JsonLd id="json-ld-landing" data={landingLd} />
       <ModernLandingPage />
     </>
   )

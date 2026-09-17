@@ -56,11 +56,8 @@ describe("public SEO site policy (S1/S2)", () => {
     expect(SOCIAL_X_URL).toBe("https://x.com/TheIrisLab")
   })
 
-  it("keeps homepage meta description aligned with quiet orientation copy (UI-01)", () => {
-    expect(SITE_DESCRIPTION).toContain("Market news and Exur co-pilot")
-    expect(SITE_DESCRIPTION.toLowerCase()).toContain(
-      "scored headlines and ai chat for the market you select"
-    )
+  it("keeps homepage meta description aligned with financial-assistant copy", () => {
+    expect(SITE_DESCRIPTION.toLowerCase()).toContain("ai financial assistant")
     expect(SITE_DESCRIPTION.toLowerCase()).not.toContain("live")
     expect(SITE_DESCRIPTION.toLowerCase()).not.toMatch(/\b6h\b/)
   })

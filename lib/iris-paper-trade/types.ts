@@ -19,20 +19,20 @@ export const IRIS_SAMPLE_PROMPTS: readonly IrisSamplePrompt[] = [
     id: "btc-signal",
     title: "BTC signal",
     description:
-      "Live price, models, stance & news — one actionable paper trade.",
+      "Live price, models, stance & news in one actionable paper trade.",
     text: BTC_SIGNAL_SAMPLE_PROMPT,
   },
   {
     id: "market-pulse",
     title: "Market pulse",
-    description: "Stance, bias, and news pulse — analysis only, no trade.",
-    text: "What is Exur stance, model bias, and the news pulse on BTC right now? Keep it factual — do not propose a trade.",
+    description: "Stance, bias, and news pulse. Analysis only, no trade.",
+    text: "What is Exur stance, model bias, and the news pulse on BTC right now? Keep it factual. Do not propose a trade.",
   },
   {
     id: "wait-or-watch",
     title: "Wait or watch",
-    description: "Trend and volatility read — should you sit out or watch?",
-    text: "From live BTC trend and volatility, should I wait on the sidelines or is a setup forming? Analysis only — do not open a paper trade.",
+    description: "Trend and volatility read. Should you sit out or watch?",
+    text: "From live BTC trend and volatility, should I wait on the sidelines or is a setup forming? Analysis only. Do not open a paper trade.",
   },
 ] as const
 
