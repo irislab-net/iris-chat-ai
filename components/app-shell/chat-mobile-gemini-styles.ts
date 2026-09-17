@@ -48,10 +48,7 @@ const chatMobileEmptyHeroContentClass =
   "chat-empty-hero flex flex-col items-center gap-5 text-center"
 
 const chatMobileEmptyHeroMarkClass =
-  `chat-empty-hero-mark relative flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-full p-0 ring-0 ${chatMobileGlassSurfaceClass} ${chatMobileHeaderShadowClass}`
-
-const chatMobileEmptyHeroMarkLogoClass =
-  "size-full object-contain object-center rounded-full"
+  "chat-empty-hero-mark relative size-12 shrink-0 rounded-full"
 
 const chatMobileEmptyHeroTitleClass =
   "chat-empty-hero-title max-w-[20rem] text-balance text-[1.75rem] font-light leading-[1.22] tracking-[-0.028em] text-foreground"
@@ -159,7 +156,7 @@ const chatEmptyHeroPromptsClass =
   "chat-empty-hero-prompts mt-1 flex w-full min-w-0 self-stretch flex-col items-stretch gap-2"
 
 const chatSamplePromptCarouselClass =
-  "w-full min-w-0 touch-pan-y [&_[data-slot=carousel-content]]:overflow-x-clip [&_[data-slot=carousel-content]]:px-1.5 [&_[data-slot=carousel-content]]:py-2.5"
+  "w-full min-w-0 touch-pan-y lg:hidden [&_[data-slot=carousel-content]]:overflow-x-clip [&_[data-slot=carousel-content]]:px-1.5 [&_[data-slot=carousel-content]]:py-2.5"
 
 const chatSamplePromptCarouselContentClass = "-ml-5 w-full items-stretch"
 
@@ -167,6 +164,9 @@ const chatSamplePromptCarouselItemClass =
   "min-w-0 basis-[88%] shrink-0 grow-0 self-stretch pl-5 sm:basis-[86%]"
 
 const chatSamplePromptCarouselDotsClass = "mt-2.5"
+
+const chatSamplePromptStaticListClass =
+  "hidden w-full flex-col items-stretch gap-2 lg:flex"
 
 const chatMobileComposerIconButtonClass =
   "size-10 shrink-0 rounded-full text-muted-foreground transition-colors hover:bg-foreground/[0.05] hover:text-foreground [&_svg]:stroke-[1.75]"
@@ -322,7 +322,6 @@ export {
   chatMobileComposerShellClass,
   chatMobileEmptyHeroContentClass,
   chatMobileEmptyHeroMarkClass,
-  chatMobileEmptyHeroMarkLogoClass,
   chatMobileEmptyHeroTitleClass,
   chatMobileEmptyHeroWrapClass,
   chatMobileDrawerFooterBarClass,
@@ -355,6 +354,7 @@ export {
   chatSamplePromptCarouselContentClass,
   chatSamplePromptCarouselDotsClass,
   chatSamplePromptCarouselItemClass,
+  chatSamplePromptStaticListClass,
   chatSamplePromptDescriptionClass,
   chatSamplePromptIconClass,
   chatSamplePromptTextClass,

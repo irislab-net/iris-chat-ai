@@ -269,19 +269,35 @@ function ChatMobileAsideSkeleton({ className }: { className?: string }) {
   )
 }
 
+function ChatDesktopStarterCardSkeleton() {
+  return (
+    <div className={cn(chatSamplePromptButtonClass, "pointer-events-none")}>
+      <div className="flex w-full min-w-0 items-start gap-2.5 sm:gap-3">
+        <Bone
+          className={cn(chatSamplePromptIconClass, "bg-muted/15 shadow-none")}
+        />
+        <div className={chatSamplePromptTextClass}>
+          <Bone className="h-3.5 w-24 rounded-full" />
+          <Bone className="h-2.5 w-full rounded-full" />
+          <Bone className="hidden h-2.5 w-[88%] rounded-full sm:block" />
+        </div>
+      </div>
+    </div>
+  )
+}
+
 function ChatPromptsSkeleton() {
   return (
-    <div className="flex min-h-0 flex-1 flex-col items-center justify-center px-4 py-10">
+    <div className="chat-empty-hero-shell flex min-h-0 flex-1 flex-col items-center justify-center px-4 py-10">
       <div className="mx-auto flex w-full max-w-3xl flex-col items-center gap-5 text-center">
-        <Bone className="size-16 rounded-2xl" />
+        <Bone className="size-16 shrink-0 rounded-2xl" />
         <Bone className="h-7 w-[min(20rem,88%)] max-w-[20rem] rounded-full" />
-        <div className="flex w-full flex-col items-stretch gap-2">
+        <div className={chatEmptyHeroPromptsClass}>
           <Bone className="h-2.5 w-12 self-center rounded-full" />
-          <Bone className="min-h-[4.75rem] w-full rounded-[20px] border border-border/15 bg-muted/15 shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_75%,transparent),0_8px_24px_-10px_color-mix(in_oklch,var(--foreground)_8%,transparent)] sm:rounded-[22px]" />
-          <div className="mt-2.5 flex items-center justify-center gap-1.5">
-            <Bone className="size-1.5 rounded-full" />
-            <Bone className="size-1.5 rounded-full" />
-            <Bone className="size-1.5 rounded-full" />
+          <div className="flex w-full flex-col items-stretch gap-2">
+            <ChatDesktopStarterCardSkeleton />
+            <ChatDesktopStarterCardSkeleton />
+            <ChatDesktopStarterCardSkeleton />
           </div>
         </div>
       </div>
@@ -315,7 +331,7 @@ function ChatHeaderSkeleton({
       {mobile ? (
         <Bone className="size-8 shrink-0 rounded-md" />
       ) : (
-        <Bone className="size-7 shrink-0 rounded-md" />
+        <Bone className="size-7 shrink-0 rounded-full" />
       )}
       <div className="min-w-0 flex-1 space-y-1.5">
         <Bone className="h-3 w-10" />
@@ -351,8 +367,11 @@ function ChatHistoryRailSkeleton({
       aria-hidden
     >
       <div className="flex shrink-0 items-center gap-1 px-2 py-2.5">
-        <Bone className="h-3.5 w-10 px-1" />
-        <Bone className="ml-auto size-8 rounded-md" />
+        <div className="flex min-w-0 flex-1 items-center gap-2 px-1">
+          <Bone className="size-7 shrink-0 rounded-full" />
+          <Bone className="h-3.5 w-10" />
+        </div>
+        <Bone className="size-8 shrink-0 rounded-md" />
       </div>
       <div className="flex min-h-0 flex-1 flex-col gap-2 px-2 py-2">
         <Bone className="h-9 w-full rounded-lg" />

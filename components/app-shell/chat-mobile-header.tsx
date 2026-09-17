@@ -4,6 +4,7 @@ import * as React from "react"
 import { CheckIcon, ChevronDownIcon } from "lucide-react"
 import { useTranslations } from "next-intl"
 
+import { AttentionPulseDot } from "@/components/app-shell/attention-pulse-dot"
 import { ChatGeminiMenuIcon } from "@/components/app-shell/chat-gemini-menu-icon"
 import { ChatGeminiNewChatIcon } from "@/components/app-shell/chat-gemini-new-chat-icon"
 
@@ -43,6 +44,7 @@ type ChatMobileThreadMenuProps = {
 type ChatMobileHeaderProps = {
   onOpenHistory?: () => void
   historyOpen?: boolean
+  showMenuSpotlight?: boolean
   effort?: ChatEffort
   onEffortChange?: (effort: ChatEffort) => void
   hideEffort?: boolean
@@ -56,6 +58,7 @@ type ChatMobileHeaderProps = {
 function ChatMobileHeader({
   onOpenHistory,
   historyOpen = false,
+  showMenuSpotlight = false,
   effort,
   onEffortChange,
   hideEffort = false,
@@ -136,12 +139,15 @@ function ChatMobileHeader({
               type="button"
               variant="ghost"
               size="icon"
-              className={chatMobileHeaderButtonClass}
+              className={cn(chatMobileHeaderButtonClass, "relative")}
               aria-label={t("chatHistory")}
               aria-pressed={historyOpen}
               onClick={onOpenHistory}
             >
               <ChatGeminiMenuIcon />
+              {showMenuSpotlight ? (
+                <AttentionPulseDot className="-top-0.5 inset-e-1" />
+              ) : null}
             </Button>
           ) : null}
           {effortControl}

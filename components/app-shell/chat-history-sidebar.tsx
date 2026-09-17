@@ -20,6 +20,7 @@ import {
 import { useTranslations } from "next-intl"
 import { useTheme } from "@wrksz/themes/client/use-theme"
 
+import { AttentionPulseDot } from "@/components/app-shell/attention-pulse-dot"
 import { ChatAccountAvatar } from "@/components/app-shell/chat-account-avatar"
 import { ChatGeminiNewChatIcon } from "@/components/app-shell/chat-gemini-new-chat-icon"
 import { IrisLabLogo } from "@/components/brand/iris-lab-logo"
@@ -131,10 +132,12 @@ function HistoryNewsNav({
   onOpenNews,
   isMobileDrawer = false,
   minimal = false,
+  showSpotlight = false,
 }: {
   onOpenNews: () => void
   isMobileDrawer?: boolean
   minimal?: boolean
+  showSpotlight?: boolean
 }) {
   const t = useTranslations("workspace")
 
@@ -147,10 +150,15 @@ function HistoryNewsNav({
               type="button"
               variant="ghost"
               size="icon"
-              className={historyRailIconButtonClass}
+              className={cn(historyRailIconButtonClass, "relative")}
               aria-label={t("news")}
               onClick={onOpenNews}
-            />
+            >
+              <NewspaperIcon className="size-4.5" />
+              {showSpotlight ? (
+                <AttentionPulseDot className="-top-0.5 inset-e-1" />
+              ) : null}
+            </Button>
           }
         >
           <NewspaperIcon className="size-4.5" />
@@ -165,7 +173,7 @@ function HistoryNewsNav({
       type="button"
       variant="ghost"
       className={cn(
-        "justify-start gap-3 text-sm font-normal shadow-none",
+        "relative justify-start gap-3 text-sm font-normal shadow-none",
         isMobileDrawer
           ? cn("mb-1", chatMobileDrawerNavItemClass)
           : "mb-2 h-9 w-full rounded-lg px-3 hover:bg-muted/50"
@@ -187,6 +195,9 @@ function HistoryNewsNav({
           {t("desk")}
         </Badge>
       ) : null}
+      {showSpotlight ? (
+        <AttentionPulseDot className="top-1 inset-e-2.5" />
+      ) : null}
     </Button>
   )
 }
@@ -202,6 +213,7 @@ type ChatHistorySidebarProps = {
   onNewChat?: () => void
   onClose?: () => void
   onOpenNews?: () => void
+  showNewsSpotlight?: boolean
   footer?: React.ReactNode
   showBrandHeader?: boolean
   variant?: "panel" | "mobile-drawer"
@@ -347,6 +359,7 @@ function ChatHistorySidebar({
   onNewChat,
   onClose,
   onOpenNews,
+  showNewsSpotlight = false,
   footer,
   showBrandHeader = true,
   variant = "panel",
@@ -399,9 +412,10 @@ function ChatHistorySidebar({
             <div className="flex min-w-0 items-center gap-2">
               <IrisLabLogo
                 decorative
+                variant="gradient"
                 priority
                 size={28}
-                className="size-7 shrink-0 rounded-full"
+                className="size-7 shrink-0 overflow-hidden rounded-full"
               />
               <h2 className="text-base font-normal leading-none tracking-tight text-foreground">
                 {t("iris")}
@@ -435,7 +449,12 @@ function ChatHistorySidebar({
                   : "flex-1 px-1"
               )}
             >
-              <IrisLabLogo decorative size={28} className="size-7 shrink-0 rounded-full" />
+              <IrisLabLogo
+                decorative
+                variant="gradient"
+                size={28}
+                className="size-7 shrink-0 overflow-hidden rounded-full"
+              />
               {!collapsed ? (
                 <span className="min-w-0 truncate text-[13px] font-normal leading-none tracking-tight text-sidebar-foreground/90">
                   {t("iris")}
@@ -508,6 +527,7 @@ function ChatHistorySidebar({
                 onOpenNews={onOpenNews}
                 isMobileDrawer={isMobileDrawer}
                 minimal={collapsed && !isMobileDrawer}
+                showSpotlight={showNewsSpotlight}
               />
             ) : null}
 
@@ -809,6 +829,7 @@ function ChatHistoryRail({
   onTogglePin,
   onNewChat,
   onOpenNews,
+  showNewsSpotlight,
   footer,
   sidebarWidth,
   collapsed = false,
@@ -838,6 +859,7 @@ function ChatHistoryRail({
         onTogglePin={onTogglePin}
         onNewChat={onNewChat}
         onOpenNews={onOpenNews}
+        showNewsSpotlight={showNewsSpotlight}
         footer={footer}
         collapsed={collapsed}
         onToggleCollapsed={onToggleCollapsed}

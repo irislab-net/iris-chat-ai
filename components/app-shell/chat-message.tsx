@@ -39,20 +39,18 @@ function IrisMark({
   const isHero = variant === "hero"
 
   return (
-    <div
+    <IrisLabLogo
+      decorative
+      variant="gradient"
+      size={isHero ? 64 : 28}
+      priority={isHero}
       className={cn(
-        "flex size-7 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-muted/50",
+        "overflow-hidden",
+        isHero ? "size-16 rounded-2xl" : "size-7 rounded-full",
         className
       )}
-    >
-      <IrisLabLogo
-        decorative
-        size={isHero ? 192 : 28}
-        priority={isHero}
-        className={isHero ? "size-full" : "size-[65%]"}
-        imageClassName={imageClassName}
-      />
-    </div>
+      imageClassName={imageClassName}
+    />
   )
 }
 

@@ -19,7 +19,7 @@ import { ChatAccountFooter } from "@/components/app-shell/chat-account-footer"
 import { ChatAccountMenu } from "@/components/app-shell/chat-account-menu"
 import { IrisLabLogo } from "@/components/brand/iris-lab-logo"
 import { ChatMobileGeminiBackground } from "@/components/app-shell/chat-mobile-gemini-background"
-import { chatEmptyHeroPromptsClass, chatMobileScrollDownClass, chatMobileThreadBottomFadeClass, chatMobileThreadBottomSpacerClass, chatMobileThreadClass, chatMobileThreadFirstTurnClass, chatMobileThreadScrollMaskClass, chatMobileEmptyHeroContentClass, chatMobileEmptyHeroMarkClass, chatMobileEmptyHeroMarkLogoClass, chatMobileEmptyHeroTitleClass, chatMobileEmptyHeroWrapClass, chatSamplePromptButtonClass, chatSamplePromptCarouselClass, chatSamplePromptCarouselContentClass, chatSamplePromptCarouselDotsClass, chatSamplePromptCarouselItemClass, chatSamplePromptDescriptionClass, chatSamplePromptIconClass, chatSamplePromptTextClass, chatSamplePromptTitleClass } from "@/components/app-shell/chat-mobile-gemini-styles"
+import { chatEmptyHeroPromptsClass, chatMobileScrollDownClass, chatMobileThreadBottomFadeClass, chatMobileThreadBottomSpacerClass, chatMobileThreadClass, chatMobileThreadFirstTurnClass, chatMobileThreadScrollMaskClass, chatMobileEmptyHeroContentClass, chatMobileEmptyHeroMarkClass, chatMobileEmptyHeroTitleClass, chatMobileEmptyHeroWrapClass, chatSamplePromptButtonClass, chatSamplePromptCarouselClass, chatSamplePromptCarouselContentClass, chatSamplePromptCarouselDotsClass, chatSamplePromptCarouselItemClass, chatSamplePromptDescriptionClass, chatSamplePromptIconClass, chatSamplePromptStaticListClass, chatSamplePromptTextClass, chatSamplePromptTitleClass } from "@/components/app-shell/chat-mobile-gemini-styles"
 import { ChatMobileHeader } from "@/components/app-shell/chat-mobile-header"
 import {
   ChatNewsMobileSheet,
@@ -56,6 +56,7 @@ import { typewriterReveal } from "@/components/app-shell/chat-typing"
 import { useAuth } from "@/components/auth/auth-provider"
 import { GoogleGlyph } from "@/components/auth/google-glyph"
 import { useIsDesktop } from "@/hooks/use-media-query"
+import { useNewsSpotlight } from "@/hooks/use-news-spotlight"
 import { useShellSidebarLayout } from "@/hooks/use-shell-sidebar-layout"
 import { useChatClientContext, useDeskContextSnapshot } from "@/hooks/use-chat-client-context"
 import { Button } from "@/components/ui/button"
@@ -377,6 +378,16 @@ function IrisSamplePrompts({
       <p className="self-center px-0.5 text-[10px] font-medium tracking-wide text-muted-foreground uppercase">
         {t("samplePromptsLabel")}
       </p>
+      <div className={chatSamplePromptStaticListClass}>
+        {IRIS_SAMPLE_PROMPTS.map((prompt) => (
+          <IrisSamplePromptCard
+            key={prompt.id}
+            prompt={prompt}
+            disabled={disabled}
+            onEdit={onEdit}
+          />
+        ))}
+      </div>
       <Carousel
         className={chatSamplePromptCarouselClass}
         opts={{
@@ -1671,6 +1682,12 @@ function ChatAside({
 
   const isFocusedLayout = displayMode === "focused" && !onClose
   const isMobileOverlay = Boolean(onClose)
+  const {
+    showMenuSpotlight,
+    showNewsSpotlight,
+    dismissNewsSpotlight,
+    acknowledgeNewsSpotlightMenu,
+  } = useNewsSpotlight(isMobileOverlay)
   const canEmbedHistoryRail = !isMobileOverlay && isDesktop === true
   const historyRailVisible = canEmbedHistoryRail
   const showFocusedMainHeader = isFocusedLayout && !isAuthenticated
@@ -1744,6 +1761,7 @@ function ChatAside({
   }
 
   function openNewsFromChat() {
+    dismissNewsSpotlight()
     setHistoryOpen(false)
     setNewsOpen(true)
   }
@@ -1868,6 +1886,7 @@ function ChatAside({
           collapsed={historyRailCollapsed}
           onToggleCollapsed={toggleHistoryRailCollapsed}
           onOpenNews={openNewsFromChat}
+          showNewsSpotlight={showNewsSpotlight}
         />
       ) : null}
 
@@ -1889,7 +1908,14 @@ function ChatAside({
       {isMobileOverlay ? (
         <ChatMobileHeader
           historyOpen={historyOpen}
-          onOpenHistory={() => setHistoryOpen((open) => !open)}
+          showMenuSpotlight={showMenuSpotlight}
+          onOpenHistory={() => {
+            setHistoryOpen((open) => {
+              const next = !open
+              if (next) acknowledgeNewsSpotlightMenu()
+              return next
+            })
+          }}
           effort={effort}
           onEffortChange={onEffortChange}
           onNewChat={startNewChat}
@@ -1924,10 +1950,8 @@ function ChatAside({
             onTogglePin={toggleConversationPin}
             onNewChat={startNewChat}
             onClose={() => setHistoryOpen(false)}
-            onOpenNews={() => {
-              setHistoryOpen(false)
-              openNewsFromChat()
-            }}
+            onOpenNews={openNewsFromChat}
+            showNewsSpotlight={showNewsSpotlight}
             showBrandHeader={false}
             className="min-h-0 flex-1"
           />
@@ -1947,8 +1971,9 @@ function ChatAside({
         >
           <IrisLabLogo
             decorative
-            size={32}
-            className="size-7 shrink-0 rounded-full"
+            variant="gradient"
+            size={28}
+            className="size-7 shrink-0 overflow-hidden rounded-full"
             priority
           />
         </Link>
@@ -2081,13 +2106,9 @@ function ChatAside({
                         <IrisMark
                           variant="hero"
                           className={chatMobileEmptyHeroMarkClass}
-                          imageClassName={chatMobileEmptyHeroMarkLogoClass}
                         />
                       ) : (
-                        <IrisMark
-                          variant="hero"
-                          className="size-16 rounded-2xl"
-                        />
+                        <IrisMark variant="hero" />
                       )}
                       <h2
                         className={cn(

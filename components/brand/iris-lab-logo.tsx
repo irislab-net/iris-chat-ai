@@ -6,6 +6,7 @@ export const IRIS_LAB_LOGO_LIGHT_SRC = "/iris-lab-logo-light.svg"
 export const IRIS_LAB_LOGO_DARK_SRC = "/iris-lab-logo-dark.svg"
 export const IRIS_LAB_LOGO_BRAND_SRC = "/iris-lab-logo-brand.svg"
 export const IRIS_LAB_LOGO_MARK_WHITE_SRC = "/iris-lab-logo-mark-white.svg"
+export const IRIS_LAB_LOGO_GRADIENT_SRC = "/iris-lab-logo-gradient.svg"
 
 type IrisLabLogoProps = {
   className?: string
@@ -16,8 +17,8 @@ type IrisLabLogoProps = {
   alt?: string
   /** Hide from assistive tech when parent link/button already names the brand. */
   decorative?: boolean
-  /** `on-hero` = white mark on transparent; `on-light` = black mark; `brand` = blue mark. */
-  variant?: "auto" | "on-hero" | "on-light" | "on-dark" | "brand"
+  /** `on-hero` = white mark on transparent; `on-light` = black mark; `brand` = blue mark; `gradient` = white shell + black gradient mark. */
+  variant?: "auto" | "on-hero" | "on-light" | "on-dark" | "brand" | "gradient"
 }
 
 function IrisLabLogo({
@@ -30,7 +31,7 @@ function IrisLabLogo({
   variant = "auto",
 }: IrisLabLogoProps) {
   const label = decorative ? undefined : alt
-  const shared = cn("h-auto w-full max-w-full object-contain", imageClassName)
+  const shared = cn("size-full object-contain", imageClassName)
   const showThemePair = variant === "auto"
 
   return (
@@ -63,6 +64,17 @@ function IrisLabLogo({
       {variant === "brand" && (
         <Image
           src={IRIS_LAB_LOGO_BRAND_SRC}
+          alt=""
+          width={size}
+          height={size}
+          priority={priority}
+          sizes={`${size}px`}
+          className={shared}
+        />
+      )}
+      {variant === "gradient" && (
+        <Image
+          src={IRIS_LAB_LOGO_GRADIENT_SRC}
           alt=""
           width={size}
           height={size}
