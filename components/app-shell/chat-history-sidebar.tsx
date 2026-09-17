@@ -409,15 +409,15 @@ function ChatHistorySidebar({
       >
         {isMobileDrawer ? (
           <header className="app-mobile-safe-header flex shrink-0 items-center justify-between gap-3 px-4 pb-2">
-            <div className="flex min-w-0 items-center gap-2">
+            <div className="flex min-w-0 items-center gap-2.5">
               <IrisLabLogo
                 decorative
                 variant="gradient"
                 priority
-                size={28}
-                className="size-7 shrink-0 overflow-hidden rounded-full"
+                size={32}
+                className="size-8 shrink-0 overflow-hidden rounded-full"
               />
-              <h2 className="text-base font-normal leading-none tracking-tight text-foreground">
+              <h2 className="text-lg font-normal leading-none tracking-tight text-foreground">
                 {t("iris")}
               </h2>
             </div>
@@ -443,7 +443,7 @@ function ChatHistorySidebar({
           >
             <div
               className={cn(
-                "flex min-w-0 items-center gap-2",
+                "flex min-w-0 items-center gap-2.5",
                 collapsed
                   ? "justify-center px-0"
                   : "flex-1 px-1"
@@ -452,11 +452,11 @@ function ChatHistorySidebar({
               <IrisLabLogo
                 decorative
                 variant="gradient"
-                size={28}
-                className="size-7 shrink-0 overflow-hidden rounded-full"
+                size={32}
+                className="size-8 shrink-0 overflow-hidden rounded-full"
               />
               {!collapsed ? (
-                <span className="min-w-0 truncate text-[13px] font-normal leading-none tracking-tight text-sidebar-foreground/90">
+                <span className="min-w-0 truncate text-[15px] font-normal leading-none tracking-tight text-sidebar-foreground/90">
                   {t("iris")}
                 </span>
               ) : null}
