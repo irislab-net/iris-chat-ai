@@ -89,14 +89,20 @@ export function GoalsSection() {
                     className={styles.block}
                     aria-hidden={index === 0 ? "false" : "true"}
                   >
-                    <h2 className={cn(styles.heading, landingTitleSection, "text-left")}>
+                    <h2
+                      className={cn(
+                        styles.heading,
+                        landingTitleSection,
+                        "text-center xl:text-left"
+                      )}
+                    >
                       {copy.heading}
                     </h2>
                     <p
                       className={cn(
                         styles.sub,
                         landingSubheading,
-                        "mx-0 mt-0 max-w-none text-left text-lg"
+                        "mx-0 mt-0 max-w-none text-center text-lg xl:text-left"
                       )}
                     >
                       {copy.sub}

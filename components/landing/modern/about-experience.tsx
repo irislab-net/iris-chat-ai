@@ -75,6 +75,22 @@ function viewportBox() {
   }
 }
 
+/**
+ * The stage goes `position: fixed` with a high z-index, but ancestors with
+ * `isolation: isolate` (the about section shell) still trap that z-index in a
+ * stacking context that sits under the sticky nav (`z-50`). Lift the nearest
+ * section so the fullscreen layer paints above chrome.
+ */
+function setExpandStacking(frame: HTMLElement, active: boolean) {
+  const section = frame.closest("section")
+  if (!(section instanceof HTMLElement)) return
+  if (active) {
+    section.style.zIndex = "100"
+  } else {
+    section.style.removeProperty("z-index")
+  }
+}
+
 export function AboutExperience() {
   const reduceMotion = useReducedMotion()
   const isDesktop = useIsDesktop()
@@ -173,6 +189,7 @@ export function AboutExperience() {
       ease: LANDING_MOTION.easeInOut,
       onComplete: () => {
         gsap.set(stage, { clearProps: "all" })
+        setExpandStacking(frame, false)
         setExpanded(false)
       },
     })
@@ -196,6 +213,7 @@ export function AboutExperience() {
 
     const rect = frame.getBoundingClientRect()
     const viewport = viewportBox()
+    setExpandStacking(frame, true)
     setExpanded(true)
 
     // Animating all four insets (rather than width/height + vw units) keeps the
@@ -391,6 +409,8 @@ export function AboutExperience() {
       body.style.cssText = previous
       window.scrollTo(0, scrollY)
       window.removeEventListener("keydown", onKey)
+      const frame = frameRef.current
+      if (frame) setExpandStacking(frame, false)
     }
   }, [close, expanded])
 
@@ -402,7 +422,11 @@ export function AboutExperience() {
       className="relative aspect-video w-full rounded-[1.75rem] bg-muted"
     >
       {expanded && (
-        <div ref={backdropRef} aria-hidden className="fixed inset-0 z-[89] bg-background" />
+        <div
+          ref={backdropRef}
+          aria-hidden
+          className="fixed inset-0 z-[89] bg-background"
+        />
       )}
 
       <div
@@ -443,7 +467,7 @@ export function AboutExperience() {
 
         {phase === "playing" && (
           <>
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 bg-linear-to-t from-background via-background/85 to-transparent px-6 pt-20 pb-8 sm:px-10 sm:pb-12">
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 bg-linear-to-t from-background via-background/85 to-transparent px-6 pt-24 pb-28 sm:px-10 sm:pb-36">
               <p
                 ref={captionRef}
                 key={cueIndex}

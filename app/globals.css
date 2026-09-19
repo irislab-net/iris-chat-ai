@@ -686,6 +686,29 @@
   filter: blur(calc(100cqw * 29 / 507)) saturate(1.22);
 }
 
+/*
+ * Landing hero / CTA cards are wide and short (esp. iPad). The chat mesh was
+ * authored for a tall portrait frame, so full-width % orbs squash into a flat
+ * band and `100cqw` blur overshoots (~48px at 810px vs 29px at 507px). Keep a
+ * portrait-ish glow footprint centered on the card and cap the blur.
+ */
+.chat-gemini-bg-hero {
+  container-type: size;
+}
+
+.chat-gemini-bg-hero .chat-gemini-mesh {
+  /* Prefer the card as the query container (width/blur), not the mesh itself. */
+  container-type: normal;
+  left: 0;
+  right: 0;
+  /* ~1.4 aspect (chat artboard ≈1.2) so orbs stay round on wide short cards. */
+  width: min(100%, calc(68cqh * 1.4));
+  height: 68%;
+  bottom: -8%;
+  margin-inline: auto;
+  filter: blur(min(32px, calc(100cqw * 29 / 507))) saturate(1.22);
+}
+
 .chat-gemini-bg-top-fade {
   background: linear-gradient(
     to bottom,

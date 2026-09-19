@@ -204,6 +204,13 @@
   }
 }
 
+@media (max-width: 1279px) {
+  .heading,
+  .sub {
+    text-align: center;
+  }
+}
+
 @media (max-width: 860px) {
   .inner {
     gap: 28px;

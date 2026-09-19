@@ -20,7 +20,7 @@ export function HeroLiquidGlassBg({
         intro
         className={cn(tone === "blue" && "chat-gemini-bg-blue")}
       />
-      <div className="absolute inset-0 bg-white/20 backdrop-blur-[2px] dark:bg-black/25" />
+      <div className="absolute inset-0 bg-white/12 backdrop-blur-[1px] dark:bg-black/15" />
       <div className="absolute inset-x-[10%] top-0 h-px bg-linear-to-r from-transparent via-white to-transparent opacity-90 dark:via-white/40" />
     </div>
   )
