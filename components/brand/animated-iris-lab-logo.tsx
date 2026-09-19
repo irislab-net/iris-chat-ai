@@ -48,7 +48,7 @@ export function AnimatedIrisLabLogo({
   return (
     <div
       className={cn(
-        "relative isolate overflow-hidden rounded-[0.72rem]",
+        "relative isolate overflow-hidden rounded-full",
         className
       )}
     >

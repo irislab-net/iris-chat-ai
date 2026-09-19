@@ -1,11 +1,11 @@
 "use client"
 
-import { ArrowUpRightIcon, CheckIcon } from "lucide-react"
-import type { ReactNode } from "react"
+import { CheckIcon } from "lucide-react"
 
 import { ScrollReveal } from "@/components/landing/modern/scroll-reveal"
-import { SectionHeader, SphereCta } from "@/components/landing/modern/sphere-ui"
+import { SectionHeader } from "@/components/landing/modern/sphere-ui"
 import { Button } from "@/components/ui/button"
+import { Link } from "@/i18n/navigation"
 import { PRICING_PLANS, PRICING_SECTION, type PricingPlan } from "@/lib/landing-modern-data"
 import {
   landingCtaLight,
@@ -30,54 +30,26 @@ function planHref(plan: PricingPlan) {
   return `mailto:${CONTACT_EMAIL}`
 }
 
-function PlanCtaIcon({ featured }: { featured?: boolean }) {
-  return (
-    <span
-      className={cn(
-        "flex size-7 items-center justify-center rounded-full transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5",
-        featured ? "bg-white/20 text-white" : "bg-[#0F172A] text-white"
-      )}
-    >
-      <ArrowUpRightIcon className="size-3.5" />
-    </span>
-  )
-}
-
-function PlanCtaContent({ children, featured }: { children: ReactNode; featured?: boolean }) {
-  return (
-    <span className="relative z-10 inline-flex w-full items-center justify-center gap-2">
-      {children}
-      <PlanCtaIcon featured={featured} />
-    </span>
-  )
-}
-
 function PlanCta({ plan }: { plan: PricingPlan }) {
   const href = planHref(plan)
   const featured = plan.featured
-  const isExternal = plan.key === "ultimate"
   const className = cn(
     featured ? landingCtaPrimary : landingCtaLight,
-    "group relative mt-8 h-auto w-full overflow-hidden px-6 py-3"
+    "mt-8 h-auto w-full justify-center px-6 py-3"
   )
 
-  if (isExternal) {
+  if (plan.key === "ultimate") {
     return (
       <Button nativeButton={false} render={<a href={href} />} className={className}>
-        <PlanCtaContent featured={featured}>{plan.cta}</PlanCtaContent>
+        {plan.cta}
       </Button>
     )
   }
 
   return (
-    <SphereCta
-      href={href}
-      variant={featured ? "primary" : "light"}
-      className="mt-8 w-full justify-center px-6 py-3"
-      iconClassName={featured ? undefined : "bg-[#0F172A] text-white"}
-    >
+    <Button nativeButton={false} render={<Link href={href} />} className={className}>
       {plan.cta}
-    </SphereCta>
+    </Button>
   )
 }
 
@@ -164,7 +136,7 @@ export function PricingSection() {
           />
         </ScrollReveal>
 
-        <div className="mx-auto mt-14 grid max-w-6xl gap-6 lg:mt-16 lg:grid-cols-3 lg:items-stretch lg:gap-5">
+        <div className="mx-auto mt-14 grid max-w-5xl gap-6 lg:mt-16 lg:grid-cols-3 lg:items-stretch lg:gap-5">
           {PRICING_PLANS.map((plan, index) => (
             <ScrollReveal key={plan.key} delay={0.08 + index * 0.04}>
               <PlanCard plan={plan} />

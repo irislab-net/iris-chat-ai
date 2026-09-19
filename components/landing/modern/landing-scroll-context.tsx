@@ -1,14 +1,10 @@
 "use client"
 
-import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import * as React from "react"
 
+import { ensureGsapScroll } from "@/lib/gsap-scroll"
 import { LANDING_DOT_SECTIONS } from "@/lib/landing-modern-data"
-
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger)
-}
 
 type LandingScrollContextValue = {
   activeSectionId: string
@@ -24,6 +20,7 @@ export function LandingScrollProvider({ children }: { children: React.ReactNode 
   )
 
   React.useEffect(() => {
+    ensureGsapScroll()
     const triggers: ScrollTrigger[] = []
 
     for (const section of LANDING_DOT_SECTIONS) {

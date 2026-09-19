@@ -1,4 +1,3 @@
-import type { LucideIcon } from "lucide-react"
 import {
   Activity,
   GraduationCap,
@@ -6,10 +5,7 @@ import {
   LineChart,
   Link2,
   MoreHorizontal,
-  Scale,
   Sparkles,
-  Unplug,
-  Volume2,
   Wallet,
   Zap,
 } from "lucide-react"
@@ -19,6 +15,7 @@ export const NAV_LINKS = [
   { label: "How it works", id: "how-it-works" },
   { label: "About", id: "about" },
   { label: "Stories", id: "testimonials" },
+  { label: "FAQ", id: "faq" },
   { label: "Pricing", id: "pricing" },
 ] as const
 
@@ -148,97 +145,6 @@ export const TRUSTED_LOGOS = [
   { name: "Ledger", icon: Link2 },
   { name: "Pulse", icon: Activity },
 ] as const
-
-export const FEATURES_SECTION = {
-  title: "Your money is scattered.",
-  subtitle: "Exur puts it in one place, then tells you what to do.",
-} as const
-
-export type FeatureScrollVisual = "noise" | "split" | "stress" | "exur"
-
-export type FeatureVisualRowState = "active" | "muted" | "conflict" | "resolved"
-
-export type FeatureVisualRow = {
-  title: string
-  meta?: string
-  state?: FeatureVisualRowState
-}
-
-export type FeatureScrollStep = {
-  id: string
-  step: string
-  label: string
-  title: string
-  /** One short line. Must read in under 3 seconds. */
-  panelDesc: string
-  icon: LucideIcon
-  visual: FeatureScrollVisual
-  visualStatus?: string
-  visualRows?: readonly FeatureVisualRow[]
-  visualOverflow?: string
-  visualAnswer?: string
-}
-
-export const FEATURE_SCROLL_STEPS: FeatureScrollStep[] = [
-  {
-    id: "noise",
-    step: "01",
-    label: "Noise",
-    title: "Too much noise",
-    panelDesc: "Most of it never changes what you should do.",
-    icon: Volume2,
-    visual: "noise",
-    visualStatus: "47 today",
-    visualOverflow: "+44 more",
-    visualRows: [
-      { title: "Rent is due Friday", meta: "2m", state: "active" },
-      { title: "New bank promo email", meta: "14m", state: "muted" },
-      { title: "Market headline dump", meta: "28m", state: "muted" },
-    ],
-  },
-  {
-    id: "split",
-    step: "02",
-    label: "Split",
-    title: "Money everywhere",
-    panelDesc: "Bank, cards, and savings don’t talk to each other.",
-    icon: Unplug,
-    visual: "split",
-    visualStatus: "3 apps",
-    visualRows: [
-      { title: "Checking", meta: "$4,280", state: "muted" },
-      { title: "Brokerage", meta: "$128K", state: "muted" },
-      { title: "Credit card", meta: "−$890", state: "muted" },
-    ],
-  },
-  {
-    id: "stress",
-    step: "03",
-    label: "Stress",
-    title: "Hard to decide",
-    panelDesc: "Every choice feels equally urgent.",
-    icon: Scale,
-    visual: "stress",
-    visualStatus: "Stuck",
-    visualRows: [
-      { title: "Spend it", meta: "Now", state: "conflict" },
-      { title: "Save it", meta: "Later", state: "conflict" },
-      { title: "Wait", meta: "Unsure", state: "conflict" },
-    ],
-  },
-  {
-    id: "exur",
-    step: "04",
-    label: "Exur",
-    title: "One place to ask",
-    panelDesc: "Your AI assistant. Plain answers, in your context.",
-    icon: Sparkles,
-    visual: "exur",
-    visualStatus: "1 answer",
-    visualRows: [{ title: "Keep the cash buffer", meta: "Safe", state: "resolved" }],
-    visualAnswer: "You’re fine. I’ll tell you the moment that changes.",
-  },
-]
 
 export const MEET_EXUR_SECTION = {
   title: "We're still early.",
@@ -431,5 +337,8 @@ export const FOOTER_CTA = {
 } as const
 
 export function scrollToSection(id: string) {
-  document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" })
+  const el = document.getElementById(id)
+  if (!el) return
+
+  el.scrollIntoView({ behavior: "smooth", block: "start" })
 }

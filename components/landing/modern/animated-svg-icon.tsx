@@ -1,14 +1,10 @@
 "use client"
 
 import { gsap } from "gsap"
-import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { useEffect, useRef, type ReactNode } from "react"
 
+import { ensureGsapScroll } from "@/lib/gsap-scroll"
 import { cn } from "@/lib/utils"
-
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger)
-}
 
 type AnimatedSvgKind = "stroke" | "logo"
 
@@ -92,6 +88,7 @@ export function AnimatedSvgIcon({
       return
     }
 
+    ensureGsapScroll()
     const ctx = gsap.context(() => {
       const timeline = gsap.timeline({
         paused: true,

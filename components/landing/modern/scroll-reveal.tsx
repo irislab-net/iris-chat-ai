@@ -1,15 +1,11 @@
 "use client"
 
 import { gsap } from "gsap"
-import { ScrollTrigger } from "gsap/ScrollTrigger"
 import * as React from "react"
 import type { ReactNode } from "react"
 
+import { ensureGsapScroll } from "@/lib/gsap-scroll"
 import { cn } from "@/lib/utils"
-
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger)
-}
 
 type ScrollRevealProps = {
   children: ReactNode
@@ -39,6 +35,7 @@ export function ScrollReveal({
       const target = ref.current
       if (!target) return
 
+      ensureGsapScroll()
       ctx = gsap.context(() => {
         gsap.fromTo(
           target,

@@ -8,7 +8,6 @@ import { HeroLiquidGlassBg } from "@/components/landing/modern/hero-liquid-glass
 import { HeroSection } from "@/components/landing/modern/hero-section"
 import { LandingNav } from "@/components/landing/modern/landing-nav"
 import { LandingScrollProvider } from "@/components/landing/modern/landing-scroll-context"
-import { LandingSectionDots } from "@/components/landing/modern/landing-section-dots"
 import { ModernFooter } from "@/components/landing/modern/modern-footer"
 import { PricingSection } from "@/components/landing/modern/pricing-section"
 import { TestimonialsSection } from "@/components/landing/modern/testimonials-section"
@@ -16,7 +15,6 @@ import { jetbrainsMono, plusJakarta } from "@/components/landing/modern/fonts"
 import {
   landingHeroCard,
   landingHeroGlass,
-  landingHeroToMain,
   landingMainStack,
   landingPageStack,
   landingShell,
@@ -26,24 +24,23 @@ import { cn } from "@/lib/utils"
 export function ModernLandingPage() {
   return (
     <LandingScrollProvider>
-    <div
-      id="top"
-      className={cn(
-        plusJakarta.variable,
-        jetbrainsMono.variable,
-        "light landing-modern min-h-dvh bg-[#FAFBFC] font-sans text-[#0F172A] antialiased selection:bg-[#0F172A]/10 selection:text-[#0F172A]",
-        "scheme-light"
-      )}
-    >
-      <LandingSectionDots />
       <div
+        id="top"
         className={cn(
-          landingShell,
-          landingPageStack,
-          "relative z-10 pb-3 sm:pb-5 lg:pb-8"
+          plusJakarta.variable,
+          jetbrainsMono.variable,
+          "light landing-modern min-h-dvh bg-[#FAFBFC] font-sans text-[#0F172A] antialiased selection:bg-[#0F172A]/10 selection:text-[#0F172A]",
+          "scheme-light"
         )}
       >
-        <LandingNav />
+        <div
+          className={cn(
+            landingShell,
+            landingPageStack,
+            "relative z-10 pb-3 sm:pb-5 lg:pb-8"
+          )}
+        >
+          <LandingNav />
 
           <div className={cn(landingHeroCard, landingHeroGlass)}>
             <HeroLiquidGlassBg />
@@ -52,7 +49,7 @@ export function ModernLandingPage() {
             </div>
           </div>
 
-          <main className={cn(landingMainStack, landingHeroToMain)}>
+          <main className={landingMainStack}>
             <GoalsSection />
             <BentoSection />
             <AboutSection />
@@ -61,9 +58,9 @@ export function ModernLandingPage() {
             <PricingSection />
           </main>
 
-        <ModernFooter />
+          <ModernFooter />
+        </div>
       </div>
-    </div>
     </LandingScrollProvider>
   )
 }

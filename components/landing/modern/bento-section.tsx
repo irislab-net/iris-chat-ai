@@ -1,8 +1,7 @@
 "use client"
 
-import { BrainIcon, EyeIcon, ScaleIcon } from "lucide-react"
-
 import { AnimatedSvgIcon } from "@/components/landing/modern/animated-svg-icon"
+import { HOW_IT_WORKS_MARKS } from "@/components/landing/modern/how-it-works-marks"
 import { ScrollReveal } from "@/components/landing/modern/scroll-reveal"
 import { SectionHeader, SphereCta } from "@/components/landing/modern/sphere-ui"
 import {
@@ -20,23 +19,16 @@ import {
 import { APP_NEWS_PATH } from "@/lib/site"
 import { cn } from "@/lib/utils"
 
-const STEP_ICONS = [EyeIcon, BrainIcon, ScaleIcon]
-
 function HowItWorksStepIcon({ index }: { index: number }) {
-  const Icon = STEP_ICONS[index]
+  const Mark = HOW_IT_WORKS_MARKS[index]
 
   return (
-    <div
-      className={cn(
-        landingGlassSurface,
-        "relative z-10 mb-5 flex size-16 items-center justify-center overflow-hidden rounded-full bg-white/52 text-[#475569] shadow-[0_12px_36px_rgba(15,23,42,0.08),inset_0_1px_1px_rgba(255,255,255,0.95)] sm:size-18"
-      )}
+    <AnimatedSvgIcon
+      replayOnHover
+      className="relative z-10 mb-6 size-13 text-[#334155] sm:size-15"
     >
-      <span aria-hidden className={cn(landingGlassSheen, "absolute inset-0 rounded-full")} />
-      <AnimatedSvgIcon scrollTrigger replayOnHover className="relative z-10 size-7 sm:size-8">
-        <Icon className="size-full overflow-visible" strokeWidth={1.75} />
-      </AnimatedSvgIcon>
-    </div>
+      <Mark />
+    </AnimatedSvgIcon>
   )
 }
 
@@ -53,10 +45,6 @@ export function BentoSection() {
 
         <ScrollReveal delay={0.08} className="mt-12 lg:mt-14">
           <div className="relative grid grid-cols-1 gap-6 md:grid-cols-3 md:gap-4">
-            <div
-              aria-hidden
-              className="absolute top-10 right-[16%] left-[16%] hidden h-px bg-linear-to-r from-transparent via-white/70 to-transparent md:block"
-            />
             {HOW_IT_WORKS_STEPS.map((item, index) => {
               return (
                 <article

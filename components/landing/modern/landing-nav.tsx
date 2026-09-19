@@ -64,7 +64,7 @@ export function LandingNav() {
           className="h-auto min-w-0 shrink-0 justify-self-start gap-2.5 rounded-full px-0 py-0 text-[#0F172A] hover:bg-[#F1F5F9]"
         >
           <span
-            className="flex size-11 shrink-0 items-center justify-center rounded-[14px] bg-white p-1 shadow-[0_6px_18px_rgba(15,23,42,0.06)]"
+            className="flex size-11 shrink-0 items-center justify-center rounded-full bg-white p-1 shadow-[0_6px_18px_rgba(15,23,42,0.06)]"
             aria-hidden
           >
             <AnimatedIrisLabLogo replayOnHover shimmer className="size-9" />

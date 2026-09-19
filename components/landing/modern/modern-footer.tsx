@@ -38,7 +38,17 @@ export function ModernFooter() {
               aria-label={SITE_NAME}
               className="h-auto w-fit gap-2.5 rounded-full px-0 py-0 text-[#0F172A] hover:bg-[#F1F5F9]"
             >
-              <AnimatedIrisLabLogo scrollTrigger className="size-14 shrink-0" />
+              <span
+                className="flex size-14 shrink-0 items-center justify-center rounded-full bg-white p-1.5 shadow-[0_8px_24px_rgba(15,23,42,0.08)] ring-1 ring-[#F1F5F9]"
+                aria-hidden
+              >
+                <AnimatedIrisLabLogo
+                  scrollTrigger
+                  replayOnHover
+                  shimmer
+                  className="size-11"
+                />
+              </span>
               <span className={landingTitleFooter}>
                 {SITE_NAME}
               </span>

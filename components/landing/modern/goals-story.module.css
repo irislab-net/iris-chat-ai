@@ -1,0 +1,230 @@
+.story {
+  position: relative;
+  height: 280vh;
+}
+
+.story[data-reduced-motion="true"] {
+  height: auto;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+.story[data-reduced-motion="true"] .stage {
+  position: relative;
+}
+
+.stage {
+  position: sticky;
+  top: 0;
+  display: flex;
+  height: 100vh;
+  height: 100dvh;
+  align-items: center;
+  justify-content: center;
+  /* Clip runaway animation, but leave room for the tile's 48px drop shadow —
+     the stage is exactly as wide as the container, so `hidden` would cut it. */
+  overflow: clip;
+  overflow-clip-margin: 72px;
+}
+
+.inner {
+  display: grid;
+  width: 100%;
+  max-width: 1120px;
+  align-items: center;
+  gap: 72px;
+  padding: 24px;
+  grid-template-columns: 1fr minmax(0, 480px);
+}
+
+.blocks {
+  display: grid;
+  max-width: 380px;
+}
+
+.block {
+  grid-area: 1 / 1;
+  will-change: transform, opacity;
+}
+
+.heading {
+  margin: 0 0 16px;
+}
+
+.sub {
+  margin: 0;
+}
+
+.bars {
+  display: flex;
+  gap: 6px;
+  margin-top: 32px;
+}
+
+.bar {
+  position: relative;
+  display: block;
+  width: 24px;
+  height: 2px;
+  overflow: hidden;
+  border-radius: 9999px;
+  background: #e2e8f0;
+  opacity: 1;
+}
+
+.bar::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #0f172a 0%, #334155 100%);
+  opacity: var(--bar-fill, 0.14);
+}
+
+.tile {
+  margin: 0;
+  aspect-ratio: 480 / 400;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 32px;
+}
+
+.tileBackdrop {
+  position: absolute;
+  inset: 0;
+  border-radius: 32px;
+  background: radial-gradient(ellipse at 50% 34%, #ffffff 0%, #f6f7f9 58%, #eef1f5 100%);
+}
+
+.tile svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.pool circle {
+  fill: #0f172a;
+  stroke: #0f172a;
+  stroke-width: 1.5;
+}
+
+.ping {
+  fill: none;
+  stroke: #475569;
+  stroke-width: 1.5;
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: exur-ping 3.6s cubic-bezier(0.2, 0.6, 0.3, 1) infinite;
+}
+
+.pingP2 {
+  animation-delay: 1.8s;
+}
+
+.ping4 {
+  fill: none;
+  stroke: #475569;
+  stroke-width: 1.5;
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: exur-ping4 4.2s cubic-bezier(0.2, 0.6, 0.3, 1) infinite;
+}
+
+.ping4Q2 {
+  animation-delay: 2.1s;
+}
+
+/** Travels from the inner ring out to the outer ring (88 → 152). */
+@keyframes exur-ping4 {
+  0% {
+    transform: scale(1);
+    opacity: 0.4;
+  }
+  100% {
+    transform: scale(1.727);
+    opacity: 0;
+  }
+}
+
+@keyframes exur-ping {
+  0% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(2.7);
+    opacity: 0;
+  }
+}
+
+.hint {
+  position: absolute;
+  right: 0;
+  bottom: 26px;
+  left: 0;
+  text-align: center;
+  font-family: var(--font-mono-modern), "JetBrains Mono", ui-monospace, Menlo, monospace;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  color: #64748b;
+}
+
+.hint span {
+  display: block;
+  width: 1px;
+  height: 26px;
+  margin: 10px auto 0;
+  transform-origin: top;
+  animation: exur-tick 1.8s ease-in-out infinite;
+  background: #94a3b8;
+  opacity: 0.6;
+}
+
+@keyframes exur-tick {
+  0% {
+    transform: scaleY(0);
+  }
+  60% {
+    transform: scaleY(1);
+  }
+  100% {
+    transform: scaleY(1);
+    opacity: 0;
+  }
+}
+
+@media (max-width: 860px) {
+  .inner {
+    gap: 28px;
+    padding: 20px;
+    grid-template-columns: 1fr;
+  }
+
+  .tile {
+    order: -1;
+    max-width: 420px;
+    margin: 0 auto;
+  }
+
+  .blocks {
+    max-width: none;
+  }
+
+  .bars {
+    margin-top: 28px;
+  }
+
+  .hint {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ping,
+  .ping4,
+  .hint span {
+    animation: none;
+  }
+}

@@ -52,7 +52,7 @@ export const landingHeroToMain = "mt-32 sm:mt-32 lg:mt-40"
 export const landingFrame = "px-4.5 sm:px-3 lg:px-4"
 
 /** Centered page column: hero card, sections, and footer card share this width. */
-export const landingOuter = "mx-auto w-full max-w-7xl"
+export const landingOuter = "mx-auto w-full max-w-6xl"
 
 /** Frame + centered column — single shell for the whole landing page. */
 export const landingShell = `${landingFrame} ${landingOuter}`
