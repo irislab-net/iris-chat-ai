@@ -1,6 +1,7 @@
 "use client"
 
 import { HeroComposeDemo } from "@/components/landing/modern/hero-compose-demo"
+import { ScrollRevealGroup } from "@/components/landing/modern/scroll-reveal"
 import { HERO } from "@/lib/landing-modern-data"
 import { landingInner, landingTitleHero } from "@/lib/landing-modern-styles"
 import { cn } from "@/lib/utils"
@@ -8,7 +9,7 @@ import { cn } from "@/lib/utils"
 export function HeroSection() {
   return (
     <section className="flex min-h-0 flex-1 flex-col">
-      <div
+      <ScrollRevealGroup
         className={cn(
           landingInner,
           "flex min-h-0 flex-1 flex-col pb-8 pt-7 sm:pb-6 sm:pt-6 lg:pb-8 lg:pt-8"
@@ -30,7 +31,7 @@ export function HeroSection() {
         <div className="mt-auto w-full shrink-0 overflow-visible pt-6 pb-1 sm:pt-6 sm:pb-0">
           <HeroComposeDemo />
         </div>
-      </div>
+      </ScrollRevealGroup>
     </section>
   )
 }

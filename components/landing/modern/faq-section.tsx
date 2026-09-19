@@ -9,6 +9,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion"
 import { FAQ_ITEMS, FAQ_SECTION } from "@/lib/landing-modern-data"
+import { LANDING_REVEAL } from "@/lib/landing-motion"
 import { landingInner, landingSection, landingSectionBody } from "@/lib/landing-modern-styles"
 import { cn } from "@/lib/utils"
 
@@ -20,7 +21,10 @@ export function FaqSection() {
           <SectionHeader title={FAQ_SECTION.title} subtitle={FAQ_SECTION.subtitle} />
         </ScrollReveal>
 
-        <ScrollReveal delay={0.08} className="mx-auto mt-10 max-w-2xl sm:mt-12">
+        <ScrollReveal
+          delay={LANDING_REVEAL.stagger}
+          className="mx-auto mt-10 max-w-2xl sm:mt-12"
+        >
           <Accordion defaultValue={["what"]}>
             {FAQ_ITEMS.map((faq) => (
               <AccordionItem key={faq.id} value={faq.id} className="border-[#E2E8F0]">

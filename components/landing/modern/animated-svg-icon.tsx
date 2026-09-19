@@ -4,6 +4,7 @@ import { gsap } from "gsap"
 import { useEffect, useRef, type ReactNode } from "react"
 
 import { ensureGsapScroll } from "@/lib/gsap-scroll"
+import { LANDING_MOTION, prefersReducedMotion } from "@/lib/landing-motion"
 import { cn } from "@/lib/utils"
 
 type AnimatedSvgKind = "stroke" | "logo"
@@ -21,10 +22,6 @@ type AnimatedSvgIconProps = {
 const STROKE_SELECTOR = "path, circle, ellipse, line, rect, polyline, polygon"
 const DURATION = 0.5
 const STAGGER = DURATION / 10
-
-function prefersReducedMotion() {
-  return typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches
-}
 
 function resetStrokeTargets(targets: SVGGeometryElement[]) {
   targets.forEach((shape) => {
@@ -56,9 +53,8 @@ function collectStrokeTargets(scope: HTMLElement) {
 function buildScrollTrigger(scope: HTMLElement) {
   return {
     trigger: scope,
-    start: "top 100%",
-    end: "center 90%",
-    toggleActions: "play play reverse reset",
+    start: LANDING_MOTION.start,
+    once: true,
   }
 }
 

@@ -14,17 +14,27 @@ export const NAV_LINKS = [
   { label: "Why Exur", id: "features" },
   { label: "How it works", id: "how-it-works" },
   { label: "About", id: "about" },
-  { label: "Stories", id: "testimonials" },
+  // { label: "Reviews", id: "testimonials" },
   { label: "FAQ", id: "faq" },
   { label: "Pricing", id: "pricing" },
 ] as const
 
-export const LANDING_DOT_SECTIONS = [
-  { id: "top", label: "Home" },
+/**
+ * Scroll-spy targets, in document order.
+ *
+ * Every id here must resolve to a real element that occupies its own band of
+ * the page — `#top` is the page root and would stay "entered" forever, so the
+ * hero is tracked via `#hero` instead. Sections that are not nav destinations
+ * (the CTA band) still belong here: without them the previous section stays
+ * highlighted while they are on screen.
+ */
+export const LANDING_SCROLL_SECTIONS = [
+  { id: "hero", label: "Home" },
   { id: "features", label: "Why Exur" },
   { id: "how-it-works", label: "How it works" },
   { id: "about", label: "About" },
-  { id: "testimonials", label: "Stories" },
+  // { id: "testimonials", label: "Reviews" },
+  { id: "get-started", label: "Get started" },
   { id: "faq", label: "FAQ" },
   { id: "pricing", label: "Pricing" },
 ] as const
@@ -146,18 +156,15 @@ export const TRUSTED_LOGOS = [
   { name: "Pulse", icon: Activity },
 ] as const
 
+/** Copy is deliberately thin — the orb narration carries this section. */
 export const MEET_EXUR_SECTION = {
-  title: "We're still early.",
-  subtitle:
-    "Exur is an AI financial assistant, not another chart, feed, or trading gimmick. It helps you see your money clearly, like a sharp friend who never sleeps.",
-  quote: "Most people don’t need more data. They need someone paying attention.",
-  tagline: "That’s what we’re building.",
+  title: "Let Exur explain.",
+  subtitle: "A minute, in its own words.",
 } as const
 
 export const ARCHITECTURE_SECTION = {
-  title: "What Exur does",
-  subtitle: "It watches. It explains. It helps when you ask.",
-  cta: "Try Exur free",
+  title: "How it works",
+  subtitle: "Three steps. After that it’s just a conversation.",
 } as const
 
 export const HOW_IT_WORKS_STEPS = [
@@ -181,9 +188,10 @@ export const HOW_IT_WORKS_STEPS = [
   },
 ] as const
 
-export const COMPANION_SECTION = {
-  title: "People actually ask this.",
-  subtitle: "Real money questions. Short answers.",
+export const TESTIMONIALS_SECTION = {
+  badge: "From X",
+  title: "People post about it.",
+  subtitle: "Unedited, straight from the timeline.",
 } as const
 
 export const FAQ_SECTION = {
@@ -202,7 +210,7 @@ export const FAQ_ITEMS: FaqItem[] = [
     id: "what",
     question: "What is Exur?",
     answer:
-      "Exur is an AI financial assistant. Ask about spending, savings, and what’s next, in your own words.",
+      "An assistant that reads your accounts and answers in plain language — grounded in your actual numbers, not generic advice.",
   },
   {
     id: "news",
@@ -242,25 +250,60 @@ export const FAQ_ITEMS: FaqItem[] = [
   },
 ]
 
-export type VoiceExchange = {
-  question: string
-  answer: string
+export type XPost = {
+  id: string
+  name: string
+  /** Without the leading “@”. */
+  handle: string
+  avatar: string
+  initials: string
+  text: string
+  /** Short display date, e.g. “Mar 12”. */
+  date: string
+  /** Permalink to the original post — every card links out so claims stay checkable. */
+  url: string
 }
 
-export const VOICE_EXCHANGES: VoiceExchange[] = [
+/**
+ * PLACEHOLDER POSTS — replace with real ones before launch.
+ *
+ * Copy each field straight from the original post and keep `url` pointing at it.
+ * Use the poster's real X avatar URL (`avatar`) rather than a stock photo, and
+ * leave `text` as written — light edits are what make quote cards read as fake.
+ */
+export const X_POSTS: XPost[] = [
   {
-    question: "Can you watch my portfolio and only tell me when something's wrong?",
-    answer:
-      "Yeah. I'll keep an eye on it and message you when there's something you actually need to decide.",
+    id: "1",
+    name: "Maya Ruiz",
+    handle: "mayabuilds",
+    avatar:
+      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=128&h=128&q=80",
+    initials: "MR",
+    text: "connected my accounts to @exur on a sunday. by monday it found two subscriptions i forgot existed + a card fee i'd been paying for three years.\n\ndidn't lecture me about budgeting. just told me what to cancel. $284/mo gone.",
+    date: "Mar 12",
+    url: "https://x.com/TheIrisLab",
   },
   {
-    question: "I want to buy a house next year.",
-    answer:
-      "Then protect the down payment first. Keep more cash, take less risk, until you’re closer.",
+    id: "2",
+    name: "Jonas Neumann",
+    handle: "jonasdev",
+    avatar:
+      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=128&h=128&q=80",
+    initials: "JN",
+    text: "freelance income is lumpy and every budgeting app i've tried breaks on that.\n\nexur is the first one that got it and told me how much i could actually take out this month without wrecking my runway.",
+    date: "Mar 8",
+    url: "https://x.com/TheIrisLab",
   },
   {
-    question: "What should I do right now?",
-    answer: "Nothing for now. You're fine. I'll let you know if that changes.",
+    id: "3",
+    name: "Priya Shah",
+    handle: "priyashah",
+    avatar:
+      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=128&h=128&q=80",
+    initials: "PS",
+    text: "asked it if i could afford a car. it said not yet, and showed me exactly why.\n\nhonestly i'd rather hear that than a yes i'd regret.",
+    date: "Feb 27",
+    url: "https://x.com/TheIrisLab",
   },
 ]
 
@@ -277,68 +320,63 @@ export type PricingPlan = {
 
 export const PRICING_SECTION = {
   title: "Simple plans.",
-  subtitle: "Start free. Upgrade if you want more.",
+  subtitle: "Start free. Upgrade if you hit the daily limit.",
 } as const
 
 export const PRICING_PLANS: PricingPlan[] = [
   {
-    key: "starter",
-    name: "Starter",
+    key: "free",
+    name: "Free",
     price: "Free",
-    desc: "See your money. Ask anything.",
+    desc: "Look around. Ask a few things. No signup.",
     cta: "Start free",
     features: [
-      "Spending & savings snapshot",
-      "Exur chat",
-      "Goals in plain language",
-      "Community support",
-      "1 seat",
+      "Ask in your own words",
+      "No account required to try",
+      "Daily ask limit",
+      "Connect accounts when you want",
     ],
   },
   {
-    key: "pro",
-    name: "Pro",
+    key: "plus",
+    name: "Plus",
     price: "$49",
-    desc: "For people who want faster answers and more room.",
-    cta: "Go Pro",
+    desc: "If you use it every day, this is the room you need.",
+    cta: "Go Plus",
     featured: true,
     badge: "Popular",
     features: [
-      "Unlimited chat",
-      "Priority answers",
-      "Saved goals",
-      "Email support",
-      "Up to 5 seats",
-      "Account history",
+      "Everything in Free",
+      "Higher daily and weekly limits",
+      "Saved chat history",
+      "A co-pilot that remembers you",
     ],
   },
   {
     key: "ultimate",
     name: "Ultimate",
     price: "Custom",
-    desc: "For teams that need custom limits and direct support.",
+    desc: "When Plus limits still aren’t enough.",
     cta: "Contact us",
-    badge: "Teams",
+    badge: "Custom",
     features: [
-      "Everything in Pro",
-      "Custom limits",
-      "Team workspaces",
-      "Dedicated support",
-      "Unlimited seats",
-      "Custom integrations",
+      "Everything in Plus",
+      "Limits we set with you",
+      "Direct line — we set it up",
     ],
   },
 ]
 
-export const FOOTER_CTA = {
-  title: "Give it a try.",
-  subtitle: "Ask about your money. See if it clicks.",
-  tagline: "Exur",
+/**
+ * Footer blurb. Deliberately not `SITE_DESCRIPTION` — that string is tuned for
+ * search results and repeats the hero subtitle almost word for word.
+ */
+export const FOOTER_TAGLINE = "The financial brain behind your accounts."
+
+/** Closing CTA band — the page's last ask, just before the FAQ. */
+export const CTA_SECTION = {
+  title: "Stop guessing about money.",
+  subtitle: "One question is enough to tell whether this is useful to you.",
+  cta: "Start free",
+  note: "Free to start. No signup to look around.",
 } as const
-
-export function scrollToSection(id: string) {
-  const el = document.getElementById(id)
-  if (!el) return
-
-  el.scrollIntoView({ behavior: "smooth", block: "start" })
-}

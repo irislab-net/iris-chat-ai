@@ -1,7 +1,7 @@
 "use client"
 
 import { PauseIcon, PlayIcon } from "lucide-react"
-import { useReducedMotion } from "motion/react"
+import { useReducedMotion } from "@/lib/landing-motion"
 import * as React from "react"
 
 import { ABOUT_DEMO_VIDEO } from "@/lib/landing-modern-data"

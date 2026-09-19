@@ -547,6 +547,33 @@
   }
 }
 
+/* Blue-only cycle — landing CTA band. Same drift, brand hue range instead of
+   the chat mesh's blue → teal → green sweep. */
+@keyframes gemini-glass-color-cycle-blue {
+  0%,
+  100% {
+    --gemini-glass-a: #93c5fd;
+    --gemini-glass-b: #a7d0fe;
+    --gemini-glass-c: #bfdbfe;
+    --gemini-glass-d: #7fb8fc;
+    --gemini-dots-tone: #60a5fa;
+  }
+  33% {
+    --gemini-glass-a: #7aa7f8;
+    --gemini-glass-b: #8db6fa;
+    --gemini-glass-c: #a5c6fc;
+    --gemini-glass-d: #6795f5;
+    --gemini-dots-tone: #3b82f6;
+  }
+  66% {
+    --gemini-glass-a: #8fb3f7;
+    --gemini-glass-b: #9fc0f9;
+    --gemini-glass-c: #b2cefb;
+    --gemini-glass-d: #7ca4f4;
+    --gemini-dots-tone: #4b8df0;
+  }
+}
+
 @keyframes gemini-glass-color-cycle-dark {
   0%,
   100% {
@@ -612,6 +639,11 @@
 
 .chat-gemini-bg-loading {
   --gemini-glass-cycle-duration: 15s;
+}
+
+/* Doubled class beats `.dark .chat-gemini-bg` on specificity. */
+.chat-gemini-bg.chat-gemini-bg-blue {
+  animation-name: gemini-glass-color-cycle-blue;
 }
 
 /* Gemini mesh layout — proportions from reference artboard 507×764, anchored to bottom. */
@@ -785,6 +817,44 @@
   background-position: 1px 6px;
   animation: gemini-dots-twinkle-c 3.8s ease-in-out infinite;
   animation-delay: -2.6s;
+}
+
+/*
+ * Landing-only sparkle grain (`variant="hero"`; chat keeps the dot grid).
+ *
+ * 15 four-point stars scattered in a 64px tile at 0.12–0.25 scale, so each mark
+ * renders ~2–4px — fine enough to read as grain rather than decoration. Masked
+ * rather than painted so the animated `--gemini-dots-tone` still drives color.
+ * Layer sizes 64/53/77 are non-multiples, so their repeats never line up.
+ */
+.chat-gemini-bg-hero .chat-gemini-dots {
+  --gemini-sparkle: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cg fill='%23000'%3E%3Cpath transform='translate(4 10) scale(.16)' d='M8 0c0 4.4 3.6 8 8 8-4.4 0-8 3.6-8 8 0-4.4-3.6-8-8-8 4.4 0 8-3.6 8-8z'/%3E%3Cpath transform='translate(18 3) scale(.22)' d='M8 0c0 4.4 3.6 8 8 8-4.4 0-8 3.6-8 8 0-4.4-3.6-8-8-8 4.4 0 8-3.6 8-8z'/%3E%3Cpath transform='translate(29 17) scale(.13)' d='M8 0c0 4.4 3.6 8 8 8-4.4 0-8 3.6-8 8 0-4.4-3.6-8-8-8 4.4 0 8-3.6 8-8z'/%3E%3Cpath transform='translate(43 7) scale(.18)' d='M8 0c0 4.4 3.6 8 8 8-4.4 0-8 3.6-8 8 0-4.4-3.6-8-8-8 4.4 0 8-3.6 8-8z'/%3E%3Cpath transform='translate(57 14) scale(.25)' d='M8 0c0 4.4 3.6 8 8 8-4.4 0-8 3.6-8 8 0-4.4-3.6-8-8-8 4.4 0 8-3.6 8-8z'/%3E%3Cpath transform='translate(9 27) scale(.2)' d='M8 0c0 4.4 3.6 8 8 8-4.4 0-8 3.6-8 8 0-4.4-3.6-8-8-8 4.4 0 8-3.6 8-8z'/%3E%3Cpath transform='translate(23 38) scale(.14)' d='M8 0c0 4.4 3.6 8 8 8-4.4 0-8 3.6-8 8 0-4.4-3.6-8-8-8 4.4 0 8-3.6 8-8z'/%3E%3Cpath transform='translate(37 30) scale(.12)' d='M8 0c0 4.4 3.6 8 8 8-4.4 0-8 3.6-8 8 0-4.4-3.6-8-8-8 4.4 0 8-3.6 8-8z'/%3E%3Cpath transform='translate(50 41) scale(.19)' d='M8 0c0 4.4 3.6 8 8 8-4.4 0-8 3.6-8 8 0-4.4-3.6-8-8-8 4.4 0 8-3.6 8-8z'/%3E%3Cpath transform='translate(61 33) scale(.15)' d='M8 0c0 4.4 3.6 8 8 8-4.4 0-8 3.6-8 8 0-4.4-3.6-8-8-8 4.4 0 8-3.6 8-8z'/%3E%3Cpath transform='translate(3 47) scale(.23)' d='M8 0c0 4.4 3.6 8 8 8-4.4 0-8 3.6-8 8 0-4.4-3.6-8-8-8 4.4 0 8-3.6 8-8z'/%3E%3Cpath transform='translate(17 58) scale(.17)' d='M8 0c0 4.4 3.6 8 8 8-4.4 0-8 3.6-8 8 0-4.4-3.6-8-8-8 4.4 0 8-3.6 8-8z'/%3E%3Cpath transform='translate(31 51) scale(.13)' d='M8 0c0 4.4 3.6 8 8 8-4.4 0-8 3.6-8 8 0-4.4-3.6-8-8-8 4.4 0 8-3.6 8-8z'/%3E%3Cpath transform='translate(46 62) scale(.21)' d='M8 0c0 4.4 3.6 8 8 8-4.4 0-8 3.6-8 8 0-4.4-3.6-8-8-8 4.4 0 8-3.6 8-8z'/%3E%3Cpath transform='translate(59 54) scale(.15)' d='M8 0c0 4.4 3.6 8 8 8-4.4 0-8 3.6-8 8 0-4.4-3.6-8-8-8 4.4 0 8-3.6 8-8z'/%3E%3C/g%3E%3C/svg%3E");
+  background-image: none;
+  background-color: color-mix(in oklab, var(--gemini-dots-tone) 24%, transparent);
+  -webkit-mask-image: var(--gemini-sparkle);
+  mask-image: var(--gemini-sparkle);
+  -webkit-mask-repeat: repeat;
+  mask-repeat: repeat;
+  mask-mode: alpha;
+}
+
+.chat-gemini-bg-hero .chat-gemini-dots-layer-a {
+  -webkit-mask-size: 64px 64px;
+  mask-size: 64px 64px;
+}
+
+.chat-gemini-bg-hero .chat-gemini-dots-layer-b {
+  -webkit-mask-size: 53px 53px;
+  mask-size: 53px 53px;
+  -webkit-mask-position: 19px 31px;
+  mask-position: 19px 31px;
+}
+
+.chat-gemini-bg-hero .chat-gemini-dots-layer-c {
+  -webkit-mask-size: 77px 77px;
+  mask-size: 77px 77px;
+  -webkit-mask-position: 41px 12px;
+  mask-position: 41px 12px;
 }
 
 .chat-gemini-pattern-active .chat-gemini-dots {

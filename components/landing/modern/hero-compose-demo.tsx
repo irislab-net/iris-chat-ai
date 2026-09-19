@@ -1,8 +1,8 @@
 "use client"
 
 import { gsap } from "gsap"
-import { CustomEase } from "gsap/CustomEase"
-import { useReducedMotion } from "motion/react"
+import { useReducedMotion } from "@/lib/landing-motion"
+import { ensureGsapScroll } from "@/lib/gsap-scroll"
 import { ArrowUpIcon, SquareIcon } from "lucide-react"
 import { useRouter } from "@/i18n/navigation"
 import {
@@ -33,10 +33,6 @@ import {
 import { buildLandingChatHref } from "@/lib/landing-chat-handoff"
 import { cn } from "@/lib/utils"
 
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(CustomEase)
-  CustomEase.create("heroDemo", "0.16, 1, 0.3, 1")
-}
 
 const FPS = 60
 const frames = (count: number) => count / FPS
@@ -606,6 +602,8 @@ export function HeroComposeDemo() {
   }, [handleSend, isStreaming, stopDemo])
 
   useLayoutEffect(() => {
+    ensureGsapScroll()
+
     const root = rootRef.current
     if (!root) return
 

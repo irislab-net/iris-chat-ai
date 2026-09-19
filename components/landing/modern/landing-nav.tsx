@@ -1,11 +1,13 @@
 "use client"
 
-import { useState } from "react"
+import { gsap } from "gsap"
+import { useEffect, useState } from "react"
 
 import { AnimatedIrisLabLogo } from "@/components/brand/animated-iris-lab-logo"
 import { IrisLabLogo } from "@/components/brand/iris-lab-logo"
 import { LocaleSwitcher } from "@/components/i18n/locale-switcher"
 import { SphereCta } from "@/components/landing/modern/sphere-ui"
+import { ThemeModeControl } from "@/components/landing/modern/theme-mode-control"
 import { Button } from "@/components/ui/button"
 import {
   Sheet,
@@ -15,8 +17,10 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet"
+import { XIcon } from "lucide-react"
 import { useLandingActiveSection } from "@/components/landing/modern/landing-scroll-context"
-import { NAV_LINKS, scrollToSection } from "@/lib/landing-modern-data"
+import { NAV_LINKS } from "@/lib/landing-modern-data"
+import { LANDING_MOTION, scrollToSection } from "@/lib/landing-motion"
 import {
   landingGlassNavIcon,
   landingTitleBrand,
@@ -31,7 +35,7 @@ import { cn } from "@/lib/utils"
 
 function scrollAndClose(id: string, close: () => void) {
   close()
-  window.setTimeout(() => scrollToSection(id), 150)
+  gsap.delayedCall(LANDING_MOTION.durationFast * 0.3, () => scrollToSection(id))
 }
 
 function NavMenuIcon() {
@@ -45,14 +49,26 @@ function NavMenuIcon() {
 
 export function LandingNav() {
   const [open, setOpen] = useState(false)
+  const [stuck, setStuck] = useState(false)
   const { activeSectionId } = useLandingActiveSection()
 
+  useEffect(() => {
+    const onScroll = () => setStuck(window.scrollY > 24)
+    onScroll()
+    window.addEventListener("scroll", onScroll, { passive: true })
+    return () => window.removeEventListener("scroll", onScroll)
+  }, [])
+
   return (
-    <header className="relative z-50 pt-3 sm:pt-4 lg:pt-5">
+    <header className="sticky top-0 z-50 pt-3 sm:pt-4 lg:pt-5">
       <nav
         className={cn(
           landingInner,
-          "grid grid-cols-[1fr_auto] items-center gap-4 md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]"
+          "grid grid-cols-[1fr_auto] items-center gap-4 md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]",
+          "rounded-[28px] transition-[background-color,box-shadow,backdrop-filter,padding] duration-300 ease-out",
+          stuck
+            ? "bg-white/72 py-2 shadow-[0_10px_40px_rgba(15,23,42,0.08),inset_0_1px_1px_rgba(255,255,255,0.9)] backdrop-blur-2xl"
+            : "bg-transparent py-0 shadow-none"
         )}
         aria-label="Landing"
       >
@@ -77,7 +93,8 @@ export function LandingNav() {
         <div
           className={cn(
             landingNavPill,
-            "hidden md:col-start-2 md:row-start-1 md:flex"
+            "hidden transition-all duration-300 md:col-start-2 md:row-start-1 md:flex",
+            stuck && "bg-[#F1F5F9]/70 shadow-none"
           )}
         >
           {NAV_LINKS.map((link) => {
@@ -101,12 +118,7 @@ export function LandingNav() {
         </div>
 
         <div className="flex shrink-0 items-center justify-end gap-2 justify-self-end md:col-start-3 md:row-start-1">
-          <SphereCta
-            href={APP_NEWS_PATH}
-            variant="glass"
-            iconClassName="max-md:hidden size-6"
-            className="min-h-8 shrink-0 px-3 py-1.5 text-xs sm:px-3.5 sm:py-1.5"
-          >
+          <SphereCta href={APP_NEWS_PATH} variant="glass" size="sm">
             Start Free
           </SphereCta>
 
@@ -127,52 +139,83 @@ export function LandingNav() {
                 </Button>
               }
             />
-            <SheetContent side="right" className="w-[min(100vw-2rem,20rem)] border-0 bg-white p-0 shadow-[0_24px_80px_rgba(15,23,42,0.12)]">
-              <SheetHeader className="bg-[#F8FAFC] px-5 py-4 text-left">
+            <SheetContent
+              side="right"
+              showCloseButton={false}
+              className={cn(
+                "gap-0 border-0 bg-white p-0 text-[#0F172A] shadow-[0_24px_80px_rgba(15,23,42,0.14)]",
+                "dark:bg-[#111827] dark:text-white dark:shadow-[0_24px_80px_rgba(0,0,0,0.45)]",
+                "top-3 right-3 bottom-3 left-auto h-auto w-[min(calc(100vw-1.5rem),20rem)] rounded-[1.75rem]",
+                "data-[side=right]:top-3 data-[side=right]:right-3 data-[side=right]:bottom-3 data-[side=right]:left-auto",
+                "data-[side=right]:h-auto data-[side=right]:w-[min(calc(100vw-1.5rem),20rem)] data-[side=right]:sm:max-w-none"
+              )}
+            >
+              <SheetHeader className="flex-row items-center justify-between gap-3 p-5 pb-3 text-left">
                 <SheetTitle
-                  className={cn(landingTitleBrand, "flex items-center gap-2.5 text-sm")}
+                  className={cn(
+                    landingTitleBrand,
+                    "flex items-center gap-2.5 dark:text-white"
+                  )}
                 >
                   <IrisLabLogo
                     decorative
-                    size={28}
-                    variant="on-light"
-                    className="size-7 overflow-hidden rounded-full bg-white"
+                    size={36}
+                    variant="auto"
+                    className="size-9 overflow-hidden rounded-full bg-white shadow-[0_6px_18px_rgba(15,23,42,0.06)] dark:bg-white/10"
                   />
                   Exur
                 </SheetTitle>
+                <SheetClose
+                  render={
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      className={cn(
+                        "relative size-10! shrink-0 rounded-full p-0 text-[#0F172A] hover:bg-transparent dark:text-white",
+                        landingGlassNavIcon
+                      )}
+                      aria-label="Close menu"
+                    />
+                  }
+                >
+                  <span aria-hidden className={cn(landingGlassSheen, "rounded-full")} />
+                  <XIcon className="relative z-10 size-4" />
+                </SheetClose>
               </SheetHeader>
-              <div className="flex flex-col gap-1 p-3">
+
+              <nav className="flex flex-1 flex-col gap-1 px-3 pt-2" aria-label="Mobile">
                 {NAV_LINKS.map((link) => {
                   const isActive = activeSectionId === link.id
                   return (
-                    <SheetClose
+                    <Button
                       key={link.id}
-                      render={
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          onClick={() => scrollAndClose(link.id, () => setOpen(false))}
-                          aria-current={isActive ? "true" : undefined}
-                          className={cn(
-                            "h-auto justify-start rounded-xl px-4 py-2.5 text-sm transition-colors",
-                            isActive
-                              ? "bg-white font-semibold text-[#0F172A] shadow-[0_2px_10px_rgba(15,23,42,0.06)] hover:text-[#0F172A]"
-                              : "font-medium text-[#94A3B8] hover:bg-white/60 hover:text-[#475569]"
-                          )}
-                        >
-                          {link.label}
-                        </Button>
-                      }
-                    />
+                      type="button"
+                      variant="ghost"
+                      onClick={() => scrollAndClose(link.id, () => setOpen(false))}
+                      aria-current={isActive ? "true" : undefined}
+                      className={cn(
+                        "h-12 justify-start rounded-2xl px-4 text-[15px] tracking-[-0.01em]",
+                        isActive
+                          ? "bg-[#F1F5F9] font-semibold text-[#0F172A] hover:bg-[#F1F5F9] hover:text-[#0F172A] dark:bg-white/10 dark:text-white dark:hover:bg-white/10 dark:hover:text-white"
+                          : "font-medium text-[#64748B] hover:bg-[#F8FAFC] hover:text-[#0F172A] dark:text-white/55 dark:hover:bg-white/5 dark:hover:text-white"
+                      )}
+                    >
+                      {link.label}
+                    </Button>
                   )
                 })}
-                <div className="mt-3 bg-[#F8FAFC] px-1 py-3">
-                  <LocaleSwitcher
-                    variant="chip"
-                    className="w-full"
-                    buttonClassName="w-full justify-center rounded-2xl bg-white text-[#525866] shadow-[0_4px_14px_rgba(15,23,42,0.05)]"
-                  />
-                </div>
+              </nav>
+
+              <div className="mt-auto flex flex-col gap-3 p-5 pt-4 pb-[max(1.25rem,env(safe-area-inset-bottom))]">
+                <SphereCta href={APP_NEWS_PATH} variant="glass" className="w-full">
+                  Start Free
+                </SphereCta>
+                <ThemeModeControl />
+                <LocaleSwitcher
+                  variant="chip"
+                  className="w-full"
+                  buttonClassName="h-10 w-full justify-center rounded-full bg-[#F1F5F9] text-[#64748B] hover:bg-[#E2E8F0] hover:text-[#0F172A] dark:bg-white/10 dark:text-white/70 dark:hover:bg-white/15 dark:hover:text-white"
+                />
               </div>
             </SheetContent>
           </Sheet>

@@ -1,13 +1,16 @@
 "use client"
 
-import { motion } from "motion/react"
 import type { CSSProperties, ReactNode } from "react"
+import { createElement } from "react"
+
+import { ScrollReveal } from "@/components/landing/modern/scroll-reveal"
 
 type FadeUpAs = "div" | "section" | "span" | "h1" | "h2" | "h3" | "p" | "nav"
 
 type FadeUpProps = {
   children: ReactNode
   delay?: number
+  /** Ignored — duration is the landing GSAP standard. Kept so call sites stay valid. */
   duration?: number
   y?: number
   className?: string
@@ -16,30 +19,23 @@ type FadeUpProps = {
   once?: boolean
 }
 
-const FADE_EASE = [0.22, 1, 0.36, 1] as const
-
+/**
+ * Thin GSAP wrapper around `ScrollReveal`.
+ *
+ * Older call sites used Motion. They now run the same reveal as every other
+ * landing block — same ease, same start, same reduced-motion path.
+ */
 export function FadeUp({
   children,
   delay = 0,
-  duration = 0.7,
-  y = 24,
+  y,
   className,
   style,
   as = "div",
-  once = true,
 }: FadeUpProps) {
-  const Tag = motion[as]
-
   return (
-    <Tag
-      className={className}
-      style={style}
-      initial={{ opacity: 0, y }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once, amount: 0.2 }}
-      transition={{ duration, delay, ease: FADE_EASE }}
-    >
-      {children}
-    </Tag>
+    <ScrollReveal delay={delay} y={y} className={className}>
+      {createElement(as, { style }, children)}
+    </ScrollReveal>
   )
 }

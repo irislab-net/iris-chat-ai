@@ -22,7 +22,8 @@
     "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
     "upload": "opennextjs-cloudflare build && opennextjs-cloudflare upload",
     "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
-    "icons:pwa": "node scripts/generate-pwa-icons.mjs"
+    "icons:pwa": "node scripts/generate-pwa-icons.mjs",
+    "narration:cues": "node scripts/narration-cues.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",

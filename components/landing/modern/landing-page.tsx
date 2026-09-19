@@ -2,6 +2,7 @@
 
 import { AboutSection } from "@/components/landing/modern/about-section"
 import { BentoSection } from "@/components/landing/modern/bento-section"
+import { CtaSection } from "@/components/landing/modern/cta-section"
 import { FaqSection } from "@/components/landing/modern/faq-section"
 import { GoalsSection } from "@/components/landing/modern/goals-section"
 import { HeroLiquidGlassBg } from "@/components/landing/modern/hero-liquid-glass-bg"
@@ -10,7 +11,6 @@ import { LandingNav } from "@/components/landing/modern/landing-nav"
 import { LandingScrollProvider } from "@/components/landing/modern/landing-scroll-context"
 import { ModernFooter } from "@/components/landing/modern/modern-footer"
 import { PricingSection } from "@/components/landing/modern/pricing-section"
-import { TestimonialsSection } from "@/components/landing/modern/testimonials-section"
 import { jetbrainsMono, plusJakarta } from "@/components/landing/modern/fonts"
 import {
   landingHeroCard,
@@ -29,8 +29,7 @@ export function ModernLandingPage() {
         className={cn(
           plusJakarta.variable,
           jetbrainsMono.variable,
-          "light landing-modern min-h-dvh bg-[#FAFBFC] font-sans text-[#0F172A] antialiased selection:bg-[#0F172A]/10 selection:text-[#0F172A]",
-          "scheme-light"
+          "landing-modern min-h-dvh bg-background font-sans text-foreground antialiased selection:bg-foreground/10 selection:text-foreground"
         )}
       >
         <div
@@ -42,7 +41,8 @@ export function ModernLandingPage() {
         >
           <LandingNav />
 
-          <div className={cn(landingHeroCard, landingHeroGlass)}>
+          {/* `#top` is the page root, so scroll-spy tracks the hero card itself. */}
+          <div id="hero" className={cn(landingHeroCard, landingHeroGlass)}>
             <HeroLiquidGlassBg />
             <div className="relative z-10 flex min-h-0 flex-1 flex-col">
               <HeroSection />
@@ -53,7 +53,11 @@ export function ModernLandingPage() {
             <GoalsSection />
             <BentoSection />
             <AboutSection />
-            <TestimonialsSection />
+            {/* Testimonials hidden until we have real X posts — see X_POSTS in
+                lib/landing-modern-data.ts. Re-enable together with the "Reviews"
+                entries in NAV_LINKS and LANDING_SCROLL_SECTIONS. */}
+            {/* <TestimonialsSection /> */}
+            <CtaSection />
             <FaqSection />
             <PricingSection />
           </main>

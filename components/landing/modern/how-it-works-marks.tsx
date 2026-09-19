@@ -2,9 +2,12 @@ import type { ReactNode } from "react"
 
 /**
  * Geometric marks for the three "how it works" steps — same circle-only
- * vocabulary as the goals scroll story. Drawn on a 40 grid so the 1.5 stroke
- * stays hairline at the rendered size. Per-circle `stroke-opacity` survives the
- * stroke-draw animation, which only touches element `opacity`.
+ * vocabulary as the goals scroll story. The 40 grid renders at 104–128px, so the
+ * stroke is scaled down from 1.5 to land on the same rendered hairline width as
+ * the goals illustration. `non-scaling-stroke` would match it exactly but
+ * breaks the dasharray the stroke-draw animation relies on. Per-circle
+ * `stroke-opacity` survives that animation, which only touches element
+ * `opacity`.
  */
 
 function Mark({ children }: { children: ReactNode }) {
@@ -13,7 +16,7 @@ function Mark({ children }: { children: ReactNode }) {
       viewBox="0 0 40 40"
       fill="none"
       stroke="currentColor"
-      strokeWidth={1.5}
+      strokeWidth={0.5}
       className="size-full overflow-visible"
     >
       {children}

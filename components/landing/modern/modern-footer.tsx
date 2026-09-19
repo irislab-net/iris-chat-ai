@@ -1,108 +1,151 @@
 "use client"
 
 import { AnimatedIrisLabLogo } from "@/components/brand/animated-iris-lab-logo"
-import { SphereCta } from "@/components/landing/modern/sphere-ui"
+import { XIcon } from "@/components/brand/x-icon"
+import { ScrollReveal } from "@/components/landing/modern/scroll-reveal"
 import { Button } from "@/components/ui/button"
+import { Separator } from "@/components/ui/separator"
 import { Link } from "@/i18n/navigation"
-import { FOOTER_CTA, NAV_LINKS, scrollToSection } from "@/lib/landing-modern-data"
-import { SITE_NAME } from "@/lib/site"
+import { FOOTER_TAGLINE } from "@/lib/landing-modern-data"
+import { scrollToSection } from "@/lib/landing-motion"
+import { APP_NEWS_PATH, SITE_NAME, SOCIAL_X_URL } from "@/lib/site"
 import {
   landingCard,
   landingFooterCard,
   landingInner,
   landingTitleFooter,
-  landingTitleFooterLg,
 } from "@/lib/landing-modern-styles"
 import { cn } from "@/lib/utils"
 
-const FOOTER_LINKS = [
-  { label: "Privacy Policy", href: "/privacy" },
+const CONTACT_EMAIL = "hello@irislab.info"
+
+/** `section` scrolls the one-pager, `href` routes, `external` opens a new tab. */
+type FooterLink =
+  | { label: string; section: string }
+  | { label: string; href: string; external?: boolean }
+
+type FooterColumn = {
+  heading: string
+  links: readonly FooterLink[]
+}
+
+const FOOTER_COLUMNS: readonly FooterColumn[] = [
+  {
+    heading: "Product",
+    links: [
+      { label: "Why Exur", section: "features" },
+      { label: "How it works", section: "how-it-works" },
+      { label: "Pricing", section: "pricing" },
+      { label: "Open app", href: APP_NEWS_PATH },
+    ],
+  },
+  {
+    heading: "Resources",
+    links: [
+      { label: "FAQ", section: "faq" },
+      { label: "About Exur", href: "/about" },
+      { label: "AI trading signals", href: "/ai-trading-signals" },
+    ],
+  },
+  {
+    heading: "Contact",
+    links: [
+      { label: CONTACT_EMAIL, href: `mailto:${CONTACT_EMAIL}`, external: true },
+      { label: "Exur on X", href: SOCIAL_X_URL, external: true },
+    ],
+  },
+]
+
+const LEGAL_LINKS = [
   { label: "Terms of Service", href: "/terms" },
+  { label: "Privacy Policy", href: "/privacy" },
   { label: "Cookie Settings", href: "/privacy" },
 ] as const
 
-const CONTACT_EMAIL = "hello@irislab.info"
+const linkClass =
+  "w-fit text-left text-sm text-[#64748B] transition-colors hover:text-[#0F172A]"
+
+function FooterColumnLink({ link }: { link: FooterLink }) {
+  if ("section" in link) {
+    return (
+      <button type="button" onClick={() => scrollToSection(link.section)} className={linkClass}>
+        {link.label}
+      </button>
+    )
+  }
+
+  if (link.external) {
+    return (
+      <a href={link.href} target="_blank" rel="noopener noreferrer" className={linkClass}>
+        {link.label}
+      </a>
+    )
+  }
+
+  return (
+    <Link href={link.href} className={linkClass}>
+      {link.label}
+    </Link>
+  )
+}
 
 export function ModernFooter() {
   const year = new Date().getFullYear()
 
   return (
     <footer className={cn(landingFooterCard, landingCard, "bg-white text-[#0F172A]")}>
-      <div className="relative z-10 py-8 sm:py-10 lg:py-12">
-        <div className={cn(landingInner, "flex flex-col gap-10 sm:gap-12")}>
-          <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
-            <Button
-              type="button"
-              variant="ghost"
-              onClick={() => scrollToSection("top")}
-              aria-label={SITE_NAME}
-              className="h-auto w-fit gap-2.5 rounded-full px-0 py-0 text-[#0F172A] hover:bg-[#F1F5F9]"
-            >
-              <span
-                className="flex size-14 shrink-0 items-center justify-center rounded-full bg-white p-1.5 shadow-[0_8px_24px_rgba(15,23,42,0.08)] ring-1 ring-[#F1F5F9]"
-                aria-hidden
+      <ScrollReveal className="relative z-10 py-9 sm:py-10">
+        <div className={cn(landingInner, "flex flex-col")}>
+          <div className="flex flex-col gap-10 lg:flex-row lg:justify-between lg:gap-16">
+            <div className="max-w-sm">
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => scrollToSection("top")}
+                aria-label={SITE_NAME}
+                className="h-auto w-fit gap-2.5 rounded-full px-0 py-0 text-[#0F172A] hover:bg-transparent"
               >
-                <AnimatedIrisLabLogo
-                  scrollTrigger
-                  replayOnHover
-                  shimmer
-                  className="size-11"
-                />
-              </span>
-              <span className={landingTitleFooter}>
-                {SITE_NAME}
-              </span>
-            </Button>
+                <AnimatedIrisLabLogo scrollTrigger replayOnHover shimmer className="size-10" />
+                <span className={landingTitleFooter}>{SITE_NAME}</span>
+              </Button>
+              <p className="mt-4 text-sm leading-relaxed text-[#64748B]">
+                {FOOTER_TAGLINE}
+              </p>
+              <a
+                href={SOCIAL_X_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`${SITE_NAME} on X`}
+                className="mt-5 inline-flex size-9 items-center justify-center rounded-full bg-[#F1F5F9] text-[#475569] transition-colors hover:bg-[#0F172A] hover:text-white"
+              >
+                <XIcon className="size-3.5" />
+              </a>
+            </div>
 
-            <div className="flex flex-col gap-4 sm:items-end">
-              <div className="flex flex-wrap items-center gap-x-6 gap-y-2 sm:justify-end">
-                <nav className="flex flex-wrap gap-x-6 gap-y-2" aria-label="Footer">
-                  {NAV_LINKS.map((link) => (
-                    <button
-                      key={link.id}
-                      type="button"
-                      onClick={() => scrollToSection(link.id)}
-                      className="text-sm font-medium text-[#64748B] transition-colors hover:text-[#0F172A]"
-                    >
-                      {link.label}
-                    </button>
+            <div className="grid grid-cols-2 gap-x-8 gap-y-8 sm:grid-cols-3 lg:gap-x-16">
+              {FOOTER_COLUMNS.map((column) => (
+                <nav key={column.heading} className="flex flex-col gap-3" aria-label={column.heading}>
+                  <p className="text-sm font-semibold text-[#0F172A]">{column.heading}</p>
+                  {column.links.map((link) => (
+                    <FooterColumnLink key={link.label} link={link} />
                   ))}
                 </nav>
-                <SphereCta href={`mailto:${CONTACT_EMAIL}`} className="shrink-0 rounded-full px-5 py-2.5 text-sm">
-                  Contact Us
-                </SphereCta>
-              </div>
-              <a
-                href={`mailto:${CONTACT_EMAIL}`}
-                className="text-sm text-[#94A3B8] transition-colors hover:text-[#0F172A]"
-              >
-                {CONTACT_EMAIL}
-              </a>
+              ))}
             </div>
           </div>
 
-          <h2 className={cn("max-w-3xl", landingTitleFooterLg)}>
-            {FOOTER_CTA.title}
-          </h2>
+          <Separator className="mt-10 mb-6 bg-[#E2E8F0]" />
 
-          <div className="flex flex-col gap-6 rounded-[1.5rem] bg-[#F8FAFC] p-6 text-sm text-[#64748B] sm:p-8 lg:flex-row lg:items-end lg:justify-between lg:gap-8">
-            <div className="max-w-xl text-left lg:max-w-2xl">
-              <p className="text-sm leading-relaxed text-[#475569] sm:text-base">
-                {FOOTER_CTA.subtitle}
-              </p>
-              <p className="mt-4 font-mono text-[10px] uppercase tracking-[0.25em] text-[#94A3B8]">
-                {FOOTER_CTA.tagline}
-              </p>
-              <p className="mt-4 shrink-0 text-[#94A3B8]">
-                © {year} {SITE_NAME}. All rights reserved.
-              </p>
-            </div>
-            <div className="flex flex-wrap items-center gap-x-6 gap-y-2 lg:gap-x-8">
-              {FOOTER_LINKS.map((link) => (
+          <div className="flex flex-col gap-3 text-xs sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-[#94A3B8]">
+              © {year} {SITE_NAME}. All rights reserved.
+            </p>
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
+              {LEGAL_LINKS.map((link) => (
                 <Link
                   key={link.label}
                   href={link.href}
-                  className="underline decoration-black/20 underline-offset-4 transition-colors hover:text-[#0F172A] hover:decoration-black/40"
+                  className="text-[#64748B] underline decoration-[#CBD5E1] underline-offset-4 transition-colors hover:text-[#0F172A] hover:decoration-[#0F172A]"
                 >
                   {link.label}
                 </Link>
@@ -110,7 +153,7 @@ export function ModernFooter() {
             </div>
           </div>
         </div>
-      </div>
+      </ScrollReveal>
     </footer>
   )
 }

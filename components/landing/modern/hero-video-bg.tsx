@@ -1,6 +1,6 @@
 "use client"
 
-import { useReducedMotion } from "motion/react"
+import { useReducedMotion } from "@/lib/landing-motion"
 import { useEffect, useRef } from "react"
 
 import { HERO_VIDEO } from "@/lib/landing-modern-data"

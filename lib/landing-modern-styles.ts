@@ -1,3 +1,4 @@
+/** Cubic-bezier twin of the GSAP `heroDemo` ease registered in `ensureGsapScroll`. */
 export const LANDING_EASE = [0.16, 1, 0.3, 1] as const
 
 export const landingDisplay = "font-[family-name:var(--font-display)]"
@@ -114,10 +115,6 @@ export const landingNavLinkInactive =
 export const landingGlassNavIcon =
   `${landingGlassSurface} size-10 shrink-0 rounded-full bg-white/50 shadow-[0_12px_36px_rgba(15,23,42,0.08),inset_0_1px_1px_rgba(255,255,255,0.95),inset_0_-1px_2px_rgba(255,255,255,0.32)]`
 
-/** Nav CTA — blue liquid glass */
-export const landingGlassNavCta =
-  "group relative isolate inline-flex h-auto min-h-8 items-center overflow-hidden rounded-full bg-[#2563EB]/90 font-semibold text-white shadow-[0_12px_40px_rgba(37,99,235,0.34),inset_0_1px_1px_rgba(255,255,255,0.38),inset_0_-1px_2px_rgba(29,78,216,0.28)] backdrop-blur-2xl transition-all hover:bg-[#2563EB]/96 hover:shadow-[0_16px_48px_rgba(37,99,235,0.42)]"
-
 export const landingGlassBlueSheen =
   "pointer-events-none absolute inset-0 bg-[linear-gradient(145deg,rgba(255,255,255,0.42)_0%,rgba(255,255,255,0.14)_40%,rgba(255,255,255,0.05)_62%,transparent_100%)]"
 
@@ -145,12 +142,42 @@ export const landingHeroGlass =
 export const landingHeroComposeGrid =
   "grid overflow-visible grid-rows-[5.5rem_10rem_3.5rem] gap-3 sm:grid-rows-[4rem_9.5rem_3.5rem] sm:gap-3.5"
 
-/** Primary CTA — blue is reserved for call-to-action buttons only. */
-export const landingCtaPrimary =
-  "group inline-flex h-auto items-center gap-2 rounded-full bg-[#2563EB] px-6 py-3 text-sm font-semibold text-white shadow-[0_8px_30px_rgba(37,99,235,0.28)] transition-all hover:bg-[#1D4ED8] hover:shadow-[0_12px_40px_rgba(37,99,235,0.35)]"
+/**
+ * Landing CTAs.
+ *
+ * Height is set by the size token and nothing else. The previous recipe was
+ * `h-auto` plus vertical padding, which let the content decide — so the same
+ * "primary" CTA rendered at five different heights across the page depending on
+ * whether it carried an arrow chip and which call site had overridden padding.
+ *
+ * Two sizes only: `sm` for chrome (nav, footer), `md` for section and plan CTAs.
+ */
 
-export const landingCtaLight =
-  "group inline-flex h-auto items-center gap-2 rounded-full bg-[#F1F5F9] px-6 py-3 text-sm font-semibold text-[#0F172A] shadow-[0_8px_30px_rgba(15,23,42,0.06)] transition-all hover:bg-[#E2E8F0] hover:shadow-[0_12px_40px_rgba(15,23,42,0.1)]"
+const landingCtaBase =
+  "group relative isolate inline-flex shrink-0 items-center justify-center gap-2 overflow-hidden rounded-full font-semibold whitespace-nowrap transition-all"
 
-/** @deprecated Use landingCtaPrimary */
-export const landingCtaDark = landingCtaPrimary
+export const LANDING_CTA_SIZES = {
+  sm: "h-10 px-5 text-sm",
+  md: "h-12 px-6 text-sm",
+} as const
+
+export type LandingCtaSize = keyof typeof LANDING_CTA_SIZES
+
+const LANDING_CTA_TONES = {
+  /** Blue is reserved for call-to-action buttons only. */
+  primary:
+    "bg-[#2563EB] text-white shadow-[0_8px_30px_rgba(37,99,235,0.28)] hover:bg-[#1D4ED8] hover:shadow-[0_12px_40px_rgba(37,99,235,0.35)]",
+  light:
+    "bg-[#F1F5F9] text-[#0F172A] shadow-[0_8px_30px_rgba(15,23,42,0.06)] hover:bg-[#E2E8F0] hover:shadow-[0_12px_40px_rgba(15,23,42,0.1)]",
+  glass:
+    "bg-[#2563EB]/90 text-white shadow-[0_12px_40px_rgba(37,99,235,0.34),inset_0_1px_1px_rgba(255,255,255,0.38),inset_0_-1px_2px_rgba(29,78,216,0.28)] backdrop-blur-2xl hover:bg-[#2563EB]/96 hover:shadow-[0_16px_48px_rgba(37,99,235,0.42)]",
+} as const
+
+export type LandingCtaTone = keyof typeof LANDING_CTA_TONES
+
+export function landingCta(
+  tone: LandingCtaTone = "primary",
+  size: LandingCtaSize = "md"
+): string {
+  return `${landingCtaBase} ${LANDING_CTA_SIZES[size]} ${LANDING_CTA_TONES[tone]}`
+}

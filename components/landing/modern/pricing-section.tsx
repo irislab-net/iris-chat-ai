@@ -2,14 +2,16 @@
 
 import { CheckIcon } from "lucide-react"
 
-import { ScrollReveal } from "@/components/landing/modern/scroll-reveal"
+import {
+  ScrollReveal,
+  ScrollRevealGroup,
+} from "@/components/landing/modern/scroll-reveal"
 import { SectionHeader } from "@/components/landing/modern/sphere-ui"
 import { Button } from "@/components/ui/button"
 import { Link } from "@/i18n/navigation"
 import { PRICING_PLANS, PRICING_SECTION, type PricingPlan } from "@/lib/landing-modern-data"
 import {
-  landingCtaLight,
-  landingCtaPrimary,
+  landingCta,
   landingGlassBlueSheen,
   landingGlassSheen,
   landingGlassSurface,
@@ -25,18 +27,15 @@ import { cn } from "@/lib/utils"
 const CONTACT_EMAIL = "hello@irislab.info"
 
 function planHref(plan: PricingPlan) {
-  if (plan.key === "starter") return APP_NEWS_PATH
-  if (plan.key === "pro") return UPGRADE_PATH
+  if (plan.key === "free") return APP_NEWS_PATH
+  if (plan.key === "plus") return UPGRADE_PATH
   return `mailto:${CONTACT_EMAIL}`
 }
 
 function PlanCta({ plan }: { plan: PricingPlan }) {
   const href = planHref(plan)
   const featured = plan.featured
-  const className = cn(
-    featured ? landingCtaPrimary : landingCtaLight,
-    "mt-8 h-auto w-full justify-center px-6 py-3"
-  )
+  const className = cn(landingCta(featured ? "primary" : "light"), "mt-8 w-full")
 
   if (plan.key === "ultimate") {
     return (
@@ -108,7 +107,7 @@ function PlanCard({ plan }: { plan: PricingPlan }) {
         <div className="mt-5">
           <p className={landingTitlePrice}>
             {plan.price}
-            {plan.key === "pro" ? (
+            {plan.key === "plus" ? (
               <span className="ml-1 text-lg font-normal text-[#94A3B8]">/mo</span>
             ) : null}
           </p>
@@ -136,13 +135,11 @@ export function PricingSection() {
           />
         </ScrollReveal>
 
-        <div className="mx-auto mt-14 grid max-w-5xl gap-6 lg:mt-16 lg:grid-cols-3 lg:items-stretch lg:gap-5">
-          {PRICING_PLANS.map((plan, index) => (
-            <ScrollReveal key={plan.key} delay={0.08 + index * 0.04}>
-              <PlanCard plan={plan} />
-            </ScrollReveal>
+        <ScrollRevealGroup className="mx-auto mt-14 grid max-w-5xl gap-6 lg:mt-16 lg:grid-cols-3 lg:items-stretch lg:gap-5">
+          {PRICING_PLANS.map((plan) => (
+            <PlanCard key={plan.key} plan={plan} />
           ))}
-        </div>
+        </ScrollRevealGroup>
       </div>
     </section>
   )

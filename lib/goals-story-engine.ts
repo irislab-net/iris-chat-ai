@@ -2,6 +2,7 @@ import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 
 import { ensureGsapScroll } from "@/lib/gsap-scroll"
+import { LANDING_MOTION } from "@/lib/landing-motion"
 
 export type CircleState = {
   x: number
@@ -306,7 +307,7 @@ export function initGoalsStory(dom: GoalsStoryDom) {
     gsap.set(bars[0], { "--bar-fill": 1 })
 
     const tl = gsap.timeline({
-      defaults: { ease: "power2.inOut" },
+      defaults: { ease: LANDING_MOTION.easeInOut },
       scrollTrigger: {
         trigger: dom.story,
         start: "top top",
@@ -345,8 +346,8 @@ export function initGoalsStory(dom: GoalsStoryDom) {
       o2[`w${k + 2}`] = 1
       tl.to(W, o2, T + 0.3)
 
-      tl.to(blocks[k], { autoAlpha: 0, y: -28, duration: 0.45, ease: "power2.in" }, T)
-      tl.to(blocks[k + 1], { autoAlpha: 1, y: 0, duration: 0.5, ease: "power2.out" }, T + 0.65)
+      tl.to(blocks[k], { autoAlpha: 0, y: -28, duration: LANDING_MOTION.durationIn, ease: LANDING_MOTION.easeIn }, T)
+      tl.to(blocks[k + 1], { autoAlpha: 1, y: 0, duration: LANDING_MOTION.durationFast, ease: LANDING_MOTION.ease }, T + 0.65)
 
       tl.to(bars[k], { "--bar-fill": 0.14, duration: 0.4 }, T + 0.2)
       tl.to(bars[k + 1], { "--bar-fill": 1, duration: 0.4 }, T + 0.6)
@@ -387,6 +388,6 @@ export const GOALS_STORY_COPY = [
   },
   {
     heading: "One place to ask",
-    sub: "Your AI assistant. Plain answers, in your context.",
+    sub: "Plain answers, in your context.",
   },
 ] as const

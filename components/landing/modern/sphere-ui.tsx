@@ -1,16 +1,16 @@
 "use client"
 
 import type { LucideIcon } from "lucide-react"
-import { ArrowUpRightIcon, SparklesIcon } from "lucide-react"
+import { SparklesIcon } from "lucide-react"
 import type { ReactNode } from "react"
 
 import { Button } from "@/components/ui/button"
 import { Link } from "@/i18n/navigation"
 import {
-  landingCtaLight,
-  landingCtaPrimary,
+  landingCta,
   landingGlassBlueSheen,
-  landingGlassNavCta,
+  type LandingCtaSize,
+  type LandingCtaTone,
   landingTitleSection,
 } from "@/lib/landing-modern-styles"
 import { cn } from "@/lib/utils"
@@ -96,64 +96,37 @@ export function SphereCta({
   href,
   onClick,
   className,
-  iconClassName,
   variant = "primary",
+  size = "md",
 }: {
   children: ReactNode
   href?: string
   onClick?: () => void
   className?: string
-  iconClassName?: string
-  variant?: "primary" | "light" | "glass"
+  variant?: LandingCtaTone
+  size?: LandingCtaSize
 }) {
-  const isLight = variant === "light"
   const isGlass = variant === "glass"
-  const buttonClass = isGlass
-    ? landingGlassNavCta
-    : isLight
-      ? landingCtaLight
-      : landingCtaPrimary
 
   const content = (
     <>
       {isGlass && <span aria-hidden className={cn(landingGlassBlueSheen, "rounded-full")} />}
-      <span className="relative z-10 inline-flex items-center gap-2">
-        {children}
-        <span
-          className={cn(
-            "flex size-7 items-center justify-center rounded-full transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5",
-            isGlass
-              ? "bg-white/20 text-white"
-              : isLight
-                ? "bg-[#0F172A] text-white"
-                : "bg-white/20 text-white",
-            iconClassName
-          )}
-        >
-          <ArrowUpRightIcon className="size-3.5" />
-        </span>
-      </span>
+      <span className="relative z-10">{children}</span>
     </>
   )
 
+  const buttonClass = cn(landingCta(variant, size), className)
+
   if (href) {
     return (
-      <Button
-        nativeButton={false}
-        render={<Link href={href} />}
-        className={cn(buttonClass, isGlass && "h-auto min-h-8", className)}
-      >
+      <Button nativeButton={false} render={<Link href={href} />} className={buttonClass}>
         {content}
       </Button>
     )
   }
 
   return (
-    <Button
-      type="button"
-      onClick={onClick}
-        className={cn(buttonClass, isGlass && "h-auto min-h-8", className)}
-    >
+    <Button type="button" onClick={onClick} className={buttonClass}>
       {content}
     </Button>
   )
