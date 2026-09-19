@@ -69,7 +69,7 @@
   height: 6px;
   overflow: hidden;
   border-radius: 9999px;
-  background: #eef2f6;
+  background: var(--muted);
   opacity: 1;
 }
 
@@ -78,7 +78,7 @@
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  background: #94a3b8;
+  background: var(--muted-foreground);
   opacity: var(--bar-fill, 0.14);
 }
 
@@ -97,7 +97,12 @@
   position: absolute;
   inset: 0;
   border-radius: 32px;
-  background: radial-gradient(ellipse at 50% 34%, #ffffff 0%, #f6f7f9 58%, #eef1f5 100%);
+  background: radial-gradient(
+    ellipse at 50% 34%,
+    color-mix(in oklch, var(--card) 100%, white) 0%,
+    var(--card) 58%,
+    var(--muted) 100%
+  );
 }
 
 .tile svg {
@@ -107,14 +112,14 @@
 }
 
 .pool circle {
-  fill: #0f172a;
-  stroke: #0f172a;
+  fill: var(--foreground);
+  stroke: var(--foreground);
   stroke-width: 1.5;
 }
 
 .ping {
   fill: none;
-  stroke: #475569;
+  stroke: var(--muted-foreground);
   stroke-width: 1.5;
   opacity: 0;
   transform-box: fill-box;
@@ -128,7 +133,7 @@
 
 .ping4 {
   fill: none;
-  stroke: #475569;
+  stroke: var(--muted-foreground);
   stroke-width: 1.5;
   opacity: 0;
   transform-box: fill-box;
@@ -172,7 +177,7 @@
   font-family: var(--font-mono-modern), "JetBrains Mono", ui-monospace, Menlo, monospace;
   font-size: 11px;
   letter-spacing: 0.18em;
-  color: #64748b;
+  color: var(--muted-foreground);
 }
 
 .hint span {
@@ -182,7 +187,7 @@
   margin: 10px auto 0;
   transform-origin: top;
   animation: exur-tick 1.8s ease-in-out infinite;
-  background: #94a3b8;
+  background: var(--muted-foreground);
   opacity: 0.6;
 }
 

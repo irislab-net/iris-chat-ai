@@ -58,6 +58,9 @@ function buildPalette(
 
 const PALETTE = buildPalette(INK_RGB, GLINT_RGB)
 const PALETTE_COMPACT = buildPalette(INK_RGB_COMPACT, GLINT_RGB_COMPACT)
+/** Light ink on the dark tile so the rim still reads. */
+const PALETTE_DARK = buildPalette([226, 232, 240], GLINT_RGB_COMPACT)
+const PALETTE_DARK_COMPACT = buildPalette([148, 163, 184], GLINT_RGB_COMPACT)
 
 type UnitPoint = { x: number; y: number; z: number }
 
@@ -92,12 +95,17 @@ type AboutOrbCanvasProps = {
   className?: string
 }
 
+function readDocumentDark() {
+  return document.documentElement.classList.contains("dark")
+}
+
 export function AboutOrbCanvas({
   amplitudeRef,
   still = false,
   className,
 }: AboutOrbCanvasProps) {
   const canvasRef = React.useRef<HTMLCanvasElement>(null)
+  const darkRef = React.useRef(false)
 
   React.useEffect(() => {
     const canvas = canvasRef.current
@@ -126,6 +134,15 @@ export function AboutOrbCanvas({
     const observer = new ResizeObserver(resize)
     observer.observe(canvas)
 
+    darkRef.current = readDocumentDark()
+    const themeObserver = new MutationObserver(() => {
+      darkRef.current = readDocumentDark()
+    })
+    themeObserver.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    })
+
     let frame = 0
     const start = performance.now()
     let smoothed = 0
@@ -142,7 +159,14 @@ export function AboutOrbCanvas({
       const cx = width / 2
       const cy = height / 2
       const baseRadius = Math.min(width, height) * 0.3 * (1 + smoothed * 0.05)
-      const palette = compact ? PALETTE_COMPACT : PALETTE
+      const dark = darkRef.current
+      const palette = dark
+        ? compact
+          ? PALETTE_DARK_COMPACT
+          : PALETTE_DARK
+        : compact
+          ? PALETTE_COMPACT
+          : PALETTE
       const rimWeight = compact ? 0.44 : 0.78
       const rimAlphaBase = compact ? 0.04 : 0.08
       const dotBase = compact ? 0.32 : 0.5
@@ -218,6 +242,7 @@ export function AboutOrbCanvas({
     return () => {
       cancelAnimationFrame(frame)
       observer.disconnect()
+      themeObserver.disconnect()
     }
   }, [amplitudeRef, still])
 

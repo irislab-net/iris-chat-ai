@@ -1,13 +1,20 @@
 "use client"
 
 import { gsap } from "gsap"
+import { EclipseIcon, UserRoundIcon, XIcon } from "lucide-react"
+import { useTranslations } from "next-intl"
+import { useTheme } from "@wrksz/themes/client/use-theme"
 import { useEffect, useState } from "react"
 
+import { ChatAccountMenu } from "@/components/app-shell/chat-account-menu"
+import { useAuth } from "@/components/auth/auth-provider"
+import { GoogleGlyph } from "@/components/auth/google-glyph"
 import { AnimatedIrisLabLogo } from "@/components/brand/animated-iris-lab-logo"
 import { IrisLabLogo } from "@/components/brand/iris-lab-logo"
 import { LocaleSwitcher } from "@/components/i18n/locale-switcher"
 import { SphereCta } from "@/components/landing/modern/sphere-ui"
 import { ThemeModeControl } from "@/components/landing/modern/theme-mode-control"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import {
   Sheet,
@@ -17,8 +24,8 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet"
-import { XIcon } from "lucide-react"
 import { useLandingActiveSection } from "@/components/landing/modern/landing-scroll-context"
+import { displayPlanName } from "@/lib/billing/catalog"
 import { NAV_LINKS } from "@/lib/landing-modern-data"
 import { LANDING_MOTION, scrollToSection } from "@/lib/landing-motion"
 import {
@@ -31,6 +38,7 @@ import {
   landingNavPill,
 } from "@/lib/landing-modern-styles"
 import { APP_NEWS_PATH } from "@/lib/site"
+import { userAccountLabel, userAccountSubline } from "@/lib/user-profile"
 import { cn } from "@/lib/utils"
 
 function scrollAndClose(id: string, close: () => void) {
@@ -41,9 +49,132 @@ function scrollAndClose(id: string, close: () => void) {
 function NavMenuIcon() {
   return (
     <span className="relative z-10 flex w-4 flex-col gap-1.25" aria-hidden>
-      <span className="h-0.5 w-full rounded-full bg-[#0F172A]" />
-      <span className="h-0.5 w-full rounded-full bg-[#0F172A]" />
+      <span className="h-0.5 w-full rounded-full bg-foreground" />
+      <span className="h-0.5 w-full rounded-full bg-foreground" />
     </span>
+  )
+}
+
+const landingNavIconButtonClass = cn(
+  landingGlassNavIcon,
+  "relative size-10! shrink-0 rounded-full p-0 text-foreground hover:bg-transparent"
+)
+
+function LandingThemeToggle() {
+  const t = useTranslations("common")
+  const { resolvedTheme, setTheme } = useTheme()
+
+  return (
+    <Button
+      type="button"
+      variant="ghost"
+      className={landingNavIconButtonClass}
+      aria-label={t("toggleTheme")}
+      onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
+    >
+      <span aria-hidden className={cn(landingGlassSheen, "rounded-full")} />
+      <EclipseIcon className="relative z-10 size-4" />
+    </Button>
+  )
+}
+
+/** Desktop: compact avatar right of Start Free. */
+function LandingNavAccount() {
+  const t = useTranslations("workspace")
+  const { user, loading, login, loginPending } = useAuth()
+
+  if (loading) {
+    return (
+      <span
+        className={cn(landingGlassNavIcon, "flex size-10 shrink-0 items-center justify-center rounded-full")}
+        aria-hidden
+      >
+        <span aria-hidden className={cn(landingGlassSheen, "rounded-full")} />
+        <UserRoundIcon className="relative z-10 size-4 text-muted-foreground" />
+      </span>
+    )
+  }
+
+  if (!user) {
+    return (
+      <Button
+        type="button"
+        variant="ghost"
+        className={landingNavIconButtonClass}
+        aria-label={t("signIn")}
+        disabled={loginPending}
+        onClick={() => login({ source: "toolbar" })}
+      >
+        <span aria-hidden className={cn(landingGlassSheen, "rounded-full")} />
+        <Avatar className="relative z-10 size-8 after:hidden">
+          <AvatarFallback className="bg-transparent text-foreground">
+            <GoogleGlyph className="size-4" />
+          </AvatarFallback>
+        </Avatar>
+      </Button>
+    )
+  }
+
+  return (
+    <ChatAccountMenu
+      variant="desktop"
+      className={cn(
+        landingGlassNavIcon,
+        "relative size-10! shrink-0 rounded-full p-0 hover:bg-transparent"
+      )}
+    />
+  )
+}
+
+/** Mobile sheet: first item — Continue with Google, or signed-in account row. */
+function LandingSheetAccount({ onDone }: { onDone?: () => void }) {
+  const t = useTranslations("workspace")
+  const { user, loading, login, loginPending } = useAuth()
+
+  if (loading) {
+    return (
+      <div className="flex h-12 items-center gap-3 rounded-2xl bg-muted/50 px-4">
+        <span className="size-8 animate-pulse rounded-full bg-muted" />
+        <span className="h-3 w-28 animate-pulse rounded bg-muted" />
+      </div>
+    )
+  }
+
+  if (!user) {
+    return (
+      <Button
+        type="button"
+        variant="outline"
+        className="h-12 w-full justify-start gap-3 rounded-2xl border-border/60 bg-background px-4 text-[15px] font-medium shadow-none"
+        disabled={loginPending}
+        onClick={() => {
+          onDone?.()
+          login({ source: "toolbar" })
+        }}
+      >
+        <GoogleGlyph className="size-5 shrink-0" />
+        <span className="truncate">
+          {loginPending ? t("connecting") : "Continue with Google"}
+        </span>
+      </Button>
+    )
+  }
+
+  return (
+    <div className="flex items-center gap-3 rounded-2xl bg-muted/50 px-3 py-2.5">
+      <ChatAccountMenu
+        variant="desktop"
+        className="h-auto shrink-0 rounded-full p-0.5 hover:bg-transparent"
+      />
+      <div className="min-w-0 flex-1">
+        <p className="truncate text-[15px] font-medium leading-tight text-foreground">
+          {userAccountLabel(user)}
+        </p>
+        <p className="truncate text-[12px] text-muted-foreground">
+          {userAccountSubline(user) ?? displayPlanName(user.tier)}
+        </p>
+      </div>
+    </div>
   )
 }
 
@@ -67,7 +198,7 @@ export function LandingNav() {
           "grid grid-cols-[1fr_auto] items-center gap-4 md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]",
           "rounded-[28px] transition-[background-color,box-shadow,backdrop-filter,padding] duration-300 ease-out",
           stuck
-            ? "bg-white/72 py-2 shadow-[0_10px_40px_rgba(15,23,42,0.08),inset_0_1px_1px_rgba(255,255,255,0.9)] backdrop-blur-2xl"
+            ? "bg-white/72 py-2 shadow-[0_10px_40px_rgba(15,23,42,0.08),inset_0_1px_1px_rgba(255,255,255,0.9)] backdrop-blur-2xl dark:bg-background/72 dark:shadow-[0_10px_40px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.08)]"
             : "bg-transparent py-0 shadow-none"
         )}
         aria-label="Landing"
@@ -77,24 +208,22 @@ export function LandingNav() {
           variant="ghost"
           onClick={() => scrollToSection("top")}
           aria-label="Exur"
-          className="h-auto min-w-0 shrink-0 justify-self-start gap-2.5 rounded-full px-0 py-0 text-[#0F172A] hover:bg-[#F1F5F9]"
+          className="h-auto min-w-0 shrink-0 justify-self-start gap-2.5 rounded-full px-0 py-0 text-foreground hover:bg-muted"
         >
           <span
-            className="flex size-11 shrink-0 items-center justify-center rounded-full bg-white p-1 shadow-[0_6px_18px_rgba(15,23,42,0.06)]"
+            className="flex size-11 shrink-0 items-center justify-center rounded-full bg-card p-1 shadow-[0_6px_18px_rgba(15,23,42,0.06)] dark:shadow-[0_6px_18px_rgba(0,0,0,0.28)]"
             aria-hidden
           >
             <AnimatedIrisLabLogo replayOnHover shimmer className="size-9" />
           </span>
-          <span className={cn(landingTitleBrand, "hidden min-[420px]:inline")}>
-            Exur
-          </span>
+          <span className={landingTitleBrand}>Exur</span>
         </Button>
 
         <div
           className={cn(
             landingNavPill,
             "hidden transition-all duration-300 md:col-start-2 md:row-start-1 md:flex",
-            stuck && "bg-[#F1F5F9]/70 shadow-none"
+            stuck && "bg-muted/70 shadow-none"
           )}
         >
           {NAV_LINKS.map((link) => {
@@ -117,10 +246,22 @@ export function LandingNav() {
           })}
         </div>
 
-        <div className="flex shrink-0 items-center justify-end gap-2 justify-self-end md:col-start-3 md:row-start-1">
+        <div className="flex shrink-0 items-center justify-end gap-1.5 justify-self-end sm:gap-2 md:col-start-3 md:row-start-1">
+          <div className="hidden items-center gap-1.5 md:flex">
+            <LandingThemeToggle />
+            <LocaleSwitcher
+              variant="icon"
+              buttonClassName={landingNavIconButtonClass}
+            />
+          </div>
+
           <SphereCta href={APP_NEWS_PATH} variant="glass" size="sm">
             Start Free
           </SphereCta>
+
+          <div className="hidden md:block">
+            <LandingNavAccount />
+          </div>
 
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger
@@ -128,10 +269,7 @@ export function LandingNav() {
                 <Button
                   type="button"
                   variant="ghost"
-                  className={cn(
-                    "relative size-10! shrink-0 rounded-full p-0 text-[#0F172A] hover:bg-transparent md:hidden",
-                    landingGlassNavIcon
-                  )}
+                  className={cn(landingNavIconButtonClass, "md:hidden")}
                   aria-label="Open menu"
                 >
                   <span aria-hidden className={cn(landingGlassSheen, "rounded-full")} />
@@ -143,8 +281,8 @@ export function LandingNav() {
               side="right"
               showCloseButton={false}
               className={cn(
-                "gap-0 border-0 bg-white p-0 text-[#0F172A] shadow-[0_24px_80px_rgba(15,23,42,0.14)]",
-                "dark:bg-[#111827] dark:text-white dark:shadow-[0_24px_80px_rgba(0,0,0,0.45)]",
+                "gap-0 border-0 bg-card p-0 text-foreground shadow-[0_24px_80px_rgba(15,23,42,0.14)]",
+                "dark:shadow-[0_24px_80px_rgba(0,0,0,0.45)]",
                 "top-3 right-3 bottom-3 left-auto h-auto w-[min(calc(100vw-1.5rem),20rem)] rounded-[1.75rem]",
                 "data-[side=right]:top-3 data-[side=right]:right-3 data-[side=right]:bottom-3 data-[side=right]:left-auto",
                 "data-[side=right]:h-auto data-[side=right]:w-[min(calc(100vw-1.5rem),20rem)] data-[side=right]:sm:max-w-none"
@@ -154,14 +292,14 @@ export function LandingNav() {
                 <SheetTitle
                   className={cn(
                     landingTitleBrand,
-                    "flex items-center gap-2.5 dark:text-white"
+                    "flex items-center gap-2.5"
                   )}
                 >
                   <IrisLabLogo
                     decorative
                     size={36}
                     variant="auto"
-                    className="size-9 overflow-hidden rounded-full bg-white shadow-[0_6px_18px_rgba(15,23,42,0.06)] dark:bg-white/10"
+                    className="size-9 overflow-hidden rounded-full bg-card shadow-[0_6px_18px_rgba(15,23,42,0.06)] dark:bg-white/10"
                   />
                   Exur
                 </SheetTitle>
@@ -171,7 +309,7 @@ export function LandingNav() {
                       type="button"
                       variant="ghost"
                       className={cn(
-                        "relative size-10! shrink-0 rounded-full p-0 text-[#0F172A] hover:bg-transparent dark:text-white",
+                        "relative size-10! shrink-0 rounded-full p-0 text-foreground hover:bg-transparent",
                         landingGlassNavIcon
                       )}
                       aria-label="Close menu"
@@ -184,6 +322,9 @@ export function LandingNav() {
               </SheetHeader>
 
               <nav className="flex flex-1 flex-col gap-1 px-3 pt-2" aria-label="Mobile">
+                <div className="mb-2">
+                  <LandingSheetAccount onDone={() => setOpen(false)} />
+                </div>
                 {NAV_LINKS.map((link) => {
                   const isActive = activeSectionId === link.id
                   return (
@@ -196,8 +337,8 @@ export function LandingNav() {
                       className={cn(
                         "h-12 justify-start rounded-2xl px-4 text-[15px] tracking-[-0.01em]",
                         isActive
-                          ? "bg-[#F1F5F9] font-semibold text-[#0F172A] hover:bg-[#F1F5F9] hover:text-[#0F172A] dark:bg-white/10 dark:text-white dark:hover:bg-white/10 dark:hover:text-white"
-                          : "font-medium text-[#64748B] hover:bg-[#F8FAFC] hover:text-[#0F172A] dark:text-white/55 dark:hover:bg-white/5 dark:hover:text-white"
+                          ? "bg-muted font-semibold text-foreground hover:bg-muted hover:text-foreground"
+                          : "font-medium text-muted-foreground hover:bg-muted/60 hover:text-foreground"
                       )}
                     >
                       {link.label}
@@ -214,7 +355,7 @@ export function LandingNav() {
                 <LocaleSwitcher
                   variant="chip"
                   className="w-full"
-                  buttonClassName="h-10 w-full justify-center rounded-full bg-[#F1F5F9] text-[#64748B] hover:bg-[#E2E8F0] hover:text-[#0F172A] dark:bg-white/10 dark:text-white/70 dark:hover:bg-white/15 dark:hover:text-white"
+                  buttonClassName="h-10 w-full justify-center rounded-full bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground"
                 />
               </div>
             </SheetContent>

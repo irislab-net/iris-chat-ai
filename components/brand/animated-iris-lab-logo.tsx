@@ -21,7 +21,7 @@ export function AnimatedIrisLabLogo({
   shimmer = false,
   variant = "on-light",
 }: AnimatedIrisLabLogoProps) {
-  const colorClass = variant === "on-hero" ? "text-white" : "text-[#171717]"
+  const colorClass = variant === "on-hero" ? "text-white" : "text-foreground"
 
   const icon = (
     <AnimatedSvgIcon

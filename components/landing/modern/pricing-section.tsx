@@ -56,9 +56,9 @@ function PlanFeatures({ features }: { features: string[] }) {
   return (
     <ul className="space-y-3.5">
       {features.map((feature) => (
-        <li key={feature} className="flex items-start gap-3 text-sm leading-relaxed text-[#64748B]">
+        <li key={feature} className="flex items-start gap-3 text-sm leading-relaxed text-muted-foreground">
           <span
-            className="mt-0.5 flex size-4 shrink-0 items-center justify-center rounded-full bg-white/70 text-[#94A3B8] shadow-[inset_0_1px_0_rgba(255,255,255,0.9)]"
+            className="mt-0.5 flex size-4 shrink-0 items-center justify-center rounded-full bg-white/70 text-muted-foreground shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] dark:bg-white/10 dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.12)]"
             aria-hidden
           >
             <CheckIcon className="size-2.5" strokeWidth={2} />
@@ -79,8 +79,8 @@ function PlanCard({ plan }: { plan: PricingPlan }) {
         landingGlassSurface,
         "relative flex h-full flex-col overflow-hidden rounded-[1.75rem]",
         featured
-          ? "bg-white/55 shadow-[0_28px_80px_rgba(37,99,235,0.1),inset_0_1px_1px_rgba(255,255,255,0.95)] ring-1 ring-[#2563EB]/10 lg:-my-1"
-          : "bg-white/42"
+          ? "bg-white/55 shadow-[0_28px_80px_rgba(37,99,235,0.1),inset_0_1px_1px_rgba(255,255,255,0.95)] ring-1 ring-[#2563EB]/10 dark:bg-white/10 dark:shadow-[0_28px_80px_rgba(37,99,235,0.16),inset_0_1px_1px_rgba(255,255,255,0.12)] lg:-my-1"
+          : "bg-white/42 dark:bg-white/8"
       )}
     >
       {featured && (
@@ -98,7 +98,7 @@ function PlanCard({ plan }: { plan: PricingPlan }) {
         <div className="flex items-start justify-between gap-3">
           <h3 className={landingTitlePlan}>{plan.name}</h3>
           {plan.badge ? (
-            <span className="rounded-full bg-white/75 px-2.5 py-1 font-mono text-[9px] font-medium uppercase tracking-[0.18em] text-[#64748B] shadow-[0_4px_12px_rgba(15,23,42,0.04)]">
+            <span className="rounded-full bg-white/75 px-2.5 py-1 font-mono text-[9px] font-medium uppercase tracking-[0.18em] text-muted-foreground shadow-[0_4px_12px_rgba(15,23,42,0.04)] dark:bg-white/10">
               {plan.badge}
             </span>
           ) : null}
@@ -108,15 +108,15 @@ function PlanCard({ plan }: { plan: PricingPlan }) {
           <p className={landingTitlePrice}>
             {plan.price}
             {plan.key === "plus" ? (
-              <span className="ml-1 text-lg font-normal text-[#94A3B8]">/mo</span>
+              <span className="ml-1 text-lg font-normal text-muted-foreground">/mo</span>
             ) : null}
           </p>
-          <p className="mt-2 text-sm leading-relaxed text-[#64748B]">{plan.desc}</p>
+          <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{plan.desc}</p>
         </div>
 
         <PlanCta plan={plan} />
 
-        <div className="mt-8 flex-1 border-t border-white/55 pt-8">
+        <div className="mt-8 flex-1 border-t border-white/55 pt-8 dark:border-white/10">
           <PlanFeatures features={plan.features} />
         </div>
       </div>

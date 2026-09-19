@@ -399,22 +399,22 @@ export function AboutExperience() {
   return (
     <div
       ref={frameRef}
-      className="relative aspect-video w-full rounded-[1.75rem] bg-[#F1F5F9]"
+      className="relative aspect-video w-full rounded-[1.75rem] bg-muted"
     >
       {expanded && (
-        <div ref={backdropRef} aria-hidden className="fixed inset-0 z-[89] bg-[#F8FAFC]" />
+        <div ref={backdropRef} aria-hidden className="fixed inset-0 z-[89] bg-background" />
       )}
 
       <div
         ref={stageRef}
         className={cn(
           landingGlassSurface,
-          "absolute inset-0 rounded-[1.75rem] bg-white/42"
+          "absolute inset-0 rounded-[1.75rem] bg-white/42 dark:bg-white/8"
         )}
       >
         <div
           aria-hidden
-          className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_42%,#ffffff_0%,#f6f7f9_58%,#eef1f5_100%)]"
+          className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_42%,#ffffff_0%,#f6f7f9_58%,#eef1f5_100%)] dark:bg-[radial-gradient(ellipse_at_50%_42%,oklch(0.28_0_0)_0%,oklch(0.22_0_0)_58%,oklch(0.18_0_0)_100%)]"
         />
         <span aria-hidden className={cn(landingGlassSheen, "absolute inset-0")} />
 
@@ -443,7 +443,7 @@ export function AboutExperience() {
 
         {phase === "playing" && (
           <>
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 bg-linear-to-t from-[#F8FAFC] via-[#F8FAFC]/85 to-transparent px-6 pt-20 pb-8 sm:px-10 sm:pb-12">
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 bg-linear-to-t from-background via-background/85 to-transparent px-6 pt-20 pb-8 sm:px-10 sm:pb-12">
               <p
                 ref={captionRef}
                 key={cueIndex}
@@ -460,7 +460,7 @@ export function AboutExperience() {
               aria-label="Close"
               className={cn(
                 landingGlassNavIcon,
-                "absolute top-4 right-4 z-30 text-[#475569] hover:text-[#0F172A]"
+                "absolute top-4 right-4 z-30 text-muted-foreground hover:text-foreground"
               )}
             >
               <XIcon className="size-5" />

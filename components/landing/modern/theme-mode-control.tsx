@@ -36,7 +36,7 @@ export function ThemeModeControl({ className }: { className?: string }) {
       role="radiogroup"
       aria-label={t("theme")}
       className={cn(
-        "grid grid-cols-3 gap-1 rounded-full bg-[#F1F5F9] p-1 dark:bg-white/10",
+        "grid grid-cols-3 gap-1 rounded-full bg-muted p-1",
         className
       )}
     >
@@ -54,8 +54,8 @@ export function ThemeModeControl({ className }: { className?: string }) {
             className={cn(
               "h-9 gap-1.5 rounded-full px-2 text-xs font-medium",
               selected
-                ? "bg-white text-[#0F172A] shadow-[0_2px_8px_rgba(15,23,42,0.08)] hover:bg-white hover:text-[#0F172A] dark:bg-white/90 dark:text-[#0F172A]"
-                : "text-[#64748B] hover:bg-transparent hover:text-[#0F172A] dark:text-white/55 dark:hover:text-white"
+                ? "bg-card text-foreground shadow-[0_2px_8px_rgba(15,23,42,0.08)] hover:bg-card hover:text-foreground dark:shadow-[0_2px_8px_rgba(0,0,0,0.3)]"
+                : "text-muted-foreground hover:bg-transparent hover:text-foreground"
             )}
           >
             <Icon className="size-3.5" />

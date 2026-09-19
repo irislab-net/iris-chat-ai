@@ -36,32 +36,6 @@ function resolveGoogleOneTapColorScheme(
   return "light"
 }
 
-function logOneTapDebug(
-  location: string,
-  message: string,
-  data: Record<string, unknown>,
-  hypothesisId: string
-) {
-  // #region agent log
-  fetch("http://127.0.0.1:7720/ingest/3be29a1b-f239-4020-9d2c-1ec85b598a76", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "X-Debug-Session-Id": "1e9208",
-    },
-    body: JSON.stringify({
-      sessionId: "1e9208",
-      runId: "theme-verify-2",
-      location,
-      message,
-      data,
-      timestamp: Date.now(),
-      hypothesisId,
-    }),
-  }).catch(() => {})
-  // #endregion
-}
-
 function handlePromptMoment(notification: GooglePromptMomentNotification) {
   if (notification.isSkippedMoment()) {
     const reason = notification.getSkippedReason()
@@ -94,23 +68,6 @@ function runGoogleOneTapPrompt(
     itp_support: true,
     use_fedcm_for_prompt: false,
   })
-
-  const metaContent = document
-    .querySelector('meta[name="color-scheme"]')
-    ?.getAttribute("content")
-
-  logOneTapDebug(
-    "google-one-tap.tsx:initialize",
-    "GIS initialize",
-    {
-      colorScheme,
-      htmlHasDarkClass: document.documentElement.classList.contains("dark"),
-      htmlColorScheme: document.documentElement.style.colorScheme,
-      metaColorScheme: metaContent,
-      prefersDark: window.matchMedia("(prefers-color-scheme: dark)").matches,
-    },
-    "T2"
-  )
 
   window.google.accounts.id.prompt(handlePromptMoment)
 }

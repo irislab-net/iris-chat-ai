@@ -23,7 +23,7 @@ export function HeroSection() {
             {HERO.titleAfter}
           </h1>
 
-          <p className="mx-auto mt-5 max-w-md text-sm leading-relaxed text-[#64748B] sm:mt-6 sm:text-base lg:max-w-2xl lg:text-lg">
+          <p className="mx-auto mt-5 max-w-md text-sm leading-relaxed text-muted-foreground sm:mt-6 sm:text-base lg:max-w-2xl lg:text-lg">
             {HERO.subtitle}
           </p>
         </div>

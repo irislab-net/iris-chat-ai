@@ -82,7 +82,7 @@ export function LandingBadge({
         "inline-flex items-center rounded-full px-4 py-1.5 text-sm font-medium",
         light
           ? "bg-white/10 text-white/90 backdrop-blur-md"
-          : "bg-[#F1F5F9] text-[#64748B]",
+          : "bg-muted text-muted-foreground",
         className
       )}
     >
@@ -173,7 +173,7 @@ export function SectionHeader({
         <p
           className={cn(
             "mt-5 text-base leading-relaxed sm:text-lg",
-            light ? "text-white/75" : "text-[#64748B]"
+            light ? "text-white/75" : "text-muted-foreground"
           )}
         >
           {subtitle}
@@ -184,5 +184,5 @@ export function SectionHeader({
 }
 
 export function SparkleAccent({ className }: { className?: string }) {
-  return <SparklesIcon className={cn("size-3.5 text-[#94A3B8]", className)} aria-hidden />
+  return <SparklesIcon className={cn("size-3.5 text-muted-foreground", className)} aria-hidden />
 }

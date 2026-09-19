@@ -27,7 +27,7 @@ function HowItWorksStepIcon({ index }: { index: number }) {
   return (
     <AnimatedSvgIcon
       replayOnHover
-      className="relative z-10 mb-6 size-26 text-[#334155] lg:size-32"
+      className="relative z-10 mb-6 size-26 text-foreground/70 lg:size-32"
     >
       <Mark />
     </AnimatedSvgIcon>
@@ -51,7 +51,7 @@ export function BentoSection() {
               key={item.title}
               className={cn(
                 landingGlassSurface,
-                "group relative flex flex-col items-center overflow-hidden rounded-[1.75rem] bg-white/42 text-center",
+                "group relative flex flex-col items-center overflow-hidden rounded-[1.75rem] bg-white/42 text-center dark:bg-white/8",
                 "px-6 py-8 sm:px-7 sm:py-9"
               )}
             >
@@ -64,7 +64,7 @@ export function BentoSection() {
               />
               <HowItWorksStepIcon index={index} />
               <h3 className={cn("relative z-10", landingTitleCard)}>{item.headline}</h3>
-              <p className="relative z-10 mt-2 text-sm leading-relaxed text-[#64748B]">
+              <p className="relative z-10 mt-2 text-sm leading-relaxed text-muted-foreground">
                 {item.desc}
               </p>
             </article>

@@ -63,7 +63,7 @@ const LEGAL_LINKS = [
 ] as const
 
 const linkClass =
-  "w-fit text-left text-sm text-[#64748B] transition-colors hover:text-[#0F172A]"
+  "w-fit text-left text-sm text-muted-foreground transition-colors hover:text-foreground"
 
 function FooterColumnLink({ link }: { link: FooterLink }) {
   if ("section" in link) {
@@ -93,7 +93,7 @@ export function ModernFooter() {
   const year = new Date().getFullYear()
 
   return (
-    <footer className={cn(landingFooterCard, landingCard, "bg-white text-[#0F172A]")}>
+    <footer className={cn(landingFooterCard, landingCard)}>
       <ScrollReveal className="relative z-10 py-9 sm:py-10">
         <div className={cn(landingInner, "flex flex-col")}>
           <div className="flex flex-col gap-10 lg:flex-row lg:justify-between lg:gap-16">
@@ -103,12 +103,12 @@ export function ModernFooter() {
                 variant="ghost"
                 onClick={() => scrollToSection("top")}
                 aria-label={SITE_NAME}
-                className="h-auto w-fit gap-2.5 rounded-full px-0 py-0 text-[#0F172A] hover:bg-transparent"
+                className="h-auto w-fit gap-2.5 rounded-full px-0 py-0 text-foreground hover:bg-transparent"
               >
                 <AnimatedIrisLabLogo scrollTrigger replayOnHover shimmer className="size-10" />
                 <span className={landingTitleFooter}>{SITE_NAME}</span>
               </Button>
-              <p className="mt-4 text-sm leading-relaxed text-[#64748B]">
+              <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
                 {FOOTER_TAGLINE}
               </p>
               <a
@@ -116,7 +116,7 @@ export function ModernFooter() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={`${SITE_NAME} on X`}
-                className="mt-5 inline-flex size-9 items-center justify-center rounded-full bg-[#F1F5F9] text-[#475569] transition-colors hover:bg-[#0F172A] hover:text-white"
+                className="mt-5 inline-flex size-9 items-center justify-center rounded-full bg-muted text-muted-foreground transition-colors hover:bg-foreground hover:text-background"
               >
                 <XIcon className="size-3.5" />
               </a>
@@ -125,7 +125,7 @@ export function ModernFooter() {
             <div className="grid grid-cols-2 gap-x-8 gap-y-8 sm:grid-cols-3 lg:gap-x-16">
               {FOOTER_COLUMNS.map((column) => (
                 <nav key={column.heading} className="flex flex-col gap-3" aria-label={column.heading}>
-                  <p className="text-sm font-semibold text-[#0F172A]">{column.heading}</p>
+                  <p className="text-sm font-semibold text-foreground">{column.heading}</p>
                   {column.links.map((link) => (
                     <FooterColumnLink key={link.label} link={link} />
                   ))}
@@ -134,10 +134,10 @@ export function ModernFooter() {
             </div>
           </div>
 
-          <Separator className="mt-10 mb-6 bg-[#E2E8F0]" />
+          <Separator className="mt-10 mb-6 bg-border" />
 
           <div className="flex flex-col gap-3 text-xs sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-[#94A3B8]">
+            <p className="text-muted-foreground">
               © {year} {SITE_NAME}. All rights reserved.
             </p>
             <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
@@ -145,7 +145,7 @@ export function ModernFooter() {
                 <Link
                   key={link.label}
                   href={link.href}
-                  className="text-[#64748B] underline decoration-[#CBD5E1] underline-offset-4 transition-colors hover:text-[#0F172A] hover:decoration-[#0F172A]"
+                  className="text-muted-foreground underline decoration-border underline-offset-4 transition-colors hover:text-foreground hover:decoration-foreground"
                 >
                   {link.label}
                 </Link>

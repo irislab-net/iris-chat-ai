@@ -131,7 +131,7 @@ function DemoUserAvatar({
     <GlassOrb className="p-0.5">
       <Avatar size="sm" className="size-full after:hidden">
         <AvatarImage src={src} alt="" />
-        <AvatarFallback className="bg-white/40 text-[9px] font-medium text-[#64748B]">
+        <AvatarFallback className="bg-white/40 text-[9px] font-medium text-muted-foreground dark:bg-white/10">
           {initials}
         </AvatarFallback>
       </Avatar>
@@ -142,7 +142,7 @@ function DemoUserAvatar({
 function DemoSystemAvatar() {
   return (
     <GlassOrb className="mt-0.5 p-1.5">
-      <IrisLabLogo variant="on-light" size={20} className="size-full" decorative />
+            <IrisLabLogo variant="auto" size={20} className="size-full" decorative />
     </GlassOrb>
   )
 }
@@ -689,7 +689,7 @@ export function HeroComposeDemo() {
               )}
             >
               <GlassSheen />
-              <p className="relative z-10 line-clamp-2 text-left text-[0.8125rem] font-normal leading-snug text-[#0F172A] sm:text-base">
+              <p className="relative z-10 line-clamp-2 text-left text-[0.8125rem] font-normal leading-snug text-foreground sm:text-base">
                 {userBubbleText ?? "\u00A0"}
               </p>
             </div>
@@ -716,9 +716,9 @@ export function HeroComposeDemo() {
                 )}
               >
                 <GlassSheen />
-                <span data-think-dot className="relative z-10 size-1.5 rounded-full bg-[#94A3B8]/80" />
-                <span data-think-dot className="relative z-10 size-1.5 rounded-full bg-[#94A3B8]/80" />
-                <span data-think-dot className="relative z-10 size-1.5 rounded-full bg-[#94A3B8]/80" />
+                <span data-think-dot className="relative z-10 size-1.5 rounded-full bg-muted-foreground/80" />
+                <span data-think-dot className="relative z-10 size-1.5 rounded-full bg-muted-foreground/80" />
+                <span data-think-dot className="relative z-10 size-1.5 rounded-full bg-muted-foreground/80" />
               </div>
             </div>
           </div>
@@ -739,14 +739,14 @@ export function HeroComposeDemo() {
                 )}
               >
                 <GlassSheen />
-                <p className="relative z-10 mb-0.5 font-mono text-[9px] font-medium uppercase tracking-[0.25em] text-[#94A3B8] sm:mb-1">
+                <p className="relative z-10 mb-0.5 font-mono text-[9px] font-medium uppercase tracking-[0.25em] text-muted-foreground sm:mb-1">
                   Exur
                 </p>
-                <p className="relative z-10 line-clamp-4 text-left text-[0.8125rem] font-normal leading-snug text-[#64748B] sm:text-base sm:leading-relaxed">
+                <p className="relative z-10 line-clamp-4 text-left text-[0.8125rem] font-normal leading-snug text-muted-foreground sm:text-base sm:leading-relaxed">
                   {answerText}
                   <span
                     data-demo-caret
-                    className="ml-0.5 inline-block h-[1.1em] w-0.5 bg-[#94A3B8] align-[-2px] opacity-0"
+                    className="ml-0.5 inline-block h-[1.1em] w-0.5 bg-muted-foreground align-[-2px] opacity-0"
                     aria-hidden
                   />
                 </p>
@@ -781,7 +781,7 @@ export function HeroComposeDemo() {
           }}
           placeholder={HERO.inputPlaceholder}
           readOnly={demoActive && phase !== "typing-question"}
-          className="relative z-10 h-10 min-w-0 flex-1 border-0 bg-transparent px-2 text-sm text-[#0F172A] shadow-none placeholder:text-[#94A3B8]/90 focus-visible:ring-0 read-only:cursor-default sm:px-3 sm:text-base"
+          className="relative z-10 h-10 min-w-0 flex-1 border-0 bg-transparent px-2 text-sm text-foreground shadow-none placeholder:text-muted-foreground/90 focus-visible:ring-0 read-only:cursor-default sm:px-3 sm:text-base"
         />
 
         <span data-demo-send className="relative z-10 inline-flex shrink-0">
@@ -792,7 +792,7 @@ export function HeroComposeDemo() {
             className={cn(
               "size-10 shrink-0 rounded-full text-white shadow-[0_8px_24px_rgba(37,99,235,0.32)] transition-colors duration-300",
               isStreaming
-                ? "bg-[#0F172A] hover:bg-[#1E293B]"
+                ? "bg-foreground text-background hover:bg-foreground/90"
                 : "bg-[#2563EB] hover:bg-[#1D4ED8]"
             )}
             aria-label={isStreaming ? "Stop" : "Ask Exur"}

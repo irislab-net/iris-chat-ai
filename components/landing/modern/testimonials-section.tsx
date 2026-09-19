@@ -32,8 +32,8 @@ function XPostCard({ post }: { post: XPost }) {
       aria-label={`Read @${post.handle}'s post on X`}
       className={cn(
         landingGlassSurface,
-        "group flex h-full flex-col rounded-[1.5rem] bg-white/42 px-5 py-5 sm:px-6 sm:py-6",
-        "transition-shadow hover:shadow-[0_24px_64px_rgba(15,23,42,0.12),inset_0_1px_1px_rgba(255,255,255,0.92),inset_0_-1px_2px_rgba(255,255,255,0.28)]"
+        "group flex h-full flex-col rounded-[1.5rem] bg-white/42 px-5 py-5 sm:px-6 sm:py-6 dark:bg-white/8",
+        "transition-shadow hover:shadow-[0_24px_64px_rgba(15,23,42,0.12),inset_0_1px_1px_rgba(255,255,255,0.92),inset_0_-1px_2px_rgba(255,255,255,0.28)] dark:hover:shadow-[0_24px_64px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.12)]"
       )}
     >
       <span
@@ -47,17 +47,17 @@ function XPostCard({ post }: { post: XPost }) {
           <AvatarFallback>{post.initials}</AvatarFallback>
         </Avatar>
         <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-medium text-[#0F172A]">{post.name}</p>
-          <p className="truncate text-xs text-[#94A3B8]">@{post.handle}</p>
+          <p className="truncate text-sm font-medium text-foreground">{post.name}</p>
+          <p className="truncate text-xs text-muted-foreground">@{post.handle}</p>
         </div>
-        <XIcon className="mt-0.5 size-4 shrink-0 text-[#CBD5E1] transition-colors group-hover:text-[#0F172A]" />
+        <XIcon className="mt-0.5 size-4 shrink-0 text-muted-foreground/50 transition-colors group-hover:text-foreground" />
       </div>
 
-      <p className="relative z-10 mt-4 flex-1 text-sm leading-relaxed whitespace-pre-line text-[#334155]">
+      <p className="relative z-10 mt-4 flex-1 text-sm leading-relaxed whitespace-pre-line text-foreground/80">
         {post.text}
       </p>
 
-      <p className="relative z-10 mt-5 text-xs text-[#94A3B8]">{post.date}</p>
+      <p className="relative z-10 mt-5 text-xs text-muted-foreground">{post.date}</p>
     </a>
   )
 }
@@ -85,7 +85,7 @@ export function TestimonialsSection() {
             href={SOCIAL_X_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 text-sm text-[#64748B] transition-colors hover:text-[#0F172A]"
+            className="inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
           >
             <XIcon className="size-3.5" />
             See more on X

@@ -547,30 +547,54 @@
   }
 }
 
-/* Blue-only cycle — landing CTA band. Same drift, brand hue range instead of
-   the chat mesh's blue → teal → green sweep. */
+/* Blue-only cycle — landing hero / CTA. Locked to Start Free `#2563EB`. */
 @keyframes gemini-glass-color-cycle-blue {
   0%,
   100% {
-    --gemini-glass-a: #93c5fd;
-    --gemini-glass-b: #a7d0fe;
-    --gemini-glass-c: #bfdbfe;
-    --gemini-glass-d: #7fb8fc;
-    --gemini-dots-tone: #60a5fa;
+    --gemini-glass-a: #2563eb;
+    --gemini-glass-b: #3b82f6;
+    --gemini-glass-c: #60a5fa;
+    --gemini-glass-d: #1d4ed8;
+    --gemini-dots-tone: #2563eb;
   }
   33% {
-    --gemini-glass-a: #7aa7f8;
-    --gemini-glass-b: #8db6fa;
-    --gemini-glass-c: #a5c6fc;
-    --gemini-glass-d: #6795f5;
+    --gemini-glass-a: #1d4ed8;
+    --gemini-glass-b: #2563eb;
+    --gemini-glass-c: #3b82f6;
+    --gemini-glass-d: #1e40af;
     --gemini-dots-tone: #3b82f6;
   }
   66% {
-    --gemini-glass-a: #8fb3f7;
-    --gemini-glass-b: #9fc0f9;
-    --gemini-glass-c: #b2cefb;
-    --gemini-glass-d: #7ca4f4;
-    --gemini-dots-tone: #4b8df0;
+    --gemini-glass-a: #3b82f6;
+    --gemini-glass-b: #60a5fa;
+    --gemini-glass-c: #2563eb;
+    --gemini-glass-d: #2563eb;
+    --gemini-dots-tone: #1d4ed8;
+  }
+}
+
+@keyframes gemini-glass-color-cycle-blue-dark {
+  0%,
+  100% {
+    --gemini-glass-a: #2563eb;
+    --gemini-glass-b: #1d4ed8;
+    --gemini-glass-c: #3b82f6;
+    --gemini-glass-d: #1e40af;
+    --gemini-dots-tone: #3b82f6;
+  }
+  33% {
+    --gemini-glass-a: #1d4ed8;
+    --gemini-glass-b: #2563eb;
+    --gemini-glass-c: #1e40af;
+    --gemini-glass-d: #1e3a8a;
+    --gemini-dots-tone: #2563eb;
+  }
+  66% {
+    --gemini-glass-a: #3b82f6;
+    --gemini-glass-b: #2563eb;
+    --gemini-glass-c: #1d4ed8;
+    --gemini-glass-d: #2563eb;
+    --gemini-dots-tone: #60a5fa;
   }
 }
 
@@ -644,6 +668,10 @@
 /* Doubled class beats `.dark .chat-gemini-bg` on specificity. */
 .chat-gemini-bg.chat-gemini-bg-blue {
   animation-name: gemini-glass-color-cycle-blue;
+}
+
+.dark .chat-gemini-bg.chat-gemini-bg-blue {
+  animation-name: gemini-glass-color-cycle-blue-dark;
 }
 
 /* Gemini mesh layout — proportions from reference artboard 507×764, anchored to bottom. */

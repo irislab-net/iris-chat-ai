@@ -43,7 +43,7 @@ export function ModernLandingPage() {
 
           {/* `#top` is the page root, so scroll-spy tracks the hero card itself. */}
           <div id="hero" className={cn(landingHeroCard, landingHeroGlass)}>
-            <HeroLiquidGlassBg />
+            <HeroLiquidGlassBg tone="blue" />
             <div className="relative z-10 flex min-h-0 flex-1 flex-col">
               <HeroSection />
             </div>

@@ -22,7 +22,7 @@ export function CtaSection() {
         // the band sits on the same scale as every other section.
         landingSectionBody,
         // Glass shell from the hero card, so the shared mesh reads as one system.
-        "bg-white/40 backdrop-blur-2xl shadow-[0_28px_80px_rgba(15,23,42,0.07)]"
+        "bg-white/40 backdrop-blur-2xl shadow-[0_28px_80px_rgba(15,23,42,0.07)] dark:bg-white/6 dark:shadow-[0_28px_80px_rgba(0,0,0,0.45)]"
       )}
     >
       <HeroLiquidGlassBg tone="blue" />
@@ -41,7 +41,7 @@ export function CtaSection() {
             </SphereCta>
           </div>
 
-          <p className="mt-5 text-center text-xs text-[#94A3B8]">{CTA_SECTION.note}</p>
+          <p className="mt-5 text-center text-xs text-muted-foreground">{CTA_SECTION.note}</p>
         </ScrollRevealGroup>
       </div>
     </section>

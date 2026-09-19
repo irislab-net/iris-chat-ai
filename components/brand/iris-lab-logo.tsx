@@ -47,7 +47,10 @@ function IrisLabLogo({
           height={size}
           priority={priority}
           sizes={`${size}px`}
-          className={cn(shared, showThemePair && "dark:hidden")}
+          className={cn(
+            shared,
+            showThemePair ? "absolute inset-0 hidden dark:block" : undefined
+          )}
         />
       )}
       {variant === "on-hero" && (
@@ -91,10 +94,7 @@ function IrisLabLogo({
           height={size}
           priority={priority}
           sizes={`${size}px`}
-          className={cn(
-            shared,
-            showThemePair ? "absolute inset-0 hidden dark:block" : undefined
-          )}
+          className={cn(shared, showThemePair && "dark:hidden")}
         />
       )}
     </span>

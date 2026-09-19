@@ -39,13 +39,13 @@ function ChatMobileGeminiBackground({
         className={cn(
           "absolute inset-0",
           isHero
-            ? "bg-linear-to-b from-white via-[#FAFBFC] to-[#F1F5F9]"
+            ? "bg-linear-to-b from-white via-[#FAFBFC] to-[#F1F5F9] dark:from-background dark:via-background dark:to-card"
             : "bg-background"
         )}
       />
       {isHero ? (
         <div
-          className="absolute inset-x-0 top-0 h-[42%] bg-linear-to-b from-white via-white/90 to-transparent"
+          className="absolute inset-x-0 top-0 h-[42%] bg-linear-to-b from-white via-white/90 to-transparent dark:from-background dark:via-background/90"
         />
       ) : (
         <div className="chat-gemini-bg-top-fade absolute inset-x-0 top-0 h-[42%]" />

@@ -117,7 +117,7 @@ export function GoalsSection() {
             </div>
 
             <figure
-              className={cn(landingGlassSurface, styles.tile, "relative bg-white/42")}
+              className={cn(landingGlassSurface, styles.tile, "relative bg-white/42 dark:bg-white/8")}
               aria-label="Circles that change as you scroll: a grid of noise, four scattered accounts, four overlapping choices, then one calm ring"
             >
               <span aria-hidden className={styles.tileBackdrop} />
