@@ -69,4 +69,13 @@ describe("composer mentions", () => {
       "What is ETH doing today?"
     )
   })
+
+  it("strips MARKET_CONTEXT appendices from history labels", () => {
+    const leaked = `Trading desk request for BTC.
+
+---
+MARKET_CONTEXT (authoritative evidence; asOf=2026-09-19T00:00:00.000Z):
+{"symbol":"BTC"}`
+    expect(summarizeSignalUserMessage(leaked)).toBe("Signal · BTC")
+  })
 })

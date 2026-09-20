@@ -13,26 +13,26 @@ export type IrisSamplePrompt = {
   text: string
 }
 
-/** Empty-state starters — signal first (regular chat), not auto paper-trade pipeline. */
+/** Empty-state starters — regular chat; signal card only via show_trade_signal when clear. */
 export const IRIS_SAMPLE_PROMPTS: readonly IrisSamplePrompt[] = [
   {
     id: "btc-signal",
     title: "BTC signal",
     description:
-      "Live price, models, stance & news in one actionable paper trade.",
-    text: BTC_SIGNAL_SAMPLE_PROMPT,
+      "Live price, models, and news — show a trade card only if the setup is clear.",
+    text: "Give me a BTC market read from live price, multi-timeframe trend, model probabilities, stance, and recent news. If a clear LONG or SHORT edge exists, call show_trade_signal with entry, stopLoss, takeProfit, leverage, setup, and thesis. If Flat, ranging, or the edge is weak, say so and do not invent a trade.",
   },
   {
     id: "market-pulse",
     title: "Market pulse",
-    description: "Stance, bias, and news pulse. Analysis only, no trade.",
-    text: "What is Exur stance, model bias, and the news pulse on BTC right now? Keep it factual. Do not propose a trade.",
+    description: "Stance, model bias, and news — analysis only.",
+    text: "What is Exur stance, model bias, and the news pulse on BTC right now? Keep it factual and concise. Analysis only — no trade card.",
   },
   {
-    id: "wait-or-watch",
-    title: "Wait or watch",
-    description: "Trend and volatility read. Should you sit out or watch?",
-    text: "From live BTC trend and volatility, should I wait on the sidelines or is a setup forming? Analysis only. Do not open a paper trade.",
+    id: "key-levels",
+    title: "Key levels",
+    description: "Support and resistance from current market structure.",
+    text: "Map the key BTC support and resistance levels from recent structure and live price. Call out the nearest levels that matter now and whether price is pressing, rejecting, or mid-range. Analysis only — no trade card.",
   },
 ] as const
 

@@ -1,6 +1,7 @@
 /** @-mentions and tool tags in the IRIS chat composer. */
 
 import { isLowSignalUserMessage } from "@/lib/co-pilot-recovery"
+import { stripMarketContextAppendix } from "@/lib/iris-paper-trade/prompt"
 import { buildActionSignalPrompt } from "@/lib/iris-paper-trade/signal-prompts"
 
 export type IrisMentionTool = "signal"
@@ -83,7 +84,7 @@ export function filterMentionOptions(query: string): IrisMentionOption[] {
 
 /** Short history/UI label for expanded desk prompts so follow-ups are not re-primed. */
 export function summarizeSignalUserMessage(text: string): string {
-  const trimmed = text.trim()
+  const trimmed = stripMarketContextAppendix(text)
   const en = trimmed.match(/^Trading desk request for\s+(.+?)\./u)
   if (en?.[1]) return `Signal · ${en[1].trim()}`
   const fa = trimmed.match(/^درخواست\s+میز\s+معاملاتی\s+برای\s+(.+?)\./u)

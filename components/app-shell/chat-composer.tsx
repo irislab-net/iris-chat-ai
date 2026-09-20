@@ -74,6 +74,9 @@ import {
 import { useIsDesktop } from "@/hooks/use-media-query"
 import { cn } from "@/lib/utils"
 
+/** Hidden for now — re-enable to show the composer "+" tools menu. */
+const SHOW_COMPOSER_TOOLS_MENU = false
+
 type ChatComposerProps = {
   onSend?: (message: string) => void
   disabled?: boolean
@@ -534,60 +537,62 @@ function ChatComposer({
         {isFloating ? (
           <>
             <div className={chatMobileComposerLeadingClass}>
-              <DropdownMenu modal={false}>
-                <DropdownMenuTrigger
-                  render={
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon-sm"
-                      aria-label={t("composerToolsMenu")}
-                      title={t("composerToolsMenu")}
-                      disabled={disabled}
-                      className={
-                        floatingComposerExpanded
-                          ? chatMobileComposerIconButtonClass
-                          : chatMobileComposerIconButtonCompactClass
-                      }
-                    />
-                  }
-                >
-                  <PlusIcon className="size-5" />
-                </DropdownMenuTrigger>
-                <DropdownMenuContent
-                  align="start"
-                  side="top"
-                  className={cn(
-                    chatMobileToolsMenuClass,
-                    "min-w-[13.5rem] border-0 p-1.5 shadow-none ring-0 !bg-white/78 dark:!bg-white/[0.08]"
-                  )}
-                >
-                  <DropdownMenuGroup>
-                    <DropdownMenuLabel className={chatMobileToolsMenuLabelClass}>
-                      {t("composerToolsMenu")}
-                    </DropdownMenuLabel>
-                    {IRIS_MENTION_OPTIONS.map((option) => (
-                      <DropdownMenuItem
-                        key={option.id}
-                        className={cn(chatMobileToolsMenuItemClass, "py-2.5")}
-                        onClick={() => insertMentionToken(option)}
-                      >
-                        <span className={chatMobileToolsMenuItemTitleClass}>
-                          {option.label}
-                        </span>
-                        <span
-                          className={cn(
-                            chatMobileToolsMenuItemDescClass,
-                            "line-clamp-2"
-                          )}
+              {SHOW_COMPOSER_TOOLS_MENU ? (
+                <DropdownMenu modal={false}>
+                  <DropdownMenuTrigger
+                    render={
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon-sm"
+                        aria-label={t("composerToolsMenu")}
+                        title={t("composerToolsMenu")}
+                        disabled={disabled}
+                        className={
+                          floatingComposerExpanded
+                            ? chatMobileComposerIconButtonClass
+                            : chatMobileComposerIconButtonCompactClass
+                        }
+                      />
+                    }
+                  >
+                    <PlusIcon className="size-5" />
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent
+                    align="start"
+                    side="top"
+                    className={cn(
+                      chatMobileToolsMenuClass,
+                      "min-w-[13.5rem] border-0 p-1.5 shadow-none ring-0 !bg-white/78 dark:!bg-white/[0.08]"
+                    )}
+                  >
+                    <DropdownMenuGroup>
+                      <DropdownMenuLabel className={chatMobileToolsMenuLabelClass}>
+                        {t("composerToolsMenu")}
+                      </DropdownMenuLabel>
+                      {IRIS_MENTION_OPTIONS.map((option) => (
+                        <DropdownMenuItem
+                          key={option.id}
+                          className={cn(chatMobileToolsMenuItemClass, "py-2.5")}
+                          onClick={() => insertMentionToken(option)}
                         >
-                          {t("composerToolSignalDesc")}
-                        </span>
-                      </DropdownMenuItem>
-                    ))}
-                  </DropdownMenuGroup>
-                </DropdownMenuContent>
-              </DropdownMenu>
+                          <span className={chatMobileToolsMenuItemTitleClass}>
+                            {option.label}
+                          </span>
+                          <span
+                            className={cn(
+                              chatMobileToolsMenuItemDescClass,
+                              "line-clamp-2"
+                            )}
+                          >
+                            {t("composerToolSignalDesc")}
+                          </span>
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuGroup>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : null}
               {effectiveActiveTool ? (
                 <Badge
                   variant="outline"
@@ -729,42 +734,44 @@ function ChatComposer({
         )}
         {!isFloating ? (
         <div className="[grid-area:leading] flex items-center gap-0.5 px-0.5 pb-0.5">
-          <DropdownMenu modal={isMobile ? false : undefined}>
-            <DropdownMenuTrigger
-              render={
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon-sm"
-                  aria-label={t("composerToolsMenu")}
-                  title={t("composerToolsMenu")}
-                  disabled={disabled}
-                  className={chatDesktopComposerIconButtonClass}
-                />
-              }
-            >
-              <PlusIcon className="size-4" />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" side="top" className={cn(chatMobileToolsMenuClass, "min-w-[13.5rem] border-0 p-1.5 shadow-none ring-0 !bg-white/78 dark:!bg-white/[0.08]")}>
-              <DropdownMenuGroup>
-                <DropdownMenuLabel className={chatMobileToolsMenuLabelClass}>
-                  {t("composerToolsMenu")}
-                </DropdownMenuLabel>
-                {IRIS_MENTION_OPTIONS.map((option) => (
-                  <DropdownMenuItem
-                    key={option.id}
-                    className={cn(chatMobileToolsMenuItemClass, "py-2.5")}
-                    onClick={() => insertMentionToken(option)}
-                  >
-                    <span className={chatMobileToolsMenuItemTitleClass}>{option.label}</span>
-                    <span className={cn(chatMobileToolsMenuItemDescClass, "line-clamp-2")}>
-                      {t("composerToolSignalDesc")}
-                    </span>
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuGroup>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          {SHOW_COMPOSER_TOOLS_MENU ? (
+            <DropdownMenu modal={isMobile ? false : undefined}>
+              <DropdownMenuTrigger
+                render={
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon-sm"
+                    aria-label={t("composerToolsMenu")}
+                    title={t("composerToolsMenu")}
+                    disabled={disabled}
+                    className={chatDesktopComposerIconButtonClass}
+                  />
+                }
+              >
+                <PlusIcon className="size-4" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" side="top" className={cn(chatMobileToolsMenuClass, "min-w-[13.5rem] border-0 p-1.5 shadow-none ring-0 !bg-white/78 dark:!bg-white/[0.08]")}>
+                <DropdownMenuGroup>
+                  <DropdownMenuLabel className={chatMobileToolsMenuLabelClass}>
+                    {t("composerToolsMenu")}
+                  </DropdownMenuLabel>
+                  {IRIS_MENTION_OPTIONS.map((option) => (
+                    <DropdownMenuItem
+                      key={option.id}
+                      className={cn(chatMobileToolsMenuItemClass, "py-2.5")}
+                      onClick={() => insertMentionToken(option)}
+                    >
+                      <span className={chatMobileToolsMenuItemTitleClass}>{option.label}</span>
+                      <span className={cn(chatMobileToolsMenuItemDescClass, "line-clamp-2")}>
+                        {t("composerToolSignalDesc")}
+                      </span>
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : null}
           {!hideEffort ? (
             <DropdownMenu modal={isMobile ? false : undefined}>
               <DropdownMenuTrigger

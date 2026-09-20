@@ -2,6 +2,7 @@ import { chatApiFetch } from "@/lib/api/chat-client"
 import { unwrapChatPayload } from "@/lib/api/chat"
 import type { CoPilotHistoryMessage } from "@/lib/api/types"
 import { summarizeSignalUserMessage } from "@/lib/chat/composer-mentions"
+import { stripMarketContextAppendix } from "@/lib/iris-paper-trade/prompt"
 import { serverMessageId } from "@/lib/chat-message-id"
 
 export type ConversationHistoryItem = {
@@ -138,6 +139,6 @@ export function historyItemsToUiMessages(items: ConversationHistoryItem[]) {
       content:
         item.role === "user"
           ? summarizeSignalUserMessage(item.content)
-          : item.content,
+          : stripMarketContextAppendix(item.content),
     }))
 }

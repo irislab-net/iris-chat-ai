@@ -44,6 +44,9 @@ export function isAppDeskPath(pathname: string | null | undefined): boolean {
 /** Full-screen plan picker → crypto invoice checkout. */
 export const UPGRADE_PATH = "/upgrade"
 
+/** Account billing status, invoices, and payment history. */
+export const BILLING_PATH = "/billing"
+
 /** Public indexable paths (sitemap + IA) — keep in sync with INDEXABLE_ROUTES. */
 export const PUBLIC_INDEXABLE_PATHS = [
   APP_PATH,
@@ -68,3 +71,6 @@ export const AUTH_SUCCESS_ROBOTS = {
 
 /** Plan picker / checkout — conversion page, not a search landing. */
 export const UPGRADE_ROBOTS = AUTH_SUCCESS_ROBOTS
+
+/** Account billing — signed-in utility page. */
+export const BILLING_ROBOTS = AUTH_SUCCESS_ROBOTS

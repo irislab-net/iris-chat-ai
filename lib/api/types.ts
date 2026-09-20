@@ -158,11 +158,10 @@ export type ChatClientContext = {
   active_symbol?: string
   role: string
   locale?: string
+  timezone?: string
   available_ui_actions?: string[]
   capabilities?: string[]
   timeframe?: string
-  prediction_horizon?: string | null
-  mark_price?: number | null
   open_positions?: Array<{
     id: string
     symbol: string
@@ -195,7 +194,7 @@ export type ChatClientContext = {
 export type ChatToolCallResult = {
   tool_name: string
   execution_target: "server" | "client"
-  input: string
+  input: string | Record<string, unknown>
   output?: string
 }
 
@@ -221,6 +220,7 @@ export type ChatMessageResponse = {
   output_text?: string
   tool_calls?: ChatToolCallResult[]
   client_actions?: ChatToolCallResult[]
+  suggested_actions?: string[]
   tokens_used?: number
   credit_balance?: ChatCreditBalance
   trial?: TrialInfo
@@ -287,6 +287,7 @@ export type CoPilotChatJsonResponse = {
 
 export type CoPilotUsageResponse = {
   usage?: CoPilotUsage
+  credit_balance?: ChatCreditBalance
   trial?: TrialInfo
   user?: { userId?: string }
   error?: string

@@ -8,6 +8,7 @@ import {
 } from "@/lib/api/chat-history"
 import { summarizeSignalUserMessage } from "@/lib/chat/composer-mentions"
 import { isStructuredSignalSetupContent } from "@/lib/chat/parse-trade-setup"
+import { stripMarketContextAppendix } from "@/lib/iris-paper-trade/prompt"
 import { parseServerMessageId, serverMessageId } from "@/lib/chat-message-id"
 import {
   conversationTitleFromMessages,
@@ -24,7 +25,7 @@ function messageMatchKey(message: Pick<ChatUiMessage, "role" | "content">) {
   const content =
     message.role === "user"
       ? summarizeSignalUserMessage(message.content)
-      : message.content.trim()
+      : stripMarketContextAppendix(message.content)
   return `${message.role}:${content}`
 }
 

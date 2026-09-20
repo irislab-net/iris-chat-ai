@@ -10,8 +10,8 @@ import {
   ActivityIcon,
   BitcoinIcon,
   ChevronDownIcon,
-  EyeIcon,
   HistoryIcon,
+  LayersIcon,
   Maximize2Icon,
 } from "lucide-react"
 
@@ -76,7 +76,7 @@ import {
   subscribeCopilotChatPrefill,
 } from "@/lib/paper-trading/copilot-client"
 import { submitChatMessageFeedback } from "@/lib/api/chat-feedback"
-import { streamCoPilotChat } from "@/lib/api/co-pilot"
+import { fetchCoPilotUsage, streamCoPilotChat } from "@/lib/api/co-pilot"
 import {
   consumePlanUpgradePendingRefresh,
   getStoredAccessToken,
@@ -89,7 +89,8 @@ import { displayPlanName } from "@/lib/billing/catalog"
 import { LANDING_CHAT_QUERY_PARAM } from "@/lib/landing-chat-handoff"
 import { isAppDeskPath, UPGRADE_PATH } from "@/lib/site"
 import { resolveUserDisplayName } from "@/lib/user-profile"
-import type { CoPilotHistoryMessage, TrialInfo } from "@/lib/api/types"
+import type { CoPilotHistoryMessage, ChatCreditBalance, TrialInfo } from "@/lib/api/types"
+import { formatCreditUsageCompact } from "@/lib/api/credit-usage"
 import {
   trackChatMessageBlockedGuest,
   trackChatMessageSent,
@@ -140,6 +141,7 @@ import { SHELL_SIDEBAR_COMPACT_FALLBACK } from "@/lib/shell-sidebar-layout"
 import { resolvePaperTicketFromChatTurn } from "@/lib/chat/parse-trade-setup"
 import { stripUnrequestedIrisSetupFromReply } from "@/lib/chat/strip-paper-setup"
 import { summarizeSignalUserMessage } from "@/lib/chat/composer-mentions"
+import { stripMarketContextAppendix } from "@/lib/iris-paper-trade/prompt"
 import {
   isMobileGeminiBackgroundActive,
   isMobileGeminiBackgroundVisible,
@@ -274,7 +276,7 @@ function IrisFollowUpPrompts({
 const SAMPLE_PROMPT_ICONS = {
   "btc-signal": BitcoinIcon,
   "market-pulse": ActivityIcon,
-  "wait-or-watch": EyeIcon,
+  "key-levels": LayersIcon,
 } as const
 
 const SAMPLE_PROMPT_TAP_SLOP_PX = 8
@@ -550,6 +552,8 @@ function ChatAside({
   const signalRecoveryAttemptedRef = React.useRef(new Set<string>())
   const [session, setSession] = React.useState<string>("pending")
   const [guestTrial, setGuestTrial] = React.useState<TrialInfo | null>(null)
+  const [creditBalance, setCreditBalance] =
+    React.useState<ChatCreditBalance | null>(null)
   const [guestUnavailable, setGuestUnavailable] = React.useState(false)
   const [guestSendError, setGuestSendError] = React.useState<string | null>(
     null
@@ -593,6 +597,27 @@ function ChatAside({
       cancelled = true
     }
   }, [authLoading, isAuthenticated, t])
+
+  React.useEffect(() => {
+    let cancelled = false
+    queueMicrotask(() => {
+      if (cancelled) return
+      if (authLoading || !isAuthenticated) {
+        setCreditBalance(null)
+        return
+      }
+      void fetchCoPilotUsage()
+        .then((mapped) => {
+          if (!cancelled) setCreditBalance(mapped.credit_balance ?? null)
+        })
+        .catch(() => {
+          if (!cancelled) setCreditBalance(null)
+        })
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [authLoading, isAuthenticated])
 
   const guestTrialExhausted =
     !isAuthenticated && (guestTrial?.messages_remaining ?? 1) <= 0
@@ -1183,12 +1208,16 @@ function ChatAside({
       if (result.trial) {
         setGuestTrial(result.trial)
       }
+      if (result.creditBalance) {
+        setCreditBalance(result.creditBalance)
+      }
 
       let fullText = (result.message || "").trim()
       if (!fullText) {
         throw new Error("Exur returned an empty reply. Please try again.")
       }
       fullText = stripUnrequestedIrisSetupFromReply(fullText)
+      fullText = stripMarketContextAppendix(fullText)
       if (!fullText) {
         throw new Error("Exur returned an empty reply. Please try again.")
       }
@@ -1274,6 +1303,7 @@ function ChatAside({
       > => {
         const parsedTicket =
           ticketOverride ??
+          clientResult.paperTicket ??
           (shouldRunPaperTradePipeline(userMessage, historySnapshot)
             ? resolvePaperTicketFromChatTurn({
                 userMessage,
@@ -1281,7 +1311,10 @@ function ChatAside({
               })
             : null)
         const hasGhostAction = clientResult.summaries.some(
-          (item) => item.tool === "preview_ghost_trade" && item.applied
+          (item) =>
+            (item.tool === "preview_ghost_trade" ||
+              item.tool === "show_trade_signal") &&
+            item.applied
         )
 
         if (parsedTicket && !hasGhostAction && !ticketOverride) {
@@ -1986,7 +2019,8 @@ function ChatAside({
           </span>
           <span className="mt-0.5 block truncate text-xs text-muted-foreground">
             {isAuthenticated
-              ? displayPlanName(user?.tier)
+              ? formatCreditUsageCompact(creditBalance) ??
+                displayPlanName(user?.tier)
               : guestUnavailable
                 ? t("copilotGuestUnavailable")
                 : guestTrial

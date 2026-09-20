@@ -6,7 +6,6 @@ import { useSearchParams } from "next/navigation"
 
 import { buildChatClientContext } from "@/lib/api/chat"
 import { usePathname } from "@/i18n/navigation"
-import { subscribeDeskSymbolSync } from "@/lib/paper-trading/desk-symbol"
 import {
   subscribeDeskContextSync,
   type DeskContextSnapshot,
@@ -14,10 +13,6 @@ import {
 import { isAppDeskPath } from "@/lib/site"
 import { resolveWorkspaceTab } from "@/lib/workspace-tab"
 import type { User } from "@/lib/api/types"
-
-function deskSymbolFromPair(symbol: string): string {
-  return symbol.replace(/USDT$/, "").replace(/USD$/, "")
-}
 
 export function useChatClientContext(input: {
   user?: User | null
@@ -28,11 +23,9 @@ export function useChatClientContext(input: {
   const locale = useLocale()
   const workspaceTab =
     isAppDeskPath(pathname) ? resolveWorkspaceTab(searchParams.get("tab")) : null
-  const [symbol, setSymbol] = React.useState("ETH")
   const [deskContext, setDeskContext] =
     React.useState<DeskContextSnapshot | null>(null)
 
-  React.useEffect(() => subscribeDeskSymbolSync(setSymbol), [])
   React.useEffect(() => subscribeDeskContextSync(setDeskContext), [])
 
   return React.useMemo(
@@ -40,13 +33,12 @@ export function useChatClientContext(input: {
       buildChatClientContext({
         user: input.user,
         isProUser: input.isProUser,
-        symbol: deskSymbolFromPair(deskContext?.symbol ?? symbol),
         pathname,
         workspaceTab,
         locale,
         deskContext,
       }),
-    [input.user, input.isProUser, symbol, deskContext, pathname, workspaceTab, locale]
+    [input.user, input.isProUser, deskContext, pathname, workspaceTab, locale]
   )
 }
 

@@ -6,6 +6,7 @@ import {
   EclipseIcon,
   LogOutIcon,
   NewspaperIcon,
+  ReceiptIcon,
   SparklesIcon,
 } from "lucide-react"
 import { useTranslations } from "next-intl"
@@ -41,7 +42,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { displayPlanName } from "@/lib/billing/catalog"
-import { UPGRADE_PATH } from "@/lib/site"
+import { BILLING_PATH, UPGRADE_PATH } from "@/lib/site"
 import {
   userAccountLabel,
   userAccountSubline,
@@ -184,6 +185,15 @@ function ChatAccountMenu({
             </DropdownMenuItem>
           </>
         ) : null}
+        <DropdownMenuSeparator className={chatContextMenuSeparatorClass} />
+        <DropdownMenuItem
+          className={chatContextMenuItemClass}
+          nativeButton={false}
+          render={<Link href={BILLING_PATH} />}
+        >
+          <ReceiptIcon className={chatContextMenuIconClass} />
+          {t("billing")}
+        </DropdownMenuItem>
         {onOpenNews ? (
           <>
             <DropdownMenuSeparator className={chatContextMenuSeparatorClass} />

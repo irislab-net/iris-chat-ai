@@ -5,6 +5,7 @@ import {
   toChatApiSymbol,
 } from "@/lib/api/chat"
 import type { User } from "@/lib/api/types"
+import type { PaperTradeTicket } from "@/lib/iris-paper-trade/types"
 import type { DeskContextSnapshot } from "@/lib/paper-trading/desk-context"
 import {
   dispatchCopilotBracketPreview,
@@ -21,7 +22,7 @@ import {
   parseCopilotOrderPrefillArgs,
 } from "@/lib/paper-trading/copilot-client"
 import { requestDeskSymbolChange } from "@/lib/paper-trading/desk-symbol"
-import { APP_PATH, isAppDeskPath } from "@/lib/site"
+import { APP_PATH } from "@/lib/site"
 import { requestOpenPaperTrading } from "@/lib/paper-trading/open-request"
 import {
   WORKSPACE_TAB_NEWS,
@@ -30,6 +31,7 @@ import {
 } from "@/lib/workspace-tab"
 
 export const CHAT_FRONTEND_TOOLS = [
+  "show_trade_signal",
   "draw_chart_indicator",
   "clear_chart_indicators",
   "fill_order_form",
@@ -44,6 +46,7 @@ export const CHAT_FRONTEND_TOOLS = [
 export type ChatFrontendTool = (typeof CHAT_FRONTEND_TOOLS)[number]
 
 export type ChatClientActivePage =
+  | "chat"
   | "trading_chart"
   | "wallet_page"
   | "admin_dashboard"
@@ -78,19 +81,18 @@ export type ChatClientActionHandlers = {
   } | null
 }
 
-export function resolveChatActivePage(input: {
-  pathname: string
+export function resolveChatActivePage(_input?: {
+  pathname?: string
   workspaceTab?: WorkspaceTab | null
 }): ChatClientActivePage {
-  if (!isAppDeskPath(input.pathname)) return "trading_chart"
-  return "trading_chart"
+  return "chat"
 }
 
 export function resolveAvailableUiActions(input: {
   role: string
   onDesk: boolean
 }): ChatFrontendTool[] {
-  const actions: ChatFrontendTool[] = ["navigate_to_page"]
+  const actions: ChatFrontendTool[] = ["show_trade_signal", "navigate_to_page"]
   if (input.onDesk) {
     actions.push(
       "draw_chart_indicator",
@@ -110,6 +112,93 @@ export function resolveAvailableUiActions(input: {
   return actions
 }
 
+function normalizeTradeSide(value: unknown): "LONG" | "SHORT" | null {
+  if (typeof value !== "string") return null
+  const key = value.trim().toUpperCase()
+  if (key === "LONG" || key === "BUY") return "LONG"
+  if (key === "SHORT" || key === "SELL") return "SHORT"
+  return null
+}
+
+function normalizeTradePrice(value: unknown): number | null {
+  const price = typeof value === "number" ? value : Number(value)
+  if (!Number.isFinite(price) || price <= 0) return null
+  return price
+}
+
+/** Parse `show_trade_signal` client tool input into a paper ticket for the UI card. */
+export function parseShowTradeSignalArgs(
+  args: Record<string, unknown>
+): PaperTradeTicket | null {
+  const symbolRaw =
+    typeof args.symbol === "string" ? args.symbol.trim().toUpperCase() : ""
+  const symbol = toChatApiSymbol(symbolRaw)
+  const side = normalizeTradeSide(args.direction ?? args.side)
+  const entry = normalizeTradePrice(
+    args.entry ?? args.entryPrice ?? args.entry_price ?? args.markPrice
+  )
+  const stopLoss = normalizeTradePrice(args.stopLoss ?? args.stop_loss)
+  const takeProfit = normalizeTradePrice(args.takeProfit ?? args.take_profit)
+  const leverageRaw =
+    typeof args.leverage === "number" ? args.leverage : Number(args.leverage)
+  const leverage =
+    Number.isFinite(leverageRaw) && leverageRaw > 0 ? leverageRaw : 1
+  const quantityRaw =
+    typeof args.quantity === "number" ? args.quantity : Number(args.quantity)
+  const quantity =
+    Number.isFinite(quantityRaw) && quantityRaw > 0 ? quantityRaw : 0
+  const setup =
+    typeof args.setup === "string" && args.setup.trim()
+      ? args.setup.trim()
+      : "Trade signal"
+  const thesis =
+    typeof args.thesis === "string" && args.thesis.trim()
+      ? args.thesis.trim()
+      : ""
+
+  if (!symbol || !side || entry == null || stopLoss == null || takeProfit == null) {
+    return null
+  }
+
+  return {
+    symbol,
+    side,
+    quantity,
+    markPrice: entry,
+    stopLoss,
+    takeProfit,
+    leverage,
+    setup,
+    thesis,
+  }
+}
+
+/** UTC offset for chat `client_context.timezone`, e.g. `+03:30` / `-05:00`. */
+export function formatUtcOffset(offsetMinutes: number): string {
+  const sign = offsetMinutes >= 0 ? "+" : "-"
+  const abs = Math.abs(offsetMinutes)
+  const hours = Math.floor(abs / 60)
+  const minutes = abs % 60
+  return `${sign}${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`
+}
+
+/**
+ * Browser UTC offset for `client_context.timezone`.
+ * Returns `undefined` when unknown so the field can be omitted.
+ */
+export function resolveClientTimezone(
+  now: Date = new Date()
+): string | undefined {
+  try {
+    if (typeof now.getTimezoneOffset !== "function") return undefined
+    const offsetMinutes = -now.getTimezoneOffset()
+    if (!Number.isFinite(offsetMinutes)) return undefined
+    return formatUtcOffset(offsetMinutes)
+  } catch {
+    return undefined
+  }
+}
+
 export function buildChatClientContext(input: {
   user?: User | null
   isProUser?: boolean
@@ -117,16 +206,16 @@ export function buildChatClientContext(input: {
   pathname?: string
   workspaceTab?: WorkspaceTab | null
   locale?: string
+  timezone?: string
   deskContext?: DeskContextSnapshot | null
 }): {
   active_page: ChatClientActivePage
   active_symbol: string
   role: string
   locale?: string
+  timezone?: string
   available_ui_actions: ChatFrontendTool[]
   timeframe?: string
-  prediction_horizon?: string | null
-  mark_price?: number | null
   open_positions?: DeskContextSnapshot["openPositions"]
   draft_order?: DeskContextSnapshot["draft"]
   paper_account?: DeskContextSnapshot["paperAccount"]
@@ -135,19 +224,19 @@ export function buildChatClientContext(input: {
   const onDesk = false
 
   const desk = input.deskContext
+  const timezone = input.timezone?.trim() || resolveClientTimezone()
 
   return {
     active_page: resolveChatActivePage({
       pathname: input.pathname ?? APP_PATH,
       workspaceTab: input.workspaceTab,
     }),
-    active_symbol: toChatApiSymbol(desk?.symbol ?? input.symbol),
+    active_symbol: "",
     role,
     locale: input.locale,
+    ...(timezone ? { timezone } : {}),
     available_ui_actions: resolveAvailableUiActions({ role, onDesk }),
     timeframe: desk?.timeframe,
-    prediction_horizon: desk?.predictionHorizon ?? null,
-    mark_price: desk?.markPrice ?? null,
     open_positions: desk?.openPositions,
     draft_order: desk?.draft ?? null,
     paper_account: desk?.paperAccount ?? null,
@@ -172,6 +261,7 @@ export function executeChatClientActions(
   handlers: ChatClientActionHandlers = {}
 ): {
   summaries: ChatClientActionSummary[]
+  paperTicket?: PaperTradeTicket
   pendingBracket?: {
     requestId: string
     positionId: string
@@ -183,6 +273,7 @@ export function executeChatClientActions(
   }
 } {
   const summaries: ChatClientActionSummary[] = []
+  let paperTicket: PaperTradeTicket | undefined
   let pendingBracket:
     | {
         requestId: string
@@ -200,6 +291,36 @@ export function executeChatClientActions(
     const args = parseToolActionInput(action.input)
 
     switch (action.tool_name) {
+      case "show_trade_signal": {
+        const ticket = parseShowTradeSignalArgs(args)
+        if (!ticket) {
+          summaries.push(
+            summarizeAction(action.tool_name, "Trade signal", false)
+          )
+          break
+        }
+        paperTicket = ticket
+        handlers.switchSymbol?.(ticket.symbol)
+        handlers.previewGhostTrade?.({
+          id: `signal:${ticket.symbol}:${Date.now()}`,
+          symbol: ticket.symbol,
+          side: ticket.side,
+          entryPrice: ticket.markPrice,
+          quantity: ticket.quantity > 0 ? ticket.quantity : 1,
+          stopLoss: ticket.stopLoss,
+          takeProfit: ticket.takeProfit,
+          label: ticket.setup,
+          clearPrevious: true,
+        })
+        summaries.push(
+          summarizeAction(
+            action.tool_name,
+            `${ticket.side} ${ticket.symbol} signal`,
+            true
+          )
+        )
+        break
+      }
       case "navigate_to_page": {
         const page = args.page
         if (page === "trading_chart") {
@@ -362,7 +483,7 @@ export function executeChatClientActions(
     }
   }
 
-  return { summaries, pendingBracket }
+  return { summaries, paperTicket, pendingBracket }
 }
 
 export function createChatClientActionHandlers(input: {

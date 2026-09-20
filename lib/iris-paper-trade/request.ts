@@ -1,13 +1,13 @@
-import { toChatApiSymbol } from "@/lib/api/chat"
 import { sendCoPilotChat } from "@/lib/api/co-pilot"
 import type {
   CoPilotChatJsonResponse,
   CoPilotEffort,
   CoPilotHistoryMessage,
 } from "@/lib/api/types"
+import { resolveClientTimezone } from "@/lib/chat/client-tools"
 import {
   PAPER_TRADE_MODEL_INSTRUCTIONS,
-  wrapPaperTradeUserMessage,
+  buildPaperTradeContextInstructions,
 } from "@/lib/iris-paper-trade/prompt"
 import { PAPER_TRADE_TOOLS } from "@/lib/iris-paper-trade/schema"
 import type { MarketContextPacket } from "@/lib/iris-paper-trade/types"
@@ -48,25 +48,26 @@ export async function requestPaperTradeDecision(input: {
     input.paperState != null
       ? serializePaperAccountForLlm(input.paperState)
       : null
+  const timezone = resolveClientTimezone()
 
   return await sendCoPilotChat({
-    message: wrapPaperTradeUserMessage(
-      input.userMessage,
-      input.packet,
-      input.paperState
-    ),
+    message: input.userMessage.trim(),
     conversationId: input.conversationId,
     history: input.history,
     signal: input.signal,
     effort: input.effort,
-    instructions: PAPER_TRADE_MODEL_INSTRUCTIONS,
+    instructions: `${PAPER_TRADE_MODEL_INSTRUCTIONS}
+
+${buildPaperTradeContextInstructions(input.packet, input.paperState)}`,
     tools: PAPER_TRADE_TOOLS,
     toolChoice: "required",
     parallelToolCalls: false,
     clientContext: {
-      active_page: "trading_chart",
-      active_symbol: toChatApiSymbol(input.packet.symbol),
+      active_page: "chat",
+      active_symbol: "",
       role: "user",
+      available_ui_actions: ["show_trade_signal"],
+      ...(timezone ? { timezone } : {}),
       ...(paperAccount
         ? {
             paper_account: {

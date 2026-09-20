@@ -15,6 +15,7 @@ import type {
 import {
   buildChatClientContext as buildChatClientContextFromTools,
 } from "@/lib/chat/client-tools"
+import { isChatCreditBalance } from "@/lib/api/credit-usage"
 import type { DeskContextSnapshot } from "@/lib/paper-trading/desk-context"
 import { WORKSPACE_TAB_NEWS, workspaceTabHref } from "@/lib/workspace-tab"
 import type { WorkspaceTab } from "@/lib/workspace-tab"
@@ -69,6 +70,7 @@ export function buildChatClientContext(input: {
   pathname?: string
   workspaceTab?: WorkspaceTab | null
   locale?: string
+  timezone?: string
   deskContext?: DeskContextSnapshot | null
 }): ChatClientContext {
   const base = buildChatClientContextFromTools(input)
@@ -157,26 +159,34 @@ export function chatToolToLegacy(call: ChatToolCallResult): CoPilotToolCall {
   }
 }
 
+export function parseSuggestedActionList(
+  value: unknown,
+  limit = 4
+): string[] {
+  if (!Array.isArray(value)) return []
+  return value
+    .filter(
+      (item): item is string =>
+        typeof item === "string" && item.trim().length > 0
+    )
+    .map((item) => item.trim())
+    .slice(0, limit)
+}
+
 export function parseSuggestedPrompts(
   metadata?: Record<string, unknown> | null
 ): string[] {
   if (!metadata) return []
   const keys = [
+    "suggested_actions",
     "suggested_prompts",
     "follow_up_prompts",
     "follow_up_questions",
     "suggested_messages",
   ] as const
   for (const key of keys) {
-    const value = metadata[key]
-    if (!Array.isArray(value)) continue
-    return value
-      .filter(
-        (item): item is string =>
-          typeof item === "string" && item.trim().length > 0
-      )
-      .map((item) => item.trim())
-      .slice(0, 4)
+    const parsed = parseSuggestedActionList(metadata[key])
+    if (parsed.length > 0) return parsed
   }
   return []
 }
@@ -184,11 +194,17 @@ export function parseSuggestedPrompts(
 export function adaptChatMessageResponse(
   data: ChatMessageResponse
 ): CoPilotChatJsonResponse {
-  const toolCalls = [
+  const clientTargeted = [
     ...(data.tool_calls ?? []),
     ...(data.client_actions ?? []),
-  ].map(chatToolToLegacy)
+  ].filter((call) => call.execution_target !== "server")
+  const toolCalls = clientTargeted.map(chatToolToLegacy)
   const message = (data.output_text || "").trim()
+  const suggestedFromField = parseSuggestedActionList(data.suggested_actions)
+  const suggestedPrompts =
+    suggestedFromField.length > 0
+      ? suggestedFromField
+      : parseSuggestedPrompts(data.metadata)
   return {
     message,
     output_text: data.output_text,
@@ -199,15 +215,17 @@ export function adaptChatMessageResponse(
     trial: data.trial,
     code: data.code,
     tool_calls: toolCalls,
-    client_actions: data.client_actions,
-    suggestedPrompts: parseSuggestedPrompts(data.metadata),
+    client_actions: clientTargeted,
+    suggestedPrompts,
   }
 }
 
 export function parseToolActionInput(
-  input: string | undefined
+  input: string | Record<string, unknown> | undefined
 ): Record<string, unknown> {
-  if (!input?.trim()) return {}
+  if (!input) return {}
+  if (typeof input === "object" && !Array.isArray(input)) return input
+  if (typeof input !== "string" || !input.trim()) return {}
   try {
     const parsed = JSON.parse(input) as unknown
     return parsed && typeof parsed === "object" && !Array.isArray(parsed)
@@ -227,11 +245,17 @@ export function pathForChatPage(page: unknown): string | null {
 export function creditsToUsageResponse(body: unknown): CoPilotUsageResponse {
   const payload = unwrapChatPayload<{
     balance?: ChatCreditBalance
+    credit_balance?: ChatCreditBalance
     trial?: TrialInfo
     error?: string
   }>(body)
+  const balance =
+    payload.balance ??
+    payload.credit_balance ??
+    (isChatCreditBalance(payload) ? payload : undefined)
   return {
-    usage: usageFromCreditBalance(payload.balance) ?? usageFromTrial(payload.trial),
+    usage: usageFromCreditBalance(balance) ?? usageFromTrial(payload.trial),
+    credit_balance: balance,
     trial: payload.trial,
     error: payload.error,
   }

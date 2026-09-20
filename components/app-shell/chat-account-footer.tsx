@@ -5,6 +5,7 @@ import { Link } from "@/i18n/navigation"
 import {
   EclipseIcon,
   LogOutIcon,
+  ReceiptIcon,
   SettingsIcon,
   SparklesIcon,
 } from "lucide-react"
@@ -28,7 +29,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { displayPlanName } from "@/lib/billing/catalog"
-import { UPGRADE_PATH } from "@/lib/site"
+import { BILLING_PATH, UPGRADE_PATH } from "@/lib/site"
 import {
   userAccountLabel,
   userAccountSubline,
@@ -197,6 +198,14 @@ function ChatAccountFooter({
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
+            <DropdownMenuItem
+              className="min-h-9 gap-2"
+              nativeButton={false}
+              render={<Link href={BILLING_PATH} />}
+            >
+              <ReceiptIcon />
+              {t("billing")}
+            </DropdownMenuItem>
             <DropdownMenuItem
               className="min-h-9 gap-2"
               onClick={() =>

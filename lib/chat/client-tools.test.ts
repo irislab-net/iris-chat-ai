@@ -2,14 +2,29 @@ import { describe, expect, it, vi } from "vitest"
 
 import {
   executeChatClientActions,
+  formatUtcOffset,
   resolveAvailableUiActions,
+  resolveClientTimezone,
 } from "@/lib/chat/client-tools"
 
 describe("chat client tools", () => {
-  it("advertises desk tools for pro users on the trading desk", () => {
+  it("formats timezone as a UTC offset", () => {
+    expect(formatUtcOffset(210)).toBe("+03:30")
+    expect(formatUtcOffset(-300)).toBe("-05:00")
+    expect(formatUtcOffset(0)).toBe("+00:00")
+  })
+
+  it("resolves the browser offset for client_context.timezone", () => {
+    const date = new Date("2026-09-20T12:00:00Z")
+    vi.spyOn(date, "getTimezoneOffset").mockReturnValue(-210)
+    expect(resolveClientTimezone(date)).toBe("+03:30")
+  })
+
+  it("advertises show_trade_signal and desk tools for pro users on the trading desk", () => {
     expect(
       resolveAvailableUiActions({ role: "pro", onDesk: true })
     ).toEqual([
+      "show_trade_signal",
       "navigate_to_page",
       "draw_chart_indicator",
       "clear_chart_indicators",
@@ -19,6 +34,47 @@ describe("chat client tools", () => {
       "modify_position_bracket",
       "fill_order_form",
     ])
+  })
+
+  it("executes show_trade_signal into a paper ticket", () => {
+    const previewGhostTrade = vi.fn()
+    const switchSymbol = vi.fn()
+
+    const result = executeChatClientActions(
+      [
+        {
+          tool_name: "show_trade_signal",
+          execution_target: "client",
+          input: JSON.stringify({
+            symbol: "BTC",
+            direction: "SHORT",
+            setup: "Model short edge fade",
+            entry: 81558,
+            stopLoss: 81756.7,
+            takeProfit: 80505.9,
+            leverage: 5,
+            thesis: "Short model p=0.76 with edge 0.065",
+          }),
+        },
+      ],
+      { previewGhostTrade, switchSymbol }
+    )
+
+    expect(result.paperTicket).toMatchObject({
+      symbol: "BTC",
+      side: "SHORT",
+      markPrice: 81558,
+      stopLoss: 81756.7,
+      takeProfit: 80505.9,
+      leverage: 5,
+      setup: "Model short edge fade",
+    })
+    expect(switchSymbol).toHaveBeenCalledWith("BTC")
+    expect(previewGhostTrade).toHaveBeenCalled()
+    expect(result.summaries[0]).toMatchObject({
+      tool: "show_trade_signal",
+      applied: true,
+    })
   })
 
   it("executes chart and order client actions", () => {

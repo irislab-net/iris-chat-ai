@@ -150,9 +150,10 @@ export async function sendCoPilotChat(input: {
   const isGuest = isGuestChatSession()
   const baseContext =
     input.clientContext ?? {
-      active_page: "trading_chart",
-      active_symbol: "ETH",
+      active_page: "chat",
+      active_symbol: "",
       role: "user",
+      available_ui_actions: ["show_trade_signal"],
     }
   const clientContext = isGuest
     ? toGuestClientContext(baseContext)
@@ -237,6 +238,7 @@ export async function streamCoPilotChat(
     suggestedPrompts: data.suggestedPrompts,
     trial: data.trial,
     usage: data.usage,
+    creditBalance: data.credit_balance,
   }
 }
 

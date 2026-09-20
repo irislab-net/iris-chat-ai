@@ -18,7 +18,12 @@ describe("isPaperTradeIntent", () => {
   it("matches signal starters through the paper-trade pipeline", () => {
     expect(isPaperTradeIntent(BTC_SIGNAL_SAMPLE_PROMPT)).toBe(true)
     expect(isPaperTradeIntent(ETH_SIGNAL_SAMPLE_PROMPT)).toBe(true)
-    expect(isPaperTradeIntent(IRIS_SAMPLE_PROMPTS[0]?.text ?? "")).toBe(true)
+  })
+
+  it("keeps empty-state starters on regular chat (not auto paper-trade)", () => {
+    expect(isPaperTradeIntent(IRIS_SAMPLE_PROMPTS[0]?.text ?? "")).toBe(false)
+    expect(isPaperTradeIntent(IRIS_SAMPLE_PROMPTS[1]?.text ?? "")).toBe(false)
+    expect(isPaperTradeIntent(IRIS_SAMPLE_PROMPTS[2]?.text ?? "")).toBe(false)
   })
 
   it("does not match analysis-only starters", () => {

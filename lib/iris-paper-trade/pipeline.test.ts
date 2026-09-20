@@ -10,7 +10,6 @@ import { planIrisPaperTrade } from "@/lib/iris-paper-trade/plan"
 import { executeIrisPaperPlan } from "@/lib/iris-paper-trade/execute"
 import { confirmIrisPaperProposal } from "@/lib/iris-paper-trade/run"
 import { IRIS_SAMPLE_PROMPTS, PAPER_TRADE_SAMPLE_PROMPT, PAPER_TRADE_SAMPLE_PROMPT_EN_LEGACY, PAPER_TRADE_SAMPLE_PROMPT_EN_PREV, PAPER_TRADE_SAMPLE_PROMPT_FA } from "@/lib/iris-paper-trade/types"
-import { BTC_SIGNAL_SAMPLE_PROMPT } from "@/lib/iris-paper-trade/signal-prompts"
 import { calculateRiskBasedSize, PAPER_AI_RISK_FRACTION } from "@/lib/iris-paper-trade/size"
 import {
   emptyPaperState,
@@ -152,8 +151,8 @@ describe("IRIS paper-trade intent", () => {
     expect(isPaperTradeIntent(PAPER_TRADE_SAMPLE_PROMPT_EN_PREV)).toBe(true)
     expect(isPaperTradeIntent(PAPER_TRADE_SAMPLE_PROMPT_EN_LEGACY)).toBe(true)
     expect(isPaperTradeIntent(PAPER_TRADE_SAMPLE_PROMPT_FA)).toBe(true)
-    expect(IRIS_SAMPLE_PROMPTS[0]?.text).toBe(BTC_SIGNAL_SAMPLE_PROMPT)
-    expect(isPaperTradeIntent(IRIS_SAMPLE_PROMPTS[0]?.text ?? "")).toBe(true)
+    expect(IRIS_SAMPLE_PROMPTS).toHaveLength(3)
+    expect(isPaperTradeIntent(IRIS_SAMPLE_PROMPTS[0]?.text ?? "")).toBe(false)
     expect(isPaperTradeIntent(IRIS_SAMPLE_PROMPTS[1]?.text ?? "")).toBe(false)
     expect(isPaperTradeIntent(IRIS_SAMPLE_PROMPTS[2]?.text ?? "")).toBe(false)
   })

@@ -55,7 +55,7 @@ export function useReducedMotion(): boolean {
 
   React.useEffect(() => {
     const query = window.matchMedia(REDUCED_MOTION_QUERY)
-    setReduced(query.matches)
+    queueMicrotask(() => setReduced(query.matches))
 
     const onChange = (event: MediaQueryListEvent) => setReduced(event.matches)
     query.addEventListener("change", onChange)

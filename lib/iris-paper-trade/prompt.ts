@@ -30,8 +30,8 @@ Rules:
 - Use no_trade ONLY when: live data is stale/missing, evidence is truly unusable, or SL/TP cannot be placed safely.
 - Write setup, thesis, and reason in English.`
 
-export function wrapPaperTradeUserMessage(
-  userText: string,
+/** Evidence packet for the model — lives in `instructions`, never in chat `message`. */
+export function buildPaperTradeContextInstructions(
   packet: MarketContextPacket,
   paperState?: PaperState | null
 ): string {
@@ -40,9 +40,8 @@ export function wrapPaperTradeUserMessage(
       ? serializePaperAccountForLlm(paperState)
       : null
 
-  return `${userText.trim()}
+  return `Decide ONLY from the MARKET_CONTEXT packet below. Do not invent prices or news.
 
----
 MARKET_CONTEXT (authoritative evidence; asOf=${packet.asOfIso}):
 ${JSON.stringify(serializeMarketContextForLlm(packet))}
 ${
@@ -54,6 +53,41 @@ ${JSON.stringify(paperAccount)}`
 }
 
 Use open_paper_trade or no_trade via function call only. Do NOT respond with prose-only trade setups or say you cannot open trades in text.`
+}
+
+/** @deprecated Prefer clean `message` + `buildPaperTradeContextInstructions`. */
+export function wrapPaperTradeUserMessage(
+  userText: string,
+  packet: MarketContextPacket,
+  paperState?: PaperState | null
+): string {
+  return `${userText.trim()}
+
+---
+${buildPaperTradeContextInstructions(packet, paperState)}`
+}
+
+/** Strip leaked MARKET_CONTEXT / PAPER_ACCOUNT appendices from user-visible chat text. */
+export function stripMarketContextAppendix(text: string): string {
+  const trimmed = text.trim()
+  if (!trimmed) return trimmed
+
+  const markers = [
+    /\n*---\s*\n+MARKET_CONTEXT\b/i,
+    /\n+MARKET_CONTEXT\s*\(/i,
+    /\n+MARKET_CONTEXT\b/i,
+    /\n+PAPER_ACCOUNT\b/i,
+  ] as const
+
+  let cut = -1
+  for (const marker of markers) {
+    const match = marker.exec(trimmed)
+    if (match?.index != null && (cut < 0 || match.index < cut)) {
+      cut = match.index
+    }
+  }
+  if (cut < 0) return trimmed
+  return trimmed.slice(0, cut).trim()
 }
 
 export function formatNoTradeChatMessage(reason: string): string {
