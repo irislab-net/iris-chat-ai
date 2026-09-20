@@ -195,7 +195,7 @@ export function LandingNav() {
       <nav
         className={cn(
           landingInner,
-          "grid grid-cols-[1fr_auto] items-center gap-4 md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]",
+          "grid grid-cols-[1fr_auto] items-center gap-4 lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]",
           "rounded-[28px] transition-[background-color,box-shadow,backdrop-filter,padding] duration-300 ease-out",
           stuck
             ? "bg-white/72 py-2 shadow-[0_10px_40px_rgba(15,23,42,0.08),inset_0_1px_1px_rgba(255,255,255,0.9)] backdrop-blur-2xl dark:bg-background/72 dark:shadow-[0_10px_40px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.08)]"
@@ -222,7 +222,7 @@ export function LandingNav() {
         <div
           className={cn(
             landingNavPill,
-            "hidden transition-all duration-300 md:col-start-2 md:row-start-1 md:flex",
+            "hidden transition-all duration-300 lg:col-start-2 lg:row-start-1 lg:flex",
             stuck && "bg-muted/70 shadow-none"
           )}
         >
@@ -246,8 +246,8 @@ export function LandingNav() {
           })}
         </div>
 
-        <div className="flex shrink-0 items-center justify-end gap-1.5 justify-self-end sm:gap-2 md:col-start-3 md:row-start-1">
-          <div className="hidden items-center gap-1.5 md:flex">
+        <div className="flex shrink-0 items-center justify-end gap-1.5 justify-self-end sm:gap-2 lg:col-start-3 lg:row-start-1">
+          <div className="hidden items-center gap-1.5 lg:flex">
             <LandingThemeToggle />
             <LocaleSwitcher
               variant="icon"
@@ -259,7 +259,7 @@ export function LandingNav() {
             Start Free
           </SphereCta>
 
-          <div className="hidden md:block">
+          <div className="hidden lg:block">
             <LandingNavAccount />
           </div>
 
@@ -269,7 +269,7 @@ export function LandingNav() {
                 <Button
                   type="button"
                   variant="ghost"
-                  className={cn(landingNavIconButtonClass, "md:hidden")}
+                  className={cn(landingNavIconButtonClass, "lg:hidden")}
                   aria-label="Open menu"
                 >
                   <span aria-hidden className={cn(landingGlassSheen, "rounded-full")} />
