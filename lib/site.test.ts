@@ -23,7 +23,7 @@ describe("public SEO site policy (S1/S2)", () => {
   })
 
   it("uses production origin fallback from known deployment host", () => {
-    expect(PRODUCTION_ORIGIN).toBe("https://chat.irislab.info")
+    expect(PRODUCTION_ORIGIN).toBe("https://chat.exur.ai")
     expect(getSiteOrigin()).toMatch(/^https:\/\//)
   })
 
@@ -53,7 +53,7 @@ describe("public SEO site policy (S1/S2)", () => {
   })
 
   it("exposes verified social URL for trust / Organization sameAs", () => {
-    expect(SOCIAL_X_URL).toBe("https://x.com/TheIrisLab")
+    expect(SOCIAL_X_URL).toBe("https://x.com/exur_ai")
   })
 
   it("keeps homepage meta description aligned with financial-assistant copy", () => {

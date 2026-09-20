@@ -30,7 +30,7 @@ describe("handleV1ApiRoute", () => {
   })
 
   it("routes chat requests to the chat handler", async () => {
-    await handleV1ApiRoute(new Request("https://chat.irislab.info/v1/chat/message"), [
+    await handleV1ApiRoute(new Request("https://chat.exur.ai/v1/chat/message"), [
       "chat",
       "message",
     ])
@@ -45,7 +45,7 @@ describe("handleV1ApiRoute", () => {
 
   it("routes trading requests to the trading handler", async () => {
     await handleV1ApiRoute(
-      new Request("https://chat.irislab.info/v1/trading/hyperliquid/controls"),
+      new Request("https://chat.exur.ai/v1/trading/hyperliquid/controls"),
       ["trading", "hyperliquid", "controls"]
     )
 
@@ -57,10 +57,10 @@ describe("handleV1ApiRoute", () => {
   })
 
   it("routes entitlements and wallets to the trading handler", async () => {
-    await handleV1ApiRoute(new Request("https://chat.irislab.info/v1/entitlements"), [
+    await handleV1ApiRoute(new Request("https://chat.exur.ai/v1/entitlements"), [
       "entitlements",
     ])
-    await handleV1ApiRoute(new Request("https://chat.irislab.info/v1/wallets"), ["wallets"])
+    await handleV1ApiRoute(new Request("https://chat.exur.ai/v1/wallets"), ["wallets"])
 
     expect(handleTradingApiRoute).toHaveBeenCalledTimes(2)
     expect(proxyIrisApiRequest).not.toHaveBeenCalled()
@@ -79,7 +79,7 @@ describe("handleV1ApiRoute", () => {
 
     for (const segments of cases) {
       await handleV1ApiRoute(
-        new Request(`https://chat.irislab.info/v1/${segments.join("/")}`),
+        new Request(`https://chat.exur.ai/v1/${segments.join("/")}`),
         [...segments]
       )
     }

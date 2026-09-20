@@ -122,7 +122,7 @@ const nextConfig: NextConfig = {
       },
     ]
   },
-  // local.irislab.info plus this machine's LAN IPs so phones on the same Wi-Fi can load HMR
+  // exur.ai plus this machine's LAN IPs so phones on the same Wi-Fi can load HMR
   allowedDevOrigins: allowedDevOrigins(),
 }
 

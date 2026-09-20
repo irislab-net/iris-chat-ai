@@ -24,7 +24,7 @@ describe("proxyIrisApiRequest", () => {
     )
 
     const res = await proxyIrisApiRequest(
-      new Request("https://chat.irislab.info/v1/auth/refresh", {
+      new Request("https://chat.exur.ai/v1/auth/refresh", {
         method: "POST",
         headers: {
           cookie: "refresh_token=abc",
@@ -62,7 +62,7 @@ describe("proxyIrisApiRequest", () => {
     )
 
     const res = await proxyIrisApiRequest(
-      new Request("https://chat.irislab.info/v1/news/latest"),
+      new Request("https://chat.exur.ai/v1/news/latest"),
       "/v1/news/latest"
     )
 
@@ -83,7 +83,7 @@ describe("proxyIrisApiRequest", () => {
     )
 
     const res = await proxyIrisApiRequest(
-      new Request("https://chat.irislab.info/v1/payments/invoices", {
+      new Request("https://chat.exur.ai/v1/payments/invoices", {
         headers: { authorization: "Bearer access-token" },
       }),
       "/v1/payments/invoices"

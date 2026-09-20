@@ -17,7 +17,7 @@ describe("analytics", () => {
     gtag.mockClear()
     vi.stubGlobal("window", {
       gtag,
-      location: { href: "https://chat.irislab.info/" },
+      location: { href: "https://chat.exur.ai/" },
     })
     vi.stubGlobal("document", { title: "Exur" })
   })

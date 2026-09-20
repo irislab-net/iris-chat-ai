@@ -17,7 +17,7 @@ import {
 } from "@/lib/landing-modern-styles"
 import { cn } from "@/lib/utils"
 
-const CONTACT_EMAIL = "hello@irislab.info"
+const CONTACT_EMAIL = "hello@exur.ai"
 
 /** `section` scrolls the one-pager, `href` routes, `external` opens a new tab. */
 type FooterLink =

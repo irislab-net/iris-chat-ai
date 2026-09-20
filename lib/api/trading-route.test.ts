@@ -17,11 +17,11 @@ describe("handleTradingApiRoute", () => {
 
   it("returns empty wallet and entitlement stubs in local dev", async () => {
     const wallets = await handleTradingApiRoute(
-      new Request("https://local.irislab.info:3000/v1/wallets"),
+      new Request("https://local.exur.ai:3000/v1/wallets"),
       "/v1/wallets"
     )
     const entitlements = await handleTradingApiRoute(
-      new Request("https://local.irislab.info:3000/v1/entitlements"),
+      new Request("https://local.exur.ai:3000/v1/entitlements"),
       "/v1/entitlements"
     )
 
@@ -42,7 +42,7 @@ describe("handleTradingApiRoute", () => {
     )
 
     const res = await handleTradingApiRoute(
-      new Request("https://intel.irislab.info/v1/wallets", {
+      new Request("https://intel.exur.ai/v1/wallets", {
         headers: { authorization: "Bearer test-token" },
       }),
       "/v1/wallets"

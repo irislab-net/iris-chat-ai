@@ -16,9 +16,9 @@ export function isGoogleOneTapConfigured() {
   return Boolean(getGoogleClientId())
 }
 
-const CHAT_APP_HOST = "chat.irislab.info"
+const CHAT_APP_HOST = "chat.exur.ai"
 
-/** Auth cookie calls must be same-origin (via app route proxy) so Domain=.irislab.info cookies are sent. */
+/** Auth cookie calls must be same-origin (via app route proxy) so Domain=.exur.ai cookies are sent. */
 export const AUTH_API_BASE = ""
 
 /** Chat deployment uses `app=chat` OAuth on api.exur.ai (not destination=). */
@@ -47,7 +47,7 @@ export function getAuthDestination() {
     return `${window.location.origin}/auth/success`
   }
 
-  return "https://chat.irislab.info/auth/success"
+  return "https://chat.exur.ai/auth/success"
 }
 
 export function loginWithGoogleUrl(

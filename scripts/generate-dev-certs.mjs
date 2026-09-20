@@ -44,7 +44,7 @@ function listLanIpv4Addresses() {
 function buildSanExtension() {
   const parts = [
     "DNS:localhost",
-    "DNS:local.irislab.info",
+    "DNS:local.exur.ai",
     "IP:127.0.0.1",
     "IP:::1",
     ...listLanIpv4Addresses().map((ip) => `IP:${ip}`),
@@ -71,7 +71,7 @@ x509_extensions = v3_req
 prompt = no
 
 [req_distinguished_name]
-CN = local.irislab.info
+CN = local.exur.ai
 
 [v3_req]
 ${buildSanExtension()}

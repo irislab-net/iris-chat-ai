@@ -2,7 +2,7 @@ export const SITE_NAME = "Exur"
 export const SITE_SHORT_NAME = "Exur"
 export const SITE_URL =
   process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "") ??
-  "https://intel.irislab.info"
+  "https://exur.ai"
 
 export const SITE_TITLE = "Exur: AI Financial Assistant"
 export const SITE_TITLE_TEMPLATE = "%s · Exur"
@@ -27,12 +27,12 @@ export const SITE_KEYWORDS = [
 ] as const
 
 export const SOCIAL_LINKS = {
-  x: "https://x.com/TheIrisLab",
-  telegram: "https://t.me/theIrisLab",
+  x: "https://x.com/exur_ai",
+  telegram: "https://t.me/exur_ai",
 } as const
 
 /** Default brand mark for sitemap / metadata (light theme SVG). */
-export const Exur_LAB_LOGO_MARK = "/iris-lab-logo-light.svg"
+export const Exur_LAB_LOGO_MARK = "/exur-logo-light.svg"
 
 /** Square mark for Google Search / Knowledge Panel (min 112×112). */
 export const ORGANIZATION_LOGO = {
@@ -204,7 +204,7 @@ export function websiteJsonLd() {
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: SITE_NAME,
-    alternateName: ["Exur", "intel.irislab.info"],
+    alternateName: ["Exur", "exur.ai"],
     url: SITE_URL,
     description: SITE_DESCRIPTION,
     publisher: {

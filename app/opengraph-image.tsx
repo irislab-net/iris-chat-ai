@@ -91,7 +91,7 @@ export default function OpenGraphImage() {
             color: "#737373",
           }}
         >
-          <span>intel.irislab.info</span>
+          <span>exur.ai</span>
           <span style={{ letterSpacing: "0.12em", textTransform: "uppercase" }}>
             ETH · News · Co-pilot
           </span>

@@ -156,7 +156,7 @@ export async function refreshAccessToken(): Promise<TokenPair> {
   if (refreshInFlight) return refreshInFlight
 
   refreshInFlight = (async () => {
-    // Same-origin via next.config rewrite → browser sends refresh_token (Domain=.irislab.info, Path=/v1/auth)
+    // Same-origin via next.config rewrite → browser sends refresh_token (Domain=.exur.ai, Path=/v1/auth)
     const res = await fetch(authUrl("/v1/auth/refresh"), {
       method: "POST",
       credentials: "include",

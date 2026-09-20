@@ -81,7 +81,7 @@ export default async function AppNewsPage({
               <Link href="/privacy">Privacy Policy</Link>
             </li>
             <li>
-              <a href="https://x.com/TheIrisLab">Exur on X</a>
+              <a href="https://x.com/exur_ai">Exur on X</a>
             </li>
           </ul>
         </nav>

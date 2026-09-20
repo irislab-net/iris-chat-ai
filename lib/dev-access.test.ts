@@ -10,8 +10,8 @@ import {
 describe("hostnameFromHostHeader", () => {
   it("strips a port from ipv4 and hostnames", () => {
     expect(hostnameFromHostHeader("192.168.1.20:3000")).toBe("192.168.1.20")
-    expect(hostnameFromHostHeader("local.irislab.info:3000")).toBe(
-      "local.irislab.info"
+    expect(hostnameFromHostHeader("local.exur.ai:3000")).toBe(
+      "local.exur.ai"
     )
   })
 
@@ -24,19 +24,19 @@ describe("devProxyAction", () => {
   it("sends loopback to the cookie host over https", () => {
     expect(devProxyAction({ hostname: "localhost", isHttps: false })).toEqual({
       type: "redirect",
-      hostname: "local.irislab.info",
+      hostname: "local.exur.ai",
       protocol: "https:",
       port: "3000",
     })
     expect(devProxyAction({ hostname: "127.0.0.1", isHttps: true })).toEqual({
       type: "redirect",
-      hostname: "local.irislab.info",
+      hostname: "local.exur.ai",
       protocol: "https:",
       port: "3000",
     })
   })
 
-  it("upgrades a LAN http host in place instead of rewriting to local.irislab.info", () => {
+  it("upgrades a LAN http host in place instead of rewriting to local.exur.ai", () => {
     expect(
       devProxyAction({ hostname: "172.20.10.14", isHttps: false })
     ).toEqual({
@@ -47,12 +47,12 @@ describe("devProxyAction", () => {
     })
   })
 
-  it("leaves https LAN and local.irislab.info alone", () => {
+  it("leaves https LAN and local.exur.ai alone", () => {
     expect(devProxyAction({ hostname: "172.20.10.14", isHttps: true })).toEqual({
       type: "next",
     })
     expect(
-      devProxyAction({ hostname: "local.irislab.info", isHttps: true })
+      devProxyAction({ hostname: "local.exur.ai", isHttps: true })
     ).toEqual({ type: "next" })
   })
 })
@@ -83,7 +83,7 @@ describe("allowedDevOrigins", () => {
         ],
       })
     ).toEqual([
-      "local.irislab.info",
+      "local.exur.ai",
       "localhost",
       "*.local",
       "172.20.10.14",

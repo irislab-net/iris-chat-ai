@@ -90,8 +90,8 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: SITE_TITLE,
     description: SITE_DESCRIPTION,
-    creator: "@TheIrisLab",
-    site: "@TheIrisLab",
+    creator: "@exur_ai",
+    site: "@exur_ai",
     images: ["/twitter-image"],
   },
   formatDetection: {

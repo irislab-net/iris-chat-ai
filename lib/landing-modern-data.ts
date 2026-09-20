@@ -281,7 +281,7 @@ export const X_POSTS: XPost[] = [
     initials: "MR",
     text: "connected my accounts to @exur on a sunday. by monday it found two subscriptions i forgot existed + a card fee i'd been paying for three years.\n\ndidn't lecture me about budgeting. just told me what to cancel. $284/mo gone.",
     date: "Mar 12",
-    url: "https://x.com/TheIrisLab",
+    url: "https://x.com/exur_ai",
   },
   {
     id: "2",
@@ -292,7 +292,7 @@ export const X_POSTS: XPost[] = [
     initials: "JN",
     text: "freelance income is lumpy and every budgeting app i've tried breaks on that.\n\nexur is the first one that got it and told me how much i could actually take out this month without wrecking my runway.",
     date: "Mar 8",
-    url: "https://x.com/TheIrisLab",
+    url: "https://x.com/exur_ai",
   },
   {
     id: "3",
@@ -303,7 +303,7 @@ export const X_POSTS: XPost[] = [
     initials: "PS",
     text: "asked it if i could afford a car. it said not yet, and showed me exactly why.\n\nhonestly i'd rather hear that than a yes i'd regret.",
     date: "Feb 27",
-    url: "https://x.com/TheIrisLab",
+    url: "https://x.com/exur_ai",
   },
 ]
 

@@ -47,10 +47,10 @@ function PrivacyPage() {
           <p>
             Scope: Exur (
             <span className="font-mono text-foreground/90">
-              intel.irislab.info
+              exur.ai
             </span>
             ), a product module of the Exur ecosystem (
-            <span className="font-mono text-foreground/90">irislab.info</span>
+            <span className="font-mono text-foreground/90">exur.ai</span>
             ).
           </p>
         </>
@@ -60,7 +60,7 @@ function PrivacyPage() {
           At <span className="font-medium text-foreground">Exur</span>{" "}
           (“we”, “us”, or “our”), accessible via{" "}
           <span className="font-mono text-foreground/90">
-            intel.irislab.info
+            exur.ai
           </span>
           , we are committed to protecting your privacy and managing your
           personal data transparently. This Privacy Policy explains how we
@@ -277,19 +277,19 @@ function PrivacyPage() {
           <li>
             <span className="font-medium text-foreground">Email:</span>{" "}
             <a
-              href="mailto:privacy@irislab.info"
+              href="mailto:privacy@exur.ai"
               className="font-medium text-foreground underline underline-offset-3 hover:text-foreground/80"
             >
-              privacy@irislab.info
+              privacy@exur.ai
             </a>
           </li>
           <li>
             <span className="font-medium text-foreground">General Legal:</span>{" "}
             <a
-              href="mailto:legal@irislab.info"
+              href="mailto:legal@exur.ai"
               className="font-medium text-foreground underline underline-offset-3 hover:text-foreground/80"
             >
-              legal@irislab.info
+              legal@exur.ai
             </a>
           </li>
           <li>
@@ -297,12 +297,12 @@ function PrivacyPage() {
               Version Control Repository:
             </span>{" "}
             <a
-              href="https://github.com/irislab-net/iris-legal-docs"
+              href="https://github.com/exur-ai/exur-legal-docs"
               target="_blank"
               rel="noopener noreferrer"
               className="font-medium text-foreground underline underline-offset-3 hover:text-foreground/80"
             >
-              github.com/irislab-net/iris-legal-docs
+              github.com/exur-ai/exur-legal-docs
             </a>
           </li>
         </LegalList>

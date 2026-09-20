@@ -1,6 +1,6 @@
 import { networkInterfaces, type NetworkInterfaceInfo } from "node:os"
 
-export const LOCAL_IRIS_HOST = "local.irislab.info"
+export const LOCAL_IRIS_HOST = "local.exur.ai"
 export const DEV_PORT = "3000"
 
 export function hostnameFromHostHeader(host: string): string {
@@ -19,7 +19,7 @@ export type DevProxyAction =
   | { type: "redirect"; hostname: string; protocol: "https:"; port: string }
   | { type: "next" }
 
-/** Loopback stays on local.irislab.info (auth cookies). LAN keeps its Host and only upgrades HTTP. */
+/** Loopback stays on local.exur.ai (auth cookies). LAN keeps its Host and only upgrades HTTP. */
 export function devProxyAction(input: {
   hostname: string
   isHttps: boolean

@@ -77,7 +77,7 @@ export async function SiteFooter() {
         { label: t("columns.signalsPage"), href: "/ai-trading-signals" },
         {
           label: t("columns.contact"),
-          href: "mailto:support@irislab.info",
+          href: "mailto:support@exur.ai",
           external: true,
         },
       ],
@@ -176,7 +176,7 @@ export async function SiteFooter() {
                 nativeButton={false}
                 render={
                   <a
-                    href="mailto:support@irislab.info"
+                    href="mailto:support@exur.ai"
                     aria-label="Email Exur support"
                   />
                 }

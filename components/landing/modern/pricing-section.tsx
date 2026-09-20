@@ -24,7 +24,7 @@ import {
 import { APP_NEWS_PATH, UPGRADE_PATH } from "@/lib/site"
 import { cn } from "@/lib/utils"
 
-const CONTACT_EMAIL = "hello@irislab.info"
+const CONTACT_EMAIL = "hello@exur.ai"
 
 function planHref(plan: PricingPlan) {
   if (plan.key === "free") return APP_NEWS_PATH

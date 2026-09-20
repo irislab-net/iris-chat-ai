@@ -42,10 +42,10 @@ function TermsPage() {
           <p>
             Scope: Exur (
             <span className="font-mono text-foreground/90">
-              intel.irislab.info
+              exur.ai
             </span>
             ), a product module of the Exur ecosystem (
-            <span className="font-mono text-foreground/90">irislab.info</span>
+            <span className="font-mono text-foreground/90">exur.ai</span>
             ).
           </p>
         </>
@@ -57,7 +57,7 @@ function TermsPage() {
             <span className="font-medium text-foreground">Exur</span>{" "}
             (accessible via{" "}
             <span className="font-mono text-foreground/90">
-              intel.irislab.info
+              exur.ai
             </span>
             ). These Terms of Service (“Terms”) govern your access to and use of
             our website, AI-driven market intelligence tools, analytics
@@ -229,19 +229,19 @@ function TermsPage() {
           <li>
             <span className="font-medium text-foreground">Legal:</span>{" "}
             <a
-              href="mailto:legal@irislab.info"
+              href="mailto:legal@exur.ai"
               className="font-medium text-foreground underline underline-offset-3 hover:text-foreground/80"
             >
-              legal@irislab.info
+              legal@exur.ai
             </a>
           </li>
           <li>
             <span className="font-medium text-foreground">Support:</span>{" "}
             <a
-              href="mailto:support@irislab.info"
+              href="mailto:support@exur.ai"
               className="font-medium text-foreground underline underline-offset-3 hover:text-foreground/80"
             >
-              support@irislab.info
+              support@exur.ai
             </a>
           </li>
           <li>
@@ -249,12 +249,12 @@ function TermsPage() {
               Version Control Repository:
             </span>{" "}
             <a
-              href="https://github.com/irislab-net/iris-legal-docs"
+              href="https://github.com/exur-ai/exur-legal-docs"
               target="_blank"
               rel="noopener noreferrer"
               className="font-medium text-foreground underline underline-offset-3 hover:text-foreground/80"
             >
-              github.com/irislab-net/iris-legal-docs
+              github.com/exur-ai/exur-legal-docs
             </a>
           </li>
         </LegalList>
