@@ -4,6 +4,7 @@ import { gsap } from "gsap"
 import { PlayIcon, XIcon } from "lucide-react"
 import * as React from "react"
 
+import { IrisLabLogo } from "@/components/brand/iris-lab-logo"
 import { AboutOrbCanvas } from "@/components/landing/modern/about-orb-canvas"
 import { Button } from "@/components/ui/button"
 import { useIsDesktop } from "@/hooks/use-media-query"
@@ -17,6 +18,7 @@ import {
 import { ensureGsapScroll } from "@/lib/gsap-scroll"
 import { LANDING_MOTION, useReducedMotion } from "@/lib/landing-motion"
 import {
+  landingDisplay,
   landingGlassNavIcon,
   landingGlassSheen,
   landingGlassSurface,
@@ -532,28 +534,37 @@ export function AboutExperience() {
           className={cn(
             "absolute inset-0",
             expanded
-              ? "bg-[radial-gradient(ellipse_at_50%_38%,rgba(186,230,253,0.55)_0%,rgba(239,246,255,0.92)_34%,#f1f5f9_100%)] dark:bg-[radial-gradient(ellipse_at_50%_38%,rgba(37,99,235,0.28)_0%,oklch(0.18_0_0)_48%,oklch(0.12_0_0)_100%)]"
-              : "bg-[radial-gradient(ellipse_at_50%_42%,#ffffff_0%,#f6f7f9_58%,#eef1f5_100%)] dark:bg-[radial-gradient(ellipse_at_50%_42%,oklch(0.28_0_0)_0%,oklch(0.22_0_0)_58%,oklch(0.18_0_0)_100%)]"
+              ? "bg-[radial-gradient(ellipse_at_50%_36%,rgba(186,230,253,0.58)_0%,rgba(239,246,255,0.9)_32%,#eef2f7_72%,#e8eef5_100%)] dark:bg-[radial-gradient(ellipse_at_50%_36%,rgba(37,99,235,0.32)_0%,oklch(0.17_0_0)_46%,oklch(0.11_0_0)_100%)]"
+              : "bg-[radial-gradient(ellipse_at_50%_40%,#ffffff_0%,#f7f8fa_52%,#eef1f5_100%)] dark:bg-[radial-gradient(ellipse_at_50%_40%,oklch(0.29_0_0)_0%,oklch(0.22_0_0)_58%,oklch(0.17_0_0)_100%)]"
           )}
         />
         {expanded ? (
           <>
             <div
               aria-hidden
-              className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_46%,rgba(255,255,255,0.4)_0%,transparent_40%)] dark:bg-[radial-gradient(circle_at_50%_46%,rgba(125,211,252,0.16)_0%,transparent_46%)]"
+              className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_44%,rgba(255,255,255,0.55)_0%,transparent_42%)] dark:bg-[radial-gradient(circle_at_50%_44%,rgba(125,211,252,0.18)_0%,transparent_48%)]"
             />
             <div
               aria-hidden
-              className="pointer-events-none absolute inset-0 opacity-40 dark:opacity-30 [background-image:radial-gradient(rgba(37,99,235,0.12)_1px,transparent_1px)] [background-size:28px_28px] mask-[radial-gradient(ellipse_at_center,black_20%,transparent_70%)]"
+              className="pointer-events-none absolute inset-0 opacity-[0.35] dark:opacity-25 [background-image:radial-gradient(rgba(37,99,235,0.14)_1px,transparent_1px)] [background-size:26px_26px] mask-[radial-gradient(ellipse_at_center,black_18%,transparent_68%)]"
+            />
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-x-0 bottom-0 h-[42%] bg-linear-to-t from-background/80 via-background/25 to-transparent dark:from-background/90"
             />
           </>
-        ) : null}
+        ) : (
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-x-0 bottom-0 h-[36%] bg-linear-to-t from-white/70 via-white/20 to-transparent dark:from-black/35 dark:via-black/10"
+          />
+        )}
         <span
           aria-hidden
           className={cn(
             landingGlassSheen,
             "absolute inset-0",
-            expanded && "opacity-50"
+            expanded && "opacity-45"
           )}
         />
 
@@ -562,7 +573,7 @@ export function AboutExperience() {
           className={cn(
             "relative z-10 size-full",
             expanded &&
-              "[&_canvas]:drop-shadow-[0_24px_80px_rgba(37,99,235,0.18)]"
+              "[&_canvas]:drop-shadow-[0_28px_90px_rgba(37,99,235,0.22)]"
           )}
         >
           <AboutOrbCanvas
@@ -574,57 +585,131 @@ export function AboutExperience() {
         </div>
 
         {phase === "idle" && (
-          <div className="absolute inset-0 z-20 flex items-center justify-center">
-            <Button
-              type="button"
-              onClick={start}
-              aria-label="Hear from Exur"
-              className="group size-16 rounded-full bg-[#2563EB] text-white shadow-[0_12px_40px_rgba(37,99,235,0.34)] transition-all hover:bg-[#1D4ED8] hover:shadow-[0_16px_48px_rgba(37,99,235,0.42)] sm:size-18"
+          <div className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-5">
+            <div className="relative flex items-center justify-center">
+              {!reduceMotion ? (
+                <>
+                  <span
+                    aria-hidden
+                    className="about-play-ring pointer-events-none absolute size-[5.25rem] rounded-full border border-[#2563EB]/22 sm:size-[5.75rem]"
+                  />
+                  <span
+                    aria-hidden
+                    className="about-play-ring-delayed pointer-events-none absolute size-[6.5rem] rounded-full border border-[#2563EB]/12 sm:size-[7rem]"
+                  />
+                </>
+              ) : null}
+              <Button
+                type="button"
+                onClick={start}
+                aria-label="Hear from Exur"
+                className={cn(
+                  "group relative size-16 rounded-full bg-[#2563EB] text-white",
+                  "shadow-[0_12px_40px_rgba(37,99,235,0.34),inset_0_1px_1px_rgba(255,255,255,0.35)]",
+                  "transition-all hover:bg-[#1D4ED8] hover:shadow-[0_16px_48px_rgba(37,99,235,0.45)]",
+                  "sm:size-18"
+                )}
+              >
+                <span
+                  aria-hidden
+                  className="pointer-events-none absolute inset-0 rounded-full bg-linear-to-b from-white/25 to-transparent opacity-80"
+                />
+                <PlayIcon className="relative size-6 translate-x-px fill-current sm:size-7" />
+              </Button>
+            </div>
+            <p
+              className={cn(
+                landingDisplay,
+                "text-sm font-normal tracking-[-0.01em] text-muted-foreground/90 sm:text-[0.95rem]"
+              )}
             >
-              <PlayIcon className="size-6 translate-x-px fill-current sm:size-7" />
-            </Button>
+              Hear from Exur
+            </p>
           </div>
         )}
 
         {phase === "playing" && (
           <>
             {expanded ? (
-              <p className="pointer-events-none absolute top-5 left-1/2 z-20 -translate-x-1/2 text-[11px] font-medium tracking-[0.18em] text-muted-foreground/80 uppercase">
-                Exur
-              </p>
+              <div className="pointer-events-none absolute top-[max(1.15rem,env(safe-area-inset-top))] left-1/2 z-20 flex -translate-x-1/2 items-center gap-2.5">
+                <IrisLabLogo
+                  decorative
+                  variant="brand"
+                  size={22}
+                  className="size-[1.35rem] opacity-90"
+                />
+                <span
+                  className={cn(
+                    landingDisplay,
+                    "text-[0.7rem] font-medium tracking-[0.2em] text-muted-foreground/85 uppercase"
+                  )}
+                >
+                  Exur
+                </span>
+              </div>
             ) : null}
 
             <div
               className={cn(
-                "pointer-events-none absolute inset-x-0 bottom-0 z-20 bg-linear-to-t from-background via-background/88 to-transparent px-6 sm:px-10",
-                expanded ? "pt-32 pb-[max(7rem,env(safe-area-inset-bottom))]" : "pt-24 pb-28 sm:pb-36"
+                "pointer-events-none absolute inset-x-0 bottom-0 z-20 px-5 sm:px-10",
+                expanded
+                  ? "pt-28 pb-[max(6.25rem,calc(env(safe-area-inset-bottom)+4.5rem))]"
+                  : "pt-20 pb-[4.75rem] sm:pb-24"
               )}
             >
-              <p
-                ref={captionRef}
-                key={cueIndex}
-                className={cn(
-                  landingTitleQuote,
-                  "mx-auto text-center",
-                  expanded ? "max-w-xl text-[1.35rem] leading-snug sm:text-[1.5rem]" : "max-w-2xl"
-                )}
-              >
-                {activeCue?.text ?? ""}
-              </p>
+              <div className="mx-auto max-w-2xl">
+                <p
+                  ref={captionRef}
+                  key={cueIndex}
+                  className={cn(
+                    landingTitleQuote,
+                    "text-center text-balance text-foreground",
+                    "drop-shadow-[0_1px_12px_rgba(255,255,255,0.65)] dark:drop-shadow-[0_1px_14px_rgba(0,0,0,0.45)]",
+                    expanded
+                      ? "mx-auto max-w-xl text-[1.4rem] leading-[1.35] tracking-[-0.02em] sm:text-[1.65rem]"
+                      : "text-[1.05rem] leading-snug sm:text-xl"
+                  )}
+                >
+                  {activeCue?.text ?? ""}
+                </p>
+              </div>
             </div>
 
             <div
               aria-hidden
               className={cn(
-                "absolute inset-x-0 bottom-0 z-30 h-1 overflow-hidden bg-foreground/5",
-                !expanded && "rounded-b-[1.75rem]"
+                "absolute inset-x-0 bottom-0 z-30 flex justify-center px-5 sm:px-10",
+                expanded
+                  ? "pb-[max(1.5rem,env(safe-area-inset-bottom))]"
+                  : "pb-3.5 sm:pb-4"
               )}
             >
               <div
-                ref={progressRef}
-                className="h-full w-full origin-left bg-[#2563EB] will-change-transform"
-                style={{ transform: "scaleX(0)" }}
-              />
+                className={cn(
+                  "flex w-full max-w-md items-center rounded-full px-3.5 py-2.5 sm:max-w-lg sm:px-4 sm:py-3",
+                  "border border-black/[0.05] bg-[#EEF2F7]/88",
+                  "shadow-[0_12px_40px_rgba(15,23,42,0.1),inset_0_1px_1px_rgba(255,255,255,0.95)]",
+                  "backdrop-blur-xl",
+                  "dark:border-white/10 dark:bg-white/[0.12]",
+                  "dark:shadow-[0_12px_40px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.14)]"
+                )}
+              >
+                <div
+                  className={cn(
+                    "relative h-1.5 w-full overflow-hidden rounded-full",
+                    "bg-[#CBD5E1]/70 dark:bg-white/20"
+                  )}
+                >
+                  <div
+                    ref={progressRef}
+                    className="about-narration-progress relative h-full w-full origin-left will-change-transform"
+                    style={{ transform: "scaleX(0)" }}
+                  >
+                    <span className="absolute inset-0 rounded-full bg-linear-to-r from-[#93C5FD] via-[#2563EB] to-[#1D4ED8]" />
+                    <span className="absolute inset-y-0 right-0 w-10 rounded-full bg-linear-to-r from-transparent via-white/35 to-white/70 dark:via-white/25 dark:to-white/45" />
+                  </div>
+                </div>
+              </div>
             </div>
 
             <Button
@@ -635,7 +720,7 @@ export function AboutExperience() {
               className={cn(
                 landingGlassNavIcon,
                 "absolute top-4 right-4 z-30 text-muted-foreground hover:text-foreground",
-                expanded && "top-[max(1rem,env(safe-area-inset-top))]"
+                expanded && "top-[max(1rem,env(safe-area-inset-top))] right-[max(1rem,env(safe-area-inset-right))]"
               )}
             >
               <XIcon className="size-5" />
