@@ -1,11 +1,13 @@
-import { describe, expect, it } from "vitest"
+import { describe, expect, it, vi } from "vitest"
 
 import { PUBLIC_HOME_REVALIDATE_SECONDS } from "@/lib/api/public-home"
 import { CANDLE_INTERVAL_MS } from "@/lib/format"
 import {
   AUTH_SUCCESS_ROBOTS,
+  getLandingHref,
   getSiteOrigin,
   isAppDeskPath,
+  LANDING_PATH,
   PRODUCTION_ORIGIN,
   PUBLIC_INDEXABLE_PATHS,
   ROOT_ROBOTS,
@@ -50,6 +52,14 @@ describe("public SEO site policy (S1/S2)", () => {
     expect(PUBLIC_INDEXABLE_PATHS).not.toContain("/auth/success")
     expect(PUBLIC_INDEXABLE_PATHS).not.toContain(UPGRADE_PATH)
     expect(PUBLIC_INDEXABLE_PATHS).not.toContain("/home")
+  })
+
+  it("points landing links at apex `/` (local preview still uses /home)", () => {
+    expect(LANDING_PATH).toBe("/")
+    vi.stubEnv("NODE_ENV", "development")
+    expect(getLandingHref()).toBe("/home")
+    vi.stubEnv("NODE_ENV", "production")
+    expect(getLandingHref()).toBe("https://exur.ai")
   })
 
   it("exposes verified social URL for trust / Organization sameAs", () => {

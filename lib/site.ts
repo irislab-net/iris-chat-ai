@@ -1,4 +1,4 @@
-import { CHAT_APP_ORIGIN } from "@/lib/hosts"
+import { CHAT_APP_ORIGIN, MARKETING_ORIGIN } from "@/lib/hosts"
 
 /**
  * Production chat app origin for OAuth / desk metadata.
@@ -33,10 +33,16 @@ export const SOCIAL_X_URL = "https://x.com/exur_ai"
 export const APP_PATH = "/"
 
 /**
- * Internal landing route (rewritten from exur.ai `/`).
- * Prefer linking to `/` on marketing; `/home` still works via redirect.
+ * Marketing landing path.
+ * On production apex this is `/`. Local / preview still uses `/home`.
  */
-export const LANDING_PATH = "/home"
+export const LANDING_PATH = "/"
+
+/** Absolute landing URL for cross-host links (chat desk → apex). */
+export function getLandingHref(): string {
+  if (process.env.NODE_ENV === "development") return "/home"
+  return MARKETING_ORIGIN
+}
 
 /** Launch App lands on the news tab (canonical in-app entry). */
 export const APP_NEWS_PATH = `${APP_PATH}?tab=news`

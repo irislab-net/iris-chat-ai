@@ -275,13 +275,17 @@
     "homeOg": "Your money, handled. Ask Exur in plain language."
   },
   "notFound": {
-    "title": "Page not found",
-    "body": "This route doesn't exist, or it moved. Head back to news."
+    "title": "This page isn’t here",
+    "body": "The link may be outdated, or the page moved. Head back to Exur and pick up where you left off.",
+    "home": "Back to Exur",
+    "code": "404"
   },
   "error": {
     "title": "Something went wrong",
-    "body": "An unexpected error stopped this page. Try again, or go back to news.",
-    "retry": "Try again"
+    "body": "We hit an unexpected snag loading this page. Try again, or jump back into the app.",
+    "retry": "Try again",
+    "home": "Back to Exur",
+    "code": "Error"
   },
   "workspace": {
     "news": "News",

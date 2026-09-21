@@ -131,8 +131,10 @@ export default async function RootLayout({
     // Image / metadata routes (e.g. opengraph-image) have no intl provider.
   }
   const dir = localeDirection(locale)
-  const pathname = (await headers()).get("x-pathname") ?? "/"
-  const chatGtmEnabled = isChatGtmEnabled(pathname)
+  const headerStore = await headers()
+  const pathname = headerStore.get("x-pathname") ?? "/"
+  const hostname = headerStore.get("x-host")
+  const chatGtmEnabled = isChatGtmEnabled(pathname, hostname)
 
   return (
     <html

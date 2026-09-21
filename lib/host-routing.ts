@@ -16,15 +16,14 @@ import {
 export type HostRouteAction =
   | { type: "next" }
   | { type: "redirect"; location: string; status: 308 }
-  | { type: "rewrite"; pathname: string }
 
 function absoluteOn(origin: string, pathname: string, search: string): string {
   return `${origin}${pathname}${search}`
 }
 
 /**
- * Apex (exur.ai) = landing; chat.exur.ai = desk.
- * Local / preview hosts skip this and keep path-based routing.
+ * Apex (exur.ai) = landing at `/`; chat.exur.ai = desk at `/`.
+ * Local / preview hosts skip this and keep path-based routing (`/home` = landing).
  */
 export function resolveHostRouting(input: {
   hostname: string
@@ -87,14 +86,7 @@ export function resolveHostRouting(input: {
       }
     }
 
-    // Clean marketing root → internal /home page
-    if (pathnameWithoutLocale === "/") {
-      return {
-        type: "rewrite",
-        pathname: withLocalePrefix(localePrefix, "/home"),
-      }
-    }
-
+    // Marketing `/` (and `/ar`) render the landing via host-aware root page.
     return { type: "next" }
   }
 

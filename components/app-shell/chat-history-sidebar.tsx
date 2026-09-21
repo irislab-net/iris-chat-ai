@@ -84,7 +84,7 @@ import {
   type StoredConversation,
 } from "@/lib/chat-storage"
 import { CHAT_HISTORY_RAIL_COLLAPSED_WIDTH } from "@/lib/chat-history-rail-prefs"
-import { BILLING_PATH, LANDING_PATH, UPGRADE_PATH } from "@/lib/site"
+import { BILLING_PATH, getLandingHref, UPGRADE_PATH } from "@/lib/site"
 import {
   userAccountLabel,
   userAccountSubline,
@@ -214,6 +214,7 @@ function HistoryHomeNav({
   minimal?: boolean
 }) {
   const t = useTranslations("workspace")
+  const landingHref = getLandingHref()
 
   if (minimal) {
     return (
@@ -226,7 +227,7 @@ function HistoryHomeNav({
               className={historyRailIconButtonClass}
               aria-label={t("home")}
               nativeButton={false}
-              render={<Link href={LANDING_PATH} />}
+              render={<a href={landingHref} />}
             >
               <HouseIcon className="size-4.5" />
             </Button>
@@ -249,7 +250,7 @@ function HistoryHomeNav({
           : "mb-2 h-9 w-full rounded-lg px-3 hover:bg-muted/50"
       )}
       nativeButton={false}
-      render={<Link href={LANDING_PATH} />}
+      render={<a href={landingHref} />}
     >
       <HouseIcon
         className={cn(

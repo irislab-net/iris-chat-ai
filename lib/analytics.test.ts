@@ -4,6 +4,7 @@ import {
   GA_MEASUREMENT_ID,
   isAnalyticsEnabled,
   isChatAnalyticsPath,
+  isChatGtmEnabled,
   trackCheckoutStart,
   trackEvent,
   trackPurchase,
@@ -84,5 +85,12 @@ describe("analytics", () => {
     expect(isChatAnalyticsPath("/ar/home")).toBe(false)
     expect(isChatAnalyticsPath("/about")).toBe(false)
     expect(isChatAnalyticsPath("/ai-trading-signals")).toBe(false)
+  })
+
+  it("disables GTM on the marketing host even for `/`", () => {
+    vi.stubEnv("NODE_ENV", "production")
+    expect(isChatGtmEnabled("/", "exur.ai")).toBe(false)
+    expect(isChatGtmEnabled("/", "www.exur.ai")).toBe(false)
+    expect(isChatGtmEnabled("/", "chat.exur.ai")).toBe(true)
   })
 })

@@ -20,7 +20,7 @@ const STRICT = process.env.PERF_STRICT !== "0"
 /** Dev Turbopack is slower than production — keep budgets realistic but failing on regression. */
 const BUDGET_MS = Number(process.env.PERF_BUDGET_MS ?? 2500)
 const CRITICAL = new Set([
-  "Landing (/home)",
+  "Landing (/home local)",
   "Desk chat (/)",
   "Desk news (?tab=news)",
   "About",
@@ -30,7 +30,7 @@ const CRITICAL = new Set([
 ])
 
 const ROUTES = [
-  { path: "/home", label: "Landing (/home)", critical: true },
+  { path: "/home", label: "Landing (/home local)", critical: true },
   { path: "/", label: "Desk chat (/)", critical: true },
   { path: "/?tab=news", label: "Desk news (?tab=news)", critical: true },
   { path: "/about", label: "About", critical: true },
@@ -40,7 +40,7 @@ const ROUTES = [
   { path: "/upgrade", label: "Upgrade", critical: false },
   { path: "/billing", label: "Billing", critical: false },
   { path: "/auth/success", label: "Auth success", critical: false },
-  { path: "/ar/home", label: "Landing AR", critical: false },
+  { path: "/ar/home", label: "Landing AR local", critical: false },
   { path: "/opengraph-image", label: "OG image", critical: true },
   { path: "/twitter-image", label: "Twitter image", critical: false },
   { path: "/favicon.ico", label: "Favicon", critical: true },

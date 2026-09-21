@@ -1,8 +1,8 @@
 import { redirect } from "next/navigation"
 
-import { LANDING_PATH } from "@/lib/site"
+import { getLandingHref } from "@/lib/site"
 
-/** Legacy path — landing is `/home` internally; production apex rewrites `/` → `/home`. */
+/** Legacy path — landing is `exur.ai/` (local preview: `/home`). */
 export default function LegacyLandingRedirect() {
-  redirect(LANDING_PATH)
+  redirect(getLandingHref())
 }

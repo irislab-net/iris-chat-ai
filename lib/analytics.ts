@@ -1,5 +1,6 @@
 import type { User } from "@/lib/api/types"
 import type { BillingCycle, PlanKey } from "@/lib/billing/catalog"
+import { isMarketingHost } from "@/lib/hosts"
 
 export const GA_MEASUREMENT_ID =
   process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID ?? "G-GLTQZ1G6RX"
@@ -36,7 +37,11 @@ export function isChatAnalyticsPath(pathname: string): boolean {
   )
 }
 
-export function isChatGtmEnabled(pathname: string): boolean {
+export function isChatGtmEnabled(
+  pathname: string,
+  hostname?: string | null
+): boolean {
+  if (hostname && isMarketingHost(hostname)) return false
   return isGtmEnabled() && isChatAnalyticsPath(pathname)
 }
 

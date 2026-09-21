@@ -12,7 +12,7 @@ const handleI18nRouting = createMiddleware(routing)
  * Auth cookies need same-site with api.exur.ai (https + shared parent domain).
  * Loopback stays on local.exur.ai; LAN devices keep their Host and only upgrade HTTP.
  *
- * Production: exur.ai → landing, chat.exur.ai → desk (see lib/host-routing.ts).
+ * Production: exur.ai `/` = landing, chat.exur.ai `/` = desk (see lib/host-routing.ts).
  */
 export function proxy(request: NextRequest) {
   if (process.env.NODE_ENV === "development") {
@@ -45,24 +45,8 @@ export function proxy(request: NextRequest) {
   }
 
   const response = handleI18nRouting(request)
-
-  if (hostAction.type === "rewrite") {
-    // Honor locale redirects from next-intl first; the follow-up request rewrites.
-    if (response.headers.get("location")) {
-      return response
-    }
-
-    const url = request.nextUrl.clone()
-    url.pathname = hostAction.pathname
-    const rewriteResponse = NextResponse.rewrite(url)
-    response.cookies.getAll().forEach((cookie) => {
-      rewriteResponse.cookies.set(cookie)
-    })
-    rewriteResponse.headers.set("x-pathname", hostAction.pathname)
-    return rewriteResponse
-  }
-
   response.headers.set("x-pathname", request.nextUrl.pathname)
+  response.headers.set("x-host", hostname)
   return response
 }
 
