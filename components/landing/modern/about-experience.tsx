@@ -426,8 +426,10 @@ export function AboutExperience() {
     )
   }, [cueIndex, phase, reduceMotion])
 
-  const closeRef = React.useRef(close)
-  closeRef.current = close
+  // Keep Escape on the latest `close` without writing a ref during render.
+  const onEscapeClose = React.useEffectEvent(() => {
+    close()
+  })
 
   // Escape closes the fullscreen stage. Scroll is locked inside the play
   // gesture (see `start`); this effect only listens for Escape and restores
@@ -436,7 +438,7 @@ export function AboutExperience() {
     if (!expanded) return
 
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") closeRef.current()
+      if (event.key === "Escape") onEscapeClose()
     }
     window.addEventListener("keydown", onKey)
 
