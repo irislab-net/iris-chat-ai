@@ -1534,7 +1534,25 @@ html.display-standalone[data-app-shell="true"] [data-slot="sheet-content"] .app-
 }
 
 .about-narration-progress {
-  filter: drop-shadow(0 0 12px rgba(37, 99, 235, 0.42));
+  filter: drop-shadow(0 0 10px rgba(37, 99, 235, 0.55));
+}
+
+@keyframes about-narration-progress-sheen {
+  0% {
+    transform: translateX(-120%);
+    opacity: 0;
+  }
+  35% {
+    opacity: 0.9;
+  }
+  100% {
+    transform: translateX(320%);
+    opacity: 0;
+  }
+}
+
+.about-narration-progress-sheen {
+  animation: about-narration-progress-sheen 2.6s ease-in-out infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1544,7 +1562,13 @@ html.display-standalone[data-app-shell="true"] [data-slot="sheet-content"] .app-
   }
 
   .about-narration-progress {
-    filter: none;
+    filter: drop-shadow(0 0 6px rgba(37, 99, 235, 0.35));
+  }
+
+  .about-narration-progress-sheen {
+    animation: none;
+    opacity: 0.45;
+    transform: none;
   }
 }
 

@@ -671,22 +671,33 @@ export function AboutExperience() {
               className={cn(
                 "absolute inset-x-0 bottom-0 z-30 flex justify-center px-8 sm:px-12",
                 expanded
-                  ? "pb-[max(1.35rem,env(safe-area-inset-bottom))]"
+                  ? "pb-[max(1.5rem,env(safe-area-inset-bottom))]"
                   : "pb-4 sm:pb-5"
               )}
             >
-              <div
-                className={cn(
-                  "relative h-[3px] w-full max-w-sm overflow-hidden rounded-full sm:max-w-md",
-                  "bg-foreground/[0.08] dark:bg-white/15"
-                )}
-              >
+              <div className="relative w-full max-w-sm sm:max-w-md">
                 <div
-                  ref={progressRef}
-                  className="about-narration-progress relative h-full w-full origin-left will-change-transform"
-                  style={{ transform: "scaleX(0)" }}
+                  className={cn(
+                    "pointer-events-none absolute inset-x-2 top-1/2 h-5 -translate-y-1/2 rounded-full",
+                    "bg-[#2563EB]/18 blur-md dark:bg-[#2563EB]/28"
+                  )}
+                />
+                <div
+                  className={cn(
+                    "relative h-1 overflow-visible rounded-full",
+                    "bg-slate-300/55 shadow-[inset_0_1px_1px_rgba(15,23,42,0.06)]",
+                    "dark:bg-white/14 dark:shadow-[inset_0_1px_1px_rgba(0,0,0,0.25)]"
+                  )}
                 >
-                  <span className="absolute inset-0 rounded-full bg-linear-to-r from-[#93C5FD] via-[#2563EB] to-[#1D4ED8]" />
+                  <div
+                    ref={progressRef}
+                    className="about-narration-progress relative h-full w-full origin-left will-change-transform"
+                    style={{ transform: "scaleX(0)" }}
+                  >
+                    <span className="absolute inset-0 rounded-full bg-linear-to-r from-[#BFDBFE] via-[#3B82F6] to-[#2563EB]" />
+                    <span className="about-narration-progress-sheen absolute inset-y-0 left-0 w-1/3 rounded-full bg-linear-to-r from-transparent via-white/70 to-transparent" />
+                    <span className="absolute top-1/2 right-0 size-2.5 -translate-y-1/2 translate-x-1/2 rounded-full bg-white shadow-[0_0_12px_rgba(37,99,235,0.85),0_0_4px_rgba(255,255,255,0.9)]" />
+                  </div>
                 </div>
               </div>
             </div>
