@@ -1,8 +1,8 @@
 "use client"
 
 import dynamic from "next/dynamic"
+import { useTranslations } from "next-intl"
 
-import { HERO } from "@/lib/landing-modern-data"
 import { landingInner, landingTitleHero } from "@/lib/landing-modern-styles"
 import { cn } from "@/lib/utils"
 
@@ -24,6 +24,8 @@ const HeroComposeDemo = dynamic(
 )
 
 export function HeroSection() {
+  const t = useTranslations("modern.hero")
+
   return (
     <section className="flex min-h-0 flex-1 flex-col">
       {/* Visible immediately — do not wrap LCP copy in ScrollReveal (`invisible`). */}
@@ -35,13 +37,13 @@ export function HeroSection() {
       >
         <div className="shrink-0 text-center">
           <h1 className={landingTitleHero}>
-            {HERO.titleBefore}
+            {t("titleBefore")}
             <br className="sm:hidden" />{" "}
-            {HERO.titleAfter}
+            {t("titleAfter")}
           </h1>
 
           <p className="mx-auto mt-5 max-w-md text-sm leading-relaxed text-muted-foreground sm:mt-6 sm:text-base lg:max-w-2xl lg:text-lg">
-            {HERO.subtitle}
+            {t("subtitle")}
           </p>
         </div>
 

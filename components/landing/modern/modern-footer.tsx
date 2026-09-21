@@ -1,12 +1,13 @@
 "use client"
 
+import { useTranslations } from "next-intl"
+
 import { AnimatedIrisLabLogo } from "@/components/brand/animated-iris-lab-logo"
 import { XIcon } from "@/components/brand/x-icon"
 import { ScrollReveal } from "@/components/landing/modern/scroll-reveal"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { Link } from "@/i18n/navigation"
-import { FOOTER_TAGLINE } from "@/lib/landing-modern-data"
 import { scrollToSection } from "@/lib/landing-motion"
 import { getLaunchAppHref, SITE_NAME, SOCIAL_X_URL } from "@/lib/site"
 import {
@@ -28,39 +29,6 @@ type FooterColumn = {
   heading: string
   links: readonly FooterLink[]
 }
-
-const FOOTER_COLUMNS: readonly FooterColumn[] = [
-  {
-    heading: "Product",
-    links: [
-      { label: "Why Exur", section: "features" },
-      { label: "How it works", section: "how-it-works" },
-      { label: "Pricing", section: "pricing" },
-      { label: "Open app", href: getLaunchAppHref() },
-    ],
-  },
-  {
-    heading: "Resources",
-    links: [
-      { label: "FAQ", section: "faq" },
-      { label: "About Exur", href: "/about" },
-      { label: "AI trading signals", href: "/ai-trading-signals" },
-    ],
-  },
-  {
-    heading: "Contact",
-    links: [
-      { label: CONTACT_EMAIL, href: `mailto:${CONTACT_EMAIL}`, external: true },
-      { label: "Exur on X", href: SOCIAL_X_URL, external: true },
-    ],
-  },
-]
-
-const LEGAL_LINKS = [
-  { label: "Terms of Service", href: "/terms" },
-  { label: "Privacy Policy", href: "/privacy" },
-  { label: "Cookie Settings", href: "/privacy" },
-] as const
 
 const linkClass =
   "w-fit text-left text-sm text-muted-foreground transition-colors hover:text-foreground"
@@ -98,7 +66,41 @@ function FooterColumnLink({ link }: { link: FooterLink }) {
 }
 
 export function ModernFooter() {
+  const t = useTranslations("modern.footer")
   const year = new Date().getFullYear()
+
+  const footerColumns: readonly FooterColumn[] = [
+    {
+      heading: t("product"),
+      links: [
+        { label: t("whyExur"), section: "features" },
+        { label: t("howItWorks"), section: "how-it-works" },
+        { label: t("pricing"), section: "pricing" },
+        { label: t("openApp"), href: getLaunchAppHref() },
+      ],
+    },
+    {
+      heading: t("resources"),
+      links: [
+        { label: t("faq"), section: "faq" },
+        { label: t("about"), href: "/about" },
+        { label: t("signals"), href: "/ai-trading-signals" },
+      ],
+    },
+    {
+      heading: t("contact"),
+      links: [
+        { label: CONTACT_EMAIL, href: `mailto:${CONTACT_EMAIL}`, external: true },
+        { label: t("onX"), href: SOCIAL_X_URL, external: true },
+      ],
+    },
+  ]
+
+  const legalLinks = [
+    { label: t("terms"), href: "/terms" },
+    { label: t("privacy"), href: "/privacy" },
+    { label: t("cookies"), href: "/privacy" },
+  ] as const
 
   return (
     <footer className={cn(landingFooterCard, landingCard)}>
@@ -117,7 +119,7 @@ export function ModernFooter() {
                 <span className={landingTitleFooter}>{SITE_NAME}</span>
               </Button>
               <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-                {FOOTER_TAGLINE}
+                {t("tagline")}
               </p>
               <a
                 href={SOCIAL_X_URL}
@@ -131,7 +133,7 @@ export function ModernFooter() {
             </div>
 
             <div className="grid grid-cols-2 gap-x-8 gap-y-8 sm:grid-cols-3 lg:gap-x-16">
-              {FOOTER_COLUMNS.map((column) => (
+              {footerColumns.map((column) => (
                 <nav key={column.heading} className="flex flex-col gap-3" aria-label={column.heading}>
                   <p className="text-sm font-semibold text-foreground">{column.heading}</p>
                   {column.links.map((link) => (
@@ -149,7 +151,7 @@ export function ModernFooter() {
               © {year} {SITE_NAME}. All rights reserved.
             </p>
             <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
-              {LEGAL_LINKS.map((link) => (
+              {legalLinks.map((link) => (
                 <Link
                   key={link.label}
                   href={link.href}

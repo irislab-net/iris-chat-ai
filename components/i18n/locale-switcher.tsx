@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { getPathname, usePathname } from "@/i18n/navigation"
 import { routing, type AppLocale } from "@/i18n/routing"
-import { persistLocaleChoice } from "@/lib/i18n/locale"
+import { localeLabelKey, persistLocaleChoice } from "@/lib/i18n/locale"
 import { cn } from "@/lib/utils"
 
 type LocaleSwitcherProps = {
@@ -74,7 +74,7 @@ export function LocaleSwitcher({
             onClick={() => switchLocale(code)}
           >
             <span className="flex-1">
-              {code === "ar" ? t("arabic") : t("english")}
+              {t(localeLabelKey(code))}
             </span>
             {locale === code ? (
               <CheckIcon className="size-3.5 text-foreground" />

@@ -1,3 +1,4 @@
+import { routing } from "@/i18n/routing"
 import { MARKETING_ORIGIN } from "@/lib/hosts"
 
 export const SITE_NAME = "Exur"
@@ -146,8 +147,8 @@ export const INDEXABLE_ROUTES = [
 export function buildSitemapEntries(lastModified = new Date()) {
   function localizedUrl(locale: string, path: string) {
     if (locale === "en") return absoluteUrl(path)
-    if (path === "/") return absoluteUrl("/ar")
-    return absoluteUrl(`/ar${path}`)
+    if (path === "/") return absoluteUrl(`/${locale}`)
+    return absoluteUrl(`/${locale}${path}`)
   }
 
   return INDEXABLE_ROUTES.map((route) => ({
@@ -157,8 +158,12 @@ export function buildSitemapEntries(lastModified = new Date()) {
     priority: route.priority,
     alternates: {
       languages: {
-        en: localizedUrl("en", route.path),
-        ar: localizedUrl("ar", route.path),
+        ...Object.fromEntries(
+          routing.locales.map((locale) => [
+            locale,
+            localizedUrl(locale, route.path),
+          ])
+        ),
         "x-default": localizedUrl("en", route.path),
       },
     },

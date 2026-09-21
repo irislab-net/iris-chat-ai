@@ -1,0 +1,71 @@
+{
+  "common": {
+    "language": "Taal",
+    "english": "English",
+    "dutch": "Nederlands",
+    "portuguese": "Português",
+    "spanish": "Español",
+    "arabic": "العربية",
+    "russian": "Русский",
+    "turkish": "Türkçe",
+    "launchApp": "App openen",
+    "analysisNotAdvice": "Analyse, geen advies."
+  },
+  "modern": {
+    "hero": {
+      "badge": "Jouw AI financiële assistent",
+      "titleBefore": "Jouw geld,",
+      "titleAfter": "onder controle.",
+      "subtitle": "Vraag over uitgaven, spaargeld en wat hierna komt — in je eigen woorden.",
+      "inputPlaceholder": "Waar gaat mijn geld deze maand naartoe?"
+    },
+    "footer": {
+      "tagline": "Het financiële brein achter je rekeningen.",
+      "product": "Product",
+      "resources": "Bronnen",
+      "contact": "Contact",
+      "whyExur": "Waarom Exur",
+      "howItWorks": "Hoe het werkt",
+      "pricing": "Prijzen",
+      "openApp": "App openen",
+      "faq": "FAQ",
+      "about": "Over Exur",
+      "signals": "AI-handelsignalen",
+      "onX": "Exur op X",
+      "terms": "Gebruiksvoorwaarden",
+      "privacy": "Privacybeleid",
+      "cookies": "Cookie-instellingen"
+    },
+    "cta": {
+      "title": "Stop met gissen over geld.",
+      "subtitle": "Eén vraag is genoeg om te weten of dit nuttig voor je is.",
+      "cta": "Gratis starten",
+      "note": "Gratis om te beginnen. Geen account nodig om rond te kijken."
+    },
+    "context": {
+      "description": "Exur is je AI financiële assistent. Zie waar je geld naartoe gaat, vraag in gewone taal, en krijg een duidelijke volgende stap — geen nieuwe feed."
+    }
+  },
+  "metadata": {
+    "homeTitle": "Exur: AI financiële assistent",
+    "homeDescription": "Exur is je AI financiële assistent. Zie waar je geld naartoe gaat, vraag in gewone taal, en krijg een duidelijke volgende stap.",
+    "homeOg": "Jouw geld, onder controle. Vraag Exur in gewone taal."
+  },
+  "landing": {
+    "footer": {
+      "tagline": "Gescoorde crypto-headlines en Exur co-pilot chat.",
+      "columns": {
+        "privacy": "Privacybeleid",
+        "terms": "Gebruiksvoorwaarden"
+      }
+    }
+  },
+  "workspace": {
+    "pinnedChats": "Vastgezet",
+    "recentChats": "Recent",
+    "pinChat": "Chat vastzetten",
+    "unpinChat": "Losmaken",
+    "newChat": "Nieuwe chat",
+    "chatHistory": "Chatgeschiedenis"
+  }
+}

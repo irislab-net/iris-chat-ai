@@ -1,0 +1,71 @@
+{
+  "common": {
+    "language": "Dil",
+    "english": "English",
+    "dutch": "Nederlands",
+    "portuguese": "Português",
+    "spanish": "Español",
+    "arabic": "العربية",
+    "russian": "Русский",
+    "turkish": "Türkçe",
+    "launchApp": "Uygulamayı aç",
+    "analysisNotAdvice": "Analiz, tavsiye değil."
+  },
+  "modern": {
+    "hero": {
+      "badge": "Yapay zekâ finans asistanınız",
+      "titleBefore": "Paranız,",
+      "titleAfter": "kontrol altında.",
+      "subtitle": "Harcamalar, birikimler ve sırada ne var diye kendi kelimelerinizle sorun.",
+      "inputPlaceholder": "Bu ay param nereye gidiyor?"
+    },
+    "footer": {
+      "tagline": "Hesaplarınızın arkasındaki finansal zihin.",
+      "product": "Ürün",
+      "resources": "Kaynaklar",
+      "contact": "İletişim",
+      "whyExur": "Neden Exur",
+      "howItWorks": "Nasıl çalışır",
+      "pricing": "Fiyatlandırma",
+      "openApp": "Uygulamayı aç",
+      "faq": "SSS",
+      "about": "Exur hakkında",
+      "signals": "YZ trading sinyalleri",
+      "onX": "X’te Exur",
+      "terms": "Hizmet Şartları",
+      "privacy": "Gizlilik Politikası",
+      "cookies": "Çerez ayarları"
+    },
+    "cta": {
+      "title": "Para hakkında tahmin yürütmeyi bırakın.",
+      "subtitle": "Bunun size yarayıp yaramadığını anlamak için bir soru yeter.",
+      "cta": "Ücretsiz başla",
+      "note": "Başlamak ücretsiz. Göz atmak için kayıt gerekmez."
+    },
+    "context": {
+      "description": "Exur, yapay zekâ finans asistanınızdır. Paranızın nereye gittiğini görün, sade dilde sorun ve net bir sonraki adımı alın — bir akış daha değil."
+    }
+  },
+  "metadata": {
+    "homeTitle": "Exur: Yapay zekâ finans asistanı",
+    "homeDescription": "Exur, yapay zekâ finans asistanınızdır. Paranızın nereye gittiğini görün, sade dilde sorun ve net bir sonraki adımı alın.",
+    "homeOg": "Paranız, kontrol altında. Exur’a sade dilde sorun."
+  },
+  "landing": {
+    "footer": {
+      "tagline": "Skorlanan kripto manşetleri ve Exur yardımcı pilot sohbeti.",
+      "columns": {
+        "privacy": "Gizlilik Politikası",
+        "terms": "Hizmet Şartları"
+      }
+    }
+  },
+  "workspace": {
+    "pinnedChats": "Sabitlenenler",
+    "recentChats": "Son",
+    "pinChat": "Sohbeti sabitle",
+    "unpinChat": "Sabitlemeyi kaldır",
+    "newChat": "Yeni sohbet",
+    "chatHistory": "Sohbet geçmişi"
+  }
+}

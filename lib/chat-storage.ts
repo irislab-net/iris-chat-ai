@@ -269,9 +269,15 @@ export function sortConversations(
   })
 }
 
+/**
+ * Insert or replace a conversation. By default does **not** change `activeId`
+ * (pin/rename/session-list sync must not steal selection). Pass
+ * `{ setActive: true }` when persisting the conversation the user is viewing.
+ */
 export function upsertConversation(
   store: ChatStore,
-  conversation: StoredConversation
+  conversation: StoredConversation,
+  options?: { setActive?: boolean }
 ): ChatStore {
   if (isConversationDeleted(store, conversation.id)) {
     return store
@@ -284,7 +290,7 @@ export function upsertConversation(
   return {
     version: 1,
     conversations: next,
-    activeId: conversation.id,
+    activeId: options?.setActive ? conversation.id : store.activeId,
     deletedIds: store.deletedIds ?? [],
   }
 }

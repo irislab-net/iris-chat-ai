@@ -1,0 +1,71 @@
+{
+  "common": {
+    "language": "Idioma",
+    "english": "English",
+    "dutch": "Nederlands",
+    "portuguese": "Português",
+    "spanish": "Español",
+    "arabic": "العربية",
+    "russian": "Русский",
+    "turkish": "Türkçe",
+    "launchApp": "Abrir app",
+    "analysisNotAdvice": "Análise, não conselho."
+  },
+  "modern": {
+    "hero": {
+      "badge": "Seu assistente financeiro com IA",
+      "titleBefore": "Seu dinheiro,",
+      "titleAfter": "sob controle.",
+      "subtitle": "Pergunte sobre gastos, poupança e o que vem a seguir, com suas palavras.",
+      "inputPlaceholder": "Para onde vai meu dinheiro este mês?"
+    },
+    "footer": {
+      "tagline": "O cérebro financeiro por trás das suas contas.",
+      "product": "Produto",
+      "resources": "Recursos",
+      "contact": "Contato",
+      "whyExur": "Por que Exur",
+      "howItWorks": "Como funciona",
+      "pricing": "Preços",
+      "openApp": "Abrir app",
+      "faq": "FAQ",
+      "about": "Sobre o Exur",
+      "signals": "Sinais de trading com IA",
+      "onX": "Exur no X",
+      "terms": "Termos de Serviço",
+      "privacy": "Política de Privacidade",
+      "cookies": "Configurações de cookies"
+    },
+    "cta": {
+      "title": "Pare de adivinhar sobre dinheiro.",
+      "subtitle": "Uma pergunta basta para saber se isso é útil para você.",
+      "cta": "Começar grátis",
+      "note": "Grátis para começar. Sem cadastro para explorar."
+    },
+    "context": {
+      "description": "Exur é seu assistente financeiro com IA. Veja para onde vai seu dinheiro, pergunte em linguagem simples e receba o próximo passo claro — não mais um feed."
+    }
+  },
+  "metadata": {
+    "homeTitle": "Exur: Assistente financeiro com IA",
+    "homeDescription": "Exur é seu assistente financeiro com IA. Veja para onde vai seu dinheiro, pergunte em linguagem simples e receba o próximo passo claro.",
+    "homeOg": "Seu dinheiro, sob controle. Pergunte ao Exur em linguagem simples."
+  },
+  "landing": {
+    "footer": {
+      "tagline": "Manchetes cripto ranqueadas e chat co-piloto Exur.",
+      "columns": {
+        "privacy": "Política de Privacidade",
+        "terms": "Termos de Serviço"
+      }
+    }
+  },
+  "workspace": {
+    "pinnedChats": "Fixados",
+    "recentChats": "Recentes",
+    "pinChat": "Fixar chat",
+    "unpinChat": "Desafixar",
+    "newChat": "Novo chat",
+    "chatHistory": "Histórico do chat"
+  }
+}

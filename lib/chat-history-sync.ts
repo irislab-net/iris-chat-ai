@@ -16,6 +16,7 @@ import {
   hasUserMessages,
   isConversationDeleted,
   readChatStore,
+  sortConversations,
   type ChatStore,
   type ChatUiMessage,
   type StoredConversation,
@@ -200,6 +201,8 @@ export function buildStoredConversationFromHistory(
     updatedAt,
     messages: mergedMessages,
     history,
+    // Keep local pin across history refresh — server pin arrives via session list.
+    pinned: local?.pinned,
   }
 }
 
@@ -231,9 +234,10 @@ export function mergeServerHistoryIntoStore(
       hasUserMessages(conversation.messages)
   )
 
-  const conversations = [...localOnly, ...serverConversations].sort((a, b) =>
-    b.updatedAt.localeCompare(a.updatedAt)
-  )
+  const conversations = sortConversations([
+    ...localOnly,
+    ...serverConversations,
+  ])
 
   const activeId =
     local.activeId && conversations.some((c) => c.id === local.activeId)
@@ -330,8 +334,10 @@ export async function refreshSessionInStore(
     ),
     title: built.title,
     createdAt: built.createdAt,
+    pinned: localConversation?.pinned ?? built.pinned,
   }
 
+  // Refresh must not steal selection when the user has another chat open.
   const merged = upsertConversation(local, conversation)
   writeChatStore(ownerId, merged)
   return merged

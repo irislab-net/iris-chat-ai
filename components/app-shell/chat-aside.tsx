@@ -781,9 +781,10 @@ function ChatAside({
         updatedAt: now,
         messages: cleaned,
         history: next.history,
+        pinned: existing?.pinned,
       }
 
-      store = upsertConversation(store, saved)
+      store = upsertConversation(store, saved, { setActive: true })
       writeChatStore(next.ownerId, store)
       setConversations(store.conversations)
     }

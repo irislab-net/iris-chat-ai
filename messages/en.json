@@ -7,7 +7,12 @@
     "pricingLink": "See pricing",
     "language": "Language",
     "english": "English",
+    "dutch": "Dutch",
+    "portuguese": "Portuguese",
+    "spanish": "Spanish",
     "arabic": "Arabic",
+    "russian": "Russian",
+    "turkish": "Turkish",
     "toggleTheme": "Toggle theme",
     "theme": "Theme",
     "themeSystem": "System",
@@ -267,6 +272,41 @@
       "watch": "Watch",
       "ethLong": "ETH long",
       "tapeAlign": "Tape and funding align."
+    }
+  },
+  "modern": {
+    "hero": {
+      "badge": "Your AI financial assistant",
+      "titleBefore": "Your money,",
+      "titleAfter": "handled.",
+      "subtitle": "Ask about spending, savings, and what’s next, in your own words.",
+      "inputPlaceholder": "Where is my money going this month?"
+    },
+    "footer": {
+      "tagline": "The financial brain behind your accounts.",
+      "product": "Product",
+      "resources": "Resources",
+      "contact": "Contact",
+      "whyExur": "Why Exur",
+      "howItWorks": "How it works",
+      "pricing": "Pricing",
+      "openApp": "Open app",
+      "faq": "FAQ",
+      "about": "About Exur",
+      "signals": "AI trading signals",
+      "onX": "Exur on X",
+      "terms": "Terms of Service",
+      "privacy": "Privacy Policy",
+      "cookies": "Cookie Settings"
+    },
+    "cta": {
+      "title": "Stop guessing about money.",
+      "subtitle": "One question is enough to tell whether this is useful to you.",
+      "cta": "Start free",
+      "note": "Free to start. No signup to look around."
+    },
+    "context": {
+      "description": "Exur is your AI financial assistant. See where your money is going, ask in plain language, and get a clear next step, not another feed."
     }
   },
   "metadata": {

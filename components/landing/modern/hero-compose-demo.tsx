@@ -1,6 +1,7 @@
 "use client"
 
 import { gsap } from "gsap"
+import { useTranslations } from "next-intl"
 import { useReducedMotion } from "@/lib/landing-motion"
 import { ensureGsapScroll } from "@/lib/gsap-scroll"
 import { ArrowUpIcon, SquareIcon } from "lucide-react"
@@ -18,7 +19,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
-  HERO,
   HERO_DEMO_AVATARS,
   HERO_DEMO_EXCHANGES,
 } from "@/lib/landing-modern-data"
@@ -513,6 +513,7 @@ function playHeroComposeTimeline({
 }
 
 export function HeroComposeDemo() {
+  const tHero = useTranslations("modern.hero")
   const router = useRouter()
   const reducedMotion = Boolean(useReducedMotion())
 
@@ -779,7 +780,7 @@ export function HeroComposeDemo() {
             e.preventDefault()
             handleAction()
           }}
-          placeholder={HERO.inputPlaceholder}
+          placeholder={tHero("inputPlaceholder")}
           readOnly={demoActive && phase !== "typing-question"}
           className="relative z-10 h-10 min-w-0 flex-1 border-0 bg-transparent px-2 text-sm text-foreground shadow-none placeholder:text-muted-foreground/90 focus-visible:ring-0 read-only:cursor-default sm:px-3 sm:text-base"
         />
