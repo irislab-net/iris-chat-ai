@@ -4,7 +4,6 @@ import { gsap } from "gsap"
 import { PlayIcon, XIcon } from "lucide-react"
 import * as React from "react"
 
-import { IrisLabLogo } from "@/components/brand/iris-lab-logo"
 import { AboutOrbCanvas } from "@/components/landing/modern/about-orb-canvas"
 import { Button } from "@/components/ui/button"
 import { useIsDesktop } from "@/hooks/use-media-query"
@@ -631,30 +630,23 @@ export function AboutExperience() {
         {phase === "playing" && (
           <>
             {expanded ? (
-              <div className="pointer-events-none absolute top-[max(1.15rem,env(safe-area-inset-top))] left-1/2 z-20 flex -translate-x-1/2 items-center gap-2.5">
-                <IrisLabLogo
-                  decorative
-                  variant="brand"
-                  size={22}
-                  className="size-[1.35rem] opacity-90"
-                />
-                <span
-                  className={cn(
-                    landingDisplay,
-                    "text-[0.7rem] font-medium tracking-[0.2em] text-muted-foreground/85 uppercase"
-                  )}
-                >
-                  Exur
-                </span>
-              </div>
+              <p
+                className={cn(
+                  landingDisplay,
+                  "pointer-events-none absolute top-[max(1.25rem,env(safe-area-inset-top))] left-1/2 z-20 -translate-x-1/2",
+                  "text-[0.7rem] font-medium tracking-[0.22em] text-muted-foreground/85 uppercase"
+                )}
+              >
+                Exur
+              </p>
             ) : null}
 
             <div
               className={cn(
                 "pointer-events-none absolute inset-x-0 bottom-0 z-20 px-5 sm:px-10",
                 expanded
-                  ? "pt-28 pb-[max(6.25rem,calc(env(safe-area-inset-bottom)+4.5rem))]"
-                  : "pt-20 pb-[4.75rem] sm:pb-24"
+                  ? "pt-28 pb-[max(5.25rem,calc(env(safe-area-inset-bottom)+3.5rem))]"
+                  : "pt-20 pb-14 sm:pb-16"
               )}
             >
               <div className="mx-auto max-w-2xl">
@@ -664,7 +656,6 @@ export function AboutExperience() {
                   className={cn(
                     landingTitleQuote,
                     "text-center text-balance text-foreground",
-                    "drop-shadow-[0_1px_12px_rgba(255,255,255,0.65)] dark:drop-shadow-[0_1px_14px_rgba(0,0,0,0.45)]",
                     expanded
                       ? "mx-auto max-w-xl text-[1.4rem] leading-[1.35] tracking-[-0.02em] sm:text-[1.65rem]"
                       : "text-[1.05rem] leading-snug sm:text-xl"
@@ -678,36 +669,24 @@ export function AboutExperience() {
             <div
               aria-hidden
               className={cn(
-                "absolute inset-x-0 bottom-0 z-30 flex justify-center px-5 sm:px-10",
+                "absolute inset-x-0 bottom-0 z-30 flex justify-center px-8 sm:px-12",
                 expanded
-                  ? "pb-[max(1.5rem,env(safe-area-inset-bottom))]"
-                  : "pb-3.5 sm:pb-4"
+                  ? "pb-[max(1.35rem,env(safe-area-inset-bottom))]"
+                  : "pb-4 sm:pb-5"
               )}
             >
               <div
                 className={cn(
-                  "flex w-full max-w-md items-center rounded-full px-3.5 py-2.5 sm:max-w-lg sm:px-4 sm:py-3",
-                  "border border-black/[0.05] bg-[#EEF2F7]/88",
-                  "shadow-[0_12px_40px_rgba(15,23,42,0.1),inset_0_1px_1px_rgba(255,255,255,0.95)]",
-                  "backdrop-blur-xl",
-                  "dark:border-white/10 dark:bg-white/[0.12]",
-                  "dark:shadow-[0_12px_40px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.14)]"
+                  "relative h-[3px] w-full max-w-sm overflow-hidden rounded-full sm:max-w-md",
+                  "bg-foreground/[0.08] dark:bg-white/15"
                 )}
               >
                 <div
-                  className={cn(
-                    "relative h-1.5 w-full overflow-hidden rounded-full",
-                    "bg-[#CBD5E1]/70 dark:bg-white/20"
-                  )}
+                  ref={progressRef}
+                  className="about-narration-progress relative h-full w-full origin-left will-change-transform"
+                  style={{ transform: "scaleX(0)" }}
                 >
-                  <div
-                    ref={progressRef}
-                    className="about-narration-progress relative h-full w-full origin-left will-change-transform"
-                    style={{ transform: "scaleX(0)" }}
-                  >
-                    <span className="absolute inset-0 rounded-full bg-linear-to-r from-[#93C5FD] via-[#2563EB] to-[#1D4ED8]" />
-                    <span className="absolute inset-y-0 right-0 w-10 rounded-full bg-linear-to-r from-transparent via-white/35 to-white/70 dark:via-white/25 dark:to-white/45" />
-                  </div>
+                  <span className="absolute inset-0 rounded-full bg-linear-to-r from-[#93C5FD] via-[#2563EB] to-[#1D4ED8]" />
                 </div>
               </div>
             </div>
