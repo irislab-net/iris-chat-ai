@@ -419,7 +419,8 @@ export function AboutExperience() {
       const next = cueIndexAt(time)
       setCueIndex((current) => (current === next ? current : next))
       if (progressBar) {
-        progressBar.style.transform = `scaleX(${Math.min(1, Math.max(0, time / ABOUT_NARRATION_DURATION))})`
+        const pct = Math.min(1, Math.max(0, time / ABOUT_NARRATION_DURATION))
+        progressBar.style.width = `${pct * 100}%`
       }
 
       if (time >= ABOUT_NARRATION_DURATION) close()
@@ -429,7 +430,7 @@ export function AboutExperience() {
     return () => {
       cancelAnimationFrame(frame)
       amplitudeRef.current = 0
-      if (progressBar) progressBar.style.transform = "scaleX(0)"
+      if (progressBar) progressBar.style.width = "0%"
     }
   }, [close, phase, reduceMotion])
 
@@ -678,25 +679,31 @@ export function AboutExperience() {
               <div className="relative w-full max-w-sm sm:max-w-md">
                 <div
                   className={cn(
-                    "pointer-events-none absolute inset-x-2 top-1/2 h-5 -translate-y-1/2 rounded-full",
-                    "bg-[#2563EB]/18 blur-md dark:bg-[#2563EB]/28"
+                    "pointer-events-none absolute inset-x-1 top-1/2 h-6 -translate-y-1/2 rounded-full",
+                    "bg-[#2563EB]/22 blur-lg dark:bg-[#2563EB]/32"
                   )}
                 />
                 <div
                   className={cn(
-                    "relative h-1 overflow-visible rounded-full",
-                    "bg-slate-300/55 shadow-[inset_0_1px_1px_rgba(15,23,42,0.06)]",
+                    "relative h-1.5 overflow-visible rounded-full",
+                    "bg-slate-300/60 shadow-[inset_0_1px_1px_rgba(15,23,42,0.08)]",
                     "dark:bg-white/14 dark:shadow-[inset_0_1px_1px_rgba(0,0,0,0.25)]"
                   )}
                 >
                   <div
                     ref={progressRef}
-                    className="about-narration-progress relative h-full w-full origin-left will-change-transform"
-                    style={{ transform: "scaleX(0)" }}
+                    className="about-narration-progress relative h-full w-0 min-w-0 will-change-[width]"
+                    style={{ width: "0%" }}
                   >
-                    <span className="absolute inset-0 rounded-full bg-linear-to-r from-[#BFDBFE] via-[#3B82F6] to-[#2563EB]" />
-                    <span className="about-narration-progress-sheen absolute inset-y-0 left-0 w-1/3 rounded-full bg-linear-to-r from-transparent via-white/70 to-transparent" />
-                    <span className="absolute top-1/2 right-0 size-2.5 -translate-y-1/2 translate-x-1/2 rounded-full bg-white shadow-[0_0_12px_rgba(37,99,235,0.85),0_0_4px_rgba(255,255,255,0.9)]" />
+                    <span className="absolute inset-0 rounded-full bg-linear-to-r from-[#93C5FD] via-[#3B82F6] to-[#1D4ED8]" />
+                    <span className="about-narration-progress-sheen absolute inset-y-0 left-0 w-2/5 rounded-full bg-linear-to-r from-transparent via-white/75 to-transparent" />
+                    <span
+                      className={cn(
+                        "absolute top-1/2 right-0 size-3 -translate-y-1/2 translate-x-1/2 rounded-full",
+                        "bg-white",
+                        "shadow-[0_0_0_3px_rgba(37,99,235,0.28),0_0_16px_rgba(37,99,235,0.9),0_0_6px_rgba(255,255,255,1)]"
+                      )}
+                    />
                   </div>
                 </div>
               </div>
