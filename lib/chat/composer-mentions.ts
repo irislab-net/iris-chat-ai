@@ -2,7 +2,6 @@
 
 import { isLowSignalUserMessage } from "@/lib/co-pilot-recovery"
 import { stripMarketContextAppendix } from "@/lib/iris-paper-trade/prompt"
-import { buildActionSignalPrompt } from "@/lib/iris-paper-trade/signal-prompts"
 
 export type IrisMentionTool = "signal"
 
@@ -41,8 +40,16 @@ function normalizeMentionQuery(query: string): string {
   return query.trim().toLowerCase().replace(/\s+/g, " ")
 }
 
+/** Exact chat payload for a signal request — backend gathers market data. */
+export function formatSignalCommand(asset: string): string {
+  const trimmed = asset.trim()
+  if (!trimmed) return "@signal"
+  return `@signal ${trimmed}`
+}
+
+/** @deprecated Prefer formatSignalCommand — kept as an alias for call sites/tests. */
 export function buildSignalPrompt(asset: string): string {
-  return buildActionSignalPrompt(asset)
+  return formatSignalCommand(asset)
 }
 
 /** Active @-query at cursor, if any. */
@@ -82,9 +89,12 @@ export function filterMentionOptions(query: string): IrisMentionOption[] {
 
 /** Expand tool tag + user text before send. */
 
-/** Short history/UI label for expanded desk prompts so follow-ups are not re-primed. */
+/** Short history/UI label for signal commands so follow-ups are not re-primed. */
 export function summarizeSignalUserMessage(text: string): string {
   const trimmed = stripMarketContextAppendix(text)
+  const mention = trimmed.match(/^@signal\s+(.+)$/u)
+  if (mention?.[1]) return `Signal · ${mention[1].trim()}`
+  // Legacy desk prompts still stored in older threads.
   const en = trimmed.match(/^Trading desk request for\s+(.+?)\./u)
   if (en?.[1]) return `Signal · ${en[1].trim()}`
   const fa = trimmed.match(/^درخواست\s+میز\s+معاملاتی\s+برای\s+(.+?)\./u)
@@ -92,11 +102,11 @@ export function summarizeSignalUserMessage(text: string): string {
   return trimmed
 }
 
-/** Re-expand a summarized signal label back into a desk prompt when needed. */
+/** Re-expand a summarized signal label back into the @signal chat payload. */
 export function expandSummarizedSignalUserMessage(text: string): string {
   const trimmed = text.trim()
   const summarized = trimmed.match(/^Signal · (.+)$/u)
-  if (summarized?.[1]) return buildSignalPrompt(summarized[1].trim())
+  if (summarized?.[1]) return formatSignalCommand(summarized[1].trim())
   return trimmed
 }
 
@@ -104,7 +114,7 @@ export function expandComposerDraft(input: ComposerDraft): string {
   const body = input.text.trim()
   if (input.tool === "signal") {
     if (isLowSignalUserMessage(body)) return body
-    return buildSignalPrompt(body)
+    return formatSignalCommand(body)
   }
   return body
 }
@@ -118,7 +128,7 @@ export function expandComposerMentions(text: string): string {
   if (inline) {
     const asset = inline[1] ?? ""
     if (isLowSignalUserMessage(asset)) return trimmed
-    return buildSignalPrompt(asset)
+    return formatSignalCommand(asset)
   }
 
   return trimmed

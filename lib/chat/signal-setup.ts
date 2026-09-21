@@ -1,8 +1,4 @@
-import {
-  isStructuredSignalSetupContent,
-  parsePaperTicketFromAssistantText,
-  resolvePaperTicketForAssistantMessage,
-} from "@/lib/chat/parse-trade-setup"
+import { isStructuredSignalSetupContent } from "@/lib/chat/parse-trade-setup"
 import { SIGNAL_SETUP_HEADER } from "@/lib/chat/signal-setup-constants"
 import type { PaperTradeTicket } from "@/lib/iris-paper-trade/types"
 import type { ChatUiMessage } from "@/lib/chat-storage"
@@ -49,8 +45,9 @@ function isGenericThesis(text: string): boolean {
 }
 
 /**
- * Attach `paperTicket` to the first setup assistant turn only.
- * Never infer tickets from follow-up prose at render time.
+ * Keep the first trusted `paperTicket` in a thread; strip duplicates on
+ * follow-ups. Never invent tickets from assistant prose (integrity: only
+ * `show_trade_signal` / recovery / persisted API tickets).
  */
 export function enrichPaperTicketsOnMessages(
   messages: ChatUiMessage[]
@@ -71,14 +68,7 @@ export function enrichPaperTicketsOnMessages(
       return message
     }
 
-    const content = message.content.trim()
-    if (!content || !isStructuredSignalSetupContent(content)) return message
-
-    const ticket = parsePaperTicketFromAssistantText(content)
-    if (!ticket) return message
-
-    threadHasSetup = true
-    return { ...message, paperTicket: ticket }
+    return message
   })
 }
 
@@ -88,10 +78,8 @@ export function splitSignalAssistantMessage(input: {
   paperTicket?: PaperTradeTicket
 }): SignalMessageParts {
   const content = input.content.trim()
-  const ticket = resolvePaperTicketForAssistantMessage({
-    content,
-    paperTicket: input.paperTicket,
-  })
+  // Cards require an explicit ticket — do not regex-parse prose into a Signal.
+  const ticket = input.paperTicket ?? null
 
   if (!ticket) {
     return { leadText: "", ticket: null, tailText: "" }
@@ -100,7 +88,8 @@ export function splitSignalAssistantMessage(input: {
   const headerLine =
     content.match(/^(?:Exur|IRIS) setup[^\n]*/i)?.[0]?.trim() ?? ""
 
-  let tailText = ticket.thesis?.trim() ?? ""
+  const ticketThesis = ticket.thesis?.trim() ?? ""
+  let tailText = ticketThesis
   if (isGenericThesis(tailText)) {
     tailText = extractThesisFromContent(content, ticket)
   }
@@ -108,8 +97,40 @@ export function splitSignalAssistantMessage(input: {
     tailText = ""
   }
 
+  let leadText = headerLine
+  // Keep API output_text when it is free-form (not a structured setup dump).
+  if (!leadText && content && !isStructuredSignalSetupContent(content)) {
+    if (isGenericThesis(ticketThesis)) {
+      // Tool signal + free-form reply: prose above the card.
+      leadText = content
+      if (tailText === content) tailText = ""
+    } else if (content !== tailText) {
+      leadText = content
+    }
+    // else: content is exactly the real thesis — keep it as tail under the card.
+  }
+
+  // Card owns thesis — avoid duplicating it under the card.
+  if (ticketThesis && tailText === ticketThesis) {
+    tailText = ""
+  }
+  if (ticketThesis && leadText === ticketThesis) {
+    leadText = ""
+  }
+
+  // Last resort: never drop visible free-form prose.
+  if (
+    !leadText &&
+    !tailText &&
+    content &&
+    !isStructuredSignalSetupContent(content) &&
+    content !== ticketThesis
+  ) {
+    leadText = content
+  }
+
   return {
-    leadText: headerLine,
+    leadText,
     ticket,
     tailText,
   }

@@ -9,7 +9,7 @@ import {
   landingSection,
   landingSectionBody,
 } from "@/lib/landing-modern-styles"
-import { APP_NEWS_PATH } from "@/lib/site"
+import { getLaunchAppHref } from "@/lib/site"
 import { cn } from "@/lib/utils"
 
 export function CtaSection() {
@@ -36,7 +36,7 @@ export function CtaSection() {
           />
 
           <div className="mt-9 flex justify-center">
-            <SphereCta href={APP_NEWS_PATH} variant="glass">
+            <SphereCta href={getLaunchAppHref()} variant="glass">
               {CTA_SECTION.cta}
             </SphereCta>
           </div>

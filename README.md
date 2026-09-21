@@ -1,13 +1,16 @@
-# IRIS Chat AI
+# Exur
 
-Focused fork of IRIS Lab — **News** and **IRIS Chat** only.
+Focused Exur app — **News**, **Exur Chat**, and marketing/legal pages.
 
 ## Features
 
 - **News** — scored market headlines and intel feed
-- **IRIS Chat** — docked co-pilot beside the news feed (desktop) or full-screen tab (mobile)
+- **Exur Chat** — docked co-pilot beside the news feed (desktop) or full-screen (mobile)
+- **Trade signal cards** — when the model returns a clear setup (`show_trade_signal` / `@signal`)
+- **Landing** — `/home` marketing site
+- **Billing / upgrade / legal** — Plus plans, terms, privacy, about
 
-Removed from the full IRIS Lab app: trading desk, paper trading, analysis tab, and related UI.
+Removed: trading desk UI, paper-trading engine, TradingView / Lightweight Charts, open-signal-in-trade tools.
 
 ## Development
 

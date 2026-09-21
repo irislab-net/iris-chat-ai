@@ -4,8 +4,12 @@ import type { ReactNode } from "react"
 import dynamic from "next/dynamic"
 
 import { IrisLabLogo } from "@/components/brand/iris-lab-logo"
+import { ChatMessageQuote } from "@/components/app-shell/chat-message-quote"
 import { chatUserBubbleClass } from "@/components/app-shell/chat-turn-actions"
 import { TypingDots } from "@/components/app-shell/chat-typing"
+import type { MessageQuote } from "@/lib/api/types"
+import { parseServerMessageId } from "@/lib/chat-message-id"
+import { formatChatTime } from "@/lib/chat-storage"
 import { cn } from "@/lib/utils"
 import { chatMobileAssistantClass } from "@/components/app-shell/chat-mobile-gemini-styles"
 
@@ -77,17 +81,26 @@ function ChatUserBubble({
 }
 
 function ChatAssistantTurn({
+  messageId,
   content,
+  createdAt,
+  replyTo,
   waiting,
+  streaming,
   children,
   actions,
   toolbar,
   className,
   variant = "default",
 }: {
+  messageId?: string
   /** Assistant reply — rendered as GFM markdown (tables, lists, code). */
   content?: string
+  createdAt?: string
+  replyTo?: MessageQuote
   waiting?: boolean
+  /** While typewriter/stream paints, skip markdown parse (cheap plain text). */
+  streaming?: boolean
   compact?: boolean
   children?: ReactNode
   actions?: ReactNode
@@ -96,11 +109,21 @@ function ChatAssistantTurn({
   variant?: "default" | "gemini"
 }) {
   const isGemini = variant === "gemini"
+  const serverId = messageId ? parseServerMessageId(messageId) : null
+  const anchorId = serverId != null ? `msg-${serverId}` : undefined
   const hasBody =
-    waiting || Boolean(content?.trim()) || Boolean(children)
+    waiting || Boolean(content?.trim()) || Boolean(children) || Boolean(replyTo)
+  const timestamp = createdAt ? (
+    <p className="min-w-0 truncate text-[10px] leading-none text-muted-foreground/80">
+      {formatChatTime(createdAt)}
+    </p>
+  ) : null
 
   return (
-    <div className={cn("w-full min-w-0", isGemini ? "px-0" : "px-2 sm:px-3", className)}>
+    <div
+      id={anchorId}
+      className={cn("w-full min-w-0", isGemini ? "px-0" : "px-2 sm:px-3", className)}
+    >
       {hasBody ? (
         <div
           dir="auto"
@@ -116,15 +139,32 @@ function ChatAssistantTurn({
             <TypingDots className="text-muted-foreground/70" />
           ) : (
             <>
+              {replyTo ? <ChatMessageQuote quote={replyTo} /> : null}
               {content?.trim() ? (
-                <AIMessageRenderer content={content} />
+                streaming ? (
+                  <div className="whitespace-pre-wrap wrap-anywhere">
+                    {content}
+                  </div>
+                ) : (
+                  <AIMessageRenderer content={content} />
+                )
               ) : null}
               {children}
+              {!isGemini && timestamp ? (
+                <div className="mt-1.5">{timestamp}</div>
+              ) : null}
             </>
           )}
         </div>
       ) : null}
-      {toolbar ? <div className={cn(isGemini ? "mt-0.5" : "mt-1")}>{toolbar}</div> : null}
+      {isGemini && (timestamp || toolbar) ? (
+        <div className="mt-1 flex min-h-7 items-center justify-between gap-2">
+          {timestamp ?? <span aria-hidden className="shrink-0" />}
+          {toolbar}
+        </div>
+      ) : toolbar ? (
+        <div className="mt-1">{toolbar}</div>
+      ) : null}
       {actions ? (
         <div className="mt-3 flex w-full flex-col items-start gap-2">{actions}</div>
       ) : null}

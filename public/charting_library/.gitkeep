@@ -1,8 +1,0 @@
-# Place the licensed TradingView Charting Library bundle here.
-#
-# 1. Request access: https://www.tradingview.com/charting-library-docs/
-# 2. Copy the `charting_library/` folder from the private repository into this directory.
-# 3. Expected entry: public/charting_library/charting_library.standalone.js
-#
-# IRIS auto-detects this bundle and switches from the legacy Lightweight Charts
-# fallback to TradingView Advanced Charts.

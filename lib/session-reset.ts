@@ -1,6 +1,5 @@
 import { clearStoredTokens } from "@/lib/api/auth"
 import { clearChatStore, discardLegacyGlobalChatStore } from "@/lib/chat-storage"
-import { resetPaperStore } from "@/lib/paper-trading/store"
 
 export const SESSION_RESET_EVENT = "iris-session-reset"
 
@@ -15,7 +14,6 @@ export function resetClientSessionOnLogout(detail?: SessionResetDetail): void {
   clearStoredTokens()
   discardLegacyGlobalChatStore()
   clearChatStore(null)
-  resetPaperStore()
 
   window.dispatchEvent(
     new CustomEvent<SessionResetDetail>(SESSION_RESET_EVENT, { detail })

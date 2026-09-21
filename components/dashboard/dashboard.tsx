@@ -2,13 +2,10 @@
 
 import * as React from "react"
 
-import { HeroPulse } from "@/components/dashboard/insight-panels"
 import {
-  HeroPulseSkeleton,
   IntelWorkspaceSkeleton,
 } from "@/components/dashboard/intel-skeletons"
 import { MarketContextWorkspace } from "@/components/dashboard/market-context-workspace"
-import { DeskWorkspaceSkeleton } from "@/components/paper-trading/desk-skeleton"
 import { useAuth } from "@/components/auth/auth-provider"
 import { fetchInsightHome, fetchNewsHome, fetchNewsLatest } from "@/lib/api/data"
 import {
@@ -25,24 +22,10 @@ import {
 } from "@/lib/format"
 import { cn } from "@/lib/utils"
 
-function DashboardSkeleton({
-  variant = "desk",
-}: {
-  variant?: "desk" | "intel" | "analysis"
-}) {
-  if (variant === "desk") {
-    return (
-      <div className="flex min-h-0 w-full flex-1 flex-col">
-        <DeskWorkspaceSkeleton />
-      </div>
-    )
-  }
-
+function DashboardSkeleton() {
   return (
     <div className="flex min-h-0 w-full flex-1 flex-col">
-      <IntelWorkspaceSkeleton
-        panel={variant === "analysis" ? "analysis" : "news"}
-      />
+      <IntelWorkspaceSkeleton panel="news" />
     </div>
   )
 }
@@ -53,10 +36,9 @@ type DashboardProps = {
   initialNews?: NewsHome | null
   /**
    * Mobile bottom-nav section. `null` = desktop (show full stack).
-   * `"home"` = Market State only; tab ids = workspace panel only.
+   * tab ids = workspace panel only.
    */
   mobileSection?: "news" | null
-  showHome?: boolean
   showWorkspace?: boolean
   preferIntel?: boolean
 }
@@ -65,7 +47,6 @@ function Dashboard({
   initialInsight = null,
   initialNews = null,
   mobileSection = null,
-  showHome = true,
   showWorkspace = true,
   preferIntel = false,
 }: DashboardProps) {
@@ -80,12 +61,10 @@ function Dashboard({
   const [newsReady, setNewsReady] = React.useState(() =>
     hasUsableNews(initialNews)
   )
-  /** Minute tick for relative freshness labels (not F1 boundary scheduling). */
   const [nowMs, setNowMs] = React.useState(() => Date.now())
-
-  const lastFetchAtRef = React.useRef<number | null>(null)
-  const inFlightRef = React.useRef(false)
   const mountedRef = React.useRef(true)
+  const inFlightRef = React.useRef(false)
+  const lastFetchAtRef = React.useRef<number | null>(null)
 
   React.useEffect(() => {
     mountedRef.current = true
@@ -116,7 +95,7 @@ function Dashboard({
       if (insightData) setInsight(insightData)
       if (newsData) setNews(newsData)
     } catch {
-      // Desk + news empty states stay usable; do not blank the page.
+      // News empty states stay usable; do not blank the page.
     } finally {
       inFlightRef.current = false
       if (mountedRef.current) {
@@ -131,7 +110,6 @@ function Dashboard({
     return () => window.clearInterval(id)
   }, [])
 
-  // Fill any section the SSR snapshot missed (news often arrives after insight).
   React.useEffect(() => {
     if (hasUsableInsight(initialInsight) && hasUsableNews(initialNews)) return
     const id = window.setTimeout(() => {
@@ -140,7 +118,6 @@ function Dashboard({
     return () => window.clearTimeout(id)
   }, [initialInsight, initialNews])
 
-  // Candle-aligned refresh: one-shot timeout → refetch → reschedule from clock.
   React.useEffect(() => {
     let timeoutId = 0
     let cancelled = false
@@ -171,7 +148,6 @@ function Dashboard({
         })()
         return
       }
-      // Realign single timer after throttle/sleep without extra fetch.
       scheduleNext()
     }
 
@@ -197,23 +173,10 @@ function Dashboard({
   return (
     <div
       className={cn(
-        "flex min-h-0 w-full flex-1 flex-col gap-4 p-4 pb-8 md:p-6",
-        !showHome && "gap-0 p-0 pb-0 md:p-0",
+        "flex min-h-0 w-full flex-1 flex-col gap-0 p-0 pb-0 md:p-0",
         mobileSection != null && "h-full min-h-0 flex-1"
       )}
     >
-      {showHome ? (
-        insight && prediction ? (
-          <HeroPulse
-            summary={insight.summary}
-            prediction={prediction}
-            freshnessLabel={insightFreshness}
-          />
-        ) : insightReady ? null : (
-          <HeroPulseSkeleton />
-        )
-      ) : null}
-
       {showWorkspace ? (
         <MarketContextWorkspace
           symbol={symbol}
@@ -228,7 +191,7 @@ function Dashboard({
           insightFreshnessLabel={insightFreshness}
           isAuthenticated={isAuthenticated}
           authLoading={authLoading}
-          preferIntel={preferIntel || showHome}
+          preferIntel={preferIntel}
           mobileSection={mobileSection === "news" ? mobileSection : null}
         />
       ) : null}

@@ -15,7 +15,13 @@ describe("isPaperTradeIntent", () => {
     expect(isPaperTradeIntent(PAPER_TRADE_SAMPLE_PROMPT)).toBe(true)
   })
 
-  it("matches signal starters through the paper-trade pipeline", () => {
+  it("keeps @signal commands on regular chat (not local paper-trade pipeline)", () => {
+    expect(isPaperTradeIntent("@signal ETH")).toBe(false)
+    expect(isPaperTradeIntent("@signal BTC")).toBe(false)
+    expect(isPaperTradeIntent("Signal · ETH")).toBe(false)
+  })
+
+  it("matches legacy desk signal starters through the paper-trade pipeline", () => {
     expect(isPaperTradeIntent(BTC_SIGNAL_SAMPLE_PROMPT)).toBe(true)
     expect(isPaperTradeIntent(ETH_SIGNAL_SAMPLE_PROMPT)).toBe(true)
   })

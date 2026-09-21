@@ -1,6 +1,8 @@
+import { CHAT_APP_ORIGIN } from "@/lib/hosts"
+
 /**
- * Production site origin for canonical / metadataBase / robots.
- * Prefer NEXT_PUBLIC_APP_URL; fallback matches OAuth destination default in lib/api/config.ts.
+ * Production chat app origin for OAuth / desk metadata.
+ * Prefer NEXT_PUBLIC_APP_URL; fallback matches chat.exur.ai.
  */
 export const PRODUCTION_ORIGIN = "https://chat.exur.ai"
 
@@ -13,7 +15,7 @@ export function getSiteOrigin(): string {
 export const SITE_NAME = "Exur"
 
 export const SITE_DESCRIPTION =
-  "Exur is your AI financial assistant. Ask about spending, savings, and what’s next."
+  "Exur is your AI financial assistant. See where your money is going, ask in plain language, and get a clear next step, not another feed."
 
 export const ABOUT_DESCRIPTION =
   "Exur is an AI financial assistant. Ask about spending, savings, and what’s next, in your own words."
@@ -27,14 +29,26 @@ export const TERMS_DESCRIPTION =
 /** Verified public contact from product UI (`website-toolbar` CONTACT.x). */
 export const SOCIAL_X_URL = "https://x.com/exur_ai"
 
-/** Authenticated / public market desk (Launch App target). */
+/** Authenticated / public market desk (Launch App target on chat.exur.ai). */
 export const APP_PATH = "/"
 
-/** Marketing landing page. */
+/**
+ * Internal landing route (rewritten from exur.ai `/`).
+ * Prefer linking to `/` on marketing; `/home` still works via redirect.
+ */
 export const LANDING_PATH = "/home"
 
 /** Launch App lands on the news tab (canonical in-app entry). */
 export const APP_NEWS_PATH = `${APP_PATH}?tab=news`
+
+/**
+ * Cross-host Launch App href.
+ * Relative on local so `local.exur.ai` keeps same-origin desk; absolute in production.
+ */
+export function getLaunchAppHref(): string {
+  if (process.env.NODE_ENV === "development") return APP_NEWS_PATH
+  return `${CHAT_APP_ORIGIN}${APP_NEWS_PATH}`
+}
 
 /** Desk routes — root chat app and legacy `/app` redirect target. */
 export function isAppDeskPath(pathname: string | null | undefined): boolean {
@@ -50,7 +64,6 @@ export const BILLING_PATH = "/billing"
 /** Public indexable paths (sitemap + IA) — keep in sync with INDEXABLE_ROUTES. */
 export const PUBLIC_INDEXABLE_PATHS = [
   APP_PATH,
-  LANDING_PATH,
   "/about",
   "/ai-trading-signals",
   "/privacy",

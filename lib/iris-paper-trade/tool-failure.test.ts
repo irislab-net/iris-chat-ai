@@ -24,9 +24,28 @@ describe("isOpenPaperTradeToolFailureProse", () => {
 })
 
 describe("findToolFailureSignalRecoveryTargets", () => {
-  it("finds assistant turns after a signal user message", () => {
+  it("does not recover @signal turns via the local desk synthesizer", () => {
     const targets = findToolFailureSignalRecoveryTargets([
       { id: "u1", role: "user", content: "Signal · eth" },
+      {
+        id: "a1",
+        role: "assistant",
+        content:
+          "I am unable to execute the open_paper_trade function. It appears to be an unknown tool.",
+      },
+    ])
+
+    expect(targets).toEqual([])
+  })
+
+  it("recovers legacy desk-prompt turns that failed open_paper_trade", () => {
+    const targets = findToolFailureSignalRecoveryTargets([
+      {
+        id: "u1",
+        role: "user",
+        content:
+          "Trading desk request for eth. Use ALL available Exur evidence.",
+      },
       {
         id: "a1",
         role: "assistant",

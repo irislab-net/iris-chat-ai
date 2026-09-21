@@ -1,4 +1,4 @@
-/** Free public Hyperliquid candles — HTTP snapshot + WebSocket stream. */
+/** Free public Hyperliquid candles — HTTP snapshot for signal market context. */
 
 export type CandleBar = {
   t: number
@@ -9,7 +9,6 @@ export type CandleBar = {
 }
 
 const HL_INFO = "https://api.hyperliquid.xyz/info"
-const HL_WS = "wss://api.hyperliquid.xyz/ws"
 
 const HL_INTERVALS = new Set([
   "1m",
@@ -28,13 +27,13 @@ const HL_INTERVALS = new Set([
   "1M",
 ])
 
-/** Map desk symbol → Hyperliquid coin (perp). Unsupported → null. */
+/** Map symbol → Hyperliquid coin (perp). Unsupported → null. */
 export function hyperliquidCoin(symbol: string): string | null {
   const key = symbol.trim().toUpperCase().replace(/[^A-Z0-9]/g, "")
   if (key === "ETH" || key === "ETHUSD" || key === "ETHUSDT") return "ETH"
   if (key === "BTC" || key === "BTCUSD" || key === "BTCUSDT") return "BTC"
   if (key === "SOL" || key === "SOLUSD" || key === "SOLUSDT") return "SOL"
-  // Desk gold (XAU) tracks Hyperliquid PAXG perp liquidity.
+  // Gold (XAU) tracks Hyperliquid PAXG perp liquidity.
   if (key === "XAU" || key === "XAUUSD" || key === "XAUUSDT") return "PAXG"
   return null
 }
@@ -89,24 +88,6 @@ function parseCandle(raw: unknown): CandleBar | null {
   return bar
 }
 
-export function mergeCandleUpdate(
-  candles: CandleBar[],
-  update: CandleBar,
-  limit = 56
-): CandleBar[] {
-  if (candles.length === 0) return [update]
-  const last = candles[candles.length - 1]
-  if (update.t === last.t) {
-    return [...candles.slice(0, -1), update]
-  }
-  if (update.t > last.t) {
-    const next = [...candles, update]
-    return next.length > limit ? next.slice(next.length - limit) : next
-  }
-  // Out-of-order / older bar — ignore for live backdrop.
-  return candles
-}
-
 export async function fetchHyperliquidCandles(input: {
   symbol: string
   timeframe: string
@@ -149,186 +130,4 @@ export async function fetchHyperliquidCandles(input: {
     .map(parseCandle)
     .filter((c): c is CandleBar => c != null)
     .sort((a, b) => a.t - b.t)
-}
-
-/**
- * Fetch historical candles covering [sinceMs, endTime] via the same Hyperliquid
- * candleSnapshot source, paginating when the window exceeds one response.
- */
-export async function fetchHyperliquidCandlesSince(input: {
-  symbol: string
-  timeframe: string
-  sinceMs: number
-  endTime?: number
-  signal?: AbortSignal
-}): Promise<CandleBar[]> {
-  const interval = hyperliquidInterval(input.timeframe)
-  const step = hyperliquidIntervalMs(interval)
-  const endTime = input.endTime ?? Date.now()
-  const sinceMs = Math.max(0, input.sinceMs)
-  if (!(endTime > sinceMs)) return []
-
-  const maxPages = 24
-  const pageSpan = step * 500
-  const byT = new Map<number, CandleBar>()
-  let cursor = sinceMs
-
-  for (let page = 0; page < maxPages && cursor < endTime; page++) {
-    const pageEnd = Math.min(endTime, cursor + pageSpan)
-    const chunk = await fetchHyperliquidCandles({
-      symbol: input.symbol,
-      timeframe: interval,
-      startTime: cursor,
-      endTime: pageEnd,
-      signal: input.signal,
-    })
-    for (const bar of chunk) {
-      if (bar.t + step <= sinceMs) continue
-      byT.set(bar.t, bar)
-    }
-    if (chunk.length === 0) {
-      cursor = pageEnd
-      continue
-    }
-    const last = chunk[chunk.length - 1]!
-    const next = last.t + step
-    cursor = next > cursor ? next : pageEnd
-  }
-
-  return [...byT.values()].sort((a, b) => a.t - b.t)
-}
-
-/**
- * Live candle stream via Hyperliquid WebSocket (free, no key).
- * Seeds with HTTP snapshot, then applies streaming candle updates.
- */
-export function subscribeHyperliquidCandles(input: {
-  symbol: string
-  timeframe: string
-  limit?: number
-  onCandles: (candles: CandleBar[]) => void
-  onStatus?: (status: "connecting" | "live" | "reconnecting" | "idle") => void
-}): () => void {
-  const coin = hyperliquidCoin(input.symbol)
-  if (!coin || typeof window === "undefined") {
-    input.onStatus?.("idle")
-    return () => {}
-  }
-
-  const interval = hyperliquidInterval(input.timeframe)
-  const limit = Math.min(Math.max(input.limit ?? 56, 8), 500)
-  let candles: CandleBar[] = []
-  let socket: WebSocket | null = null
-  let pingId: number | null = null
-  let reconnectId: number | null = null
-  let closed = false
-  let attempt = 0
-
-  const emit = () => input.onCandles(candles)
-
-  const clearTimers = () => {
-    if (pingId != null) {
-      window.clearInterval(pingId)
-      pingId = null
-    }
-    if (reconnectId != null) {
-      window.clearTimeout(reconnectId)
-      reconnectId = null
-    }
-  }
-
-  const applyUpdate = (raw: unknown) => {
-    const items = Array.isArray(raw) ? raw : [raw]
-    let changed = false
-    for (const item of items) {
-      const bar = parseCandle(item)
-      if (!bar) continue
-      const next = mergeCandleUpdate(candles, bar, limit)
-      if (next !== candles) {
-        candles = next
-        changed = true
-      }
-    }
-    if (changed) emit()
-  }
-
-  const connect = () => {
-    if (closed) return
-    input.onStatus?.(attempt > 0 ? "reconnecting" : "connecting")
-    const ws = new WebSocket(HL_WS)
-    socket = ws
-
-    ws.onopen = () => {
-      if (closed) {
-        ws.close()
-        return
-      }
-      attempt = 0
-      input.onStatus?.("live")
-      ws.send(
-        JSON.stringify({
-          method: "subscribe",
-          subscription: { type: "candle", coin, interval },
-        })
-      )
-      pingId = window.setInterval(() => {
-        if (ws.readyState === WebSocket.OPEN) {
-          ws.send(JSON.stringify({ method: "ping" }))
-        }
-      }, 20_000)
-    }
-
-    ws.onmessage = (event) => {
-      try {
-        const msg = JSON.parse(String(event.data)) as {
-          channel?: string
-          data?: unknown
-        }
-        if (msg.channel === "candle") {
-          applyUpdate(msg.data)
-        }
-      } catch {
-        // ignore malformed frames
-      }
-    }
-
-    ws.onerror = () => {
-      // onclose handles reconnect
-    }
-
-    ws.onclose = () => {
-      clearTimers()
-      socket = null
-      if (closed) return
-      attempt += 1
-      input.onStatus?.("reconnecting")
-      const delay = Math.min(1000 * 2 ** Math.min(attempt, 4), 15_000)
-      reconnectId = window.setTimeout(connect, delay)
-    }
-  }
-
-  void (async () => {
-    try {
-      candles = await fetchHyperliquidCandles({
-        symbol: input.symbol,
-        timeframe: input.timeframe,
-        limit,
-      })
-      if (!closed) emit()
-    } catch {
-      candles = []
-    }
-    if (!closed) connect()
-  })()
-
-  return () => {
-    closed = true
-    clearTimers()
-    if (socket) {
-      socket.onclose = null
-      socket.close()
-      socket = null
-    }
-    input.onStatus?.("idle")
-  }
 }

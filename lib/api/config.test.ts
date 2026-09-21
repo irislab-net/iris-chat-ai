@@ -20,8 +20,10 @@ describe("loginWithGoogleUrl", () => {
     expect(url.searchParams.get("privacy_notice")).toBe("accepted")
   })
 
-  it("detects chat.exur.ai as the chat app host", () => {
+  it("treats chat and marketing hosts as chat OAuth surfaces", () => {
     expect(isChatAppHost("chat.exur.ai")).toBe(true)
+    expect(isChatAppHost("exur.ai")).toBe(true)
+    expect(isChatAppHost("www.exur.ai")).toBe(true)
     expect(isChatAppHost("intel.exur.ai")).toBe(false)
   })
 

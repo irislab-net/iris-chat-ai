@@ -1,14 +1,12 @@
 import { parsePaperTicketFromAssistantText } from "@/lib/chat/parse-trade-setup"
+import { SIGNAL_DEMO_EQUITY } from "@/lib/chat/trade-signal"
 import type { CoPilotEffort, CoPilotHistoryMessage } from "@/lib/api/types"
 import { buildMarketContextPacket } from "@/lib/iris-paper-trade/build-context"
 import { synthesizePaperDecisionFromContext } from "@/lib/iris-paper-trade/fallback-decision"
 import { extractTradeSymbolFromMessage } from "@/lib/iris-paper-trade/extract-symbol"
 import { isPaperTradeIntent } from "@/lib/iris-paper-trade/intent"
 import { isOpenPaperTradeToolFailureProse } from "@/lib/iris-paper-trade/tool-failure"
-import {
-  formatOpenedChatMessage,
-  formatProposedChatMessage,
-} from "@/lib/iris-paper-trade/execute"
+import { formatProposedChatMessage } from "@/lib/iris-paper-trade/execute"
 import { parsePaperDecision } from "@/lib/iris-paper-trade/parse"
 import { planIrisPaperTrade } from "@/lib/iris-paper-trade/plan"
 import {
@@ -28,18 +26,10 @@ import type {
   PaperTradeTicket,
   PlanIrisPaperTradeResult,
 } from "@/lib/iris-paper-trade/types"
-import {
-  positionForSymbol,
-  type PaperPosition,
-} from "@/lib/paper-trading"
-import {
-  getPaperSnapshot,
-  paperOpenTrade,
-} from "@/lib/paper-trading/store"
 
 function proposedFromPlan(
   planned: Extract<PlanIrisPaperTradeResult, { status: "ready" }>,
-  equity?: number
+  equity = SIGNAL_DEMO_EQUITY
 ): IrisPaperTradeChatResult {
   const ticket: PaperTradeTicket = {
     symbol: planned.symbol,
@@ -73,13 +63,11 @@ function proposedFromPlan(
 
 function planDecision(
   decision: ParsedPaperDecision,
-  packet: MarketContextPacket,
-  state: ReturnType<typeof getPaperSnapshot>
+  packet: MarketContextPacket
 ): IrisPaperTradeChatResult {
   const planned = planIrisPaperTrade({
     decision,
     context: packet,
-    state,
   })
 
   if (planned.status === "no_trade") {
@@ -99,12 +87,12 @@ function planDecision(
     }
   }
 
-  return proposedFromPlan(planned, state.account.equity)
+  return proposedFromPlan(planned)
 }
 
 /**
  * When the chat API returns open_paper_trade tool failure prose, synthesize a
- * deterministic desk proposal from live market context (same as run.ts fallback).
+ * deterministic proposal from live market context.
  */
 export async function tryRecoverProposedPaperTradeFromToolFailure(input: {
   userMessage: string
@@ -124,17 +112,13 @@ export async function tryRecoverProposedPaperTradeFromToolFailure(input: {
   const fallbackDecision = synthesizePaperDecisionFromContext(built.packet)
   if (!fallbackDecision) return null
 
-  const result = planDecision(
-    fallbackDecision,
-    built.packet,
-    getPaperSnapshot()
-  )
+  const result = planDecision(fallbackDecision, built.packet)
   return result.status === "proposed" ? result : null
 }
 
 /**
- * One user request → at most one paper-trade proposal.
- * Does not mutate paper state. Opening requires confirmIrisPaperProposal.
+ * One user request → at most one trade-signal proposal.
+ * Does not open positions.
  */
 export async function runIrisPaperTradeRequest(input: {
   userMessage: string
@@ -161,8 +145,6 @@ export async function runIrisPaperTradeRequest(input: {
     }
   }
 
-  const state = getPaperSnapshot()
-
   input.onPhase?.("evaluate")
   const response = await requestPaperTradeDecision({
     userMessage: input.userMessage,
@@ -171,7 +153,6 @@ export async function runIrisPaperTradeRequest(input: {
     history: input.history,
     signal: input.signal,
     effort: input.effort,
-    paperState: state,
   })
 
   const assistantText = assistantTextFromCoPilotResponse(response)
@@ -181,7 +162,7 @@ export async function runIrisPaperTradeRequest(input: {
   })
 
   if (parsed.ok) {
-    return planDecision(parsed.decision, built.packet, state)
+    return planDecision(parsed.decision, built.packet)
   }
 
   const proseTicket = isOpenPaperTradeToolFailureProse(assistantText)
@@ -197,7 +178,7 @@ export async function runIrisPaperTradeRequest(input: {
 
   const fallbackDecision = synthesizePaperDecisionFromContext(built.packet)
   if (fallbackDecision) {
-    return planDecision(fallbackDecision, built.packet, state)
+    return planDecision(fallbackDecision, built.packet)
   }
 
   const reason =
@@ -213,54 +194,5 @@ export async function runIrisPaperTradeRequest(input: {
     message: formatRejectedChatMessage(
       "Exur did not return a valid structured decision."
     ),
-  }
-}
-
-export function confirmIrisPaperProposal(
-  ticket: PaperTradeTicket
-):
-  | { ok: true; position: PaperPosition; message: string }
-  | { ok: false; error: string } {
-  const state = getPaperSnapshot()
-  if (positionForSymbol(state, ticket.symbol)) {
-    return {
-      ok: false,
-      error: `An open paper position already exists for ${ticket.symbol}.`,
-    }
-  }
-
-  const committed = paperOpenTrade({
-    symbol: ticket.symbol,
-    side: ticket.side,
-    quantity: ticket.quantity,
-    entryPrice: ticket.markPrice,
-    stopLoss: ticket.stopLoss,
-    takeProfit: ticket.takeProfit,
-    leverage: ticket.leverage,
-    source: "IRIS_AI",
-  })
-  if (!committed.ok || !committed.position) {
-    return {
-      ok: false,
-      error: committed.ok
-        ? "Engine did not open a position."
-        : committed.error,
-    }
-  }
-
-  return {
-    ok: true,
-    position: committed.position,
-    message: formatOpenedChatMessage({
-      symbol: committed.position.symbol,
-      side: committed.position.side,
-      setup: ticket.setup,
-      thesis: ticket.thesis,
-      quantity: committed.position.quantity,
-      leverage: committed.position.leverage,
-      entryPrice: committed.position.entryPrice,
-      stopLoss: committed.position.stopLoss,
-      takeProfit: committed.position.takeProfit,
-    }),
   }
 }

@@ -1,4 +1,4 @@
-import type { PaperSide } from "@/lib/paper-trading"
+import type { PaperSide } from "@/lib/chat/trade-signal"
 import {
   BTC_SIGNAL_SAMPLE_PROMPT,
   ETH_SIGNAL_SAMPLE_PROMPT,
@@ -19,8 +19,8 @@ export const IRIS_SAMPLE_PROMPTS: readonly IrisSamplePrompt[] = [
     id: "btc-signal",
     title: "BTC signal",
     description:
-      "Live price, models, and news — show a trade card only if the setup is clear.",
-    text: "Give me a BTC market read from live price, multi-timeframe trend, model probabilities, stance, and recent news. If a clear LONG or SHORT edge exists, call show_trade_signal with entry, stopLoss, takeProfit, leverage, setup, and thesis. If Flat, ranging, or the edge is weak, say so and do not invent a trade.",
+      "Ask the chat API for a live trade signal — card only when the model returns one.",
+    text: "@signal BTC",
   },
   {
     id: "market-pulse",
@@ -179,6 +179,11 @@ export type PaperTradeTicket = {
   leverage: number
   setup: string
   thesis: string
+  /** Optional display fields from `show_trade_signal` (omit when absent). */
+  timeHorizon?: string
+  entryReason?: string
+  stopLossReason?: string
+  takeProfitReason?: string
 }
 
 export type IrisPaperTradeChatResult =

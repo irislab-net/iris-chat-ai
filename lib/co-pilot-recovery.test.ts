@@ -175,6 +175,41 @@ describe("co-pilot recovery helpers", () => {
     expect(cleaned.map((m) => m.id)).toEqual(["u1", "fail", "partial-fail"])
   })
 
+  it("sanitizeMessages keeps signal-card turns with empty output_text", () => {
+    const messages: ChatUiMessage[] = [
+      { id: "u1", role: "user", content: "Signal · BTC" },
+      {
+        id: "a1",
+        role: "assistant",
+        content: "",
+        paperTicket: {
+          symbol: "BTC",
+          side: "LONG",
+          quantity: 1,
+          markPrice: 100,
+          stopLoss: 90,
+          takeProfit: 120,
+          leverage: 5,
+          setup: "Trade signal",
+          thesis: "",
+        },
+      },
+    ]
+    expect(sanitizeMessages(messages).map((m) => m.id)).toEqual(["u1", "a1"])
+  })
+
+  it("removeEmptyAssistantTurn keeps blank turns that already have a paperTicket", () => {
+    const messages = [
+      { id: "u1", content: "Signal · BTC" },
+      {
+        id: "a1",
+        content: "",
+        paperTicket: { symbol: "BTC" },
+      },
+    ]
+    expect(removeEmptyAssistantTurn(messages, "a1")).toEqual(messages)
+  })
+
   it("flags digit-only and punctuation-only input as low signal", () => {
     expect(isLowSignalUserMessage("12312434546")).toBe(true)
     expect(isLowSignalUserMessage("!!!")).toBe(true)

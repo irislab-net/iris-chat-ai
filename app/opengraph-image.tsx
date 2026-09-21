@@ -4,6 +4,7 @@ export const alt = "Exur: AI Financial Assistant"
 export const size = { width: 1200, height: 630 }
 export const contentType = "image/png"
 
+/** Keep this file free of next-intl / app providers — OG routes have no intl context. */
 export default function OpenGraphImage() {
   return new ImageResponse(
     (
@@ -15,7 +16,8 @@ export default function OpenGraphImage() {
           flexDirection: "column",
           justifyContent: "space-between",
           padding: "64px 72px",
-          background: "linear-gradient(145deg, #141414 0%, #252525 55%, #1a1a1a 100%)",
+          background:
+            "linear-gradient(145deg, #141414 0%, #252525 55%, #1a1a1a 100%)",
           color: "#f5f5f5",
           fontFamily: "ui-sans-serif, system-ui, sans-serif",
         }}
@@ -32,20 +34,16 @@ export default function OpenGraphImage() {
               width: 72,
               height: 72,
               borderRadius: 18,
-              border: "3px solid #c8c8c8",
+              border: "2px solid rgba(255,255,255,0.35)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
+              fontSize: 34,
+              fontWeight: 700,
+              letterSpacing: "-0.04em",
             }}
           >
-            <div
-              style={{
-                width: 18,
-                height: 18,
-                borderRadius: 999,
-                background: "#d4d4d4",
-              }}
-            />
+            E
           </div>
           <div
             style={{
@@ -93,7 +91,7 @@ export default function OpenGraphImage() {
         >
           <span>exur.ai</span>
           <span style={{ letterSpacing: "0.12em", textTransform: "uppercase" }}>
-            ETH · News · Co-pilot
+            Ask · Decide · Act
           </span>
         </div>
       </div>

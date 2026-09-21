@@ -8,6 +8,18 @@ function compact(text: string): string {
 }
 
 /**
+ * Composer `@signal ETH` (and UI label `Signal · ETH`) — chat API + client
+ * `show_trade_signal`, not the local paper-trade market-context pipeline.
+ */
+export function isSignalMentionCommand(text: string): boolean {
+  const raw = compact(text)
+  if (!raw) return false
+  if (/^@signal(?:\s+\S.*)?$/iu.test(raw)) return true
+  if (/^Signal · .+$/u.test(raw)) return true
+  return false
+}
+
+/**
  * User-initiated paper-trade / signal requests.
  * Regular co-pilot questions (stance, news, “should I long”) stay on the chat path.
  */
@@ -17,6 +29,11 @@ export function isPaperTradeIntent(text: string): boolean {
 
   if (PAPER_TRADE_INTENT_PROMPTS.some((prompt) => compact(prompt) === raw)) {
     return true
+  }
+
+  // Short @signal commands — backend tools + show_trade_signal on regular chat.
+  if (isSignalMentionCommand(raw)) {
+    return false
   }
 
   // Client UI tool — stays on regular chat; not the local paper-trade pipeline.

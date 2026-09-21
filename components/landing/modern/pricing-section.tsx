@@ -21,14 +21,18 @@ import {
   landingTitlePlan,
   landingTitlePrice,
 } from "@/lib/landing-modern-styles"
-import { APP_NEWS_PATH, UPGRADE_PATH } from "@/lib/site"
+import { getLaunchAppHref, UPGRADE_PATH } from "@/lib/site"
 import { cn } from "@/lib/utils"
+import { CHAT_APP_ORIGIN } from "@/lib/hosts"
 
 const CONTACT_EMAIL = "hello@exur.ai"
 
 function planHref(plan: PricingPlan) {
-  if (plan.key === "free") return APP_NEWS_PATH
-  if (plan.key === "plus") return UPGRADE_PATH
+  if (plan.key === "free") return getLaunchAppHref()
+  if (plan.key === "plus") {
+    if (process.env.NODE_ENV === "development") return UPGRADE_PATH
+    return `${CHAT_APP_ORIGIN}${UPGRADE_PATH}`
+  }
   return `mailto:${CONTACT_EMAIL}`
 }
 
@@ -36,8 +40,9 @@ function PlanCta({ plan }: { plan: PricingPlan }) {
   const href = planHref(plan)
   const featured = plan.featured
   const className = cn(landingCta(featured ? "primary" : "light"), "mt-8 w-full")
+  const external = /^https?:\/\//i.test(href) || href.startsWith("mailto:")
 
-  if (plan.key === "ultimate") {
+  if (external) {
     return (
       <Button nativeButton={false} render={<a href={href} />} className={className}>
         {plan.cta}

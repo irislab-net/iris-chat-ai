@@ -2,15 +2,15 @@
 
 import {
   ActivityIcon,
+  ClockIcon,
   CrosshairIcon,
   FlagIcon,
-  GaugeIcon,
+  HexagonIcon,
   LayersIcon,
   ScaleIcon,
-  ShieldIcon,
+  ZapIcon,
   TrendingDownIcon,
   TrendingUpIcon,
-  WalletIcon,
   type LucideIcon,
 } from "lucide-react"
 import { useTranslations } from "next-intl"
@@ -23,29 +23,27 @@ import {
   chatSignalCardMetricTileClass,
 } from "@/components/app-shell/chat-mobile-gemini-styles"
 import { signalRewardRiskRatio } from "@/lib/chat/signal-setup"
-import {
-  PAPER_AI_RISK_FRACTION,
-  paperRiskAmountUsd,
-} from "@/lib/iris-paper-trade/size"
+import { formatTradePrice } from "@/lib/chat/trade-signal"
 import type { PaperTradeTicket } from "@/lib/iris-paper-trade/types"
-import { formatPaperPrice } from "@/lib/paper-trading"
-import { getPaperSnapshot } from "@/lib/paper-trading/store"
 import { cn } from "@/lib/utils"
 
 type PriceColumn = {
   icon: LucideIcon
   label: string
   value: string
+  reason?: string
   emphasis?: boolean
 }
 
 function PriceTile({ column }: { column: PriceColumn }) {
   const Icon = column.icon
+  const hasReason = Boolean(column.reason)
 
   return (
     <div
       className={cn(
-        "flex min-w-0 flex-col items-center px-2 py-3 text-center sm:px-2.5 sm:py-3.5",
+        "flex min-w-0 flex-col px-2.5 py-3 sm:px-3 sm:py-3.5",
+        hasReason ? "items-start text-left" : "items-center text-center",
         column.emphasis
           ? chatSignalCardEntryShellClass
           : chatSignalCardMetricTileClass
@@ -59,14 +57,19 @@ function PriceTile({ column }: { column: PriceColumn }) {
       </p>
       <p
         className={cn(
-          "mt-1.5 font-medium tabular-nums tracking-tight text-foreground",
+          "mt-1.5 font-semibold tabular-nums tracking-tight text-foreground",
           column.emphasis
             ? "text-[1.15rem] leading-none sm:text-[1.25rem]"
-            : "text-[13px] leading-none sm:text-[14px]"
+            : "text-[15px] leading-none sm:text-[16px]"
         )}
       >
         {column.value}
       </p>
+      {column.reason ? (
+        <p className="mt-2 text-[11px] leading-snug text-muted-foreground">
+          {column.reason}
+        </p>
+      ) : null}
     </div>
   )
 }
@@ -95,7 +98,7 @@ function MetaItem({
       <span className={cn(chatSignalCardIconShellClass, "col-start-1 row-span-2")}>
         <Icon className="size-3.5 text-muted-foreground" aria-hidden />
       </span>
-      <p className="col-start-2 row-start-1 text-[10px] leading-none text-muted-foreground">
+      <p className="col-start-2 row-start-1 text-[10px] leading-none tracking-[0.06em] text-muted-foreground uppercase">
         {label}
       </p>
       <p className="col-start-2 row-start-2 text-[13px] font-medium tabular-nums leading-none text-foreground">
@@ -116,27 +119,73 @@ function ChatSignalCard({
   const isLong = ticket.side === "LONG"
   const SideIcon = isLong ? TrendingUpIcon : TrendingDownIcon
   const rewardRisk = signalRewardRiskRatio(ticket)
-  const equity = getPaperSnapshot().account.equity
-  const riskUsd = equity > 0 ? paperRiskAmountUsd(equity) : null
+  const hasLeverage = ticket.leverage > 0
+  const hasSize = ticket.quantity > 0
+  const setup = ticket.setup.trim()
+  const thesis = ticket.thesis.trim()
+  const timeHorizon = ticket.timeHorizon?.trim() ?? ""
+  const stopLossReason = ticket.stopLossReason?.trim() ?? ""
+  const entryReason = ticket.entryReason?.trim() ?? ""
+  const takeProfitReason = ticket.takeProfitReason?.trim() ?? ""
 
   const priceColumns: PriceColumn[] = [
     {
-      icon: ShieldIcon,
+      icon: HexagonIcon,
       label: t("signalCardStopLoss"),
-      value: formatPaperPrice(ticket.stopLoss),
+      value: formatTradePrice(ticket.stopLoss),
+      reason: stopLossReason || undefined,
     },
     {
       icon: CrosshairIcon,
       label: t("signalCardEntry"),
-      value: formatPaperPrice(ticket.markPrice),
+      value: formatTradePrice(ticket.markPrice),
+      reason: entryReason || undefined,
       emphasis: true,
     },
     {
       icon: FlagIcon,
       label: t("signalCardTakeProfit"),
-      value: formatPaperPrice(ticket.takeProfit),
+      value: formatTradePrice(ticket.takeProfit),
+      reason: takeProfitReason || undefined,
     },
   ]
+
+  const metaItems = [
+    hasLeverage ? (
+      <MetaItem
+        key="leverage"
+        icon={ZapIcon}
+        label={t("signalCardLeverage")}
+        value={`${ticket.leverage}x`}
+      />
+    ) : null,
+    hasSize ? (
+      <MetaItem
+        key="size"
+        icon={LayersIcon}
+        label={t("signalCardSize")}
+        value={ticket.quantity.toLocaleString(undefined, {
+          maximumFractionDigits: 4,
+        })}
+      />
+    ) : null,
+    rewardRisk != null ? (
+      <MetaItem
+        key="rr"
+        icon={ScaleIcon}
+        label={t("signalCardRewardRisk")}
+        value={`1 : ${rewardRisk.toFixed(2)}`}
+      />
+    ) : null,
+    timeHorizon ? (
+      <MetaItem
+        key="horizon"
+        icon={ClockIcon}
+        label={t("signalCardTimeHorizon")}
+        value={timeHorizon}
+      />
+    ) : null,
+  ].filter(Boolean)
 
   return (
     <article className={cn("mt-1.5", chatSignalCardClass, className)}>
@@ -156,42 +205,36 @@ function ChatSignalCard({
             {t("signalCardTitle")}
           </span>
         </div>
-        <p className="mt-2 max-w-md text-[13px] leading-relaxed text-muted-foreground">
-          {ticket.setup}
-        </p>
+        {setup ? (
+          <p className="mt-2 max-w-md text-[13px] leading-relaxed text-muted-foreground">
+            {setup}
+          </p>
+        ) : null}
       </header>
 
-      <div className="space-y-3 px-4 pb-3">
+      <div className="space-y-4 px-4 pb-4">
         <PriceBand columns={priceColumns} />
 
-        <div className="grid grid-cols-2 gap-x-4 gap-y-3 sm:grid-cols-4">
-          <MetaItem
-            icon={GaugeIcon}
-            label={t("signalCardLeverage")}
-            value={`${ticket.leverage}x`}
-          />
-          <MetaItem
-            icon={LayersIcon}
-            label={t("signalCardSize")}
-            value={ticket.quantity.toLocaleString(undefined, {
-              maximumFractionDigits: 4,
-            })}
-          />
-          {rewardRisk != null ? (
-            <MetaItem
-              icon={ScaleIcon}
-              label={t("signalCardRewardRisk")}
-              value={`1 : ${rewardRisk.toFixed(2)}`}
-            />
-          ) : null}
-          {riskUsd != null ? (
-            <MetaItem
-              icon={WalletIcon}
-              label={t("signalCardRisk")}
-              value={`~$${riskUsd.toFixed(2)} · ${(PAPER_AI_RISK_FRACTION * 100).toFixed(1)}%`}
-            />
-          ) : null}
-        </div>
+        {metaItems.length > 0 ? (
+          <div className="grid grid-cols-2 gap-x-4 gap-y-3 sm:grid-cols-3">
+            {metaItems}
+          </div>
+        ) : null}
+
+        {thesis ? (
+          <div className="border-t border-foreground/[0.06] pt-3">
+            <p className="text-[10px] font-medium tracking-[0.08em] text-muted-foreground uppercase">
+              {t("signalCardThesisHeading")}
+            </p>
+            <p className="mt-2 text-[13px] leading-relaxed text-foreground/85">
+              {thesis}
+            </p>
+          </div>
+        ) : null}
+
+        <p className="text-center text-[9px] tracking-[0.08em] text-muted-foreground/70 uppercase">
+          {t("signalCardDisclaimer")}
+        </p>
       </div>
     </article>
   )

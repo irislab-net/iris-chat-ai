@@ -86,7 +86,6 @@ function ChatThreadOptionsMenu({
   const t = useTranslations("workspace")
   const [shared, setShared] = React.useState(false)
   const [renameOpen, setRenameOpen] = React.useState(false)
-  const [renameDraft, setRenameDraft] = React.useState(title)
   const shareTimerRef = React.useRef(0)
 
   React.useEffect(() => {
@@ -102,15 +101,7 @@ function ChatThreadOptionsMenu({
   }
 
   function openRename() {
-    setRenameDraft(title)
     setRenameOpen(true)
-  }
-
-  function submitRename() {
-    const next = renameDraft.trim()
-    if (!next) return
-    onRename(next)
-    setRenameOpen(false)
   }
 
   return (
@@ -179,10 +170,9 @@ function ChatThreadOptionsMenu({
 
       <ChatRenameDialog
         open={renameOpen}
-        value={renameDraft}
-        onValueChange={setRenameDraft}
+        title={title}
         onOpenChange={setRenameOpen}
-        onSubmit={submitRename}
+        onSubmit={onRename}
       />
     </>
   )

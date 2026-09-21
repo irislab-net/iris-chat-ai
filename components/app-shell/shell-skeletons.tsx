@@ -51,59 +51,6 @@ function MobileBone({
   )
 }
 
-const ASK_DEPTH = [28, 40, 55, 36, 68, 48] as const
-const BID_DEPTH = [64, 50, 38, 44, 30, 22] as const
-
-function BookLevelSkeleton({
-  depth,
-  side,
-}: {
-  depth: number
-  side: "bid" | "ask"
-}) {
-  return (
-    <div className="relative grid h-5 grid-cols-2 items-center px-3">
-      <div
-        aria-hidden
-        className={cn(
-          "absolute inset-y-0 right-0",
-          side === "bid" ? "bg-emerald-500/10" : "bg-red-500/10"
-        )}
-        style={{ width: `${depth}%` }}
-      />
-      <Bone className="relative h-2 w-12" />
-      <Bone className="relative ml-auto h-2 w-8" />
-    </div>
-  )
-}
-
-function FieldSkeleton() {
-  return (
-    <div className="flex h-8 items-center justify-between gap-2 rounded-md border border-border bg-muted/50 px-2.5">
-      <Bone className="h-2 w-10" />
-      <Bone className="h-2 w-16" />
-    </div>
-  )
-}
-
-function MetaSkeleton({ label, value }: { label: number; value: number }) {
-  return (
-    <div className="flex items-center justify-between">
-      <Bone className="h-2" style={{ width: label }} />
-      <Bone className="h-2" style={{ width: value }} />
-    </div>
-  )
-}
-
-function SizeSliderSkeleton() {
-  return (
-    <div className="flex items-center gap-2.5 px-0.5">
-      <Bone className="h-1 flex-1 rounded-full" />
-      <Bone className="h-2.5 w-8" />
-    </div>
-  )
-}
-
 function ChatComposerSkeleton({ className }: { className?: string }) {
   return (
     <div
@@ -294,7 +241,7 @@ function ChatPromptsSkeleton() {
         <Bone className="h-7 w-[min(20rem,88%)] max-w-[20rem] rounded-full" />
         <div className={chatEmptyHeroPromptsClass}>
           <Bone className="h-2.5 w-12 self-center rounded-full" />
-          <div className="flex w-full flex-col items-stretch gap-2">
+          <div className="mx-auto grid w-full max-w-md grid-cols-1 gap-2">
             <ChatDesktopStarterCardSkeleton />
             <ChatDesktopStarterCardSkeleton />
             <ChatDesktopStarterCardSkeleton />
@@ -477,103 +424,4 @@ function ChatAsideSkeleton({
   )
 }
 
-function TicketAsideSkeleton({ className }: { className?: string }) {
-  return (
-    <div
-      className={cn(
-        "flex h-full min-h-0 flex-col bg-sidebar text-sidebar-foreground",
-        className
-      )}
-      aria-busy="true"
-      aria-label="Loading order ticket"
-    >
-      <div className="flex h-12 shrink-0 items-center border-b border-border/60 pr-3 pl-5">
-        <div className="space-y-1.5">
-          <Bone className="h-3.5 w-12" />
-          <Bone className="h-2.5 w-24" />
-        </div>
-      </div>
-
-      <div className="min-h-0 flex-1 overflow-hidden">
-        <div className="shrink-0 border-b border-border/60">
-          <div className="grid grid-cols-2 border-b border-border/50 px-3 py-1.5">
-            <Bone className="h-2 w-8" />
-            <Bone className="ml-auto h-2 w-7" />
-          </div>
-          {ASK_DEPTH.map((depth) => (
-            <BookLevelSkeleton key={`ask-${depth}`} depth={depth} side="ask" />
-          ))}
-          <div className="flex items-center justify-between border-y border-border/50 px-3 py-1.5">
-            <Bone className="h-3 w-16" />
-            <Bone className="h-2 w-10" />
-          </div>
-          {BID_DEPTH.map((depth) => (
-            <BookLevelSkeleton key={`bid-${depth}`} depth={depth} side="bid" />
-          ))}
-        </div>
-
-        <div className="flex flex-col gap-3 px-3 pt-2.5 pb-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-1.5">
-              <Bone className="size-5 rounded-sm" />
-              <Bone className="h-3 w-16" />
-            </div>
-            <Bone className="h-2 w-12" />
-          </div>
-
-          <div className="grid grid-cols-3 gap-1.5">
-            <Bone className="h-7 rounded-md" />
-            <Bone className="h-7 rounded-md" />
-            <Bone className="h-7 rounded-md" />
-          </div>
-
-          <div className="flex h-7 items-end gap-4 border-b border-border/60 pb-0.5">
-            <Bone className="h-2 w-10" />
-            <Bone className="h-2 w-8" />
-            <Bone className="h-2 w-6" />
-          </div>
-
-          <div className="grid grid-cols-2 gap-2">
-            <div className="flex h-8 items-center justify-center rounded-md border border-border bg-muted/30">
-              <Bone className="h-2.5 w-16" />
-            </div>
-            <div className="flex h-8 items-center justify-center rounded-md border border-border bg-muted/30">
-              <Bone className="h-2.5 w-16" />
-            </div>
-          </div>
-
-          <div className="space-y-1 px-0.5 py-0.5">
-            <MetaSkeleton label={88} value={64} />
-            <MetaSkeleton label={76} value={48} />
-          </div>
-
-          <FieldSkeleton />
-          <SizeSliderSkeleton />
-
-          <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 py-0.5">
-            <div className="flex items-center gap-1.5">
-              <Bone className="size-3.5 rounded-sm" />
-              <Bone className="h-2 w-16" />
-            </div>
-            <div className="flex items-center gap-1.5">
-              <Bone className="size-3.5 rounded-sm" />
-              <Bone className="h-2 w-20" />
-            </div>
-          </div>
-
-          <div className="space-y-1.5 border-t border-border/50 pt-2.5">
-            <MetaSkeleton label={92} value={40} />
-            <MetaSkeleton label={68} value={48} />
-            <MetaSkeleton label={84} value={36} />
-          </div>
-
-          <div className="flex h-8 items-center justify-center rounded-md bg-muted/40">
-            <Bone className="h-2.5 w-20" />
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-export { Bone, ChatAsideSkeleton, TicketAsideSkeleton }
+export { Bone, ChatAsideSkeleton }

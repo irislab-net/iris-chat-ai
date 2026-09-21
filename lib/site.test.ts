@@ -42,7 +42,6 @@ describe("public SEO site policy (S1/S2)", () => {
   it("lists only real public indexable paths for sitemap IA", () => {
     expect(PUBLIC_INDEXABLE_PATHS).toEqual([
       "/",
-      "/home",
       "/about",
       "/ai-trading-signals",
       "/privacy",
@@ -50,6 +49,7 @@ describe("public SEO site policy (S1/S2)", () => {
     ])
     expect(PUBLIC_INDEXABLE_PATHS).not.toContain("/auth/success")
     expect(PUBLIC_INDEXABLE_PATHS).not.toContain(UPGRADE_PATH)
+    expect(PUBLIC_INDEXABLE_PATHS).not.toContain("/home")
   })
 
   it("exposes verified social URL for trust / Organization sameAs", () => {

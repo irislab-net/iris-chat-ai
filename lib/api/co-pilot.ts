@@ -144,6 +144,8 @@ export async function sendCoPilotChat(input: {
   toolChoice?: CoPilotChatRequest["tool_choice"]
   parallelToolCalls?: boolean
   instructions?: string
+  /** Server message id to reply to (omit / 0 = normal turn). */
+  replyToId?: number
 }): Promise<CoPilotChatJsonResponse> {
   const timeout = createChatTimeoutSignal(CHAT_REQUEST_TIMEOUT_MS)
   const signal = mergeAbortSignals(input.signal, timeout.signal)
@@ -167,6 +169,9 @@ export async function sendCoPilotChat(input: {
         message: input.message,
         effort: isGuest ? "normal" : toChatApiEffort(input.effort),
         client_context: clientContext,
+        ...(input.replyToId != null && input.replyToId > 0
+          ? { reply_to_id: input.replyToId }
+          : {}),
         ...(input.instructions ? { instructions: input.instructions } : {}),
         ...(input.tools?.length ? { tools: input.tools } : {}),
         ...(input.toolChoice ? { tool_choice: input.toolChoice } : {}),
@@ -206,18 +211,20 @@ export async function streamCoPilotChat(
     history: CoPilotHistoryMessage[]
     effort?: CoPilotChatRequest["effort"]
     clientContext?: ChatClientContext
+    replyToId?: number
   },
   handlers: StreamCoPilotChatHandlers = {},
   session?: CoPilotSessionRefresh
 ) {
   const data = await sendCoPilotChatWithSessionRetry(
     {
-    message: input.message,
-    conversationId: input.conversationId,
-    history: input.history,
-    effort: input.effort,
-    clientContext: input.clientContext,
-    signal: handlers.signal,
+      message: input.message,
+      conversationId: input.conversationId,
+      history: input.history,
+      effort: input.effort,
+      clientContext: input.clientContext,
+      replyToId: input.replyToId,
+      signal: handlers.signal,
     },
     session
   )
@@ -239,6 +246,8 @@ export async function streamCoPilotChat(
     trial: data.trial,
     usage: data.usage,
     creditBalance: data.credit_balance,
+    userMessage: data.user_message,
+    assistantMessage: data.assistant_message,
   }
 }
 

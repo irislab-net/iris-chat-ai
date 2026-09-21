@@ -14,10 +14,6 @@ export function localeDirection(locale: string): "ltr" | "rtl" {
   return locale === "ar" ? "rtl" : "ltr"
 }
 
-export function tradingViewLocale(locale: string): string {
-  return locale === "ar" ? "ar" : "en"
-}
-
 export function speechLocale(locale: string): string {
   return locale === "ar" ? "ar-SA" : "en-US"
 }

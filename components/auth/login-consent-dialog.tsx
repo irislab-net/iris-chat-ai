@@ -48,11 +48,31 @@ type LoginConsentDialogProps = {
   confirming?: boolean
 }
 
-const TITLE = "Before you connect"
-const DESCRIPTION =
-  "Review and accept Exur's legal terms to continue with Google."
+const TITLE = "Continue with Google"
+const DESCRIPTION = "Accept the terms below to sign in securely."
 const DISCLAIMER =
-  "By continuing, you confirm that you are at least 18 years old, are not a U.S. Person or resident of a sanctioned jurisdiction, and acknowledge that Exur Intel provides analytics for informational purposes only, not financial advice."
+  "You must be 18+, not a U.S. Person or in a sanctioned jurisdiction. Exur provides analytics for information only — not financial advice."
+
+function LegalLink({
+  href,
+  children,
+}: {
+  href: string
+  children: React.ReactNode
+}) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="inline-flex items-center gap-1 font-medium text-foreground underline decoration-border underline-offset-[3px] transition-colors hover:decoration-foreground/40"
+      onClick={(event) => event.stopPropagation()}
+    >
+      {children}
+      <ExternalLinkIcon className="size-3 opacity-50" aria-hidden />
+    </a>
+  )
+}
 
 function ConsentCheck({
   id,
@@ -71,7 +91,7 @@ function ConsentCheck({
     <label
       htmlFor={id}
       className={cn(
-        "flex min-h-12 cursor-pointer items-center gap-3 rounded-2xl border px-3.5 py-3 text-left transition-[background-color,border-color,box-shadow]",
+        "flex min-h-11 cursor-pointer items-center gap-3 rounded-xl border px-3.5 py-2.5 text-left transition-[background-color,border-color]",
         checked
           ? chatMobileSheetConsentCheckedClass
           : chatMobileSheetConsentUncheckedClass
@@ -79,7 +99,7 @@ function ConsentCheck({
     >
       <span
         id={labelId}
-        className="min-w-0 flex-1 text-[15px] leading-snug text-foreground"
+        className="min-w-0 flex-1 text-[13px] leading-snug text-foreground"
       >
         {children}
       </span>
@@ -94,40 +114,20 @@ function ConsentCheck({
   )
 }
 
-function LegalLink({ href, children }: { href: string; children: React.ReactNode }) {
+function LoginConsentBrand() {
   return (
-    <a
-      href={href}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="inline-flex items-center gap-1 font-medium text-foreground underline decoration-border underline-offset-[3px] transition-colors hover:decoration-foreground/40"
-      onClick={(event) => event.stopPropagation()}
-    >
-      {children}
-      <ExternalLinkIcon className="size-3 opacity-50" aria-hidden />
-    </a>
-  )
-}
-
-function LoginConsentBrand({ compact = false }: { compact?: boolean }) {
-  return (
-    <div
-      className={cn(
-        "flex items-center gap-3",
-        compact ? "px-5 pb-1" : "pb-2"
-      )}
-    >
+    <div className="flex items-center gap-2.5">
       <IrisLabLogo
         decorative
-        size={40}
-        className="size-10 shrink-0 rounded-full"
+        size={36}
+        className="size-9 shrink-0 rounded-full"
         priority
       />
       <div className="min-w-0">
-        <p className="text-[15px] font-medium leading-none tracking-tight text-foreground">
+        <p className="text-[14px] font-semibold leading-none tracking-tight text-foreground">
           Exur
         </p>
-        <p className="mt-1 text-[13px] leading-snug text-muted-foreground">
+        <p className="mt-1 text-[12px] leading-none text-muted-foreground">
           Secure sign-in with Google
         </p>
       </div>
@@ -149,12 +149,12 @@ function LoginConsentActions({
   mobile?: boolean
 }) {
   return (
-    <div className="flex w-full flex-col gap-2">
+    <div className="flex w-full flex-col gap-1.5">
       <Button
         type="button"
         size="lg"
         className={cn(
-          "h-12 w-full gap-2.5 rounded-full px-5 text-[15px] font-medium shadow-none disabled:opacity-45",
+          "h-11 w-full gap-2 rounded-full px-5 text-[14px] font-medium shadow-none disabled:opacity-45",
           mobile && chatMobileSheetPrimaryButtonClass
         )}
         disabled={!canContinue}
@@ -170,7 +170,7 @@ function LoginConsentActions({
         className={cn(
           mobile
             ? chatMobileSheetGhostButtonClass
-            : "h-10 w-full rounded-full text-[15px] font-normal text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+            : "h-9 w-full rounded-full text-[13px] font-normal text-muted-foreground hover:bg-muted/50 hover:text-foreground"
         )}
         disabled={confirming}
         onClick={onCancel}
@@ -193,7 +193,7 @@ function LoginConsentBody({
   onPrivacyChange: (checked: boolean) => void
 }) {
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-3">
       <div className="flex flex-col gap-2">
         <ConsentCheck
           id="accept-terms"
@@ -213,11 +213,9 @@ function LoginConsentBody({
         </ConsentCheck>
       </div>
 
-      <div className="rounded-2xl border border-black/6 bg-white/70 px-3.5 py-3 dark:border-border/40 dark:bg-muted/15">
-        <p className="text-pretty text-[13px] leading-relaxed text-muted-foreground">
-          {DISCLAIMER}
-        </p>
-      </div>
+      <p className="text-pretty px-0.5 text-[11.5px] leading-relaxed text-muted-foreground">
+        {DISCLAIMER}
+      </p>
     </div>
   )
 }
@@ -264,16 +262,16 @@ function LoginConsentDialog({
     return (
       <Dialog open={open} onOpenChange={handleOpenChange}>
         <DialogContent
-          className="gap-0 overflow-hidden rounded-[1.35rem] border border-border/40 bg-background p-0 shadow-xl ring-0 sm:max-w-104"
+          className="gap-0 overflow-hidden rounded-[1.25rem] border border-border/40 bg-background p-0 shadow-xl ring-0 sm:max-w-[24rem]"
           showCloseButton={!confirming}
         >
-          <div className="flex flex-col gap-5 px-6 pt-6 pb-2">
+          <div className="flex flex-col gap-4 px-5 pt-5 pb-1">
             <LoginConsentBrand />
-            <DialogHeader className="gap-1.5 space-y-0 text-left">
-              <DialogTitle className="text-[22px] font-normal tracking-tight">
+            <DialogHeader className="gap-1 space-y-0 text-left">
+              <DialogTitle className="text-[18px] font-semibold tracking-tight">
                 {TITLE}
               </DialogTitle>
-              <DialogDescription className="text-pretty text-[15px] leading-relaxed text-muted-foreground">
+              <DialogDescription className="text-pretty text-[13px] leading-relaxed text-muted-foreground">
                 {DESCRIPTION}
               </DialogDescription>
             </DialogHeader>
@@ -284,7 +282,7 @@ function LoginConsentDialog({
               onPrivacyChange={setPrivacyAccepted}
             />
           </div>
-          <DialogFooter className="mx-0 mb-0 flex-col gap-2 rounded-none border-t border-border/40 bg-muted/10 p-5 pt-4 sm:flex-col sm:justify-stretch">
+          <DialogFooter className="mx-0 mb-0 flex-col gap-2 rounded-none border-t border-border/40 p-4 pt-3.5 sm:flex-col sm:justify-stretch">
             {actions}
           </DialogFooter>
         </DialogContent>
@@ -300,11 +298,15 @@ function LoginConsentDialog({
         className={chatMobileSheetContentClass}
       >
         <div aria-hidden className={chatMobileSheetHandleClass} />
-        <div className={cn(chatMobileSheetBodyClass, "gap-5 pb-2")}>
-          <LoginConsentBrand compact />
+        <div className={cn(chatMobileSheetBodyClass, "gap-4 pb-2")}>
+          <LoginConsentBrand />
           <SheetHeader className={chatMobileSheetHeaderClass}>
-            <SheetTitle className={chatMobileSheetTitleClass}>{TITLE}</SheetTitle>
-            <SheetDescription className={chatMobileSheetDescriptionClass}>
+            <SheetTitle className={cn(chatMobileSheetTitleClass, "text-[18px]")}>
+              {TITLE}
+            </SheetTitle>
+            <SheetDescription
+              className={cn(chatMobileSheetDescriptionClass, "text-[13px]")}
+            >
               {DESCRIPTION}
             </SheetDescription>
           </SheetHeader>
@@ -316,7 +318,9 @@ function LoginConsentDialog({
           />
         </div>
         <SheetFooter className={chatMobileSheetFooterClass}>
-          <div className={cn(chatMobileSheetFooterBarClass, "px-5")}>{actions}</div>
+          <div className={cn(chatMobileSheetFooterBarClass, "px-5")}>
+            {actions}
+          </div>
         </SheetFooter>
       </SheetContent>
     </Sheet>

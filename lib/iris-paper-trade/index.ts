@@ -21,9 +21,6 @@ export { isPaperTradeIntent } from "@/lib/iris-paper-trade/intent"
 export { assembleMarketContext } from "@/lib/iris-paper-trade/market-context"
 export { parsePaperDecision } from "@/lib/iris-paper-trade/parse"
 export { planIrisPaperTrade } from "@/lib/iris-paper-trade/plan"
-export { executeIrisPaperPlan } from "@/lib/iris-paper-trade/execute"
-export {
-  confirmIrisPaperProposal,
-  runIrisPaperTradeRequest,
-} from "@/lib/iris-paper-trade/run"
+export { formatProposedChatMessage } from "@/lib/iris-paper-trade/execute"
+export { runIrisPaperTradeRequest } from "@/lib/iris-paper-trade/run"
 export { PAPER_TRADE_TOOLS } from "@/lib/iris-paper-trade/schema"

@@ -2,6 +2,11 @@ import {
   AUTH_PRIVACY_NOTICE_ACCEPTED,
   AUTH_TERMS_ACCEPTED,
 } from "@/lib/legal"
+import {
+  CHAT_APP_ORIGIN,
+  isMarketingHost,
+  isProductionChatHost,
+} from "@/lib/hosts"
 
 export { CHAT_API_ORIGIN } from "@/lib/api/origins"
 
@@ -16,38 +21,58 @@ export function isGoogleOneTapConfigured() {
   return Boolean(getGoogleClientId())
 }
 
-const CHAT_APP_HOST = "chat.exur.ai"
-
 /** Auth cookie calls must be same-origin (via app route proxy) so Domain=.exur.ai cookies are sent. */
 export const AUTH_API_BASE = ""
 
-/** Chat deployment uses `app=chat` OAuth on api.exur.ai (not destination=). */
-export function isChatAppHost(hostname?: string | null) {
-  if (hostname) return hostname === CHAT_APP_HOST
+function resolveRequestHostname(hostname?: string | null): string | null {
+  if (hostname) return hostname
   const fromEnv = process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "")
   if (fromEnv) {
     try {
-      return new URL(fromEnv).hostname === CHAT_APP_HOST
+      return new URL(fromEnv).hostname
     } catch {
       /* fall through */
     }
   }
   if (typeof window !== "undefined") {
-    return window.location.hostname === CHAT_APP_HOST
+    return window.location.hostname
+  }
+  return null
+}
+
+/**
+ * Product OAuth uses `app=chat` on api.exur.ai.
+ * True on chat.exur.ai and marketing apex (login from landing still opens the chat app).
+ */
+export function isChatAppHost(hostname?: string | null) {
+  const host = resolveRequestHostname(hostname)
+  if (host) {
+    return isProductionChatHost(host) || isMarketingHost(host)
   }
   return true
 }
 
-/** Where Google OAuth should send the browser after login. */
+/** Where Google OAuth should send the browser after login — always the chat app in production. */
 export function getAuthDestination() {
   const fromEnv = process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "")
-  if (fromEnv) return `${fromEnv}/auth/success`
+  if (fromEnv) {
+    try {
+      const host = new URL(fromEnv).hostname
+      if (isMarketingHost(host)) return `${CHAT_APP_ORIGIN}/auth/success`
+      return `${fromEnv}/auth/success`
+    } catch {
+      return `${fromEnv}/auth/success`
+    }
+  }
 
   if (typeof window !== "undefined") {
+    if (isMarketingHost(window.location.hostname)) {
+      return `${CHAT_APP_ORIGIN}/auth/success`
+    }
     return `${window.location.origin}/auth/success`
   }
 
-  return "https://chat.exur.ai/auth/success"
+  return `${CHAT_APP_ORIGIN}/auth/success`
 }
 
 export function loginWithGoogleUrl(

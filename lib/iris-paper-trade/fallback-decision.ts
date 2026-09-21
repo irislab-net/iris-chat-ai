@@ -1,4 +1,4 @@
-import { getMaxLeverage } from "@/lib/paper-trading"
+import { getMaxLeverage } from "@/lib/chat/trade-signal"
 import {
   MAX_STOP_PCT,
   MIN_STOP_PCT,

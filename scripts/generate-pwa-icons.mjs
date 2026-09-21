@@ -9,7 +9,7 @@ import { Resvg } from "@resvg/resvg-js"
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..")
 const markSvg = readFileSync(
-  join(root, "public/iris-lab-logo-light.svg"),
+  join(root, "public/exur-logo-light.svg"),
   "utf8"
 )
 
@@ -86,8 +86,4 @@ render(
 render(
   buildLogoSvg({ size: 512, padRatio: HOME_SCREEN_PAD }),
   join(root, "public/organization-logo.png")
-)
-render(
-  buildLogoSvg({ size: 512, padRatio: HOME_SCREEN_PAD }),
-  join(root, "public/Logo.png")
 )

@@ -118,8 +118,13 @@ export function SphereCta({
   const buttonClass = cn(landingCta(variant, size), className)
 
   if (href) {
+    const external = /^https?:\/\//i.test(href)
     return (
-      <Button nativeButton={false} render={<Link href={href} />} className={buttonClass}>
+      <Button
+        nativeButton={false}
+        render={external ? <a href={href} /> : <Link href={href} />}
+        className={buttonClass}
+      >
         {content}
       </Button>
     )

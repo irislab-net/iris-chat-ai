@@ -1,8 +1,7 @@
 import { replyContainsIrisSetupBlock } from "@/lib/chat/strip-paper-setup"
+import type { PaperSide } from "@/lib/chat/trade-signal"
 import type { PaperTradeTicket } from "@/lib/iris-paper-trade/types"
 import { calculateRiskBasedSize } from "@/lib/iris-paper-trade/size"
-import type { PaperSide } from "@/lib/paper-trading"
-import { getPaperSnapshot } from "@/lib/paper-trading/store"
 
 export type ParsedTradeSetup = {
   symbol: string
@@ -169,7 +168,6 @@ export function parsedSetupToPaperTicket(
   setup: ParsedTradeSetup
 ): PaperTradeTicket | null {
   const sized = calculateRiskBasedSize({
-    state: getPaperSnapshot(),
     side: setup.side,
     markPrice: setup.entryPrice,
     stopLoss: setup.stopLoss,
@@ -238,9 +236,8 @@ export function resolvePaperTicketForAssistantMessage(input: {
   content: string
   paperTicket?: PaperTradeTicket
 }): PaperTradeTicket | null {
-  if (input.paperTicket) return input.paperTicket
-  const content = input.content.trim()
-  if (!content || !isStructuredSignalSetupContent(content)) return null
-  return parsePaperTicketFromAssistantText(content)
+  // Integrity: only trust an explicit ticket (API client_actions / recovery).
+  // Do not invent Signal cards from assistant prose.
+  return input.paperTicket ?? null
 }
 

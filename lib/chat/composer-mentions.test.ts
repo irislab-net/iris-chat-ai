@@ -5,7 +5,9 @@ import {
   buildSignalPrompt,
   expandComposerDraft,
   expandComposerMentions,
+  expandSummarizedSignalUserMessage,
   filterMentionOptions,
+  formatSignalCommand,
   parseComposerToolTag,
   parseMentionPalette,
   summarizeSignalUserMessage,
@@ -28,20 +30,20 @@ describe("composer mentions", () => {
     expect(filterMentionOptions("eth")).toEqual([])
   })
 
-  it("builds a signal prompt for any asset", () => {
-    expect(buildSignalPrompt("ETH")).toContain("Trading desk request for ETH")
-    expect(buildSignalPrompt("اتریوم")).toContain("درخواست میز معاملاتی")
+  it("formats a short @signal command for any asset", () => {
+    expect(formatSignalCommand("ETH")).toBe("@signal ETH")
+    expect(buildSignalPrompt("اتریوم")).toBe("@signal اتریوم")
   })
 
-  it("expands tool tag + user text", () => {
-    const expanded = expandComposerDraft({ tool: "signal", text: "SOL" })
-    expect(expanded).toContain("Trading desk request for SOL")
+  it("expands tool tag + user text to @signal only", () => {
+    expect(expandComposerDraft({ tool: "signal", text: "SOL" })).toBe(
+      "@signal SOL"
+    )
   })
 
-  it("expands legacy @signal inline text", () => {
+  it("expands legacy @signal inline text to @signal only", () => {
     const expanded = expandComposerMentions("Please run @signal ETH now")
-    expect(expanded).toContain("Trading desk request for ETH")
-    expect(expanded).not.toContain("@signal ETH")
+    expect(expanded).toBe("@signal ETH")
   })
 
   it("parses typed @signal into chip draft", () => {
@@ -61,16 +63,20 @@ describe("composer mentions", () => {
     expect(result.nextCursor).toBe(6)
   })
 
-  it("summarizes expanded desk prompts for history", () => {
-    expect(summarizeSignalUserMessage(buildSignalPrompt("ETH"))).toBe(
-      "Signal · ETH"
-    )
+  it("summarizes @signal commands for history", () => {
+    expect(summarizeSignalUserMessage("@signal ETH")).toBe("Signal · ETH")
     expect(summarizeSignalUserMessage("What is ETH doing today?")).toBe(
       "What is ETH doing today?"
     )
   })
 
-  it("strips MARKET_CONTEXT appendices from history labels", () => {
+  it("re-expands summarized labels to @signal commands", () => {
+    expect(expandSummarizedSignalUserMessage("Signal · ETH")).toBe(
+      "@signal ETH"
+    )
+  })
+
+  it("still summarizes legacy desk prompts for history", () => {
     const leaked = `Trading desk request for BTC.
 
 ---

@@ -2,9 +2,7 @@ import {
   getMaxLeverage,
   isValidStopLoss,
   isValidTakeProfit,
-  positionForSymbol,
-  type PaperState,
-} from "@/lib/paper-trading"
+} from "@/lib/chat/trade-signal"
 import type {
   MarketContextPacket,
   ParsedPaperDecision,
@@ -21,11 +19,10 @@ export const MAX_CONTEXT_AGE_MS = 5 * 60 * 1000
 export function validatePaperDecision(input: {
   decision: ParsedPaperDecision
   context: MarketContextPacket
-  state: PaperState
   now?: number
 }): PlanIrisPaperTradeResult {
   const now = input.now ?? Date.now()
-  const { decision, context, state } = input
+  const { decision, context } = input
   const mark = context.live.price
 
   if (!(mark > 0) || !Number.isFinite(mark)) {
@@ -130,14 +127,6 @@ export function validatePaperDecision(input: {
       status: "rejected",
       reason: "STOP_TOO_WIDE",
       detail: "Stop is too far from the live price.",
-    }
-  }
-
-  if (positionForSymbol(state, symbol)) {
-    return {
-      status: "rejected",
-      reason: "EXISTING_POSITION",
-      detail: `An open paper position already exists for ${symbol}.`,
     }
   }
 

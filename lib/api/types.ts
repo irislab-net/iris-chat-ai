@@ -215,6 +215,68 @@ export type TrialInfo = {
   weekly_reset_at: string
 }
 
+export type MessageQuote = {
+  id: number
+  role: "user" | "assistant"
+  excerpt: string
+  created_at: string
+}
+
+export type PersistedMessageRef = {
+  id: number
+  created_at: string
+  reply_to_id?: number
+  reply_to?: MessageQuote
+}
+
+export type SessionPreview = {
+  role: "user" | "assistant" | string
+  content: string
+}
+
+export type SessionListItem = {
+  session_id: string
+  title: string
+  pinned: boolean
+  last_message_at: string
+  first_message_at: string
+  message_count: number
+  preview: SessionPreview
+}
+
+export type SessionListResult = {
+  items: SessionListItem[]
+  limit: number
+  offset: number
+  total: number
+}
+
+export type TradeSignalItem = {
+  uid: string
+  session_id: string
+  channel?: string
+  source: "signal_command" | "chat_tool"
+  outcome: "signal" | "no_trade"
+  final_status: "tp_hit" | "sl_hit" | "expired" | null
+  content_hash: string
+  created_at: string
+  hash_ok: boolean
+  symbol?: string
+  direction?: string
+  setup?: string
+  entry?: number
+  stop_loss?: number
+  take_profit?: number
+  entry_reason?: string
+  stop_loss_reason?: string
+  take_profit_reason?: string
+  leverage?: number
+  time_horizon?: string
+  thesis?: string
+  rr_ratio?: number
+  no_trade_reason?: string
+}
+
 export type ChatMessageResponse = {
   session_id?: string
   output_text?: string
@@ -227,6 +289,8 @@ export type ChatMessageResponse = {
   metadata?: Record<string, unknown>
   error?: string
   code?: string
+  user_message?: PersistedMessageRef
+  assistant_message?: PersistedMessageRef
 }
 
 export type CoPilotChatRequest = {
@@ -277,6 +341,8 @@ export type CoPilotChatJsonResponse = {
   tool_calls?: CoPilotToolCall[]
   client_actions?: ChatToolCallResult[]
   suggestedPrompts?: string[]
+  user_message?: PersistedMessageRef
+  assistant_message?: PersistedMessageRef
   choices?: Array<{
     message?: {
       content?: string | null

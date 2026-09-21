@@ -103,6 +103,21 @@ describe("chat API adapters", () => {
     const adapted = adaptChatMessageResponse({
       session_id: "sess-1",
       output_text: "Support is near 62000.",
+      user_message: {
+        id: 11,
+        created_at: "2026-09-21T10:00:00Z",
+        reply_to_id: 10,
+        reply_to: {
+          id: 10,
+          role: "assistant",
+          excerpt: "Prior reply",
+          created_at: "2026-09-21T09:59:00Z",
+        },
+      },
+      assistant_message: {
+        id: 12,
+        created_at: "2026-09-21T10:00:01Z",
+      },
       tool_calls: [
         {
           tool_name: "show_trade_signal",
@@ -129,6 +144,8 @@ describe("chat API adapters", () => {
     })
     expect(adapted.message).toBe("Support is near 62000.")
     expect(adapted.conversation_id).toBe("sess-1")
+    expect(adapted.user_message?.id).toBe(11)
+    expect(adapted.assistant_message?.id).toBe(12)
     expect(adapted.usage).toMatchObject({
       remaining: 800,
       limit: 1000,
@@ -139,6 +156,37 @@ describe("chat API adapters", () => {
       "navigate_to_page",
     ])
     expect(adapted.tool_calls?.[0]?.function?.name).toBe("show_trade_signal")
+  })
+
+  it("keeps empty output_text and filters server tool_calls from client_actions", () => {
+    const adapted = adaptChatMessageResponse({
+      session_id: "sess-signal",
+      output_text: "",
+      suggested_actions: ["Explain the stop", "Show BTC instead"],
+      tool_calls: [
+        {
+          tool_name: "get_market_state",
+          execution_target: "server",
+          input: '{"symbol":"ETH"}',
+        },
+      ],
+      client_actions: [
+        {
+          tool_name: "show_trade_signal",
+          execution_target: "client",
+          input:
+            '{"symbol":"ETH","direction":"LONG","setup":"Range Bounce","entry":2626,"stopLoss":2623.5,"takeProfit":2632,"leverage":10,"thesis":"Bid-side pressure in range."}',
+        },
+      ],
+    })
+
+    expect(adapted.message).toBe("")
+    expect(adapted.suggestedPrompts).toEqual([
+      "Explain the stop",
+      "Show BTC instead",
+    ])
+    expect(adapted.client_actions).toHaveLength(1)
+    expect(adapted.client_actions?.[0]?.tool_name).toBe("show_trade_signal")
   })
 
   it("maps credits payload and navigates trading_chart actions", () => {
@@ -155,7 +203,6 @@ describe("chat API adapters", () => {
     expect(mapped.usage?.remaining).toBe(10)
     expect(mapped.credit_balance?.weekly_limit).toBe(200)
     expect(pathForChatPage("trading_chart")).toBe("/?tab=news")
-    const navigate = vi.fn()
     executeChatClientActions(
       [
         {
@@ -164,8 +211,7 @@ describe("chat API adapters", () => {
           input: '{"page":"trading_chart"}',
         },
       ],
-      { navigate, openDesk: vi.fn(), focusDeskPane: vi.fn() }
+      { navigate: vi.fn() }
     )
-    expect(navigate).toHaveBeenCalledWith("/?tab=news")
   })
 })

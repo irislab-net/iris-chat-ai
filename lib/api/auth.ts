@@ -43,6 +43,31 @@ export const AUTH_SESSION_EXPIRED_EVENT = "iris-auth-session-expired"
 export const AUTH_RETURN_TO_KEY = "iris-auth-return-to"
 export const PLAN_UPGRADE_PENDING_REFRESH_KEY = "iris-plan-upgrade-pending-refresh"
 
+/**
+ * Only allow same-origin relative paths after login (blocks open redirects via
+ * tampered sessionStorage returnTo values).
+ */
+export function safeAuthReturnPath(
+  raw: string | null | undefined,
+  fallback: string
+): string {
+  if (!raw) return fallback
+  const trimmed = raw.trim()
+  if (!trimmed.startsWith("/") || trimmed.startsWith("//") || trimmed.includes("\\")) {
+    return fallback
+  }
+  if (typeof window === "undefined") {
+    return trimmed.startsWith("/") ? trimmed : fallback
+  }
+  try {
+    const url = new URL(trimmed, window.location.origin)
+    if (url.origin !== window.location.origin) return fallback
+    return `${url.pathname}${url.search}${url.hash}`
+  } catch {
+    return fallback
+  }
+}
+
 export function markPlanUpgradePendingRefresh() {
   if (typeof window === "undefined") return
   sessionStorage.setItem(PLAN_UPGRADE_PENDING_REFRESH_KEY, "true")

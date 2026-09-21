@@ -1,13 +1,20 @@
 "use client"
 
 import * as React from "react"
-import { CheckIcon, ChevronDownIcon, CopyIcon, PencilIcon } from "lucide-react"
+import {
+  CheckIcon,
+  ChevronDownIcon,
+  CopyIcon,
+  PencilIcon,
+  ReplyIcon,
+} from "lucide-react"
 
 import {
   chatContextMenuContentClass,
   chatContextMenuIconClass,
   chatContextMenuItemClass,
 } from "@/components/app-shell/chat-context-menu-styles"
+import { ChatMessageQuote } from "@/components/app-shell/chat-message-quote"
 import { chatMobileUserBubbleInteractiveClass } from "@/components/app-shell/chat-mobile-gemini-styles"
 import {
   chatTurnActionsClass,
@@ -24,6 +31,9 @@ import {
   ContextMenuTrigger,
 } from "@/components/ui/context-menu"
 import { trackChatMessageCopied } from "@/lib/analytics"
+import type { MessageQuote } from "@/lib/api/types"
+import { parseServerMessageId } from "@/lib/chat-message-id"
+import { formatChatTime } from "@/lib/chat-storage"
 import { cn } from "@/lib/utils"
 
 const COLLAPSE_CHAR_LIMIT = 360
@@ -32,7 +42,10 @@ type ChatUserTurnProps = {
   messageId: string
   conversationId: string
   content: string
+  createdAt?: string
+  replyTo?: MessageQuote
   onEdit?: () => void
+  onReply?: () => void
   disabled?: boolean
   className?: string
   variant?: "default" | "gemini"
@@ -42,7 +55,10 @@ function ChatUserTurn({
   messageId,
   conversationId,
   content,
+  createdAt,
+  replyTo,
   onEdit,
+  onReply,
   disabled,
   className,
   variant = "default",
@@ -51,6 +67,8 @@ function ChatUserTurn({
   const [expanded, setExpanded] = React.useState(false)
   const copyTimerRef = React.useRef(0)
   const isGemini = variant === "gemini"
+  const serverId = parseServerMessageId(messageId)
+  const anchorId = serverId != null ? `msg-${serverId}` : undefined
 
   const trimmed = content.trim()
   const collapsible = trimmed.length > COLLAPSE_CHAR_LIMIT
@@ -83,8 +101,40 @@ function ChatUserTurn({
     }
   }
 
+  const expandToggle = collapsible ? (
+    <Button
+      type="button"
+      variant="ghost"
+      size="xs"
+      className={chatUserBubbleExpandToggleClass}
+      onClick={() => setExpanded((value) => !value)}
+    >
+      {expanded ? "Show less" : "Show more"}
+      <ChevronDownIcon
+        className={cn(
+          "size-3.5 transition-transform",
+          expanded && "rotate-180"
+        )}
+      />
+    </Button>
+  ) : null
+
   const actionButtons = (
     <div className={cn(chatTurnActionsClass, "shrink-0")}>
+      {onReply ? (
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon-sm"
+          className={chatUserBubbleInlineActionClass}
+          aria-label="Reply to message"
+          title="Reply"
+          disabled={disabled}
+          onClick={onReply}
+        >
+          <ReplyIcon />
+        </Button>
+      ) : null}
       <Button
         type="button"
         variant="ghost"
@@ -118,59 +168,73 @@ function ChatUserTurn({
     </div>
   )
 
+  const timestamp = createdAt ? (
+    <p className="min-w-0 truncate text-[10px] leading-none text-muted-foreground/80">
+      {formatChatTime(createdAt)}
+    </p>
+  ) : null
+
   return (
     <ContextMenu>
       <ContextMenuTrigger
         render={
           <div
+            id={anchorId}
             className={cn(
               "group/user-turn w-full min-w-0",
               isGemini && "flex justify-end",
               className
             )}
           >
-            <div
-              dir="auto"
-              tabIndex={0}
-              className={cn(
-                "chat-bidi min-w-0 cursor-text select-text overflow-hidden wrap-anywhere outline-none",
-                isGemini
-                  ? chatMobileUserBubbleInteractiveClass
-                  : cn("w-full", chatUserBubbleClass)
-              )}
-            >
-              <span className="block min-w-0 whitespace-pre-wrap wrap-anywhere">
-                {displayText}
-              </span>
+            {isGemini ? (
+              <div className="flex w-full max-w-[88%] flex-col items-stretch gap-1">
+                <div
+                  dir="auto"
+                  tabIndex={0}
+                  className={cn(
+                    "chat-bidi min-w-0 cursor-text select-text overflow-hidden wrap-anywhere",
+                    chatMobileUserBubbleInteractiveClass
+                  )}
+                >
+                  {replyTo ? <ChatMessageQuote quote={replyTo} /> : null}
+                  <span className="block min-w-0 whitespace-pre-wrap wrap-anywhere">
+                    {displayText}
+                  </span>
+                  {expandToggle ? (
+                    <div className="mt-1.5 flex justify-start">{expandToggle}</div>
+                  ) : null}
+                </div>
+                <div className="flex min-h-7 items-center justify-between gap-2 px-1">
+                  {timestamp ?? <span aria-hidden className="shrink-0" />}
+                  {actionButtons}
+                </div>
+              </div>
+            ) : (
               <div
+                dir="auto"
+                tabIndex={0}
                 className={cn(
-                  chatTurnActionsClass,
-                  chatUserTurnActionsRevealClass,
-                  "mt-2 w-full justify-between"
+                  "chat-bidi min-w-0 w-full cursor-text select-text overflow-hidden wrap-anywhere outline-none",
+                  chatUserBubbleClass
                 )}
               >
-                {collapsible ? (
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="xs"
-                    className={chatUserBubbleExpandToggleClass}
-                    onClick={() => setExpanded((value) => !value)}
-                  >
-                    {expanded ? "Show less" : "Show more"}
-                    <ChevronDownIcon
-                      className={cn(
-                        "size-3.5 transition-transform",
-                        expanded && "rotate-180"
-                      )}
-                    />
-                  </Button>
-                ) : (
-                  <span aria-hidden className="shrink-0" />
-                )}
-                {actionButtons}
+                {replyTo ? <ChatMessageQuote quote={replyTo} /> : null}
+                <span className="block min-w-0 whitespace-pre-wrap wrap-anywhere">
+                  {displayText}
+                </span>
+                {timestamp ? <div className="mt-1.5">{timestamp}</div> : null}
+                <div
+                  className={cn(
+                    chatTurnActionsClass,
+                    chatUserTurnActionsRevealClass,
+                    "mt-2 w-full justify-between"
+                  )}
+                >
+                  {expandToggle ?? <span aria-hidden className="shrink-0" />}
+                  {actionButtons}
+                </div>
               </div>
-            </div>
+            )}
           </div>
         }
       />
@@ -178,6 +242,16 @@ function ChatUserTurn({
         sideOffset={8}
         className={chatContextMenuContentClass}
       >
+        {onReply ? (
+          <ContextMenuItem
+            className={chatContextMenuItemClass}
+            disabled={disabled}
+            onClick={onReply}
+          >
+            <ReplyIcon className={chatContextMenuIconClass} />
+            Reply
+          </ContextMenuItem>
+        ) : null}
         <ContextMenuItem
           className={chatContextMenuItemClass}
           disabled={disabled || !trimmed}

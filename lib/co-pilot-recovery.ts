@@ -136,12 +136,12 @@ export function buildFailedAssistantTurn(input: {
 }
 
 /** Remove an empty in-flight assistant bubble after expected abort (no scary error). */
-export function removeEmptyAssistantTurn<T extends { id: string; content: string }>(
-  messages: T[],
-  assistantId: string
-): T[] {
+export function removeEmptyAssistantTurn<
+  T extends { id: string; content: string; paperTicket?: unknown },
+>(messages: T[], assistantId: string): T[] {
   return messages.filter(
-    (m) => !(m.id === assistantId && !m.content.trim())
+    (m) =>
+      !(m.id === assistantId && !m.content.trim() && !m.paperTicket)
   )
 }
 

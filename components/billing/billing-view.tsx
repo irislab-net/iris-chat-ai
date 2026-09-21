@@ -90,7 +90,7 @@ function InvoiceRow({
       : formatInvoiceDate(invoice.created_at)
 
   return (
-    <li className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-3 gap-y-1 border-b border-border/50 py-3.5 last:border-b-0 sm:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_auto_auto] sm:items-center">
+    <li className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-3 gap-y-1 border-b border-border/50 px-4 py-3.5 last:border-b-0 sm:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_auto_auto] sm:items-center sm:px-5">
       <div className="min-w-0">
         <p className="truncate text-[14px] font-medium text-foreground">
           {formatInvoicePlanLabel(invoice.plan_id)}
@@ -111,7 +111,7 @@ function InvoiceRow({
         </p>
       </div>
       <div className="col-start-2 row-start-1 justify-self-end sm:col-auto sm:row-auto">
-        <Badge variant={statusBadgeVariant(status)} className="capitalize">
+        <Badge variant={statusBadgeVariant(status)} className="rounded-full capitalize">
           {statusLabel(status)}
         </Badge>
       </div>
@@ -135,7 +135,7 @@ function HistoryList({
 }) {
   if (rows.length === 0) {
     return (
-      <Empty className="min-h-48 border border-border/60">
+      <Empty className="min-h-52 border-0 py-12">
         <EmptyHeader>
           <EmptyMedia variant="icon">
             {mode === "payment" ? <WalletIcon /> : <ReceiptIcon />}
@@ -153,6 +153,27 @@ function HistoryList({
         <InvoiceRow key={invoice.uid} invoice={invoice} mode={mode} />
       ))}
     </ul>
+  )
+}
+
+function StatCell({
+  label,
+  value,
+  className,
+}: {
+  label: string
+  value: string
+  className?: string
+}) {
+  return (
+    <div className={cn("min-w-0 px-5 py-4", className)}>
+      <p className="text-[11px] font-medium tracking-wide text-muted-foreground uppercase">
+        {label}
+      </p>
+      <p className="mt-1.5 truncate text-[17px] font-semibold tracking-tight">
+        {value}
+      </p>
+    </div>
   )
 }
 
@@ -209,6 +230,20 @@ function BillingView() {
     (row) => normalizeInvoiceStatus(row.status) === "pending"
   ).length
 
+  const statusValue = !isAuthenticated
+    ? "Signed out"
+    : isProUser
+      ? "Active"
+      : pendingCount > 0
+        ? "Payment pending"
+        : "Free"
+
+  const renewValue = isProUser
+    ? (proExpires ?? "—")
+    : trialEnds
+      ? `Ends ${trialEnds}`
+      : "—"
+
   return (
     <div className="flex min-h-dvh flex-col bg-background text-foreground">
       <header className="flex h-14 shrink-0 items-center gap-3 border-b border-border/60 px-4 sm:px-6">
@@ -216,7 +251,7 @@ function BillingView() {
         <div className="min-w-0 flex-1">
           <p className="text-sm font-medium leading-none">Billing</p>
           <p className="mt-0.5 truncate text-xs text-muted-foreground">
-            Status, invoices, and payments
+            Current plan: {isAuthenticated ? planName : "—"}
           </p>
         </div>
         <Button
@@ -230,73 +265,90 @@ function BillingView() {
         </Button>
       </header>
 
-      <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-8 px-4 py-8 sm:px-6">
-        <section className="space-y-4">
-          <div className="flex flex-wrap items-end justify-between gap-3">
-            <div>
-              <h1 className="text-xl font-semibold tracking-tight">
-                Billing status
-              </h1>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Your current plan and renewal details.
-              </p>
-            </div>
-            {!isProUser ? (
-              <Button
-                size="sm"
-                nativeButton={false}
-                render={<Link href={UPGRADE_PATH} />}
-              >
-                Upgrade
-                <ArrowUpRightIcon className="size-3.5" />
-              </Button>
-            ) : null}
-          </div>
+      <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-10 px-4 py-8 sm:px-6 sm:py-10">
+        <div className="mx-auto max-w-2xl text-center">
+          <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
+            Your billing
+          </h1>
+          <p className="mt-2 text-sm leading-relaxed text-muted-foreground sm:text-base">
+            Plan status, co-pilot credits, and crypto payment history in one
+            place.
+          </p>
+        </div>
 
-          <div className="grid gap-3 sm:grid-cols-3">
-            <div className="rounded-2xl border border-border/60 px-4 py-3.5">
-              <p className="text-[11px] font-medium tracking-wide text-muted-foreground uppercase">
-                Plan
-              </p>
-              <p className="mt-1.5 text-[17px] font-semibold tracking-tight">
-                {isAuthenticated ? planName : "—"}
-              </p>
+        <section className="space-y-4">
+          <div className="overflow-hidden rounded-2xl border border-border/60 bg-card/90">
+            <div className="flex flex-wrap items-start justify-between gap-4 border-b border-border/50 px-5 py-5">
+              <div className="min-w-0">
+                <p className="text-[11px] font-medium tracking-wide text-muted-foreground uppercase">
+                  Current plan
+                </p>
+                <p className="mt-1.5 text-2xl font-semibold tracking-tight">
+                  {isAuthenticated ? planName : "—"}
+                </p>
+                {isProUser && proExpires ? (
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    Renews {proExpires}
+                  </p>
+                ) : !isProUser && trialEnds ? (
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    Trial ends {trialEnds}
+                  </p>
+                ) : !isAuthenticated ? (
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    Sign in to see your plan details
+                  </p>
+                ) : pendingCount > 0 ? (
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    Payment pending · finish checkout on Upgrade
+                  </p>
+                ) : null}
+              </div>
+              {!isProUser ? (
+                <Button
+                  size="sm"
+                  className="rounded-xl"
+                  nativeButton={false}
+                  render={<Link href={UPGRADE_PATH} />}
+                >
+                  Upgrade
+                  <ArrowUpRightIcon className="size-3.5" />
+                </Button>
+              ) : (
+                <Badge variant="outline" className="rounded-full">
+                  Active
+                </Badge>
+              )}
             </div>
-            <div className="rounded-2xl border border-border/60 px-4 py-3.5">
-              <p className="text-[11px] font-medium tracking-wide text-muted-foreground uppercase">
-                Status
-              </p>
-              <p className="mt-1.5 text-[17px] font-semibold tracking-tight">
-                {!isAuthenticated
-                  ? "Signed out"
-                  : isProUser
-                    ? "Active"
-                    : pendingCount > 0
-                      ? "Payment pending"
-                      : "Free"}
-              </p>
-            </div>
-            <div className="rounded-2xl border border-border/60 px-4 py-3.5">
-              <p className="text-[11px] font-medium tracking-wide text-muted-foreground uppercase">
-                {isProUser ? "Renews / expires" : "Trial"}
-              </p>
-              <p className="mt-1.5 text-[17px] font-semibold tracking-tight">
-                {isProUser
-                  ? proExpires ?? "—"
-                  : trialEnds
-                    ? `Ends ${trialEnds}`
-                    : "—"}
-              </p>
+
+            <div className="grid sm:grid-cols-3">
+              <StatCell
+                label="Status"
+                value={statusValue}
+                className="border-b border-border/50 sm:border-r sm:border-b-0"
+              />
+              <StatCell
+                label={isProUser ? "Renews / expires" : "Trial"}
+                value={renewValue}
+                className="border-b border-border/50 sm:border-r sm:border-b-0"
+              />
+              <StatCell
+                label="Pending invoices"
+                value={
+                  isAuthenticated ? String(pendingCount) : "—"
+                }
+              />
             </div>
           </div>
 
           {!isAuthenticated ? (
-            <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-dashed border-border/70 px-4 py-3">
+            <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-primary/20 bg-primary/5 px-4 py-4">
               <p className="min-w-0 flex-1 text-sm text-muted-foreground">
-                Sign in to view invoices and payment history.
+                Sign in to view invoices, payments, and credit usage.
               </p>
               <Button
                 size="sm"
+                className="rounded-xl"
                 disabled={loginPending}
                 onClick={() => login({ source: "billing" })}
               >
@@ -315,7 +367,7 @@ function BillingView() {
         />
 
         <section className="space-y-4">
-          <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex flex-wrap items-end justify-between gap-3">
             <div>
               <h2 className="text-lg font-semibold tracking-tight">History</h2>
               <p className="mt-1 text-sm text-muted-foreground">
@@ -326,6 +378,7 @@ function BillingView() {
               type="button"
               variant="ghost"
               size="sm"
+              className="rounded-xl"
               disabled={!isAuthenticated || loading}
               onClick={() => void loadInvoices()}
             >
@@ -342,59 +395,72 @@ function BillingView() {
             </p>
           ) : null}
 
-          <Tabs defaultValue="invoices">
-            <TabsList className="w-full justify-start">
-              <TabsTrigger value="invoices">
-                Invoices
-                {invoiceRows.length > 0 ? (
-                  <span className="text-muted-foreground">
-                    ({invoiceRows.length})
-                  </span>
-                ) : null}
-              </TabsTrigger>
-              <TabsTrigger value="payments">
-                Payments
-                {paymentRows.length > 0 ? (
-                  <span className="text-muted-foreground">
-                    ({paymentRows.length})
-                  </span>
-                ) : null}
-              </TabsTrigger>
-            </TabsList>
-            <TabsContent value="invoices" className="mt-4">
-              {loading && invoices == null ? (
-                <p className="py-10 text-center text-sm text-muted-foreground">
-                  Loading invoices…
-                </p>
-              ) : (
-                <HistoryList
-                  rows={invoiceRows}
-                  mode="invoice"
-                  emptyTitle="No invoices yet"
-                  emptyBody="When you start a Plus checkout, invoices will show up here."
-                />
-              )}
-            </TabsContent>
-            <TabsContent value="payments" className="mt-4">
-              {loading && invoices == null ? (
-                <p className="py-10 text-center text-sm text-muted-foreground">
-                  Loading payments…
-                </p>
-              ) : (
-                <HistoryList
-                  rows={paymentRows}
-                  mode="payment"
-                  emptyTitle="No payments yet"
-                  emptyBody="Confirmed crypto payments will appear in this list."
-                />
-              )}
-            </TabsContent>
-          </Tabs>
+          <div className="overflow-hidden rounded-2xl border border-border/60 bg-card/90">
+            <Tabs defaultValue="invoices" className="gap-0">
+              <div className="flex justify-center border-b border-border/50 px-4 py-3">
+                <TabsList className="h-11 rounded-full p-1.5 group-data-horizontal/tabs:h-11">
+                  <TabsTrigger
+                    value="invoices"
+                    className="h-8 rounded-full px-5 text-sm"
+                  >
+                    Invoices
+                    {invoiceRows.length > 0 ? (
+                      <span className="text-muted-foreground">
+                        ({invoiceRows.length})
+                      </span>
+                    ) : null}
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="payments"
+                    className="h-8 rounded-full px-5 text-sm"
+                  >
+                    Payments
+                    {paymentRows.length > 0 ? (
+                      <span className="text-muted-foreground">
+                        ({paymentRows.length})
+                      </span>
+                    ) : null}
+                  </TabsTrigger>
+                </TabsList>
+              </div>
+              <TabsContent value="invoices" className="mt-0">
+                {loading && invoices == null ? (
+                  <p className="py-12 text-center text-sm text-muted-foreground">
+                    Loading invoices…
+                  </p>
+                ) : (
+                  <HistoryList
+                    rows={invoiceRows}
+                    mode="invoice"
+                    emptyTitle="No invoices yet"
+                    emptyBody="When you start a Plus checkout, invoices will show up here."
+                  />
+                )}
+              </TabsContent>
+              <TabsContent value="payments" className="mt-0">
+                {loading && invoices == null ? (
+                  <p className="py-12 text-center text-sm text-muted-foreground">
+                    Loading payments…
+                  </p>
+                ) : (
+                  <HistoryList
+                    rows={paymentRows}
+                    mode="payment"
+                    emptyTitle="No payments yet"
+                    emptyBody="Confirmed crypto payments will appear in this list."
+                  />
+                )}
+              </TabsContent>
+            </Tabs>
+          </div>
         </section>
 
         <p className="pb-6 text-center text-[11px] text-muted-foreground">
           Manage plans on{" "}
-          <Link href={UPGRADE_PATH} className="underline underline-offset-2">
+          <Link
+            href={UPGRADE_PATH}
+            className="underline underline-offset-2 hover:text-foreground"
+          >
             Upgrade
           </Link>
         </p>

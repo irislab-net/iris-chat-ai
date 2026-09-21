@@ -8,7 +8,7 @@ import { Separator } from "@/components/ui/separator"
 import { Link } from "@/i18n/navigation"
 import { FOOTER_TAGLINE } from "@/lib/landing-modern-data"
 import { scrollToSection } from "@/lib/landing-motion"
-import { APP_NEWS_PATH, SITE_NAME, SOCIAL_X_URL } from "@/lib/site"
+import { getLaunchAppHref, SITE_NAME, SOCIAL_X_URL } from "@/lib/site"
 import {
   landingCard,
   landingFooterCard,
@@ -36,7 +36,7 @@ const FOOTER_COLUMNS: readonly FooterColumn[] = [
       { label: "Why Exur", section: "features" },
       { label: "How it works", section: "how-it-works" },
       { label: "Pricing", section: "pricing" },
-      { label: "Open app", href: APP_NEWS_PATH },
+      { label: "Open app", href: getLaunchAppHref() },
     ],
   },
   {
@@ -77,6 +77,14 @@ function FooterColumnLink({ link }: { link: FooterLink }) {
   if (link.external) {
     return (
       <a href={link.href} target="_blank" rel="noopener noreferrer" className={linkClass}>
+        {link.label}
+      </a>
+    )
+  }
+
+  if (/^https?:\/\//i.test(link.href)) {
+    return (
+      <a href={link.href} className={linkClass}>
         {link.label}
       </a>
     )

@@ -6,9 +6,17 @@
  * `pnpm narration:cues` whenever the audio file changes.
  */
 
-export const ABOUT_NARRATION_SRC = "https://files.exur.ai/ex/en/intro-voice.mp3"
+/** Canonical CDN asset (server proxy + cue tooling). */
+export const ABOUT_NARRATION_CDN =
+  "https://files.exur.ai/ex/en/intro-voice.mp3"
 
-/** Warm the TLS handshake early; the bytes themselves are fetched lazily. */
+/**
+ * Browser playback URL — same-origin proxy so WebAudio can analyse the track.
+ * The CDN itself does not send CORS headers.
+ */
+export const ABOUT_NARRATION_SRC = "/media/about-narration"
+
+/** @deprecated Prefer ABOUT_NARRATION_CDN for server tooling. */
 export const ABOUT_NARRATION_ORIGIN = "https://files.exur.ai"
 
 /** Real length of the file, so the experience knows when to close itself. */

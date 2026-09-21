@@ -1,33 +1,50 @@
 import type { Metadata } from "next"
 import { Link } from "@/i18n/navigation"
+import dynamic from "next/dynamic"
 import { Suspense } from "react"
 
 import { fetchPublicHomeSnapshot } from "@/lib/api/public-home"
 import { AppShell } from "@/components/app-shell/app-shell"
 import { DashboardSkeleton } from "@/components/dashboard/dashboard"
-import { HomeView } from "@/components/dashboard/home-view"
-import { PublicHomeIntro } from "@/components/dashboard/public-home-intro"
 import {
   SITE_DESCRIPTION,
   SITE_NAME,
   SITE_TITLE,
 } from "@/lib/seo"
-import { APP_PATH, LANDING_PATH, ROOT_ROBOTS } from "@/lib/site"
+import {
+  APP_PATH,
+  AUTH_SUCCESS_ROBOTS,
+  LANDING_PATH,
+  PRODUCTION_ORIGIN,
+} from "@/lib/site"
 import { resolveWorkspaceTab } from "@/lib/workspace-tab"
+
+const HomeView = dynamic(
+  () =>
+    import("@/components/dashboard/home-view").then((m) => m.HomeView),
+  {
+    loading: () => (
+      <div className="flex h-full min-h-0 w-full flex-1 flex-col">
+        <DashboardSkeleton />
+      </div>
+    ),
+  }
+)
 
 export const metadata: Metadata = {
   title: {
     absolute: `News · ${SITE_NAME}`,
   },
   description: SITE_DESCRIPTION,
-  robots: ROOT_ROBOTS,
+  // Desk lives on chat.exur.ai; marketing acquisition is exur.ai.
+  robots: AUTH_SUCCESS_ROBOTS,
   alternates: {
-    canonical: APP_PATH,
+    canonical: PRODUCTION_ORIGIN,
   },
   openGraph: {
     title: `${SITE_TITLE} · News`,
     description: SITE_DESCRIPTION,
-    url: APP_PATH,
+    url: PRODUCTION_ORIGIN,
     type: "website",
   },
 }
@@ -43,7 +60,6 @@ async function NewsWithSnapshot({
   const snapshot = await fetchPublicHomeSnapshot()
   return (
     <HomeView
-      intro={<PublicHomeIntro />}
       initialInsight={snapshot.insight}
       initialNews={snapshot.news}
       initialTab={initialTab}
@@ -90,7 +106,7 @@ export default async function AppNewsPage({
         <Suspense
           fallback={
             <div className="flex h-full min-h-0 w-full flex-1 flex-col">
-              <DashboardSkeleton variant="intel" />
+              <DashboardSkeleton />
             </div>
           }
         >

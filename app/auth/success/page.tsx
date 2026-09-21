@@ -8,6 +8,7 @@ import {
   AUTH_RETURN_TO_KEY,
   AUTH_SUCCESS_MESSAGE,
   establishSession,
+  safeAuthReturnPath,
 } from "@/lib/api/auth"
 import { trackLoginFail, trackLoginSuccess } from "@/lib/analytics"
 import { APP_NEWS_PATH } from "@/lib/site"
@@ -39,8 +40,10 @@ export default function AuthSuccessPage() {
         trackLoginSuccess(session.user)
         await refresh()
         if (!cancelled) {
-          const returnTo =
-            sessionStorage.getItem(AUTH_RETURN_TO_KEY) ?? APP_NEWS_PATH
+          const returnTo = safeAuthReturnPath(
+            sessionStorage.getItem(AUTH_RETURN_TO_KEY),
+            APP_NEWS_PATH
+          )
           sessionStorage.removeItem(AUTH_RETURN_TO_KEY)
           router.replace(returnTo)
         }
@@ -59,7 +62,10 @@ export default function AuthSuccessPage() {
               window.close()
             } else {
               router.replace(
-                sessionStorage.getItem(AUTH_RETURN_TO_KEY) ?? APP_NEWS_PATH
+                safeAuthReturnPath(
+                  sessionStorage.getItem(AUTH_RETURN_TO_KEY),
+                  APP_NEWS_PATH
+                )
               )
               sessionStorage.removeItem(AUTH_RETURN_TO_KEY)
             }

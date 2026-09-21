@@ -14,14 +14,12 @@ import {
 import { useIsDesktop } from "@/hooks/use-media-query"
 
 type HomeViewProps = {
-  intro: React.ReactNode
   initialInsight?: InsightHome | null
   initialNews?: NewsHome | null
   initialTab?: WorkspaceTab | null
 }
 
 function HomeViewInner({
-  intro,
   initialInsight = null,
   initialNews = null,
   initialTab = null,
@@ -37,8 +35,6 @@ function HomeViewInner({
   const mobileSection = isMobile ? tab : null
   const mobileWorkspace = isMobile && mobileSection === WORKSPACE_TAB_NEWS
   const desktopNews = !isMobile && tab === WORKSPACE_TAB_NEWS
-  const showHome = false
-  const showWorkspace = true
 
   return (
     <div
@@ -47,13 +43,10 @@ function HomeViewInner({
         (desktopNews || mobileWorkspace) && "h-full min-h-0"
       )}
     >
-      <div className={cn(!showHome && "hidden")}>{intro}</div>
       <Dashboard
         initialInsight={initialInsight}
         initialNews={initialNews}
         mobileSection={mobileSection}
-        showHome={showHome}
-        showWorkspace={showWorkspace}
         preferIntel={desktopNews}
       />
     </div>
@@ -65,7 +58,7 @@ function HomeViewFallback({
 }: Pick<HomeViewProps, "initialTab">) {
   return (
     <div className="flex h-full min-h-0 w-full flex-1 flex-col">
-      <DashboardSkeleton variant="intel" />
+      <DashboardSkeleton />
     </div>
   )
 }

@@ -6,28 +6,15 @@ import {
 } from "@/lib/workspace-auth"
 
 describe("workspace auth gates", () => {
-  it("marks intel as auth-required; iris stays guest-preview friendly", () => {
-    expect(workspacePageRequiresAuth("intel")).toBe(true)
+  it("does not require auth for news or iris", () => {
     expect(workspacePageRequiresAuth("iris")).toBe(false)
     expect(workspacePageRequiresAuth("news")).toBe(false)
-    expect(workspacePageRequiresAuth("desk")).toBe(false)
   })
 
-  it("shows login gate for guests after data is ready and empty", () => {
+  it("never shows login gate when auth is not required", () => {
     expect(
-      shouldShowWorkspaceLoginGate("intel", {
+      shouldShowWorkspaceLoginGate("news", {
         isAuthenticated: false,
-        authLoading: false,
-        dataReady: true,
-        hasData: false,
-      })
-    ).toBe(true)
-  })
-
-  it("keeps authenticated empty states", () => {
-    expect(
-      shouldShowWorkspaceLoginGate("intel", {
-        isAuthenticated: true,
         authLoading: false,
         dataReady: true,
         hasData: false,

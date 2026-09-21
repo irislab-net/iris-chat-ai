@@ -16,13 +16,15 @@ import { cn } from "@/lib/utils"
 function UsageMeter({
   title,
   period,
+  className,
 }: {
   title: string
   period: CreditUsagePeriod
+  className?: string
 }) {
   const pct = Math.round(period.usedFraction * 100)
   return (
-    <div className="rounded-2xl border border-border/60 px-4 py-3.5">
+    <div className={cn("min-w-0 px-5 py-4", className)}>
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="text-[11px] font-medium tracking-wide text-muted-foreground uppercase">
@@ -85,7 +87,7 @@ function CreditUsageStatusPanel({
         {onRefresh ? (
           <button
             type="button"
-            className="text-xs font-medium text-muted-foreground underline-offset-2 hover:text-foreground hover:underline disabled:opacity-50"
+            className="rounded-xl px-2 py-1 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground disabled:opacity-50"
             disabled={loading}
             onClick={onRefresh}
           >
@@ -101,12 +103,18 @@ function CreditUsageStatusPanel({
       ) : null}
 
       {usage ? (
-        <div className="grid gap-3 sm:grid-cols-2">
-          <UsageMeter title="Daily remaining" period={usage.daily} />
-          <UsageMeter title="Weekly remaining" period={usage.weekly} />
+        <div className="overflow-hidden rounded-2xl border border-border/60 bg-card/90">
+          <div className="grid sm:grid-cols-2">
+            <UsageMeter
+              title="Daily remaining"
+              period={usage.daily}
+              className="border-b border-border/50 sm:border-r sm:border-b-0"
+            />
+            <UsageMeter title="Weekly remaining" period={usage.weekly} />
+          </div>
         </div>
       ) : trial ? (
-        <div className="rounded-2xl border border-border/60 px-4 py-3.5">
+        <div className="overflow-hidden rounded-2xl border border-border/60 bg-card/90 px-5 py-4">
           <p className="text-[11px] font-medium tracking-wide text-muted-foreground uppercase">
             Guest trial
           </p>
@@ -122,9 +130,11 @@ function CreditUsageStatusPanel({
           </p>
         </div>
       ) : loading ? (
-        <p className="py-6 text-sm text-muted-foreground">Loading credit usage…</p>
+        <div className="overflow-hidden rounded-2xl border border-border/60 bg-card/90 px-5 py-8">
+          <p className="text-sm text-muted-foreground">Loading credit usage…</p>
+        </div>
       ) : (
-        <div className="flex items-start gap-3 rounded-2xl border border-dashed border-border/70 px-4 py-3.5">
+        <div className="flex items-start gap-3 rounded-2xl border border-border/60 bg-card/90 px-5 py-4">
           <GaugeIcon className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
           <p className="text-sm text-muted-foreground">
             Sign in to see daily and weekly credit limits.

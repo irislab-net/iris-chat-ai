@@ -1,9 +1,5 @@
-import {
-  availableBalance,
-  calculateInitialMargin,
-  type PaperSide,
-  type PaperState,
-} from "@/lib/paper-trading"
+import type { PaperSide } from "@/lib/chat/trade-signal"
+import { SIGNAL_DEMO_EQUITY } from "@/lib/chat/trade-signal"
 
 /** Fraction of equity risked to the stop. Engine-owned — never from the model. */
 export const PAPER_AI_RISK_FRACTION = 0.005
@@ -22,13 +18,14 @@ export function paperRiskAmountUsd(equity: number): number {
 }
 
 export function calculateRiskBasedSize(input: {
-  state: PaperState
   side: PaperSide
   markPrice: number
   stopLoss: number
   leverage: number
+  equity?: number
 }): { ok: true; quantity: number } | { ok: false; error: string } {
-  const { state, markPrice, stopLoss, leverage } = input
+  const { markPrice, stopLoss, leverage } = input
+  const equity = input.equity ?? SIGNAL_DEMO_EQUITY
   if (!(markPrice > 0) || !(stopLoss > 0)) {
     return { ok: false, error: "INVALID_SIZE" }
   }
@@ -36,26 +33,19 @@ export function calculateRiskBasedSize(input: {
   const stopDist = Math.abs(markPrice - stopLoss)
   if (!(stopDist > 0)) return { ok: false, error: "INVALID_SIZE" }
 
-  const equity = state.account.equity
   if (!(equity > 0)) return { ok: false, error: "INVALID_SIZE" }
 
   const riskAmount = paperRiskAmountUsd(equity)
   let quantity = snapQuantity(riskAmount / stopDist)
   if (!(quantity > 0)) return { ok: false, error: "INVALID_SIZE" }
 
-  const avail = availableBalance(state)
-  const required = calculateInitialMargin(quantity, markPrice, leverage)
-  if (required > avail && avail > 0 && leverage > 0) {
-    const maxQty = snapQuantity((avail * leverage) / markPrice)
-    quantity = Math.min(quantity, maxQty)
+  // Cap by notional affordability at the given leverage (demo equity as available).
+  if (leverage > 0 && markPrice > 0) {
+    const maxQty = snapQuantity((equity * leverage) / markPrice)
+    if (maxQty > 0) quantity = Math.min(quantity, maxQty)
   }
 
   if (!(quantity > 0)) return { ok: false, error: "INSUFFICIENT_MARGIN" }
-
-  const finalRequired = calculateInitialMargin(quantity, markPrice, leverage)
-  if (finalRequired > avail + 1e-9) {
-    return { ok: false, error: "INSUFFICIENT_MARGIN" }
-  }
 
   return { ok: true, quantity }
 }

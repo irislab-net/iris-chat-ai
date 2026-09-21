@@ -16,7 +16,6 @@ import {
   buildChatClientContext as buildChatClientContextFromTools,
 } from "@/lib/chat/client-tools"
 import { isChatCreditBalance } from "@/lib/api/credit-usage"
-import type { DeskContextSnapshot } from "@/lib/paper-trading/desk-context"
 import { WORKSPACE_TAB_NEWS, workspaceTabHref } from "@/lib/workspace-tab"
 import type { WorkspaceTab } from "@/lib/workspace-tab"
 
@@ -71,47 +70,8 @@ export function buildChatClientContext(input: {
   workspaceTab?: WorkspaceTab | null
   locale?: string
   timezone?: string
-  deskContext?: DeskContextSnapshot | null
 }): ChatClientContext {
-  const base = buildChatClientContextFromTools(input)
-  const desk = input.deskContext
-
-  return {
-    ...base,
-    open_positions: desk?.openPositions.map((position) => ({
-      id: position.id,
-      symbol: position.symbol,
-      side: position.side,
-      quantity: position.quantity,
-      entry_price: position.entryPrice,
-      mark_price: position.markPrice,
-      stop_loss: position.stopLoss,
-      take_profit: position.takeProfit,
-      leverage: position.leverage,
-      margin_mode: position.marginMode,
-      unrealized_pnl: position.unrealizedPnl,
-    })),
-    draft_order: desk
-      ? desk.draft
-        ? {
-            side: desk.draft.side,
-            quantity: desk.draft.quantity,
-            stop_loss: desk.draft.stopLoss,
-            take_profit: desk.draft.takeProfit,
-          }
-        : null
-      : undefined,
-    paper_account: desk?.paperAccount
-      ? {
-          starting_balance: desk.paperAccount.startingBalance,
-          balance: desk.paperAccount.balance,
-          equity: desk.paperAccount.equity,
-          available_balance: desk.paperAccount.availableBalance,
-          risk_per_trade: desk.paperAccount.riskPerTradeUsd,
-          risk_fraction: desk.paperAccount.riskFraction,
-        }
-      : undefined,
-  }
+  return buildChatClientContextFromTools(input)
 }
 
 export function usageFromCreditBalance(
@@ -217,6 +177,8 @@ export function adaptChatMessageResponse(
     tool_calls: toolCalls,
     client_actions: clientTargeted,
     suggestedPrompts,
+    user_message: data.user_message,
+    assistant_message: data.assistant_message,
   }
 }
 

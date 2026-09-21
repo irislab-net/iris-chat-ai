@@ -4,6 +4,7 @@ import * as React from "react"
 import {
   CheckIcon,
   CopyIcon,
+  ReplyIcon,
   ThumbsDownIcon,
   ThumbsUpIcon,
 } from "lucide-react"
@@ -26,6 +27,7 @@ type ChatMessageActionsProps = {
   content: string
   feedback?: ChatMessageFeedback
   onFeedbackChange: (feedback: ChatMessageFeedback | undefined) => void
+  onReply?: () => void
   disabled?: boolean
   className?: string
   variant?: "default" | "gemini"
@@ -37,6 +39,7 @@ function ChatMessageActions({
   content,
   feedback,
   onFeedbackChange,
+  onReply,
   disabled,
   className,
   variant = "default",
@@ -85,6 +88,20 @@ function ChatMessageActions({
 
   return (
     <div className={cn(chatTurnActionsClass, "justify-start", className)}>
+      {onReply ? (
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon-sm"
+          className={buttonClass}
+          aria-label="Reply to message"
+          title="Reply"
+          disabled={disabled}
+          onClick={onReply}
+        >
+          <ReplyIcon className={isGemini ? "size-[18px]" : undefined} />
+        </Button>
+      ) : null}
       <Button
         type="button"
         variant="ghost"
@@ -113,7 +130,10 @@ function ChatMessageActions({
         onClick={() => onReaction("up")}
       >
         <ThumbsUpIcon
-          className={cn(isGemini && "size-[18px]", feedback === "up" ? "text-foreground" : undefined)}
+          className={cn(
+            isGemini && "size-[18px]",
+            feedback === "up" ? "text-foreground" : undefined
+          )}
           fill={feedback === "up" ? "currentColor" : "none"}
         />
       </Button>
@@ -129,7 +149,10 @@ function ChatMessageActions({
         onClick={() => onReaction("down")}
       >
         <ThumbsDownIcon
-          className={cn(isGemini && "size-[18px]", feedback === "down" ? "text-foreground" : undefined)}
+          className={cn(
+            isGemini && "size-[18px]",
+            feedback === "down" ? "text-foreground" : undefined
+          )}
           fill={feedback === "down" ? "currentColor" : "none"}
         />
       </Button>

@@ -1,8 +1,8 @@
 import type { WorkspacePageId } from "@/lib/workspace-page-info"
 
 /** Guest APIs return empty for these tabs — prompt sign-in instead of "no data". */
-export function workspacePageRequiresAuth(page: WorkspacePageId): boolean {
-  return page === "intel"
+export function workspacePageRequiresAuth(_page: WorkspacePageId): boolean {
+  return false
 }
 
 export type WorkspaceLoginCopy = {
@@ -11,25 +11,15 @@ export type WorkspaceLoginCopy = {
 }
 
 export const WORKSPACE_LOGIN_COPY: Record<WorkspacePageId, WorkspaceLoginCopy> = {
-  desk: {
-    title: "Sign in to open Desk",
-    description:
-      "Connect Google to load your workspace session and sync the trading desk.",
-  },
   news: {
     title: "Sign in to read News",
     description:
       "Connect Google to load scored headlines, tape windows, and asset sentiment.",
   },
-  intel: {
-    title: "Sign in to view Intel",
-    description:
-      "Model distance, risk geometry, and classifier status need a signed-in session.",
-  },
   iris: {
-    title: "Sign in to use IRIS",
+    title: "Sign in to use Exur",
     description:
-      "Connect Google so the co-pilot can answer with your desk context.",
+      "Connect Google so the co-pilot can answer with fuller session context.",
   },
 }
 

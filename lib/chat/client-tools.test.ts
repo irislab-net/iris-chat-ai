@@ -20,148 +20,132 @@ describe("chat client tools", () => {
     expect(resolveClientTimezone(date)).toBe("+03:30")
   })
 
-  it("advertises show_trade_signal and desk tools for pro users on the trading desk", () => {
-    expect(
-      resolveAvailableUiActions({ role: "pro", onDesk: true })
-    ).toEqual([
+  it("advertises show_trade_signal for pro users", () => {
+    expect(resolveAvailableUiActions({ role: "pro" })).toEqual([
       "show_trade_signal",
       "navigate_to_page",
-      "draw_chart_indicator",
-      "clear_chart_indicators",
-      "show_wallet_balance",
-      "preview_ghost_trade",
-      "preview_position_bracket",
-      "modify_position_bracket",
-      "fill_order_form",
+    ])
+  })
+
+  it("adds admin_user_lookup for admins", () => {
+    expect(resolveAvailableUiActions({ role: "admin" })).toEqual([
+      "show_trade_signal",
+      "navigate_to_page",
+      "admin_user_lookup",
     ])
   })
 
   it("executes show_trade_signal into a paper ticket", () => {
-    const previewGhostTrade = vi.fn()
-    const switchSymbol = vi.fn()
-
-    const result = executeChatClientActions(
-      [
-        {
-          tool_name: "show_trade_signal",
-          execution_target: "client",
-          input: JSON.stringify({
-            symbol: "BTC",
-            direction: "SHORT",
-            setup: "Model short edge fade",
-            entry: 81558,
-            stopLoss: 81756.7,
-            takeProfit: 80505.9,
-            leverage: 5,
-            thesis: "Short model p=0.76 with edge 0.065",
-          }),
-        },
-      ],
-      { previewGhostTrade, switchSymbol }
-    )
+    const result = executeChatClientActions([
+      {
+        tool_name: "show_trade_signal",
+        execution_target: "client",
+        input: JSON.stringify({
+          symbol: "BTC",
+          direction: "LONG",
+          setup: "Range Breakout",
+          entry: 81806,
+          stopLoss: 81690,
+          takeProfit: 82050,
+          leverage: 10,
+          timeHorizon: "~2 hours",
+          entryReason:
+            "Price has broken above the recent 30-minute high, indicating potential for further upside.",
+          stopLossReason:
+            "Stop loss placed below the previous 1-minute candle low to protect against a false breakout.",
+          takeProfitReason:
+            "Targeting the next significant resistance level based on prior price action.",
+          thesis:
+            "BTC is showing signs of a short-term breakout from a consolidation range.",
+        }),
+      },
+    ])
 
     expect(result.paperTicket).toMatchObject({
       symbol: "BTC",
-      side: "SHORT",
-      markPrice: 81558,
-      stopLoss: 81756.7,
-      takeProfit: 80505.9,
-      leverage: 5,
-      setup: "Model short edge fade",
+      side: "LONG",
+      markPrice: 81806,
+      stopLoss: 81690,
+      takeProfit: 82050,
+      leverage: 10,
+      setup: "Range Breakout",
+      quantity: 0,
+      timeHorizon: "~2 hours",
+      entryReason:
+        "Price has broken above the recent 30-minute high, indicating potential for further upside.",
+      stopLossReason:
+        "Stop loss placed below the previous 1-minute candle low to protect against a false breakout.",
+      takeProfitReason:
+        "Targeting the next significant resistance level based on prior price action.",
+      thesis:
+        "BTC is showing signs of a short-term breakout from a consolidation range.",
     })
-    expect(switchSymbol).toHaveBeenCalledWith("BTC")
-    expect(previewGhostTrade).toHaveBeenCalled()
     expect(result.summaries[0]).toMatchObject({
       tool: "show_trade_signal",
       applied: true,
     })
   })
 
-  it("executes chart and order client actions", () => {
-    const drawChartIndicator = vi.fn()
-    const fillOrderForm = vi.fn()
-    const navigate = vi.fn()
-    const focusDeskPane = vi.fn()
-
-    const result = executeChatClientActions(
-      [
-        {
-          tool_name: "draw_chart_indicator",
-          execution_target: "client",
-          input: '{"type":"support","price":62000}',
-        },
-        {
-          tool_name: "fill_order_form",
-          execution_target: "client",
-          input:
-            '{"side":"buy","symbol":"BTCUSDT","quantity":0.5,"price":62000,"stop_loss":61000,"take_profit":64000,"leverage":10}',
-        },
-      ],
+  it("does not invent leverage, size, setup, or symbol for show_trade_signal", () => {
+    const result = executeChatClientActions([
       {
-        navigate,
-        openDesk: vi.fn(),
-        drawChartIndicator,
-        fillOrderForm,
-        focusDeskPane,
-      }
-    )
+        tool_name: "show_trade_signal",
+        execution_target: "client",
+        input: JSON.stringify({
+          symbol: "BTC",
+          direction: "LONG",
+          entry: 81529,
+          stopLoss: 81321,
+          takeProfit: 81642,
+        }),
+      },
+    ])
 
-    expect(navigate).toHaveBeenCalledWith("/?tab=news")
-    expect(focusDeskPane).toHaveBeenCalledWith({ pane: "chart" })
-    expect(drawChartIndicator).toHaveBeenCalledWith({
-      type: "support",
-      price: 62000,
-      mode: "append",
-    })
-    expect(fillOrderForm).toHaveBeenCalledWith({
+    expect(result.paperTicket).toMatchObject({
+      symbol: "BTC",
       side: "LONG",
-      symbol: "BTCUSDT",
-      quantity: 0.5,
-      limitPrice: 62000,
-      stopLoss: 61000,
-      takeProfit: 64000,
-      leverage: 10,
+      leverage: 0,
+      quantity: 0,
+      setup: "",
     })
-    expect(result.summaries).toHaveLength(2)
   })
 
-  it("queues bracket apply after modify_position_bracket", () => {
-    const previewPositionBracket = vi.fn()
-    const pendingBracketApply = vi.fn()
-
-    const result = executeChatClientActions(
-      [
-        {
-          tool_name: "modify_position_bracket",
-          execution_target: "client",
-          input:
-            '{"symbol":"ETH","stop_loss":3300,"take_profit":3600,"reason":"Tighten risk"}',
-        },
-      ],
+  it("skips show_trade_signal when symbol is missing", () => {
+    const result = executeChatClientActions([
       {
-        navigate: vi.fn(),
-        openDesk: vi.fn(),
-        focusDeskPane: vi.fn(),
-        previewPositionBracket,
-        pendingBracketApply,
-        resolvePosition: () => ({
-          id: "pos-1",
-          symbol: "ETH",
-          side: "LONG",
-          entryPrice: 3400,
-          quantity: 1,
+        tool_name: "show_trade_signal",
+        execution_target: "client",
+        input: JSON.stringify({
+          direction: "LONG",
+          entry: 100,
+          stopLoss: 90,
+          takeProfit: 120,
         }),
-      }
-    )
+      },
+    ])
 
-    expect(previewPositionBracket).toHaveBeenCalled()
-    expect(pendingBracketApply).toHaveBeenCalledWith(
-      expect.objectContaining({
-        positionId: "pos-1",
-        stopLoss: 3300,
-        takeProfit: 3600,
-      })
+    expect(result.paperTicket).toBeUndefined()
+    expect(result.summaries[0]?.applied).toBe(false)
+  })
+
+  it("executes no_trade into a reason", () => {
+    const result = executeChatClientActions([
+      {
+        tool_name: "no_trade",
+        execution_target: "client",
+        input: JSON.stringify({
+          reason: "Live data is stale; no safe SL/TP levels.",
+        }),
+      },
+    ])
+
+    expect(result.noTradeReason).toBe(
+      "Live data is stale; no safe SL/TP levels."
     )
-    expect(result.pendingBracket?.positionId).toBe("pos-1")
+    expect(result.paperTicket).toBeUndefined()
+    expect(result.summaries[0]).toMatchObject({
+      tool: "no_trade",
+      applied: true,
+    })
   })
 })

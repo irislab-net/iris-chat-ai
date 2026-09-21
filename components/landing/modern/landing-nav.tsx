@@ -37,7 +37,7 @@ import {
   landingNavLinkInactive,
   landingNavPill,
 } from "@/lib/landing-modern-styles"
-import { APP_NEWS_PATH } from "@/lib/site"
+import { getLaunchAppHref } from "@/lib/site"
 import { userAccountLabel, userAccountSubline } from "@/lib/user-profile"
 import { cn } from "@/lib/utils"
 
@@ -255,7 +255,7 @@ export function LandingNav() {
             />
           </div>
 
-          <SphereCta href={APP_NEWS_PATH} variant="glass" size="sm">
+          <SphereCta href={getLaunchAppHref()} variant="glass" size="sm">
             Start Free
           </SphereCta>
 
@@ -348,7 +348,7 @@ export function LandingNav() {
               </nav>
 
               <div className="mt-auto flex flex-col gap-3 p-5 pt-4 pb-[max(1.25rem,env(safe-area-inset-bottom))]">
-                <SphereCta href={APP_NEWS_PATH} variant="glass" className="w-full">
+                <SphereCta href={getLaunchAppHref()} variant="glass" className="w-full">
                   Start Free
                 </SphereCta>
                 <ThemeModeControl />

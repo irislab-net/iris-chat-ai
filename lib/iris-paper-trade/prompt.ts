@@ -1,12 +1,15 @@
 import { serializeMarketContextForLlm } from "@/lib/iris-paper-trade/market-context"
 import type { MarketContextPacket } from "@/lib/iris-paper-trade/types"
 import { PAPER_TRADE_SAMPLE_PROMPT } from "@/lib/iris-paper-trade/types"
-import { serializePaperAccountForLlm } from "@/lib/paper-trading/account-context"
-import type { PaperState } from "@/lib/paper-trading"
+import {
+  PAPER_AI_RISK_FRACTION,
+  paperRiskAmountUsd,
+} from "@/lib/iris-paper-trade/size"
+import { SIGNAL_DEMO_EQUITY } from "@/lib/chat/trade-signal"
 
 export { PAPER_TRADE_SAMPLE_PROMPT }
 
-export const PAPER_TRADE_MODEL_INSTRUCTIONS = `You are IRIS on the trading desk evaluating ONE user-initiated trade request.
+export const PAPER_TRADE_MODEL_INSTRUCTIONS = `You are IRIS evaluating ONE user-initiated trade-signal request.
 
 Call exactly one function:
 - open_paper_trade
@@ -15,9 +18,7 @@ Call exactly one function:
 Decide ONLY from the MARKET_CONTEXT packet. Do not invent prices or news.
 
 You decide: DIRECTION, SETUP, SL, TP, LEVERAGE, THESIS.
-You do NOT decide: SIZE, FEES, SLIPPAGE, MARGIN, FILL, LIQUIDATION. Those belong to the paper engine.
-
-The user's demo budget is in PAPER_ACCOUNT. Position size is computed by the engine as risk_fraction × equity_usdc divided by stop distance. Respect their capital when choosing leverage and stop distance — tight stops on small accounts can still fail margin checks.
+You do NOT decide: SIZE. Size is computed from a fixed demo equity and stop distance for display on the signal card.
 
 Rules:
 - Use ALL fields in MARKET_CONTEXT: live price, trend, volatility, models, insight stance/bias, news.
@@ -32,39 +33,24 @@ Rules:
 
 /** Evidence packet for the model — lives in `instructions`, never in chat `message`. */
 export function buildPaperTradeContextInstructions(
-  packet: MarketContextPacket,
-  paperState?: PaperState | null
+  packet: MarketContextPacket
 ): string {
-  const paperAccount =
-    paperState != null
-      ? serializePaperAccountForLlm(paperState)
-      : null
+  const riskUsd = paperRiskAmountUsd(SIGNAL_DEMO_EQUITY)
+  const demoAccount = {
+    equity_usdc: SIGNAL_DEMO_EQUITY,
+    risk_fraction: PAPER_AI_RISK_FRACTION,
+    risk_per_trade_usdc: riskUsd,
+  }
 
   return `Decide ONLY from the MARKET_CONTEXT packet below. Do not invent prices or news.
 
 MARKET_CONTEXT (authoritative evidence; asOf=${packet.asOfIso}):
 ${JSON.stringify(serializeMarketContextForLlm(packet))}
-${
-  paperAccount
-    ? `
-PAPER_ACCOUNT (user demo budget; size is engine-owned from equity and stop distance):
-${JSON.stringify(paperAccount)}`
-    : ""
-}
+
+DEMO_ACCOUNT (fixed display sizing; size is computed from equity and stop distance):
+${JSON.stringify(demoAccount)}
 
 Use open_paper_trade or no_trade via function call only. Do NOT respond with prose-only trade setups or say you cannot open trades in text.`
-}
-
-/** @deprecated Prefer clean `message` + `buildPaperTradeContextInstructions`. */
-export function wrapPaperTradeUserMessage(
-  userText: string,
-  packet: MarketContextPacket,
-  paperState?: PaperState | null
-): string {
-  return `${userText.trim()}
-
----
-${buildPaperTradeContextInstructions(packet, paperState)}`
 }
 
 /** Strip leaked MARKET_CONTEXT / PAPER_ACCOUNT appendices from user-visible chat text. */
@@ -77,6 +63,7 @@ export function stripMarketContextAppendix(text: string): string {
     /\n+MARKET_CONTEXT\s*\(/i,
     /\n+MARKET_CONTEXT\b/i,
     /\n+PAPER_ACCOUNT\b/i,
+    /\n+DEMO_ACCOUNT\b/i,
   ] as const
 
   let cut = -1
@@ -92,11 +79,11 @@ export function stripMarketContextAppendix(text: string): string {
 
 export function formatNoTradeChatMessage(reason: string): string {
   const trimmed = reason.trim() || "Conditions are not sufficient."
-  return `No paper trade opened.\n\n${trimmed}`
+  return `No trade signal.\n\n${trimmed}`
 }
 
 export function formatRejectedChatMessage(detail: string): string {
-  return `No paper trade opened.\n\nThe setup did not pass validation, so nothing was executed.${
+  return `No trade signal.\n\nThe setup did not pass validation.${
     detail ? `\n\n${detail}` : ""
   }`
 }

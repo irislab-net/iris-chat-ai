@@ -14,10 +14,14 @@ const setupHistory: CoPilotHistoryMessage[] = [
 ]
 
 describe("shouldRunPaperTradePipeline", () => {
-  it("routes explicit signal prompts on a fresh thread", () => {
+  it("routes explicit legacy desk prompts on a fresh thread", () => {
     expect(shouldRunPaperTradePipeline(ETH_SIGNAL_SAMPLE_PROMPT, [])).toBe(
       true
     )
+  })
+
+  it("keeps @signal commands on regular chat", () => {
+    expect(shouldRunPaperTradePipeline("@signal ETH", [])).toBe(false)
   })
 
   it("does not re-run paper trade for follow-up chat after a setup", () => {
@@ -29,7 +33,7 @@ describe("shouldRunPaperTradePipeline", () => {
     ).toBe(false)
   })
 
-  it("allows a fresh explicit signal request in the same thread", () => {
+  it("allows a fresh explicit desk signal request in the same thread", () => {
     expect(
       shouldRunPaperTradePipeline(ETH_SIGNAL_SAMPLE_PROMPT, setupHistory)
     ).toBe(true)

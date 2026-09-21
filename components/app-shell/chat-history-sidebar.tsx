@@ -13,7 +13,9 @@ import {
   PencilIcon,
   PinIcon,
   PinOffIcon,
+  ReceiptIcon,
   Settings,
+  SparklesIcon,
   Trash2Icon,
   XIcon,
   HouseIcon,
@@ -30,7 +32,6 @@ import { displayPlanName } from "@/lib/billing/catalog"
 import { GoogleGlyph } from "@/components/auth/google-glyph"
 import { useUserAvatarUrl } from "@/hooks/use-user-avatar-url"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
   ContextMenu,
@@ -83,7 +84,7 @@ import {
   type StoredConversation,
 } from "@/lib/chat-storage"
 import { CHAT_HISTORY_RAIL_COLLAPSED_WIDTH } from "@/lib/chat-history-rail-prefs"
-import { LANDING_PATH, UPGRADE_PATH } from "@/lib/site"
+import { BILLING_PATH, LANDING_PATH, UPGRADE_PATH } from "@/lib/site"
 import {
   userAccountLabel,
   userAccountSubline,
@@ -91,7 +92,11 @@ import {
 import { cn } from "@/lib/utils"
 
 const rowMenuButtonClass =
-  "size-8 shrink-0 rounded-full text-muted-foreground hover:bg-muted/60 hover:text-foreground opacity-100 [@media(hover:hover)]:opacity-0 [@media(hover:hover)]:group-hover/item:opacity-100 [@media(hover:hover)]:group-focus-within/item:opacity-100"
+  "size-8 shrink-0 rounded-full text-muted-foreground hover:bg-muted/60 hover:text-foreground"
+
+/** Desktop rail — hide until row hover/focus. Touch has no hover, so compact skips this. */
+const rowMenuButtonHoverRevealClass =
+  "opacity-100 [@media(hover:hover)]:opacity-0 [@media(hover:hover)]:group-hover/item:opacity-100 [@media(hover:hover)]:group-focus-within/item:opacity-100"
 
 const historyRailIconButtonClass =
   "size-9 shrink-0 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground"
@@ -194,14 +199,6 @@ function HistoryNewsNav({
         )}
       />
       <span className="min-w-0 flex-1 truncate text-start">{t("news")}</span>
-      {!isMobileDrawer ? (
-        <Badge
-          variant="secondary"
-          className="h-5 shrink-0 px-1.5 text-[10px] font-medium tracking-wide"
-        >
-          {t("desk")}
-        </Badge>
-      ) : null}
       {showSpotlight ? (
         <AttentionPulseDot className="top-1 inset-e-2.5" />
       ) : null}
@@ -371,8 +368,28 @@ function MobileHistoryDrawerFooter({
           align="end"
           side="top"
           sideOffset={8}
-          className={chatContextMenuContentClass}
+          className={cn(chatContextMenuContentClass, "min-w-56")}
         >
+          {user && !isProUser ? (
+            <DropdownMenuItem
+              className={chatContextMenuItemClass}
+              nativeButton={false}
+              render={<Link href={UPGRADE_PATH} />}
+            >
+              <SparklesIcon className={chatContextMenuIconClass} />
+              {t("upgradeToPlus")}
+            </DropdownMenuItem>
+          ) : null}
+          {user ? (
+            <DropdownMenuItem
+              className={chatContextMenuItemClass}
+              nativeButton={false}
+              render={<Link href={BILLING_PATH} />}
+            >
+              <ReceiptIcon className={chatContextMenuIconClass} />
+              {t("billing")}
+            </DropdownMenuItem>
+          ) : null}
           {onOpenNews ? (
             <DropdownMenuItem
               className={chatContextMenuItemClass}
@@ -434,7 +451,6 @@ function ChatHistorySidebar({
   const isMobileDrawer = variant === "mobile-drawer"
   const [renameTarget, setRenameTarget] =
     React.useState<StoredConversation | null>(null)
-  const [renameDraft, setRenameDraft] = React.useState("")
 
   const sorted = React.useMemo(
     () => sortConversations(conversations),
@@ -445,20 +461,10 @@ function ChatHistorySidebar({
 
   function openRename(chat: StoredConversation) {
     setRenameTarget(chat)
-    setRenameDraft(chat.title)
   }
 
   function closeRename() {
     setRenameTarget(null)
-    setRenameDraft("")
-  }
-
-  function submitRename() {
-    if (!renameTarget) return
-    const next = renameDraft.trim()
-    if (!next) return
-    onRename(renameTarget.id, next)
-    closeRename()
   }
 
   return (
@@ -658,12 +664,14 @@ function ChatHistorySidebar({
 
       <ChatRenameDialog
         open={renameTarget != null}
-        value={renameDraft}
-        onValueChange={setRenameDraft}
+        title={renameTarget?.title ?? ""}
         onOpenChange={(open) => {
           if (!open) closeRename()
         }}
-        onSubmit={submitRename}
+        onSubmit={(next) => {
+          if (!renameTarget) return
+          onRename(renameTarget.id, next)
+        }}
       />
     </>
   )
@@ -815,7 +823,7 @@ function ConversationRow({
         className={cn(
           "min-w-0 flex-1 justify-start text-left font-normal shadow-none hover:bg-transparent",
           compact
-            ? "h-11 gap-0 rounded-full px-4 text-[15px]"
+            ? "h-11 gap-0 rounded-full px-4 pe-1 text-[15px]"
             : "h-9 gap-2.5 rounded-md px-2 text-sm"
         )}
         onClick={onSelect}
@@ -830,7 +838,6 @@ function ConversationRow({
         <span className="truncate">{chat.title}</span>
       </Button>
 
-      {!compact ? (
       <DropdownMenu modal={undefined}>
         <DropdownMenuTrigger
           render={
@@ -840,8 +847,12 @@ function ConversationRow({
               size="icon-sm"
               className={cn(
                 rowMenuButtonClass,
-                compact && "opacity-100",
-                active && "[@media(hover:hover)]:opacity-100"
+                compact
+                  ? "size-9 opacity-100"
+                  : cn(
+                      rowMenuButtonHoverRevealClass,
+                      active && "[@media(hover:hover)]:opacity-100"
+                    )
               )}
               aria-label={t("chatOptions")}
               disabled={sending}
@@ -849,7 +860,7 @@ function ConversationRow({
             />
           }
         >
-          <MoreHorizontalIcon className="size-4.5" />
+          <MoreHorizontalIcon className={compact ? "size-5" : "size-4.5"} />
         </DropdownMenuTrigger>
         <DropdownMenuContent
           align="end"
@@ -865,7 +876,6 @@ function ConversationRow({
           />
         </DropdownMenuContent>
       </DropdownMenu>
-      ) : null}
     </div>
   )
 

@@ -11,8 +11,11 @@ import {
 } from "@/lib/iris-paper-trade/prompt"
 import { PAPER_TRADE_TOOLS } from "@/lib/iris-paper-trade/schema"
 import type { MarketContextPacket } from "@/lib/iris-paper-trade/types"
-import { serializePaperAccountForLlm } from "@/lib/paper-trading/account-context"
-import type { PaperState } from "@/lib/paper-trading"
+import {
+  PAPER_AI_RISK_FRACTION,
+  paperRiskAmountUsd,
+} from "@/lib/iris-paper-trade/size"
+import { SIGNAL_DEMO_EQUITY } from "@/lib/chat/trade-signal"
 
 export function toolCallsFromCoPilotResponse(
   data: CoPilotChatJsonResponse
@@ -42,13 +45,9 @@ export async function requestPaperTradeDecision(input: {
   history: CoPilotHistoryMessage[]
   signal?: AbortSignal
   effort?: CoPilotEffort
-  paperState?: PaperState | null
 }): Promise<CoPilotChatJsonResponse> {
-  const paperAccount =
-    input.paperState != null
-      ? serializePaperAccountForLlm(input.paperState)
-      : null
   const timezone = resolveClientTimezone()
+  const riskUsd = paperRiskAmountUsd(SIGNAL_DEMO_EQUITY)
 
   return await sendCoPilotChat({
     message: input.userMessage.trim(),
@@ -58,7 +57,7 @@ export async function requestPaperTradeDecision(input: {
     effort: input.effort,
     instructions: `${PAPER_TRADE_MODEL_INSTRUCTIONS}
 
-${buildPaperTradeContextInstructions(input.packet, input.paperState)}`,
+${buildPaperTradeContextInstructions(input.packet)}`,
     tools: PAPER_TRADE_TOOLS,
     toolChoice: "required",
     parallelToolCalls: false,
@@ -68,18 +67,14 @@ ${buildPaperTradeContextInstructions(input.packet, input.paperState)}`,
       role: "user",
       available_ui_actions: ["show_trade_signal"],
       ...(timezone ? { timezone } : {}),
-      ...(paperAccount
-        ? {
-            paper_account: {
-              starting_balance: paperAccount.starting_balance_usdc,
-              balance: paperAccount.balance_usdc,
-              equity: paperAccount.equity_usdc,
-              available_balance: paperAccount.available_balance_usdc,
-              risk_per_trade: paperAccount.risk_per_trade_usdc,
-              risk_fraction: paperAccount.risk_fraction,
-            },
-          }
-        : {}),
+      paper_account: {
+        starting_balance: SIGNAL_DEMO_EQUITY,
+        balance: SIGNAL_DEMO_EQUITY,
+        equity: SIGNAL_DEMO_EQUITY,
+        available_balance: SIGNAL_DEMO_EQUITY,
+        risk_per_trade: riskUsd,
+        risk_fraction: PAPER_AI_RISK_FRACTION,
+      },
     },
   })
 }

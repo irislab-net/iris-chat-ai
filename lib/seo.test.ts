@@ -8,6 +8,7 @@ import {
   SITE_DESCRIPTION,
   SITE_KEYWORDS,
   SITE_TITLE,
+  SITE_URL,
   buildSitemapEntries,
   faqPageJsonLd,
   INDEXABLE_ROUTES,
@@ -18,6 +19,11 @@ import {
 } from "@/lib/seo"
 
 describe("search / AI citation identity", () => {
+  it("keeps marketing SITE_URL off the chat desk host", () => {
+    expect(SITE_URL).toBe("https://exur.ai")
+    expect(SITE_URL).not.toContain("chat.exur.ai")
+  })
+
   it("names the product in the language people search", () => {
     expect(SITE_TITLE.toLowerCase()).toContain("ai financial assistant")
     expect(SITE_DESCRIPTION.toLowerCase()).toContain("ai financial assistant")

@@ -53,12 +53,12 @@ export const IRIS_COMPOSER_QUICK_PROMPTS: IrisComposerQuickPrompt[] = [
   {
     id: "btc-signal",
     label: "BTC signal",
-    text: "Give me a BTC market read from live price, multi-timeframe trend, model probabilities, stance, and recent news. If a clear LONG or SHORT edge exists, call show_trade_signal with entry, stopLoss, takeProfit, leverage, setup, and thesis. If Flat, ranging, or the edge is weak, say so and do not invent a trade.",
+    text: "@signal BTC",
   },
   {
     id: "btc-signal-fa",
     label: "سیگنال BTC",
-    text: "یک خوانش از بیت‌کوین با قیمت زنده، روند چند تایم‌فریم، احتمال مدل‌ها، stance و اخبار اخیر بده. اگر لبه LONG یا SHORT واضح است، show_trade_signal را با entry، stopLoss، takeProfit، leverage، setup و thesis صدا بزن. اگر Flat، رنج، یا edge ضعیف است، بگو و معامله جعلی نساز.",
+    text: "@signal BTC",
   },
   {
     id: "market-pulse",

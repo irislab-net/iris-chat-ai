@@ -126,7 +126,7 @@ async function main() {
   const narration = await import(SOURCE)
   const cues = narration.ABOUT_NARRATION_CUES
   // ffmpeg reads https directly, so a CDN-hosted track needs no download.
-  const src = narration.ABOUT_NARRATION_SRC
+  const src = narration.ABOUT_NARRATION_CDN ?? narration.ABOUT_NARRATION_SRC
   const file = /^https?:\/\//.test(src) ? src : join(ROOT, "public", src)
 
   const [duration, pauses] = await Promise.all([

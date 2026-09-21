@@ -3,7 +3,6 @@ import { describe, expect, it } from "vitest"
 import { synthesizePaperDecisionFromContext } from "@/lib/iris-paper-trade/fallback-decision"
 import { planIrisPaperTrade } from "@/lib/iris-paper-trade/plan"
 import type { MarketContextPacket } from "@/lib/iris-paper-trade/types"
-import { emptyPaperState } from "@/lib/paper-trading"
 
 function ethPacket(): MarketContextPacket {
   const asOf = Date.now()
@@ -72,7 +71,6 @@ describe("synthesizePaperDecisionFromContext", () => {
     const planned = planIrisPaperTrade({
       decision,
       context: packet,
-      state: emptyPaperState(),
       now: packet.asOf,
     })
     expect(planned.status).toBe("ready")

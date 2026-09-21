@@ -1,9 +1,9 @@
 "use client"
 
 import * as React from "react"
+import dynamic from "next/dynamic"
 import { useSearchParams } from "next/navigation"
 
-import { ChatAside } from "@/components/app-shell/chat-aside"
 import { ChatAsideSkeleton } from "@/components/app-shell/shell-skeletons"
 import { ContextMain } from "@/components/app-shell/context-main"
 import { WebsiteToolbar } from "@/components/app-shell/website-toolbar"
@@ -36,11 +36,15 @@ import {
   resolveWorkspaceTab,
   type WorkspaceTab,
 } from "@/lib/workspace-tab"
-import {
-  subscribeCopilotChatPrefill,
-  subscribeDismissMobileChat,
-  subscribeDockChat,
-} from "@/lib/paper-trading/copilot-client"
+
+const ChatAside = dynamic(
+  () =>
+    import("@/components/app-shell/chat-aside").then((m) => m.ChatAside),
+  {
+    ssr: false,
+    loading: () => <ChatAsideSkeleton variant="focused" />,
+  }
+)
 
 type AppShellProps = {
   children: React.ReactNode
@@ -173,23 +177,10 @@ function AppShellInner({
       ? "focused"
       : chatMode
 
-  React.useEffect(() => {
-    return subscribeDismissMobileChat(() => {
-      persistChatOpen(false)
-    })
-  }, [])
-
   function persistChatMode(next: ChatDisplayMode) {
     setChatMode(next)
     writeShellLayoutPrefs({ chatMode: next })
   }
-
-  React.useEffect(() => {
-    return subscribeDockChat(() => {
-      if (isDesktop !== true) return
-      persistChatMode("docked")
-    })
-  }, [isDesktop])
 
   const desktopChatEnabled =
     isDesktop === true && (onDesk || defaultChatOpen)
@@ -202,14 +193,6 @@ function AppShellInner({
     window.addEventListener("keydown", onKeyDown)
     return () => window.removeEventListener("keydown", onKeyDown)
   }, [isDesktop, resolvedChatOpen])
-
-  React.useEffect(() => {
-    return subscribeCopilotChatPrefill((input) => {
-      if (!input.openChat) return
-      persistChatOpen(true)
-      if (isDesktop === true) persistChatMode("docked")
-    })
-  }, [isDesktop])
 
   const toolbarProps = {
     onWorkspaceTabNavigate: () => {

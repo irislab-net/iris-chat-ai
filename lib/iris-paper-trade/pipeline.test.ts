@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from "vitest"
+import { describe, expect, it } from "vitest"
 
 import type { CandleBar } from "@/lib/api/candles"
 import type { InsightHome, NewsHome } from "@/lib/api/types"
@@ -7,20 +7,9 @@ import { isPaperTradeIntent } from "@/lib/iris-paper-trade/intent"
 import { parsePaperDecision } from "@/lib/iris-paper-trade/parse"
 import { PAPER_TRADE_TOOLS } from "@/lib/iris-paper-trade/schema"
 import { planIrisPaperTrade } from "@/lib/iris-paper-trade/plan"
-import { executeIrisPaperPlan } from "@/lib/iris-paper-trade/execute"
-import { confirmIrisPaperProposal } from "@/lib/iris-paper-trade/run"
 import { IRIS_SAMPLE_PROMPTS, PAPER_TRADE_SAMPLE_PROMPT, PAPER_TRADE_SAMPLE_PROMPT_EN_LEGACY, PAPER_TRADE_SAMPLE_PROMPT_EN_PREV, PAPER_TRADE_SAMPLE_PROMPT_FA } from "@/lib/iris-paper-trade/types"
 import { calculateRiskBasedSize, PAPER_AI_RISK_FRACTION } from "@/lib/iris-paper-trade/size"
-import {
-  emptyPaperState,
-  marketFillFee,
-  openPaperTrade,
-} from "@/lib/paper-trading"
-import {
-  getPaperSnapshot,
-  paperOpenTrade,
-  replacePaperState,
-} from "@/lib/paper-trading/store"
+import { SIGNAL_DEMO_EQUITY } from "@/lib/chat/trade-signal"
 
 const NOW = 1_700_000_000_000
 
@@ -320,26 +309,20 @@ describe("structured paper decision parse (fail-closed)", () => {
   })
 })
 
-describe("IRIS paper-trade plan + engine (fail-closed)", () => {
+describe("IRIS paper-trade plan (propose only)", () => {
   const context = packetAt(1850)
 
-  it("NO_TRADE does not mutate paper state", () => {
-    const state = emptyPaperState()
-    const result = executeIrisPaperPlan({
+  it("NO_TRADE returns no_trade", () => {
+    const result = planIrisPaperTrade({
       decision: { action: "NO_TRADE", args: { reason: "No setup." } },
       context,
-      state,
       now: NOW,
     })
     expect(result.status).toBe("no_trade")
-    expect(state.positions).toHaveLength(0)
-    expect(state.fills).toHaveLength(0)
-    expect(state.orders).toHaveLength(0)
   })
 
-  it("rejects inverted LONG levels without opening", () => {
-    const state = emptyPaperState()
-    const result = executeIrisPaperPlan({
+  it("rejects inverted LONG levels", () => {
+    const result = planIrisPaperTrade({
       decision: {
         action: "OPEN_PAPER_TRADE",
         args: {
@@ -353,19 +336,16 @@ describe("IRIS paper-trade plan + engine (fail-closed)", () => {
         },
       },
       context,
-      state,
       now: NOW,
     })
     expect(result.status).toBe("rejected")
-    expect(state.positions).toHaveLength(0)
   })
 
-  it("opens a LONG with risk-based size, IRIS_AI source, fees and slippage", () => {
-    const state = emptyPaperState()
+  it("sizes a LONG with risk-based quantity", () => {
     const mark = context.live.price
     const stopLoss = mark * 0.985
     const takeProfit = mark * 1.03
-    const result = executeIrisPaperPlan({
+    const result = planIrisPaperTrade({
       decision: {
         action: "OPEN_PAPER_TRADE",
         args: {
@@ -379,24 +359,12 @@ describe("IRIS paper-trade plan + engine (fail-closed)", () => {
         },
       },
       context,
-      state,
       now: NOW,
     })
-    expect(result.status).toBe("opened")
-    if (result.status !== "opened") return
-
-    const { price, fee } = marketFillFee("BUY", result.quantity, mark)
-    expect(result.position.source).toBe("IRIS_AI")
-    expect(result.position.side).toBe("LONG")
-    expect(result.position.entryPrice).toBe(price)
-    expect(result.position.entryPrice).toBeGreaterThan(mark)
-    expect(result.position.stopLoss).toBe(stopLoss)
-    expect(result.position.takeProfit).toBe(takeProfit)
-    expect(result.state.fills[0]?.fee).toBeCloseTo(fee)
-    expect(result.state.account.balance).toBeLessThan(state.account.balance)
+    expect(result.status).toBe("ready")
+    if (result.status !== "ready") return
 
     const sized = calculateRiskBasedSize({
-      state,
       side: "LONG",
       markPrice: mark,
       stopLoss,
@@ -406,14 +374,13 @@ describe("IRIS paper-trade plan + engine (fail-closed)", () => {
     if (!sized.ok) return
     expect(result.quantity).toBe(sized.quantity)
     expect(result.quantity).toBeGreaterThan(0)
-    const risk = state.account.equity * PAPER_AI_RISK_FRACTION
+    const risk = SIGNAL_DEMO_EQUITY * PAPER_AI_RISK_FRACTION
     expect(result.quantity * Math.abs(mark - stopLoss)).toBeCloseTo(risk, 0)
   })
 
-  it("opens a SHORT with valid SL/TP below/above live price inverted", () => {
-    const state = emptyPaperState()
+  it("sizes a SHORT with valid SL/TP", () => {
     const mark = context.live.price
-    const result = executeIrisPaperPlan({
+    const result = planIrisPaperTrade({
       decision: {
         action: "OPEN_PAPER_TRADE",
         args: {
@@ -427,120 +394,11 @@ describe("IRIS paper-trade plan + engine (fail-closed)", () => {
         },
       },
       context,
-      state,
       now: NOW,
     })
-    expect(result.status).toBe("opened")
-    if (result.status !== "opened") return
-    expect(result.position.side).toBe("SHORT")
-    expect(result.position.source).toBe("IRIS_AI")
-    expect(result.position.entryPrice).toBeLessThan(mark)
-    expect(result.position.stopLoss).toBeGreaterThan(mark)
-    expect(result.position.takeProfit).toBeLessThan(mark)
-    expect(result.state.fills[0]?.fee).toBeGreaterThan(0)
-  })
-
-  it("does not open when a position already exists", () => {
-    let state = emptyPaperState()
-    state = openPaperTrade(state, {
-      symbol: "ETH",
-      side: "LONG",
-      quantity: 1,
-      entryPrice: 1850,
-    }).state
-    const planned = planIrisPaperTrade({
-      decision: {
-        action: "OPEN_PAPER_TRADE",
-        args: {
-          symbol: "ETH",
-          direction: "SHORT",
-          setup: "Fade",
-          stopLoss: 1880,
-          takeProfit: 1800,
-          leverage: 3,
-          thesis: "Already in.",
-        },
-      },
-      context,
-      state,
-      now: NOW,
-    })
-    expect(planned.status).toBe("rejected")
-    if (planned.status !== "rejected") return
-    expect(planned.reason).toBe("EXISTING_POSITION")
-  })
-})
-
-describe("confirmIrisPaperProposal", () => {
-  beforeEach(() => {
-    replacePaperState(emptyPaperState())
-  })
-
-  it("does not mutate paper state until confirm, then opens IRIS_AI with fees and slippage", () => {
-    const mark = 1850
-    const stopLoss = mark * 0.985
-    const takeProfit = mark * 1.03
-    const sized = calculateRiskBasedSize({
-      state: emptyPaperState(),
-      side: "LONG",
-      markPrice: mark,
-      stopLoss,
-      leverage: 5,
-    })
-    expect(sized.ok).toBe(true)
-    if (!sized.ok) return
-
-    expect(getPaperSnapshot().positions).toHaveLength(0)
-
-    const ticket = {
-      symbol: "ETH" as const,
-      side: "LONG" as const,
-      quantity: sized.quantity,
-      markPrice: mark,
-      stopLoss,
-      takeProfit,
-      leverage: 5,
-      setup: "Dip hold",
-      thesis: "Stance and models favor upside.",
-    }
-
-    const result = confirmIrisPaperProposal(ticket)
-    expect(result.ok).toBe(true)
-    if (!result.ok) return
-
-    const snap = getPaperSnapshot()
-    expect(snap.positions).toHaveLength(1)
-    expect(snap.positions[0]?.source).toBe("IRIS_AI")
-    expect(snap.positions[0]?.side).toBe("LONG")
-    const { price, fee } = marketFillFee("BUY", sized.quantity, mark)
-    expect(snap.positions[0]?.entryPrice).toBe(price)
-    expect(snap.positions[0]?.entryPrice).toBeGreaterThan(mark)
-    expect(snap.fills[0]?.fee).toBeCloseTo(fee)
-    expect(result.message).toContain("Paper trade opened")
-  })
-
-  it("rejects confirm when a position already exists", () => {
-    const opened = paperOpenTrade({
-      symbol: "ETH",
-      side: "LONG",
-      quantity: 1,
-      entryPrice: 1850,
-    })
-    expect(opened.ok).toBe(true)
-    const before = getPaperSnapshot()
-
-    const result = confirmIrisPaperProposal({
-      symbol: "ETH",
-      side: "SHORT",
-      quantity: 0.4,
-      markPrice: 1850,
-      stopLoss: 1880,
-      takeProfit: 1800,
-      leverage: 3,
-      setup: "Fade",
-      thesis: "Already in.",
-    })
-    expect(result.ok).toBe(false)
-    expect(getPaperSnapshot().positions).toHaveLength(before.positions.length)
+    expect(result.status).toBe("ready")
+    if (result.status !== "ready") return
+    expect(result.side).toBe("SHORT")
+    expect(result.quantity).toBeGreaterThan(0)
   })
 })

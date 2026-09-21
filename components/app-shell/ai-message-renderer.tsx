@@ -1,5 +1,6 @@
 "use client"
 
+import DOMPurify from "isomorphic-dompurify"
 import { marked } from "marked"
 
 import { prepareAssistantMarkdown } from "@/lib/prepare-assistant-markdown"
@@ -9,6 +10,48 @@ marked.setOptions({
   gfm: true,
   breaks: true,
 })
+
+type PurifyConfig = NonNullable<Parameters<typeof DOMPurify.sanitize>[1]>
+
+const PURIFY_OPTIONS: PurifyConfig = {
+  USE_PROFILES: { html: true },
+  FORBID_TAGS: [
+    "style",
+    "form",
+    "input",
+    "button",
+    "textarea",
+    "iframe",
+    "object",
+    "embed",
+    "svg",
+    "math",
+  ],
+  FORBID_ATTR: ["style", "onerror", "onload", "onclick"],
+  ALLOWED_URI_REGEXP:
+    /^(?:(?:https?|mailto):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i,
+  ADD_ATTR: ["target", "rel"],
+  RETURN_TRUSTED_TYPE: false,
+}
+
+let hooksInstalled = false
+
+function ensurePurifyHooks() {
+  if (hooksInstalled) return
+  hooksInstalled = true
+  DOMPurify.addHook("afterSanitizeAttributes", (node) => {
+    if (!("tagName" in node) || node.tagName !== "A") return
+    const href = node.getAttribute("href") ?? ""
+    if (/^\s*javascript:/i.test(href) || /^\s*data:/i.test(href)) {
+      node.removeAttribute("href")
+      return
+    }
+    node.setAttribute("rel", "noopener noreferrer nofollow")
+    if (/^\s*https?:/i.test(href)) {
+      node.setAttribute("target", "_blank")
+    }
+  })
+}
 
 const aiMessageClassName = cn(
   "ai-message chat-bidi min-w-0 wrap-anywhere overflow-x-auto text-[14px] leading-[1.7] sm:text-[13px]",
@@ -36,9 +79,11 @@ const aiMessageClassName = cn(
 )
 
 function renderAssistantHtml(content: string) {
+  ensurePurifyHooks()
   const prepared = prepareAssistantMarkdown(content)
-  const html = marked.parse(prepared, { async: false })
-  return typeof html === "string" ? html : ""
+  const parsed = marked.parse(prepared, { async: false })
+  const raw = typeof parsed === "string" ? parsed : ""
+  return String(DOMPurify.sanitize(raw, PURIFY_OPTIONS))
 }
 
 /**

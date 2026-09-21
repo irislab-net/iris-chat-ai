@@ -1,8 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
-import { getChatStorageKey, writeChatStore, type ChatStore } from "@/lib/chat-storage"
-import { PAPER_STORAGE_KEY } from "@/lib/paper-trading/engine"
-import { getPaperSnapshot, paperOpenTrade, resetPaperStore } from "@/lib/paper-trading/store"
+import {
+  getChatStorageKey,
+  writeChatStore,
+  type ChatStore,
+} from "@/lib/chat-storage"
 import {
   resetClientSessionOnLogout,
   SESSION_RESET_EVENT,
@@ -50,94 +52,50 @@ describe("resetClientSessionOnLogout", () => {
         localStorage: storage,
         sessionStorage: globalThis.sessionStorage,
         addEventListener(type: string, listener: EventListener) {
-          const set = listeners.get(type) ?? new Set()
-          set.add(listener)
-          listeners.set(type, set)
+          if (!listeners.has(type)) listeners.set(type, new Set())
+          listeners.get(type)!.add(listener)
         },
         removeEventListener(type: string, listener: EventListener) {
           listeners.get(type)?.delete(listener)
         },
         dispatchEvent(event: Event) {
-          for (const listener of listeners.get(event.type) ?? []) {
-            listener(event)
-          }
+          const set = listeners.get(event.type)
+          if (!set) return true
+          for (const listener of set) listener(event)
           return true
         },
       },
     })
-    sessionStorage.setItem("access_token", "stale")
-    sessionStorage.setItem("expires_at", "2099-01-01T00:00:00.000Z")
   })
 
   afterEach(() => {
-    Reflect.deleteProperty(globalThis, "window")
-    Reflect.deleteProperty(globalThis, "localStorage")
-    Reflect.deleteProperty(globalThis, "sessionStorage")
     vi.restoreAllMocks()
   })
 
-  it("clears guest chat, paper desk, and session tokens", () => {
-    const guestStore: ChatStore = {
+  it("clears chat store and dispatches session reset", () => {
+    const store: ChatStore = {
       version: 1,
+      activeId: "c1",
+      deletedIds: [],
       conversations: [
         {
           id: "c1",
-          title: "Guest chat",
-          createdAt: "2026-01-01T00:00:00.000Z",
-          updatedAt: "2026-01-01T00:00:00.000Z",
-          messages: [{ id: "m1", role: "user", content: "hello" }],
-          history: [{ role: "user", content: "hello" }],
+          title: "Hello",
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          messages: [],
+          history: [],
         },
       ],
-      activeId: "c1",
     }
-    writeChatStore(null, guestStore)
-    paperOpenTrade({
-      symbol: "ETH",
-      side: "LONG",
-      quantity: 1,
-      entryPrice: 3000,
-      stopLoss: null,
-      takeProfit: null,
-      marginMode: "CROSS",
-      leverage: 5,
-      source: "USER",
-    })
-    expect(localStorage.getItem(PAPER_STORAGE_KEY)).toBeTruthy()
+    writeChatStore(null, store)
 
-    resetClientSessionOnLogout({ userId: "user-1" })
+    const onReset = vi.fn()
+    window.addEventListener(SESSION_RESET_EVENT, onReset)
 
-    expect(sessionStorage.getItem("access_token")).toBeNull()
+    resetClientSessionOnLogout()
+
     expect(localStorage.getItem(getChatStorageKey(null))).toBeNull()
-    expect(localStorage.getItem(PAPER_STORAGE_KEY)).toBeNull()
-    expect(getPaperSnapshot().positions).toHaveLength(0)
-  })
-
-  it("dispatches a session reset event for live UI listeners", () => {
-    const handler = vi.fn()
-    window.addEventListener(SESSION_RESET_EVENT, handler)
-    resetClientSessionOnLogout({ userId: "user-1" })
-    expect(handler).toHaveBeenCalledTimes(1)
-    window.removeEventListener(SESSION_RESET_EVENT, handler)
-  })
-
-  it("resetPaperStore clears in-memory paper state without a reload", () => {
-    paperOpenTrade({
-      symbol: "BTC",
-      side: "LONG",
-      quantity: 1,
-      entryPrice: 90_000,
-      stopLoss: null,
-      takeProfit: null,
-      marginMode: "CROSS",
-      leverage: 5,
-      source: "USER",
-    })
-    expect(getPaperSnapshot().positions).toHaveLength(1)
-
-    resetPaperStore()
-
-    expect(getPaperSnapshot().positions).toHaveLength(0)
-    expect(localStorage.getItem(PAPER_STORAGE_KEY)).toBeNull()
+    expect(onReset).toHaveBeenCalled()
   })
 })

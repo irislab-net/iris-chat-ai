@@ -3,6 +3,7 @@ import {
   groupHistoryBySession,
   historyItemsToCoPilotMessages,
   historyItemsToUiMessages,
+  isHistoryUiMessage,
   sortHistoryItemsAsc,
   type ConversationHistoryItem,
 } from "@/lib/api/chat-history"
@@ -13,6 +14,7 @@ import { parseServerMessageId, serverMessageId } from "@/lib/chat-message-id"
 import {
   conversationTitleFromMessages,
   hasUserMessages,
+  isConversationDeleted,
   readChatStore,
   type ChatStore,
   type ChatUiMessage,
@@ -46,8 +48,55 @@ function overlayLocalFields(
     content: preferLocalContent ? local.content : serverMessage.content,
     feedback: local.feedback ?? serverMessage.feedback,
     suggestedPrompts: local.suggestedPrompts ?? serverMessage.suggestedPrompts,
-    paperTicket: local.paperTicket ?? serverMessage.paperTicket,
+    // Server history `client_actions` is the source of truth for signal cards.
+    paperTicket: serverMessage.paperTicket ?? local.paperTicket,
+    noTradeReason: serverMessage.noTradeReason ?? local.noTradeReason,
+    clientActionSummaries:
+      serverMessage.clientActionSummaries ?? local.clientActionSummaries,
   }
+}
+
+/**
+ * Re-attach locally cached signal cards after server history sync.
+ * Prefer tickets hydrated from history `client_actions`; fall back to local
+ * when the server turn has no card yet (legacy rows / race).
+ */
+export function mergeAssistantPaperTickets(
+  localMessages: ChatUiMessage[],
+  serverMessages: ChatUiMessage[]
+): ChatUiMessage[] {
+  const localAssistants = localMessages.filter(
+    (message) => message.role === "assistant"
+  )
+  if (
+    !localAssistants.some((message) => Boolean(message.paperTicket))
+  ) {
+    return serverMessages
+  }
+
+  let assistantIndex = 0
+  const merged = serverMessages.map((message) => {
+    if (message.role !== "assistant") return message
+    const local = localAssistants[assistantIndex]
+    assistantIndex += 1
+    if (!local?.paperTicket) return message
+    return {
+      ...message,
+      paperTicket: message.paperTicket ?? local.paperTicket,
+      noTradeReason: message.noTradeReason ?? local.noTradeReason,
+      content: message.content.trim()
+        ? message.content
+        : local.content || message.content,
+    }
+  })
+
+  for (let index = assistantIndex; index < localAssistants.length; index += 1) {
+    const local = localAssistants[index]
+    if (!local?.paperTicket) continue
+    merged.push(local)
+  }
+
+  return merged
 }
 
 function overlayLocalMessageFields(
@@ -57,7 +106,9 @@ function overlayLocalMessageFields(
   const localByServerId = new Map<number, ChatUiMessage>()
   const localByKey = new Map<string, ChatUiMessage>()
   const localAssistants = localMessages.filter(
-    (message) => message.role === "assistant" && message.content.trim()
+    (message) =>
+      message.role === "assistant" &&
+      (Boolean(message.content.trim()) || Boolean(message.paperTicket))
   )
 
   for (const message of localMessages) {
@@ -69,6 +120,7 @@ function overlayLocalMessageFields(
   }
 
   let assistantOrdinal = 0
+  const usedLocalIds = new Set<string>()
 
   const merged = serverMessages.map((message) => {
     const serverId = parseServerMessageId(message.id)
@@ -92,19 +144,30 @@ function overlayLocalMessageFields(
       assistantOrdinal += 1
     }
 
+    if (local) usedLocalIds.add(local.id)
     return overlayLocalFields(message, local)
   })
 
   const serverKeys = new Set(serverMessages.map(messageMatchKey))
   for (const message of localMessages) {
+    if (usedLocalIds.has(message.id)) continue
     const isUiOnly =
       message.error ||
       message.action === "retry" ||
       message.action === "connect" ||
-      Boolean(message.suggestedPrompts?.length)
+      Boolean(message.suggestedPrompts?.length) ||
+      Boolean(message.paperTicket)
     if (!isUiOnly) continue
-    if (!message.content.trim() && message.action !== "connect") continue
-    if (serverKeys.has(messageMatchKey(message))) continue
+    if (
+      !message.content.trim() &&
+      message.action !== "connect" &&
+      !message.paperTicket
+    ) {
+      continue
+    }
+    if (message.content.trim() && serverKeys.has(messageMatchKey(message))) {
+      continue
+    }
     merged.push(message)
   }
 
@@ -124,7 +187,10 @@ export function buildStoredConversationFromHistory(
   const createdAt = sorted[0]?.created_at ?? new Date().toISOString()
   const updatedAt = sorted[sorted.length - 1]?.created_at ?? createdAt
   const mergedMessages = local
-    ? overlayLocalMessageFields(messages, local.messages)
+    ? mergeAssistantPaperTickets(
+        local.messages,
+        overlayLocalMessageFields(messages, local.messages)
+      )
     : messages
 
   return {
@@ -141,10 +207,13 @@ export function mergeServerHistoryIntoStore(
   local: ChatStore,
   items: ConversationHistoryItem[]
 ): ChatStore {
+  const deletedIds = local.deletedIds ?? []
+  const deleted = new Set(deletedIds)
   const grouped = groupHistoryBySession(items)
   const serverConversations: StoredConversation[] = []
 
   for (const [sessionId, sessionItems] of grouped) {
+    if (deleted.has(sessionId)) continue
     const localConversation = local.conversations.find((c) => c.id === sessionId)
     const built = buildStoredConversationFromHistory(
       sessionId,
@@ -157,7 +226,9 @@ export function mergeServerHistoryIntoStore(
   const serverIds = new Set(serverConversations.map((c) => c.id))
   const localOnly = local.conversations.filter(
     (conversation) =>
-      !serverIds.has(conversation.id) && hasUserMessages(conversation.messages)
+      !deleted.has(conversation.id) &&
+      !serverIds.has(conversation.id) &&
+      hasUserMessages(conversation.messages)
   )
 
   const conversations = [...localOnly, ...serverConversations].sort((a, b) =>
@@ -169,22 +240,20 @@ export function mergeServerHistoryIntoStore(
       ? local.activeId
       : null
 
-  return { version: 1, conversations, activeId }
+  return { version: 1, conversations, activeId, deletedIds }
 }
 
 export function remapMessagesWithServerHistory(
   messages: ChatUiMessage[],
   items: ConversationHistoryItem[]
 ): ChatUiMessage[] {
-  const sorted = sortHistoryItemsAsc(items).filter(
-    (item) =>
-      (item.role === "user" || item.role === "assistant") &&
-      item.content.trim().length > 0
-  )
+  const sorted = sortHistoryItemsAsc(items).filter(isHistoryUiMessage)
   const persisted = messages.filter(
     (message) =>
       (message.role === "user" || message.role === "assistant") &&
-      message.content.trim().length > 0
+      (message.content.trim().length > 0 ||
+        Boolean(message.paperTicket) ||
+        Boolean(message.noTradeReason))
   )
 
   const idMap = new Map<string, string>()
@@ -203,7 +272,13 @@ export function remapMessagesWithServerHistory(
         ? summarizeSignalUserMessage(remote.content.trim())
         : remote.content.trim()
 
-    if (localContent !== remoteContent) continue
+    // Signal-only turns may both have empty content — still remap by ordinal.
+    if (
+      localContent !== remoteContent &&
+      !(localContent === "" && remoteContent === "")
+    ) {
+      continue
+    }
     idMap.set(local.id, serverMessageId(remote.id))
   }
 
@@ -230,8 +305,10 @@ export async function refreshSessionInStore(
   sessionId: string,
   signal?: AbortSignal
 ): Promise<ChatStore> {
-  const items = await fetchAllCoPilotHistory({ sessionId, signal })
   const local = readChatStore(ownerId)
+  if (isConversationDeleted(local, sessionId)) return local
+
+  const items = await fetchAllCoPilotHistory({ sessionId, signal })
   const localConversation = local.conversations.find((c) => c.id === sessionId)
   const built = buildStoredConversationFromHistory(
     sessionId,
@@ -247,7 +324,10 @@ export async function refreshSessionInStore(
 
   const conversation: StoredConversation = {
     ...built,
-    messages: overlayLocalMessageFields(built.messages, remappedMessages),
+    messages: mergeAssistantPaperTickets(
+      localConversation?.messages ?? remappedMessages,
+      overlayLocalMessageFields(built.messages, remappedMessages)
+    ),
     title: built.title,
     createdAt: built.createdAt,
   }

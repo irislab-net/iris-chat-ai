@@ -4,6 +4,11 @@ import * as React from "react"
 
 import { cn } from "@/lib/utils"
 
+/** Cap how often typewriter paints — avoids React 19 nested-update false positives
+ *  when each frame re-renders expensive chat chrome (markdown, scroll effects). */
+const TYPEWRITER_MIN_EMIT_MS = 40
+const TYPEWRITER_MIN_CHAR_STEP = 12
+
 function TypingDots({ className }: { className?: string }) {
   return (
     <span
@@ -40,6 +45,8 @@ async function typewriterReveal(
   // Keep long answers readable without waiting forever
   const targetMs = Math.min(4200, Math.max(900, text.length * 10))
   const start = performance.now()
+  let lastCount = 0
+  let lastEmitAt = 0
 
   await new Promise<void>((resolve) => {
     const tick = (now: number) => {
@@ -51,11 +58,23 @@ async function typewriterReveal(
       const t = Math.min(1, (now - start) / targetMs)
       const eased = 1 - (1 - t) * (1 - t)
       const count = Math.max(1, Math.floor(eased * text.length))
-      onUpdate(text.slice(0, count))
+      const due =
+        t >= 1 ||
+        count - lastCount >= TYPEWRITER_MIN_CHAR_STEP ||
+        now - lastEmitAt >= TYPEWRITER_MIN_EMIT_MS
+
+      if (due && count !== lastCount) {
+        lastCount = count
+        lastEmitAt = now
+        onUpdate(text.slice(0, count))
+      }
+
       if (t < 1) {
         window.requestAnimationFrame(tick)
       } else {
-        onUpdate(text)
+        if (lastCount !== text.length) {
+          onUpdate(text)
+        }
         resolve()
       }
     }

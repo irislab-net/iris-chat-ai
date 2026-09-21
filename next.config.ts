@@ -2,18 +2,13 @@ import { existsSync, readFileSync } from "node:fs"
 import { join } from "node:path"
 
 import type { NextConfig } from "next"
+import { withSentryConfig } from "@sentry/nextjs"
 import createNextIntlPlugin from "next-intl/plugin"
 
 import { allowedDevOrigins } from "./lib/dev-access"
 import { CHAT_API_ORIGIN } from "./lib/api/origins"
 
 const withNextIntl = createNextIntlPlugin("./i18n/request.ts")
-
-const TRADINGVIEW_LIBRARY_ENTRY = join(
-  process.cwd(),
-  "public/charting_library/charting_library.standalone.js"
-)
-const hasTradingViewLibrary = existsSync(TRADINGVIEW_LIBRARY_ENTRY)
 
 function readDevVarsFile(): Record<string, string> {
   const devVarsPath = join(process.cwd(), ".dev.vars")
@@ -62,7 +57,6 @@ if (devPublicEnv.NEXT_PUBLIC_GOOGLE_CLIENT_ID) {
 
 const nextConfig: NextConfig = {
   env: {
-    NEXT_PUBLIC_TRADINGVIEW_LIBRARY: hasTradingViewLibrary ? "1" : "0",
     ...devPublicEnv,
   },
   poweredByHeader: false,
@@ -86,16 +80,14 @@ const nextConfig: NextConfig = {
   // /v1/* is handled by app/v1/[...path]/route.ts (Cloudflare-safe proxy dispatch).
   async rewrites() {
     if (process.env.NODE_ENV === "development") {
-      console.log(`[iris] Chat API proxy → ${CHAT_API_ORIGIN}`)
+      console.log(
+        `[iris] Chat API proxy → ${CHAT_API_ORIGIN}`
+      )
       if (process.env.CHAT_API_GUEST_FALLBACK_ORIGIN) {
         console.log(
           `[iris] Guest fallback → ${process.env.CHAT_API_GUEST_FALLBACK_ORIGIN}`
         )
       }
-      console.log(
-        `[iris] TradingView Charting Library ${hasTradingViewLibrary ? "enabled" : "disabled (Lightweight Charts fallback)"}`
-      )
-      console.log("[iris] Trading API stub (paper/demo trading only)")
     }
     return []
   },
@@ -126,6 +118,17 @@ const nextConfig: NextConfig = {
   allowedDevOrigins: allowedDevOrigins(),
 }
 
-export default withNextIntl(nextConfig)
+export default withSentryConfig(withNextIntl(nextConfig), {
+  org: process.env.SENTRY_ORG,
+  project: process.env.SENTRY_PROJECT,
+  authToken: process.env.SENTRY_AUTH_TOKEN,
+  silent: !process.env.CI,
+  // Upload source maps only when an auth token is present (CI/production builds).
+  sourcemaps: {
+    disable: !process.env.SENTRY_AUTH_TOKEN,
+  },
+  widenClientFileUpload: true,
+  disableLogger: true,
+})
 
 import('@opennextjs/cloudflare').then(m => m.initOpenNextCloudflareForDev());

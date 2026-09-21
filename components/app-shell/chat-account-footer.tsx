@@ -3,11 +3,15 @@
 import * as React from "react"
 import { Link } from "@/i18n/navigation"
 import {
+  CheckIcon,
   EclipseIcon,
   LogOutIcon,
+  MonitorIcon,
+  MoonIcon,
   ReceiptIcon,
   SettingsIcon,
   SparklesIcon,
+  SunIcon,
 } from "lucide-react"
 import { useTranslations } from "next-intl"
 import { useTheme } from "@wrksz/themes/client/use-theme"
@@ -57,6 +61,68 @@ function AccountPlanBadge({
   )
 }
 
+function ThemeSettingsMenu() {
+  const common = useTranslations("common")
+  const { theme, setTheme } = useTheme()
+  const active =
+    theme === "light" || theme === "dark" || theme === "system" ? theme : "system"
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger
+        render={
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="size-9 shrink-0 rounded-lg hover:bg-muted/40"
+            aria-label={common("settings")}
+          />
+        }
+      >
+        <SettingsIcon className="size-4 text-muted-foreground" />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent side="top" align="end" className="min-w-48">
+        <DropdownMenuGroup>
+          <DropdownMenuLabel className="text-xs font-medium text-muted-foreground">
+            {common("theme")}
+          </DropdownMenuLabel>
+          <DropdownMenuItem
+            className="min-h-9 gap-2"
+            onClick={() => setTheme("system")}
+          >
+            <MonitorIcon />
+            {common("themeSystem")}
+            {active === "system" ? (
+              <CheckIcon className="ml-auto size-4 opacity-70" aria-hidden />
+            ) : null}
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            className="min-h-9 gap-2"
+            onClick={() => setTheme("light")}
+          >
+            <SunIcon />
+            {common("themeLight")}
+            {active === "light" ? (
+              <CheckIcon className="ml-auto size-4 opacity-70" aria-hidden />
+            ) : null}
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            className="min-h-9 gap-2"
+            onClick={() => setTheme("dark")}
+          >
+            <MoonIcon />
+            {common("themeDark")}
+            {active === "dark" ? (
+              <CheckIcon className="ml-auto size-4 opacity-70" aria-hidden />
+            ) : null}
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  )
+}
+
 function ChatAccountFooter({
   className,
   collapsed = false,
@@ -102,6 +168,7 @@ function ChatAccountFooter({
             </span>
           ) : null}
         </Button>
+        <ThemeSettingsMenu />
       </div>
     )
   }

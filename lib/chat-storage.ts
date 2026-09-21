@@ -1,30 +1,26 @@
-import type { CoPilotHistoryMessage } from "@/lib/api/types"
+import type { CoPilotHistoryMessage, MessageQuote } from "@/lib/api/types"
 import type { PaperTradeTicket } from "@/lib/iris-paper-trade/types"
 import type { ChatClientActionSummary } from "@/lib/chat/client-tools"
-
-export type PendingBracketApply = {
-  requestId: string
-  positionId: string
-  symbol: string
-  side: "LONG" | "SHORT"
-  stopLoss?: number | null
-  takeProfit?: number | null
-  reason?: string
-}
 
 export type ChatUiMessage = {
   id: string
   role: "user" | "assistant" | "system"
   content: string
+  /** Server `created_at` (RFC3339) — bubble clock; never invent with Date.now(). */
+  createdAt?: string
+  /** Server parent message id when this turn is a reply. */
+  replyToId?: number
+  /** Nested quote from live POST or GET /history. */
+  replyTo?: MessageQuote
   error?: boolean
   /** Safe user-facing error line (credits / recovery). */
   errorText?: string
   /** Inline CTA rendered under the bubble (e.g. Continue with Google / Try again). */
-  action?: "connect" | "retry" | "view_paper_trade" | "open_paper_trade"
-  /** Validated IRIS setup waiting for the user to confirm. */
+  action?: "connect" | "retry"
+  /** Validated trade signal for the chat card. */
   paperTicket?: PaperTradeTicket
-  /** Bracket update awaiting user confirmation. */
-  pendingBracket?: PendingBracketApply
+  /** `no_trade` client action reason for the muted card. */
+  noTradeReason?: string
   /** Summaries of frontend tools executed for this reply. */
   clientActionSummaries?: ChatClientActionSummary[]
   /** Present when `action` is `retry` — user text for that failed turn. */
@@ -51,6 +47,8 @@ export type ChatStore = {
   version: 1
   conversations: StoredConversation[]
   activeId: string | null
+  /** Session IDs the user deleted locally — kept so server history sync cannot revive them. */
+  deletedIds?: string[]
 }
 
 /** Pre-Phase-0 global key — ownership cannot be proven; discard, never migrate. */
@@ -60,6 +58,7 @@ const STORAGE_KEY_PREFIX = "iris-chat-v1"
 const WELCOME_DISMISSED_KEY = "iris-chat-welcome-dismissed"
 const IRIS_CHAT_BADGE_DISMISSED_KEY = "iris-chat-badge-dismissed"
 const MAX_CONVERSATIONS = 50
+const MAX_DELETED_IDS = 200
 
 export const CHAT_WELCOME_TEXT =
   "Ask in plain English: “Should I long ETH this candle?” I’ll use the live model board + news pulse."
@@ -68,7 +67,18 @@ export const CHAT_WELCOME_TEXT =
 export type ChatOwnerId = string | null
 
 function emptyStore(): ChatStore {
-  return { version: 1, conversations: [], activeId: null }
+  return { version: 1, conversations: [], activeId: null, deletedIds: [] }
+}
+
+function normalizeDeletedIds(value: unknown): string[] {
+  if (!Array.isArray(value)) return []
+  return value
+    .filter((id): id is string => typeof id === "string" && id.trim().length > 0)
+    .slice(-MAX_DELETED_IDS)
+}
+
+export function isConversationDeleted(store: ChatStore, id: string): boolean {
+  return (store.deletedIds ?? []).includes(id)
 }
 
 function canUseStorage() {
@@ -119,6 +129,7 @@ function parseStore(raw: string | null): ChatStore {
       version: 1,
       conversations: parsed.conversations,
       activeId: parsed.activeId ?? null,
+      deletedIds: normalizeDeletedIds(parsed.deletedIds),
     }
   } catch {
     return emptyStore()
@@ -164,6 +175,8 @@ export function sanitizeMessages(messages: ChatUiMessage[]): ChatUiMessage[] {
     const text = m.content.trim()
     // Keep recoverable failed turns (may have empty content + retry CTA).
     if (m.error && m.action === "retry") return true
+    // Signal-card turns can have empty output_text but a paperTicket.
+    if (m.role === "assistant" && m.paperTicket) return true
     if (m.role === "assistant" && (!text || text === "(empty)")) return false
     return true
   })
@@ -178,7 +191,10 @@ export function restoreMessages(
   const hist = history ?? []
 
   const uiAssistants = cleaned.filter(
-    (m) => m.role === "assistant" && m.content.trim() && m.content.trim() !== "(empty)"
+    (m) =>
+      m.role === "assistant" &&
+      ((m.content.trim() && m.content.trim() !== "(empty)") ||
+        Boolean(m.paperTicket))
   ).length
   const histAssistants = hist.filter(
     (m) => m.role === "assistant" && m.content.trim()
@@ -257,6 +273,9 @@ export function upsertConversation(
   store: ChatStore,
   conversation: StoredConversation
 ): ChatStore {
+  if (isConversationDeleted(store, conversation.id)) {
+    return store
+  }
   const without = store.conversations.filter((c) => c.id !== conversation.id)
   const next = sortConversations([conversation, ...without]).slice(
     0,
@@ -266,15 +285,18 @@ export function upsertConversation(
     version: 1,
     conversations: next,
     activeId: conversation.id,
+    deletedIds: store.deletedIds ?? [],
   }
 }
 
 export function deleteConversation(store: ChatStore, id: string): ChatStore {
   const conversations = store.conversations.filter((c) => c.id !== id)
+  const deletedIds = normalizeDeletedIds([...(store.deletedIds ?? []), id])
   return {
     version: 1,
     conversations,
     activeId: store.activeId === id ? null : store.activeId,
+    deletedIds,
   }
 }
 
@@ -282,7 +304,7 @@ export function setActiveConversation(
   store: ChatStore,
   id: string | null
 ): ChatStore {
-  return { ...store, activeId: id }
+  return { ...store, activeId: id, deletedIds: store.deletedIds ?? [] }
 }
 
 export function formatChatTime(iso: string) {

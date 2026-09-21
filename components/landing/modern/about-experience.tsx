@@ -10,7 +10,6 @@ import { useIsDesktop } from "@/hooks/use-media-query"
 import {
   ABOUT_NARRATION_CUES,
   ABOUT_NARRATION_DURATION,
-  ABOUT_NARRATION_ORIGIN,
   ABOUT_NARRATION_SRC,
   cueIndexAt,
 } from "@/lib/about-narration"
@@ -25,8 +24,23 @@ import {
 import { cn } from "@/lib/utils"
 
 /** Voice sits in the low-mid bins; ignore the rest so the orb tracks speech. */
-const VOICE_BIN_START = 2
-const VOICE_BIN_END = 48
+const VOICE_BIN_START = 1
+const VOICE_BIN_END = 80
+
+/** Map analyser bins → 0..1 with clear speech dynamics. */
+function voiceAmplitudeFromBins(bins: Uint8Array): number {
+  let sum = 0
+  let peak = 0
+  for (let i = VOICE_BIN_START; i < VOICE_BIN_END; i += 1) {
+    const v = bins[i] / 255
+    sum += v
+    if (v > peak) peak = v
+  }
+  const avg = sum / (VOICE_BIN_END - VOICE_BIN_START)
+  // Peak-weighted so consonants punch the orb; mild compress keeps soft speech visible.
+  const mixed = avg * 0.4 + peak * 0.6
+  return Math.min(1, Math.pow(Math.max(0, mixed), 0.55) * 1.85)
+}
 
 /** Start fetching the track this far before the section reaches the viewport. */
 const WARM_MARGIN = "700px 0px"
@@ -39,30 +53,6 @@ function whenIdle(task: () => void) {
   }
   const handle = window.setTimeout(task, 400)
   return () => clearTimeout(handle)
-}
-
-/**
- * Can WebAudio read this file?
- *
- * A cross-origin track served without `Access-Control-Allow-Origin` still
- * plays, but routing it through an AnalyserNode makes the graph output
- * silence — so we must know before wiring the analyser, not after. One
- * single-byte ranged request answers it.
- */
-async function isReadableByWebAudio(src: string): Promise<boolean> {
-  if (new URL(src, window.location.href).origin === window.location.origin) {
-    return true
-  }
-  try {
-    const response = await fetch(src, {
-      method: "GET",
-      mode: "cors",
-      headers: { Range: "bytes=0-0" },
-    })
-    return response.ok
-  } catch {
-    return false
-  }
 }
 
 type Phase = "idle" | "playing"
@@ -106,12 +96,10 @@ export function AboutExperience() {
   const binsRef = React.useRef<Uint8Array<ArrayBuffer> | null>(null)
   /** Start of the silent-fallback clock, used when no audio is playing. */
   const syntheticStartRef = React.useRef(0)
-  const hasAudioRef = React.useRef(false)
-  /** null until the CORS probe answers; only `true` may reach the analyser. */
-  const analyserAllowedRef = React.useRef<boolean | null>(null)
 
   const orbLiftRef = React.useRef<HTMLDivElement>(null)
   const captionRef = React.useRef<HTMLParagraphElement>(null)
+  const progressRef = React.useRef<HTMLDivElement>(null)
 
   const [phase, setPhase] = React.useState<Phase>("idle")
   const [cueIndex, setCueIndex] = React.useState(-1)
@@ -135,13 +123,8 @@ export function AboutExperience() {
         observer.disconnect()
 
         cancelIdle = whenIdle(() => {
-          void isReadableByWebAudio(ABOUT_NARRATION_SRC).then((allowed) => {
-            analyserAllowedRef.current = allowed
-            // Must be set before the element loads, or it would need a reload.
-            if (allowed) audio.crossOrigin = "anonymous"
-            audio.preload = "auto"
-            audio.load()
-          })
+          audio.preload = "auto"
+          audio.load()
         })
       },
       { rootMargin: WARM_MARGIN }
@@ -251,13 +234,9 @@ export function AboutExperience() {
     const audio = audioRef.current
     if (!audio) return
 
-    // Everything below must stay synchronous: Safari only honours the first
-    // playback if it starts inside the user gesture, and any `await` ends it.
-    //
-    // Skip the analyser unless the probe cleared it. Wiring a CORS-blocked
-    // element into WebAudio would silence the narration outright, so an
-    // unreactive orb is the far cheaper failure.
-    if (analyserAllowedRef.current && !audioContextRef.current) {
+    // Keep this synchronous: Safari only honours the first playback inside the
+    // user gesture. Same-origin `/media/about-narration` is WebAudio-safe.
+    if (!audioContextRef.current) {
       const Ctor =
         window.AudioContext ??
         (window as unknown as { webkitAudioContext?: typeof AudioContext })
@@ -267,28 +246,25 @@ export function AboutExperience() {
           const context = new Ctor()
           const source = context.createMediaElementSource(audio)
           const analyser = context.createAnalyser()
-          analyser.fftSize = 512
-          analyser.smoothingTimeConstant = 0.72
+          analyser.fftSize = 1024
+          analyser.smoothingTimeConstant = 0.35
           source.connect(analyser)
           analyser.connect(context.destination)
           audioContextRef.current = context
           analyserRef.current = analyser
-          binsRef.current = new Uint8Array(new ArrayBuffer(analyser.frequencyBinCount))
+          binsRef.current = new Uint8Array(
+            new ArrayBuffer(analyser.frequencyBinCount)
+          )
         } catch {
           // Analyser is a nicety; the synthetic envelope covers the failure.
         }
       }
     }
 
-    const playback = audio.play()
+    void audio.play().catch(() => {
+      /* synthetic envelope keeps the orb alive */
+    })
     void audioContextRef.current?.resume()
-    playback
-      ?.then(() => {
-        hasAudioRef.current = true
-      })
-      .catch(() => {
-        hasAudioRef.current = false
-      })
   }, [expand, isDesktop])
 
   // Drive the orb and the captions off the track's own clock.
@@ -303,32 +279,41 @@ export function AboutExperience() {
       const analyser = analyserRef.current
       const bins = binsRef.current
       const audio = audioRef.current
-      const live = hasAudioRef.current && audio && !audio.paused
+      const live = Boolean(audio && !audio.paused && !audio.ended)
+      const analysing = live && analyser && bins
 
-      if (live && analyser && bins) {
+      if (analysing) {
         analyser.getByteFrequencyData(bins)
-        let sum = 0
-        for (let i = VOICE_BIN_START; i < VOICE_BIN_END; i += 1) sum += bins[i]
-        amplitudeRef.current = sum / (VOICE_BIN_END - VOICE_BIN_START) / 255
+        amplitudeRef.current = voiceAmplitudeFromBins(bins)
+      } else if (audio && live && !reduceMotion) {
+        // Audio playing but analyser missing — speech-shaped fallback.
+        const t = audio.currentTime
+        const envelope =
+          0.32 +
+          0.22 * Math.sin(t * 6.2) +
+          0.14 * Math.sin(t * 13.1 + 1.1) +
+          0.1 * Math.sin(t * 27.4 + 2.4)
+        amplitudeRef.current = Math.max(0, Math.min(1, envelope))
       } else if (!reduceMotion) {
-        // Track missing or blocked — keep the orb alive on a speech-ish envelope.
         const t = (now - syntheticStartRef.current) / 1000
         const envelope =
-          0.26 +
-          0.13 * Math.sin(t * 5.1) +
-          0.09 * Math.sin(t * 11.7 + 1.1) +
-          0.06 * Math.sin(t * 23.3 + 2.4)
+          0.3 +
+          0.16 * Math.sin(t * 5.1) +
+          0.1 * Math.sin(t * 11.7 + 1.1)
         amplitudeRef.current = Math.max(0, Math.min(1, envelope))
       }
 
-      // Captions follow real playback position, so they stay in sync even if
-      // the track buffers. The wall clock only stands in when there's no audio.
-      const time = live
-        ? audio.currentTime
-        : (now - syntheticStartRef.current) / 1000
+      const time =
+        audio && live
+          ? audio.currentTime
+          : (now - syntheticStartRef.current) / 1000
 
       const next = cueIndexAt(time)
       setCueIndex((current) => (current === next ? current : next))
+      const bar = progressRef.current
+      if (bar) {
+        bar.style.transform = `scaleX(${Math.min(1, Math.max(0, time / ABOUT_NARRATION_DURATION))})`
+      }
 
       if (time >= ABOUT_NARRATION_DURATION) close()
     }
@@ -337,6 +322,8 @@ export function AboutExperience() {
     return () => {
       cancelAnimationFrame(frame)
       amplitudeRef.current = 0
+      const bar = progressRef.current
+      if (bar) bar.style.transform = "scaleX(0)"
     }
   }, [close, phase, reduceMotion])
 
@@ -356,14 +343,15 @@ export function AboutExperience() {
     const el = orbLiftRef.current
     if (!el) return
     ensureGsapScroll()
+    const playing = phase === "playing"
     gsap.to(el, {
-      yPercent: phase === "playing" ? -7 : 0,
-      scale: phase === "playing" ? 0.88 : 1,
+      yPercent: playing ? (expanded ? -4 : -7) : 0,
+      scale: playing ? (expanded ? 0.92 : 0.88) : 1,
       duration: reduceMotion ? 0 : LANDING_MOTION.duration,
       ease: LANDING_MOTION.ease,
       overwrite: true,
     })
-  }, [phase, reduceMotion])
+  }, [phase, expanded, reduceMotion])
 
   React.useEffect(() => {
     const el = captionRef.current
@@ -399,6 +387,7 @@ export function AboutExperience() {
     const { body } = document
     const scrollY = window.scrollY
     const previous = body.style.cssText
+    const frame = frameRef.current
     body.style.position = "fixed"
     body.style.top = `-${scrollY}px`
     body.style.left = "0"
@@ -409,7 +398,6 @@ export function AboutExperience() {
       body.style.cssText = previous
       window.scrollTo(0, scrollY)
       window.removeEventListener("keydown", onKey)
-      const frame = frameRef.current
       if (frame) setExpandStacking(frame, false)
     }
   }, [close, expanded])
@@ -433,48 +421,108 @@ export function AboutExperience() {
         ref={stageRef}
         className={cn(
           landingGlassSurface,
-          "absolute inset-0 rounded-[1.75rem] bg-white/42 dark:bg-white/8"
+          "absolute inset-0 rounded-[1.75rem] bg-white/42 dark:bg-white/8",
+          expanded && "rounded-none bg-background dark:bg-background"
         )}
       >
         <div
           aria-hidden
-          className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_42%,#ffffff_0%,#f6f7f9_58%,#eef1f5_100%)] dark:bg-[radial-gradient(ellipse_at_50%_42%,oklch(0.28_0_0)_0%,oklch(0.22_0_0)_58%,oklch(0.18_0_0)_100%)]"
+          className={cn(
+            "absolute inset-0",
+            expanded
+              ? "bg-[radial-gradient(ellipse_at_50%_38%,rgba(186,230,253,0.55)_0%,rgba(239,246,255,0.92)_34%,#f1f5f9_100%)] dark:bg-[radial-gradient(ellipse_at_50%_38%,rgba(37,99,235,0.28)_0%,oklch(0.18_0_0)_48%,oklch(0.12_0_0)_100%)]"
+              : "bg-[radial-gradient(ellipse_at_50%_42%,#ffffff_0%,#f6f7f9_58%,#eef1f5_100%)] dark:bg-[radial-gradient(ellipse_at_50%_42%,oklch(0.28_0_0)_0%,oklch(0.22_0_0)_58%,oklch(0.18_0_0)_100%)]"
+          )}
         />
-        <span aria-hidden className={cn(landingGlassSheen, "absolute inset-0")} />
+        {expanded ? (
+          <>
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_46%,rgba(255,255,255,0.4)_0%,transparent_40%)] dark:bg-[radial-gradient(circle_at_50%_46%,rgba(125,211,252,0.16)_0%,transparent_46%)]"
+            />
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-0 opacity-40 dark:opacity-30 [background-image:radial-gradient(rgba(37,99,235,0.12)_1px,transparent_1px)] [background-size:28px_28px] mask-[radial-gradient(ellipse_at_center,black_20%,transparent_70%)]"
+            />
+          </>
+        ) : null}
+        <span
+          aria-hidden
+          className={cn(
+            landingGlassSheen,
+            "absolute inset-0",
+            expanded && "opacity-50"
+          )}
+        />
 
-        <div ref={orbLiftRef} className="relative z-10 size-full">
+        <div
+          ref={orbLiftRef}
+          className={cn(
+            "relative z-10 size-full",
+            expanded &&
+              "[&_canvas]:drop-shadow-[0_24px_80px_rgba(37,99,235,0.18)]"
+          )}
+        >
           <AboutOrbCanvas
             amplitudeRef={amplitudeRef}
             still={Boolean(reduceMotion)}
+            immersive={expanded}
             className="size-full"
           />
         </div>
 
-          {phase === "idle" && (
-            <div className="absolute inset-0 z-20 flex items-center justify-center">
-              {/* A media frame gets a play affordance, not a text pill parked
-                  over the artwork. */}
-              <Button
-                type="button"
-                onClick={start}
-                aria-label="Hear from Exur"
-                className="group size-16 rounded-full bg-[#2563EB] text-white shadow-[0_12px_40px_rgba(37,99,235,0.34)] transition-all hover:bg-[#1D4ED8] hover:shadow-[0_16px_48px_rgba(37,99,235,0.42)] sm:size-18"
-              >
-                <PlayIcon className="size-6 translate-x-px fill-current sm:size-7" />
-              </Button>
-            </div>
-          )}
+        {phase === "idle" && (
+          <div className="absolute inset-0 z-20 flex items-center justify-center">
+            <Button
+              type="button"
+              onClick={start}
+              aria-label="Hear from Exur"
+              className="group size-16 rounded-full bg-[#2563EB] text-white shadow-[0_12px_40px_rgba(37,99,235,0.34)] transition-all hover:bg-[#1D4ED8] hover:shadow-[0_16px_48px_rgba(37,99,235,0.42)] sm:size-18"
+            >
+              <PlayIcon className="size-6 translate-x-px fill-current sm:size-7" />
+            </Button>
+          </div>
+        )}
 
         {phase === "playing" && (
           <>
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 bg-linear-to-t from-background via-background/85 to-transparent px-6 pt-24 pb-28 sm:px-10 sm:pb-36">
+            {expanded ? (
+              <p className="pointer-events-none absolute top-5 left-1/2 z-20 -translate-x-1/2 text-[11px] font-medium tracking-[0.18em] text-muted-foreground/80 uppercase">
+                Exur
+              </p>
+            ) : null}
+
+            <div
+              className={cn(
+                "pointer-events-none absolute inset-x-0 bottom-0 z-20 bg-linear-to-t from-background via-background/88 to-transparent px-6 sm:px-10",
+                expanded ? "pt-32 pb-[max(7rem,env(safe-area-inset-bottom))]" : "pt-24 pb-28 sm:pb-36"
+              )}
+            >
               <p
                 ref={captionRef}
                 key={cueIndex}
-                className={cn(landingTitleQuote, "mx-auto max-w-2xl text-center")}
+                className={cn(
+                  landingTitleQuote,
+                  "mx-auto text-center",
+                  expanded ? "max-w-xl text-[1.35rem] leading-snug sm:text-[1.5rem]" : "max-w-2xl"
+                )}
               >
                 {activeCue?.text ?? ""}
               </p>
+            </div>
+
+            <div
+              aria-hidden
+              className={cn(
+                "absolute inset-x-0 bottom-0 z-30 h-1 overflow-hidden bg-foreground/5",
+                !expanded && "rounded-b-[1.75rem]"
+              )}
+            >
+              <div
+                ref={progressRef}
+                className="h-full w-full origin-left bg-[#2563EB] will-change-transform"
+                style={{ transform: "scaleX(0)" }}
+              />
             </div>
 
             <Button
@@ -484,7 +532,8 @@ export function AboutExperience() {
               aria-label="Close"
               className={cn(
                 landingGlassNavIcon,
-                "absolute top-4 right-4 z-30 text-muted-foreground hover:text-foreground"
+                "absolute top-4 right-4 z-30 text-muted-foreground hover:text-foreground",
+                expanded && "top-[max(1rem,env(safe-area-inset-top))]"
               )}
             >
               <XIcon className="size-5" />
@@ -493,11 +542,7 @@ export function AboutExperience() {
         )}
       </div>
 
-      {/* React hoists this: the CDN handshake is done by the time we ask for
-          bytes, but no audio is downloaded until the warm-up effect says so. */}
-      <link rel="preconnect" href={ABOUT_NARRATION_ORIGIN} crossOrigin="anonymous" />
-
-      {/* `preload` and `crossOrigin` are raised later, by the warm-up effect. */}
+      {/* Same-origin `/media/about-narration` — WebAudio-safe. */}
       <audio ref={audioRef} src={ABOUT_NARRATION_SRC} preload="none" />
     </div>
   )

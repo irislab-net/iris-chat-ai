@@ -68,7 +68,7 @@ function MarketContextWorkspaceInner({
           <header className="flex shrink-0 items-start justify-between gap-3 border-b border-border/50 px-4 pt-5 pb-4 sm:px-6">
             <div className="min-w-0">
               <p className="text-[11px] font-medium tracking-[0.16em] text-muted-foreground uppercase">
-                Intel
+                Exur
               </p>
               <h1 className="mt-1 text-xl font-semibold tracking-tight">
                 News

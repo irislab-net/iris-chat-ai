@@ -74,7 +74,7 @@ const chatMobileHeaderScrimClass =
   "pointer-events-none absolute inset-x-0 top-0 -bottom-2 z-0 bg-gradient-to-b from-transparent from-20% via-background/90 via-[72%] to-background to-100% dark:via-background/85"
 
 const chatMobileUserBubbleClass =
-  "max-w-[88%] rounded-[24px] border border-transparent bg-secondary px-4 py-3 text-[15px] leading-[1.55] text-secondary-foreground dark:border-border/50"
+  "w-full rounded-[24px] border border-transparent bg-secondary px-4 py-3 text-[15px] leading-[1.55] text-secondary-foreground dark:border-border/50"
 
 const chatMobileUserBubbleInteractiveClass =
   `${chatMobileUserBubbleClass} outline-none transition-[background-color] duration-150 hover:bg-secondary/90 focus-within:bg-secondary/90 dark:hover:bg-secondary/75 dark:focus-within:bg-secondary/75`
@@ -138,35 +138,35 @@ const chatDesktopComposerSendDisabledClass =
 
 /** Empty-state sample prompt cards — liquid glass, Apple-like inset padding. */
 const chatSamplePromptButtonClass =
-  `flex h-auto w-full min-w-0 items-start justify-start rounded-[20px] border-0 px-[18px] py-4 text-left transition-[background-color,box-shadow,transform] active:scale-[0.985] sm:rounded-[22px] sm:px-5 sm:py-[18px] ${chatMobileGlassSurfaceClass} ${chatMobileHeaderShadowClass} ${chatMobileHeaderShadowHoverClass}`
+  `flex h-full w-full min-w-0 items-start justify-start rounded-[20px] border-0 px-[18px] py-4 text-left transition-[background-color,box-shadow,transform] active:scale-[0.985] sm:rounded-[22px] sm:px-5 sm:py-[18px] lg:rounded-[16px] lg:px-3.5 lg:py-3 ${chatMobileGlassSurfaceClass} ${chatMobileHeaderShadowClass} ${chatMobileHeaderShadowHoverClass}`
 
 const chatSamplePromptIconClass =
-  "mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-[14px] bg-white/50 shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_82%,transparent),0_1px_2px_color-mix(in_oklch,var(--foreground)_4%,transparent)] backdrop-blur-md backdrop-saturate-150 text-muted-foreground dark:bg-white/[0.1] sm:size-9 sm:rounded-[15px]"
+  "mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-[14px] bg-white/50 shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_82%,transparent),0_1px_2px_color-mix(in_oklch,var(--foreground)_4%,transparent)] backdrop-blur-md backdrop-saturate-150 text-muted-foreground dark:bg-white/[0.1] sm:size-9 sm:rounded-[15px] lg:size-7 lg:rounded-[12px]"
 
 const chatSamplePromptTextClass =
-  "flex min-w-0 flex-1 flex-col items-start gap-1 text-start"
+  "flex min-w-0 flex-1 flex-col items-start gap-0.5 text-start lg:gap-0.5"
 
 const chatSamplePromptTitleClass =
-  "w-full text-[13px] font-medium leading-snug text-foreground sm:text-sm"
+  "w-full text-[13px] font-medium leading-snug text-foreground sm:text-sm lg:text-[13px]"
 
 const chatSamplePromptDescriptionClass =
-  "w-full text-pretty text-[11px] leading-5 break-words text-muted-foreground sm:text-xs sm:leading-5"
+  "w-full line-clamp-2 text-pretty text-[11px] leading-5 break-words text-muted-foreground sm:text-xs sm:leading-5 lg:text-[11px] lg:leading-4"
 
 const chatEmptyHeroPromptsClass =
-  "chat-empty-hero-prompts mt-1 flex w-full min-w-0 self-stretch flex-col items-stretch gap-2"
+  "chat-empty-hero-prompts mt-1 flex w-full min-w-0 self-stretch flex-col items-center gap-2"
 
 const chatSamplePromptCarouselClass =
-  "w-full min-w-0 touch-pan-y lg:hidden [&_[data-slot=carousel-content]]:overflow-x-clip [&_[data-slot=carousel-content]]:px-1.5 [&_[data-slot=carousel-content]]:py-2.5"
+  "w-full min-w-0 touch-pan-y lg:hidden [&_[data-slot=carousel-content]]:overflow-x-clip [&_[data-slot=carousel-content]]:px-1.5 [&_[data-slot=carousel-content]]:py-2.5 [&_[data-slot=carousel-content]]:[mask-image:linear-gradient(to_right,transparent_0%,black_10%,black_90%,transparent_100%)] [&_[data-slot=carousel-content]]:[-webkit-mask-image:linear-gradient(to_right,transparent_0%,black_10%,black_90%,transparent_100%)]"
 
 const chatSamplePromptCarouselContentClass = "-ml-5 w-full items-stretch"
 
 const chatSamplePromptCarouselItemClass =
-  "min-w-0 basis-[88%] shrink-0 grow-0 self-stretch pl-5 sm:basis-[86%]"
+  "flex min-w-0 basis-[88%] shrink-0 grow-0 self-stretch pl-5 sm:basis-[86%]"
 
 const chatSamplePromptCarouselDotsClass = "mt-2.5"
 
 const chatSamplePromptStaticListClass =
-  "hidden w-full flex-col items-stretch gap-2 lg:flex"
+  "mx-auto hidden w-full max-w-md grid-cols-1 gap-2 lg:grid"
 
 const chatMobileComposerIconButtonClass =
   "size-10 shrink-0 rounded-full text-muted-foreground transition-colors hover:bg-foreground/[0.05] hover:text-foreground [&_svg]:stroke-[1.75]"

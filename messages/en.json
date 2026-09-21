@@ -270,19 +270,17 @@
     }
   },
   "metadata": {
-    "homeTitle": "Exur: Market News & AI Co-Pilot",
-    "homeDescription": "Scored crypto headlines and Exur co-pilot chat for the market you select.",
-    "homeOg": "News bullets and Exur chat in one focused app."
+    "homeTitle": "Exur: AI Financial Assistant",
+    "homeDescription": "Exur is your AI financial assistant. See where your money is going, ask in plain language, and get a clear next step.",
+    "homeOg": "Your money, handled. Ask Exur in plain language."
   },
   "notFound": {
     "title": "Page not found",
-    "body": "This route doesn't exist, or it moved. Head back to the desk."
+    "body": "This route doesn't exist, or it moved. Head back to news."
   },
   "workspace": {
-    "desk": "Desk",
     "news": "News",
     "home": "Home",
-    "intel": "Intel",
     "market": "Market",
     "workspace": "Workspace",
     "iris": "Exur",
@@ -307,9 +305,6 @@
     "expandChatHistory": "Expand chat history",
     "historyDrawerSubtitle": "AI market co-pilot",
     "dockChat": "Dock chat",
-    "deskToolsBannerTitle": "Demo trading",
-    "deskToolsBannerBody": "Practice on live prices with chart, orders, and paper positions. No real funds.",
-    "deskToolsBannerDismiss": "Dismiss",
     "fullScreenChat": "Full screen chat",
     "newChat": "New chat",
     "closeChat": "Close chat",
@@ -341,17 +336,15 @@
     "signalCardSize": "Size",
     "signalCardRisk": "Risk",
     "signalCardRewardRisk": "R:R",
-    "signalCardDisclaimer": "Analysis only, not financial advice. Not a profit guarantee.",
+    "signalCardTimeHorizon": "Time horizon",
+    "signalCardThesisHeading": "Thesis — why this setup",
+    "signalCardDisclaimer": "Exur provides market information only, not financial advice.",
     "samplePromptsLabel": "Starters",
     "emptySignedIn": "Start from a prompt or ask in plain language.",
     "emptySignedOut": "Explore the chat. Sign in when you want a real answer.",
     "emptyGuestTrial": "Ask Exur anything. You get 3 free messages per week before signing in.",
     "fetchingContext": "Fetching live market context…",
     "evaluatingSetup": "Evaluating setup against live evidence…",
-    "chartSetLevel": "Click chart to set {level} · Esc cancel",
-    "chartSl": "SL",
-    "chartTp": "TP",
-    "chartAttribution": "TradingView Advanced Charts · Hyperliquid data",
     "recentChats": "Recent",
     "noSavedChats": "No saved chats yet.",
     "pinnedChats": "Pinned",

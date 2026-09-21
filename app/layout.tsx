@@ -60,6 +60,7 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
+      { url: "/favicon.ico", sizes: "any" },
       { url: "/favicon-32.png", sizes: "32x32", type: "image/png" },
       { url: "/favicon-48.png", sizes: "48x48", type: "image/png" },
       { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
@@ -68,6 +69,7 @@ export const metadata: Metadata = {
     apple: [
       { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
     ],
+    shortcut: ["/favicon.ico"],
   },
   manifest: "/manifest.webmanifest",
   openGraph: {
@@ -122,7 +124,12 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const locale = await getLocale()
+  let locale = "en"
+  try {
+    locale = await getLocale()
+  } catch {
+    // Image / metadata routes (e.g. opengraph-image) have no intl provider.
+  }
   const dir = localeDirection(locale)
   const pathname = (await headers()).get("x-pathname") ?? "/"
   const chatGtmEnabled = isChatGtmEnabled(pathname)

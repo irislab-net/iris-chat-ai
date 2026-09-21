@@ -1,8 +1,17 @@
+import { MARKETING_ORIGIN } from "@/lib/hosts"
+
 export const SITE_NAME = "Exur"
 export const SITE_SHORT_NAME = "Exur"
-export const SITE_URL =
-  process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "") ??
-  "https://exur.ai"
+
+/**
+ * Marketing SEO origin (metadataBase, sitemap, canonicals).
+ * Never use the chat desk host here — chat.exur.ai is noindex for `/`.
+ */
+export const SITE_URL = (
+  process.env.NEXT_PUBLIC_MARKETING_URL ||
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  MARKETING_ORIGIN
+).replace(/\/$/, "")
 
 export const SITE_TITLE = "Exur: AI Financial Assistant"
 export const SITE_TITLE_TEMPLATE = "%s · Exur"
@@ -41,7 +50,6 @@ export const ORGANIZATION_LOGO = {
   height: 512,
   caption: "Exur",
 } as const
-
 /** Live-retrieval and training crawlers that should see public pages. */
 export const AI_CRAWLER_USER_AGENTS = [
   "GPTBot",
@@ -105,14 +113,8 @@ export function absoluteUrl(path = "/") {
 export const INDEXABLE_ROUTES = [
   {
     path: "/",
-    changeFrequency: "hourly" as const,
-    priority: 1,
-    images: [ORGANIZATION_LOGO.path, Exur_LAB_LOGO_MARK] as const,
-  },
-  {
-    path: "/home",
     changeFrequency: "weekly" as const,
-    priority: 0.95,
+    priority: 1,
     images: ["/home-bg-header.webp", Exur_LAB_LOGO_MARK, "/opengraph-image"] as const,
   },
   {
@@ -184,7 +186,7 @@ export function organizationJsonLd() {
     "@context": "https://schema.org",
     "@type": "Organization",
     name: SITE_NAME,
-    alternateName: ["Exur", "Exur", "Exur AI"],
+    alternateName: ["Exur AI", "exur.ai"],
     url: SITE_URL,
     logo,
     image: logo,
@@ -272,8 +274,8 @@ export function llmsTxt() {
     "",
     "## Pages",
     "",
-    `- Landing: ${absoluteUrl("/home")}`,
-    `- Market desk (Launch App): ${absoluteUrl("/")}`,
+    `- Landing: ${absoluteUrl("/")}`,
+    `- Chat app (Launch App): https://chat.exur.ai/`,
     `- AI financial assistant: ${absoluteUrl(AI_SIGNALS_PATH)}`,
     `- About: ${absoluteUrl("/about")}`,
     `- Terms: ${absoluteUrl("/terms")}`,

@@ -5,23 +5,20 @@ import type {
   ParsedPaperDecision,
   PlanIrisPaperTradeResult,
 } from "@/lib/iris-paper-trade/types"
-import type { PaperState } from "@/lib/paper-trading"
 
 /**
- * Stage 2: validate the structured proposal, then compute engine-owned size.
- * Does not mutate paper state.
+ * Validate the structured proposal, then compute risk-based size.
+ * Does not open positions.
  */
 export function planIrisPaperTrade(input: {
   decision: ParsedPaperDecision
   context: MarketContextPacket
-  state: PaperState
   now?: number
 }): PlanIrisPaperTradeResult {
   const validated = validatePaperDecision(input)
   if (validated.status !== "ready") return validated
 
   const sized = calculateRiskBasedSize({
-    state: input.state,
     side: validated.side,
     markPrice: validated.markPrice,
     stopLoss: validated.stopLoss,

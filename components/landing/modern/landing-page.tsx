@@ -1,16 +1,11 @@
 "use client"
 
-import { AboutSection } from "@/components/landing/modern/about-section"
-import { BentoSection } from "@/components/landing/modern/bento-section"
-import { CtaSection } from "@/components/landing/modern/cta-section"
-import { FaqSection } from "@/components/landing/modern/faq-section"
-import { GoalsSection } from "@/components/landing/modern/goals-section"
+import dynamic from "next/dynamic"
+
 import { HeroLiquidGlassBg } from "@/components/landing/modern/hero-liquid-glass-bg"
 import { HeroSection } from "@/components/landing/modern/hero-section"
 import { LandingNav } from "@/components/landing/modern/landing-nav"
 import { LandingScrollProvider } from "@/components/landing/modern/landing-scroll-context"
-import { ModernFooter } from "@/components/landing/modern/modern-footer"
-import { PricingSection } from "@/components/landing/modern/pricing-section"
 import { jetbrainsMono, plusJakarta } from "@/components/landing/modern/fonts"
 import {
   landingHeroCard,
@@ -20,6 +15,52 @@ import {
   landingShell,
 } from "@/lib/landing-modern-styles"
 import { cn } from "@/lib/utils"
+
+const GoalsSection = dynamic(
+  () =>
+    import("@/components/landing/modern/goals-section").then(
+      (m) => m.GoalsSection
+    ),
+  { ssr: true }
+)
+const BentoSection = dynamic(
+  () =>
+    import("@/components/landing/modern/bento-section").then(
+      (m) => m.BentoSection
+    ),
+  { ssr: true }
+)
+const AboutSection = dynamic(
+  () =>
+    import("@/components/landing/modern/about-section").then(
+      (m) => m.AboutSection
+    ),
+  { ssr: true }
+)
+const CtaSection = dynamic(
+  () =>
+    import("@/components/landing/modern/cta-section").then((m) => m.CtaSection),
+  { ssr: true }
+)
+const FaqSection = dynamic(
+  () =>
+    import("@/components/landing/modern/faq-section").then((m) => m.FaqSection),
+  { ssr: true }
+)
+const PricingSection = dynamic(
+  () =>
+    import("@/components/landing/modern/pricing-section").then(
+      (m) => m.PricingSection
+    ),
+  { ssr: true }
+)
+const ModernFooter = dynamic(
+  () =>
+    import("@/components/landing/modern/modern-footer").then(
+      (m) => m.ModernFooter
+    ),
+  { ssr: true }
+)
 
 export function ModernLandingPage() {
   return (

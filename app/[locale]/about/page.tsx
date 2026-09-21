@@ -8,12 +8,12 @@ import { JsonLd } from "@/components/seo/json-ld"
 import { Button } from "@/components/ui/button"
 import {
   ABOUT_DESCRIPTION,
-  getSiteOrigin,
   ROOT_ROBOTS,
   APP_NEWS_PATH,
   SITE_NAME,
   SOCIAL_X_URL,
 } from "@/lib/site"
+import { SITE_URL } from "@/lib/seo"
 
 export const metadata: Metadata = {
   title: "About",
@@ -38,7 +38,7 @@ export const metadata: Metadata = {
 }
 
 function AboutPage() {
-  const origin = getSiteOrigin()
+  const origin = SITE_URL
   const aboutPageLd = {
     "@context": "https://schema.org",
     "@type": "AboutPage",

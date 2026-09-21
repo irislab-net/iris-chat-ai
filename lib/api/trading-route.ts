@@ -1,17 +1,6 @@
 const DEV_STUBS: Record<string, () => unknown> = {
   "/v1/wallets": () => ({ wallets: [] }),
   "/v1/entitlements": () => ({ entitlements: [] }),
-  "/v1/trading/hyperliquid/controls": () => ({
-    global_execution_enabled: true,
-    user_execution_enabled: true,
-    disabled_markets: [],
-  }),
-  "/v1/trading/hyperliquid/signer/status": () => ({
-    available: false,
-    network: "testnet",
-    wallet_identity_id: null,
-    expires_at: null,
-  }),
 }
 
 function normalizeApiPath(path: string): string {

@@ -2,11 +2,11 @@ import Image from "next/image"
 
 import { cn } from "@/lib/utils"
 
-export const IRIS_LAB_LOGO_LIGHT_SRC = "/iris-lab-logo-light.svg"
-export const IRIS_LAB_LOGO_DARK_SRC = "/iris-lab-logo-dark.svg"
-export const IRIS_LAB_LOGO_BRAND_SRC = "/iris-lab-logo-brand.svg"
-export const IRIS_LAB_LOGO_MARK_WHITE_SRC = "/iris-lab-logo-mark-white.svg"
-export const IRIS_LAB_LOGO_GRADIENT_SRC = "/iris-lab-logo-gradient.svg"
+export const IRIS_LAB_LOGO_LIGHT_SRC = "/exur-logo-light.svg"
+export const IRIS_LAB_LOGO_DARK_SRC = "/exur-logo-dark.svg"
+export const IRIS_LAB_LOGO_BRAND_SRC = "/exur-logo-brand.svg"
+export const IRIS_LAB_LOGO_MARK_WHITE_SRC = "/exur-logo-mark-white.svg"
+export const IRIS_LAB_LOGO_GRADIENT_SRC = "/exur-logo-gradient.svg"
 
 type IrisLabLogoProps = {
   className?: string
