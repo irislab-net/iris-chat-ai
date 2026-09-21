@@ -272,6 +272,7 @@ export function AboutExperience() {
     if (phase !== "playing") return
 
     let frame = 0
+    const progressBar = progressRef.current
 
     const tick = (now: number) => {
       frame = requestAnimationFrame(tick)
@@ -310,9 +311,8 @@ export function AboutExperience() {
 
       const next = cueIndexAt(time)
       setCueIndex((current) => (current === next ? current : next))
-      const bar = progressRef.current
-      if (bar) {
-        bar.style.transform = `scaleX(${Math.min(1, Math.max(0, time / ABOUT_NARRATION_DURATION))})`
+      if (progressBar) {
+        progressBar.style.transform = `scaleX(${Math.min(1, Math.max(0, time / ABOUT_NARRATION_DURATION))})`
       }
 
       if (time >= ABOUT_NARRATION_DURATION) close()
@@ -322,8 +322,7 @@ export function AboutExperience() {
     return () => {
       cancelAnimationFrame(frame)
       amplitudeRef.current = 0
-      const bar = progressRef.current
-      if (bar) bar.style.transform = "scaleX(0)"
+      if (progressBar) progressBar.style.transform = "scaleX(0)"
     }
   }, [close, phase, reduceMotion])
 

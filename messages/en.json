@@ -278,6 +278,11 @@
     "title": "Page not found",
     "body": "This route doesn't exist, or it moved. Head back to news."
   },
+  "error": {
+    "title": "Something went wrong",
+    "body": "An unexpected error stopped this page. Try again, or go back to news.",
+    "retry": "Try again"
+  },
   "workspace": {
     "news": "News",
     "home": "Home",

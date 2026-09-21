@@ -2,7 +2,7 @@ import { existsSync, readFileSync } from "node:fs"
 import { join } from "node:path"
 
 import type { NextConfig } from "next"
-import { withSentryConfig } from "@sentry/nextjs"
+import { withSentryConfig } from "@sentry/nextjs/config"
 import createNextIntlPlugin from "next-intl/plugin"
 
 import { allowedDevOrigins } from "./lib/dev-access"
@@ -128,7 +128,11 @@ export default withSentryConfig(withNextIntl(nextConfig), {
     disable: !process.env.SENTRY_AUTH_TOKEN,
   },
   widenClientFileUpload: true,
-  disableLogger: true,
+  webpack: {
+    treeshake: {
+      removeDebugLogging: true,
+    },
+  },
 })
 
 import('@opennextjs/cloudflare').then(m => m.initOpenNextCloudflareForDev());
