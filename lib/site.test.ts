@@ -48,6 +48,7 @@ describe("public SEO site policy (S1/S2)", () => {
       "/ai-trading-signals",
       "/privacy",
       "/terms",
+      "/refund",
     ])
     expect(PUBLIC_INDEXABLE_PATHS).not.toContain("/auth/success")
     expect(PUBLIC_INDEXABLE_PATHS).not.toContain(UPGRADE_PATH)

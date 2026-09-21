@@ -119,6 +119,9 @@ export default async function RootPage({ params, searchParams }: PageProps) {
               <Link href="/privacy">Privacy Policy</Link>
             </li>
             <li>
+              <Link href="/refund">Refund Policy</Link>
+            </li>
+            <li>
               <a href="https://x.com/exur_ai">Exur on X</a>
             </li>
           </ul>

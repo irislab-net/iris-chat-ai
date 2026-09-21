@@ -82,6 +82,8 @@ export function isMarketingOnlyPath(pathnameWithoutLocale: string): boolean {
   if (pathnameWithoutLocale.startsWith("/privacy/")) return true
   if (pathnameWithoutLocale === "/terms") return true
   if (pathnameWithoutLocale.startsWith("/terms/")) return true
+  if (pathnameWithoutLocale === "/refund") return true
+  if (pathnameWithoutLocale.startsWith("/refund/")) return true
   return false
 }
 

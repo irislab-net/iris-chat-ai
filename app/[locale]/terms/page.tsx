@@ -7,6 +7,8 @@ import {
   LegalP,
   LegalSection,
 } from "@/components/legal/legal-doc"
+import { Link } from "@/i18n/navigation"
+import { LEGAL_DOCS_REPO_URL } from "@/lib/legal"
 import { ROOT_ROBOTS, SITE_NAME, TERMS_DESCRIPTION } from "@/lib/site"
 
 export const metadata: Metadata = {
@@ -37,16 +39,12 @@ function TermsPage() {
       title="Terms of Service"
       meta={
         <>
-          <p>Effective Date: August 11, 2026</p>
-          <p>Version: 1.0.0</p>
+          <p>Effective Date: September 21, 2026</p>
+          <p>Version: 2.1.0</p>
           <p>
             Scope: Exur (
-            <span className="font-mono text-foreground/90">
-              exur.ai
-            </span>
-            ), a product module of the Exur ecosystem (
             <span className="font-mono text-foreground/90">exur.ai</span>
-            ).
+            ), an AI-native financial intelligence platform.
           </p>
         </>
       }
@@ -56,24 +54,19 @@ function TermsPage() {
             Welcome to{" "}
             <span className="font-medium text-foreground">Exur</span>{" "}
             (accessible via{" "}
-            <span className="font-mono text-foreground/90">
-              exur.ai
-            </span>
+            <span className="font-mono text-foreground/90">exur.ai</span>
             ). These Terms of Service (“Terms”) govern your access to and use of
-            our website, AI-driven market intelligence tools, analytics
-            dashboards, quantitative signals, news aggregations, and associated
-            features (collectively, the “Service”).
+            our website, conversational AI interfaces, Model Context Protocol
+            (MCP) data pipelines, market intelligence tools, quantitative
+            prediction models, and associated services (collectively, the
+            “Service”).
           </LegalP>
           <LegalP>
-            The Service is operated and owned by{" "}
-            <span className="font-medium text-foreground">Exur</span>{" "}
-            (managed by{" "}
-            <span className="font-medium text-foreground">
-              Hamid Reza Hassani Yaqouti
-            </span>{" "}
-            as an individual operator pending formal corporate registration). By
-            accessing or using the Service, you agree to be bound by these
-            Terms.
+            The Service is operated and maintained by the{" "}
+            <span className="font-medium text-foreground">Exur Core Team</span>{" "}
+            (pending formal corporate entity incorporation in a designated
+            jurisdiction). By accessing or using the Service, you agree to be
+            bound by these Terms.
           </LegalP>
         </>
       }
@@ -89,9 +82,9 @@ function TermsPage() {
         </LegalP>
         <LegalList>
           <li>
-            All content, automated signal indicators, market analysis, news
-            aggregations, confidence scores, and AI-generated outputs available
-            on the Service are provided strictly for{" "}
+            All content, conversational outputs, quantitative model signals,
+            market analysis, news summaries, confidence metrics, and AI-generated
+            insights provided by Exur are strictly for{" "}
             <span className="font-medium text-foreground">
               informational, educational, and research purposes only
             </span>
@@ -99,135 +92,205 @@ function TermsPage() {
           </li>
           <li>
             Exur is not a registered investment advisor, broker-dealer,
-            financial analyst, or commodities trader under any regulatory
-            authority.
+            financial planner, commodities trading advisor, or regulated
+            financial institution under any jurisdiction.
           </li>
           <li>
-            Trading cryptocurrencies, digital assets, and derivatives involves
-            substantial risk of loss and is not suitable for every investor. You
-            are solely responsible for your own trading decisions and financial
-            risks. Exur and its operator shall not be liable for any losses,
-            damages, or claims arising from reliance on information provided by
-            the Service.
+            Trading and investing in financial instruments, digital assets,
+            cryptocurrencies, and derivatives involve substantial risk of
+            financial loss and are not suitable for every individual. You bear
+            sole responsibility for your investment decisions, risk management,
+            and trading activities. Exur and its operators shall not be held
+            liable for any direct or indirect financial losses resulting from
+            your reliance on information or signals provided by the Service.
           </li>
         </LegalList>
       </LegalSection>
 
       <LegalSection
         id="terms-eligibility"
-        title="2. Eligibility and Prohibited Jurisdictions"
+        title="2. Eligibility & Prohibited Jurisdictions"
       >
-        <LegalP>By using the Service, you represent and warrant that:</LegalP>
+        <LegalP>
+          By accessing or using the Service, you represent and warrant that:
+        </LegalP>
         <LegalList>
           <li>
             You are at least{" "}
-            <span className="font-medium text-foreground">18 years of age</span>{" "}
-            (or the legal age of majority in your jurisdiction).
+            <span className="font-medium text-foreground">
+              18 years of age
+            </span>{" "}
+            (or the age of legal majority in your jurisdiction).
           </li>
           <li>
             You are not located in, a citizen of, or a resident of any country
-            or territory subject to comprehensive sanctions or embargoes
-            administered by OFAC, the European Union, or the United Nations.
+            or territory subject to comprehensive financial sanctions or trade
+            embargoes administered by OFAC, the European Union, the United
+            Nations, or other applicable regulatory bodies.
           </li>
           <li>
-            You are not a{" "}
-            <span className="font-medium text-foreground">U.S. Person</span> or
-            accessing the Service from within the United States of America,
-            where local regulatory compliance laws may restrict access to
-            unregulated cryptocurrency analytics tools.
+            You are complying with all applicable local, national, and
+            international laws regarding digital asset access and automated
+            analytics tools.
           </li>
         </LegalList>
       </LegalSection>
 
       <LegalSection
         id="terms-accounts"
-        title="3. User Accounts and Google Authentication"
+        title="3. User Accounts and Authentication (Google OAuth)"
       >
         <LegalP>
-          To access certain features, including the Pro Plan, you may be
-          required to log in via Google OAuth. You agree that:
+          To access the Service, you must authenticate using your{" "}
+          <span className="font-medium text-foreground">Google account</span>{" "}
+          via Google OAuth. You agree that:
         </LegalP>
         <LegalList>
           <li>
-            You are responsible for maintaining the security of your Google
-            account.
+            You are responsible for maintaining the security and confidentiality
+            of your Google account credentials.
           </li>
           <li>
-            We collect profile data such as Google user ID, name, email
-            address, and profile image URL to deliver personalized dashboards,
-            notifications, and referral/promotion tracking.
+            We collect essential account profile details (Google User ID, email
+            address, name, and profile picture URL) to manage your session and
+            personalize your user experience.
+          </li>
+          <li>
+            You agree not to attempt to breach, bypass, reverse-engineer, or
+            exploit our authentication mechanisms, API routes, or backend
+            systems.
           </li>
           <li>
             We reserve the right to suspend or terminate your access to the
-            Service at our sole discretion if you violate these Terms.
+            Service at our sole discretion if you violate these Terms or engage
+            in fraudulent or abusive activities.
+          </li>
+        </LegalList>
+      </LegalSection>
+
+      <LegalSection
+        id="terms-usage"
+        title="4. Platform Usage & AI Model Interactions"
+      >
+        <LegalList>
+          <li>
+            <span className="font-medium text-foreground">
+              AI Reasoning &amp; Conversational Limitations:
+            </span>{" "}
+            Exur utilizes third-party Large Language Model (LLM) orchestration
+            (via OpenRouter, OpenAI, and Google Gemini) combined with
+            proprietary prediction engines. You acknowledge that AI outputs can
+            occasionally produce inaccurate, incomplete, or delayed information
+            (“hallucinations”).
+          </li>
+          <li>
+            <span className="font-medium text-foreground">
+              Fair Usage &amp; System Abuse:
+            </span>{" "}
+            You agree not to perform automated scraping, reverse engineering,
+            rate-limit bypassing, or unauthorized exploitation of Exur’s MCP
+            tools, backend APIs, or prediction models.
           </li>
         </LegalList>
       </LegalSection>
 
       <LegalSection
         id="terms-availability"
-        title="4. Service Availability & Pro Plan Modifications"
+        title="5. Service Availability, Modifications & Free/Pro Tiers"
+      >
+        <LegalList>
+          <li>
+            <span className="font-medium text-foreground">
+              “As-Is” Service Provision:
+            </span>{" "}
+            The Service is provided on an{" "}
+            <span className="font-medium text-foreground">
+              “AS IS” and “AS AVAILABLE”
+            </span>{" "}
+            basis without warranties of any kind, express or implied.
+          </li>
+          <li>
+            <span className="font-medium text-foreground">
+              Service Modifications:
+            </span>{" "}
+            We reserve the right to modify, suspend, or discontinue any
+            feature, prediction model, API integration, or free/pro tier access
+            at any time without prior notice or financial liability.
+          </li>
+          <li>
+            <span className="font-medium text-foreground">
+              Payments &amp; Non-Refundable Policy:
+            </span>{" "}
+            Access to premium tiers or features purchased via cryptocurrency or
+            other digital payment methods is{" "}
+            <span className="font-medium text-foreground">
+              strictly non-refundable
+            </span>{" "}
+            as detailed in our{" "}
+            <Link
+              href="/refund"
+              className="font-medium text-foreground underline underline-offset-3 hover:text-foreground/80"
+            >
+              Refund Policy
+            </Link>
+            .
+          </li>
+        </LegalList>
+      </LegalSection>
+
+      <LegalSection id="terms-ip" title="6. Intellectual Property Rights">
+        <LegalP>
+          All software code, proprietary model architectures, algorithms, MCP
+          tool specifications, brand assets, logos, and UI designs associated
+          with Exur are the exclusive intellectual property of the Exur
+          operators. You are granted a limited, personal, non-exclusive,
+          non-transferable, and revokable license to access and use the platform
+          in accordance with these Terms.
+        </LegalP>
+      </LegalSection>
+
+      <LegalSection id="terms-liability" title="7. Limitation of Liability">
+        <LegalP>
+          To the maximum extent permitted by applicable law, Exur, its
+          operators, contributors, infrastructure providers, and third-party
+          vendors shall not be liable for any indirect, incidental, special,
+          consequential, or punitive damages—including trading losses, loss of
+          profits, data loss, service interruption, or system outages—arising
+          out of or in connection with your use of or inability to use the
+          Service.
+        </LegalP>
+      </LegalSection>
+
+      <LegalSection
+        id="terms-governing-law"
+        title="8. Governing Law & Dispute Resolution"
       >
         <LegalP>
-          The Service, including free tier data and Pro Plan features (such as
-          custom notifications via Email/Telegram/Webhooks, historical market
-          analytics, and event tracking), is provided on an{" "}
-          <span className="font-medium text-foreground">
-            “AS IS” and “AS AVAILABLE”
-          </span>{" "}
-          basis. We reserve the right to modify, suspend, or discontinue any
-          feature, API, or service at any time without prior notice or
-          liability.
-        </LegalP>
-      </LegalSection>
-
-      <LegalSection id="terms-ip" title="5. Intellectual Property">
-        <LegalP>
-          All software code, user interface designs, proprietary algorithm
-          outputs, logos, and branding related to Exur and Exur are
-          the intellectual property of the operator. You are granted a limited,
-          non-exclusive, non-transferable license to access the Service for
-          personal or internal business use.
-        </LegalP>
-      </LegalSection>
-
-      <LegalSection id="terms-liability" title="6. Limitation of Liability">
-        <LegalP>
-          To the maximum extent permitted by applicable law, Exur and its
-          operator shall not be liable for any indirect, incidental, special,
-          consequential, or punitive damages, including loss of profits, trading
-          losses, data loss, service interruption, or system failure resulting
-          from your use of or inability to use the Service.
-        </LegalP>
-      </LegalSection>
-
-      <LegalSection id="terms-governing-law" title="7. Governing Law">
-        <LegalP>
           These Terms shall be governed by and construed in accordance with
-          general international commercial principles and applicable laws,
-          without regard to conflict of law principles.
+          general international commercial principles and applicable data
+          protection legislation (including EU GDPR standards), without regard
+          to conflict of law principles.
         </LegalP>
       </LegalSection>
 
-      <LegalSection id="terms-modifications" title="8. Modifications to Terms">
+      <LegalSection id="terms-modifications" title="9. Modifications to Terms">
         <LegalP>
-          We reserve the right to modify or replace these Terms at any time at
-          our sole discretion. If a revision is material, we will provide notice
-          prior to any new terms taking effect via an in-app banner, email
-          notification, or an updated prompt upon log-in. By continuing to
-          access or use our Service after those revisions become effective, you
-          agree to be bound by the revised terms.
+          We reserve the right to update or replace these Terms at any time at
+          our sole discretion. Material changes will be communicated via the
+          official documentation repository, in-app notices, or platform
+          announcements. Your continued use of the Service after effective
+          revisions constitutes full acceptance of the updated Terms.
         </LegalP>
       </LegalSection>
 
-      <LegalSection id="terms-contact" title="9. Contact Information">
+      <LegalSection id="terms-contact" title="10. Contact Information">
         <LegalP>
-          For legal inquiries or support regarding these Terms, please contact
-          us at:
+          For legal inquiries, terms clarification, or platform support, please
+          contact:
         </LegalP>
         <LegalList>
           <li>
-            <span className="font-medium text-foreground">Legal:</span>{" "}
+            <span className="font-medium text-foreground">Legal Team:</span>{" "}
             <a
               href="mailto:legal@exur.ai"
               className="font-medium text-foreground underline underline-offset-3 hover:text-foreground/80"
@@ -236,20 +299,11 @@ function TermsPage() {
             </a>
           </li>
           <li>
-            <span className="font-medium text-foreground">Support:</span>{" "}
-            <a
-              href="mailto:support@exur.ai"
-              className="font-medium text-foreground underline underline-offset-3 hover:text-foreground/80"
-            >
-              support@exur.ai
-            </a>
-          </li>
-          <li>
             <span className="font-medium text-foreground">
-              Version Control Repository:
+              Official Legal Documentation Repository:
             </span>{" "}
             <a
-              href="https://github.com/exur-ai/exur-legal-docs"
+              href={LEGAL_DOCS_REPO_URL}
               target="_blank"
               rel="noopener noreferrer"
               className="font-medium text-foreground underline underline-offset-3 hover:text-foreground/80"

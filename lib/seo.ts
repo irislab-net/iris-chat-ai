@@ -142,6 +142,12 @@ export const INDEXABLE_ROUTES = [
     priority: 0.5,
     images: [] as const,
   },
+  {
+    path: "/refund",
+    changeFrequency: "monthly" as const,
+    priority: 0.5,
+    images: [] as const,
+  },
 ] as const
 
 export function buildSitemapEntries(lastModified = new Date()) {
@@ -285,6 +291,7 @@ export function llmsTxt() {
     `- About: ${absoluteUrl("/about")}`,
     `- Terms: ${absoluteUrl("/terms")}`,
     `- Privacy: ${absoluteUrl("/privacy")}`,
+    `- Refund: ${absoluteUrl("/refund")}`,
     "",
     "## Product",
     "",

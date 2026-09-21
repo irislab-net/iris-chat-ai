@@ -26,6 +26,9 @@ export const PRIVACY_DESCRIPTION =
 export const TERMS_DESCRIPTION =
   "Terms of Service for Exur: eligibility, no financial advice, accounts, liability, and contact."
 
+export const REFUND_DESCRIPTION =
+  "Refund Policy for Exur premium subscriptions: non-refundable payments, cancellation, and billing support."
+
 /** Verified public contact from product UI (`website-toolbar` CONTACT.x). */
 export const SOCIAL_X_URL = "https://x.com/exur_ai"
 
@@ -74,6 +77,7 @@ export const PUBLIC_INDEXABLE_PATHS = [
   "/ai-trading-signals",
   "/privacy",
   "/terms",
+  "/refund",
 ] as const
 
 /** Root homepage — intentional public acquisition URL. */

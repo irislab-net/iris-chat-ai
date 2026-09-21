@@ -105,6 +105,7 @@ function LegalDocShell({
 function LegalNavButtons({
   showTerms = true,
   showPrivacy = true,
+  showRefund = true,
 }: {
   showTerms?: boolean
   showPrivacy?: boolean

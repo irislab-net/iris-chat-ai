@@ -51,7 +51,7 @@ type LoginConsentDialogProps = {
 const TITLE = "Continue with Google"
 const DESCRIPTION = "Accept the terms below to sign in securely."
 const DISCLAIMER =
-  "You must be 18+, not a U.S. Person or in a sanctioned jurisdiction. Exur provides analytics for information only — not financial advice."
+  "You must be 18+ and not located in a comprehensively sanctioned jurisdiction. Exur provides analytics for information only — not financial advice."
 
 function LegalLink({
   href,

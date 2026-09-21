@@ -99,6 +99,7 @@ export function ModernFooter() {
   const legalLinks = [
     { label: t("terms"), href: "/terms" },
     { label: t("privacy"), href: "/privacy" },
+    { label: t("refund"), href: "/refund" },
     { label: t("cookies"), href: "/privacy" },
   ] as const
 

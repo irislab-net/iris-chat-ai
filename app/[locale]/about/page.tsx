@@ -226,6 +226,15 @@ function AboutPage() {
             >
               Terms of Service
             </Button>
+            <Button
+              variant="outline"
+              size="lg"
+              className="rounded-2xl"
+              nativeButton={false}
+              render={<Link href="/refund" />}
+            >
+              Refund Policy
+            </Button>
           </div>
           <p className="text-xs text-muted-foreground">
             <TrackedContactLink
@@ -250,6 +259,13 @@ function AboutPage() {
               className="underline-offset-4 hover:underline"
             >
               Terms of Service
+            </Link>
+            {" · "}
+            <Link
+              href="/refund"
+              className="underline-offset-4 hover:underline"
+            >
+              Refund Policy
             </Link>
           </p>
         </section>
