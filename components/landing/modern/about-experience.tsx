@@ -653,8 +653,8 @@ export function AboutExperience() {
               className={cn(
                 "pointer-events-none absolute inset-x-0 bottom-0 z-20 px-5 sm:px-10",
                 expanded
-                  ? "pt-28 pb-[max(5.5rem,calc(env(safe-area-inset-bottom)+3.75rem))]"
-                  : "pt-20 pb-16 sm:pb-20"
+                  ? "pt-28 pb-[max(6.25rem,calc(env(safe-area-inset-bottom)+4.5rem))]"
+                  : "pt-20 pb-[4.75rem] sm:pb-24"
               )}
             >
               <div className="mx-auto max-w-2xl">
@@ -663,9 +663,10 @@ export function AboutExperience() {
                   key={cueIndex}
                   className={cn(
                     landingTitleQuote,
-                    "text-center text-balance",
+                    "text-center text-balance text-foreground",
+                    "drop-shadow-[0_1px_12px_rgba(255,255,255,0.65)] dark:drop-shadow-[0_1px_14px_rgba(0,0,0,0.45)]",
                     expanded
-                      ? "max-w-xl mx-auto text-[1.4rem] leading-[1.35] tracking-[-0.02em] sm:text-[1.65rem]"
+                      ? "mx-auto max-w-xl text-[1.4rem] leading-[1.35] tracking-[-0.02em] sm:text-[1.65rem]"
                       : "text-[1.05rem] leading-snug sm:text-xl"
                   )}
                 >
@@ -677,26 +678,34 @@ export function AboutExperience() {
             <div
               aria-hidden
               className={cn(
-                "absolute inset-x-0 bottom-0 z-30 flex justify-center px-6 sm:px-10",
+                "absolute inset-x-0 bottom-0 z-30 flex justify-center px-5 sm:px-10",
                 expanded
-                  ? "pb-[max(1.35rem,env(safe-area-inset-bottom))]"
-                  : "pb-4 sm:pb-5"
+                  ? "pb-[max(1.5rem,env(safe-area-inset-bottom))]"
+                  : "pb-3.5 sm:pb-4"
               )}
             >
               <div
                 className={cn(
-                  "relative h-[3px] w-full max-w-sm overflow-hidden rounded-full sm:h-1 sm:max-w-md",
-                  "bg-foreground/[0.07] shadow-[inset_0_1px_1px_rgba(15,23,42,0.05)]",
-                  "backdrop-blur-[2px] dark:bg-white/[0.1] dark:shadow-[inset_0_1px_1px_rgba(255,255,255,0.04)]"
+                  "flex w-full max-w-md items-center rounded-full px-3.5 py-2.5 sm:max-w-lg sm:px-4 sm:py-3",
+                  "bg-white/55 shadow-[0_10px_36px_rgba(15,23,42,0.08),inset_0_1px_1px_rgba(255,255,255,0.95)]",
+                  "backdrop-blur-xl dark:bg-white/10",
+                  "dark:shadow-[0_10px_36px_rgba(0,0,0,0.35),inset_0_1px_1px_rgba(255,255,255,0.12)]"
                 )}
               >
                 <div
-                  ref={progressRef}
-                  className="about-narration-progress relative h-full w-full origin-left will-change-transform"
-                  style={{ transform: "scaleX(0)" }}
+                  className={cn(
+                    "relative h-1.5 w-full overflow-hidden rounded-full",
+                    "bg-foreground/[0.08] dark:bg-white/15"
+                  )}
                 >
-                  <span className="absolute inset-0 rounded-full bg-linear-to-r from-[#93C5FD] via-[#2563EB] to-[#1D4ED8]" />
-                  <span className="absolute inset-y-0 right-0 w-8 rounded-full bg-linear-to-r from-transparent to-white/50 dark:to-white/35" />
+                  <div
+                    ref={progressRef}
+                    className="about-narration-progress relative h-full w-full origin-left will-change-transform"
+                    style={{ transform: "scaleX(0)" }}
+                  >
+                    <span className="absolute inset-0 rounded-full bg-linear-to-r from-[#93C5FD] via-[#2563EB] to-[#1D4ED8]" />
+                    <span className="absolute inset-y-0 right-0 w-10 rounded-full bg-linear-to-r from-transparent via-white/35 to-white/70 dark:via-white/25 dark:to-white/45" />
+                  </div>
                 </div>
               </div>
             </div>

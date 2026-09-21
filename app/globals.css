@@ -1534,7 +1534,7 @@ html.display-standalone[data-app-shell="true"] [data-slot="sheet-content"] .app-
 }
 
 .about-narration-progress {
-  filter: drop-shadow(0 0 10px rgba(37, 99, 235, 0.35));
+  filter: drop-shadow(0 0 12px rgba(37, 99, 235, 0.42));
 }
 
 @media (prefers-reduced-motion: reduce) {
