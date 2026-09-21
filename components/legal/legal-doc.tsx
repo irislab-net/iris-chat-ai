@@ -109,6 +109,7 @@ function LegalNavButtons({
 }: {
   showTerms?: boolean
   showPrivacy?: boolean
+  showRefund?: boolean
 }) {
   return (
     <>
@@ -141,6 +142,17 @@ function LegalNavButtons({
           render={<Link href="/privacy" />}
         >
           Privacy Policy
+        </Button>
+      ) : null}
+      {showRefund ? (
+        <Button
+          variant="outline"
+          size="lg"
+          className="rounded-2xl"
+          nativeButton={false}
+          render={<Link href="/refund" />}
+        >
+          Refund Policy
         </Button>
       ) : null}
       <Button
