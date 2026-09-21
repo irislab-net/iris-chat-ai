@@ -506,4 +506,61 @@ describe("chat history sync", () => {
     )
     expect(built?.messages[1]?.paperTicket).toBeUndefined()
   })
+
+  it("preserves local pinned flag when rebuilding from history", () => {
+    const built = buildStoredConversationFromHistory(
+      sessionA,
+      [
+        historyItem(1, sessionA, "user", "Long ETH?", "2026-01-02T09:59:00Z"),
+        historyItem(2, sessionA, "assistant", "Stand aside.", "2026-01-02T10:00:00Z"),
+      ],
+      {
+        id: sessionA,
+        title: "Pinned chat",
+        createdAt: "2026-01-02T09:59:00Z",
+        updatedAt: "2026-01-02T10:00:00Z",
+        messages: [
+          { id: "u1", role: "user", content: "Long ETH?" },
+          { id: "a1", role: "assistant", content: "Stand aside." },
+        ],
+        history: [
+          { role: "user", content: "Long ETH?" },
+          { role: "assistant", content: "Stand aside." },
+        ],
+        pinned: true,
+      }
+    )
+
+    expect(built?.pinned).toBe(true)
+    expect(built?.title).toBe("Pinned chat")
+  })
+
+  it("keeps pinned chats ahead of newer unpinned ones after merge", () => {
+    const local: ChatStore = {
+      version: 1,
+      conversations: [
+        {
+          id: sessionA,
+          title: "Pinned older",
+          createdAt: "2026-01-01T00:00:00Z",
+          updatedAt: "2026-01-01T00:00:00Z",
+          messages: [{ id: "u1", role: "user", content: "Long ETH?" }],
+          history: [{ role: "user", content: "Long ETH?" }],
+          pinned: true,
+        },
+      ],
+      activeId: sessionA,
+    }
+
+    const merged = mergeServerHistoryIntoStore(local, [
+      historyItem(1, sessionA, "user", "Long ETH?", "2026-01-01T00:00:00Z"),
+      historyItem(2, sessionA, "assistant", "Stand aside.", "2026-01-01T00:01:00Z"),
+      historyItem(3, sessionB, "user", "BTC?", "2026-01-03T11:00:00Z"),
+      historyItem(4, sessionB, "assistant", "Neutral.", "2026-01-03T11:01:00Z"),
+    ])
+
+    expect(merged.conversations.map((c) => c.id)).toEqual([sessionA, sessionB])
+    expect(merged.conversations[0]?.pinned).toBe(true)
+    expect(merged.activeId).toBe(sessionA)
+  })
 })

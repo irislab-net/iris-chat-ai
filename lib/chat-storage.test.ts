@@ -5,6 +5,8 @@ import {
   discardLegacyGlobalChatStore,
   getChatStorageKey,
   readChatStore,
+  sortConversations,
+  upsertConversation,
   writeChatStore,
   type ChatStore,
   type StoredConversation,
@@ -132,5 +134,55 @@ describe("chat storage isolation", () => {
     expect(getChatStorageKey(null)).toBe("iris-chat-v1:guest")
     expect(getChatStorageKey("abc")).toBe("iris-chat-v1:user:abc")
     expect(getChatStorageKey("abc")).not.toBe(getChatStorageKey("def"))
+  })
+})
+
+describe("upsertConversation active + pin", () => {
+  it("does not steal activeId when updating pin/rename metadata", () => {
+    const active = sampleConversation("active", "Active")
+    const other = { ...sampleConversation("other", "Other"), pinned: false }
+    const store: ChatStore = {
+      version: 1,
+      conversations: [active, other],
+      activeId: "active",
+    }
+
+    const next = upsertConversation(store, { ...other, pinned: true })
+    expect(next.activeId).toBe("active")
+    expect(next.conversations.find((c) => c.id === "other")?.pinned).toBe(true)
+    expect(next.conversations[0]?.id).toBe("other")
+  })
+
+  it("sets activeId only when setActive is true", () => {
+    const a = sampleConversation("a", "A")
+    const b = sampleConversation("b", "B")
+    const store: ChatStore = {
+      version: 1,
+      conversations: [a, b],
+      activeId: "a",
+    }
+
+    const next = upsertConversation(
+      store,
+      { ...b, title: "B renamed", updatedAt: "2026-02-01T00:00:00.000Z" },
+      { setActive: true }
+    )
+    expect(next.activeId).toBe("b")
+  })
+
+  it("sorts pinned conversations ahead of recent", () => {
+    const recent = {
+      ...sampleConversation("r", "Recent"),
+      updatedAt: "2026-03-01T00:00:00.000Z",
+    }
+    const pinned = {
+      ...sampleConversation("p", "Pinned"),
+      pinned: true,
+      updatedAt: "2026-01-01T00:00:00.000Z",
+    }
+    expect(sortConversations([recent, pinned]).map((c) => c.id)).toEqual([
+      "p",
+      "r",
+    ])
   })
 })

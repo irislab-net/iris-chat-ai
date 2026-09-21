@@ -1,0 +1,71 @@
+{
+  "common": {
+    "language": "Idioma",
+    "english": "English",
+    "dutch": "Nederlands",
+    "portuguese": "Português",
+    "spanish": "Español",
+    "arabic": "العربية",
+    "russian": "Русский",
+    "turkish": "Türkçe",
+    "launchApp": "Abrir app",
+    "analysisNotAdvice": "Análisis, no consejo."
+  },
+  "modern": {
+    "hero": {
+      "badge": "Tu asistente financiero con IA",
+      "titleBefore": "Tu dinero,",
+      "titleAfter": "bajo control.",
+      "subtitle": "Pregunta por gastos, ahorro y qué sigue, con tus propias palabras.",
+      "inputPlaceholder": "¿A dónde va mi dinero este mes?"
+    },
+    "footer": {
+      "tagline": "El cerebro financiero detrás de tus cuentas.",
+      "product": "Producto",
+      "resources": "Recursos",
+      "contact": "Contacto",
+      "whyExur": "Por qué Exur",
+      "howItWorks": "Cómo funciona",
+      "pricing": "Precios",
+      "openApp": "Abrir app",
+      "faq": "FAQ",
+      "about": "Sobre Exur",
+      "signals": "Señales de trading con IA",
+      "onX": "Exur en X",
+      "terms": "Términos de Servicio",
+      "privacy": "Política de Privacidad",
+      "cookies": "Configuración de cookies"
+    },
+    "cta": {
+      "title": "Deja de adivinar con el dinero.",
+      "subtitle": "Una pregunta basta para saber si esto te sirve.",
+      "cta": "Empezar gratis",
+      "note": "Gratis para empezar. Sin registro para mirar."
+    },
+    "context": {
+      "description": "Exur es tu asistente financiero con IA. Mira a dónde va tu dinero, pregunta en lenguaje sencillo y recibe el siguiente paso claro — no otro feed."
+    }
+  },
+  "metadata": {
+    "homeTitle": "Exur: Asistente financiero con IA",
+    "homeDescription": "Exur es tu asistente financiero con IA. Mira a dónde va tu dinero, pregunta en lenguaje sencillo y recibe el siguiente paso claro.",
+    "homeOg": "Tu dinero, bajo control. Pregunta a Exur en lenguaje sencillo."
+  },
+  "landing": {
+    "footer": {
+      "tagline": "Titulares cripto puntuados y chat copiloto Exur.",
+      "columns": {
+        "privacy": "Política de Privacidad",
+        "terms": "Términos de Servicio"
+      }
+    }
+  },
+  "workspace": {
+    "pinnedChats": "Fijados",
+    "recentChats": "Recientes",
+    "pinChat": "Fijar chat",
+    "unpinChat": "Desfijar",
+    "newChat": "Nuevo chat",
+    "chatHistory": "Historial del chat"
+  }
+}

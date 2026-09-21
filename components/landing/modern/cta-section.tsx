@@ -1,9 +1,10 @@
 "use client"
 
+import { useTranslations } from "next-intl"
+
 import { HeroLiquidGlassBg } from "@/components/landing/modern/hero-liquid-glass-bg"
 import { ScrollRevealGroup } from "@/components/landing/modern/scroll-reveal"
 import { SectionHeader, SphereCta } from "@/components/landing/modern/sphere-ui"
-import { CTA_SECTION } from "@/lib/landing-modern-data"
 import {
   landingInner,
   landingSection,
@@ -13,6 +14,8 @@ import { getLaunchAppHref } from "@/lib/site"
 import { cn } from "@/lib/utils"
 
 export function CtaSection() {
+  const t = useTranslations("modern.cta")
+
   return (
     <section
       id="get-started"
@@ -30,18 +33,18 @@ export function CtaSection() {
       <div className={cn(landingInner, "relative z-10")}>
         <ScrollRevealGroup>
           <SectionHeader
-            title={CTA_SECTION.title}
-            subtitle={CTA_SECTION.subtitle}
+            title={t("title")}
+            subtitle={t("subtitle")}
             className="max-w-2xl"
           />
 
           <div className="mt-9 flex justify-center">
             <SphereCta href={getLaunchAppHref()} variant="glass">
-              {CTA_SECTION.cta}
+              {t("cta")}
             </SphereCta>
           </div>
 
-          <p className="mt-5 text-center text-xs text-muted-foreground">{CTA_SECTION.note}</p>
+          <p className="mt-5 text-center text-xs text-muted-foreground">{t("note")}</p>
         </ScrollRevealGroup>
       </div>
     </section>

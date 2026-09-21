@@ -17,22 +17,22 @@ export type IrisSamplePrompt = {
 export const IRIS_SAMPLE_PROMPTS: readonly IrisSamplePrompt[] = [
   {
     id: "btc-signal",
-    title: "BTC signal",
+    title: "BTC trade signal",
     description:
-      "Ask the chat API for a live trade signal — card only when the model returns one.",
+      "Ask for a live setup — card only when the model has a clear read.",
     text: "@signal BTC",
   },
   {
     id: "market-pulse",
     title: "Market pulse",
     description: "Stance, model bias, and news — analysis only.",
-    text: "What is Exur stance, model bias, and the news pulse on BTC right now? Keep it factual and concise. Analysis only — no trade card.",
+    text: "What is Exur's stance and model bias on BTC right now, and what does the news pulse say? Keep it factual and concise. Analysis only — no trade card.",
   },
   {
     id: "key-levels",
     title: "Key levels",
-    description: "Support and resistance from current market structure.",
-    text: "Map the key BTC support and resistance levels from recent structure and live price. Call out the nearest levels that matter now and whether price is pressing, rejecting, or mid-range. Analysis only — no trade card.",
+    description: "Nearest support and resistance that matter now.",
+    text: "Map BTC's key support and resistance from recent structure and live price. Call out the nearest levels and whether price is pressing, rejecting, or mid-range. Analysis only — no trade card.",
   },
 ] as const
 
