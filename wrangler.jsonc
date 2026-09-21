@@ -33,5 +33,23 @@
 		// Enable image optimization
 		// see https://opennext.js.org/cloudflare/howtos/image
 		"binding": "IMAGES"
+	},
+	// Public Google OAuth web client ID (One Tap / GIS). Client secret lives on the API.
+	"vars": {
+		"NEXT_PUBLIC_GOOGLE_CLIENT_ID": "50876205060-0j6l4c2b286q18e0vluvp7eadqcs15vq.apps.googleusercontent.com"
+	},
+	// Workers Logs + Traces (dashboard Observability). Redeploy required after change.
+	"observability": {
+		"logs": {
+			"enabled": true,
+			"head_sampling_rate": 1,
+			"invocation_logs": true,
+			"persist": true
+		},
+		"traces": {
+			"enabled": true,
+			"head_sampling_rate": 1,
+			"persist": true
+		}
 	}
 }
