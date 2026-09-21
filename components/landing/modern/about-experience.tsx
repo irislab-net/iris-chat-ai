@@ -646,8 +646,8 @@ export function AboutExperience() {
               className={cn(
                 "pointer-events-none absolute inset-x-0 bottom-0 z-20 px-5 sm:px-10",
                 expanded
-                  ? "pt-28 pb-[max(5.25rem,calc(env(safe-area-inset-bottom)+3.5rem))]"
-                  : "pt-20 pb-14 sm:pb-16"
+                  ? "pt-28 pb-[max(5.75rem,calc(env(safe-area-inset-bottom)+4rem))]"
+                  : "pt-20 pb-16 sm:pb-[4.5rem]"
               )}
             >
               <div className="mx-auto max-w-2xl">
