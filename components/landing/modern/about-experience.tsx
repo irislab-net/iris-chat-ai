@@ -8,6 +8,7 @@ import { AboutOrbCanvas } from "@/components/landing/modern/about-orb-canvas"
 import { Button } from "@/components/ui/button"
 import { useIsDesktop } from "@/hooks/use-media-query"
 import {
+  ABOUT_NARRATION_CDN,
   ABOUT_NARRATION_CUES,
   ABOUT_NARRATION_DURATION,
   ABOUT_NARRATION_SRC,
@@ -98,6 +99,13 @@ export function AboutExperience() {
   const syntheticStartRef = React.useRef(0)
   /** Set for the whole narration so a late warm-up reload cannot abort `play()`. */
   const playbackRequestedRef = React.useRef(false)
+  /**
+   * Same-origin proxy is required for WebAudio analysis (CDN has no CORS).
+   * If the proxy errors, fall back to the CDN for audible playback and skip
+   * MediaElementSource — creating it on a non-CORS cross-origin element
+   * routes silence to the destination and the orb goes mute.
+   */
+  const useCdnFallbackRef = React.useRef(false)
   /** Body scroll lock applied for the fullscreen stage. Idempotent. */
   const scrollLockRef = React.useRef<{
     scrollY: number
@@ -112,17 +120,41 @@ export function AboutExperience() {
   const [cueIndex, setCueIndex] = React.useState(-1)
   const [expanded, setExpanded] = React.useState(false)
 
+  const fallBackToCdn = React.useCallback((audio: HTMLAudioElement) => {
+    if (useCdnFallbackRef.current) return
+    useCdnFallbackRef.current = true
+    audio.src = ABOUT_NARRATION_CDN
+  }, [])
+
   // Buffer the narration before it is needed, without ever competing with the
   // page itself: nothing is fetched at load, the request waits until the
   // section is roughly a screen away, and even then it goes out at idle. The
   // file streams progressively, so playback can begin long before the last
-  // byte lands.
+  // byte lands. If the same-origin proxy is down, switch to the CDN before
+  // the user taps so the gesture-bound `play()` still has a reachable src.
   React.useEffect(() => {
     const frame = frameRef.current
     const audio = audioRef.current
     if (!frame || !audio) return
 
     let cancelIdle: (() => void) | undefined
+
+    const onError = () => {
+      // Once MediaElementSource owns the element we cannot flip to the CDN
+      // without muting (no CORS on the CDN).
+      if (audioContextRef.current) return
+      fallBackToCdn(audio)
+      if (playbackRequestedRef.current) {
+        void audio.play().catch(() => {
+          /* synthetic envelope keeps the orb alive */
+        })
+        return
+      }
+      if (!audio.paused || audio.currentTime > 0) return
+      audio.preload = "auto"
+      audio.load()
+    }
+    audio.addEventListener("error", onError)
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -146,8 +178,9 @@ export function AboutExperience() {
     return () => {
       observer.disconnect()
       cancelIdle?.()
+      audio.removeEventListener("error", onError)
     }
-  }, [])
+  }, [fallBackToCdn])
 
   const stop = React.useCallback(() => {
     playbackRequestedRef.current = false
@@ -276,50 +309,69 @@ export function AboutExperience() {
     const audio = audioRef.current
     if (!audio) return
 
-    // Keep this synchronous: Safari only honours the first playback inside the
-    // user gesture. Same-origin `/media/about-narration` is WebAudio-safe.
-    // Create the graph only after the scroll lock so that lock cannot suspend
-    // a context we already resumed.
-    if (!audioContextRef.current) {
+    // Keep play() synchronous with the user gesture (Safari). Wire WebAudio
+    // only after a successful same-origin start — MediaElementSource on the
+    // non-CORS CDN element would output silence to the destination.
+    const attachAnalyser = () => {
+      if (useCdnFallbackRef.current || audioContextRef.current) return
       const Ctor =
         window.AudioContext ??
         (window as unknown as { webkitAudioContext?: typeof AudioContext })
           .webkitAudioContext
-      if (Ctor) {
-        try {
-          const context = new Ctor()
-          const source = context.createMediaElementSource(audio)
-          const analyser = context.createAnalyser()
-          analyser.fftSize = 1024
-          analyser.smoothingTimeConstant = 0.35
-          source.connect(analyser)
-          analyser.connect(context.destination)
-          audioContextRef.current = context
-          analyserRef.current = analyser
-          binsRef.current = new Uint8Array(
-            new ArrayBuffer(analyser.frequencyBinCount)
-          )
-        } catch {
-          // Analyser is a nicety; the synthetic envelope covers the failure.
-        }
+      if (!Ctor) return
+      try {
+        const context = new Ctor()
+        const source = context.createMediaElementSource(audio)
+        const analyser = context.createAnalyser()
+        analyser.fftSize = 1024
+        analyser.smoothingTimeConstant = 0.35
+        source.connect(analyser)
+        analyser.connect(context.destination)
+        audioContextRef.current = context
+        analyserRef.current = analyser
+        binsRef.current = new Uint8Array(
+          new ArrayBuffer(analyser.frequencyBinCount)
+        )
+      } catch {
+        // Analyser is a nicety; the synthetic envelope covers the failure.
       }
+    }
+
+    const resumeContext = () => {
+      const context = audioContextRef.current
+      if (context && context.state !== "running") void context.resume()
     }
 
     const beginPlayback = () => {
       if (!playbackRequestedRef.current) return
-      if (audio.paused && !audio.ended) {
-        void audio.play().catch(() => {
-          /* synthetic envelope keeps the orb alive */
-        })
+      if (!(audio.paused && !audio.ended)) {
+        if (!useCdnFallbackRef.current) attachAnalyser()
+        resumeContext()
+        return
       }
-      const context = audioContextRef.current
-      if (context && context.state !== "running") void context.resume()
+      void audio
+        .play()
+        .then(() => {
+          if (!useCdnFallbackRef.current) attachAnalyser()
+          resumeContext()
+        })
+        .catch(() => {
+          // Proxy may 500 before the warm-up error handler runs. Flip to the
+          // CDN for a second attempt; Chrome still counts this as the gesture
+          // chain, Safari may not — warm-up fallback covers the common path.
+          if (!useCdnFallbackRef.current) {
+            fallBackToCdn(audio)
+            void audio.play().catch(() => {
+              /* synthetic envelope keeps the orb alive */
+            })
+          }
+        })
     }
     beginPlayback()
     // A scroll-lock that already ran can pause the element before the click
     // task yields. A microtask is still inside the user gesture; a later effect is not.
     queueMicrotask(beginPlayback)
-  }, [expand, isDesktop, lockPageScroll])
+  }, [expand, fallBackToCdn, isDesktop, lockPageScroll])
 
   // Drive the orb and the captions off the track's own clock.
   React.useEffect(() => {

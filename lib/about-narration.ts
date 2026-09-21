@@ -12,7 +12,8 @@ export const ABOUT_NARRATION_CDN =
 
 /**
  * Browser playback URL — same-origin proxy so WebAudio can analyse the track.
- * The CDN itself does not send CORS headers.
+ * The CDN itself does not send CORS headers. If the proxy is unreachable the
+ * landing orb falls back to ABOUT_NARRATION_CDN for audible playback.
  */
 export const ABOUT_NARRATION_SRC = "/media/about-narration"
 

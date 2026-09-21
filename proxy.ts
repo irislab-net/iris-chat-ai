@@ -51,8 +51,9 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  // Skip metadata / asset routes that have no locale (OG images crash without intl).
+  // Skip metadata / asset / binary proxy routes that have no locale
+  // (OG images crash without intl; /media/* is the narration audio proxy).
   matcher: [
-    "/((?!api|auth|_next|_vercel|v1|opengraph-image|twitter-image|sitemap|robots|manifest\\.webmanifest|.*\\..*).*)",
+    "/((?!api|auth|media|_next|_vercel|v1|opengraph-image|twitter-image|sitemap|robots|manifest\\.webmanifest|.*\\..*).*)",
   ],
 }
