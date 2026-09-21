@@ -114,7 +114,7 @@ export const HERO_DEMO_AVATARS = [
     initials: "SP",
   },
   {
-    src: "https://images.unsplash.com/photo-1541534401786-2077eed87a72?auto=format&fit=crop&w=96&h=96&q=80",
+    src: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=96&h=96&q=80",
     initials: "TW",
   },
   {
