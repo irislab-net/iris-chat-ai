@@ -4,7 +4,6 @@ import { gsap } from "gsap"
 import { PlayIcon, XIcon } from "lucide-react"
 import * as React from "react"
 
-import { IrisLabLogo } from "@/components/brand/iris-lab-logo"
 import { AboutOrbCanvas } from "@/components/landing/modern/about-orb-canvas"
 import { Button } from "@/components/ui/button"
 import { useIsDesktop } from "@/hooks/use-media-query"
@@ -420,7 +419,8 @@ export function AboutExperience() {
       const next = cueIndexAt(time)
       setCueIndex((current) => (current === next ? current : next))
       if (progressBar) {
-        progressBar.style.transform = `scaleX(${Math.min(1, Math.max(0, time / ABOUT_NARRATION_DURATION))})`
+        const pct = Math.min(1, Math.max(0, time / ABOUT_NARRATION_DURATION))
+        progressBar.style.width = `${pct * 100}%`
       }
 
       if (time >= ABOUT_NARRATION_DURATION) close()
@@ -430,7 +430,7 @@ export function AboutExperience() {
     return () => {
       cancelAnimationFrame(frame)
       amplitudeRef.current = 0
-      if (progressBar) progressBar.style.transform = "scaleX(0)"
+      if (progressBar) progressBar.style.width = "0%"
     }
   }, [close, phase, reduceMotion])
 
@@ -631,30 +631,23 @@ export function AboutExperience() {
         {phase === "playing" && (
           <>
             {expanded ? (
-              <div className="pointer-events-none absolute top-[max(1.15rem,env(safe-area-inset-top))] left-1/2 z-20 flex -translate-x-1/2 items-center gap-2.5">
-                <IrisLabLogo
-                  decorative
-                  variant="brand"
-                  size={22}
-                  className="size-[1.35rem] opacity-90"
-                />
-                <span
-                  className={cn(
-                    landingDisplay,
-                    "text-[0.7rem] font-medium tracking-[0.2em] text-muted-foreground/85 uppercase"
-                  )}
-                >
-                  Exur
-                </span>
-              </div>
+              <p
+                className={cn(
+                  landingDisplay,
+                  "pointer-events-none absolute top-[max(1.25rem,env(safe-area-inset-top))] left-1/2 z-20 -translate-x-1/2",
+                  "text-[0.7rem] font-medium tracking-[0.22em] text-muted-foreground/85 uppercase"
+                )}
+              >
+                Exur
+              </p>
             ) : null}
 
             <div
               className={cn(
                 "pointer-events-none absolute inset-x-0 bottom-0 z-20 px-5 sm:px-10",
                 expanded
-                  ? "pt-28 pb-[max(6.25rem,calc(env(safe-area-inset-bottom)+4.5rem))]"
-                  : "pt-20 pb-[4.75rem] sm:pb-24"
+                  ? "pt-28 pb-[max(5.75rem,calc(env(safe-area-inset-bottom)+4rem))]"
+                  : "pt-20 pb-16 sm:pb-[4.5rem]"
               )}
             >
               <div className="mx-auto max-w-2xl">
@@ -664,7 +657,6 @@ export function AboutExperience() {
                   className={cn(
                     landingTitleQuote,
                     "text-center text-balance text-foreground",
-                    "drop-shadow-[0_1px_12px_rgba(255,255,255,0.65)] dark:drop-shadow-[0_1px_14px_rgba(0,0,0,0.45)]",
                     expanded
                       ? "mx-auto max-w-xl text-[1.4rem] leading-[1.35] tracking-[-0.02em] sm:text-[1.65rem]"
                       : "text-[1.05rem] leading-snug sm:text-xl"
@@ -678,35 +670,40 @@ export function AboutExperience() {
             <div
               aria-hidden
               className={cn(
-                "absolute inset-x-0 bottom-0 z-30 flex justify-center px-5 sm:px-10",
+                "absolute inset-x-0 bottom-0 z-30 flex justify-center px-8 sm:px-12",
                 expanded
                   ? "pb-[max(1.5rem,env(safe-area-inset-bottom))]"
-                  : "pb-3.5 sm:pb-4"
+                  : "pb-4 sm:pb-5"
               )}
             >
-              <div
-                className={cn(
-                  "flex w-full max-w-md items-center rounded-full px-3.5 py-2.5 sm:max-w-lg sm:px-4 sm:py-3",
-                  "border border-black/[0.05] bg-[#EEF2F7]/88",
-                  "shadow-[0_12px_40px_rgba(15,23,42,0.1),inset_0_1px_1px_rgba(255,255,255,0.95)]",
-                  "backdrop-blur-xl",
-                  "dark:border-white/10 dark:bg-white/[0.12]",
-                  "dark:shadow-[0_12px_40px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.14)]"
-                )}
-              >
+              <div className="relative w-full max-w-sm sm:max-w-md">
                 <div
                   className={cn(
-                    "relative h-1.5 w-full overflow-hidden rounded-full",
-                    "bg-[#CBD5E1]/70 dark:bg-white/20"
+                    "pointer-events-none absolute inset-x-1 top-1/2 h-6 -translate-y-1/2 rounded-full",
+                    "bg-[#2563EB]/22 blur-lg dark:bg-[#2563EB]/32"
+                  )}
+                />
+                <div
+                  className={cn(
+                    "relative h-1.5 overflow-visible rounded-full",
+                    "bg-slate-300/60 shadow-[inset_0_1px_1px_rgba(15,23,42,0.08)]",
+                    "dark:bg-white/14 dark:shadow-[inset_0_1px_1px_rgba(0,0,0,0.25)]"
                   )}
                 >
                   <div
                     ref={progressRef}
-                    className="about-narration-progress relative h-full w-full origin-left will-change-transform"
-                    style={{ transform: "scaleX(0)" }}
+                    className="about-narration-progress relative h-full w-0 min-w-0 will-change-[width]"
+                    style={{ width: "0%" }}
                   >
-                    <span className="absolute inset-0 rounded-full bg-linear-to-r from-[#93C5FD] via-[#2563EB] to-[#1D4ED8]" />
-                    <span className="absolute inset-y-0 right-0 w-10 rounded-full bg-linear-to-r from-transparent via-white/35 to-white/70 dark:via-white/25 dark:to-white/45" />
+                    <span className="absolute inset-0 rounded-full bg-linear-to-r from-[#93C5FD] via-[#3B82F6] to-[#1D4ED8]" />
+                    <span className="about-narration-progress-sheen absolute inset-y-0 left-0 w-2/5 rounded-full bg-linear-to-r from-transparent via-white/75 to-transparent" />
+                    <span
+                      className={cn(
+                        "absolute top-1/2 right-0 size-3 -translate-y-1/2 translate-x-1/2 rounded-full",
+                        "bg-white",
+                        "shadow-[0_0_0_3px_rgba(37,99,235,0.28),0_0_16px_rgba(37,99,235,0.9),0_0_6px_rgba(255,255,255,1)]"
+                      )}
+                    />
                   </div>
                 </div>
               </div>
