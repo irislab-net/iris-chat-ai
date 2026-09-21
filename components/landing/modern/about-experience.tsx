@@ -96,6 +96,13 @@ export function AboutExperience() {
   const binsRef = React.useRef<Uint8Array<ArrayBuffer> | null>(null)
   /** Start of the silent-fallback clock, used when no audio is playing. */
   const syntheticStartRef = React.useRef(0)
+  /** Set for the whole narration so a late warm-up reload cannot abort `play()`. */
+  const playbackRequestedRef = React.useRef(false)
+  /** Body scroll lock applied for the fullscreen stage. Idempotent. */
+  const scrollLockRef = React.useRef<{
+    scrollY: number
+    previous: string
+  } | null>(null)
 
   const orbLiftRef = React.useRef<HTMLDivElement>(null)
   const captionRef = React.useRef<HTMLParagraphElement>(null)
@@ -123,6 +130,11 @@ export function AboutExperience() {
         observer.disconnect()
 
         cancelIdle = whenIdle(() => {
+          // `load()` aborts any in-flight play, and the replacement is no
+          // longer covered by the user gesture — so a tap that wins this race
+          // (typical on the fullscreen mobile path) goes silent.
+          if (playbackRequestedRef.current) return
+          if (!audio.paused || audio.currentTime > 0) return
           audio.preload = "auto"
           audio.load()
         })
@@ -138,6 +150,7 @@ export function AboutExperience() {
   }, [])
 
   const stop = React.useCallback(() => {
+    playbackRequestedRef.current = false
     const audio = audioRef.current
     if (audio) {
       audio.pause()
@@ -146,6 +159,27 @@ export function AboutExperience() {
     amplitudeRef.current = 0
     setPhase("idle")
     setCueIndex(-1)
+  }, [])
+
+  const lockPageScroll = React.useCallback(() => {
+    if (scrollLockRef.current) return
+    const { body } = document
+    const scrollY = window.scrollY
+    scrollLockRef.current = { scrollY, previous: body.style.cssText }
+    // iOS Safari ignores `overflow: hidden` on body, so pin it instead.
+    body.style.position = "fixed"
+    body.style.top = `-${scrollY}px`
+    body.style.left = "0"
+    body.style.right = "0"
+    body.style.overflow = "hidden"
+  }, [])
+
+  const unlockPageScroll = React.useCallback(() => {
+    const lock = scrollLockRef.current
+    if (!lock) return
+    scrollLockRef.current = null
+    document.body.style.cssText = lock.previous
+    window.scrollTo(0, lock.scrollY)
   }, [])
 
   const collapse = React.useCallback(() => {
@@ -186,7 +220,7 @@ export function AboutExperience() {
   const expand = React.useCallback(() => {
     const stage = stageRef.current
     const frame = frameRef.current
-    if (!stage || !frame) return
+    if (!stage || !frame) return false
 
     // A leftover transform on the frame would make it the containing block for
     // the fixed stage, trapping "fullscreen" inside the card. Clear it even if
@@ -221,21 +255,31 @@ export function AboutExperience() {
       duration: reduceMotion ? 0 : LANDING_MOTION.expand,
       ease: LANDING_MOTION.easeInOut,
     })
+    return true
   }, [reduceMotion])
 
   const start = React.useCallback(() => {
     // Visual state goes first and never awaits the audio pipeline — a missing
     // or slow-failing track must not hold back the fullscreen transition.
+    playbackRequestedRef.current = true
     syntheticStartRef.current = performance.now()
     setPhase("playing")
     setCueIndex(0)
-    if (isDesktop === false) expand()
+    if (isDesktop === false && expand()) {
+      // Pin the page before `play()`. The fullscreen path is the only one that
+      // locks scroll; doing it in an effect (after this gesture) makes the
+      // browser abort the in-flight playback, and a retry is no longer allowed
+      // to start audio. Desktop never locks, so only the fullscreen orb was silent.
+      lockPageScroll()
+    }
 
     const audio = audioRef.current
     if (!audio) return
 
     // Keep this synchronous: Safari only honours the first playback inside the
     // user gesture. Same-origin `/media/about-narration` is WebAudio-safe.
+    // Create the graph only after the scroll lock so that lock cannot suspend
+    // a context we already resumed.
     if (!audioContextRef.current) {
       const Ctor =
         window.AudioContext ??
@@ -261,11 +305,21 @@ export function AboutExperience() {
       }
     }
 
-    void audio.play().catch(() => {
-      /* synthetic envelope keeps the orb alive */
-    })
-    void audioContextRef.current?.resume()
-  }, [expand, isDesktop])
+    const beginPlayback = () => {
+      if (!playbackRequestedRef.current) return
+      if (audio.paused && !audio.ended) {
+        void audio.play().catch(() => {
+          /* synthetic envelope keeps the orb alive */
+        })
+      }
+      const context = audioContextRef.current
+      if (context && context.state !== "running") void context.resume()
+    }
+    beginPlayback()
+    // A scroll-lock that already ran can pause the element before the click
+    // task yields. A microtask is still inside the user gesture; a later effect is not.
+    queueMicrotask(beginPlayback)
+  }, [expand, isDesktop, lockPageScroll])
 
   // Drive the orb and the captions off the track's own clock.
   React.useEffect(() => {
@@ -372,34 +426,27 @@ export function AboutExperience() {
     )
   }, [cueIndex, phase, reduceMotion])
 
-  // Escape closes, and the page must not scroll behind the fullscreen stage.
+  const closeRef = React.useRef(close)
+  closeRef.current = close
+
+  // Escape closes the fullscreen stage. Scroll is locked inside the play
+  // gesture (see `start`); this effect only listens for Escape and restores
+  // the page on the way out. Pinning `body` again here would abort playback.
   React.useEffect(() => {
     if (!expanded) return
 
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") close()
+      if (event.key === "Escape") closeRef.current()
     }
     window.addEventListener("keydown", onKey)
 
-    // iOS Safari ignores `overflow: hidden` on body, so pin it instead and
-    // restore the scroll offset on the way out.
-    const { body } = document
-    const scrollY = window.scrollY
-    const previous = body.style.cssText
     const frame = frameRef.current
-    body.style.position = "fixed"
-    body.style.top = `-${scrollY}px`
-    body.style.left = "0"
-    body.style.right = "0"
-    body.style.overflow = "hidden"
-
     return () => {
-      body.style.cssText = previous
-      window.scrollTo(0, scrollY)
       window.removeEventListener("keydown", onKey)
+      unlockPageScroll()
       if (frame) setExpandStacking(frame, false)
     }
-  }, [close, expanded])
+  }, [expanded, unlockPageScroll])
 
   const activeCue = cueIndex >= 0 ? ABOUT_NARRATION_CUES[cueIndex] : null
 
@@ -408,15 +455,17 @@ export function AboutExperience() {
       ref={frameRef}
       className="relative aspect-video w-full rounded-[1.75rem] bg-muted"
     >
-      {expanded && (
+      {expanded ? (
         <div
+          key="about-backdrop"
           ref={backdropRef}
           aria-hidden
           className="fixed inset-0 z-[89] bg-background"
         />
-      )}
+      ) : null}
 
       <div
+        key="about-stage"
         ref={stageRef}
         className={cn(
           landingGlassSurface,
@@ -541,8 +590,14 @@ export function AboutExperience() {
         )}
       </div>
 
-      {/* Same-origin `/media/about-narration` — WebAudio-safe. */}
-      <audio ref={audioRef} src={ABOUT_NARRATION_SRC} preload="none" />
+      {/* Keyed so the fullscreen backdrop cannot remount this node.
+          `play()` is tied to the element that received the user gesture. */}
+      <audio
+        key="about-narration"
+        ref={audioRef}
+        src={ABOUT_NARRATION_SRC}
+        preload="none"
+      />
     </div>
   )
 }
