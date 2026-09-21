@@ -687,15 +687,17 @@ export function AboutExperience() {
               <div
                 className={cn(
                   "flex w-full max-w-md items-center rounded-full px-3.5 py-2.5 sm:max-w-lg sm:px-4 sm:py-3",
-                  "bg-white/55 shadow-[0_10px_36px_rgba(15,23,42,0.08),inset_0_1px_1px_rgba(255,255,255,0.95)]",
-                  "backdrop-blur-xl dark:bg-white/10",
-                  "dark:shadow-[0_10px_36px_rgba(0,0,0,0.35),inset_0_1px_1px_rgba(255,255,255,0.12)]"
+                  "border border-black/[0.05] bg-[#EEF2F7]/88",
+                  "shadow-[0_12px_40px_rgba(15,23,42,0.1),inset_0_1px_1px_rgba(255,255,255,0.95)]",
+                  "backdrop-blur-xl",
+                  "dark:border-white/10 dark:bg-white/[0.12]",
+                  "dark:shadow-[0_12px_40px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.14)]"
                 )}
               >
                 <div
                   className={cn(
                     "relative h-1.5 w-full overflow-hidden rounded-full",
-                    "bg-foreground/[0.08] dark:bg-white/15"
+                    "bg-[#CBD5E1]/70 dark:bg-white/20"
                   )}
                 >
                   <div
