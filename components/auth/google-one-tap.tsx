@@ -100,21 +100,36 @@ export function GoogleOneTap({ enabled, onCredential }: GoogleOneTapProps) {
     let cancelled = false
     const scheme = resolveGoogleOneTapColorScheme(resolvedTheme)
 
-    void loadGoogleIdentityScript()
-      .then(() => {
-        if (cancelled || promptedRef.current) return
-        promptedRef.current = true
-        lastColorSchemeRef.current = scheme
-        runGoogleOneTapPrompt(clientId, scheme, (credential) => {
-          onCredentialRef.current(credential)
+    const start = () => {
+      if (cancelled || promptedRef.current) return
+      void loadGoogleIdentityScript()
+        .then(() => {
+          if (cancelled || promptedRef.current) return
+          promptedRef.current = true
+          lastColorSchemeRef.current = scheme
+          runGoogleOneTapPrompt(clientId, scheme, (credential) => {
+            onCredentialRef.current(credential)
+          })
         })
-      })
-      .catch(() => {
-        // GIS blocked or failed to load — fall back to manual Google sign-in.
-      })
+        .catch(() => {
+          // GIS blocked or failed to load — fall back to manual Google sign-in.
+        })
+    }
+
+    // Keep ~100KB GIS off the chat critical path (Lighthouse unused-JS).
+    const idle = window.requestIdleCallback
+    let idleHandle: number | undefined
+    let timeoutHandle: number | undefined
+    if (typeof idle === "function") {
+      idleHandle = idle(start, { timeout: 4000 })
+    } else {
+      timeoutHandle = window.setTimeout(start, 2500)
+    }
 
     return () => {
       cancelled = true
+      if (idleHandle !== undefined) window.cancelIdleCallback(idleHandle)
+      if (timeoutHandle !== undefined) window.clearTimeout(timeoutHandle)
     }
   }, [shouldRun, clientId, pathname, themeReady, resolvedTheme])
 

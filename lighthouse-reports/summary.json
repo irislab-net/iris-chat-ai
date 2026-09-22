@@ -1,0 +1,342 @@
+{
+  "generatedAt": "2026-09-22T19:40:32.455Z",
+  "exur": {
+    "name": "exur.ai",
+    "finalUrl": "https://exur.ai/",
+    "score": 78,
+    "metrics": {
+      "first-contentful-paint": {
+        "score": 0.47,
+        "value": "3.1 s",
+        "ms": 3089.87
+      },
+      "largest-contentful-paint": {
+        "score": 0.75,
+        "value": "3.1 s",
+        "ms": 3089.87
+      },
+      "total-blocking-time": {
+        "score": 0.96,
+        "value": "130 ms",
+        "ms": 127.5
+      },
+      "cumulative-layout-shift": {
+        "score": 0.99,
+        "value": "0.046",
+        "ms": 0.0461039210706383
+      },
+      "speed-index": {
+        "score": 0.07,
+        "value": "10.8 s",
+        "ms": 10756.963238994325
+      },
+      "interactive": {
+        "score": 0.18,
+        "value": "11.7 s",
+        "ms": 11652.12345
+      },
+      "max-potential-fid": {
+        "score": 0.87,
+        "value": "140 ms",
+        "ms": 138
+      }
+    },
+    "opportunities": [
+      {
+        "id": "server-response-time",
+        "title": "Reduce initial server response time",
+        "score": 0,
+        "savingsMs": 769,
+        "display": "Root document took 770 ms",
+        "description": "Keep the server response time for the main document short because all other requests depend on it. .",
+        "items": [
+          {
+            "url": "https://exur.ai/"
+          }
+        ]
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "unused-javascript",
+        "title": "Reduce unused JavaScript",
+        "score": 0.5,
+        "display": "Est savings of 237 KiB",
+        "numericValue": 0,
+        "topItems": [
+          {
+            "url": "https://exur.ai/_next/static/chunks/3bk0-8uf49b39.js",
+            "wastedBytes": 75774,
+            "totalBytes": 112968
+          },
+          {
+            "url": "https://www.googletagmanager.com/gtag/js?id=G-GLTQZ1G6RX",
+            "wastedBytes": 75057,
+            "totalBytes": 175776
+          },
+          {
+            "url": "https://exur.ai/_next/static/chunks/3jiiop7-_n6i0.js",
+            "wastedBytes": 24652,
+            "totalBytes": 43743
+          },
+          {
+            "url": "https://exur.ai/_next/static/chunks/0bfjfp6-eqw77.js",
+            "wastedBytes": 23660,
+            "totalBytes": 50715
+          },
+          {
+            "url": "https://exur.ai/_next/static/chunks/1uvq4mwp_yq_s.js",
+            "wastedBytes": 22126,
+            "totalBytes": 75441
+          },
+          {
+            "url": "https://exur.ai/_next/static/chunks/3r13r7bd-kltp.js",
+            "wastedBytes": 20994,
+            "totalBytes": 52921
+          }
+        ]
+      },
+      {
+        "id": "bootup-time",
+        "title": "Reduce JavaScript execution time",
+        "score": 0,
+        "display": "1.3 s",
+        "numericValue": 1312.2880000000107,
+        "topItems": [
+          {
+            "url": "https://exur.ai/"
+          },
+          {
+            "url": "https://exur.ai/_next/static/chunks/0bfjfp6-eqw77.js"
+          },
+          {
+            "url": "https://exur.ai/_next/static/chunks/1uvq4mwp_yq_s.js"
+          },
+          {
+            "url": "Unattributable"
+          },
+          {
+            "url": "https://exur.ai/_next/static/chunks/3bk0-8uf49b39.js"
+          },
+          {
+            "url": "https://www.googletagmanager.com/gtag/js?id=G-GLTQZ1G6RX"
+          }
+        ]
+      },
+      {
+        "id": "mainthread-work-breakdown",
+        "title": "Minimize main-thread work",
+        "score": 0,
+        "display": "5.6 s",
+        "numericValue": 5621.248000000046,
+        "topItems": [
+          {
+            "url": "Style & Layout",
+            "duration": 2433.7959999999794
+          },
+          {
+            "url": "Script Evaluation",
+            "duration": 1299.5919999999724
+          },
+          {
+            "url": "Other",
+            "duration": 1010.8000000000263
+          },
+          {
+            "url": "Rendering",
+            "duration": 646.1400000000681
+          },
+          {
+            "url": "Script Parsing & Compilation",
+            "duration": 155.368
+          },
+          {
+            "url": "Garbage Collection",
+            "duration": 39.90800000000002
+          }
+        ]
+      }
+    ]
+  },
+  "chat": {
+    "name": "chat.exur.ai",
+    "finalUrl": "https://chat.exur.ai/",
+    "score": 56,
+    "metrics": {
+      "first-contentful-paint": {
+        "score": 0.05,
+        "value": "5.7 s",
+        "ms": 5708.4505
+      },
+      "largest-contentful-paint": {
+        "score": 0,
+        "value": "12.1 s",
+        "ms": 12058.012000000008
+      },
+      "total-blocking-time": {
+        "score": 0.98,
+        "value": "100 ms",
+        "ms": 95.5
+      },
+      "cumulative-layout-shift": {
+        "score": 1,
+        "value": "0.003",
+        "ms": 0.002890508516125024
+      },
+      "speed-index": {
+        "score": 0.16,
+        "value": "8.8 s",
+        "ms": 8799.587732962142
+      },
+      "interactive": {
+        "score": 0.05,
+        "value": "16.5 s",
+        "ms": 16548.098200000004
+      },
+      "max-potential-fid": {
+        "score": 0.95,
+        "value": "110 ms",
+        "ms": 108
+      }
+    },
+    "opportunities": [
+      {
+        "id": "server-response-time",
+        "title": "Reduce initial server response time",
+        "score": 0,
+        "savingsMs": 1423,
+        "display": "Root document took 1,420 ms",
+        "description": "Keep the server response time for the main document short because all other requests depend on it. .",
+        "items": [
+          {
+            "url": "https://chat.exur.ai/"
+          }
+        ]
+      },
+      {
+        "id": "unused-javascript",
+        "title": "Reduce unused JavaScript",
+        "score": 0,
+        "savingsMs": 620,
+        "display": "Est savings of 400 KiB",
+        "description": "Reduce unused JavaScript and defer loading scripts until they are required to decrease bytes consumed by network activity. .",
+        "items": [
+          {
+            "url": "https://www.googletagmanager.com/gtm.js?id=GTM-KMGLCNZD",
+            "wastedMs": 76004,
+            "totalBytes": 117614
+          },
+          {
+            "url": "https://accounts.google.com/gsi/client",
+            "wastedMs": 75577,
+            "totalBytes": 100660
+          },
+          {
+            "url": "https://chat.exur.ai/_next/static/chunks/3bk0-8uf49b39.js",
+            "wastedMs": 75482,
+            "totalBytes": 112993
+          },
+          {
+            "url": "https://www.googletagmanager.com/gtag/js?id=G-GLTQZ1G6RX",
+            "wastedMs": 72896,
+            "totalBytes": 175776
+          },
+          {
+            "url": "https://chat.exur.ai/_next/static/chunks/3r13r7bd-kltp.js",
+            "wastedMs": 38906,
+            "totalBytes": 52912
+          },
+          {
+            "url": "https://chat.exur.ai/_next/static/chunks/3jiiop7-_n6i0.js",
+            "wastedMs": 24850,
+            "totalBytes": 43792
+          },
+          {
+            "url": "https://chat.exur.ai/_next/static/chunks/0bfjfp6-eqw77.js",
+            "wastedMs": 23257,
+            "totalBytes": 50715
+          },
+          {
+            "url": "https://chat.exur.ai/_next/static/chunks/1uvq4mwp_yq_s.js",
+            "wastedMs": 22719,
+            "totalBytes": 75378
+          }
+        ]
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "unused-javascript",
+        "title": "Reduce unused JavaScript",
+        "score": 0,
+        "display": "Est savings of 400 KiB",
+        "numericValue": 620,
+        "topItems": [
+          {
+            "url": "https://www.googletagmanager.com/gtm.js?id=GTM-KMGLCNZD",
+            "wastedBytes": 76004,
+            "totalBytes": 117614
+          },
+          {
+            "url": "https://accounts.google.com/gsi/client",
+            "wastedBytes": 75577,
+            "totalBytes": 100660
+          },
+          {
+            "url": "https://chat.exur.ai/_next/static/chunks/3bk0-8uf49b39.js",
+            "wastedBytes": 75482,
+            "totalBytes": 112993
+          },
+          {
+            "url": "https://www.googletagmanager.com/gtag/js?id=G-GLTQZ1G6RX",
+            "wastedBytes": 72896,
+            "totalBytes": 175776
+          },
+          {
+            "url": "https://chat.exur.ai/_next/static/chunks/3r13r7bd-kltp.js",
+            "wastedBytes": 38906,
+            "totalBytes": 52912
+          },
+          {
+            "url": "https://chat.exur.ai/_next/static/chunks/3jiiop7-_n6i0.js",
+            "wastedBytes": 24850,
+            "totalBytes": 43792
+          }
+        ]
+      },
+      {
+        "id": "mainthread-work-breakdown",
+        "title": "Minimize main-thread work",
+        "score": 0,
+        "display": "2.6 s",
+        "numericValue": 2615.896000000055,
+        "topItems": [
+          {
+            "url": "Style & Layout",
+            "duration": 778.4919999999997
+          },
+          {
+            "url": "Script Evaluation",
+            "duration": 757.1080000000205
+          },
+          {
+            "url": "Other",
+            "duration": 676.7280000000321
+          },
+          {
+            "url": "Script Parsing & Compilation",
+            "duration": 194.088
+          },
+          {
+            "url": "Rendering",
+            "duration": 141.63600000000312
+          },
+          {
+            "url": "Parse HTML & CSS",
+            "duration": 38.388000000000005
+          }
+        ]
+      }
+    ]
+  }
+}

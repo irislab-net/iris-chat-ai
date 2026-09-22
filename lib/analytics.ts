@@ -80,12 +80,20 @@ export function trackEvent(name: string, params?: AnalyticsParams) {
 }
 
 export function trackPageView(path: string) {
-  gtag("event", "page_view", {
+  const params = {
     page_path: path,
     page_location:
       typeof window !== "undefined" ? window.location.href : undefined,
     page_title: typeof document !== "undefined" ? document.title : undefined,
-  })
+  }
+
+  // GTM-only chat path: History Change tags listen on dataLayer.
+  if (typeof window !== "undefined") {
+    window.dataLayer = window.dataLayer ?? []
+    window.dataLayer.push({ event: "page_view", ...params })
+  }
+
+  gtag("event", "page_view", params)
 }
 
 /** Bind GA user_id + tier for cohorting (clears on logout). */

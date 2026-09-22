@@ -4,6 +4,7 @@ import * as React from "react"
 import { usePathname } from "next/navigation"
 import Script from "next/script"
 
+import { useIdleReady } from "@/hooks/use-idle-ready"
 import { GTM_ID, isChatGtmEnabled } from "@/lib/analytics"
 
 declare global {
@@ -20,8 +21,9 @@ function GoogleTagManager() {
     () => isChatGtmEnabled(pathname, window.location.hostname),
     () => false
   )
+  const idleReady = useIdleReady(enabled, 4000)
 
-  if (!enabled) return null
+  if (!enabled || !idleReady) return null
 
   return (
     <>

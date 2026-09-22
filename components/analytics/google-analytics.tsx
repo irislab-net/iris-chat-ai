@@ -4,9 +4,11 @@ import * as React from "react"
 import { usePathname } from "next/navigation"
 import Script from "next/script"
 
+import { useIdleReady } from "@/hooks/use-idle-ready"
 import {
   GA_MEASUREMENT_ID,
   isAnalyticsEnabled,
+  isChatGtmEnabled,
   trackPageView,
 } from "@/lib/analytics"
 import { isMarketingHost } from "@/lib/hosts"
@@ -29,11 +31,20 @@ function GoogleAnalytics() {
   const pathname = usePathname()
   const hostname = useHostname()
   const initialPath = React.useRef<string | null>(null)
-  const [idleReady, setIdleReady] = React.useState(false)
 
   const isMarketing = Boolean(hostname) && isMarketingHost(hostname)
+  const gtmCoversChat =
+    Boolean(hostname) &&
+    !isMarketing &&
+    isChatGtmEnabled(pathname ?? "/", hostname)
 
-  // SPA navigations — initial load is covered by gtag config.
+  // Standalone gtag is marketing-only when GTM already ships GA4 on chat.
+  const wantsGa =
+    isAnalyticsEnabled() && Boolean(hostname) && !gtmCoversChat
+
+  const idleReady = useIdleReady(wantsGa, isMarketing ? 5000 : 4000)
+
+  // SPA navigations — initial load is covered by gtag config / GTM.
   React.useEffect(() => {
     if (!pathname) return
     if (initialPath.current === null) {
@@ -45,25 +56,7 @@ function GoogleAnalytics() {
     trackPageView(pathname)
   }, [pathname])
 
-  // Marketing only: wait for idle so GA does not compete with LCP/TBT.
-  React.useEffect(() => {
-    if (!isAnalyticsEnabled() || !isMarketing) return
-
-    const idle = window.requestIdleCallback
-    if (typeof idle === "function") {
-      const handle = idle(() => setIdleReady(true), { timeout: 5000 })
-      return () => window.cancelIdleCallback(handle)
-    }
-    const handle = window.setTimeout(() => setIdleReady(true), 2500)
-    return () => window.clearTimeout(handle)
-  }, [isMarketing])
-
-  const boot =
-    isAnalyticsEnabled() &&
-    Boolean(hostname) &&
-    (!isMarketing || idleReady)
-
-  if (!boot) return null
+  if (!wantsGa || !idleReady) return null
 
   // Google CDN scripts rotate content, so Subresource Integrity hashes are not viable.
   return (
