@@ -3,6 +3,10 @@ import { Link } from "@/i18n/navigation"
 import dynamic from "next/dynamic"
 import { Suspense } from "react"
 
+import {
+  generateLandingMetadata,
+  MarketingLandingPage,
+} from "@/components/landing/modern/landing-route"
 import { fetchPublicHomeSnapshot } from "@/lib/api/public-home"
 import { AppShell } from "@/components/app-shell/app-shell"
 import { DashboardSkeleton } from "@/components/dashboard/dashboard"
@@ -11,6 +15,7 @@ import {
   SITE_NAME,
   SITE_TITLE,
 } from "@/lib/seo"
+import { isMarketingRequest } from "@/lib/request-host"
 import {
   APP_PATH,
   AUTH_SUCCESS_ROBOTS,
@@ -58,7 +63,12 @@ type PageProps = {
   searchParams: Promise<{ tab?: string | string[] }>
 }
 
-export async function generateMetadata(): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
+  if (await isMarketingRequest()) {
+    return generateLandingMetadata({ params })
+  }
   return newsMetadata
 }
 
@@ -77,8 +87,16 @@ async function NewsWithSnapshot({
   )
 }
 
-/** Chat desk at `/` (chat.exur.ai / local). Marketing apex rewrites `/` → `/home`. */
-export default async function RootPage({ searchParams }: PageProps) {
+/**
+ * Chat desk at `/` (chat.exur.ai / local).
+ * Marketing apex: proxy rewrites `/` → `/home`; this host check is a safety net
+ * if the rewrite is skipped (e.g. preview hosts still hit this page).
+ */
+export default async function RootPage({ params, searchParams }: PageProps) {
+  if (await isMarketingRequest()) {
+    return <MarketingLandingPage params={params} />
+  }
+
   const query = await searchParams
   const tabValue = Array.isArray(query.tab) ? query.tab[0] : query.tab
   const initialTab = resolveWorkspaceTab(tabValue)

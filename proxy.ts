@@ -7,12 +7,6 @@ import { routing } from "@/i18n/routing"
 
 const handleI18nRouting = createMiddleware(routing)
 
-function copyCookies(from: NextResponse, to: NextResponse) {
-  from.cookies.getAll().forEach((cookie) => {
-    to.cookies.set(cookie)
-  })
-}
-
 /**
  * Auth cookies need same-site with api.exur.ai (https + shared parent domain).
  * Loopback stays on local.exur.ai; LAN devices keep their Host and only upgrade HTTP.
@@ -63,7 +57,8 @@ export function proxy(request: NextRequest) {
   if (hostAction.type === "rewrite") {
     const rewriteUrl = request.nextUrl.clone()
     rewriteUrl.pathname = hostAction.pathname
-    // Run i18n against the rewrite target so locale cookies/headers apply.
+    // Run i18n against `/home` so next-intl can rewrite to `/en/home` (etc.).
+    // Do NOT invent a bare `/home` rewrite — that 404s under `[locale]`.
     const i18nRequest = new NextRequest(rewriteUrl, request)
     const i18nResponse = handleI18nRouting(i18nRequest)
 
@@ -85,16 +80,14 @@ export function proxy(request: NextRequest) {
       return i18nResponse
     }
 
-    const response = NextResponse.rewrite(rewriteUrl)
-    copyCookies(i18nResponse, response)
-    response.headers.set("x-pathname", request.nextUrl.pathname)
-    response.headers.set("x-host", hostname)
+    i18nResponse.headers.set("x-pathname", request.nextUrl.pathname)
+    i18nResponse.headers.set("x-host", hostname)
     // CDN-friendly marketing HTML (URL stays `/`; segment is `/home`).
-    response.headers.set(
+    i18nResponse.headers.set(
       "Cache-Control",
       "public, s-maxage=900, stale-while-revalidate=86400"
     )
-    return response
+    return i18nResponse
   }
 
   const response = handleI18nRouting(request)

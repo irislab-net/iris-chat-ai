@@ -5,6 +5,10 @@ import { isMarketingHost } from "@/lib/hosts"
 
 /** True when this request is on exur.ai / www (marketing apex). */
 export async function isMarketingRequest(): Promise<boolean> {
-  const host = hostnameFromHostHeader((await headers()).get("host") ?? "")
+  const h = await headers()
+  // Prefer middleware `x-host` (set after Host normalization) over raw Host.
+  const host = hostnameFromHostHeader(
+    h.get("x-host") ?? h.get("host") ?? ""
+  )
   return isMarketingHost(host)
 }
