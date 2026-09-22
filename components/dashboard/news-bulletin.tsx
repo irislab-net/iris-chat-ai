@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { NewspaperIcon, SquareIcon, Volume2Icon } from "lucide-react"
+import { CheckIcon, CopyIcon, EyeIcon, NewspaperIcon, SquareIcon, Volume2Icon } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -497,6 +497,25 @@ function newsSpeechText(item: NewsItem, withSource = false) {
   return parts.join(" ")
 }
 
+function newsCopyText(item: NewsItem) {
+  const parts: string[] = []
+  if (item.title.trim()) parts.push(item.title.trim())
+  if (item.summary?.trim()) parts.push(item.summary.trim())
+  const source = item.source?.trim() || hostFromUrl(item.url)
+  const meta = [source, item.url.trim()].filter(Boolean).join("\n")
+  if (meta) parts.push(meta)
+  return parts.join("\n\n")
+}
+
+function newsFooterActionButtonClass(glass: boolean) {
+  return cn(
+    "shrink-0",
+    glass
+      ? "size-8 rounded-full text-muted-foreground hover:bg-white/50 hover:text-foreground dark:hover:bg-white/8"
+      : "text-muted-foreground hover:text-foreground"
+  )
+}
+
 function speakUtterance(
   item: NewsItem,
   text: string,
@@ -607,12 +626,7 @@ function NewsSpeakButton({
       size="icon-sm"
       aria-label={speaking ? "Stop reading aloud" : "Listen to article"}
       aria-pressed={speaking}
-      className={cn(
-        "shrink-0",
-        glass
-          ? "size-8 rounded-full text-muted-foreground hover:bg-white/50 hover:text-foreground dark:hover:bg-white/8"
-          : "text-muted-foreground hover:text-foreground"
-      )}
+      className={newsFooterActionButtonClass(glass)}
       onClick={() => toggleNewsSpeech(item)}
     >
       {speaking ? (
@@ -620,6 +634,90 @@ function NewsSpeakButton({
       ) : (
         <Volume2Icon className="size-4" aria-hidden />
       )}
+    </Button>
+  )
+}
+
+function NewsCopyButton({
+  item,
+  glass = false,
+}: {
+  item: NewsItem
+  glass?: boolean
+}) {
+  const [copied, setCopied] = React.useState(false)
+  const copyTimerRef = React.useRef(0)
+
+  React.useEffect(() => {
+    return () => window.clearTimeout(copyTimerRef.current)
+  }, [])
+
+  async function onCopy(event: React.MouseEvent) {
+    event.preventDefault()
+    event.stopPropagation()
+    const text = newsCopyText(item)
+    if (!text) return
+    try {
+      await navigator.clipboard.writeText(text)
+      setCopied(true)
+      window.clearTimeout(copyTimerRef.current)
+      copyTimerRef.current = window.setTimeout(() => setCopied(false), 1_600)
+    } catch {
+      setCopied(false)
+    }
+  }
+
+  return (
+    <Button
+      type="button"
+      variant="ghost"
+      size="icon-sm"
+      aria-label={copied ? "Copied" : "Copy article"}
+      className={newsFooterActionButtonClass(glass)}
+      onClick={onCopy}
+    >
+      {copied ? (
+        <CheckIcon className="size-4 text-emerald-600 dark:text-emerald-400" aria-hidden />
+      ) : (
+        <CopyIcon className="size-4" aria-hidden />
+      )}
+    </Button>
+  )
+}
+
+function NewsSourceButton({
+  item,
+  glass = false,
+}: {
+  item: NewsItem
+  glass?: boolean
+}) {
+  const href = item.url?.trim()
+  if (!href) return null
+
+  return (
+    <Button
+      variant="ghost"
+      size="icon-sm"
+      nativeButton={false}
+      aria-label="Open original article"
+      className={newsFooterActionButtonClass(glass)}
+      render={
+        <a
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={() =>
+            trackNewsArticleClick({
+              article_id: item.id,
+              source: item.source ?? "unknown",
+              impact_score: item.metrics.impact_score,
+            })
+          }
+        />
+      }
+    >
+      <EyeIcon className="size-4" aria-hidden />
     </Button>
   )
 }
@@ -658,7 +756,11 @@ function NewsCardFooter({
           </span>
         ) : null}
       </div>
-      <NewsSpeakButton item={item} glass={glass} />
+      <div className="flex shrink-0 items-center gap-0.5">
+        <NewsCopyButton item={item} glass={glass} />
+        <NewsSourceButton item={item} glass={glass} />
+        <NewsSpeakButton item={item} glass={glass} />
+      </div>
     </div>
   )
 }

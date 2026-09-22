@@ -76,6 +76,7 @@ import {
 } from "@/components/ui/empty"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
+import { Skeleton } from "@/components/ui/skeleton"
 import {
   Tooltip,
   TooltipContent,
@@ -269,6 +270,8 @@ type ChatHistorySidebarProps = {
   conversations: StoredConversation[]
   conversationId: string
   sending: boolean
+  /** Session ids waiting on backend DELETE confirmation — shown as row skeletons. */
+  deletingIds?: ReadonlySet<string>
   onSelect: (id: string) => void
   onDelete: (id: string, event: React.MouseEvent) => void
   onRename: (id: string, title: string) => void
@@ -431,6 +434,7 @@ function ChatHistorySidebar({
   conversations,
   conversationId,
   sending,
+  deletingIds,
   onSelect,
   onDelete,
   onRename,
@@ -625,6 +629,7 @@ function ChatHistorySidebar({
                     chats={pinned}
                     conversationId={conversationId}
                     sending={sending}
+                    deletingIds={deletingIds}
                     onSelect={onSelect}
                     onRename={openRename}
                     onTogglePin={onTogglePin}
@@ -642,6 +647,7 @@ function ChatHistorySidebar({
                   chats={recent}
                   conversationId={conversationId}
                   sending={sending}
+                  deletingIds={deletingIds}
                   onSelect={onSelect}
                   onRename={openRename}
                   onTogglePin={onTogglePin}
@@ -681,6 +687,7 @@ function ConversationSection({
   chats,
   conversationId,
   sending,
+  deletingIds,
   onSelect,
   onRename,
   onTogglePin,
@@ -692,6 +699,7 @@ function ConversationSection({
   chats: StoredConversation[]
   conversationId: string
   sending: boolean
+  deletingIds?: ReadonlySet<string>
   onSelect: (id: string) => void
   onRename: (chat: StoredConversation) => void
   onTogglePin: (id: string) => void
@@ -715,20 +723,44 @@ function ConversationSection({
       <ul className={cn("flex flex-col", compact ? "gap-0.5 px-1" : "gap-0.5")}>
         {chats.map((chat) => (
           <li key={chat.id}>
-            <ConversationRow
-              chat={chat}
-              active={chat.id === conversationId}
-              sending={sending}
-              onSelect={() => onSelect(chat.id)}
-              onRename={() => onRename(chat)}
-              onTogglePin={() => onTogglePin(chat.id)}
-              onDelete={(event) => onDelete(chat.id, event)}
-              compact={compact}
-            />
+            {deletingIds?.has(chat.id) ? (
+              <ConversationRowSkeleton compact={compact} />
+            ) : (
+              <ConversationRow
+                chat={chat}
+                active={chat.id === conversationId}
+                sending={sending}
+                onSelect={() => onSelect(chat.id)}
+                onRename={() => onRename(chat)}
+                onTogglePin={() => onTogglePin(chat.id)}
+                onDelete={(event) => onDelete(chat.id, event)}
+                compact={compact}
+              />
+            )}
           </li>
         ))}
       </ul>
     </section>
+  )
+}
+
+function ConversationRowSkeleton({ compact = false }: { compact?: boolean }) {
+  return (
+    <div
+      className={cn(
+        "flex min-w-0 items-center",
+        compact
+          ? "h-11 gap-0 rounded-full px-4"
+          : "gap-2.5 rounded-lg px-3 py-2"
+      )}
+      aria-busy="true"
+      role="status"
+    >
+      {!compact ? (
+        <Skeleton className="size-4 shrink-0 rounded-sm bg-foreground/7" />
+      ) : null}
+      <Skeleton className="h-3 min-w-0 flex-1 rounded-sm bg-foreground/7" />
+    </div>
   )
 }
 
@@ -901,6 +933,7 @@ function ChatHistoryRail({
   conversations,
   conversationId,
   sending,
+  deletingIds,
   onSelect,
   onDelete,
   onRename,
@@ -931,6 +964,7 @@ function ChatHistoryRail({
         conversations={conversations}
         conversationId={conversationId}
         sending={sending}
+        deletingIds={deletingIds}
         onSelect={onSelect}
         onDelete={onDelete}
         onRename={onRename}

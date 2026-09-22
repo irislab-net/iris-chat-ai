@@ -375,6 +375,10 @@ function ChatAside({
   const [conversations, setConversations] = React.useState<StoredConversation[]>(
     []
   )
+  const [deletingIds, setDeletingIds] = React.useState<ReadonlySet<string>>(
+    () => new Set()
+  )
+  const deletingIdsRef = React.useRef<Set<string>>(new Set())
   const [sending, setSending] = React.useState(false)
   const sendingRef = React.useRef(false)
   sendingRef.current = sending
@@ -787,6 +791,7 @@ function ChatAside({
 
   function openConversation(id: string) {
     if (sending) return
+    if (deletingIdsRef.current.has(id)) return
     abortRef.current?.abort()
     abortRef.current = null
     setPendingAssistantId(null)
@@ -820,30 +825,63 @@ function ChatAside({
     void refreshConversationFromServer(target.id)
   }
 
+  function startBlankConversation(store: ReturnType<typeof readChatStore>) {
+    const blank = blankConversation()
+    setConversationId(blank.id)
+    setMessages(blank.messages)
+    setHistory(blank.history)
+    setReplyTarget(null)
+    const next = setActiveConversation(store, blank.id)
+    writeChatStore(chatOwnerId, next)
+    return next
+  }
+
+  function markConversationDeleting(id: string) {
+    deletingIdsRef.current.add(id)
+    setDeletingIds(new Set(deletingIdsRef.current))
+  }
+
+  function clearConversationDeleting(id: string) {
+    deletingIdsRef.current.delete(id)
+    setDeletingIds(new Set(deletingIdsRef.current))
+  }
+
   function removeConversation(id: string, event?: React.MouseEvent) {
     event?.stopPropagation()
-    const store = deleteConversation(readChatStore(chatOwnerId), id)
-    writeChatStore(chatOwnerId, store)
-    setConversations(store.conversations)
+    if (deletingIdsRef.current.has(id)) return
 
-    if (id === conversationId) {
-      const blank = blankConversation()
-      setConversationId(blank.id)
-      setMessages(blank.messages)
-      setHistory(blank.history)
-      setReplyTarget(null)
-      writeChatStore(
-        chatOwnerId,
-        setActiveConversation(store, blank.id)
-      )
+    const wasActive = id === conversationId
+
+    // Guest / local-only: no backend confirm — remove immediately.
+    if (!chatOwnerId) {
+      const store = deleteConversation(readChatStore(chatOwnerId), id)
+      writeChatStore(chatOwnerId, store)
+      setConversations(store.conversations)
+      if (wasActive) startBlankConversation(store)
+      return
     }
 
-    if (chatOwnerId) {
-      void deleteChatSession(id).catch(() => {})
+    markConversationDeleting(id)
+    if (wasActive) {
+      startBlankConversation(readChatStore(chatOwnerId))
     }
+
+    void deleteChatSession(id)
+      .then(() => {
+        const store = deleteConversation(readChatStore(chatOwnerId), id)
+        writeChatStore(chatOwnerId, store)
+        setConversations(store.conversations)
+      })
+      .catch(() => {
+        // Keep the row; skeleton clears below.
+      })
+      .finally(() => {
+        clearConversationDeleting(id)
+      })
   }
 
   function renameConversation(id: string, title: string) {
+    if (deletingIdsRef.current.has(id)) return
     const trimmed = title.trim()
     if (!trimmed) return
     const store = readChatStore(chatOwnerId)
@@ -863,6 +901,7 @@ function ChatAside({
   }
 
   function toggleConversationPin(id: string) {
+    if (deletingIdsRef.current.has(id)) return
     const store = readChatStore(chatOwnerId)
     const target = store.conversations.find((chat) => chat.id === id)
     if (!target) return
@@ -1820,6 +1859,7 @@ function ChatAside({
           conversations={conversations}
           conversationId={conversationId}
           sending={sending}
+          deletingIds={deletingIds}
           onSelect={openConversation}
           onDelete={removeConversation}
           onRename={renameConversation}
@@ -1890,6 +1930,7 @@ function ChatAside({
             conversations={conversations}
             conversationId={conversationId}
             sending={sending}
+            deletingIds={deletingIds}
             onSelect={openConversation}
             onDelete={removeConversation}
             onRename={renameConversation}
@@ -2321,6 +2362,7 @@ function ChatAside({
               conversations={conversations}
               conversationId={conversationId}
               sending={sending}
+              deletingIds={deletingIds}
               onSelect={openConversation}
               onDelete={removeConversation}
               onRename={renameConversation}
