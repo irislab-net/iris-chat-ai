@@ -92,12 +92,19 @@ const nextConfig: NextConfig = {
     return []
   },
   async headers() {
+    // GIS One Tap on local HTTPS needs a looser referrer than production.
+    // See https://developers.google.com/identity/gsi/web/guides/get-google-api-clientid
+    const referrerPolicy =
+      process.env.NODE_ENV === "production"
+        ? "strict-origin-when-cross-origin"
+        : "no-referrer-when-downgrade"
+
     return [
       {
         source: "/:path*",
         headers: [
           { key: "X-Content-Type-Options", value: "nosniff" },
-          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          { key: "Referrer-Policy", value: referrerPolicy },
           {
             key: "Permissions-Policy",
             value: "camera=(), microphone=(), geolocation=()",

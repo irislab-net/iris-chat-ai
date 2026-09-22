@@ -1,19 +1,22 @@
 import { getTranslations } from "next-intl/server"
 import type { Metadata } from "next"
 
+import { StatusPage } from "@/components/status/status-page"
 import {
-  StatusPage,
   statusHomeAction,
   statusLaunchAppAction,
-} from "@/components/status/status-page"
+} from "@/components/status/status-page-actions"
+import { routing } from "@/i18n/routing"
 
 export const metadata: Metadata = {
   robots: { index: false, follow: true },
 }
 
 export default async function NotFound() {
-  const t = await getTranslations("notFound")
-  const common = await getTranslations("common")
+  // Root not-found sits outside `[locale]`; pass an explicit locale.
+  const locale = routing.defaultLocale
+  const t = await getTranslations({ locale, namespace: "notFound" })
+  const common = await getTranslations({ locale, namespace: "common" })
 
   return (
     <StatusPage

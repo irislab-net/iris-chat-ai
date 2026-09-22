@@ -4,10 +4,8 @@ import * as Sentry from "@sentry/nextjs"
 import { useEffect } from "react"
 import { useTranslations } from "next-intl"
 
-import {
-  StatusPage,
-  statusLaunchAppAction,
-} from "@/components/status/status-page"
+import { StatusPage } from "@/components/status/status-page"
+import { statusLaunchAppAction } from "@/components/status/status-page-actions"
 
 export default function LocaleError({
   error,

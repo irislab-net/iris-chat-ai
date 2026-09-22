@@ -5,23 +5,21 @@ import type { ReactNode } from "react"
 import { IrisLabLogo } from "@/components/brand/iris-lab-logo"
 import { HeroLiquidGlassBg } from "@/components/landing/modern/hero-liquid-glass-bg"
 import { jetbrainsMono, plusJakarta } from "@/components/landing/modern/fonts"
-import { SphereCta } from "@/components/landing/modern/sphere-ui"
+import { Button } from "@/components/ui/button"
+import type { StatusPageAction } from "@/components/status/status-page-actions"
 import {
+  landingCta,
   landingDisplay,
+  landingGlassBlueSheen,
   landingHeroGlass,
   landingInner,
   landingShell,
   landingTitleSection,
 } from "@/lib/landing-modern-styles"
-import { getLandingHref, getLaunchAppHref, SITE_NAME } from "@/lib/site"
+import { getLandingHref, SITE_NAME } from "@/lib/site"
 import { cn } from "@/lib/utils"
 
-export type StatusPageAction = {
-  label: string
-  href?: string
-  onClick?: () => void
-  tone?: "glass" | "light" | "primary"
-}
+export type { StatusPageAction }
 
 type StatusPageProps = {
   code: string
@@ -34,15 +32,35 @@ type StatusPageProps = {
 }
 
 function StatusAction({ action }: { action: StatusPageAction }) {
+  const tone = action.tone ?? "glass"
+  const isGlass = tone === "glass"
+  const buttonClass = landingCta(tone, "md")
+  const content = (
+    <>
+      {isGlass ? (
+        <span aria-hidden className={cn(landingGlassBlueSheen, "rounded-full")} />
+      ) : null}
+      <span className="relative z-10">{action.label}</span>
+    </>
+  )
+
+  // Plain anchors — status pages can render outside `[locale]` (no next-intl Link).
+  if (action.href) {
+    return (
+      <Button
+        nativeButton={false}
+        render={<a href={action.href} />}
+        className={buttonClass}
+      >
+        {content}
+      </Button>
+    )
+  }
+
   return (
-    <SphereCta
-      href={action.href}
-      onClick={action.onClick}
-      variant={action.tone ?? "glass"}
-      size="md"
-    >
-      {action.label}
-    </SphereCta>
+    <Button type="button" onClick={action.onClick} className={buttonClass}>
+      {content}
+    </Button>
   )
 }
 
@@ -142,21 +160,4 @@ export function StatusPage({
       </div>
     </div>
   )
-}
-
-/** Default secondary action used by locale error / 404 pages. */
-export function statusLaunchAppAction(label: string): StatusPageAction {
-  return {
-    label,
-    href: getLaunchAppHref(),
-    tone: "light",
-  }
-}
-
-export function statusHomeAction(label: string): StatusPageAction {
-  return {
-    label,
-    href: getLandingHref(),
-    tone: "glass",
-  }
 }

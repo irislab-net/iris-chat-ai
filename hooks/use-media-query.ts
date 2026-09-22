@@ -4,27 +4,31 @@ import * as React from "react"
 
 const DESKTOP_QUERY = "(min-width: 1024px)"
 
-function readIsDesktop(): boolean | null {
-  if (typeof window === "undefined") return null
+function subscribeDesktop(onStoreChange: () => void) {
+  const media = window.matchMedia(DESKTOP_QUERY)
+  media.addEventListener("change", onStoreChange)
+  return () => media.removeEventListener("change", onStoreChange)
+}
+
+function getDesktopSnapshot(): boolean | null {
   return window.matchMedia(DESKTOP_QUERY).matches
+}
+
+/** Server + hydration must match; viewport is resolved only after hydrate. */
+function getDesktopServerSnapshot(): boolean | null {
+  return null
 }
 
 /**
  * Tailwind `lg` and up (1024px). Tablets and iPads stay in the mobile shell.
- * SSR stays `null`; on the client we seed from matchMedia to avoid a blank boot frame.
+ * Returns `null` on the server and during hydration, then the live matchMedia value.
  */
 function useIsDesktop(): boolean | null {
-  const [isDesktop, setIsDesktop] = React.useState<boolean | null>(readIsDesktop)
-
-  React.useEffect(() => {
-    const media = window.matchMedia(DESKTOP_QUERY)
-    const apply = () => setIsDesktop(media.matches)
-    apply()
-    media.addEventListener("change", apply)
-    return () => media.removeEventListener("change", apply)
-  }, [])
-
-  return isDesktop
+  return React.useSyncExternalStore(
+    subscribeDesktop,
+    getDesktopSnapshot,
+    getDesktopServerSnapshot
+  )
 }
 
 export { useIsDesktop }

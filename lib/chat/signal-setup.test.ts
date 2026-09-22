@@ -112,46 +112,84 @@ describe("enrichPaperTicketsOnMessages", () => {
     expect(enriched[3]?.paperTicket).toBeUndefined()
   })
 
-  it("keeps the first trusted paperTicket and strips follow-up duplicates", () => {
+  it("keeps signal-turn tickets and strips follow-up duplicates", () => {
+    const ticket = {
+      symbol: "ETH",
+      side: "SHORT" as const,
+      quantity: 1,
+      markPrice: 1,
+      stopLoss: 2,
+      takeProfit: 3,
+      leverage: 5,
+      setup: "fade",
+      thesis: "test",
+    }
+
     const enriched = enrichPaperTicketsOnMessages([
-      { id: "u1", role: "user", content: "signal" },
+      { id: "u1", role: "user", content: "@signal ETH" },
       {
         id: "a1",
         role: "assistant",
-        content: "Exur setup. Not a profit guarantee.\n\nETH SHORT\nSetup: fade\nEntry 1\nSL 2\nTP 3\nLeverage 5x",
-        paperTicket: {
-          symbol: "ETH",
-          side: "SHORT",
-          quantity: 1,
-          markPrice: 1,
-          stopLoss: 2,
-          takeProfit: 3,
-          leverage: 5,
-          setup: "fade",
-          thesis: "test",
-        },
+        content:
+          "Exur setup. Not a profit guarantee.\n\nETH SHORT\nSetup: fade\nEntry 1\nSL 2\nTP 3\nLeverage 5x",
+        paperTicket: ticket,
       },
       { id: "u2", role: "user", content: "why?" },
       {
         id: "a2",
         role: "assistant",
         content: "Because momentum faded.",
-        paperTicket: {
-          symbol: "ETH",
-          side: "SHORT",
-          quantity: 1,
-          markPrice: 1,
-          stopLoss: 2,
-          takeProfit: 3,
-          leverage: 5,
-          setup: "fade",
-          thesis: "test",
-        },
+        paperTicket: ticket,
       },
     ])
 
     expect(enriched[1]?.paperTicket?.symbol).toBe("ETH")
     expect(enriched[3]?.paperTicket).toBeUndefined()
+  })
+
+  it("keeps a second @signal ticket later in the same thread", () => {
+    const btcTicket = {
+      symbol: "BTC",
+      side: "SHORT" as const,
+      quantity: 1,
+      markPrice: 87000,
+      stopLoss: 87500,
+      takeProfit: 86000,
+      leverage: 5,
+      setup: "btc fade",
+      thesis: "btc thesis",
+    }
+    const ethTicket = {
+      symbol: "ETH",
+      side: "LONG" as const,
+      quantity: 1,
+      markPrice: 2500,
+      stopLoss: 2450,
+      takeProfit: 2600,
+      leverage: 5,
+      setup: "eth bounce",
+      thesis: "eth thesis",
+    }
+
+    const enriched = enrichPaperTicketsOnMessages([
+      { id: "u1", role: "user", content: "@signal BTC" },
+      {
+        id: "a1",
+        role: "assistant",
+        content: "",
+        paperTicket: btcTicket,
+      },
+      { id: "u2", role: "user", content: "Signal · ETH" },
+      {
+        id: "a2",
+        role: "assistant",
+        content: "",
+        paperTicket: ethTicket,
+      },
+    ])
+
+    expect(enriched[1]?.paperTicket?.symbol).toBe("BTC")
+    expect(enriched[3]?.paperTicket?.symbol).toBe("ETH")
   })
 })
 

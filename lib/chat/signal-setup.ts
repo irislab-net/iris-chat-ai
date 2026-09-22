@@ -1,5 +1,9 @@
 import { isStructuredSignalSetupContent } from "@/lib/chat/parse-trade-setup"
 import { SIGNAL_SETUP_HEADER } from "@/lib/chat/signal-setup-constants"
+import {
+  isPaperTradeIntent,
+  isSignalMentionCommand,
+} from "@/lib/iris-paper-trade/intent"
 import type { PaperTradeTicket } from "@/lib/iris-paper-trade/types"
 import type { ChatUiMessage } from "@/lib/chat-storage"
 
@@ -44,31 +48,41 @@ function isGenericThesis(text: string): boolean {
   )
 }
 
+function precedingUserMessage(
+  messages: ChatUiMessage[],
+  index: number
+): ChatUiMessage | null {
+  for (let i = index - 1; i >= 0; i -= 1) {
+    if (messages[i]?.role === "user") return messages[i] ?? null
+  }
+  return null
+}
+
+/** True when this user turn is a fresh signal / desk request (card belongs here). */
+function isSignalRequestUserTurn(content: string): boolean {
+  const trimmed = content.trim()
+  if (!trimmed) return false
+  return isSignalMentionCommand(trimmed) || isPaperTradeIntent(trimmed)
+}
+
 /**
- * Keep the first trusted `paperTicket` in a thread; strip duplicates on
- * follow-ups. Never invent tickets from assistant prose (integrity: only
+ * Keep trusted `paperTicket`s on signal-request turns; strip them from
+ * follow-up Q&A that incorrectly re-attached the previous card.
+ * Never invent tickets from assistant prose (integrity: only
  * `show_trade_signal` / recovery / persisted API tickets).
  */
 export function enrichPaperTicketsOnMessages(
   messages: ChatUiMessage[]
 ): ChatUiMessage[] {
-  let threadHasSetup = false
+  return messages.map((message, index) => {
+    if (message.role !== "assistant" || !message.paperTicket) return message
 
-  return messages.map((message) => {
-    if (message.role !== "assistant") return message
-
-    if (threadHasSetup) {
-      return message.paperTicket
-        ? { ...message, paperTicket: undefined }
-        : message
-    }
-
-    if (message.paperTicket) {
-      threadHasSetup = true
+    const user = precedingUserMessage(messages, index)
+    if (user && isSignalRequestUserTurn(user.content)) {
       return message
     }
 
-    return message
+    return { ...message, paperTicket: undefined }
   })
 }
 

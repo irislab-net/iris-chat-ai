@@ -12,26 +12,24 @@ export type WorkspacePageInfo = {
 export const WORKSPACE_PAGE_INFO: Record<WorkspacePageId, WorkspacePageInfo> = {
   news: {
     title: "News",
-    summary:
-      "Scored headline tape with impact, sentiment, and asset flow, not a raw newswire.",
+    summary: "Headlines ranked by impact, with sentiment and asset flow.",
     audience:
-      "Best when you need context on what is moving the market before you ask Exur.",
+      "Start here when you want to see what is moving before you ask Exur.",
     bullets: [
-      "Lead story ranked by impact score",
-      "Tape windows for 15m, 1h, and 24h headline volume",
+      "Lead story ranked by impact",
+      "Headline volume for 15m, 1h, and 24h",
       "BTC, ETH, DXY, and gold sentiment at a glance",
     ],
   },
   iris: {
     title: "Exur",
-    summary:
-      "AI co-pilot beside the news feed — ask in plain language about markets and setups.",
+    summary: "Ask about markets, news, and setups in plain language.",
     audience:
-      "Best when you want a second read on the tape, levels, or a trade signal card.",
+      "Open this when you want a quick take on the news, a level, or a trade idea.",
     bullets: [
-      "Ask in natural language, no command syntax",
-      "Context-aware answers tied to live market evidence",
-      "Trade signal cards when the model returns a clear setup",
+      "Ask in plain language — nothing to memorize",
+      "Answers grounded in live market context",
+      "Trade signal cards when a clear setup appears",
     ],
   },
 }

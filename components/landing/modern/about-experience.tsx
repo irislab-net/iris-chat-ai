@@ -19,6 +19,7 @@ import { LANDING_MOTION, useReducedMotion } from "@/lib/landing-motion"
 import {
   landingDisplay,
   landingGlassNavIcon,
+  landingGlassPill,
   landingGlassSheen,
   landingGlassSurface,
   landingTitleQuote,
@@ -568,6 +569,23 @@ export function AboutExperience() {
           )}
         />
 
+        {phase === "idle" ? (
+          <div
+            className={cn(
+              landingGlassPill,
+              "pointer-events-none absolute top-3.5 left-3.5 z-20 inline-flex items-center gap-2 px-3 py-1.5 sm:top-4 sm:left-4"
+            )}
+          >
+            <span
+              aria-hidden
+              className="size-1.5 shrink-0 rounded-full bg-[#2563EB] shadow-[0_0_0_3px_rgba(37,99,235,0.16)]"
+            />
+            <span className="font-[family-name:var(--font-mono-modern)] text-[10px] font-medium tracking-[0.16em] text-muted-foreground uppercase">
+              1 min listen
+            </span>
+          </div>
+        ) : null}
+
         <div
           ref={orbLiftRef}
           className={cn(
@@ -579,13 +597,14 @@ export function AboutExperience() {
           <AboutOrbCanvas
             amplitudeRef={amplitudeRef}
             still={Boolean(reduceMotion)}
+            active={phase === "playing" || expanded}
             immersive={expanded}
             className="size-full"
           />
         </div>
 
         {phase === "idle" && (
-          <div className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-5">
+          <div className="absolute inset-0 z-20 flex items-center justify-center">
             <div className="relative flex items-center justify-center">
               {!reduceMotion ? (
                 <>
@@ -617,14 +636,6 @@ export function AboutExperience() {
                 <PlayIcon className="relative size-6 translate-x-px fill-current sm:size-7" />
               </Button>
             </div>
-            <p
-              className={cn(
-                landingDisplay,
-                "text-sm font-normal tracking-[-0.01em] text-muted-foreground/90 sm:text-[0.95rem]"
-              )}
-            >
-              Hear from Exur
-            </p>
           </div>
         )}
 

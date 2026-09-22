@@ -17,6 +17,8 @@ export default async function LocaleLayout({ children, params }: Props) {
   const { locale } = await params
 
   if (!hasLocale(routing.locales, locale)) {
+    // Keep intl available for `[locale]/not-found` when the segment is invalid.
+    setRequestLocale(routing.defaultLocale)
     notFound()
   }
 

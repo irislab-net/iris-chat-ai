@@ -346,40 +346,34 @@ function ChatHistoryRailSkeleton({
   )
 }
 
-type ChatAsideSkeletonVariant = "docked" | "focused" | "mobile"
+type ChatAsideSkeletonVariant = "docked" | "focused" | "mobile" | "responsive"
 
-function ChatAsideSkeleton({
+function ChatDesktopAsideSkeleton({
   className,
-  variant = "docked",
+  variant,
   sidebarWidth = "16rem",
   isAuthenticated = false,
 }: {
   className?: string
-  variant?: ChatAsideSkeletonVariant
+  variant: "docked" | "focused"
   sidebarWidth?: string
   isAuthenticated?: boolean
 }) {
-  const mobile = variant === "mobile"
   const focused = variant === "focused"
   const guest = !isAuthenticated
-  const showHistoryRail = focused || !mobile
+  const showHistoryRail = focused
   const showHeader = !focused || guest
-  const showMainColumnHeader = showHeader && !showHistoryRail && !mobile
-
-  if (mobile) {
-    return <ChatMobileAsideSkeleton className={className} />
-  }
+  const showMainColumnHeader = showHeader && !showHistoryRail
 
   const mainColumn = (
     <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-background text-foreground">
       {showMainColumnHeader ? (
         <ChatHeaderSkeleton
-          mobile={mobile}
           guestSubtitle={guest}
-          showUpgrade={!mobile}
-          showFullscreen={!focused && !mobile}
-          showHistory={isAuthenticated && !focused && !mobile && !showHistoryRail}
-          showNewChat={!focused && !mobile}
+          showUpgrade
+          showFullscreen={!focused}
+          showHistory={isAuthenticated && !focused && !showHistoryRail}
+          showNewChat={!focused}
         />
       ) : null}
       <ChatPromptsSkeleton />
@@ -395,7 +389,7 @@ function ChatAsideSkeleton({
         data-slot="chat-aside"
         className={cn(
           "relative flex h-full min-h-0 w-full flex-row overflow-hidden bg-sidebar text-sidebar-foreground",
-          !focused && !mobile && "rounded-r-2xl",
+          !focused && "rounded-r-2xl",
           className
         )}
         aria-busy="true"
@@ -421,6 +415,72 @@ function ChatAsideSkeleton({
     >
       {mainColumn}
     </div>
+  )
+}
+
+/**
+ * CSS-driven boot skeleton: mobile/tablet shell below `lg`, focused desktop at `lg+`.
+ * Avoids waiting on JS matchMedia (no wrong two-column chrome on narrow viewports).
+ */
+function ChatResponsiveAsideSkeleton({
+  className,
+  sidebarWidth = "16rem",
+  isAuthenticated = false,
+}: {
+  className?: string
+  sidebarWidth?: string
+  isAuthenticated?: boolean
+}) {
+  return (
+    <div
+      className={cn(
+        "relative flex h-full min-h-0 w-full min-w-0 flex-1 flex-col overflow-hidden",
+        className
+      )}
+    >
+      <ChatMobileAsideSkeleton className="h-full min-h-0 flex-1 lg:hidden" />
+      <ChatDesktopAsideSkeleton
+        className="hidden h-full min-h-0 flex-1 lg:flex"
+        variant="focused"
+        sidebarWidth={sidebarWidth}
+        isAuthenticated={isAuthenticated}
+      />
+    </div>
+  )
+}
+
+function ChatAsideSkeleton({
+  className,
+  variant = "docked",
+  sidebarWidth = "16rem",
+  isAuthenticated = false,
+}: {
+  className?: string
+  variant?: ChatAsideSkeletonVariant
+  sidebarWidth?: string
+  isAuthenticated?: boolean
+}) {
+  if (variant === "responsive") {
+    return (
+      <ChatResponsiveAsideSkeleton
+        className={className}
+        sidebarWidth={sidebarWidth}
+        isAuthenticated={isAuthenticated}
+      />
+    )
+  }
+
+  if (variant === "mobile") {
+    return <ChatMobileAsideSkeleton className={className} />
+  }
+
+  return (
+    <ChatDesktopAsideSkeleton
+      className={className}
+      variant={variant}
+      sidebarWidth={sidebarWidth}
+      isAuthenticated={isAuthenticated}
+    />
   )
 }
 

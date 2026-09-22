@@ -57,9 +57,10 @@
 
 .bars {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 8px;
   margin-top: 32px;
+  max-width: 380px;
 }
 
 .bar {
@@ -208,6 +209,11 @@
   .heading,
   .sub {
     text-align: center;
+  }
+
+  .bars {
+    justify-content: center;
+    max-width: none;
   }
 }
 

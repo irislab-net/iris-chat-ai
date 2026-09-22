@@ -42,7 +42,7 @@ const ChatAside = dynamic(
     import("@/components/app-shell/chat-aside").then((m) => m.ChatAside),
   {
     ssr: false,
-    loading: () => <ChatAsideSkeleton variant="focused" />,
+    loading: () => <ChatAsideSkeleton variant="responsive" />,
   }
 )
 
@@ -217,6 +217,8 @@ function AppShellInner({
   const deskChatBooting = onDesk && isDesktop === null
 
   if (deskChatBooting) {
+    // Viewport unknown until matchMedia hydrates — CSS picks mobile vs focused
+    // so narrow devices never flash the two-column desktop chrome.
     return (
       <>
         <AppViewportSync />
@@ -225,7 +227,7 @@ function AppShellInner({
           className={cn("flex h-app overflow-hidden bg-background", className)}
         >
           <ChatAsideSkeleton
-            variant={isDesktop === true ? "focused" : "mobile"}
+            variant="responsive"
             className="min-h-0 flex-1 rounded-none"
             sidebarWidth={shellSidebars.chat.minSize}
           />
