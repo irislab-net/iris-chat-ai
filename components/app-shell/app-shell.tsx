@@ -4,6 +4,8 @@ import * as React from "react"
 import dynamic from "next/dynamic"
 import { useSearchParams } from "next/navigation"
 
+import "@/app/styles/chat-gemini.css"
+
 import { ChatAsideSkeleton } from "@/components/app-shell/shell-skeletons"
 import { ContextMain } from "@/components/app-shell/context-main"
 import { WebsiteToolbar } from "@/components/app-shell/website-toolbar"

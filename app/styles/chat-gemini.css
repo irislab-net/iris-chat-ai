@@ -1,0 +1,701 @@
+/* Chat + landing hero Gemini mesh (loaded only where used). */
+
+@keyframes gemini-glow-rise {
+  0% {
+    opacity: 0;
+    transform: translateY(8%) scale(0.96);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes gemini-orb-drift-a {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  40% {
+    transform: translate(10%, -8%) scale(1.1);
+  }
+  70% {
+    transform: translate(-6%, 5%) scale(0.94);
+  }
+  100% {
+    transform: translate(7%, 2%) scale(1.06);
+  }
+}
+
+@keyframes gemini-orb-drift-b {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  35% {
+    transform: translate(-9%, 6%) scale(1.08);
+  }
+  65% {
+    transform: translate(8%, -4%) scale(0.92);
+  }
+  100% {
+    transform: translate(-5%, -7%) scale(1.04);
+  }
+}
+
+@keyframes gemini-orb-drift-c {
+  0% {
+    transform: translate(0, 0) scale(0.96);
+  }
+  45% {
+    transform: translate(6%, 9%) scale(1.12);
+  }
+  80% {
+    transform: translate(-8%, -3%) scale(0.9);
+  }
+  100% {
+    transform: translate(4%, 5%) scale(1.02);
+  }
+}
+
+@keyframes gemini-orb-drift-d {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(8%, -6%) scale(1.14);
+  }
+  100% {
+    transform: translate(-8%, 4%) scale(0.88);
+  }
+}
+
+@keyframes gemini-dots-twinkle-a {
+  0%,
+  100% {
+    opacity: 0.1;
+  }
+  16% {
+    opacity: 0.62;
+  }
+  32% {
+    opacity: 0.16;
+  }
+  48% {
+    opacity: 0.52;
+  }
+  64% {
+    opacity: 0.12;
+  }
+  82% {
+    opacity: 0.58;
+  }
+}
+
+@keyframes gemini-dots-twinkle-b {
+  0%,
+  100% {
+    opacity: 0.14;
+  }
+  22% {
+    opacity: 0.48;
+  }
+  38% {
+    opacity: 0.18;
+  }
+  56% {
+    opacity: 0.66;
+  }
+  74% {
+    opacity: 0.2;
+  }
+  90% {
+    opacity: 0.44;
+  }
+}
+
+@keyframes gemini-dots-twinkle-c {
+  0%,
+  100% {
+    opacity: 0.08;
+  }
+  20% {
+    opacity: 0.36;
+  }
+  42% {
+    opacity: 0.72;
+  }
+  58% {
+    opacity: 0.14;
+  }
+  76% {
+    opacity: 0.5;
+  }
+  92% {
+    opacity: 0.22;
+  }
+}
+
+@property --gemini-glass-a {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #c4e3fa;
+}
+
+@property --gemini-glass-b {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #cce8fb;
+}
+
+@property --gemini-glass-c {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #d5ecfb;
+}
+
+@property --gemini-glass-d {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #c0e0f7;
+}
+
+@property --gemini-dots-tone {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #8ebfe0;
+}
+
+@keyframes gemini-glass-color-cycle {
+  0%,
+  100% {
+    --gemini-glass-a: #7ec8f5;
+    --gemini-glass-b: #8ed0f8;
+    --gemini-glass-c: #9ad8fa;
+    --gemini-glass-d: #72bdf0;
+    --gemini-dots-tone: #4da3e8;
+  }
+  33% {
+    --gemini-glass-a: #6ee8de;
+    --gemini-glass-b: #7fece3;
+    --gemini-glass-c: #8ef0e8;
+    --gemini-glass-d: #5ce0d4;
+    --gemini-dots-tone: #2ec9bb;
+  }
+  66% {
+    --gemini-glass-a: #72e0b0;
+    --gemini-glass-b: #82e6bc;
+    --gemini-glass-c: #92ecc8;
+    --gemini-glass-d: #62d8a2;
+    --gemini-dots-tone: #2eb888;
+  }
+}
+
+/* Blue-only cycle — landing hero / CTA. Locked to Start Free `#2563EB`. */
+@keyframes gemini-glass-color-cycle-blue {
+  0%,
+  100% {
+    --gemini-glass-a: #2563eb;
+    --gemini-glass-b: #3b82f6;
+    --gemini-glass-c: #60a5fa;
+    --gemini-glass-d: #1d4ed8;
+    --gemini-dots-tone: #2563eb;
+  }
+  33% {
+    --gemini-glass-a: #1d4ed8;
+    --gemini-glass-b: #2563eb;
+    --gemini-glass-c: #3b82f6;
+    --gemini-glass-d: #1e40af;
+    --gemini-dots-tone: #3b82f6;
+  }
+  66% {
+    --gemini-glass-a: #3b82f6;
+    --gemini-glass-b: #60a5fa;
+    --gemini-glass-c: #2563eb;
+    --gemini-glass-d: #2563eb;
+    --gemini-dots-tone: #1d4ed8;
+  }
+}
+
+@keyframes gemini-glass-color-cycle-blue-dark {
+  0%,
+  100% {
+    --gemini-glass-a: #2563eb;
+    --gemini-glass-b: #1d4ed8;
+    --gemini-glass-c: #3b82f6;
+    --gemini-glass-d: #1e40af;
+    --gemini-dots-tone: #3b82f6;
+  }
+  33% {
+    --gemini-glass-a: #1d4ed8;
+    --gemini-glass-b: #2563eb;
+    --gemini-glass-c: #1e40af;
+    --gemini-glass-d: #1e3a8a;
+    --gemini-dots-tone: #2563eb;
+  }
+  66% {
+    --gemini-glass-a: #3b82f6;
+    --gemini-glass-b: #2563eb;
+    --gemini-glass-c: #1d4ed8;
+    --gemini-glass-d: #2563eb;
+    --gemini-dots-tone: #60a5fa;
+  }
+}
+
+@keyframes gemini-glass-color-cycle-dark {
+  0%,
+  100% {
+    --gemini-glass-a: #2563a8;
+    --gemini-glass-b: #2d6eb5;
+    --gemini-glass-c: #3579c2;
+    --gemini-glass-d: #1f5898;
+    --gemini-dots-tone: #4d8fd4;
+  }
+  33% {
+    --gemini-glass-a: #1f7a82;
+    --gemini-glass-b: #258790;
+    --gemini-glass-c: #2b949e;
+    --gemini-glass-d: #196870;
+    --gemini-dots-tone: #3eb8b0;
+  }
+  66% {
+    --gemini-glass-a: #1f8258;
+    --gemini-glass-b: #259064;
+    --gemini-glass-c: #2b9e70;
+    --gemini-glass-d: #196848;
+    --gemini-dots-tone: #3eb888;
+  }
+}
+
+@keyframes gemini-orb-glass-breathe {
+  0%,
+  100% {
+    opacity: 0.72;
+  }
+  50% {
+    opacity: 0.92;
+  }
+}
+
+.chat-gemini-bg {
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.4s ease,
+    visibility 0.4s ease;
+  animation: gemini-glass-color-cycle var(--gemini-glass-cycle-duration, 26s)
+    ease-in-out infinite;
+}
+
+.chat-gemini-bg-visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.chat-gemini-bg-hidden {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.dark .chat-gemini-bg {
+  animation-name: gemini-glass-color-cycle-dark;
+}
+
+.chat-gemini-bg-active {
+  --gemini-glass-cycle-duration: 20s;
+}
+
+.chat-gemini-bg-loading {
+  --gemini-glass-cycle-duration: 15s;
+}
+
+/* Doubled class beats `.dark .chat-gemini-bg` on specificity. */
+.chat-gemini-bg.chat-gemini-bg-blue {
+  animation-name: gemini-glass-color-cycle-blue;
+}
+
+.dark .chat-gemini-bg.chat-gemini-bg-blue {
+  animation-name: gemini-glass-color-cycle-blue-dark;
+}
+
+/* Gemini mesh layout — proportions from reference artboard 507×764, anchored to bottom. */
+.chat-gemini-mesh {
+  container-type: size;
+  top: auto;
+  height: 55.4%;
+  bottom: -5%;
+  transform: translateZ(0);
+  contain: paint;
+  filter: blur(29px) saturate(1.22);
+  filter: blur(calc(100cqw * 29 / 507)) saturate(1.22);
+}
+
+/*
+ * Landing hero / CTA cards are wide and short (esp. iPad). The chat mesh was
+ * authored for a tall portrait frame, so full-width % orbs squash into a flat
+ * band and `100cqw` blur overshoots (~48px at 810px vs 29px at 507px). Keep a
+ * portrait-ish glow footprint centered on the card and cap the blur.
+ */
+.chat-gemini-bg-hero {
+  container-type: size;
+}
+
+.chat-gemini-bg-hero .chat-gemini-mesh {
+  /* Prefer the card as the query container (width/blur), not the mesh itself. */
+  container-type: normal;
+  left: 0;
+  right: 0;
+  /* ~1.4 aspect (chat artboard ≈1.2) so orbs stay round on wide short cards. */
+  width: min(100%, calc(68cqh * 1.4));
+  height: 68%;
+  bottom: -8%;
+  margin-inline: auto;
+  filter: blur(min(32px, calc(100cqw * 29 / 507))) saturate(1.22);
+}
+
+.chat-gemini-bg-top-fade {
+  background: linear-gradient(
+    to bottom,
+    var(--background) 0%,
+    color-mix(in oklab, var(--background) 88%, transparent) 52%,
+    transparent 100%
+  );
+  pointer-events: none;
+}
+
+.dark .chat-gemini-bg-top-fade {
+  background: linear-gradient(
+    to bottom,
+    var(--background) 0%,
+    color-mix(in oklab, var(--background) 88%, transparent) 52%,
+    transparent 100%
+  );
+}
+
+.chat-gemini-mesh-intro {
+  animation: gemini-glow-rise 1.1s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.chat-empty-hero-shell {
+  transition:
+    opacity 0.35s ease,
+    transform 0.35s ease;
+}
+
+.chat-empty-hero-shell-exiting {
+  opacity: 0;
+  transform: translateY(-10px);
+  pointer-events: none;
+}
+
+.chat-empty-hero-shell-exiting .chat-empty-hero-mark,
+.chat-empty-hero-shell-exiting .chat-empty-hero-title {
+  animation: none !important;
+}
+
+.chat-mobile-gemini-empty [data-slot="chat-composer"] {
+  transition: padding 0.35s ease;
+}
+
+.chat-mobile-gemini-threaded [data-slot="chat-composer"] {
+  transition: padding 0.35s ease;
+}
+
+.chat-gemini-bg-loading .chat-gemini-orb {
+  animation-duration: 7s, 9s !important;
+}
+
+.chat-gemini-orb {
+  position: absolute;
+  border-radius: 50%;
+  will-change: transform, opacity;
+  background: radial-gradient(
+    circle,
+    color-mix(in oklab, var(--gemini-glass-tone, var(--gemini-glass-a)) 62%, transparent)
+      0%,
+    color-mix(in oklab, var(--gemini-glass-tone, var(--gemini-glass-a)) 56%, transparent)
+      78%,
+    transparent 78%
+  );
+}
+
+.chat-gemini-orb-a {
+  width: 63.22%;
+  height: 75.78%;
+  bottom: -6%;
+  left: -20.12%;
+  --gemini-glass-tone: var(--gemini-glass-a);
+  animation:
+    gemini-orb-drift-a 16s ease-in-out infinite alternate,
+    gemini-orb-glass-breathe 13s ease-in-out infinite;
+}
+
+.chat-gemini-orb-b {
+  width: 52.42%;
+  height: 62.84%;
+  bottom: -6%;
+  left: 59.37%;
+  --gemini-glass-tone: var(--gemini-glass-b);
+  animation:
+    gemini-orb-drift-b 13s ease-in-out infinite alternate,
+    gemini-orb-glass-breathe 15s ease-in-out infinite;
+  animation-delay: -3.5s, -4s;
+}
+
+.chat-gemini-orb-c {
+  width: 41.64%;
+  height: 49.9%;
+  bottom: 28%;
+  left: 29%;
+  --gemini-glass-tone: var(--gemini-glass-c);
+  animation:
+    gemini-orb-drift-c 19s ease-in-out infinite alternate,
+    gemini-orb-glass-breathe 17s ease-in-out infinite;
+  animation-delay: -7s, -6s;
+}
+
+.chat-gemini-orb-d {
+  width: 35.47%;
+  height: 42.51%;
+  bottom: 25%;
+  left: 35.11%;
+  --gemini-glass-tone: var(--gemini-glass-d);
+  animation:
+    gemini-orb-drift-d 11s ease-in-out infinite alternate,
+    gemini-orb-glass-breathe 11s ease-in-out infinite;
+  animation-delay: -2s, -1.5s;
+}
+
+.dark .chat-gemini-orb {
+  background: radial-gradient(
+    circle,
+    color-mix(in oklab, var(--gemini-glass-tone, var(--gemini-glass-a)) 48%, transparent)
+      0%,
+    color-mix(in oklab, var(--gemini-glass-tone, var(--gemini-glass-a)) 42%, transparent)
+      78%,
+    transparent 78%
+  );
+}
+
+.chat-gemini-bg-active .chat-gemini-orb {
+  animation-duration: 16s, 10s;
+}
+
+.chat-gemini-pattern {
+  mask-image: linear-gradient(to top, black 0%, black 38%, transparent 92%);
+  -webkit-mask-image: linear-gradient(to top, black 0%, black 38%, transparent 92%);
+}
+
+.chat-gemini-dots {
+  background-image: radial-gradient(
+    circle,
+    color-mix(in oklab, var(--gemini-dots-tone) 22%, transparent) 1px,
+    transparent 1px
+  );
+  will-change: opacity;
+}
+
+.chat-gemini-dots-layer-a {
+  background-size: 12px 12px;
+  animation: gemini-dots-twinkle-a 4.6s ease-in-out infinite;
+}
+
+.chat-gemini-dots-layer-b {
+  background-size: 14px 14px;
+  background-position: 4px 2px;
+  animation: gemini-dots-twinkle-b 5.9s ease-in-out infinite;
+  animation-delay: -1.8s;
+}
+
+.chat-gemini-dots-layer-c {
+  background-size: 11px 11px;
+  background-position: 1px 6px;
+  animation: gemini-dots-twinkle-c 3.8s ease-in-out infinite;
+  animation-delay: -2.6s;
+}
+
+/*
+ * Landing-only sparkle grain (`variant="hero"`; chat keeps the dot grid).
+ *
+ * 15 four-point stars scattered in a 64px tile at 0.12–0.25 scale, so each mark
+ * renders ~2–4px — fine enough to read as grain rather than decoration. Masked
+ * rather than painted so the animated `--gemini-dots-tone` still drives color.
+ * Layer sizes 64/53/77 are non-multiples, so their repeats never line up.
+ */
+.chat-gemini-bg-hero .chat-gemini-dots {
+  --gemini-sparkle: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cg fill='%23000'%3E%3Cpath transform='translate(4 10) scale(.16)' d='M8 0c0 4.4 3.6 8 8 8-4.4 0-8 3.6-8 8 0-4.4-3.6-8-8-8 4.4 0 8-3.6 8-8z'/%3E%3Cpath transform='translate(18 3) scale(.22)' d='M8 0c0 4.4 3.6 8 8 8-4.4 0-8 3.6-8 8 0-4.4-3.6-8-8-8 4.4 0 8-3.6 8-8z'/%3E%3Cpath transform='translate(29 17) scale(.13)' d='M8 0c0 4.4 3.6 8 8 8-4.4 0-8 3.6-8 8 0-4.4-3.6-8-8-8 4.4 0 8-3.6 8-8z'/%3E%3Cpath transform='translate(43 7) scale(.18)' d='M8 0c0 4.4 3.6 8 8 8-4.4 0-8 3.6-8 8 0-4.4-3.6-8-8-8 4.4 0 8-3.6 8-8z'/%3E%3Cpath transform='translate(57 14) scale(.25)' d='M8 0c0 4.4 3.6 8 8 8-4.4 0-8 3.6-8 8 0-4.4-3.6-8-8-8 4.4 0 8-3.6 8-8z'/%3E%3Cpath transform='translate(9 27) scale(.2)' d='M8 0c0 4.4 3.6 8 8 8-4.4 0-8 3.6-8 8 0-4.4-3.6-8-8-8 4.4 0 8-3.6 8-8z'/%3E%3Cpath transform='translate(23 38) scale(.14)' d='M8 0c0 4.4 3.6 8 8 8-4.4 0-8 3.6-8 8 0-4.4-3.6-8-8-8 4.4 0 8-3.6 8-8z'/%3E%3Cpath transform='translate(37 30) scale(.12)' d='M8 0c0 4.4 3.6 8 8 8-4.4 0-8 3.6-8 8 0-4.4-3.6-8-8-8 4.4 0 8-3.6 8-8z'/%3E%3Cpath transform='translate(50 41) scale(.19)' d='M8 0c0 4.4 3.6 8 8 8-4.4 0-8 3.6-8 8 0-4.4-3.6-8-8-8 4.4 0 8-3.6 8-8z'/%3E%3Cpath transform='translate(61 33) scale(.15)' d='M8 0c0 4.4 3.6 8 8 8-4.4 0-8 3.6-8 8 0-4.4-3.6-8-8-8 4.4 0 8-3.6 8-8z'/%3E%3Cpath transform='translate(3 47) scale(.23)' d='M8 0c0 4.4 3.6 8 8 8-4.4 0-8 3.6-8 8 0-4.4-3.6-8-8-8 4.4 0 8-3.6 8-8z'/%3E%3Cpath transform='translate(17 58) scale(.17)' d='M8 0c0 4.4 3.6 8 8 8-4.4 0-8 3.6-8 8 0-4.4-3.6-8-8-8 4.4 0 8-3.6 8-8z'/%3E%3Cpath transform='translate(31 51) scale(.13)' d='M8 0c0 4.4 3.6 8 8 8-4.4 0-8 3.6-8 8 0-4.4-3.6-8-8-8 4.4 0 8-3.6 8-8z'/%3E%3Cpath transform='translate(46 62) scale(.21)' d='M8 0c0 4.4 3.6 8 8 8-4.4 0-8 3.6-8 8 0-4.4-3.6-8-8-8 4.4 0 8-3.6 8-8z'/%3E%3Cpath transform='translate(59 54) scale(.15)' d='M8 0c0 4.4 3.6 8 8 8-4.4 0-8 3.6-8 8 0-4.4-3.6-8-8-8 4.4 0 8-3.6 8-8z'/%3E%3C/g%3E%3C/svg%3E");
+  background-image: none;
+  background-color: color-mix(in oklab, var(--gemini-dots-tone) 24%, transparent);
+  -webkit-mask-image: var(--gemini-sparkle);
+  mask-image: var(--gemini-sparkle);
+  -webkit-mask-repeat: repeat;
+  mask-repeat: repeat;
+  mask-mode: alpha;
+}
+
+.chat-gemini-bg-hero .chat-gemini-dots-layer-a {
+  -webkit-mask-size: 64px 64px;
+  mask-size: 64px 64px;
+}
+
+.chat-gemini-bg-hero .chat-gemini-dots-layer-b {
+  -webkit-mask-size: 53px 53px;
+  mask-size: 53px 53px;
+  -webkit-mask-position: 19px 31px;
+  mask-position: 19px 31px;
+}
+
+.chat-gemini-bg-hero .chat-gemini-dots-layer-c {
+  -webkit-mask-size: 77px 77px;
+  mask-size: 77px 77px;
+  -webkit-mask-position: 41px 12px;
+  mask-position: 41px 12px;
+}
+
+.chat-gemini-pattern-active .chat-gemini-dots {
+  animation-duration: 3.2s;
+}
+
+.chat-gemini-pattern-loading .chat-gemini-dots {
+  animation-duration: 2s;
+}
+
+@keyframes chat-empty-hero-mark-in {
+  0% {
+    opacity: 0;
+    transform: translateY(10px) scale(0.88);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes chat-empty-hero-title-in {
+  0% {
+    opacity: 0;
+    transform: translateY(12px);
+    filter: blur(4px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes chat-empty-hero-mark-breathe {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-2px);
+  }
+}
+
+
+.chat-empty-hero-mark {
+  animation:
+    chat-empty-hero-mark-in 0.7s cubic-bezier(0.22, 1, 0.36, 1) both,
+    chat-empty-hero-mark-breathe 5.5s ease-in-out 0.7s infinite;
+}
+
+.chat-empty-hero-mark::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom right,
+    color-mix(in oklch, white 32%, transparent),
+    color-mix(in oklch, white 6%, transparent) 45%,
+    transparent 70%
+  );
+  box-shadow: inset 0 1px 0 0 color-mix(in oklch, white 68%, transparent);
+}
+
+.dark .chat-empty-hero-mark::after {
+  background: linear-gradient(
+    to bottom right,
+    color-mix(in oklch, white 14%, transparent),
+    color-mix(in oklch, white 4%, transparent) 45%,
+    transparent 70%
+  );
+  box-shadow: inset 0 1px 0 0 color-mix(in oklch, var(--foreground) 12%, transparent);
+}
+
+
+.chat-empty-hero-title {
+  animation: chat-empty-hero-title-in 0.75s cubic-bezier(0.22, 1, 0.36, 1) 0.12s both;
+}
+
+.chat-empty-hero-name {
+  background-image: linear-gradient(
+    120deg,
+    var(--foreground) 0%,
+    color-mix(in oklab, var(--foreground) 72%, #0284c7) 100%
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.dark .chat-empty-hero-name {
+  background-image: linear-gradient(
+    120deg,
+    var(--foreground) 0%,
+    color-mix(in oklab, var(--foreground) 70%, #7dd3fc) 100%
+  );
+}
+
+@keyframes chat-skeleton-shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.chat-skeleton-shimmer {
+  position: relative;
+  overflow: hidden;
+  background-color: color-mix(in oklch, var(--foreground) 6%, transparent);
+}
+
+.chat-skeleton-shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in oklch, var(--foreground) 8%, transparent),
+    transparent
+  );
+  animation: chat-skeleton-shimmer 1.85s ease-in-out infinite;
+}
+
+.chat-mobile-skeleton-stagger-1::after {
+  animation-delay: 120ms;
+}
+
+.chat-mobile-skeleton-stagger-2::after {
+  animation-delay: 240ms;
+}
+
+.chat-mobile-skeleton-stagger-3::after {
+  animation-delay: 360ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chat-gemini-bg,
+  .chat-gemini-mesh-intro,
+  .chat-gemini-orb,
+  .chat-gemini-dots,
+  .chat-empty-hero-mark,
+  .chat-empty-hero-title,
+  .chat-empty-hero-shell,
+  .chat-skeleton-shimmer::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

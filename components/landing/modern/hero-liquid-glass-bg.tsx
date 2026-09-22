@@ -1,3 +1,5 @@
+"use client"
+
 import { ChatMobileGeminiBackground } from "@/components/app-shell/chat-mobile-gemini-background"
 import { cn } from "@/lib/utils"
 

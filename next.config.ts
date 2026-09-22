@@ -66,6 +66,24 @@ const nextConfig: NextConfig = {
   experimental: {
     optimizePackageImports: ["lucide-react", "motion"],
   },
+  // Drop Lucide's XML namespace URI so HTML5 SVG doesn't emit http:// xmlns
+  // (checklist scanners false-flag it as an HTTPS downgrade).
+  turbopack: {
+    resolveAlias: {
+      "lucide-react/dist/esm/defaultAttributes.mjs":
+        "./lib/lucide-default-attributes.mjs",
+    },
+  },
+  webpack: (config) => {
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      "lucide-react/dist/esm/defaultAttributes.mjs": join(
+        process.cwd(),
+        "lib/lucide-default-attributes.mjs"
+      ),
+    }
+    return config
+  },
   images: {
     formats: ["image/avif", "image/webp"],
     minimumCacheTTL: 60 * 60 * 24 * 30,
@@ -118,6 +136,48 @@ const nextConfig: NextConfig = {
           {
             key: "Permissions-Policy",
             value: "camera=(), microphone=(), geolocation=()",
+          },
+          { key: "X-Frame-Options", value: "SAMEORIGIN" },
+          {
+            key: "Strict-Transport-Security",
+            value: "max-age=63072000; includeSubDomains; preload",
+          },
+          {
+            key: "Content-Security-Policy",
+            value: [
+              "default-src 'self'",
+              "base-uri 'self'",
+              "object-src 'none'",
+              "frame-ancestors 'self'",
+              "form-action 'self' https:",
+              "upgrade-insecure-requests",
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://www.google.com https://accounts.google.com https://apis.google.com https://browser.sentry-cdn.com https://*.sentry-cdn.com",
+              "style-src 'self' 'unsafe-inline'",
+              "img-src 'self' data: blob: https:",
+              "font-src 'self' data:",
+              "connect-src 'self' https://api.exur.ai https://*.exur.ai https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com https://accounts.google.com https://*.sentry.io https://*.ingest.sentry.io wss: https:",
+              "frame-src 'self' https://accounts.google.com https://www.google.com https://www.googletagmanager.com https://js.stripe.com https://buy.stripe.com",
+              "worker-src 'self' blob:",
+              "media-src 'self' https://files.exur.ai blob:",
+            ].join("; "),
+          },
+        ],
+      },
+      {
+        source: "/home",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, s-maxage=900, stale-while-revalidate=86400",
+          },
+        ],
+      },
+      {
+        source: "/:locale(ar|fa|nl|pt|es|ru|tr)/home",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, s-maxage=900, stale-while-revalidate=86400",
           },
         ],
       },

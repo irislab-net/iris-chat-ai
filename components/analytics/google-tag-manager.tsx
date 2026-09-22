@@ -1,8 +1,10 @@
 "use client"
 
+import * as React from "react"
+import { usePathname } from "next/navigation"
 import Script from "next/script"
 
-import { GTM_ID } from "@/lib/analytics"
+import { GTM_ID, isChatGtmEnabled } from "@/lib/analytics"
 
 declare global {
   interface Window {
@@ -10,11 +12,15 @@ declare global {
   }
 }
 
-type GoogleTagManagerProps = {
-  enabled?: boolean
-}
+/** GTM is chat-only; read host on the client so the root layout stays static. */
+function GoogleTagManager() {
+  const pathname = usePathname() ?? "/"
+  const enabled = React.useSyncExternalStore(
+    () => () => {},
+    () => isChatGtmEnabled(pathname, window.location.hostname),
+    () => false
+  )
 
-function GoogleTagManager({ enabled = false }: GoogleTagManagerProps) {
   if (!enabled) return null
 
   return (

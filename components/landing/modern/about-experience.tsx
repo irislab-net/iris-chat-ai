@@ -10,7 +10,6 @@ import { Button } from "@/components/ui/button"
 import { useIsDesktop } from "@/hooks/use-media-query"
 import {
   ABOUT_NARRATION_CDN,
-  ABOUT_NARRATION_CUES,
   ABOUT_NARRATION_DURATION,
   ABOUT_NARRATION_SRC,
   cueIndexAt,

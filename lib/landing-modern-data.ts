@@ -48,35 +48,35 @@ export const HERO_DEMO_EXCHANGE_COUNT = 10
 
 export const HERO_DEMO_AVATARS = [
   {
-    src: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=96&h=96&q=80",
+    src: "/landing/avatars/al.webp",
     initials: "AL",
   },
   {
-    src: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=96&h=96&q=80",
+    src: "/landing/avatars/jn.webp",
     initials: "JN",
   },
   {
-    src: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=96&h=96&q=80",
+    src: "/landing/avatars/mr.webp",
     initials: "MR",
   },
   {
-    src: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=96&h=96&q=80",
+    src: "/landing/avatars/dk.webp",
     initials: "DK",
   },
   {
-    src: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=96&h=96&q=80",
+    src: "/landing/avatars/sp.webp",
     initials: "SP",
   },
   {
-    src: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=96&h=96&q=80",
+    src: "/landing/avatars/tw.webp",
     initials: "TW",
   },
   {
-    src: "https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?auto=format&fit=crop&w=96&h=96&q=80",
+    src: "/landing/avatars/nl.webp",
     initials: "NL",
   },
   {
-    src: "https://images.unsplash.com/photo-1544723795-3fb6469f5b39?auto=format&fit=crop&w=96&h=96&q=80",
+    src: "/landing/avatars/rk.webp",
     initials: "RK",
   },
 ] as const

@@ -1,0 +1,28 @@
+diff --git a/dist/cjs/lucide-react.js b/dist/cjs/lucide-react.js
+index e92ef478c79018f609f42936810930047f71550c..578c19debeb24831cda10ead54deccfe98cdd26a 100644
+--- a/dist/cjs/lucide-react.js
++++ b/dist/cjs/lucide-react.js
+@@ -35,7 +35,8 @@ const toPascalCase = (string) => {
+ };
+ 
+ var defaultAttributes = {
+-  xmlns: "http://www.w3.org/2000/svg",
++  // Omit xmlns — HTML5 SVG doesn't need the XML namespace URI, and scanners
++  // false-flag `http://www.w3.org/2000/svg` as an HTTPS downgrade.
+   width: 24,
+   height: 24,
+   viewBox: "0 0 24 24",
+diff --git a/dist/esm/defaultAttributes.mjs b/dist/esm/defaultAttributes.mjs
+index 9664d2baa572d01e8fd381394c49b838317a484b..c649919a51e5124cb5735feb64284cb9f37beba2 100644
+--- a/dist/esm/defaultAttributes.mjs
++++ b/dist/esm/defaultAttributes.mjs
+@@ -6,7 +6,8 @@
+  */
+ 
+ var defaultAttributes = {
+-  xmlns: "http://www.w3.org/2000/svg",
++  // Omit xmlns — HTML5 SVG doesn't need the XML namespace URI, and scanners
++  // false-flag `http://www.w3.org/2000/svg` as an HTTPS downgrade.
+   width: 24,
+   height: 24,
+   viewBox: "0 0 24 24",

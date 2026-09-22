@@ -131,8 +131,8 @@ export function GoalsSection() {
 
             <figure
               className={cn(landingGlassSurface, styles.tile, "relative bg-white/42 dark:bg-white/8")}
-              aria-label={t("diagramAria")}
             >
+              <figcaption className="sr-only">{t("diagramAria")}</figcaption>
               <span aria-hidden className={styles.tileBackdrop} />
               <span
                 aria-hidden

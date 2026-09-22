@@ -34,14 +34,14 @@ describe("resolveHostRouting", () => {
     })
   })
 
-  it("lets marketing root through (landing is host-aware `/`)", () => {
+  it("rewrites marketing root to /home (static landing segment)", () => {
     expect(
       resolveHostRouting({
         hostname: "exur.ai",
         pathname: "/",
         search: "",
       })
-    ).toEqual({ type: "next" })
+    ).toEqual({ type: "rewrite", pathname: "/home" })
 
     expect(
       resolveHostRouting({
@@ -49,7 +49,7 @@ describe("resolveHostRouting", () => {
         pathname: "/ar",
         search: "",
       })
-    ).toEqual({ type: "next" })
+    ).toEqual({ type: "rewrite", pathname: "/ar/home" })
   })
 
   it("canonicalizes /home on marketing to /", () => {

@@ -1,0 +1,225 @@
+/* Modern marketing landing motion utilities. */
+
+@keyframes hero-fluid-drift-a {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(3%, -2.5%, 0) scale(1.04);
+  }
+}
+
+@keyframes hero-fluid-drift-b {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(-2.5%, 2%, 0) scale(1.03);
+  }
+}
+
+@keyframes hero-fluid-drift-c {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(1.5%, -1.5%, 0) scale(1.02);
+  }
+}
+
+@keyframes hero-fluid-glow {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.82;
+  }
+}
+
+.landing-modern .hero-fluid-wave {
+  transform-box: fill-box;
+  transform-origin: center;
+  will-change: transform;
+}
+
+.landing-modern .hero-fluid-wave-a {
+  animation: hero-fluid-drift-a 22s ease-in-out infinite;
+}
+
+.landing-modern .hero-fluid-wave-b {
+  animation: hero-fluid-drift-b 26s ease-in-out infinite;
+}
+
+.landing-modern .hero-fluid-wave-c {
+  animation: hero-fluid-drift-c 19s ease-in-out infinite;
+}
+
+.landing-modern .hero-fluid-glow {
+  animation: hero-fluid-glow 16s ease-in-out infinite;
+}
+
+@keyframes hero-liquid-drift-1 {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(4%, -3%, 0) scale(1.06);
+  }
+}
+
+@keyframes hero-liquid-drift-2 {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(-5%, 4%, 0) scale(1.05);
+  }
+}
+
+@keyframes hero-liquid-drift-3 {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(3%, 5%, 0) scale(1.04);
+  }
+}
+
+@keyframes hero-liquid-drift-4 {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(-3%, -4%, 0) scale(1.03);
+  }
+}
+
+.landing-modern .hero-liquid-orb {
+  transform-box: fill-box;
+  transform-origin: center;
+  will-change: transform;
+}
+
+.landing-modern .hero-liquid-orb-a {
+  animation: hero-liquid-drift-1 24s ease-in-out infinite;
+}
+
+.landing-modern .hero-liquid-orb-b {
+  animation: hero-liquid-drift-2 28s ease-in-out infinite;
+}
+
+.landing-modern .hero-liquid-orb-c {
+  animation: hero-liquid-drift-3 22s ease-in-out infinite;
+}
+
+.landing-modern .hero-liquid-orb-d {
+  animation: hero-liquid-drift-4 20s ease-in-out infinite;
+}
+
+/* Modern landing utilities */
+@keyframes landing-pulse-dot {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.45;
+    transform: scale(0.8);
+  }
+}
+
+@keyframes landing-float-slow {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
+
+@keyframes landing-node-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.2;
+    transform: scale(1.12);
+  }
+}
+
+.landing-modern .animate-pulse-dot {
+  animation: landing-pulse-dot 2.2s ease-in-out infinite;
+}
+
+.landing-modern .animate-float-slow {
+  animation: landing-float-slow 7s ease-in-out infinite;
+}
+
+.landing-modern .market-node-pulse {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: landing-node-pulse 2.4s ease-in-out infinite;
+}
+
+.landing-modern .font-mono {
+  font-family: var(--font-mono-modern), ui-monospace, monospace;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-modern .hero-fluid-wave,
+  .landing-modern .hero-fluid-glow,
+  .landing-modern .hero-liquid-orb {
+    animation: none;
+  }
+
+  .landing-modern .animate-pulse-dot,
+  .landing-modern .animate-float-slow,
+  .landing-modern .market-node-pulse {
+    animation: none;
+  }
+}
+
+/* Print: keep copy, drop chrome/motion surfaces. */
+@media print {
+  .landing-modern header,
+  .landing-modern [aria-hidden="true"],
+  .landing-modern .chat-gemini-bg,
+  .landing-modern [data-slot="sheet-trigger"],
+  .landing-modern [data-demo-send],
+  .landing-modern button[aria-label="Theme"],
+  .landing-modern button[aria-label="Language"],
+  .landing-modern button[aria-label="Open menu"] {
+    display: none !important;
+  }
+
+  .landing-modern,
+  .landing-modern * {
+    background: transparent !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    color: #000 !important;
+  }
+
+  .landing-modern a[href]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.85em;
+    font-weight: 400;
+  }
+
+  .landing-modern a[href^="#"]::after,
+  .landing-modern a[href^="/"]::after {
+    content: "";
+  }
+}

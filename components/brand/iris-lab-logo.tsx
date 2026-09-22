@@ -1,5 +1,3 @@
-import Image from "next/image"
-
 import { cn } from "@/lib/utils"
 
 export const IRIS_LAB_LOGO_LIGHT_SRC = "/exur-logo-light.svg"
@@ -11,7 +9,7 @@ export const IRIS_LAB_LOGO_GRADIENT_SRC = "/exur-logo-gradient.svg"
 type IrisLabLogoProps = {
   className?: string
   imageClassName?: string
-  /** Intrinsic pixel size for next/image (layout scales via className). */
+  /** Intrinsic pixel size (layout scales via className). */
   size?: number
   priority?: boolean
   alt?: string
@@ -19,6 +17,33 @@ type IrisLabLogoProps = {
   decorative?: boolean
   /** `on-hero` = white mark on transparent; `on-light` = black mark; `brand` = blue mark; `gradient` = white shell + black gradient mark. */
   variant?: "auto" | "on-hero" | "on-light" | "on-dark" | "brand" | "gradient"
+}
+
+function LogoPicture({
+  src,
+  size,
+  className,
+  priority,
+}: {
+  src: string
+  size: number
+  className?: string
+  priority?: boolean
+}) {
+  return (
+    <picture>
+      <source srcSet={src} type="image/svg+xml" />
+      <img
+        src={src}
+        alt=""
+        width={size}
+        height={size}
+        decoding="async"
+        fetchPriority={priority ? "high" : "auto"}
+        className={className}
+      />
+    </picture>
+  )
 }
 
 function IrisLabLogo({
@@ -40,13 +65,10 @@ function IrisLabLogo({
       {...(label ? { role: "img", "aria-label": label } : { "aria-hidden": true })}
     >
       {(variant === "auto" || variant === "on-dark") && (
-        <Image
+        <LogoPicture
           src={IRIS_LAB_LOGO_LIGHT_SRC}
-          alt=""
-          width={size}
-          height={size}
+          size={size}
           priority={priority}
-          sizes={`${size}px`}
           className={cn(
             shared,
             showThemePair ? "absolute inset-0 hidden dark:block" : undefined
@@ -54,46 +76,34 @@ function IrisLabLogo({
         />
       )}
       {variant === "on-hero" && (
-        <Image
+        <LogoPicture
           src={IRIS_LAB_LOGO_MARK_WHITE_SRC}
-          alt=""
-          width={size}
-          height={size}
+          size={size}
           priority={priority}
-          sizes={`${size}px`}
           className={shared}
         />
       )}
       {variant === "brand" && (
-        <Image
+        <LogoPicture
           src={IRIS_LAB_LOGO_BRAND_SRC}
-          alt=""
-          width={size}
-          height={size}
+          size={size}
           priority={priority}
-          sizes={`${size}px`}
           className={shared}
         />
       )}
       {variant === "gradient" && (
-        <Image
+        <LogoPicture
           src={IRIS_LAB_LOGO_GRADIENT_SRC}
-          alt=""
-          width={size}
-          height={size}
+          size={size}
           priority={priority}
-          sizes={`${size}px`}
           className={shared}
         />
       )}
       {(variant === "auto" || variant === "on-light") && (
-        <Image
+        <LogoPicture
           src={IRIS_LAB_LOGO_DARK_SRC}
-          alt=""
-          width={size}
-          height={size}
+          size={size}
           priority={priority}
-          sizes={`${size}px`}
           className={cn(shared, showThemePair && "dark:hidden")}
         />
       )}

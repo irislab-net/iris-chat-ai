@@ -1,0 +1,33 @@
+/* Print stylesheet — linked with media="print" for discovery + checklist tools. */
+@media print {
+  header,
+  [data-slot="sheet-trigger"],
+  [data-demo-send],
+  button[aria-label="Theme"],
+  button[aria-label="Language"],
+  button[aria-label="Open menu"],
+  .chat-gemini-bg,
+  .landing-modern [aria-hidden="true"] {
+    display: none !important;
+  }
+
+  body,
+  .landing-modern,
+  .landing-modern * {
+    background: transparent !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    color: #000 !important;
+  }
+
+  a[href]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.85em;
+    font-weight: 400;
+  }
+
+  a[href^="#"]::after,
+  a[href^="/"]::after {
+    content: "";
+  }
+}

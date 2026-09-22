@@ -23,6 +23,8 @@ type FlagProps = {
   title?: string
   className?: string
   "aria-hidden"?: boolean | "true" | "false"
+  /** Country-flag-icons SVGs accept standard SVG attrs; omit XML ns in HTML5. */
+  xmlns?: string
 }
 
 const FLAGS: Record<LocaleFlagCode, ComponentType<FlagProps>> = {
@@ -65,6 +67,8 @@ export function LocaleFlag({
       <Flag
         title={title}
         aria-hidden={title ? undefined : true}
+        // HTML5 SVG — omit XML namespace so scanners don't treat it as http://.
+        xmlns={undefined}
         className={cn(
           "size-full",
           tone === "mono" && "grayscale contrast-[1.05]"

@@ -9,6 +9,7 @@ import {
   isAnalyticsEnabled,
   trackPageView,
 } from "@/lib/analytics"
+import { isMarketingHost } from "@/lib/hosts"
 
 declare global {
   interface Window {
@@ -16,9 +17,21 @@ declare global {
   }
 }
 
+function useHostname() {
+  return React.useSyncExternalStore(
+    () => () => {},
+    () => window.location.hostname,
+    () => ""
+  )
+}
+
 function GoogleAnalytics() {
   const pathname = usePathname()
+  const hostname = useHostname()
   const initialPath = React.useRef<string | null>(null)
+  const [idleReady, setIdleReady] = React.useState(false)
+
+  const isMarketing = Boolean(hostname) && isMarketingHost(hostname)
 
   // SPA navigations — initial load is covered by gtag config.
   React.useEffect(() => {
@@ -32,7 +45,25 @@ function GoogleAnalytics() {
     trackPageView(pathname)
   }, [pathname])
 
-  if (!isAnalyticsEnabled()) return null
+  // Marketing only: wait for idle so GA does not compete with LCP/TBT.
+  React.useEffect(() => {
+    if (!isAnalyticsEnabled() || !isMarketing) return
+
+    const idle = window.requestIdleCallback
+    if (typeof idle === "function") {
+      const handle = idle(() => setIdleReady(true), { timeout: 5000 })
+      return () => window.cancelIdleCallback(handle)
+    }
+    const handle = window.setTimeout(() => setIdleReady(true), 2500)
+    return () => window.clearTimeout(handle)
+  }, [isMarketing])
+
+  const boot =
+    isAnalyticsEnabled() &&
+    Boolean(hostname) &&
+    (!isMarketing || idleReady)
+
+  if (!boot) return null
 
   // Google CDN scripts rotate content, so Subresource Integrity hashes are not viable.
   return (

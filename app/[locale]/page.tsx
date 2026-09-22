@@ -3,10 +3,6 @@ import { Link } from "@/i18n/navigation"
 import dynamic from "next/dynamic"
 import { Suspense } from "react"
 
-import {
-  generateLandingMetadata,
-  MarketingLandingPage,
-} from "@/components/landing/modern/landing-route"
 import { fetchPublicHomeSnapshot } from "@/lib/api/public-home"
 import { AppShell } from "@/components/app-shell/app-shell"
 import { DashboardSkeleton } from "@/components/dashboard/dashboard"
@@ -15,7 +11,6 @@ import {
   SITE_NAME,
   SITE_TITLE,
 } from "@/lib/seo"
-import { isMarketingRequest } from "@/lib/request-host"
 import {
   APP_PATH,
   AUTH_SUCCESS_ROBOTS,
@@ -63,12 +58,7 @@ type PageProps = {
   searchParams: Promise<{ tab?: string | string[] }>
 }
 
-export async function generateMetadata({
-  params,
-}: PageProps): Promise<Metadata> {
-  if (await isMarketingRequest()) {
-    return generateLandingMetadata({ params })
-  }
+export async function generateMetadata(): Promise<Metadata> {
   return newsMetadata
 }
 
@@ -87,11 +77,8 @@ async function NewsWithSnapshot({
   )
 }
 
-export default async function RootPage({ params, searchParams }: PageProps) {
-  if (await isMarketingRequest()) {
-    return <MarketingLandingPage params={params} />
-  }
-
+/** Chat desk at `/` (chat.exur.ai / local). Marketing apex rewrites `/` → `/home`. */
+export default async function RootPage({ searchParams }: PageProps) {
   const query = await searchParams
   const tabValue = Array.isArray(query.tab) ? query.tab[0] : query.tab
   const initialTab = resolveWorkspaceTab(tabValue)

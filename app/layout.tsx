@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from "next"
-import { headers } from "next/headers"
 import Script from "next/script"
 import { getLocale } from "next-intl/server"
 
@@ -12,7 +11,6 @@ import { ThemeExtras } from "@/components/theme-provider"
 import { Toaster } from "@/components/ui/sonner"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { ThemeProvider } from "@wrksz/themes/next"
-import { isChatGtmEnabled } from "@/lib/analytics"
 import {
   BROWSER_CHROME_COLORS,
 } from "@/lib/browser-chrome"
@@ -130,10 +128,6 @@ export default async function RootLayout({
     // Image / metadata routes (e.g. opengraph-image) have no intl provider.
   }
   const dir = localeDirection(locale)
-  const headerStore = await headers()
-  const pathname = headerStore.get("x-pathname") ?? "/"
-  const hostname = headerStore.get("x-host")
-  const chatGtmEnabled = isChatGtmEnabled(pathname, hostname)
 
   return (
     <html
@@ -143,7 +137,8 @@ export default async function RootLayout({
       className="font-sans antialiased"
     >
       <body>
-        <GoogleTagManager enabled={chatGtmEnabled} />
+        <link rel="stylesheet" href="/styles/print.css" media="print" />
+        <GoogleTagManager />
         <noscript>
           <div
             style={{

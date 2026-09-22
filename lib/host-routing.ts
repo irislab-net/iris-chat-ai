@@ -16,6 +16,8 @@ import {
 export type HostRouteAction =
   | { type: "next" }
   | { type: "redirect"; location: string; status: 308 }
+  /** Internal rewrite — browser URL unchanged (marketing `/` → `/home`). */
+  | { type: "rewrite"; pathname: string }
 
 function absoluteOn(origin: string, pathname: string, search: string): string {
   return `${origin}${pathname}${search}`
@@ -86,7 +88,15 @@ export function resolveHostRouting(input: {
       }
     }
 
-    // Marketing `/` (and `/ar`) render the landing via host-aware root page.
+    // Marketing `/` rewrites to `/home` so the landing segment can stay
+    // static/cacheable (no per-request `headers()` host check on `/`).
+    if (pathnameWithoutLocale === "/") {
+      return {
+        type: "rewrite",
+        pathname: withLocalePrefix(localePrefix, "/home"),
+      }
+    }
+
     return { type: "next" }
   }
 

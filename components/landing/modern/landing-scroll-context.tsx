@@ -21,34 +21,53 @@ export function LandingScrollProvider({ children }: { children: React.ReactNode 
   )
 
   React.useEffect(() => {
-    ensureGsapScroll()
-
+    let cancelled = false
     const triggers: ScrollTrigger[] = []
+    let frame = 0
+    let fonts: Promise<void> | undefined
 
-    for (const section of LANDING_SCROLL_SECTIONS) {
-      const el = document.getElementById(section.id)
-      if (!el) continue
+    const onLoad = () => ScrollTrigger.refresh()
 
-      triggers.push(
-        ScrollTrigger.create({
-          trigger: el,
-          start: LANDING_MOTION.spyStart,
-          end: LANDING_MOTION.spyEnd,
-          onEnter: () => setActiveSectionId(section.id),
-          onEnterBack: () => setActiveSectionId(section.id),
-        })
-      )
+    const start = () => {
+      if (cancelled) return
+      ensureGsapScroll()
+
+      for (const section of LANDING_SCROLL_SECTIONS) {
+        const el = document.getElementById(section.id)
+        if (!el) continue
+
+        triggers.push(
+          ScrollTrigger.create({
+            trigger: el,
+            start: LANDING_MOTION.spyStart,
+            end: LANDING_MOTION.spyEnd,
+            onEnter: () => setActiveSectionId(section.id),
+            onEnterBack: () => setActiveSectionId(section.id),
+          })
+        )
+      }
+
+      // Reveals measure after first paint, fonts, and late images — refresh so
+      // start positions stay honest as the page settles.
+      const refresh = () => ScrollTrigger.refresh()
+      frame = requestAnimationFrame(refresh)
+      window.addEventListener("load", onLoad)
+      fonts = document.fonts?.ready.then(refresh)
     }
 
-    // Reveals measure after first paint, fonts, and late images — refresh so
-    // start positions stay honest as the page settles.
-    const refresh = () => ScrollTrigger.refresh()
-    const frame = requestAnimationFrame(refresh)
-    const onLoad = () => refresh()
-    window.addEventListener("load", onLoad)
-    const fonts = document.fonts?.ready.then(refresh)
+    // Defer ScrollTrigger off the LCP critical path.
+    let idleHandle: number | undefined
+    let timeoutHandle: number | undefined
+    if (typeof window.requestIdleCallback === "function") {
+      idleHandle = window.requestIdleCallback(start, { timeout: 2000 })
+    } else {
+      timeoutHandle = window.setTimeout(start, 200)
+    }
 
     return () => {
+      cancelled = true
+      if (idleHandle !== undefined) window.cancelIdleCallback(idleHandle)
+      if (timeoutHandle !== undefined) window.clearTimeout(timeoutHandle)
       cancelAnimationFrame(frame)
       window.removeEventListener("load", onLoad)
       void fonts

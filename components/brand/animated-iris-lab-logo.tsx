@@ -33,7 +33,6 @@ export function AnimatedIrisLabLogo({
     >
       <svg
         viewBox={IRIS_LAB_LOGO_VIEWBOX}
-        xmlns="http://www.w3.org/2000/svg"
         className="size-full overflow-visible"
         fill="none"
         aria-hidden

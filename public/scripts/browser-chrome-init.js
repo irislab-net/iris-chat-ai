@@ -39,5 +39,5 @@
       document.head.appendChild(apple)
     }
     apple.setAttribute("content", isDark ? "black-translucent" : "default")
-  } catch (e) {}
+  } catch (_e) {}
 })()

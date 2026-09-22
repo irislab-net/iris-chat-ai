@@ -50,32 +50,37 @@ export function BentoSection() {
           />
         </ScrollReveal>
 
-        <ScrollRevealGroup className={cn(landingContentWide, "relative grid grid-cols-1 gap-6 md:grid-cols-3 md:gap-4", landingAfterHeader)}>
-          {HOW_IT_WORKS_STEP_KEYS.map((key, index) => (
-            <article
-              key={key}
-              className={cn(
-                landingGlassSurface,
-                "group relative flex flex-col items-center overflow-hidden rounded-[1.75rem] bg-white/42 text-center dark:bg-white/8",
-                "px-6 py-8 sm:px-7 sm:py-9"
-              )}
-            >
-              <span
-                aria-hidden
-                className={cn(
-                  landingGlassSheen,
-                  "pointer-events-none absolute inset-0 rounded-[1.75rem]"
-                )}
-              />
-              <HowItWorksStepIcon index={index} />
-              <h3 className={cn("relative z-10", landingTitleCard)}>
-                {tSteps(`${key}.headline`)}
-              </h3>
-              <p className="relative z-10 mt-2 text-sm leading-relaxed text-muted-foreground">
-                {tSteps(`${key}.desc`)}
-              </p>
-            </article>
-          ))}
+        <ScrollRevealGroup
+          className={cn(landingContentWide, landingAfterHeader)}
+        >
+          <ol className="relative m-0 grid list-none grid-cols-1 gap-6 p-0 md:grid-cols-3 md:gap-4">
+            {HOW_IT_WORKS_STEP_KEYS.map((key, index) => (
+              <li key={key}>
+                <article
+                  className={cn(
+                    landingGlassSurface,
+                    "group relative flex h-full flex-col items-center overflow-hidden rounded-[1.75rem] bg-white/42 text-center dark:bg-white/8",
+                    "px-6 py-8 sm:px-7 sm:py-9"
+                  )}
+                >
+                  <span
+                    aria-hidden
+                    className={cn(
+                      landingGlassSheen,
+                      "pointer-events-none absolute inset-0 rounded-[1.75rem]"
+                    )}
+                  />
+                  <HowItWorksStepIcon index={index} />
+                  <h3 className={cn("relative z-10", landingTitleCard)}>
+                    {tSteps(`${key}.headline`)}
+                  </h3>
+                  <p className="relative z-10 mt-2 text-sm leading-relaxed text-muted-foreground">
+                    {tSteps(`${key}.desc`)}
+                  </p>
+                </article>
+              </li>
+            ))}
+          </ol>
         </ScrollRevealGroup>
       </div>
     </section>

@@ -29,6 +29,7 @@ import {
   trackLogout,
   type LoginSource,
 } from "@/lib/analytics"
+import { isMarketingHost } from "@/lib/hosts"
 import { APP_PATH } from "@/lib/site"
 import { resetClientSessionOnLogout } from "@/lib/session-reset"
 
@@ -58,6 +59,21 @@ const POPUP_REFRESH_DELAY_MS = 450
 
 async function wait(ms: number) {
   await new Promise((resolve) => window.setTimeout(resolve, ms))
+}
+
+function isMarketingDocument(): boolean {
+  if (typeof window === "undefined") return false
+  return isMarketingHost(window.location.hostname)
+}
+
+function whenIdle(task: () => void) {
+  const idle = window.requestIdleCallback
+  if (idle) {
+    const handle = idle(task, { timeout: 4000 })
+    return () => window.cancelIdleCallback(handle)
+  }
+  const handle = window.setTimeout(task, 1200)
+  return () => clearTimeout(handle)
 }
 
 function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -158,23 +174,44 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     if (isOAuthPopupCallback) return
 
     let cancelled = false
-    ;(async () => {
-      try {
-        const session = await bootstrapSession()
-        if (!cancelled) {
-          setUser(session.user)
-          setChatRegisteredUserId(session.user?.id ?? null)
-          if (session.user) setAnalyticsUser(session.user)
+
+    const runBootstrap = () => {
+      void (async () => {
+        try {
+          const session = await bootstrapSession()
+          if (!cancelled) {
+            setUser(session.user)
+            setChatRegisteredUserId(session.user?.id ?? null)
+            if (session.user) setAnalyticsUser(session.user)
+          }
+        } catch {
+          if (!cancelled) {
+            setUser(null)
+            setChatRegisteredUserId(null)
+          }
+        } finally {
+          if (!cancelled) setLoading(false)
         }
-      } catch {
-        if (!cancelled) {
-          setUser(null)
-          setChatRegisteredUserId(null)
-        }
-      } finally {
+      })()
+    }
+
+    // Marketing: defer session + One Tap until idle so LCP/TBT stay clean.
+    if (isMarketingDocument()) {
+      const cancelIdle = whenIdle(() => {
+        if (!cancelled) runBootstrap()
+      })
+      // Async so we do not sync-setState in the effect body (eslint).
+      const loadingTimer = window.setTimeout(() => {
         if (!cancelled) setLoading(false)
+      }, 0)
+      return () => {
+        cancelled = true
+        cancelIdle()
+        window.clearTimeout(loadingTimer)
       }
-    })()
+    }
+
+    runBootstrap()
     return () => {
       cancelled = true
     }
@@ -315,7 +352,9 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     !user &&
     !loginPending &&
     !consentOpen &&
-    !isOAuthPopupCallback
+    !isOAuthPopupCallback &&
+    // One Tap competes with LCP on the marketing apex — keep it on chat only.
+    !isMarketingDocument()
 
   const value = React.useMemo<AuthContextValue>(
     () => ({
