@@ -184,16 +184,19 @@ export function PricingSection() {
         </ScrollReveal>
 
         <ScrollRevealGroup className={cn(landingContentWide, "grid gap-6 lg:grid-cols-3 lg:items-stretch lg:gap-5", landingAfterHeader)}>
-          {PRICING_PLAN_META.map((plan) => (
-            <PlanCard
-              key={plan.key}
-              planKey={plan.key}
-              featured={plan.featured}
-              featureCount={plan.featureCount}
-              hasPriceWas={plan.hasPriceWas}
-              hasBadge={plan.hasBadge}
-            />
-          ))}
+          <ul className="contents list-none">
+            {PRICING_PLAN_META.map((plan) => (
+              <li key={plan.key} className="min-h-0 h-full">
+                <PlanCard
+                  planKey={plan.key}
+                  featured={plan.featured}
+                  featureCount={plan.featureCount}
+                  hasPriceWas={plan.hasPriceWas}
+                  hasBadge={plan.hasBadge}
+                />
+              </li>
+            ))}
+          </ul>
         </ScrollRevealGroup>
       </div>
     </section>

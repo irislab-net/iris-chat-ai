@@ -116,7 +116,7 @@ function LiveMarketCard({
     <article
       className={cn(
         landingGlassSurface,
-        "group relative flex flex-col items-center overflow-hidden rounded-[1.75rem] bg-white/42 px-5 py-8 text-center dark:bg-white/8 sm:px-6 sm:py-9"
+        "group relative flex h-full flex-col items-center overflow-hidden rounded-[1.75rem] bg-white/42 px-5 py-8 text-center dark:bg-white/8 sm:px-6 sm:py-9"
       )}
     >
       <span
@@ -202,9 +202,13 @@ export function SignalsMarketsSection() {
             landingAfterHeader
           )}
         >
-          {SIGNALS_LIVE_MARKETS.map((market) => (
-            <LiveMarketCard key={market.id} {...market} prices={prices} />
-          ))}
+          <ul className="contents list-none">
+            {SIGNALS_LIVE_MARKETS.map((market) => (
+              <li key={market.id} className="min-h-0">
+                <LiveMarketCard {...market} prices={prices} />
+              </li>
+            ))}
+          </ul>
         </ScrollRevealGroup>
 
         <ScrollReveal delay={0.12} className={cn(landingContent, landingAfterHeader)}>

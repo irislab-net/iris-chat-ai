@@ -129,26 +129,30 @@ export function ModernFooter() {
               <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
                 {t("tagline")}
               </p>
-              <div className="mt-5 flex items-center gap-2">
-                <a
-                  href={SOCIAL_X_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={`${SITE_NAME} on X`}
-                  className="inline-flex size-9 items-center justify-center rounded-full bg-muted text-muted-foreground transition-colors hover:bg-foreground hover:text-background"
-                >
-                  <XIcon className="size-3.5" />
-                </a>
-                <a
-                  href={SOCIAL_TELEGRAM_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={`${SITE_NAME} on Telegram`}
-                  className="inline-flex size-9 items-center justify-center rounded-full bg-muted text-muted-foreground transition-colors hover:bg-foreground hover:text-background"
-                >
-                  <TelegramIcon className="size-3.5" />
-                </a>
-              </div>
+              <ul className="mt-5 flex list-none items-center gap-2 p-0">
+                <li>
+                  <a
+                    href={SOCIAL_X_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`${SITE_NAME} on X`}
+                    className="inline-flex size-9 items-center justify-center rounded-full bg-muted text-muted-foreground transition-colors hover:bg-foreground hover:text-background"
+                  >
+                    <XIcon className="size-3.5" />
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href={SOCIAL_TELEGRAM_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`${SITE_NAME} on Telegram`}
+                    className="inline-flex size-9 items-center justify-center rounded-full bg-muted text-muted-foreground transition-colors hover:bg-foreground hover:text-background"
+                  >
+                    <TelegramIcon className="size-3.5" />
+                  </a>
+                </li>
+              </ul>
             </div>
 
             <div className="grid grid-cols-2 gap-x-8 gap-y-8 sm:grid-cols-3 lg:gap-x-16">
