@@ -7,7 +7,6 @@ import { useTranslations } from "next-intl"
 import { NewsBulletin, NewsReadAllButton } from "@/components/dashboard/news-bulletin"
 import { NewsBulletinSkeleton } from "@/components/dashboard/intel-skeletons"
 import { useAuth } from "@/components/auth/auth-provider"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
   Sheet,
@@ -15,6 +14,12 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet"
+import {
+  chatMobileHeaderButtonClass,
+  chatNewsFreshnessBadgeClass,
+  chatNewsPanelHeaderClass,
+  chatNewsPanelShellClass,
+} from "@/components/app-shell/chat-mobile-gemini-styles"
 import { fetchNewsHome, fetchNewsLatest } from "@/lib/api/data"
 import type { NewsHome } from "@/lib/api/types"
 import {
@@ -90,34 +95,24 @@ function ChatNewsPanelBody({
 
   return (
     <div className={cn("flex h-full min-h-0 flex-col", className)}>
-      <header
-        className={cn(
-          "app-mobile-safe-header flex shrink-0 items-start justify-between gap-3 px-4 pb-3",
-          headerClassName
-        )}
-      >
+      <header className={cn(chatNewsPanelHeaderClass, headerClassName)}>
         <div className="min-w-0">
-          <p className="text-[11px] font-medium tracking-[0.16em] text-muted-foreground uppercase">
-            Intel
-          </p>
-          <h2 className="mt-0.5 text-lg font-semibold tracking-tight">
+          <h2 className="text-[1.25rem] font-semibold tracking-[-0.02em] text-foreground">
             {t("news")}
           </h2>
         </div>
         <div className="flex shrink-0 items-center gap-1.5">
-          <NewsReadAllButton news={news} />
-          <Badge variant="secondary" className="font-mono text-[10px] font-normal">
-            {freshnessLabel}
-          </Badge>
+          <NewsReadAllButton news={news} glass />
+          <span className={chatNewsFreshnessBadgeClass}>{freshnessLabel}</span>
           <Button
             type="button"
             variant="ghost"
             size="icon-sm"
-            className="size-8 shrink-0"
+            className={cn(chatMobileHeaderButtonClass, "size-8 [&_svg]:size-4")}
             aria-label={t("closeNews")}
             onClick={onClose}
           >
-            <XIcon className="size-4" />
+            <XIcon />
           </Button>
         </div>
       </header>
@@ -158,7 +153,10 @@ function ChatNewsSidePanel({ open, onOpenChange }: ChatNewsSidePanelProps) {
   return (
     <aside
       data-slot="chat-news-panel"
-      className="flex h-full min-h-0 w-[min(36rem,48vw)] min-w-104 shrink-0 flex-col overflow-hidden bg-sidebar text-sidebar-foreground"
+      className={cn(
+        "flex h-full min-h-0 w-[min(36rem,48vw)] min-w-104 shrink-0 flex-col overflow-hidden",
+        chatNewsPanelShellClass
+      )}
       aria-label="News"
     >
       <ChatNewsPanelBody onClose={() => onOpenChange(false)} />
@@ -180,7 +178,10 @@ function ChatNewsMobileSheet({ open, onOpenChange }: ChatNewsMobileSheetProps) {
         side="right"
         showCloseButton={false}
         data-slot="sheet-content"
-        className="gap-0 p-0 data-[side=right]:w-full data-[side=right]:max-w-none"
+        className={cn(
+          "gap-0 border-0 p-0 shadow-none data-[side=right]:w-full data-[side=right]:max-w-none data-[side=right]:border-0",
+          chatNewsPanelShellClass
+        )}
       >
         <SheetHeader className="sr-only">
           <SheetTitle>{t("news")}</SheetTitle>

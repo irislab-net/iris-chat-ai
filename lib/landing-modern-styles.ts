@@ -177,8 +177,8 @@ const landingCtaBase =
   "group relative isolate inline-flex shrink-0 items-center justify-center gap-2 overflow-hidden rounded-full font-semibold whitespace-nowrap transition-all"
 
 export const LANDING_CTA_SIZES = {
-  sm: "h-10 px-5 text-sm",
-  md: "h-12 px-6 text-sm",
+  sm: "h-11 px-5 text-sm",
+  md: "h-12 px-6 text-[15px]",
 } as const
 
 export type LandingCtaSize = keyof typeof LANDING_CTA_SIZES
@@ -187,6 +187,9 @@ const LANDING_CTA_TONES = {
   /** Blue is reserved for call-to-action buttons only. */
   primary:
     "bg-[#2563EB] text-white shadow-[0_8px_30px_rgba(37,99,235,0.28)] hover:bg-[#1D4ED8] hover:shadow-[0_12px_40px_rgba(37,99,235,0.35)]",
+  /** Soft companion to primary — same blue family, quieter surface. */
+  secondary:
+    "bg-[#2563EB]/10 text-[#1D4ED8] shadow-[0_6px_24px_rgba(37,99,235,0.1)] hover:bg-[#2563EB]/16 hover:text-[#1E40AF] dark:bg-[#2563EB]/18 dark:text-[#93C5FD] dark:shadow-[0_6px_24px_rgba(37,99,235,0.16)] dark:hover:bg-[#2563EB]/26 dark:hover:text-white",
   light:
     "bg-muted text-foreground shadow-[0_8px_30px_rgba(15,23,42,0.06)] hover:bg-muted/80 hover:shadow-[0_12px_40px_rgba(15,23,42,0.1)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.28)] dark:hover:shadow-[0_12px_40px_rgba(0,0,0,0.4)]",
   glass:

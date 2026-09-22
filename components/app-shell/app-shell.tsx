@@ -12,7 +12,6 @@ import { useIsDesktop } from "@/hooks/use-media-query"
 import { usePathname, useRouter } from "@/i18n/navigation"
 import { useAuth } from "@/components/auth/auth-provider"
 import { markPlanUpgradePendingRefresh } from "@/lib/api/auth"
-import { useWorkspacePageIntro } from "@/hooks/use-mobile-workspace-page-intro"
 import { useShellSidebarLayout } from "@/hooks/use-shell-sidebar-layout"
 import {
   readPanelLayoutForTier,
@@ -26,10 +25,6 @@ import { isAppDeskPath } from "@/lib/site"
 import { cn } from "@/lib/utils"
 import { trackChatToggle } from "@/lib/analytics"
 import type { Layout } from "react-resizable-panels"
-import {
-  resolveWorkspaceTab,
-  type WorkspaceTab,
-} from "@/lib/workspace-tab"
 
 const ChatAside = dynamic(
   () =>
@@ -51,14 +46,6 @@ const WebsiteToolbar = dynamic(
 const ContextMain = dynamic(
   () =>
     import("@/components/app-shell/context-main").then((m) => m.ContextMain),
-  { ssr: false }
-)
-
-const WorkspacePageIntroSheet = dynamic(
-  () =>
-    import("@/components/app-shell/workspace-page-info-sheet").then(
-      (m) => m.WorkspacePageIntroSheet
-    ),
   { ssr: false }
 )
 
@@ -84,11 +71,7 @@ type AppShellProps = {
 
 function AppShell(props: AppShellProps) {
   return (
-    <React.Suspense
-      fallback={
-        <AppShellInner {...props} workspaceTab={null} />
-      }
-    >
+    <React.Suspense fallback={<AppShellInner {...props} />}>
       <AppShellWithTab {...props} />
     </React.Suspense>
   )
@@ -100,9 +83,6 @@ function AppShellWithTab(props: AppShellProps) {
   const searchParams = useSearchParams()
   const { refreshAfterUpgrade, isAuthenticated } = useAuth()
   const checkoutHandledRef = React.useRef(false)
-  const workspaceTab = isAppDeskPath(pathname)
-    ? resolveWorkspaceTab(searchParams.get("tab"))
-    : null
 
   React.useEffect(() => {
     if (searchParams.get("checkout") !== "success") return
@@ -130,19 +110,14 @@ function AppShellWithTab(props: AppShellProps) {
     searchParams,
   ])
 
-  return (
-    <AppShellInner {...props} workspaceTab={workspaceTab} />
-  )
+  return <AppShellInner {...props} />
 }
 
 function AppShellInner({
   children,
   className,
   defaultChatOpen = true,
-  workspaceTab,
-}: AppShellProps & {
-  workspaceTab: WorkspaceTab | null
-}) {
+}: AppShellProps) {
   const isDesktop = useIsDesktop()
   const sidebarLayout = useShellSidebarLayout()
   const shellSidebars = sidebarLayout ?? SHELL_SIDEBAR_COMPACT_FALLBACK
@@ -238,12 +213,6 @@ function AppShellInner({
     desktopChatEnabled && resolvedChatMode === "focused"
   const showDesktopSplit = showDesktopChatDocked
   const showMobileChat = isDesktop === false && resolvedChatOpen
-  const { introPage, introOpen, onIntroOpenChange } = useWorkspacePageIntro({
-    enabled: onDesk && isDesktop === false,
-    pathname,
-    workspaceTab,
-    mobileIrisTab: isDesktop === false && resolvedChatOpen,
-  })
   const deskChatBooting = onDesk && isDesktop === null
 
   if (deskChatBooting) {
@@ -341,12 +310,6 @@ function AppShellInner({
       ) : (
         contextColumn
       )}
-
-      <WorkspacePageIntroSheet
-        page={introPage}
-        open={introOpen}
-        onOpenChange={onIntroOpenChange}
-      />
     </div>
     </>
   )

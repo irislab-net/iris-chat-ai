@@ -178,7 +178,7 @@ function ChatRenameDialog({
           ) : null}
         </div>
         <SheetFooter className={chatMobileSheetFooterClass}>
-          <div className={cn(chatMobileSheetFooterBarClass, "space-y-2 px-5")}>
+          <div className={cn(chatMobileSheetFooterBarClass, "space-y-2")}>
             <Button
               type="button"
               disabled={!canSave}

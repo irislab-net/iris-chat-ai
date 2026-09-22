@@ -19,6 +19,14 @@ import { NewsBulletinSkeleton } from "@/components/dashboard/intel-skeletons"
 import { WorkspaceLoginGate } from "@/components/dashboard/workspace-login-gate"
 import { shouldShowWorkspaceLoginGate } from "@/lib/workspace-auth"
 import { MarketAssetLogo } from "@/components/dashboard/market-asset-logo"
+import {
+  chatNewsGlassCardClass,
+  chatNewsGlassChipClass,
+  chatNewsGlassInsetClass,
+  chatNewsGlassTileClass,
+  chatNewsReadAllButtonClass,
+  chatSignalCardIconShellClass,
+} from "@/components/app-shell/chat-mobile-gemini-styles"
 import { trackNewsArticleClick } from "@/lib/analytics"
 import { hostFromUrl, newsPublishedLabel } from "@/lib/format"
 import type { NewsAnalytics, NewsItem } from "@/lib/api/types"
@@ -106,6 +114,28 @@ function toneTileClass(tone: SentimentTone) {
   return "bg-muted/22"
 }
 
+/** Liquid-glass fill tinted by sentiment — no border/ring. */
+function toneGlassFillClass(tone: SentimentTone | null, featured = false) {
+  if (tone === "Positive") {
+    return featured
+      ? "bg-emerald-500/16 supports-[backdrop-filter]:bg-emerald-500/12 dark:bg-emerald-400/14 dark:supports-[backdrop-filter]:bg-emerald-400/10"
+      : "bg-emerald-500/12 supports-[backdrop-filter]:bg-emerald-500/9 dark:bg-emerald-400/11 dark:supports-[backdrop-filter]:bg-emerald-400/8"
+  }
+  if (tone === "Negative") {
+    return featured
+      ? "bg-red-500/16 supports-[backdrop-filter]:bg-red-500/12 dark:bg-red-400/14 dark:supports-[backdrop-filter]:bg-red-400/10"
+      : "bg-red-500/12 supports-[backdrop-filter]:bg-red-500/9 dark:bg-red-400/11 dark:supports-[backdrop-filter]:bg-red-400/8"
+  }
+  return "bg-white/78 supports-[backdrop-filter]:bg-white/62 dark:bg-white/[0.08] dark:supports-[backdrop-filter]:bg-white/[0.06]"
+}
+
+/** Glass chrome without a fill color — fill comes from toneGlassFillClass. */
+const newsGlassShellClass =
+  "overflow-hidden rounded-[1.25rem] border-0 text-foreground shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_72%,transparent),0_14px_44px_-20px_color-mix(in_oklch,var(--foreground)_14%,transparent)] backdrop-blur-2xl backdrop-saturate-[180%] dark:shadow-[inset_0_1px_0_0_color-mix(in_oklch,var(--foreground)_12%,transparent),0_16px_48px_-22px_color-mix(in_oklch,black_48%,transparent)]"
+
+const newsGlassTileShellClass =
+  "rounded-xl border-0 shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_78%,transparent),0_3px_14px_-10px_color-mix(in_oklch,var(--foreground)_9%,transparent)] backdrop-blur-md backdrop-saturate-150 dark:shadow-[inset_0_1px_0_0_color-mix(in_oklch,var(--foreground)_10%,transparent),0_4px_16px_-12px_color-mix(in_oklch,black_32%,transparent)]"
+
 function toneChipClass(tone: SentimentTone) {
   if (tone === "Positive") {
     return "bg-emerald-500/10 text-emerald-800/80 dark:text-emerald-200/90"
@@ -144,16 +174,24 @@ function tapeWindows(analytics: NewsAnalytics | null): TapeWindow[] {
 function NewsTapeWindowTile({
   slot,
   variant = "cell",
+  glass = false,
 }: {
   slot: TapeWindow
   variant?: "cell" | "standalone"
+  glass?: boolean
 }) {
   return (
     <div
       className={cn(
-        variant === "cell"
-          ? "rounded-lg bg-background/55 px-2 py-2.5 text-center dark:bg-background/30"
-          : "rounded-xl bg-muted/22 px-3 py-2.5"
+        glass
+          ? cn(
+              chatNewsGlassTileClass,
+              "px-2 py-2.5 text-center",
+              variant === "standalone" && "px-3"
+            )
+          : variant === "cell"
+            ? "rounded-lg bg-background/55 px-2 py-2.5 text-center dark:bg-background/30"
+            : "rounded-xl bg-muted/22 px-3 py-2.5"
       )}
     >
       <p className="font-mono text-[10px] uppercase tracking-wide text-muted-foreground">
@@ -163,7 +201,14 @@ function NewsTapeWindowTile({
         {Math.round(slot.volume)}
       </p>
       <p className="mt-0.5 text-[10px] text-muted-foreground">headlines</p>
-      <p className="mt-1.5 inline-flex items-center justify-center rounded-md bg-foreground/4 px-1.5 py-0.5 font-mono text-[10px] tabular-nums text-muted-foreground">
+      <p
+        className={cn(
+          "mt-1.5 inline-flex items-center justify-center px-1.5 py-0.5 font-mono text-[10px] tabular-nums text-muted-foreground",
+          glass
+            ? cn(chatNewsGlassChipClass, "rounded-md px-1.5 py-0.5 text-[10px]")
+            : "rounded-md bg-foreground/4"
+        )}
+      >
         Impact {slot.impact.toFixed(1)}
       </p>
     </div>
@@ -173,11 +218,28 @@ function NewsTapeWindowTile({
 function NewsTapeWindows({
   windows,
   mobile = false,
+  glass = false,
 }: {
   windows: TapeWindow[]
   mobile?: boolean
+  glass?: boolean
 }) {
   if (windows.length === 0) return null
+
+  if (glass) {
+    return (
+      <div className="grid grid-cols-3 gap-2.5">
+        {windows.map((slot) => (
+          <NewsTapeWindowTile
+            key={slot.key}
+            slot={slot}
+            variant="cell"
+            glass
+          />
+        ))}
+      </div>
+    )
+  }
 
   if (mobile) {
     return (
@@ -198,12 +260,23 @@ function NewsTapeWindows({
   )
 }
 
-function NewsAssetTile({ asset, tone, score }: TapeAsset) {
+function NewsAssetTile({
+  asset,
+  tone,
+  score,
+  glass = false,
+}: TapeAsset & { glass?: boolean }) {
   return (
     <div
       className={cn(
-        "flex min-w-0 gap-2 rounded-xl px-2 py-2",
-        toneTileClass(tone)
+        "flex min-w-0 gap-2 px-2 py-2",
+        glass
+          ? cn(
+              newsGlassTileShellClass,
+              "rounded-2xl px-2.5 py-2.5",
+              toneGlassFillClass(tone)
+            )
+          : cn("rounded-xl", toneTileClass(tone))
       )}
     >
       <MarketAssetLogo symbol={asset} className="size-7" />
@@ -215,7 +288,9 @@ function NewsAssetTile({ asset, tone, score }: TapeAsset) {
           <span
             className={cn(
               "shrink-0 rounded-full px-1.5 py-0.5 text-[9px] font-semibold leading-none",
-              toneChipClass(tone)
+              glass
+                ? cn(chatNewsGlassChipClass, "px-1.5 py-0.5 text-[9px]", toneClass(tone))
+                : toneChipClass(tone)
             )}
           >
             {toneChipLabel(tone)}
@@ -235,20 +310,24 @@ function NewsAssetTile({ asset, tone, score }: TapeAsset) {
 function NewsAssetTape({
   assets,
   mobile = false,
+  glass = false,
 }: {
   assets: TapeAsset[]
   mobile?: boolean
+  glass?: boolean
 }) {
   if (assets.length === 0) return null
 
   return (
     <div
       className={cn(
-        mobile ? "grid grid-cols-2 gap-1.5" : "grid grid-cols-2 gap-2 sm:grid-cols-4"
+        mobile || glass
+          ? "grid grid-cols-2 gap-2.5"
+          : "grid grid-cols-2 gap-2 sm:grid-cols-4"
       )}
     >
       {assets.map((item) => (
-        <NewsAssetTile key={item.asset} {...item} />
+        <NewsAssetTile key={item.asset} {...item} glass={glass} />
       ))}
     </div>
   )
@@ -305,18 +384,30 @@ function newsFaviconSrc(articleUrl: string): string | null {
 function NewsSourceIcon({
   url,
   size = "lg",
+  glass = false,
 }: {
   url: string
-  size?: "sm" | "lg"
+  size?: "sm" | "lg" | "header" | "lead"
+  glass?: boolean
 }) {
   const src = newsFaviconSrc(url)
+  const dim =
+    size === "header"
+      ? "size-5"
+      : size === "lead"
+        ? "size-7"
+        : size === "sm"
+          ? "size-8"
+          : "mt-0.5 size-10"
 
   return (
     <Avatar
-      size={size === "sm" ? "sm" : "lg"}
+      size={size === "lg" || size === "lead" ? "lg" : "sm"}
       className={cn(
-        "bg-muted/70 after:border-border/50",
-        size === "sm" ? "size-8" : "mt-0.5 size-10"
+        "shrink-0",
+        glass
+          ? cn(chatSignalCardIconShellClass, "after:border-0", dim)
+          : cn("bg-muted/70 after:border-border/50", dim)
       )}
       aria-hidden
     >
@@ -327,13 +418,19 @@ function NewsSourceIcon({
           referrerPolicy="no-referrer"
           className={cn(
             "object-contain",
-            size === "sm"
-              ? "p-1.5 opacity-80 grayscale dark:invert dark:opacity-85"
-              : "p-2 opacity-90"
+            size === "header"
+              ? "p-0.5 opacity-90"
+              : size === "lead"
+                ? "p-1 opacity-95"
+                : size === "sm"
+                  ? "p-1.5 opacity-80 grayscale dark:invert dark:opacity-85"
+                  : "p-2 opacity-90"
           )}
         />
       ) : null}
-      <AvatarFallback className="bg-muted-foreground/15" />
+      <AvatarFallback
+        className={glass ? "bg-transparent" : "bg-muted-foreground/15"}
+      />
     </Avatar>
   )
 }
@@ -482,7 +579,13 @@ function toggleReadAllNews(items: NewsItem[]) {
   speakNext()
 }
 
-function NewsSpeakButton({ item }: { item: NewsItem }) {
+function NewsSpeakButton({
+  item,
+  glass = false,
+}: {
+  item: NewsItem
+  glass?: boolean
+}) {
   const supported = React.useSyncExternalStore(
     () => () => {},
     () => "speechSynthesis" in window,
@@ -504,7 +607,12 @@ function NewsSpeakButton({ item }: { item: NewsItem }) {
       size="icon-sm"
       aria-label={speaking ? "Stop reading aloud" : "Listen to article"}
       aria-pressed={speaking}
-      className="mt-0.5 shrink-0 text-muted-foreground hover:text-foreground"
+      className={cn(
+        "shrink-0",
+        glass
+          ? "size-8 rounded-full text-muted-foreground hover:bg-white/50 hover:text-foreground dark:hover:bg-white/8"
+          : "text-muted-foreground hover:text-foreground"
+      )}
       onClick={() => toggleNewsSpeech(item)}
     >
       {speaking ? (
@@ -516,7 +624,52 @@ function NewsSpeakButton({ item }: { item: NewsItem }) {
   )
 }
 
-function NewsReadAllButton({ news }: { news: NewsItem[] }) {
+function NewsCardFooter({
+  item,
+  glass = false,
+  showTone = true,
+}: {
+  item: NewsItem
+  glass?: boolean
+  showTone?: boolean
+}) {
+  const published = newsPublishedLabel(item.published_at)
+  const source = item.source?.trim() || hostFromUrl(item.url)
+  const tone = newsTone(item)
+
+  return (
+    <div className="mt-3 flex items-center justify-between gap-2">
+      <div className="flex min-w-0 flex-1 flex-wrap items-center gap-1.5">
+        <p className="min-w-0 truncate text-xs text-muted-foreground">
+          <span>{source}</span>
+          {published ? <span> · {published}</span> : null}
+        </p>
+        {showTone && tone && tone !== "Neutral" ? (
+          <span
+            className={cn(
+              "inline-flex shrink-0 items-center rounded-full px-2 py-0.5 text-[10px] font-semibold leading-none tracking-wide",
+              tone === "Positive" &&
+                "bg-emerald-500/15 text-emerald-800/90 dark:bg-emerald-400/15 dark:text-emerald-200/90",
+              tone === "Negative" &&
+                "bg-red-500/15 text-red-800/90 dark:bg-red-400/15 dark:text-red-200/90"
+            )}
+          >
+            {tone}
+          </span>
+        ) : null}
+      </div>
+      <NewsSpeakButton item={item} glass={glass} />
+    </div>
+  )
+}
+
+function NewsReadAllButton({
+  news,
+  glass = false,
+}: {
+  news: NewsItem[]
+  glass?: boolean
+}) {
   const supported = React.useSyncExternalStore(
     () => () => {},
     () => "speechSynthesis" in window,
@@ -538,7 +691,11 @@ function NewsReadAllButton({ news }: { news: NewsItem[] }) {
       variant="ghost"
       size="sm"
       aria-pressed={readingAll}
-      className="h-7 shrink-0 gap-1.5 px-2 text-xs font-medium text-muted-foreground hover:text-foreground"
+      className={cn(
+        glass
+          ? chatNewsReadAllButtonClass
+          : "h-7 shrink-0 gap-1.5 px-2 text-xs font-medium text-muted-foreground hover:text-foreground"
+      )}
       onClick={() => toggleReadAllNews(items)}
     >
       {readingAll ? (
@@ -554,9 +711,11 @@ function NewsReadAllButton({ news }: { news: NewsItem[] }) {
 function NewsTape({
   analytics,
   mobile = false,
+  glass = false,
 }: {
   analytics: NewsAnalytics | null
   mobile?: boolean
+  glass?: boolean
 }) {
   const brief = newsBrief(analytics)
   const hour = analytics?.timeframes?.["1h"] ?? analytics?.timeframes?.["15m"]
@@ -565,12 +724,23 @@ function NewsTape({
 
   if (!brief && windows.length === 0 && assets.length === 0) return null
 
-  if (mobile) {
+  if (mobile || glass) {
     return (
-      <div className="flex flex-col gap-2.5">
-        {(assets.length > 0 || windows.length > 0) ? (
+      <div className="flex flex-col gap-3.5">
+        {glass ? (
+          <>
+            {assets.length > 0 ? (
+              <NewsAssetTape assets={assets} mobile glass />
+            ) : null}
+            {windows.length > 0 ? (
+              <NewsTapeWindows windows={windows} mobile glass />
+            ) : null}
+          </>
+        ) : assets.length > 0 || windows.length > 0 ? (
           <div className="flex flex-col gap-2 rounded-2xl bg-muted/18 p-2">
-            {assets.length > 0 ? <NewsAssetTape assets={assets} mobile /> : null}
+            {assets.length > 0 ? (
+              <NewsAssetTape assets={assets} mobile />
+            ) : null}
             {windows.length > 0 ? (
               <div className="grid grid-cols-3 gap-1 rounded-xl bg-background/35 p-1 dark:bg-background/20">
                 {windows.map((slot) => (
@@ -581,7 +751,14 @@ function NewsTape({
           </div>
         ) : null}
         {brief ? (
-          <p className="text-sm leading-relaxed text-foreground/90">{brief}</p>
+          <p
+            className={cn(
+              "text-sm leading-relaxed text-foreground/90",
+              glass && cn(chatNewsGlassInsetClass, "rounded-2xl px-3.5 py-3")
+            )}
+          >
+            {brief}
+          </p>
         ) : null}
       </div>
     )
@@ -707,73 +884,84 @@ function NewsCard({
 }) {
   const summary = item.summary?.trim()
   const tone = newsTone(item)
+  const glass = mobile || sidebar
+  const glassSurface = glass
+    ? cn(
+        newsGlassShellClass,
+        toneGlassFillClass(tone, featured),
+        featured ? "rounded-[1.4rem] p-4 sm:p-5" : "p-3"
+      )
+    : null
 
   if (mobile) {
-    const published = newsPublishedLabel(item.published_at)
-    const source = item.source?.trim() || hostFromUrl(item.url)
-
     return (
       <article
         className={cn(
-          "group/news rounded-2xl",
-          toneSurfaceClass(tone, featured),
-          featured ? "p-4" : "p-3",
+          "group/news flex flex-col rounded-2xl",
+          glassSurface ??
+            cn(toneSurfaceClass(tone, featured), featured ? "p-4" : "p-3"),
           className
         )}
       >
-        <div className="flex items-start gap-3">
-          <a
-            href={item.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex min-w-0 flex-1 items-start gap-3"
-            onClick={() =>
-              trackNewsArticleClick({
-                article_id: item.id,
-                source: item.source ?? "unknown",
-                impact_score: item.metrics.impact_score,
-              })
-            }
+        <a
+          href={item.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="min-w-0"
+          onClick={() =>
+            trackNewsArticleClick({
+              article_id: item.id,
+              source: item.source ?? "unknown",
+              impact_score: item.metrics.impact_score,
+            })
+          }
+        >
+          {featured ? (
+            <span
+              className={cn(
+                chatNewsGlassChipClass,
+                "mb-2 inline-flex text-[10px] font-semibold tracking-[0.08em] text-foreground uppercase"
+              )}
+            >
+              Lead
+            </span>
+          ) : null}
+          <div
+            className={cn(
+              "flex items-start",
+              featured ? "gap-2.5" : "gap-2"
+            )}
           >
-            <NewsSourceIcon url={item.url} size={featured ? "lg" : "sm"} />
-            <div className="min-w-0 flex-1">
-              <p className="text-xs text-muted-foreground">
-                {featured ? (
-                  <span className="font-medium text-foreground">Lead · </span>
-                ) : null}
-                {source}
-                {published ? ` · ${published}` : ""}
-                {tone && tone !== "Neutral" ? (
-                  <span className={cn("font-medium", toneClass(tone))}>
-                    {" · "}
-                    {tone}
-                  </span>
-                ) : null}
-              </p>
-              <h3
-                className={cn(
-                  "mt-1.5 font-semibold tracking-tight text-foreground",
-                  featured
-                    ? "text-base leading-snug"
-                    : "line-clamp-2 text-[15px] leading-snug"
-                )}
-              >
-                {item.title}
-              </h3>
-              {summary ? (
-                <p
-                  className={cn(
-                    "mt-1.5 leading-relaxed text-muted-foreground",
-                    featured ? "line-clamp-3 text-sm" : "line-clamp-2 text-[13px]"
-                  )}
-                >
-                  {summary}
-                </p>
-              ) : null}
-            </div>
-          </a>
-          <NewsSpeakButton item={item} />
-        </div>
+            <NewsSourceIcon
+              url={item.url}
+              size={featured ? "lead" : "header"}
+              glass={glass}
+            />
+            <h3
+              className={cn(
+                "min-w-0 flex-1 font-semibold tracking-tight text-foreground",
+                featured
+                  ? "text-[1.05rem] leading-snug tracking-[-0.015em] sm:text-lg"
+                  : "line-clamp-2 text-[15px] leading-snug"
+              )}
+            >
+              {item.title}
+            </h3>
+          </div>
+          {summary ? (
+            <p
+              className={cn(
+                "mt-2 leading-relaxed text-muted-foreground",
+                featured
+                  ? "line-clamp-4 text-[13px] sm:text-sm"
+                  : "line-clamp-2 text-[13px]"
+              )}
+            >
+              {summary}
+            </p>
+          ) : null}
+        </a>
+        <NewsCardFooter item={item} glass={glass} />
       </article>
     )
   }
@@ -790,47 +978,66 @@ function NewsCard({
     return (
       <article
         className={cn(
-          "group/news flex select-text items-start gap-3 rounded-2xl transition-colors",
-          featured
-            ? cn(toneSurfaceClass(tone, true), "p-4 sm:p-5")
-            : cn(toneSurfaceClass(tone, false), "px-2 py-3 sm:px-3"),
+          "group/news flex select-text flex-col rounded-2xl transition-colors",
+          glassSurface ??
+            (featured
+              ? cn(toneSurfaceClass(tone, true), "p-4 sm:p-5")
+              : cn(toneSurfaceClass(tone, false), "px-2 py-3 sm:px-3")),
+          featured && glass && "sm:p-5",
+          !featured && glass && "sm:px-3.5 sm:py-3.5",
           className
         )}
       >
-        <NewsSourceIcon url={item.url} size={featured ? "lg" : "sm"} />
-        <div className="min-w-0 flex-1">
-          <NewsMeta item={item} featured={featured} />
+        {featured ? (
+          <span
+            className={cn(
+              chatNewsGlassChipClass,
+              "mb-2 w-fit text-[10px] font-semibold tracking-[0.08em] text-foreground uppercase"
+            )}
+          >
+            Lead
+          </span>
+        ) : null}
+        <div
+          className={cn(
+            "flex items-start",
+            featured ? "gap-2.5" : "gap-2"
+          )}
+        >
+          <NewsSourceIcon
+            url={item.url}
+            size={featured ? "lead" : "header"}
+            glass
+          />
           <a
             href={item.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-1.5 block font-semibold tracking-tight text-foreground underline-offset-2 hover:underline"
+            className="min-w-0 flex-1 font-semibold tracking-tight text-foreground underline-offset-2 hover:underline"
             onClick={trackArticleClick}
           >
             <h3
               className={cn(
                 featured
-                  ? "text-lg leading-snug sm:text-xl"
+                  ? "text-lg leading-snug tracking-[-0.015em] sm:text-xl"
                   : "text-[15px] leading-snug"
               )}
             >
               {item.title}
             </h3>
           </a>
-          {summaryDesktop ? (
-            <p
-              className={cn(
-                "mt-1.5 whitespace-pre-wrap leading-relaxed text-muted-foreground",
-                featured ? "text-sm" : "text-[13px]"
-              )}
-            >
-              {summaryDesktop}
-            </p>
-          ) : null}
         </div>
-        <div className="shrink-0">
-          <NewsSpeakButton item={item} />
-        </div>
+        {summaryDesktop ? (
+          <p
+            className={cn(
+              "mt-1.5 whitespace-pre-wrap leading-relaxed text-muted-foreground",
+              featured ? "text-sm" : "text-[13px]"
+            )}
+          >
+            {summaryDesktop}
+          </p>
+        ) : null}
+        <NewsCardFooter item={item} glass />
       </article>
     )
   }
@@ -929,7 +1136,14 @@ function NewsHeadlineList({
 
   if (news.length === 0) {
     return (
-      <Empty className="min-h-48 rounded-2xl bg-muted/18">
+      <Empty
+        className={cn(
+          "min-h-48 rounded-2xl",
+          sidebar || mobile
+            ? chatNewsGlassCardClass
+            : "bg-muted/18"
+        )}
+      >
         <EmptyHeader>
           <EmptyMedia variant="icon">
             <NewspaperIcon />
@@ -944,19 +1158,20 @@ function NewsHeadlineList({
   }
 
   const { lead, rest } = pickLeadStory(news)
+  const glass = mobile || sidebar
 
   return (
-    <div className={cn("flex flex-col", mobile ? "gap-3" : "gap-5 pb-2")}>
-      {mobile ? (
+    <div className={cn("flex flex-col", mobile || glass ? "gap-4" : "gap-5 pb-2")}>
+      {mobile && !sidebar ? (
         <div className="flex justify-end px-1">
-          <NewsReadAllButton news={news} />
+          <NewsReadAllButton news={news} glass={glass} />
         </div>
       ) : null}
-      <NewsTape analytics={analytics} mobile={mobile} />
+      <NewsTape analytics={analytics} mobile={mobile} glass={glass} />
       <NewsCard item={lead} featured mobile={mobile} sidebar={sidebar} />
       {rest.length > 0 ? (
         mobile ? (
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-3">
             {rest.map((item) => (
               <NewsCard key={item.id} item={item} mobile sidebar={sidebar} />
             ))}
@@ -969,7 +1184,7 @@ function NewsHeadlineList({
               </p>
               <Separator className="flex-1" />
             </div>
-            <div className="flex flex-col gap-2">
+            <div className={cn("flex flex-col", glass ? "gap-3" : "gap-2")}>
               {rest.map((item) => (
                 <NewsCard key={item.id} item={item} sidebar={sidebar} />
               ))}

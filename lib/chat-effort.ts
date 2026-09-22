@@ -1,20 +1,20 @@
-export const CHAT_EFFORTS = ["instant", "medium", "high"] as const
+export const CHAT_EFFORTS = ["instant", "high"] as const
 
 export type ChatEffort = (typeof CHAT_EFFORTS)[number]
 
+/** Fast replies — default for every new chat / prompt session. */
 export const DEFAULT_CHAT_EFFORT: ChatEffort = "instant"
 
 const STORAGE_KEY = "iris-chat-effort"
-const LEGACY_DEFAULT_MIGRATION_KEY = "iris-chat-effort-normal-default-v1"
+const LEGACY_TWO_MODE_MIGRATION_KEY = "iris-chat-effort-fast-thinking-v1"
 
 export const CHAT_EFFORT_OPTIONS: {
   value: ChatEffort
   label: string
   hint: string
 }[] = [
-  { value: "instant", label: "Normal", hint: "Fast, concise replies" },
-  { value: "medium", label: "High effort", hint: "More context and detail" },
-  { value: "high", label: "Deep thinking", hint: "Slowest, deepest analysis" },
+  { value: "instant", label: "Fast", hint: "Quick, concise replies" },
+  { value: "high", label: "Thinking", hint: "Deeper analysis, slower" },
 ]
 
 export function isChatEffort(value: unknown): value is ChatEffort {
@@ -24,9 +24,16 @@ export function isChatEffort(value: unknown): value is ChatEffort {
   )
 }
 
+/** Map legacy stored values onto the two-mode model. */
+export function normalizeChatEffort(value: unknown): ChatEffort {
+  if (value === "high") return "high"
+  // "medium" / unknown / "instant" → Fast
+  return DEFAULT_CHAT_EFFORT
+}
+
 export function chatEffortLabel(value: ChatEffort) {
   return (
-    CHAT_EFFORT_OPTIONS.find((item) => item.value === value)?.label ?? "Normal"
+    CHAT_EFFORT_OPTIONS.find((item) => item.value === value)?.label ?? "Fast"
   )
 }
 
@@ -34,16 +41,18 @@ export function readChatEffort(): ChatEffort {
   if (typeof window === "undefined") return DEFAULT_CHAT_EFFORT
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY)
-    const migrated = window.localStorage.getItem(LEGACY_DEFAULT_MIGRATION_KEY)
+    const migrated = window.localStorage.getItem(LEGACY_TWO_MODE_MIGRATION_KEY)
 
-    // Previous default was "medium" (High effort). Reset once so Normal is the default.
-    if (!migrated && raw === "medium") {
-      window.localStorage.setItem(LEGACY_DEFAULT_MIGRATION_KEY, "1")
-      window.localStorage.setItem(STORAGE_KEY, DEFAULT_CHAT_EFFORT)
-      return DEFAULT_CHAT_EFFORT
+    if (!migrated) {
+      window.localStorage.setItem(LEGACY_TWO_MODE_MIGRATION_KEY, "1")
+      // Drop the old three-mode default ("medium" / Normal) → Fast.
+      if (raw === "medium" || raw === "normal") {
+        window.localStorage.setItem(STORAGE_KEY, DEFAULT_CHAT_EFFORT)
+        return DEFAULT_CHAT_EFFORT
+      }
     }
 
-    if (isChatEffort(raw)) return raw
+    return normalizeChatEffort(raw)
   } catch {
     // ignore
   }
@@ -53,7 +62,7 @@ export function readChatEffort(): ChatEffort {
 export function writeChatEffort(value: ChatEffort) {
   if (typeof window === "undefined") return
   try {
-    window.localStorage.setItem(STORAGE_KEY, value)
+    window.localStorage.setItem(STORAGE_KEY, normalizeChatEffort(value))
   } catch {
     // ignore
   }

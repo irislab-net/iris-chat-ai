@@ -3,7 +3,6 @@
 import * as React from "react"
 import { Link } from "@/i18n/navigation"
 import {
-  EclipseIcon,
   LogOutIcon,
   MessageSquareIcon,
   MoreHorizontalIcon,
@@ -21,10 +20,13 @@ import {
   HouseIcon,
 } from "lucide-react"
 import { useTranslations } from "next-intl"
-import { useTheme } from "@wrksz/themes/client/use-theme"
 
 import { AttentionPulseDot } from "@/components/app-shell/attention-pulse-dot"
 import { ChatAccountAvatar } from "@/components/app-shell/chat-account-avatar"
+import {
+  AccountLanguageItems,
+  AccountThemeItems,
+} from "@/components/app-shell/chat-account-preferences"
 import { ChatGeminiNewChatIcon } from "@/components/app-shell/chat-gemini-new-chat-icon"
 import { ExurLogo } from "@/components/brand/exur-logo"
 import { useAuth } from "@/components/auth/auth-provider"
@@ -292,7 +294,6 @@ function MobileHistoryDrawerFooter({
   const common = useTranslations("common")
   const { user, isProUser, login, logout, loginPending } = useAuth()
   const avatarUrl = useUserAvatarUrl(user)
-  const { resolvedTheme, setTheme } = useTheme()
 
   return (
     <footer className={chatMobileDrawerFooterWrapClass}>
@@ -369,7 +370,7 @@ function MobileHistoryDrawerFooter({
           align="end"
           side="top"
           sideOffset={8}
-          className={cn(chatContextMenuContentClass, "min-w-56")}
+          className={cn(chatContextMenuContentClass, "min-w-64")}
         >
           {user && !isProUser ? (
             <DropdownMenuItem
@@ -400,15 +401,12 @@ function MobileHistoryDrawerFooter({
               {t("news")}
             </DropdownMenuItem>
           ) : null}
-          <DropdownMenuItem
-            className={chatContextMenuItemClass}
-            onClick={() =>
-              setTheme(resolvedTheme === "dark" ? "light" : "dark")
-            }
-          >
-            <EclipseIcon className={chatContextMenuIconClass} />
-            {resolvedTheme === "dark" ? common("lightMode") : common("darkMode")}
-          </DropdownMenuItem>
+          {(user || onOpenNews) ? (
+            <DropdownMenuSeparator className={chatContextMenuSeparatorClass} />
+          ) : null}
+          <AccountThemeItems />
+          <DropdownMenuSeparator className={chatContextMenuSeparatorClass} />
+          <AccountLanguageItems />
           {user ? (
             <>
               <DropdownMenuSeparator className={chatContextMenuSeparatorClass} />

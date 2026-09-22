@@ -41,8 +41,8 @@ function Switch({
       <span
         aria-hidden
         className={cn(
-          "pointer-events-none block size-5 rounded-full bg-background shadow-sm transition-transform duration-200",
-          checked ? "translate-x-[1.25rem]" : "translate-x-0.5"
+          "pointer-events-none block size-5 rounded-full bg-white shadow-sm transition-transform duration-200",
+          checked ? "translate-x-5" : "translate-x-0.5"
         )}
       />
     </button>

@@ -779,6 +779,8 @@ function ChatAside({
     setHistory(blank.history)
     setDraft("")
     setReplyTarget(null)
+    setEffort(DEFAULT_CHAT_EFFORT)
+    writeChatEffort(DEFAULT_CHAT_EFFORT)
     const store = setActiveConversation(readChatStore(chatOwnerId), blank.id)
     writeChatStore(chatOwnerId, store)
   }

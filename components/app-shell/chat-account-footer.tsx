@@ -3,20 +3,26 @@
 import * as React from "react"
 import { Link } from "@/i18n/navigation"
 import {
-  CheckIcon,
-  EclipseIcon,
   LogOutIcon,
-  MonitorIcon,
-  MoonIcon,
   ReceiptIcon,
   SettingsIcon,
   SparklesIcon,
-  SunIcon,
 } from "lucide-react"
 import { useTranslations } from "next-intl"
-import { useTheme } from "@wrksz/themes/client/use-theme"
 
 import { ChatAccountAvatar } from "@/components/app-shell/chat-account-avatar"
+import {
+  AccountLanguageItems,
+  AccountThemeItems,
+} from "@/components/app-shell/chat-account-preferences"
+import {
+  chatContextMenuContentClass,
+  chatContextMenuDeleteClass,
+  chatContextMenuHeaderClass,
+  chatContextMenuIconClass,
+  chatContextMenuItemClass,
+  chatContextMenuSeparatorClass,
+} from "@/components/app-shell/chat-context-menu-styles"
 import { useAuth } from "@/components/auth/auth-provider"
 import { GoogleGlyph } from "@/components/auth/google-glyph"
 import { useUserAvatarUrl } from "@/hooks/use-user-avatar-url"
@@ -63,9 +69,6 @@ function AccountPlanBadge({
 
 function ThemeSettingsMenu() {
   const common = useTranslations("common")
-  const { theme, setTheme } = useTheme()
-  const active =
-    theme === "light" || theme === "dark" || theme === "system" ? theme : "system"
 
   return (
     <DropdownMenu>
@@ -82,42 +85,14 @@ function ThemeSettingsMenu() {
       >
         <SettingsIcon className="size-4 text-muted-foreground" />
       </DropdownMenuTrigger>
-      <DropdownMenuContent side="top" align="end" className="min-w-48">
-        <DropdownMenuGroup>
-          <DropdownMenuLabel className="text-xs font-medium text-muted-foreground">
-            {common("theme")}
-          </DropdownMenuLabel>
-          <DropdownMenuItem
-            className="min-h-9 gap-2"
-            onClick={() => setTheme("system")}
-          >
-            <MonitorIcon />
-            {common("themeSystem")}
-            {active === "system" ? (
-              <CheckIcon className="ml-auto size-4 opacity-70" aria-hidden />
-            ) : null}
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            className="min-h-9 gap-2"
-            onClick={() => setTheme("light")}
-          >
-            <SunIcon />
-            {common("themeLight")}
-            {active === "light" ? (
-              <CheckIcon className="ml-auto size-4 opacity-70" aria-hidden />
-            ) : null}
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            className="min-h-9 gap-2"
-            onClick={() => setTheme("dark")}
-          >
-            <MoonIcon />
-            {common("themeDark")}
-            {active === "dark" ? (
-              <CheckIcon className="ml-auto size-4 opacity-70" aria-hidden />
-            ) : null}
-          </DropdownMenuItem>
-        </DropdownMenuGroup>
+      <DropdownMenuContent
+        side="top"
+        align="end"
+        className={cn(chatContextMenuContentClass, "min-w-64")}
+      >
+        <AccountThemeItems />
+        <DropdownMenuSeparator className={chatContextMenuSeparatorClass} />
+        <AccountLanguageItems />
       </DropdownMenuContent>
     </DropdownMenu>
   )
@@ -133,7 +108,6 @@ function ChatAccountFooter({
   const t = useTranslations("workspace")
   const { user, isProUser, login, logout, loginPending } = useAuth()
   const avatarUrl = useUserAvatarUrl(user)
-  const { resolvedTheme, setTheme } = useTheme()
 
   if (!user) {
     return (
@@ -223,9 +197,13 @@ function ChatAccountFooter({
             </>
           ) : null}
         </DropdownMenuTrigger>
-        <DropdownMenuContent side="top" align="start" className="min-w-60">
+        <DropdownMenuContent
+          side="top"
+          align="start"
+          className={cn(chatContextMenuContentClass, "min-w-64")}
+        >
           <DropdownMenuGroup>
-            <DropdownMenuLabel className="font-normal">
+            <DropdownMenuLabel className={chatContextMenuHeaderClass}>
               <div className="flex items-start justify-between gap-3">
                 <div className="flex min-w-0 items-center gap-2.5">
                   <ChatAccountAvatar
@@ -263,33 +241,27 @@ function ChatAccountFooter({
               </div>
             ) : null}
           </DropdownMenuGroup>
-          <DropdownMenuSeparator />
-          <DropdownMenuGroup>
-            <DropdownMenuItem
-              className="min-h-9 gap-2"
-              nativeButton={false}
-              render={<Link href={BILLING_PATH} />}
-            >
-              <ReceiptIcon />
-              {t("billing")}
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              className="min-h-9 gap-2"
-              onClick={() =>
-                setTheme(resolvedTheme === "dark" ? "light" : "dark")
-              }
-            >
-              <EclipseIcon />
-              {resolvedTheme === "dark" ? "Light mode" : "Dark mode"}
-            </DropdownMenuItem>
-          </DropdownMenuGroup>
-          <DropdownMenuSeparator />
+          <DropdownMenuSeparator className={chatContextMenuSeparatorClass} />
+          <DropdownMenuItem
+            className={chatContextMenuItemClass}
+            nativeButton={false}
+            render={<Link href={BILLING_PATH} />}
+          >
+            <ReceiptIcon className={chatContextMenuIconClass} />
+            {t("billing")}
+          </DropdownMenuItem>
+          <DropdownMenuSeparator className={chatContextMenuSeparatorClass} />
+          <AccountThemeItems />
+          <DropdownMenuSeparator className={chatContextMenuSeparatorClass} />
+          <AccountLanguageItems />
+          <DropdownMenuSeparator className={chatContextMenuSeparatorClass} />
           <DropdownMenuItem
             variant="destructive"
+            className={chatContextMenuDeleteClass}
             onClick={() => void logout()}
           >
-            <LogOutIcon />
-            Log out
+            <LogOutIcon className="size-4.5 shrink-0" />
+            {t("logOut")}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

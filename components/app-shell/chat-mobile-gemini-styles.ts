@@ -221,10 +221,10 @@ const chatMobileDrawerFooterBarClass =
 
 /** Shared mobile bottom sheets — guide, privacy, checkout. */
 const chatMobileSheetContentClass =
-  "max-h-[min(92dvh,720px)] gap-0 overflow-y-auto rounded-t-[1.75rem] border-0 bg-background pb-[max(0.75rem,env(safe-area-inset-bottom,0px))] pt-2 text-foreground shadow-[0_-12px_48px_-16px_color-mix(in_oklch,var(--foreground)_12%,transparent)]"
+  "max-h-[min(92dvh,720px)] gap-0 overflow-y-auto rounded-t-[1.75rem] border-0 bg-white/82 pb-0 pt-2 text-foreground shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_75%,transparent),0_-16px_48px_-18px_color-mix(in_oklch,var(--foreground)_14%,transparent)] backdrop-blur-2xl backdrop-saturate-[180%] supports-[backdrop-filter]:bg-white/68 dark:bg-white/[0.1] dark:shadow-[inset_0_1px_0_0_color-mix(in_oklch,var(--foreground)_12%,transparent),0_-16px_48px_-18px_color-mix(in_oklch,black_45%,transparent)] dark:supports-[backdrop-filter]:bg-white/[0.07]"
 
 const chatMobileSheetHandleClass =
-  "mx-auto mb-4 h-1 w-10 shrink-0 rounded-full bg-border"
+  "mx-auto mb-4 h-1 w-10 shrink-0 rounded-full bg-foreground/15 dark:bg-white/20"
 
 const chatMobileSheetHeaderClass =
   "gap-1.5 space-y-0 px-5 pb-2 pt-0 text-left"
@@ -241,25 +241,33 @@ const chatMobileSheetSectionLabelClass =
   "text-[13px] font-normal tracking-wide text-muted-foreground uppercase"
 
 const chatMobileSheetCardClass =
-  "rounded-2xl border border-border/60 bg-card/75 px-3.5 py-3"
+  `rounded-2xl border-0 px-3.5 py-3 ${chatMobileGlassSurfaceClass}`
 
 const chatMobileSheetFooterClass =
-  "sticky bottom-0 border-0 px-5 pt-4 pb-0"
+  "mt-auto gap-0 border-0 !p-0"
 
 const chatMobileSheetFooterBarClass =
-  "rounded-t-[1.25rem] border-t border-border/60 bg-background/92 px-0 pt-4 pb-[max(0.75rem,env(safe-area-inset-bottom,0px))] shadow-[0_-8px_24px_-16px_color-mix(in_oklch,var(--foreground)_10%,transparent)] backdrop-blur-2xl backdrop-saturate-150 supports-[backdrop-filter]:bg-background/78"
+  "w-full border-0 bg-transparent px-5 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom,0px))]"
 
 const chatMobileSheetPrimaryButtonClass =
-  `h-12 w-full rounded-full text-[15px] font-medium ${chatMobilePrimaryButtonClass}`
+  "h-12 w-full rounded-full text-[15px] font-medium"
 
 const chatMobileSheetGhostButtonClass =
-  "h-10 w-full rounded-full text-[15px] font-normal text-muted-foreground hover:bg-accent hover:text-foreground"
+  "h-11 w-full rounded-full text-[15px] font-medium"
 
 const chatMobileSheetConsentCheckedClass =
-  "border-border/60 bg-card shadow-[0_1px_0_0_color-mix(in_oklch,var(--background)_80%,transparent)_inset]"
+  `border-0 ${chatMobileGlassSurfaceClass}`
 
 const chatMobileSheetConsentUncheckedClass =
-  "border-border/50 bg-card/60 hover:border-border hover:bg-card/80"
+  `border-0 bg-white/45 shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_70%,transparent)] backdrop-blur-xl supports-[backdrop-filter]:bg-white/32 hover:bg-white/55 dark:bg-white/[0.06] dark:supports-[backdrop-filter]:bg-white/[0.05] dark:hover:bg-white/[0.09]`
+
+/** Desktop login / consent dialog — same liquid glass language. */
+const chatLoginConsentDialogClass =
+  `gap-0 overflow-hidden !rounded-[1.5rem] !border-0 !bg-white/78 p-0 !text-foreground !shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_75%,transparent),0_24px_64px_-24px_color-mix(in_oklch,var(--foreground)_22%,transparent)] !ring-0 backdrop-blur-2xl backdrop-saturate-[180%] supports-[backdrop-filter]:!bg-white/62 sm:max-w-[24rem] dark:!bg-white/[0.08] dark:!shadow-[inset_0_1px_0_0_color-mix(in_oklch,var(--foreground)_10%,transparent),0_24px_64px_-24px_color-mix(in_oklch,black_50%,transparent)] dark:supports-[backdrop-filter]:!bg-white/[0.06]`
+
+const chatLoginConsentBrandMarkClass =
+  `flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-full ${chatMobileGlassSurfaceClass} ${chatMobileHeaderShadowClass}`
+
 
 const chatMobileToolsMenuClass =
   `z-30 min-w-[13.5rem] overflow-hidden rounded-2xl p-1.5 text-foreground ${chatMobileGlassSurfaceClass} ${chatMobileHeaderShadowClass} shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_75%,transparent),0_12px_40px_-16px_color-mix(in_oklch,var(--foreground)_18%,transparent)] dark:shadow-[inset_0_1px_0_0_color-mix(in_oklch,var(--foreground)_10%,transparent),0_12px_40px_-16px_color-mix(in_oklch,black_45%,transparent)]`
@@ -294,6 +302,24 @@ const chatSignalCardEntryShellClass =
 
 const chatSignalCardMetricTileClass =
   "rounded-xl border-0 bg-white/50 shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_78%,transparent),0_3px_14px_-10px_color-mix(in_oklch,var(--foreground)_9%,transparent)] backdrop-blur-md backdrop-saturate-150 supports-[backdrop-filter]:bg-white/36 dark:bg-white/[0.08] dark:shadow-[inset_0_1px_0_0_color-mix(in_oklch,var(--foreground)_10%,transparent),0_4px_16px_-12px_color-mix(in_oklch,black_32%,transparent)] dark:supports-[backdrop-filter]:bg-white/[0.06]"
+
+/** News / Intel panel shell — solid surface; glass stays on cards/controls. */
+const chatNewsPanelShellClass = "border-0 bg-background text-foreground"
+
+const chatNewsPanelHeaderClass =
+  "app-mobile-safe-header flex shrink-0 items-start justify-between gap-3 px-4 pb-3 pt-1"
+
+const chatNewsFreshnessBadgeClass =
+  `inline-flex h-8 shrink-0 items-center rounded-full px-2.5 font-mono text-[10px] font-normal tracking-tight text-muted-foreground ${chatMobileGlassSurfaceClass} ${chatMobileHeaderShadowClass}`
+
+const chatNewsReadAllButtonClass =
+  `inline-flex h-8 shrink-0 items-center gap-1.5 rounded-full px-2.5 text-xs font-medium tracking-[-0.01em] text-foreground ${chatMobileGlassSurfaceClass} ${chatMobileHeaderShadowClass} ${chatMobileHeaderShadowHoverClass} transition-[transform,background-color,box-shadow] active:scale-[0.98] hover:bg-white/88 dark:hover:bg-white/[0.12] [&_svg:not([class*='size-'])]:size-3.5 [&_svg]:opacity-70`
+
+/** News cards / tape — same liquid glass language as signal cards. */
+const chatNewsGlassCardClass = chatSignalCardClass
+const chatNewsGlassInsetClass = chatSignalCardInsetClass
+const chatNewsGlassTileClass = chatSignalCardMetricTileClass
+const chatNewsGlassChipClass = chatSignalCardChipClass
 
 
 export {
@@ -341,6 +367,14 @@ export {
   chatMobileHeaderModelPrimaryClass,
   chatMobileHeaderModelSecondaryClass,
   chatMobilePrimaryButtonClass,
+  chatNewsFreshnessBadgeClass,
+  chatNewsGlassCardClass,
+  chatNewsGlassChipClass,
+  chatNewsGlassInsetClass,
+  chatNewsGlassTileClass,
+  chatNewsPanelHeaderClass,
+  chatNewsPanelShellClass,
+  chatNewsReadAllButtonClass,
   chatSignalCardChipClass,
   chatSignalCardClass,
   chatSignalCardEntryShellClass,
@@ -373,6 +407,8 @@ export {
   chatMobileSheetPrimaryButtonClass,
   chatMobileSheetSectionLabelClass,
   chatMobileSheetTitleClass,
+  chatLoginConsentBrandMarkClass,
+  chatLoginConsentDialogClass,
   chatMobileThreadClass,
   chatMobileThreadFirstTurnClass,
   chatMobileThreadBottomSpacerClass,

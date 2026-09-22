@@ -3,16 +3,18 @@
 import * as React from "react"
 import { Link } from "@/i18n/navigation"
 import {
-  EclipseIcon,
   LogOutIcon,
   NewspaperIcon,
   ReceiptIcon,
   SparklesIcon,
 } from "lucide-react"
 import { useTranslations } from "next-intl"
-import { useTheme } from "@wrksz/themes/client/use-theme"
 
 import { ChatAccountAvatar } from "@/components/app-shell/chat-account-avatar"
+import {
+  AccountLanguageItems,
+  AccountThemeItems,
+} from "@/components/app-shell/chat-account-preferences"
 import {
   chatContextMenuContentClass,
   chatContextMenuDeleteClass,
@@ -61,55 +63,75 @@ function ChatAccountMenu({
   className,
 }: ChatAccountMenuProps) {
   const t = useTranslations("workspace")
-  const common = useTranslations("common")
   const { user, isProUser, login, logout, loginPending } = useAuth()
   const avatarUrl = useUserAvatarUrl(user)
-  const { resolvedTheme, setTheme } = useTheme()
   const planName = user ? displayPlanName(user.tier) : "Free"
   const isDesktop = variant === "desktop"
 
   if (!user) {
     return (
-      <Button
-        type="button"
-        variant={isDesktop ? "outline" : "ghost"}
-        size={isDesktop ? "sm" : "default"}
-        className={cn(
-          isDesktop
-            ? "h-8 shrink-0 gap-2 px-2.5"
-            : chatMobileHeaderAvatarButtonClass,
-          className
-        )}
-        aria-label={t("signIn")}
-        disabled={loginPending}
-        onClick={() => login({ source: "chat" })}
-      >
-        {isDesktop ? (
-          <>
-            <GoogleGlyph className="size-3.5 shrink-0" />
-            <span className="hidden sm:inline">
-              {loginPending ? t("connecting") : t("signIn")}
-            </span>
-          </>
-        ) : (
-          <span className="relative inline-flex shrink-0">
-            <Avatar className={chatMobileHeaderAvatarClass}>
-              <AvatarFallback className="bg-muted text-[11px] font-medium text-muted-foreground">
-                <GoogleGlyph className="size-3.5" />
-              </AvatarFallback>
-            </Avatar>
-            <Badge
+      <DropdownMenu>
+        <DropdownMenuTrigger
+          render={
+            <Button
+              type="button"
+              variant={isDesktop ? "outline" : "ghost"}
+              size={isDesktop ? "sm" : "default"}
               className={cn(
-                "absolute bottom-0 left-1/2 z-10 min-w-0 -translate-x-1/2 rounded-full border border-border/50 bg-background text-muted-foreground",
-                chatMobileHeaderPlanBadgeClass
+                isDesktop
+                  ? "h-8 shrink-0 gap-2 px-2.5"
+                  : chatMobileHeaderAvatarButtonClass,
+                className
               )}
-              aria-hidden
-            >
-              Free
-            </Badge>
-          </span>
-        )}
-      </Button>
+              aria-label={t("signIn")}
+            />
+          }
+        >
+          {isDesktop ? (
+            <>
+              <GoogleGlyph className="size-3.5 shrink-0" />
+              <span className="hidden sm:inline">
+                {loginPending ? t("connecting") : t("signIn")}
+              </span>
+            </>
+          ) : (
+            <span className="relative inline-flex shrink-0">
+              <Avatar className={chatMobileHeaderAvatarClass}>
+                <AvatarFallback className="bg-muted text-[11px] font-medium text-muted-foreground">
+                  <GoogleGlyph className="size-3.5" />
+                </AvatarFallback>
+              </Avatar>
+              <Badge
+                className={cn(
+                  "absolute bottom-0 left-1/2 z-10 min-w-0 -translate-x-1/2 rounded-full border border-border/50 bg-background text-muted-foreground",
+                  chatMobileHeaderPlanBadgeClass
+                )}
+                aria-hidden
+              >
+                Free
+              </Badge>
+            </span>
+          )}
+        </DropdownMenuTrigger>
+        <DropdownMenuContent
+          align="end"
+          sideOffset={10}
+          className={cn(chatContextMenuContentClass, "min-w-64")}
+        >
+          <AccountThemeItems />
+          <DropdownMenuSeparator className={chatContextMenuSeparatorClass} />
+          <AccountLanguageItems />
+          <DropdownMenuSeparator className={chatContextMenuSeparatorClass} />
+          <DropdownMenuItem
+            className={chatContextMenuItemClass}
+            disabled={loginPending}
+            onClick={() => login({ source: "chat" })}
+          >
+            <GoogleGlyph className="size-4 shrink-0" />
+            {loginPending ? t("connecting") : t("signIn")}
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     )
   }
 
@@ -146,7 +168,7 @@ function ChatAccountMenu({
       <DropdownMenuContent
         align="end"
         sideOffset={10}
-        className={cn(chatContextMenuContentClass, "min-w-68")}
+        className={cn(chatContextMenuContentClass, "min-w-64")}
       >
         <DropdownMenuGroup>
           <DropdownMenuLabel className={chatContextMenuHeaderClass}>
@@ -172,6 +194,7 @@ function ChatAccountMenu({
             </div>
           </DropdownMenuLabel>
         </DropdownMenuGroup>
+
         {!isProUser ? (
           <>
             <DropdownMenuSeparator className={chatContextMenuSeparatorClass} />
@@ -185,18 +208,10 @@ function ChatAccountMenu({
             </DropdownMenuItem>
           </>
         ) : null}
+
         <DropdownMenuSeparator className={chatContextMenuSeparatorClass} />
-        <DropdownMenuItem
-          className={chatContextMenuItemClass}
-          nativeButton={false}
-          render={<Link href={BILLING_PATH} />}
-        >
-          <ReceiptIcon className={chatContextMenuIconClass} />
-          {t("billing")}
-        </DropdownMenuItem>
-        {onOpenNews ? (
-          <>
-            <DropdownMenuSeparator className={chatContextMenuSeparatorClass} />
+        <DropdownMenuGroup>
+          {onOpenNews ? (
             <DropdownMenuItem
               className={chatContextMenuItemClass}
               onClick={onOpenNews}
@@ -204,20 +219,23 @@ function ChatAccountMenu({
               <NewspaperIcon className={chatContextMenuIconClass} />
               {t("news")}
             </DropdownMenuItem>
-          </>
-        ) : null}
+          ) : null}
+          <DropdownMenuItem
+            className={chatContextMenuItemClass}
+            nativeButton={false}
+            render={<Link href={BILLING_PATH} />}
+          >
+            <ReceiptIcon className={chatContextMenuIconClass} />
+            {t("billing")}
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
+
         <DropdownMenuSeparator className={chatContextMenuSeparatorClass} />
-        <DropdownMenuItem
-          className={chatContextMenuItemClass}
-          onClick={() =>
-            setTheme(resolvedTheme === "dark" ? "light" : "dark")
-          }
-        >
-          <EclipseIcon className={chatContextMenuIconClass} />
-          {resolvedTheme === "dark"
-            ? common("lightMode")
-            : common("darkMode")}
-        </DropdownMenuItem>
+        <AccountThemeItems />
+
+        <DropdownMenuSeparator className={chatContextMenuSeparatorClass} />
+        <AccountLanguageItems />
+
         <DropdownMenuSeparator className={chatContextMenuSeparatorClass} />
         <DropdownMenuItem
           variant="destructive"

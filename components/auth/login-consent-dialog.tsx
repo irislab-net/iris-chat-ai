@@ -26,6 +26,8 @@ import {
 import { useIsDesktop } from "@/hooks/use-media-query"
 import { PRIVACY_NOTICE_URL, TERMS_OF_SERVICE_URL } from "@/lib/legal"
 import {
+  chatLoginConsentBrandMarkClass,
+  chatLoginConsentDialogClass,
   chatMobileSheetBodyClass,
   chatMobileSheetConsentCheckedClass,
   chatMobileSheetConsentUncheckedClass,
@@ -33,12 +35,11 @@ import {
   chatMobileSheetDescriptionClass,
   chatMobileSheetFooterBarClass,
   chatMobileSheetFooterClass,
-  chatMobileSheetGhostButtonClass,
   chatMobileSheetHandleClass,
   chatMobileSheetHeaderClass,
-  chatMobileSheetPrimaryButtonClass,
   chatMobileSheetTitleClass,
 } from "@/components/app-shell/chat-mobile-gemini-styles"
+import { landingCta } from "@/lib/landing-modern-styles"
 import { cn } from "@/lib/utils"
 
 type LoginConsentDialogProps = {
@@ -65,7 +66,7 @@ function LegalLink({
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="inline-flex items-center gap-1 font-medium text-foreground underline decoration-border underline-offset-[3px] transition-colors hover:decoration-foreground/40"
+      className="inline-flex items-center gap-1 font-medium text-foreground underline decoration-foreground/25 underline-offset-[3px] transition-colors hover:decoration-foreground/55"
       onClick={(event) => event.stopPropagation()}
     >
       {children}
@@ -91,7 +92,7 @@ function ConsentCheck({
     <label
       htmlFor={id}
       className={cn(
-        "flex min-h-11 cursor-pointer items-center gap-3 rounded-xl border px-3.5 py-2.5 text-left transition-[background-color,border-color]",
+        "flex min-h-12 cursor-pointer items-center gap-3 rounded-2xl px-3.5 py-3 text-left transition-[background-color,box-shadow]",
         checked
           ? chatMobileSheetConsentCheckedClass
           : chatMobileSheetConsentUncheckedClass
@@ -99,7 +100,7 @@ function ConsentCheck({
     >
       <span
         id={labelId}
-        className="min-w-0 flex-1 text-[13px] leading-snug text-foreground"
+        className="min-w-0 flex-1 text-[13px] leading-snug tracking-[-0.01em] text-foreground"
       >
         {children}
       </span>
@@ -108,7 +109,11 @@ function ConsentCheck({
         checked={checked}
         onCheckedChange={onCheckedChange}
         aria-labelledby={labelId}
-        className="shrink-0"
+        className={cn(
+          "shrink-0",
+          checked &&
+            "bg-[#2563EB] hover:bg-[#1D4ED8] focus-visible:ring-[#2563EB]/40"
+        )}
       />
     </label>
   )
@@ -116,18 +121,20 @@ function ConsentCheck({
 
 function LoginConsentBrand() {
   return (
-    <div className="flex items-center gap-2.5">
-      <ExurLogo
-        decorative
-        size={36}
-        className="size-9 shrink-0 rounded-full"
-        priority
-      />
+    <div className="flex items-center gap-3">
+      <span className={chatLoginConsentBrandMarkClass}>
+        <ExurLogo
+          decorative
+          size={28}
+          className="size-7 rounded-full"
+          priority
+        />
+      </span>
       <div className="min-w-0">
-        <p className="text-sm font-semibold leading-none tracking-tight text-foreground">
+        <p className="text-[15px] font-semibold leading-none tracking-[-0.02em] text-foreground">
           Exur
         </p>
-        <p className="mt-1 text-xs leading-none text-muted-foreground">
+        <p className="mt-1.5 text-[12px] leading-none text-muted-foreground">
           Secure sign-in with Google
         </p>
       </div>
@@ -140,7 +147,6 @@ function LoginConsentActions({
   confirming,
   onConfirm,
   onCancel,
-  mobile = false,
 }: {
   canContinue: boolean
   confirming: boolean
@@ -149,28 +155,24 @@ function LoginConsentActions({
   mobile?: boolean
 }) {
   return (
-    <div className="flex w-full flex-col gap-1.5">
+    <div className="flex w-full flex-col gap-2.5">
       <Button
         type="button"
-        size="lg"
         className={cn(
-          "h-11 w-full gap-2 rounded-full px-5 text-sm font-medium shadow-none disabled:opacity-45",
-          mobile && chatMobileSheetPrimaryButtonClass
+          landingCta("primary", "md"),
+          "h-12! min-h-12 w-full disabled:opacity-45"
         )}
         disabled={!canContinue}
         onClick={onConfirm}
       >
-        <GoogleGlyph className="size-4" />
+        <GoogleGlyph className="size-4 shrink-0" />
         {confirming ? "Connecting…" : "Agree & continue with Google"}
       </Button>
       <Button
         type="button"
-        variant="ghost"
-        size="lg"
         className={cn(
-          mobile
-            ? chatMobileSheetGhostButtonClass
-            : "h-9 w-full rounded-full text-[13px] font-normal text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+          landingCta("secondary", "md"),
+          "h-12! min-h-12 w-full"
         )}
         disabled={confirming}
         onClick={onCancel}
@@ -254,7 +256,6 @@ function LoginConsentDialog({
       confirming={confirming}
       onConfirm={onConfirm}
       onCancel={resetAndClose}
-      mobile={!isDesktop}
     />
   )
 
@@ -262,13 +263,13 @@ function LoginConsentDialog({
     return (
       <Dialog open={open} onOpenChange={handleOpenChange}>
         <DialogContent
-          className="gap-0 overflow-hidden rounded-[1.25rem] border border-border/40 bg-background p-0 shadow-xl ring-0 sm:max-w-[24rem]"
+          className={chatLoginConsentDialogClass}
           showCloseButton={!confirming}
         >
           <div className="flex flex-col gap-4 px-5 pt-5 pb-1">
             <LoginConsentBrand />
-            <DialogHeader className="gap-1 space-y-0 text-left">
-              <DialogTitle className="text-lg font-semibold tracking-tight">
+            <DialogHeader className="gap-1.5 space-y-0 text-left">
+              <DialogTitle className="text-[1.25rem] font-semibold tracking-[-0.02em]">
                 {TITLE}
               </DialogTitle>
               <DialogDescription className="text-pretty text-[13px] leading-relaxed text-muted-foreground">
@@ -282,7 +283,7 @@ function LoginConsentDialog({
               onPrivacyChange={setPrivacyAccepted}
             />
           </div>
-          <DialogFooter className="mx-0 mb-0 flex-col gap-2 rounded-none border-t border-border/40 p-4 pt-3.5 sm:flex-col sm:justify-stretch">
+          <DialogFooter className="mx-0 mb-0 flex-col gap-2 rounded-none border-0 bg-transparent p-4 pt-2 sm:flex-col sm:justify-stretch">
             {actions}
           </DialogFooter>
         </DialogContent>
@@ -295,7 +296,7 @@ function LoginConsentDialog({
       <SheetContent
         side="bottom"
         showCloseButton={!confirming}
-        className={chatMobileSheetContentClass}
+        className={cn(chatMobileSheetContentClass, "gap-0 border-0")}
       >
         <div aria-hidden className={chatMobileSheetHandleClass} />
         <div className={cn(chatMobileSheetBodyClass, "gap-4 pb-2")}>
@@ -318,9 +319,7 @@ function LoginConsentDialog({
           />
         </div>
         <SheetFooter className={chatMobileSheetFooterClass}>
-          <div className={cn(chatMobileSheetFooterBarClass, "px-5")}>
-            {actions}
-          </div>
+          <div className={chatMobileSheetFooterBarClass}>{actions}</div>
         </SheetFooter>
       </SheetContent>
     </Sheet>
