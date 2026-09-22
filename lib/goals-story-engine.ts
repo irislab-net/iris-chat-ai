@@ -376,22 +376,3 @@ export function initGoalsStory(dom: GoalsStoryDom) {
     ctx.revert()
   }
 }
-
-export const GOALS_STORY_COPY = [
-  {
-    heading: "Too much noise",
-    sub: "Most of it never changes what you should do.",
-  },
-  {
-    heading: "Money everywhere",
-    sub: "Bank, cards, and savings don’t talk to each other.",
-  },
-  {
-    heading: "Hard to decide",
-    sub: "Every choice feels equally urgent.",
-  },
-  {
-    heading: "One place to ask",
-    sub: "Plain answers, in your context.",
-  },
-] as const

@@ -20,7 +20,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
   HERO_DEMO_AVATARS,
-  HERO_DEMO_EXCHANGES,
+  HERO_DEMO_EXCHANGE_COUNT,
 } from "@/lib/landing-modern-data"
 import {
   landingGlassBubbleAi,
@@ -79,7 +79,7 @@ type DemoShotElements = {
 }
 
 function pickRandomScenarioIndex(exclude?: number) {
-  const count = HERO_DEMO_EXCHANGES.length
+  const count = HERO_DEMO_EXCHANGE_COUNT
   if (count <= 1) return 0
   let index = Math.floor(Math.random() * count)
   while (index === exclude) {
@@ -535,7 +535,8 @@ export function HeroComposeDemo() {
   const [scenarioIndex, setScenarioIndex] = useState(0)
 
   const demoActive = !isFocused && userQuery.length === 0
-  const exchange = HERO_DEMO_EXCHANGES[scenarioIndex]
+  const question = tHero(`exchanges.${scenarioIndex}.q`)
+  const answer = tHero(`exchanges.${scenarioIndex}.a`)
   const demoAvatar = HERO_DEMO_AVATARS[scenarioIndex % HERO_DEMO_AVATARS.length]
 
   const isStreaming =
@@ -623,12 +624,12 @@ export function HeroComposeDemo() {
 
       killDemoMotion()
 
-      const question = sendQuestion ?? exchange.question
+      const nextQuestion = sendQuestion ?? question
 
       timelineRef.current = playHeroComposeTimeline({
         elements,
-        question,
-        answer: exchange.answer,
+        question: nextQuestion,
+        answer,
         reducedMotion,
         startAt,
         onDraft: (value) => {
@@ -661,12 +662,12 @@ export function HeroComposeDemo() {
       killDemoMotion()
     }
   }, [
+    answer,
     demoActive,
-    exchange,
     hideDemoShots,
     killDemoMotion,
+    question,
     reducedMotion,
-    scenarioIndex,
   ])
 
   return (

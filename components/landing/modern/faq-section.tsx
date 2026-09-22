@@ -1,5 +1,7 @@
 "use client"
 
+import { useTranslations } from "next-intl"
+
 import { ScrollReveal } from "@/components/landing/modern/scroll-reveal"
 import { SectionHeader } from "@/components/landing/modern/sphere-ui"
 import {
@@ -8,7 +10,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
-import { FAQ_ITEMS, FAQ_SECTION } from "@/lib/landing-modern-data"
+import { FAQ_ITEM_IDS } from "@/lib/landing-modern-data"
 import { LANDING_REVEAL } from "@/lib/landing-motion"
 import {
   landingAfterHeader,
@@ -20,11 +22,13 @@ import {
 import { cn } from "@/lib/utils"
 
 export function FaqSection() {
+  const t = useTranslations("modern.faq")
+
   return (
     <section id="faq" className={cn(landingSection, landingSectionBody)}>
       <div className={landingInner}>
         <ScrollReveal>
-          <SectionHeader title={FAQ_SECTION.title} subtitle={FAQ_SECTION.subtitle} />
+          <SectionHeader title={t("title")} subtitle={t("subtitle")} />
         </ScrollReveal>
 
         <ScrollReveal
@@ -32,13 +36,13 @@ export function FaqSection() {
           className={cn(landingContent, landingAfterHeader)}
         >
           <Accordion defaultValue={["what"]}>
-            {FAQ_ITEMS.map((faq) => (
-              <AccordionItem key={faq.id} value={faq.id} className="border-border">
+            {FAQ_ITEM_IDS.map((id) => (
+              <AccordionItem key={id} value={id} className="border-border">
                 <AccordionTrigger className="py-4 text-left text-sm font-normal text-foreground hover:no-underline sm:text-base">
-                  {faq.question}
+                  {t(`items.${id}.question`)}
                 </AccordionTrigger>
                 <AccordionContent className="pb-4 text-sm leading-relaxed text-muted-foreground sm:text-[0.9375rem]">
-                  {faq.answer}
+                  {t(`items.${id}.answer`)}
                 </AccordionContent>
               </AccordionItem>
             ))}

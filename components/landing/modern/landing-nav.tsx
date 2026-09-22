@@ -1,7 +1,7 @@
 "use client"
 
 import { gsap } from "gsap"
-import { EclipseIcon, UserRoundIcon, XIcon } from "lucide-react"
+import { CheckIcon, MonitorIcon, MoonIcon, SunIcon, UserRoundIcon, XIcon } from "lucide-react"
 import { useTranslations } from "next-intl"
 import { useTheme } from "@wrksz/themes/client/use-theme"
 import { useEffect, useState } from "react"
@@ -16,6 +16,12 @@ import { SphereCta } from "@/components/landing/modern/sphere-ui"
 import { ThemeModeControl } from "@/components/landing/modern/theme-mode-control"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import {
   Sheet,
   SheetClose,
@@ -60,25 +66,61 @@ const landingNavIconButtonClass = cn(
   "relative size-10! shrink-0 rounded-full p-0 text-foreground hover:bg-transparent"
 )
 
+type ThemeChoice = "system" | "light" | "dark"
+
+const THEME_CHOICES: {
+  value: ThemeChoice
+  icon: typeof MonitorIcon
+  labelKey: "themeSystem" | "themeLight" | "themeDark"
+}[] = [
+  { value: "light", icon: SunIcon, labelKey: "themeLight" },
+  { value: "dark", icon: MoonIcon, labelKey: "themeDark" },
+  { value: "system", icon: MonitorIcon, labelKey: "themeSystem" },
+]
+
 function LandingThemeToggle() {
   const t = useTranslations("common")
-  const { resolvedTheme, setTheme } = useTheme()
+  const { theme, setTheme } = useTheme()
+  const active: ThemeChoice =
+    theme === "light" || theme === "dark" || theme === "system" ? theme : "system"
+  const ActiveIcon =
+    THEME_CHOICES.find((choice) => choice.value === active)?.icon ?? MonitorIcon
 
   return (
-    <Button
-      type="button"
-      variant="ghost"
-      className={landingNavIconButtonClass}
-      aria-label={t("toggleTheme")}
-      onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
-    >
-      <span aria-hidden className={cn(landingGlassSheen, "rounded-full")} />
-      <EclipseIcon className="relative z-10 size-4" />
-    </Button>
+    <DropdownMenu>
+      <DropdownMenuTrigger
+        render={
+          <Button
+            type="button"
+            variant="ghost"
+            className={landingNavIconButtonClass}
+            aria-label={t("theme")}
+          />
+        }
+      >
+        <span aria-hidden className={cn(landingGlassSheen, "rounded-full")} />
+        <ActiveIcon className="relative z-10 size-4" strokeWidth={1.75} />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" sideOffset={10} className="min-w-40">
+        {THEME_CHOICES.map(({ value, icon: Icon, labelKey }) => (
+          <DropdownMenuItem
+            key={value}
+            className="min-h-9 gap-2"
+            onClick={() => setTheme(value)}
+          >
+            <Icon className="size-4" strokeWidth={1.75} />
+            {t(labelKey)}
+            {active === value ? (
+              <CheckIcon className="ml-auto size-4 opacity-70" aria-hidden />
+            ) : null}
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
   )
 }
 
-/** Desktop: compact avatar right of Start Free. */
+/** Desktop: compact avatar right of Application. */
 function LandingNavAccount() {
   const t = useTranslations("workspace")
   const { user, loading, login, loginPending } = useAuth()
@@ -179,6 +221,8 @@ function LandingSheetAccount({ onDone }: { onDone?: () => void }) {
 }
 
 export function LandingNav() {
+  const tNav = useTranslations("modern.nav")
+  const tAria = useTranslations("nav")
   const [open, setOpen] = useState(false)
   const [stuck, setStuck] = useState(false)
   const { activeSectionId } = useLandingActiveSection()
@@ -201,7 +245,7 @@ export function LandingNav() {
             ? "bg-white/72 py-2 shadow-[0_10px_40px_rgba(15,23,42,0.08),inset_0_1px_1px_rgba(255,255,255,0.9)] backdrop-blur-2xl dark:bg-background/72 dark:shadow-[0_10px_40px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.08)]"
             : "bg-transparent py-0 shadow-none"
         )}
-        aria-label="Landing"
+        aria-label={tAria("aria")}
       >
         <Button
           type="button"
@@ -240,7 +284,7 @@ export function LandingNav() {
                   isActive ? landingNavLinkActive : landingNavLinkInactive
                 )}
               >
-                {link.label}
+                {tNav(link.id)}
               </Button>
             )
           })}
@@ -256,7 +300,7 @@ export function LandingNav() {
           </div>
 
           <SphereCta href={getLaunchAppHref()} variant="glass" size="sm">
-            Start Free
+            {tNav("application")}
           </SphereCta>
 
           <div className="hidden lg:block">
@@ -270,7 +314,7 @@ export function LandingNav() {
                   type="button"
                   variant="ghost"
                   className={cn(landingNavIconButtonClass, "lg:hidden")}
-                  aria-label="Open menu"
+                  aria-label={tNav("openMenu")}
                 >
                   <span aria-hidden className={cn(landingGlassSheen, "rounded-full")} />
                   <NavMenuIcon />
@@ -312,7 +356,7 @@ export function LandingNav() {
                         "relative size-10! shrink-0 rounded-full p-0 text-foreground hover:bg-transparent",
                         landingGlassNavIcon
                       )}
-                      aria-label="Close menu"
+                      aria-label={tNav("closeMenu")}
                     />
                   }
                 >
@@ -321,7 +365,7 @@ export function LandingNav() {
                 </SheetClose>
               </SheetHeader>
 
-              <nav className="flex flex-1 flex-col gap-1 px-3 pt-2" aria-label="Mobile">
+              <nav className="flex flex-1 flex-col gap-1 px-3 pt-2" aria-label={tNav("mobileNav")}>
                 <div className="mb-2">
                   <LandingSheetAccount onDone={() => setOpen(false)} />
                 </div>
@@ -341,7 +385,7 @@ export function LandingNav() {
                           : "font-medium text-muted-foreground hover:bg-muted/60 hover:text-foreground"
                       )}
                     >
-                      {link.label}
+                      {tNav(link.id)}
                     </Button>
                   )
                 })}
@@ -349,7 +393,7 @@ export function LandingNav() {
 
               <div className="mt-auto flex flex-col gap-3 p-5 pt-4 pb-[max(1.25rem,env(safe-area-inset-bottom))]">
                 <SphereCta href={getLaunchAppHref()} variant="glass" className="w-full">
-                  Start Free
+                  {tNav("application")}
                 </SphereCta>
                 <ThemeModeControl />
                 <LocaleSwitcher

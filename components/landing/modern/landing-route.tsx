@@ -1,11 +1,11 @@
-import { setRequestLocale } from "next-intl/server"
+import { getTranslations, setRequestLocale } from "next-intl/server"
 import type { Metadata } from "next"
 
 import { ModernLandingPage } from "@/components/landing/modern/landing-page"
 import { JsonLd } from "@/components/seo/json-ld"
-import type { AppLocale } from "@/i18n/routing"
+import { routing, type AppLocale } from "@/i18n/routing"
 import { openGraphLocale } from "@/lib/i18n/locale"
-import { SITE_DESCRIPTION, SITE_URL } from "@/lib/seo"
+import { SITE_URL } from "@/lib/seo"
 import {
   APP_PATH,
   getSiteOrigin,
@@ -22,12 +22,22 @@ export async function generateLandingMetadata({
   params,
 }: Props): Promise<Metadata> {
   const { locale } = await params
+  const t = await getTranslations({ locale, namespace: "metadata" })
 
-  const title = "Exur: AI Financial Assistant"
-  const description =
-    "See where your money is going. Ask in plain language. Get a clear next step."
+  const title = t("homeTitle")
+  const description = t("homeDescription")
+  const og = t("homeOg")
 
-  const canonical = locale === "en" ? SITE_URL : `${SITE_URL}/ar`
+  const canonical =
+    locale === routing.defaultLocale ? SITE_URL : `${SITE_URL}/${locale}`
+
+  const languages = Object.fromEntries(
+    routing.locales.map((code) => [
+      code,
+      code === routing.defaultLocale ? SITE_URL : `${SITE_URL}/${code}`,
+    ])
+  ) as Record<string, string>
+  languages["x-default"] = SITE_URL
 
   return {
     title: { absolute: title },
@@ -35,18 +45,14 @@ export async function generateLandingMetadata({
     robots: ROOT_ROBOTS,
     alternates: {
       canonical,
-      languages: {
-        en: SITE_URL,
-        ar: `${SITE_URL}/ar`,
-        "x-default": SITE_URL,
-      },
+      languages,
     },
     openGraph: {
       type: "website",
       locale: openGraphLocale(locale),
       url: canonical,
       siteName: SITE_NAME,
-      title,
+      title: og,
       description,
       images: [
         {
@@ -59,7 +65,7 @@ export async function generateLandingMetadata({
     },
     twitter: {
       card: "summary_large_image",
-      title,
+      title: og,
       description,
       images: ["/twitter-image"],
     },
@@ -70,14 +76,15 @@ export async function MarketingLandingPage({ params }: Props) {
   const { locale } = await params
   setRequestLocale(locale)
 
+  const t = await getTranslations({ locale, namespace: "metadata" })
   const marketingOrigin = SITE_URL
   const chatOrigin = getSiteOrigin()
   const landingLd = {
     "@context": "https://schema.org",
     "@type": "WebPage",
-    name: "Exur: AI Financial Assistant",
+    name: t("homeTitle"),
     url: marketingOrigin,
-    description: SITE_DESCRIPTION,
+    description: t("homeDescription"),
     inLanguage: locale,
     isPartOf: {
       "@type": "WebSite",

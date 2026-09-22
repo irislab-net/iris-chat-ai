@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { useTranslations } from "next-intl"
 
 import { AnimatedSvgIcon } from "@/components/landing/modern/animated-svg-icon"
 import {
@@ -20,7 +21,6 @@ import { formatTradePrice } from "@/lib/chat/trade-signal"
 import { buildLandingChatHref } from "@/lib/landing-chat-handoff"
 import {
   SIGNALS_LIVE_MARKETS,
-  SIGNALS_MARKETS_SECTION,
   SIGNALS_SOON_MARKETS,
 } from "@/lib/landing-modern-data"
 import {
@@ -106,9 +106,9 @@ function LivePrice({
 function LiveMarketCard({
   id,
   symbol,
-  name,
   prices,
 }: (typeof SIGNALS_LIVE_MARKETS)[number] & { prices: LivePrices | null }) {
+  const t = useTranslations("modern.signals")
   const Mark = SIGNALS_LIVE_MARKS[id]
   const href = buildLandingChatHref(formatSignalCommand(symbol))
 
@@ -136,7 +136,7 @@ function LiveMarketCard({
         <span className="mr-2 font-(family-name:--font-mono-modern) text-[0.65em] font-medium tracking-[0.14em] text-muted-foreground/70 uppercase">
           {symbol}
         </span>
-        {name}
+        {t(`markets.${id}`)}
       </h3>
 
       <LivePrice symbol={symbol} prices={prices} />
@@ -147,7 +147,7 @@ function LiveMarketCard({
         size="sm"
         className="relative z-10 mt-6"
       >
-        {SIGNALS_MARKETS_SECTION.cardAction}
+        {t("cardAction")}
       </SphereCta>
     </article>
   )
@@ -156,8 +156,8 @@ function LiveMarketCard({
 function SoonMarketChip({
   id,
   symbol,
-  name,
 }: (typeof SIGNALS_SOON_MARKETS)[number]) {
+  const t = useTranslations("modern.signals")
   const Mark = SIGNALS_SOON_MARKS[id]
 
   return (
@@ -178,23 +178,21 @@ function SoonMarketChip({
         {symbol}
       </span>
       <span className="sr-only">
-        {name}, {SIGNALS_MARKETS_SECTION.soonLabel}
+        {t(`markets.${id}`)}, {t("soonLabel")}
       </span>
     </li>
   )
 }
 
 export function SignalsMarketsSection() {
+  const t = useTranslations("modern.signals")
   const prices = useLiveMarketPrices()
 
   return (
     <section id="signals" className={cn(landingSection, landingSectionBody)}>
       <div className={landingInner}>
         <ScrollReveal>
-          <SectionHeader
-            title={SIGNALS_MARKETS_SECTION.title}
-            subtitle={SIGNALS_MARKETS_SECTION.subtitle}
-          />
+          <SectionHeader title={t("title")} subtitle={t("subtitle")} />
         </ScrollReveal>
 
         <ScrollRevealGroup
@@ -212,7 +210,7 @@ export function SignalsMarketsSection() {
         <ScrollReveal delay={0.12} className={cn(landingContent, landingAfterHeader)}>
           <div className="text-center">
             <p className="text-sm font-medium text-muted-foreground">
-              {SIGNALS_MARKETS_SECTION.soonHint}
+              {t("soonHint")}
             </p>
             <ul className="mt-6 flex flex-wrap items-start justify-center gap-x-5 gap-y-6 sm:gap-x-7">
               {SIGNALS_SOON_MARKETS.map((market) => (

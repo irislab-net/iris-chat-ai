@@ -1,0 +1,281 @@
+{
+  "nav": {
+    "features": "Por que Exur",
+    "desk": "Desk",
+    "signals": "Sinais",
+    "about": "Sobre",
+    "pricing": "Preços",
+    "application": "Aplicativo",
+    "openMenu": "Abrir menu",
+    "closeMenu": "Fechar menu",
+    "mobileNav": "Mobile"
+  },
+  "goals": {
+    "0": {
+      "heading": "Muito barulho",
+      "sub": "A maior parte nunca muda o que você deveria fazer."
+    },
+    "1": {
+      "heading": "Dinheiro em todo lugar",
+      "sub": "Banco, cartões e poupança não se falam."
+    },
+    "2": {
+      "heading": "Difícil decidir",
+      "sub": "Cada opção parece igualmente urgente."
+    },
+    "3": {
+      "heading": "Um só lugar para perguntar",
+      "sub": "Respostas claras, no seu contexto."
+    },
+    "diagramAria": "Círculos que mudam ao rolar: uma grade de ruído, quatro contas espalhadas, quatro opções sobrepostas e então um anel calmo"
+  },
+  "architecture": {
+    "title": "Como o desk funciona.",
+    "subtitle": "Leia a fita. Pergunte uma vez. Depois aja, ou espere."
+  },
+  "howItWorks": {
+    "read": {
+      "headline": "Manchetes pontuadas",
+      "desc": "Notícias ranqueadas por impacto para o mercado em que você está, não outro feed infinito."
+    },
+    "ask": {
+      "headline": "Em linguagem clara",
+      "desc": "Acompanhe uma história ou a fita mais ampla. Respostas curtas, ancoradas no contexto."
+    },
+    "act": {
+      "headline": "Setup ou espera",
+      "desc": "Se houver um movimento que valha a pena, Exur mostra os níveis. Se não, diz para esperar."
+    }
+  },
+  "desk": {
+    "title": "Da manchete à resposta.",
+    "subtitle": "Sem feed para rolar. Só a história que merece uma pergunta.",
+    "onTheDesk": "No desk",
+    "you": "Você",
+    "news": {
+      "0": {
+        "source": "Bloomberg",
+        "time": "3m",
+        "headline": "Fluxos de ETF spot voltam ao positivo após três semanas de saídas"
+      },
+      "1": {
+        "source": "CoinDesk",
+        "time": "12m",
+        "headline": "Funding vira negativo enquanto o alavancamento se reseta antes do CPI"
+      },
+      "2": {
+        "source": "The Block",
+        "time": "27m",
+        "headline": "Reservas em exchanges caem ao nível mais baixo desde março"
+      }
+    },
+    "ask": {
+      "question": "A manchete do ETF importa para ETH hoje?",
+      "answer": "Sim. Entradas costumam levantar o beta primeiro. Veja se o funding continua negativo enquanto o spot lidera."
+    }
+  },
+  "signalWait": {
+    "title": "Aja só quando estiver claro.",
+    "subtitle": "Pergunte uma vez. Receba um setup, ou um não silencioso.",
+    "composerPlaceholder": "Pergunte sobre uma operação…",
+    "ticket": {
+      "setup": "Spot lidera enquanto o funding segue suave",
+      "thesis": "Spot lidera; funding ainda suave.",
+      "timeHorizon": "Intraday",
+      "entryReason": "Acima do VWAP da sessão",
+      "stopLossReason": "Abaixo do swing anterior",
+      "takeProfitReason": "Prateleira de oferta anterior"
+    },
+    "tradeQuestion": "Long ETH daqui?",
+    "hold": {
+      "label": "Sem operação",
+      "question": "Short nesse rebote?",
+      "answer": "Não. A fita está mista e o alavancamento ainda está se resetando.",
+      "reason": "Hoje não há edge que valha forçar."
+    }
+  },
+  "signals": {
+    "title": "Dados profundos onde importa.",
+    "subtitle": "BTC, ETH e ouro estão ativos. Mais desks em breve.",
+    "soonLabel": "Em breve",
+    "soonHint": "Mais desks a caminho",
+    "cardAction": "Pedir sinal",
+    "markets": {
+      "btc": "Bitcoin",
+      "eth": "Ethereum",
+      "xau": "Ouro",
+      "sol": "Solana",
+      "bnb": "BNB",
+      "xrp": "XRP",
+      "link": "Chainlink",
+      "avax": "Avalanche",
+      "doge": "Dogecoin",
+      "arb": "Arbitrum",
+      "op": "Optimism"
+    }
+  },
+  "about": {
+    "title": "Deixe o Exur explicar.",
+    "subtitle": "Um minuto, com as próprias palavras.",
+    "listenLabel": "1 min de áudio",
+    "hearFromExur": "Ouvir o Exur",
+    "close": "Fechar",
+    "narration": {
+      "0": "Olá, eu sou Exur.",
+      "1": "Não sou apenas mais um chatbot, sinal de trading ou rastreador de portfólio.",
+      "2": "Sou o seu Cérebro Financeiro.",
+      "3": "Hoje, o mundo financeiro global é avassalador,",
+      "4": "cheio de ruído constante, books de ordens complexos e dados sem fim.",
+      "5": "As instituições lidam com isso com exércitos de especialistas,",
+      "6": "enquanto os indivíduos ficam sozinhos com planilhas e gráficos.",
+      "7": "Eu fecho essa lacuna.",
+      "8": "Observo os mercados globais, analiso microestrutura, fluxo de ordens e notícias,",
+      "9": "e combino isso com uma compreensão de você, seus objetivos, seu portfólio e seu risco.",
+      "10": "Não apenas prevejo o que o mercado pode fazer; digo o que você deveria fazer.",
+      "11": "E quando não há edge?",
+      "12": "Simplesmente direi: «Não faça nada».",
+      "13": "Sou Exur, a camada de inteligência responsável pela sua vida financeira.",
+      "14": "Experimente hoje a sua nova inteligência financeira.",
+      "15": "Comece a conversar comigo agora."
+    }
+  },
+  "guestTrial": {
+    "title": "Explore o desk. Pergunte algumas vezes.",
+    "subtitle": "As notícias estão abertas sem conta. O chat de convidado dá três mensagens por semana; depois entre com o Google para continuar.",
+    "statLabel": "mensagens de convidado / semana",
+    "cta": "Abrir o desk",
+    "note": "Sem wallet. Sem cartão. Só o mercado."
+  },
+  "faq": {
+    "title": "Perguntas frequentes.",
+    "subtitle": "O que Exur é e o que não é.",
+    "items": {
+      "what": {
+        "question": "O que é Exur?",
+        "answer": "Um desk de mercado: manchetes pontuadas de um lado, um copiloto Exur do outro, ancorado em contexto ao vivo, não um chat genérico."
+      },
+      "news": {
+        "question": "Preciso de uma conta para ler notícias?",
+        "answer": "Não. O desk de notícias está aberto. Entre quando quiser histórico, limites maiores e um copiloto que se lembre de você."
+      },
+      "chatbot": {
+        "question": "É um chatbot genérico?",
+        "answer": "Não. Exur responde sobre o mercado e as manchetes que você está vendo. Respostas curtas, não chat interminável."
+      },
+      "ask": {
+        "question": "O que posso perguntar?",
+        "answer": "Se uma manchete importa, o que a fita está dizendo, níveis a observar, ou se há um setup que valha a pena."
+      },
+      "account": {
+        "question": "O que é o teste de convidado?",
+        "answer": "Três mensagens de chat grátis por semana sem entrar. Leia notícias quando quiser. O Google desbloqueia o resto."
+      },
+      "free": {
+        "question": "Qual a diferença entre Free e Plus?",
+        "answer": "Free cobre o desk com limites diários. Plus sobe os limites quando Exur faz parte da sua rotina."
+      },
+      "profits": {
+        "question": "Isso é aconselhamento financeiro?",
+        "answer": "Não. Exur ajuda você a ler a fita com clareza. Não é uma corretora e não promete retornos."
+      }
+    }
+  },
+  "pricing": {
+    "title": "Escolha sua profundidade.",
+    "subtitle": "Grátis para ler notícias. Plus quando Exur faz parte da sua rotina.",
+    "perMonth": "/mês",
+    "plans": {
+      "free": {
+        "name": "Free",
+        "price": "Grátis",
+        "desc": "Leia notícias. Copiloto com limite diário.",
+        "cta": "Começar grátis",
+        "features": {
+          "0": "Manchetes de mercado pontuadas",
+          "1": "Chat de convidado, 3 mensagens / semana",
+          "2": "Limite diário de envios do copiloto",
+          "3": "Desks de BTC, ETH e ouro"
+        }
+      },
+      "plus": {
+        "name": "Plus",
+        "price": "$19",
+        "priceWas": "$49",
+        "desc": "Quando o desk faz parte de cada sessão.",
+        "cta": "Ir para Plus",
+        "badge": "O mais escolhido",
+        "features": {
+          "0": "Tudo do Free",
+          "1": "Limites diários e semanais mais altos",
+          "2": "Histórico de chat salvo",
+          "3": "Sinais e planejamento com mais contexto"
+        }
+      },
+      "ultimate": {
+        "name": "Ultimate",
+        "price": "Sob medida",
+        "desc": "Quando os limites do Plus ainda não bastam.",
+        "cta": "Fale conosco",
+        "badge": "Sob medida",
+        "features": {
+          "0": "Tudo do Plus",
+          "1": "Limites que definimos com você",
+          "2": "Linha direta. Nós configuramos"
+        }
+      }
+    }
+  },
+  "hero": {
+    "exchanges": {
+      "0": {
+        "q": "Você pode vigiar minhas contas esta semana?",
+        "a": "Sim. Só aviso se algo realmente precisar de você."
+      },
+      "1": {
+        "q": "Para onde vai o meu dinheiro?",
+        "a": "340 $/mês em assinaturas sem uso. Corte isso primeiro."
+      },
+      "2": {
+        "q": "Posso pagar este apartamento?",
+        "a": "Ainda não. Guarde 6 meses de aluguel em dinheiro e depois veja."
+      },
+      "3": {
+        "q": "O que faço com a minha poupança?",
+        "a": "Guarde 3 meses em dinheiro. O resto, em um índice simples."
+      },
+      "4": {
+        "q": "Estou gastando demais em restaurantes?",
+        "a": "Sim. 22% do gasto. Limite a 12% e você fica bem."
+      },
+      "5": {
+        "q": "Me ajude a comprar uma casa em 2 anos.",
+        "a": "Proteja a entrada. Menos risco, mais dinheiro, até chegar perto."
+      },
+      "6": {
+        "q": "Minha reserva de emergência basta?",
+        "a": "Quase. Você está em 4 meses. Chegue a 6 e depois invista o resto."
+      },
+      "7": {
+        "q": "Pago o cartão ou invisto?",
+        "a": "Pague primeiro o cartão a 19%. Depois invista o que sobrar."
+      },
+      "8": {
+        "q": "Resuma meu dinheiro em uma linha.",
+        "a": "Você está bem. Poupe mais, gaste um pouco menos, não persiga nada."
+      },
+      "9": {
+        "q": "O que precisa da minha atenção hoje?",
+        "a": "Nada urgente. Aviso no momento em que isso mudar."
+      }
+    }
+  },
+  "cta": {
+    "title": "Pare de adivinhar a fita.",
+    "subtitle": "Uma pergunta sobre uma manchete ao vivo basta para saber se isso combina com você.",
+    "cta": "Abrir o desk",
+    "note": "Notícias são grátis. Chat de convidado incluso. Sem wallet para olhar."
+  },
+  "footer": {
+    "tagline": "Notícias e Exur para o mercado que você acompanha."
+  }
+}

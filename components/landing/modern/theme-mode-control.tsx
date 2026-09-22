@@ -58,7 +58,7 @@ export function ThemeModeControl({ className }: { className?: string }) {
                 : "text-muted-foreground hover:bg-transparent hover:text-foreground"
             )}
           >
-            <Icon className="size-3.5" />
+            <Icon className="size-3.5 shrink-0" strokeWidth={1.75} />
             <span className="hidden min-[360px]:inline">{t(labelKey)}</span>
           </Button>
         )

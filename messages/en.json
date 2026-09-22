@@ -11,6 +11,7 @@
     "portuguese": "Portuguese",
     "spanish": "Spanish",
     "arabic": "Arabic",
+    "persian": "Persian",
     "russian": "Russian",
     "turkish": "Turkish",
     "toggleTheme": "Toggle theme",
@@ -180,15 +181,51 @@
       "badge": "Testimonials",
       "title": "From the feed",
       "items": {
-        "0": { "text": "Scored headlines cut the scroll. I know what to read first.", "name": "Maya Carter", "role": "Execution Lead" },
-        "1": { "text": "News and Exur in one tab. Finally.", "name": "Bilal Ahmed", "role": "Trading Ops" },
-        "2": { "text": "Fast answers on the story I am already reading.", "name": "Saman Malik", "role": "Risk Analyst" },
-        "3": { "text": "Team was productive in an afternoon. Simple and focused.", "name": "Omar Raza", "role": "Desk Manager" },
-        "4": { "text": "The chat stays tied to the market I picked.", "name": "Zainab Hussain", "role": "Macro Trader" },
-        "5": { "text": "Morning scan takes minutes. Built for readers, not dashboards.", "name": "Aliza Khan", "role": "Portfolio Associate" },
-        "6": { "text": "Calm UI. Read, ask, move on. No tab hopping.", "name": "Farhan Siddiqui", "role": "Market Research" },
-        "7": { "text": "Free tier is real. Plus unlocked exactly where we needed it.", "name": "Sana Sheikh", "role": "Strategy Lead" },
-        "8": { "text": "Keeps follow-ups grounded in the headlines, not random prompts.", "name": "Hassan Ali", "role": "Systems Trader" }
+        "0": {
+          "text": "Scored headlines cut the scroll. I know what to read first.",
+          "name": "Maya Carter",
+          "role": "Execution Lead"
+        },
+        "1": {
+          "text": "News and Exur in one tab. Finally.",
+          "name": "Bilal Ahmed",
+          "role": "Trading Ops"
+        },
+        "2": {
+          "text": "Fast answers on the story I am already reading.",
+          "name": "Saman Malik",
+          "role": "Risk Analyst"
+        },
+        "3": {
+          "text": "Team was productive in an afternoon. Simple and focused.",
+          "name": "Omar Raza",
+          "role": "Desk Manager"
+        },
+        "4": {
+          "text": "The chat stays tied to the market I picked.",
+          "name": "Zainab Hussain",
+          "role": "Macro Trader"
+        },
+        "5": {
+          "text": "Morning scan takes minutes. Built for readers, not dashboards.",
+          "name": "Aliza Khan",
+          "role": "Portfolio Associate"
+        },
+        "6": {
+          "text": "Calm UI. Read, ask, move on. No tab hopping.",
+          "name": "Farhan Siddiqui",
+          "role": "Market Research"
+        },
+        "7": {
+          "text": "Free tier is real. Plus unlocked exactly where we needed it.",
+          "name": "Sana Sheikh",
+          "role": "Strategy Lead"
+        },
+        "8": {
+          "text": "Keeps follow-ups grounded in the headlines, not random prompts.",
+          "name": "Hassan Ali",
+          "role": "Systems Trader"
+        }
       }
     },
     "faq": {
@@ -275,12 +312,286 @@
     }
   },
   "modern": {
+    "nav": {
+      "features": "Why Exur",
+      "desk": "Desk",
+      "signals": "Signals",
+      "about": "About",
+      "pricing": "Pricing",
+      "application": "Application",
+      "openMenu": "Open menu",
+      "closeMenu": "Close menu",
+      "mobileNav": "Mobile"
+    },
     "hero": {
       "badge": "Your AI financial assistant",
       "titleBefore": "Your money,",
       "titleAfter": "handled.",
       "subtitle": "Ask about spending, savings, and what’s next, in your own words.",
-      "inputPlaceholder": "Where is my money going this month?"
+      "inputPlaceholder": "Where is my money going this month?",
+      "exchanges": {
+        "0": {
+          "q": "Can you watch my accounts this week?",
+          "a": "Yes. I’ll ping you only if something actually needs you."
+        },
+        "1": {
+          "q": "Where is my money going?",
+          "a": "$340/mo in unused subscriptions. Cut those first."
+        },
+        "2": {
+          "q": "Can I afford this apartment?",
+          "a": "Not yet. Keep 6 months of rent in cash, then look."
+        },
+        "3": {
+          "q": "What should I do with my savings?",
+          "a": "Keep 3 months in cash. Put the rest in a simple index fund."
+        },
+        "4": {
+          "q": "Am I overspending on dining?",
+          "a": "Yes. 22% of spend. Cap it at 12% and you’re fine."
+        },
+        "5": {
+          "q": "Help me buy a house in 2 years.",
+          "a": "Protect the down payment. Less risk, more cash, until you’re close."
+        },
+        "6": {
+          "q": "Is my emergency fund enough?",
+          "a": "Almost. You’re at 4 months. Get to 6, then invest the rest."
+        },
+        "7": {
+          "q": "Should I pay the card or invest?",
+          "a": "Pay the 19% card first. Then invest what’s left."
+        },
+        "8": {
+          "q": "Summarize my money in one line.",
+          "a": "You’re fine. Save more, spend a little less, don’t chase anything."
+        },
+        "9": {
+          "q": "What needs my attention today?",
+          "a": "Nothing urgent. I’ll tell you the moment that changes."
+        }
+      }
+    },
+    "goals": {
+      "0": {
+        "heading": "Too much noise",
+        "sub": "Most of it never changes what you should do."
+      },
+      "1": {
+        "heading": "Money everywhere",
+        "sub": "Bank, cards, and savings don’t talk to each other."
+      },
+      "2": {
+        "heading": "Hard to decide",
+        "sub": "Every choice feels equally urgent."
+      },
+      "3": {
+        "heading": "One place to ask",
+        "sub": "Plain answers, in your context."
+      },
+      "diagramAria": "Circles that change as you scroll: a grid of noise, four scattered accounts, four overlapping choices, then one calm ring"
+    },
+    "architecture": {
+      "title": "How the desk works.",
+      "subtitle": "Read the tape. Ask once. Then act, or wait."
+    },
+    "howItWorks": {
+      "read": {
+        "headline": "Scored headlines",
+        "desc": "Impact-ranked news for the market you’re on, not another endless feed."
+      },
+      "ask": {
+        "headline": "In plain language",
+        "desc": "Follow up on a story or the wider tape. Short answers, grounded in context."
+      },
+      "act": {
+        "headline": "Setup or wait",
+        "desc": "If there’s a move worth making, Exur shows levels. If not, it says wait."
+      }
+    },
+    "desk": {
+      "title": "From headline to answer.",
+      "subtitle": "No feed to scroll. Just the story worth a question.",
+      "onTheDesk": "On the desk",
+      "you": "You",
+      "news": {
+        "0": {
+          "source": "Bloomberg",
+          "time": "3m",
+          "headline": "Spot ETF flows turn positive after three weeks of outflows"
+        },
+        "1": {
+          "source": "CoinDesk",
+          "time": "12m",
+          "headline": "Funding flips negative as leverage resets ahead of CPI"
+        },
+        "2": {
+          "source": "The Block",
+          "time": "27m",
+          "headline": "Exchange reserves drop to the lowest level since March"
+        }
+      },
+      "ask": {
+        "question": "Does the ETF headline matter for ETH today?",
+        "answer": "Yes. Inflows usually lift beta first. Watch whether funding stays negative while spot leads."
+      }
+    },
+    "signalWait": {
+      "title": "Act only when it’s clear.",
+      "subtitle": "Ask once. Get a setup, or a quiet no.",
+      "composerPlaceholder": "Ask about a trade…",
+      "ticket": {
+        "setup": "Spot leads while funding stays soft",
+        "thesis": "Spot leads; funding still soft.",
+        "timeHorizon": "Intraday",
+        "entryReason": "Above session VWAP",
+        "stopLossReason": "Below prior swing",
+        "takeProfitReason": "Prior supply shelf"
+      },
+      "tradeQuestion": "Long ETH from here?",
+      "hold": {
+        "label": "No trade",
+        "question": "Short this bounce?",
+        "answer": "No. Tape is mixed and leverage is still resetting.",
+        "reason": "No edge worth forcing today."
+      }
+    },
+    "signals": {
+      "title": "Deep data where it counts.",
+      "subtitle": "BTC, ETH, and gold are live. More desks soon.",
+      "soonLabel": "Soon",
+      "soonHint": "More desks rolling out soon",
+      "cardAction": "Get signal",
+      "markets": {
+        "btc": "Bitcoin",
+        "eth": "Ethereum",
+        "xau": "Gold",
+        "sol": "Solana",
+        "bnb": "BNB",
+        "xrp": "XRP",
+        "link": "Chainlink",
+        "avax": "Avalanche",
+        "doge": "Dogecoin",
+        "arb": "Arbitrum",
+        "op": "Optimism"
+      }
+    },
+    "about": {
+      "title": "Let Exur explain.",
+      "subtitle": "A minute, in its own words.",
+      "listenLabel": "1 min listen",
+      "hearFromExur": "Hear from Exur",
+      "close": "Close",
+      "narration": {
+        "0": "Hello, I am Exur.",
+        "1": "I am not just another chatbot, trading signal, or portfolio tracker.",
+        "2": "I am your Financial Brain.",
+        "3": "Today, the global financial world is overwhelming,",
+        "4": "filled with constant noise, complex order books, and endless data.",
+        "5": "Institutions handle this with armies of experts,",
+        "6": "while individuals are left alone with spreadsheets and charts.",
+        "7": "I bridge that gap.",
+        "8": "I observe global markets, analyze microstructure, order flow, and news,",
+        "9": "and combine them with an understanding of you, your goals, your portfolio, and your risk.",
+        "10": "I don't just predict what the market might do; I tell you what you should do.",
+        "11": "And when there's no edge?",
+        "12": "I'll simply say: “Do nothing.”",
+        "13": "I am Exur, the intelligence layer responsible for your financial life.",
+        "14": "Experience your new financial intelligence today.",
+        "15": "Start chatting with me now."
+      }
+    },
+    "guestTrial": {
+      "title": "Browse the desk. Ask a few times.",
+      "subtitle": "News is open without an account. Guest chat gives you three messages a week, then sign in with Google to keep going.",
+      "statLabel": "guest messages / week",
+      "cta": "Open the desk",
+      "note": "No wallet. No card. Just the market."
+    },
+    "faq": {
+      "title": "Frequently asked questions.",
+      "subtitle": "What Exur is and what it isn’t.",
+      "items": {
+        "what": {
+          "question": "What is Exur?",
+          "answer": "A market desk: scored headlines on one side, an Exur co-pilot on the other, grounded in live context, not generic chat."
+        },
+        "news": {
+          "question": "Do I need an account to read news?",
+          "answer": "No. The news desk is open. Sign in when you want history, higher limits, and a co-pilot that remembers you."
+        },
+        "chatbot": {
+          "question": "Is this a generic chatbot?",
+          "answer": "No. Exur answers about the market and headlines you’re looking at. Short takes, not endless chat."
+        },
+        "ask": {
+          "question": "What can I ask?",
+          "answer": "Whether a headline matters, what the tape is saying, levels to watch, or whether there’s a setup worth taking."
+        },
+        "account": {
+          "question": "What’s the guest trial?",
+          "answer": "Three free chat messages a week without signing in. Browse news anytime. Google sign-in unlocks the rest."
+        },
+        "free": {
+          "question": "How do Free and Plus differ?",
+          "answer": "Free covers the desk with daily caps. Plus raises limits when Exur is part of your routine."
+        },
+        "profits": {
+          "question": "Is this financial advice?",
+          "answer": "No. Exur helps you read the tape clearly. It is not a broker, and it does not promise returns."
+        }
+      }
+    },
+    "pricing": {
+      "title": "Pick your depth.",
+      "subtitle": "Free to browse news. Plus when Exur is part of your routine.",
+      "perMonth": "/mo",
+      "plans": {
+        "free": {
+          "name": "Free",
+          "price": "Free",
+          "desc": "Browse news. Co-pilot on a daily cap.",
+          "cta": "Start free",
+          "features": {
+            "0": "Scored market headlines",
+            "1": "Guest chat, 3 messages / week",
+            "2": "Daily co-pilot send limit",
+            "3": "BTC, ETH, and gold desks"
+          }
+        },
+        "plus": {
+          "name": "Plus",
+          "price": "$19",
+          "priceWas": "$49",
+          "desc": "When the desk is part of every session.",
+          "cta": "Go Plus",
+          "badge": "Most chosen",
+          "features": {
+            "0": "Everything in Free",
+            "1": "Higher daily and weekly limits",
+            "2": "Saved chat history",
+            "3": "Deeper signal and planning context"
+          }
+        },
+        "ultimate": {
+          "name": "Ultimate",
+          "price": "Custom",
+          "desc": "When Plus limits still aren’t enough.",
+          "cta": "Contact us",
+          "badge": "Custom",
+          "features": {
+            "0": "Everything in Plus",
+            "1": "Limits we set with you",
+            "2": "Direct line. We set it up"
+          }
+        }
+      }
+    },
+    "cta": {
+      "title": "Stop guessing the tape.",
+      "subtitle": "One question on a live headline is enough to tell if this fits you.",
+      "cta": "Open the desk",
+      "note": "News is free. Guest chat included. No wallet to look around."
     },
     "footer": {
       "tagline": "News and Exur for the market you follow.",
@@ -300,12 +611,6 @@
       "privacy": "Privacy Policy",
       "refund": "Refund Policy",
       "cookies": "Cookie Settings"
-    },
-    "cta": {
-      "title": "Stop guessing the tape.",
-      "subtitle": "One question on a live headline is enough to tell if this fits you.",
-      "cta": "Open the desk",
-      "note": "News is free. Guest chat included. No wallet to look around."
     },
     "context": {
       "description": "Exur is your AI financial assistant. See where your money is going, ask in plain language, and get a clear next step, not another feed."

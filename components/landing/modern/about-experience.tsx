@@ -2,6 +2,7 @@
 
 import { gsap } from "gsap"
 import { PlayIcon, XIcon } from "lucide-react"
+import { useTranslations } from "next-intl"
 import * as React from "react"
 
 import { AboutOrbCanvas } from "@/components/landing/modern/about-orb-canvas"
@@ -85,6 +86,7 @@ function setExpandStacking(frame: HTMLElement, active: boolean) {
 }
 
 export function AboutExperience() {
+  const t = useTranslations("modern.about")
   const reduceMotion = useReducedMotion()
   const isDesktop = useIsDesktop()
 
@@ -505,12 +507,19 @@ export function AboutExperience() {
     }
   }, [expanded, unlockPageScroll])
 
-  const activeCue = cueIndex >= 0 ? ABOUT_NARRATION_CUES[cueIndex] : null
+  const captionText =
+    cueIndex >= 0 ? t(`narration.${cueIndex}`) : ""
 
   return (
     <div
       ref={frameRef}
-      className="relative aspect-video w-full rounded-[1.75rem] bg-muted"
+      className={cn(
+        "relative w-full rounded-[1.75rem] bg-muted",
+        // Idle stage is taller so the play cue has presence; playing keeps 16:9.
+        phase === "idle"
+          ? "aspect-[4/5] sm:aspect-[5/4] lg:aspect-[16/10]"
+          : "aspect-video"
+      )}
     >
       {expanded ? (
         <div
@@ -581,7 +590,7 @@ export function AboutExperience() {
               className="size-1.5 shrink-0 rounded-full bg-[#2563EB] shadow-[0_0_0_3px_rgba(37,99,235,0.16)]"
             />
             <span className="font-[family-name:var(--font-mono-modern)] text-[10px] font-medium tracking-[0.16em] text-muted-foreground uppercase">
-              1 min listen
+              {t("listenLabel")}
             </span>
           </div>
         ) : null}
@@ -621,7 +630,7 @@ export function AboutExperience() {
               <Button
                 type="button"
                 onClick={start}
-                aria-label="Hear from Exur"
+                aria-label={t("hearFromExur")}
                 className={cn(
                   "group relative size-16 rounded-full bg-[#2563EB] text-white",
                   "shadow-[0_12px_40px_rgba(37,99,235,0.34),inset_0_1px_1px_rgba(255,255,255,0.35)]",
@@ -673,7 +682,7 @@ export function AboutExperience() {
                       : "text-[1.05rem] leading-snug sm:text-xl"
                   )}
                 >
-                  {activeCue?.text ?? ""}
+                  {captionText}
                 </p>
               </div>
             </div>
@@ -729,7 +738,7 @@ export function AboutExperience() {
               variant="ghost"
               size="icon"
               onClick={close}
-              aria-label="Close"
+              aria-label={t("close")}
               className={cn(
                 landingGlassNavIcon,
                 "absolute top-4 right-4 z-30 text-muted-foreground hover:text-foreground",

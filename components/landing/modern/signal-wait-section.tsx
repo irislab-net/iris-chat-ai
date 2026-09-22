@@ -1,7 +1,8 @@
 "use client"
 
 import { ArrowUpIcon } from "lucide-react"
-import { useLayoutEffect, useRef, useState } from "react"
+import { useTranslations } from "next-intl"
+import { useLayoutEffect, useMemo, useRef, useState } from "react"
 
 import { ChatSignalCard } from "@/components/app-shell/chat-signal-card"
 import { HeroLiquidGlassBg } from "@/components/landing/modern/hero-liquid-glass-bg"
@@ -9,12 +10,7 @@ import { ScrollReveal } from "@/components/landing/modern/scroll-reveal"
 import { SectionHeader } from "@/components/landing/modern/sphere-ui"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import {
-  SIGNAL_WAIT_HOLD,
-  SIGNAL_WAIT_SECTION,
-  SIGNAL_WAIT_TICKET,
-  SIGNAL_WAIT_TRADE_BEAT,
-} from "@/lib/landing-modern-data"
+import { SIGNAL_WAIT_TICKET } from "@/lib/landing-modern-data"
 import { useReducedMotion } from "@/lib/landing-motion"
 import {
   landingAfterHeader,
@@ -35,7 +31,13 @@ import {
 } from "@/lib/signal-wait-story-engine"
 import { cn } from "@/lib/utils"
 
-function UserBubble({ children }: { children: string }) {
+function UserBubble({
+  children,
+  youLabel,
+}: {
+  children: string
+  youLabel: string
+}) {
   return (
     <div className="flex h-full items-center justify-end gap-2.5">
       <div
@@ -52,7 +54,7 @@ function UserBubble({ children }: { children: string }) {
           "size-8 shrink-0 text-[10px] font-medium text-muted-foreground"
         )}
       >
-        You
+        {youLabel}
       </span>
     </div>
   )
@@ -93,7 +95,18 @@ function AiBubble({
   )
 }
 
-function SignalResult() {
+function SignalResult({
+  ticket,
+}: {
+  ticket: typeof SIGNAL_WAIT_TICKET & {
+    setup: string
+    thesis: string
+    timeHorizon: string
+    entryReason: string
+    stopLossReason: string
+    takeProfitReason: string
+  }
+}) {
   return (
     <div className="relative flex h-full min-h-0 w-full items-start justify-center overflow-visible">
       <div
@@ -125,14 +138,14 @@ function SignalResult() {
             "[&_article]:rounded-[1.25rem] [&_article]:bg-white/70 [&_article]:shadow-none sm:[&_article]:rounded-[1.35rem] dark:[&_article]:bg-white/8"
           )}
         >
-          <ChatSignalCard ticket={SIGNAL_WAIT_TICKET} className="mt-0" />
+          <ChatSignalCard ticket={ticket} className="mt-0" />
         </div>
       </div>
     </div>
   )
 }
 
-function HoldResult() {
+function HoldResult({ label, reason }: { label: string; reason: string }) {
   return (
     <div className="flex h-full flex-col items-center justify-center px-2 text-center">
       <p
@@ -141,16 +154,18 @@ function HoldResult() {
           "text-[2rem] leading-none tracking-[-0.04em] text-foreground/90 sm:text-4xl"
         )}
       >
-        {SIGNAL_WAIT_HOLD.label}.
+        {label}.
       </p>
       <p className="mt-3 max-w-sm text-sm leading-relaxed text-muted-foreground sm:text-[15px]">
-        {SIGNAL_WAIT_HOLD.reason}
+        {reason}
       </p>
     </div>
   )
 }
 
 export function SignalWaitSection() {
+  const t = useTranslations("modern.signalWait")
+  const tDesk = useTranslations("modern.desk")
   const reducedMotion = useReducedMotion()
   const rootRef = useRef<HTMLDivElement>(null)
   const userRef = useRef<HTMLDivElement>(null)
@@ -164,15 +179,32 @@ export function SignalWaitSection() {
   const [replyText, setReplyText] = useState<string | null>(null)
   const [scenario, setScenario] = useState<SignalWaitScenario>("trade")
 
-  const shownUserText = reducedMotion
-    ? SIGNAL_WAIT_TRADE_BEAT.question
-    : userText
+  const tradeQuestion = t("tradeQuestion")
+  const holdQuestion = t("hold.question")
+  const holdAnswer = t("hold.answer")
+  const holdLabel = t("hold.label")
+  const holdReason = t("hold.reason")
+  const youLabel = tDesk("you")
+  const composerPlaceholder = t("composerPlaceholder")
+
+  const ticket = useMemo(
+    () => ({
+      ...SIGNAL_WAIT_TICKET,
+      setup: t("ticket.setup"),
+      thesis: t("ticket.thesis"),
+      timeHorizon: t("ticket.timeHorizon"),
+      entryReason: t("ticket.entryReason"),
+      stopLossReason: t("ticket.stopLossReason"),
+      takeProfitReason: t("ticket.takeProfitReason"),
+    }),
+    [t]
+  )
+
+  const shownUserText = reducedMotion ? tradeQuestion : userText
   const shownReplyText = reducedMotion ? null : replyText
   const shownDraft = reducedMotion ? "" : draft
   const replyTyping =
-    !reducedMotion &&
-    replyText != null &&
-    replyText !== SIGNAL_WAIT_HOLD.answer
+    !reducedMotion && replyText != null && replyText !== holdAnswer
 
   useLayoutEffect(() => {
     if (reducedMotion) return
@@ -194,15 +226,12 @@ export function SignalWaitSection() {
         onUserText: setUserText,
         onReplyText: setReplyText,
         onScenario: setScenario,
-        questionFor: (id) =>
-          id === "trade"
-            ? SIGNAL_WAIT_TRADE_BEAT.question
-            : SIGNAL_WAIT_HOLD.question,
-        answerFor: (id) => (id === "hold" ? SIGNAL_WAIT_HOLD.answer : null),
+        questionFor: (id) => (id === "trade" ? tradeQuestion : holdQuestion),
+        answerFor: (id) => (id === "hold" ? holdAnswer : null),
       },
       false
     )
-  }, [reducedMotion])
+  }, [reducedMotion, tradeQuestion, holdQuestion, holdAnswer])
 
   return (
     <section
@@ -214,10 +243,7 @@ export function SignalWaitSection() {
       )}
     >
       <ScrollReveal>
-        <SectionHeader
-          title={SIGNAL_WAIT_SECTION.title}
-          subtitle={SIGNAL_WAIT_SECTION.subtitle}
-        />
+        <SectionHeader title={t("title")} subtitle={t("subtitle")} />
       </ScrollReveal>
 
       <ScrollReveal className={cn("w-full", landingAfterHeader)}>
@@ -238,62 +264,61 @@ export function SignalWaitSection() {
               "relative z-10 mx-auto w-full max-w-xl px-4 py-6 sm:max-w-2xl sm:px-8 sm:py-9 lg:px-10 lg:py-10"
             )}
           >
-              {/* Slot 1 — user + EX (tight; no empty reply gap on trade) */}
-              <div className="relative flex min-h-0 flex-col gap-3.5 sm:gap-4">
-                <div
-                  ref={userRef}
-                  className="min-h-0 shrink-0"
-                  aria-hidden={!shownUserText}
-                >
-                  <UserBubble>{shownUserText ?? "\u00A0"}</UserBubble>
-                </div>
-
-                <div
-                  ref={replyRef}
-                  className={cn(
-                    "min-h-0 shrink-0",
-                    !shownReplyText &&
-                      "pointer-events-none absolute h-0 w-0 overflow-hidden opacity-0"
-                  )}
-                  aria-hidden={!shownReplyText}
-                >
-                  {shownReplyText ? (
-                    <AiBubble typing={replyTyping}>{shownReplyText}</AiBubble>
-                  ) : null}
-                </div>
-              </div>
-
-              {/* Slot 2 — result panes overlaid (no height swap) */}
-              <div className="relative min-h-0">
-                {reducedMotion ? (
-                  <SignalResult />
-                ) : (
-                  <>
-                    <div
-                      ref={tradeResultRef}
-                      className="absolute inset-0"
-                      aria-hidden={scenario !== "trade"}
-                    >
-                      <SignalResult />
-                    </div>
-                    <div
-                      ref={holdResultRef}
-                      className="absolute inset-0"
-                      aria-hidden={scenario !== "hold"}
-                    >
-                      <HoldResult />
-                    </div>
-                  </>
-                )}
-              </div>
-
-              {/* Slot 3 — composer */}
+            <div className="relative flex min-h-0 flex-col gap-3.5 sm:gap-4">
               <div
-                className={cn(
-                  "relative z-30 flex h-full min-h-0 items-center gap-2 overflow-visible px-2 py-1.5 sm:px-3 sm:py-2",
-                  landingGlassPill
-                )}
+                ref={userRef}
+                className="min-h-0 shrink-0"
+                aria-hidden={!shownUserText}
               >
+                <UserBubble youLabel={youLabel}>
+                  {shownUserText ?? "\u00A0"}
+                </UserBubble>
+              </div>
+
+              <div
+                ref={replyRef}
+                className={cn(
+                  "min-h-0 shrink-0",
+                  !shownReplyText &&
+                    "pointer-events-none absolute h-0 w-0 overflow-hidden opacity-0"
+                )}
+                aria-hidden={!shownReplyText}
+              >
+                {shownReplyText ? (
+                  <AiBubble typing={replyTyping}>{shownReplyText}</AiBubble>
+                ) : null}
+              </div>
+            </div>
+
+            <div className="relative min-h-0">
+              {reducedMotion ? (
+                <SignalResult ticket={ticket} />
+              ) : (
+                <>
+                  <div
+                    ref={tradeResultRef}
+                    className="absolute inset-0"
+                    aria-hidden={scenario !== "trade"}
+                  >
+                    <SignalResult ticket={ticket} />
+                  </div>
+                  <div
+                    ref={holdResultRef}
+                    className="absolute inset-0"
+                    aria-hidden={scenario !== "hold"}
+                  >
+                    <HoldResult label={holdLabel} reason={holdReason} />
+                  </div>
+                </>
+              )}
+            </div>
+
+            <div
+              className={cn(
+                "relative z-30 flex h-full min-h-0 items-center gap-2 overflow-visible px-2 py-1.5 sm:px-3 sm:py-2",
+                landingGlassPill
+              )}
+            >
               <span
                 aria-hidden
                 className={cn(landingGlassSheen, "rounded-full")}
@@ -302,14 +327,11 @@ export function SignalWaitSection() {
                 value={shownDraft}
                 readOnly
                 tabIndex={-1}
-                placeholder={SIGNAL_WAIT_SECTION.composerPlaceholder}
+                placeholder={composerPlaceholder}
                 className="relative z-10 h-10 min-w-0 flex-1 border-0 bg-transparent px-2 text-sm text-foreground shadow-none placeholder:text-muted-foreground/90 focus-visible:ring-0 read-only:cursor-default sm:px-3 sm:text-base"
-                aria-label={SIGNAL_WAIT_SECTION.composerPlaceholder}
+                aria-label={composerPlaceholder}
               />
-              <span
-                ref={sendRef}
-                className="relative z-10 inline-flex shrink-0"
-              >
+              <span ref={sendRef} className="relative z-10 inline-flex shrink-0">
                 <Button
                   type="button"
                   size="icon"

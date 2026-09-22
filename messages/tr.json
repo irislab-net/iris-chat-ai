@@ -6,21 +6,296 @@
     "portuguese": "Português",
     "spanish": "Español",
     "arabic": "العربية",
+    "persian": "فارسی",
     "russian": "Русский",
     "turkish": "Türkçe",
     "launchApp": "Uygulamayı aç",
     "analysisNotAdvice": "Analiz, tavsiye değil."
   },
   "modern": {
+    "nav": {
+      "features": "Neden Exur",
+      "desk": "Desk",
+      "signals": "Sinyaller",
+      "about": "Hakkında",
+      "pricing": "Fiyatlandırma",
+      "application": "Uygulama",
+      "openMenu": "Menüyü aç",
+      "closeMenu": "Menüyü kapat",
+      "mobileNav": "Mobil"
+    },
     "hero": {
       "badge": "Yapay zekâ finans asistanınız",
       "titleBefore": "Paranız,",
       "titleAfter": "kontrol altında.",
       "subtitle": "Harcamalar, birikimler ve sırada ne var diye kendi kelimelerinizle sorun.",
-      "inputPlaceholder": "Bu ay param nereye gidiyor?"
+      "inputPlaceholder": "Bu ay param nereye gidiyor?",
+      "exchanges": {
+        "0": {
+          "q": "Bu hafta hesaplarımı izleyebilir misin?",
+          "a": "Evet. Yalnızca gerçekten sizi gerektiren bir şey olursa haber veririm."
+        },
+        "1": {
+          "q": "Param nereye gidiyor?",
+          "a": "Kullanılmayan aboneliklerde 340 $/ay. Önce onları kesin."
+        },
+        "2": {
+          "q": "Bu daireyi karşılayabilir miyim?",
+          "a": "Henüz değil. 6 aylık kirayı nakitte tutun, sonra bakın."
+        },
+        "3": {
+          "q": "Birikimlerimle ne yapmalıyım?",
+          "a": "3 ayı nakitte tutun. Kalanı basit bir endekse koyun."
+        },
+        "4": {
+          "q": "Restoranlarda fazla mı harcıyorum?",
+          "a": "Evet. Harcamanın %22’si. %12’ye sabitleyin, sorun olmaz."
+        },
+        "5": {
+          "q": "2 yılda ev almama yardım et.",
+          "a": "Peşinatı koruyun. Yaklaşana kadar daha az risk, daha fazla nakit."
+        },
+        "6": {
+          "q": "Acil durum fonum yeterli mi?",
+          "a": "Neredeyse. 4 aydasınız. 6’ya çıkın, sonra kalanı yatırın."
+        },
+        "7": {
+          "q": "Kartı mı ödeyeyim yoksa yatırım mı yapayım?",
+          "a": "Önce %19’luk kartı ödeyin. Sonra kalanı yatırın."
+        },
+        "8": {
+          "q": "Paramı bir satırda özetle.",
+          "a": "İyisiniz. Daha çok biriktirin, biraz daha az harcayın, hiçbir şeyin peşinden koşmayın."
+        },
+        "9": {
+          "q": "Bugün neye dikkat etmeliyim?",
+          "a": "Acil bir şey yok. Değiştiği an size söylerim."
+        }
+      }
+    },
+    "goals": {
+      "0": {
+        "heading": "Çok fazla gürültü",
+        "sub": "Çoğu, ne yapmanız gerektiğini asla değiştirmez."
+      },
+      "1": {
+        "heading": "Para her yerde",
+        "sub": "Banka, kartlar ve birikimler birbirine konuşmaz."
+      },
+      "2": {
+        "heading": "Karar vermek zor",
+        "sub": "Her seçenek aynı derecede acil görünür."
+      },
+      "3": {
+        "heading": "Sormak için tek yer",
+        "sub": "Net yanıtlar, sizin bağlamınızda."
+      },
+      "diagramAria": "Kaydırdıkça değişen daireler: bir gürültü ızgarası, dört dağınık hesap, dört örtüşen seçenek, sonra sakin bir halka"
+    },
+    "architecture": {
+      "title": "Desk nasıl çalışır.",
+      "subtitle": "Bandı okuyun. Bir kez sorun. Sonra hareket edin veya bekleyin."
+    },
+    "howItWorks": {
+      "read": {
+        "headline": "Puanlanmış manşetler",
+        "desc": "Bulunduğunuz piyasa için etki sıralı haberler — sonsuz başka bir akış değil."
+      },
+      "ask": {
+        "headline": "Sade dilde",
+        "desc": "Bir haberi veya daha geniş bandı takip edin. Kısa yanıtlar, bağlama dayalı."
+      },
+      "act": {
+        "headline": "Setup veya bekle",
+        "desc": "Değmeye değer bir hareket varsa Exur seviyeleri gösterir. Yoksa bekleyin der."
+      }
+    },
+    "desk": {
+      "title": "Manşetten yanıta.",
+      "subtitle": "Kaydırılacak bir akış yok. Sadece sorulmaya değer hikâye.",
+      "onTheDesk": "Desk’te",
+      "you": "Siz",
+      "news": {
+        "0": {
+          "source": "Bloomberg",
+          "time": "3m",
+          "headline": "Spot ETF akışları üç haftalık çıkışların ardından pozitife döndü"
+        },
+        "1": {
+          "source": "CoinDesk",
+          "time": "12m",
+          "headline": "CPI öncesi kaldıraç sıfırlanırken funding negatife döndü"
+        },
+        "2": {
+          "source": "The Block",
+          "time": "27m",
+          "headline": "Borsa rezervleri Mart’tan bu yana en düşük seviyeye indi"
+        }
+      },
+      "ask": {
+        "question": "ETF manşeti bugün ETH için önemli mi?",
+        "answer": "Evet. Girişler genelde önce betayı yükseltir. Spot öndeyken funding’in negatif kalıp kalmadığına bakın."
+      }
+    },
+    "signalWait": {
+      "title": "Yalnızca net olduğunda hareket edin.",
+      "subtitle": "Bir kez sorun. Bir setup alın — ya da sessiz bir hayır.",
+      "composerPlaceholder": "Bir işlem hakkında sorun…",
+      "ticket": {
+        "setup": "Funding yumuşak kalırken spot önde",
+        "thesis": "Spot önde; funding hâlâ yumuşak.",
+        "timeHorizon": "Gün içi",
+        "entryReason": "Seans VWAP’ının üstünde",
+        "stopLossReason": "Önceki swing’in altında",
+        "takeProfitReason": "Önceki arz rafı"
+      },
+      "tradeQuestion": "Buradan ETH long?",
+      "hold": {
+        "label": "İşlem yok",
+        "question": "Bu tepkiyi short’layayım mı?",
+        "answer": "Hayır. Bant karışık ve kaldıraç hâlâ sıfırlanıyor.",
+        "reason": "Bugün zorlanacak bir edge yok."
+      }
+    },
+    "signals": {
+      "title": "Önemli yerde derin veri.",
+      "subtitle": "BTC, ETH ve altın canlı. Yakında daha fazla desk.",
+      "soonLabel": "Yakında",
+      "soonHint": "Daha fazla desk yolda",
+      "cardAction": "Sinyal iste",
+      "markets": {
+        "btc": "Bitcoin",
+        "eth": "Ethereum",
+        "xau": "Altın",
+        "sol": "Solana",
+        "bnb": "BNB",
+        "xrp": "XRP",
+        "link": "Chainlink",
+        "avax": "Avalanche",
+        "doge": "Dogecoin",
+        "arb": "Arbitrum",
+        "op": "Optimism"
+      }
+    },
+    "about": {
+      "title": "Exur anlatsın.",
+      "subtitle": "Bir dakika, kendi sözleriyle.",
+      "listenLabel": "1 dk dinle",
+      "hearFromExur": "Exur’dan dinle",
+      "close": "Kapat",
+      "narration": {
+        "0": "Merhaba, ben Exur.",
+        "1": "Sadece bir chatbot, işlem sinyali veya portföy takipçisi değilim.",
+        "2": "Ben sizin Finansal Beyninizim.",
+        "3": "Bugün küresel finans dünyası bunaltıcı,",
+        "4": "sürekli gürültü, karmaşık emir defterleri ve sonsuz veriyle dolu.",
+        "5": "Kurumlar bunu uzman ordularıyla yönetiyor,",
+        "6": "bireyler ise tablolar ve grafiklerle yalnız bırakılıyor.",
+        "7": "Ben bu boşluğu kapatıyorum.",
+        "8": "Küresel piyasaları izler, mikro yapı, emir akışı ve haberleri analiz eder,",
+        "9": "bunları sizi, hedeflerinizi, portföyünüzü ve riskinizi anlamakla birleştiririm.",
+        "10": "Sadece piyasanın ne yapabileceğini tahmin etmem; ne yapmanız gerektiğini söylerim.",
+        "11": "Peki edge yoksa?",
+        "12": "Basitçe derim: «Hiçbir şey yapma».",
+        "13": "Ben Exur, finansal hayatınızdan sorumlu zekâ katmanıyım.",
+        "14": "Yeni finansal zekânızı bugün deneyimleyin.",
+        "15": "Şimdi benimle sohbet etmeye başlayın."
+      }
+    },
+    "guestTrial": {
+      "title": "Desk’i gezin. Birkaç kez sorun.",
+      "subtitle": "Haberler hesap olmadan açık. Misafir sohbeti haftada üç mesaj verir; devam etmek için Google ile giriş yapın.",
+      "statLabel": "misafir mesajı / hafta",
+      "cta": "Desk’i aç",
+      "note": "Cüzdan yok. Kart yok. Sadece piyasa."
+    },
+    "faq": {
+      "title": "Sık sorulan sorular.",
+      "subtitle": "Exur nedir, ne değildir.",
+      "items": {
+        "what": {
+          "question": "Exur nedir?",
+          "answer": "Bir piyasa desk’i: bir yanda puanlanmış manşetler, diğer yanda Exur yardımcı pilotu — canlı bağlama dayalı, genel bir sohbet değil."
+        },
+        "news": {
+          "question": "Haber okumak için hesap gerekir mi?",
+          "answer": "Hayır. Haber desk’i açık. Geçmiş, daha yüksek limitler ve sizi hatırlayan bir yardımcı pilot istediğinizde giriş yapın."
+        },
+        "chatbot": {
+          "question": "Bu genel bir chatbot mu?",
+          "answer": "Hayır. Exur, baktığınız piyasa ve manşetler hakkında yanıt verir. Kısa değerlendirmeler, sonsuz sohbet değil."
+        },
+        "ask": {
+          "question": "Ne sorabilirim?",
+          "answer": "Bir manşetin önemli olup olmadığı, bandın ne söylediği, izlenecek seviyeler veya alınmaya değer bir setup olup olmadığı."
+        },
+        "account": {
+          "question": "Misafir denemesi nedir?",
+          "answer": "Giriş yapmadan haftada üç ücretsiz sohbet mesajı. Haberleri istediğiniz zaman okuyun. Google girişi gerisini açar."
+        },
+        "free": {
+          "question": "Free ile Plus nasıl farklı?",
+          "answer": "Free, günlük limitlerle desk’i kapsar. Plus, Exur rutininizin parçası olduğunda limitleri yükseltir."
+        },
+        "profits": {
+          "question": "Bu finansal tavsiye midir?",
+          "answer": "Hayır. Exur bandı net okumanıza yardımcı olur. Aracı kurum değildir ve getiri vaat etmez."
+        }
+      }
+    },
+    "pricing": {
+      "title": "Derinliğinizi seçin.",
+      "subtitle": "Haberleri ücretsiz okuyun. Exur rutininizin parçasıysa Plus.",
+      "perMonth": "/ay",
+      "plans": {
+        "free": {
+          "name": "Free",
+          "price": "Ücretsiz",
+          "desc": "Haber okuyun. Günlük limitli yardımcı pilot.",
+          "cta": "Ücretsiz başla",
+          "features": {
+            "0": "Puanlanmış piyasa manşetleri",
+            "1": "Misafir sohbeti, 3 mesaj / hafta",
+            "2": "Günlük yardımcı pilot gönderim limiti",
+            "3": "BTC, ETH ve altın desk’leri"
+          }
+        },
+        "plus": {
+          "name": "Plus",
+          "price": "$19",
+          "priceWas": "$49",
+          "desc": "Desk her seansın parçası olduğunda.",
+          "cta": "Plus’a geç",
+          "badge": "En çok seçilen",
+          "features": {
+            "0": "Free’deki her şey",
+            "1": "Daha yüksek günlük ve haftalık limitler",
+            "2": "Kayıtlı sohbet geçmişi",
+            "3": "Daha derin sinyal ve planlama bağlamı"
+          }
+        },
+        "ultimate": {
+          "name": "Ultimate",
+          "price": "Özel",
+          "desc": "Plus limitleri hâlâ yetmediğinde.",
+          "cta": "Bize ulaşın",
+          "badge": "Özel",
+          "features": {
+            "0": "Plus’taki her şey",
+            "1": "Sizinle birlikte belirlediğimiz limitler",
+            "2": "Doğrudan hat. Biz kurarız"
+          }
+        }
+      }
+    },
+    "cta": {
+      "title": "Bandı tahmin etmeyi bırakın.",
+      "subtitle": "Canlı bir manşet hakkında tek bir soru, bunun size uyup uymadığını anlamak için yeter.",
+      "cta": "Desk’i aç",
+      "note": "Haberler ücretsiz. Misafir sohbeti dahil. Bakmak için cüzdan gerekmez."
     },
     "footer": {
-      "tagline": "Hesaplarınızın arkasındaki finansal zihin.",
+      "tagline": "Takip ettiğiniz piyasa için haberler ve Exur.",
       "product": "Ürün",
       "resources": "Kaynaklar",
       "contact": "İletişim",
@@ -35,17 +310,11 @@
       "onTelegram": "Telegram’da Exur",
       "terms": "Hizmet Şartları",
       "privacy": "Gizlilik Politikası",
-      "refund": "İade politikası",
-      "cookies": "Çerez ayarları"
-    },
-    "cta": {
-      "title": "Para hakkında tahmin yürütmeyi bırakın.",
-      "subtitle": "Bunun size yarayıp yaramadığını anlamak için bir soru yeter.",
-      "cta": "Ücretsiz başla",
-      "note": "Başlamak ücretsiz. Göz atmak için kayıt gerekmez."
+      "refund": "İade Politikası",
+      "cookies": "Çerez Ayarları"
     },
     "context": {
-      "description": "Exur, yapay zekâ finans asistanınızdır. Paranızın nereye gittiğini görün, sade dilde sorun ve net bir sonraki adımı alın — bir akış daha değil."
+      "description": "Exur yapay zekâ finans asistanınızdır. Paranızın nereye gittiğini görün, sade dilde sorun ve net bir sonraki adım alın — başka bir akış değil."
     }
   },
   "metadata": {

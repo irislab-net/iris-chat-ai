@@ -1749,7 +1749,9 @@ html.display-standalone[data-app-shell="true"] [data-slot="sheet-content"] .app-
 }
 
 .landing-modern [class*="--font-display"] {
-  font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
+  /* Plus Jakarta is Latin-only; IRIS Sans carries Vazirmatn for Arabic/Persian. */
+  font-family: var(--font-display), "IRIS Sans", ui-sans-serif, system-ui,
+    sans-serif;
 }
 
 @media (prefers-reduced-motion: reduce) {

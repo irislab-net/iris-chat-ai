@@ -6,43 +6,312 @@
     "portuguese": "Português",
     "spanish": "Español",
     "arabic": "العربية",
+    "persian": "فارسی",
     "russian": "Русский",
     "turkish": "Türkçe",
     "launchApp": "App openen",
     "analysisNotAdvice": "Analyse, geen advies."
   },
   "modern": {
+    "nav": {
+      "features": "Waarom Exur",
+      "desk": "Desk",
+      "signals": "Signalen",
+      "about": "Over",
+      "pricing": "Prijzen",
+      "application": "Applicatie",
+      "openMenu": "Menu openen",
+      "closeMenu": "Menu sluiten",
+      "mobileNav": "Mobiel"
+    },
     "hero": {
       "badge": "Jouw AI financiële assistent",
       "titleBefore": "Jouw geld,",
       "titleAfter": "onder controle.",
       "subtitle": "Vraag over uitgaven, spaargeld en wat hierna komt — in je eigen woorden.",
-      "inputPlaceholder": "Waar gaat mijn geld deze maand naartoe?"
+      "inputPlaceholder": "Waar gaat mijn geld deze maand naartoe?",
+      "exchanges": {
+        "0": {
+          "q": "Kun je deze week mijn rekeningen in de gaten houden?",
+          "a": "Ja. Ik ping je alleen als er echt iets nodig is."
+        },
+        "1": {
+          "q": "Waar gaat mijn geld naartoe?",
+          "a": "$340/mnd aan ongebruikte abonnementen. Snijd die eerst weg."
+        },
+        "2": {
+          "q": "Kan ik dit appartement betalen?",
+          "a": "Nog niet. Houd 6 maanden huur cash, kijk dan verder."
+        },
+        "3": {
+          "q": "Wat moet ik met mijn spaargeld?",
+          "a": "Houd 3 maanden cash. De rest in een simpele index."
+        },
+        "4": {
+          "q": "Geef ik te veel uit aan eten?",
+          "a": "Ja. 22% van de uitgaven. Cap op 12% en je zit goed."
+        },
+        "5": {
+          "q": "Help me over 2 jaar een huis te kopen.",
+          "a": "Bescherm de aanbetaling. Minder risico, meer cash, tot je dichtbij bent."
+        },
+        "6": {
+          "q": "Is mijn noodfonds genoeg?",
+          "a": "Bijna. Je zit op 4 maanden. Ga naar 6, investeer daarna de rest."
+        },
+        "7": {
+          "q": "Kaart aflossen of beleggen?",
+          "a": "Los eerst de 19%-kaart af. Beleg daarna wat overblijft."
+        },
+        "8": {
+          "q": "Vat mijn geld in één zin samen.",
+          "a": "Je zit goed. Meer sparen, iets minder uitgeven, niks najagen."
+        },
+        "9": {
+          "q": "Wat vraagt vandaag mijn aandacht?",
+          "a": "Niets urgents. Ik zeg het zodra dat verandert."
+        }
+      }
+    },
+    "goals": {
+      "0": {
+        "heading": "Te veel lawaai",
+        "sub": "Het meeste verandert nooit wat je moet doen."
+      },
+      "1": {
+        "heading": "Geld overal",
+        "sub": "Bank, kaarten en spaargeld praten niet met elkaar."
+      },
+      "2": {
+        "heading": "Moeilijk kiezen",
+        "sub": "Elke keuze voelt even urgent."
+      },
+      "3": {
+        "heading": "Eén plek om te vragen",
+        "sub": "Duidelijke antwoorden, in jouw context."
+      },
+      "diagramAria": "Cirkels die veranderen terwijl je scrollt: een raster van ruis, vier verspreide rekeningen, vier overlappende keuzes, dan één kalme ring"
+    },
+    "architecture": {
+      "title": "Zo werkt de desk.",
+      "subtitle": "Lees de tape. Vraag één keer. Handel, of wacht."
+    },
+    "howItWorks": {
+      "read": {
+        "headline": "Gescoorde headlines",
+        "desc": "Impact-gerankte nieuws voor de markt waarop je zit, geen eindeloze feed."
+      },
+      "ask": {
+        "headline": "In gewone taal",
+        "desc": "Volg een verhaal of de bredere tape. Korte antwoorden, geworteld in context."
+      },
+      "act": {
+        "headline": "Setup of wachten",
+        "desc": "Als er een zet is die de moeite waard is, toont Exur niveaus. Zo niet, zegt het wacht."
+      }
+    },
+    "desk": {
+      "title": "Van headline naar antwoord.",
+      "subtitle": "Geen feed om te scrollen. Alleen het verhaal dat een vraag waard is.",
+      "onTheDesk": "Op de desk",
+      "you": "Jij",
+      "news": {
+        "0": {
+          "source": "Bloomberg",
+          "time": "3m",
+          "headline": "Spot-ETF-stromen draaien positief na drie weken uitstroom"
+        },
+        "1": {
+          "source": "CoinDesk",
+          "time": "12m",
+          "headline": "Funding slaat negatief om terwijl leverage reset voor CPI"
+        },
+        "2": {
+          "source": "The Block",
+          "time": "27m",
+          "headline": "Exchange-reserves dalen naar het laagste niveau sinds maart"
+        }
+      },
+      "ask": {
+        "question": "Doet de ETF-headline er vandaag toe voor ETH?",
+        "answer": "Ja. Instroom tilt meestal eerst beta. Let op of funding negatief blijft terwijl spot leidt."
+      }
+    },
+    "signalWait": {
+      "title": "Handel alleen als het duidelijk is.",
+      "subtitle": "Vraag één keer. Krijg een setup, of een stil nee.",
+      "composerPlaceholder": "Vraag over een trade…",
+      "ticket": {
+        "setup": "Spot leidt terwijl funding zacht blijft",
+        "thesis": "Spot leidt; funding nog zacht.",
+        "timeHorizon": "Intraday",
+        "entryReason": "Boven sessie-VWAP",
+        "stopLossReason": "Onder eerdere swing",
+        "takeProfitReason": "Eerdere supply-shelf"
+      },
+      "tradeQuestion": "Long ETH vanaf hier?",
+      "hold": {
+        "label": "Geen trade",
+        "question": "Short deze bounce?",
+        "answer": "Nee. Tape is gemengd en leverage reset nog.",
+        "reason": "Geen edge die je vandaag moet forceren."
+      }
+    },
+    "signals": {
+      "title": "Diepe data waar het telt.",
+      "subtitle": "BTC, ETH en goud zijn live. Meer desks binnenkort.",
+      "soonLabel": "Binnenkort",
+      "soonHint": "Meer desks volgen snel",
+      "cardAction": "Vraag signaal",
+      "markets": {
+        "btc": "Bitcoin",
+        "eth": "Ethereum",
+        "xau": "Goud",
+        "sol": "Solana",
+        "bnb": "BNB",
+        "xrp": "XRP",
+        "link": "Chainlink",
+        "avax": "Avalanche",
+        "doge": "Dogecoin",
+        "arb": "Arbitrum",
+        "op": "Optimism"
+      }
+    },
+    "about": {
+      "title": "Laat Exur het uitleggen.",
+      "subtitle": "Een minuut, in eigen woorden.",
+      "listenLabel": "1 min luisteren",
+      "hearFromExur": "Luister naar Exur",
+      "close": "Sluiten",
+      "narration": {
+        "0": "Hallo, ik ben Exur.",
+        "1": "Ik ben niet zomaar een chatbot, trading signaal of portfoliotracker.",
+        "2": "Ik ben je Financiële Brein.",
+        "3": "Vandaag is de wereldwijde financiële wereld overweldigend,",
+        "4": "vol constante ruis, complexe orderboeken en eindeloze data.",
+        "5": "Instituten doen dit met legers van experts,",
+        "6": "terwijl individuen alleen achterblijven met spreadsheets en grafieken.",
+        "7": "Ik overbrug die kloof.",
+        "8": "Ik observeer mondiale markten, analyseer microstructuur, orderflow en nieuws,",
+        "9": "en combineer dat met begrip van jou, je doelen, je portfolio en je risico.",
+        "10": "Ik voorspel niet alleen wat de markt kan doen; ik zeg wat jij moet doen.",
+        "11": "En als er geen edge is?",
+        "12": "Dan zeg ik gewoon: “Doe niets.”",
+        "13": "Ik ben Exur, de intelligentielaag voor je financiële leven.",
+        "14": "Ervaar vandaag je nieuwe financiële intelligentie.",
+        "15": "Begin nu met mij te chatten."
+      }
+    },
+    "guestTrial": {
+      "title": "Bekijk de desk. Stel een paar vragen.",
+      "subtitle": "Nieuws is open zonder account. Gastchat geeft je drie berichten per week; log daarna in met Google om door te gaan.",
+      "statLabel": "gastberichten / week",
+      "cta": "Open de desk",
+      "note": "Geen wallet. Geen kaart. Alleen de markt."
+    },
+    "faq": {
+      "title": "Veelgestelde vragen.",
+      "subtitle": "Wat Exur is en wat niet.",
+      "items": {
+        "what": {
+          "question": "Wat is Exur?",
+          "answer": "Een marktdesk: gescoorde headlines aan de ene kant, een Exur-copiloot aan de andere, geworteld in live context, geen generieke chat."
+        },
+        "news": {
+          "question": "Heb ik een account nodig om nieuws te lezen?",
+          "answer": "Nee. De nieuwsdesk is open. Log in als je geschiedenis, hogere limieten en een copiloot wilt die je onthoudt."
+        },
+        "chatbot": {
+          "question": "Is dit een generieke chatbot?",
+          "answer": "Nee. Exur antwoordt over de markt en headlines die je bekijkt. Korte takes, geen eindeloze chat."
+        },
+        "ask": {
+          "question": "Wat kan ik vragen?",
+          "answer": "Of een headline ertoe doet, wat de tape zegt, niveaus om te watchen, of er een setup is die de moeite waard is."
+        },
+        "account": {
+          "question": "Wat is de gastproef?",
+          "answer": "Drie gratis chatberichten per week zonder inloggen. Nieuws altijd lezen. Google-login ontgrendelt de rest."
+        },
+        "free": {
+          "question": "Hoe verschillen Free en Plus?",
+          "answer": "Free dekt de desk met dagelijkse limieten. Plus verhoogt limieten als Exur bij je routine hoort."
+        },
+        "profits": {
+          "question": "Is dit financieel advies?",
+          "answer": "Nee. Exur helpt je de tape helder te lezen. Het is geen broker en belooft geen rendement."
+        }
+      }
+    },
+    "pricing": {
+      "title": "Kies je diepte.",
+      "subtitle": "Gratis nieuws lezen. Plus als Exur bij je routine hoort.",
+      "perMonth": "/mnd",
+      "plans": {
+        "free": {
+          "name": "Free",
+          "price": "Gratis",
+          "desc": "Lees nieuws. Copiloot met daglimiet.",
+          "cta": "Gratis starten",
+          "features": {
+            "0": "Gescoorde marktheadlines",
+            "1": "Gastchat, 3 berichten / week",
+            "2": "Dagelijkse copiloot-verzendlimiet",
+            "3": "BTC-, ETH- en gouddesks"
+          }
+        },
+        "plus": {
+          "name": "Plus",
+          "price": "$19",
+          "priceWas": "$49",
+          "desc": "Als de desk bij elke sessie hoort.",
+          "cta": "Ga Plus",
+          "badge": "Meest gekozen",
+          "features": {
+            "0": "Alles in Free",
+            "1": "Hogere dag- en weeklimieten",
+            "2": "Opgeslagen chatgeschiedenis",
+            "3": "Diepere signaal- en planningscontext"
+          }
+        },
+        "ultimate": {
+          "name": "Ultimate",
+          "price": "Op maat",
+          "desc": "Als Plus-limieten nog niet genoeg zijn.",
+          "cta": "Neem contact op",
+          "badge": "Op maat",
+          "features": {
+            "0": "Alles in Plus",
+            "1": "Limieten die we met jou zetten",
+            "2": "Directe lijn. Wij zetten het op"
+          }
+        }
+      }
+    },
+    "cta": {
+      "title": "Stop met de tape raden.",
+      "subtitle": "Eén vraag over een live headline is genoeg om te weten of dit bij je past.",
+      "cta": "Open de desk",
+      "note": "Nieuws is gratis. Gastchat inbegrepen. Geen wallet om rond te kijken."
     },
     "footer": {
-      "tagline": "Het financiële brein achter je rekeningen.",
+      "tagline": "Nieuws en Exur voor de markt die je volgt.",
       "product": "Product",
       "resources": "Bronnen",
       "contact": "Contact",
       "whyExur": "Waarom Exur",
       "howItWorks": "Hoe het werkt",
       "pricing": "Prijzen",
-      "openApp": "App openen",
+      "openApp": "Open app",
       "faq": "FAQ",
       "about": "Over Exur",
-      "signals": "AI-handelsignalen",
+      "signals": "AI-tradingsignalen",
       "onX": "Exur op X",
       "onTelegram": "Exur op Telegram",
-      "terms": "Gebruiksvoorwaarden",
+      "terms": "Servicevoorwaarden",
       "privacy": "Privacybeleid",
-      "refund": "Restitutiebeleid",
+      "refund": "Terugbetalingsbeleid",
       "cookies": "Cookie-instellingen"
-    },
-    "cta": {
-      "title": "Stop met gissen over geld.",
-      "subtitle": "Eén vraag is genoeg om te weten of dit nuttig voor je is.",
-      "cta": "Gratis starten",
-      "note": "Gratis om te beginnen. Geen account nodig om rond te kijken."
     },
     "context": {
       "description": "Exur is je AI financiële assistent. Zie waar je geld naartoe gaat, vraag in gewone taal, en krijg een duidelijke volgende stap — geen nieuwe feed."

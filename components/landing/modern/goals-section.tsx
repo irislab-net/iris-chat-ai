@@ -1,13 +1,14 @@
 "use client"
 
 import { useLayoutEffect, useRef } from "react"
+import { useTranslations } from "next-intl"
 
 import styles from "@/components/landing/modern/goals-story.module.css"
 import {
-  GOALS_STORY_COPY,
   GOALS_STORY_POOL_SIZE,
   initGoalsStory,
 } from "@/lib/goals-story-engine"
+import { GOALS_STORY_COUNT } from "@/lib/landing-modern-data"
 import {
   landingGlassSheen,
   landingGlassSurface,
@@ -19,6 +20,7 @@ import {
 import { cn } from "@/lib/utils"
 
 export function GoalsSection() {
+  const t = useTranslations("modern.goals")
   const storyRef = useRef<HTMLDivElement>(null)
   const blocksRef = useRef<HTMLDivElement>(null)
   const barsRef = useRef<HTMLDivElement>(null)
@@ -47,8 +49,8 @@ export function GoalsSection() {
     const poolEls = Array.from(pool.querySelectorAll<SVGCircleElement>("circle"))
 
     if (
-      blocks.length !== 4 ||
-      bars.length !== 4 ||
+      blocks.length !== GOALS_STORY_COUNT ||
+      bars.length !== GOALS_STORY_COUNT ||
       poolEls.length !== GOALS_STORY_POOL_SIZE
     ) {
       return
@@ -79,9 +81,9 @@ export function GoalsSection() {
           <div className={cn(landingInner, styles.inner)}>
             <div>
               <div ref={blocksRef} className={styles.blocks}>
-                {GOALS_STORY_COPY.map((copy, index) => (
+                {Array.from({ length: GOALS_STORY_COUNT }, (_, index) => (
                   <div
-                    key={copy.heading}
+                    key={index}
                     data-story-block
                     className={styles.block}
                     aria-hidden={index === 0 ? "false" : "true"}
@@ -90,19 +92,19 @@ export function GoalsSection() {
                       className={cn(
                         styles.heading,
                         landingTitleSection,
-                        "text-center xl:text-left"
+                        "text-center xl:text-start"
                       )}
                     >
-                      {copy.heading}
+                      {t(`${index}.heading`)}
                     </h2>
                     <p
                       className={cn(
                         styles.sub,
                         landingSubheading,
-                        "mx-0 mt-0 max-w-none text-center text-lg xl:text-left"
+                        "mx-0 mt-0 max-w-none text-center text-lg xl:text-start"
                       )}
                     >
-                      {copy.sub}
+                      {t(`${index}.sub`)}
                     </p>
                   </div>
                 ))}
@@ -113,15 +115,15 @@ export function GoalsSection() {
                 role="presentation"
                 aria-hidden="true"
               >
-                {GOALS_STORY_COPY.map((copy) => (
-                  <span key={copy.heading} data-story-bar className={styles.bar} />
+                {Array.from({ length: GOALS_STORY_COUNT }, (_, index) => (
+                  <span key={index} data-story-bar className={styles.bar} />
                 ))}
               </div>
             </div>
 
             <figure
               className={cn(landingGlassSurface, styles.tile, "relative bg-white/42 dark:bg-white/8")}
-              aria-label="Circles that change as you scroll: a grid of noise, four scattered accounts, four overlapping choices, then one calm ring"
+              aria-label={t("diagramAria")}
             >
               <span aria-hidden className={styles.tileBackdrop} />
               <span

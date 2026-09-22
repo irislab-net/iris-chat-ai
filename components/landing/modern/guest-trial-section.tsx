@@ -1,9 +1,11 @@
 "use client"
 
+import { useTranslations } from "next-intl"
+
 import { HeroLiquidGlassBg } from "@/components/landing/modern/hero-liquid-glass-bg"
 import { ScrollRevealGroup } from "@/components/landing/modern/scroll-reveal"
 import { SectionHeader, SphereCta } from "@/components/landing/modern/sphere-ui"
-import { GUEST_TRIAL_SECTION } from "@/lib/landing-modern-data"
+import { GUEST_TRIAL_STAT } from "@/lib/landing-modern-data"
 import {
   landingAfterHeader,
   landingContent,
@@ -16,6 +18,8 @@ import { getLaunchAppHref } from "@/lib/site"
 import { cn } from "@/lib/utils"
 
 export function GuestTrialSection() {
+  const t = useTranslations("modern.guestTrial")
+
   return (
     <section
       id="try"
@@ -29,10 +33,7 @@ export function GuestTrialSection() {
 
       <div className={cn(landingInner, "relative z-10")}>
         <ScrollRevealGroup>
-          <SectionHeader
-            title={GUEST_TRIAL_SECTION.title}
-            subtitle={GUEST_TRIAL_SECTION.subtitle}
-          />
+          <SectionHeader title={t("title")} subtitle={t("subtitle")} />
 
           <div
             className={cn(
@@ -48,21 +49,21 @@ export function GuestTrialSection() {
               )}
               aria-hidden
             >
-              {GUEST_TRIAL_SECTION.stat}
+              {GUEST_TRIAL_STAT}
             </p>
             <p className="mt-2 font-[family-name:var(--font-mono-modern)] text-xs tracking-[0.2em] text-muted-foreground uppercase">
-              {GUEST_TRIAL_SECTION.statLabel}
+              {t("statLabel")}
             </p>
           </div>
 
           <div className="mt-8 flex justify-center sm:mt-10">
             <SphereCta href={getLaunchAppHref()} variant="glass">
-              {GUEST_TRIAL_SECTION.cta}
+              {t("cta")}
             </SphereCta>
           </div>
 
           <p className="mt-5 text-center text-xs text-muted-foreground">
-            {GUEST_TRIAL_SECTION.note}
+            {t("note")}
           </p>
         </ScrollRevealGroup>
       </div>

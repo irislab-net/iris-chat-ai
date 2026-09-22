@@ -1,12 +1,10 @@
 "use client"
 
+import { useTranslations } from "next-intl"
+
 import { ScrollReveal, ScrollRevealGroup } from "@/components/landing/modern/scroll-reveal"
 import { SectionHeader } from "@/components/landing/modern/sphere-ui"
-import {
-  DESK_ASK,
-  DESK_NEWS_ITEMS,
-  DESK_SECTION,
-} from "@/lib/landing-modern-data"
+import { DESK_NEWS_META } from "@/lib/landing-modern-data"
 import {
   landingAfterHeader,
   landingContent,
@@ -20,21 +18,17 @@ import {
 import { cn } from "@/lib/utils"
 
 export function DeskSurfacesSection() {
+  const t = useTranslations("modern.desk")
+
   return (
     <section id="desk" className={cn(landingSection, landingSectionBody)}>
       <div className={landingInner}>
         <ScrollReveal>
-          <SectionHeader
-            title={DESK_SECTION.title}
-            subtitle={DESK_SECTION.subtitle}
-          />
+          <SectionHeader title={t("title")} subtitle={t("subtitle")} />
         </ScrollReveal>
 
         <div className={cn(landingContent, landingAfterHeader)}>
-          <ScrollRevealGroup
-            stagger={0.1}
-            className="flex flex-col gap-3.5"
-          >
+          <ScrollRevealGroup stagger={0.1} className="flex flex-col gap-3.5">
             <div className="flex items-end justify-end gap-2.5">
               <div
                 className={cn(
@@ -42,7 +36,7 @@ export function DeskSurfacesSection() {
                   "max-w-[min(100%,22rem)] px-4 py-3.5 text-left text-[13px] leading-relaxed text-foreground sm:text-sm"
                 )}
               >
-                {DESK_ASK.question}
+                {t("ask.question")}
               </div>
               <span
                 className={cn(
@@ -50,7 +44,7 @@ export function DeskSurfacesSection() {
                   "mb-0.5 size-8 shrink-0 text-[10px] font-medium text-muted-foreground"
                 )}
               >
-                You
+                {t("you")}
               </span>
             </div>
 
@@ -69,24 +63,26 @@ export function DeskSurfacesSection() {
                   "max-w-[min(100%,24rem)] px-4 py-3.5 text-left text-[13px] leading-relaxed text-foreground/90 sm:text-sm"
                 )}
               >
-                {DESK_ASK.answer}
+                {t("ask.answer")}
               </div>
             </div>
           </ScrollRevealGroup>
 
           <ScrollReveal className={landingAfterHeader}>
             <p className="mb-4 text-center font-[family-name:var(--font-mono-modern)] text-[9px] tracking-[0.2em] text-muted-foreground/60 uppercase">
-              On the desk
+              {t("onTheDesk")}
             </p>
             <ul className="flex flex-col gap-2.5">
-              {DESK_NEWS_ITEMS.map((item) => (
+              {DESK_NEWS_META.map((item) => (
                 <li
-                  key={item.headline}
+                  key={item.id}
                   className="text-center text-[13px] leading-snug text-muted-foreground/65 sm:text-sm"
                 >
-                  <span className="text-foreground/55">{item.headline}</span>
+                  <span className="text-foreground/55">
+                    {t(`news.${item.id}.headline`)}
+                  </span>
                   <span className="mt-1 block font-[family-name:var(--font-mono-modern)] text-[9px] tracking-[0.14em] text-muted-foreground/45 uppercase">
-                    {item.source} · {item.time}
+                    {t(`news.${item.id}.source`)} · {t(`news.${item.id}.time`)}
                   </span>
                 </li>
               ))}
