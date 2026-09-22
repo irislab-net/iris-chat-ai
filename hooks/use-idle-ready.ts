@@ -13,10 +13,7 @@ export function useInteractionOrIdleReady(
   const [ready, setReady] = React.useState(false)
 
   React.useEffect(() => {
-    if (!enabled) {
-      setReady(false)
-      return
-    }
+    if (!enabled) return
 
     let settled = false
     const arm = () => {
@@ -45,10 +42,13 @@ export function useInteractionOrIdleReady(
       }
       if (idleHandle !== undefined) window.cancelIdleCallback(idleHandle)
       if (timeoutHandle !== undefined) window.clearTimeout(timeoutHandle)
+      settled = true
+      // Defer reset so we never setState synchronously in the effect body.
+      queueMicrotask(() => setReady(false))
     }
   }, [enabled, timeoutMs])
 
-  return ready
+  return enabled && ready
 }
 
 /** @deprecated Prefer useInteractionOrIdleReady for third-party scripts. */

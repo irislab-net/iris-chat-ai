@@ -34,10 +34,20 @@ const SAMPLE_PROMPT_ICONS = {
 } as const
 
 const SAMPLE_PROMPT_TAP_SLOP_PX = 8
+const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)"
 
-function prefersReducedMotion() {
-  if (typeof window === "undefined") return false
-  return window.matchMedia("(prefers-reduced-motion: reduce)").matches
+function subscribeReducedMotion(onStoreChange: () => void) {
+  const media = window.matchMedia(REDUCED_MOTION_QUERY)
+  media.addEventListener("change", onStoreChange)
+  return () => media.removeEventListener("change", onStoreChange)
+}
+
+function getReducedMotionSnapshot() {
+  return window.matchMedia(REDUCED_MOTION_QUERY).matches
+}
+
+function getReducedMotionServerSnapshot() {
+  return false
 }
 
 function IrisSamplePromptCard({
@@ -121,7 +131,11 @@ export function IrisSamplePrompts({
   onEdit: (text: string) => void
 }) {
   const t = useTranslations("workspace")
-  const [reduceMotion, setReduceMotion] = React.useState(false)
+  const reduceMotion = React.useSyncExternalStore(
+    subscribeReducedMotion,
+    getReducedMotionSnapshot,
+    getReducedMotionServerSnapshot
+  )
   const autoplayPlugin = React.useMemo(
     () =>
       Autoplay({
@@ -132,10 +146,6 @@ export function IrisSamplePrompts({
       }),
     []
   )
-
-  React.useEffect(() => {
-    setReduceMotion(prefersReducedMotion())
-  }, [])
 
   return (
     <div className={chatEmptyHeroPromptsClass}>
