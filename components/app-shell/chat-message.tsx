@@ -3,7 +3,7 @@
 import type { ReactNode } from "react"
 import dynamic from "next/dynamic"
 
-import { IrisLabLogo } from "@/components/brand/iris-lab-logo"
+import { ExurLogo } from "@/components/brand/exur-logo"
 import { ChatMessageQuote } from "@/components/app-shell/chat-message-quote"
 import { chatUserBubbleClass } from "@/components/app-shell/chat-turn-actions"
 import { TypingDots } from "@/components/app-shell/chat-typing"
@@ -43,7 +43,7 @@ function IrisMark({
   const isHero = variant === "hero"
 
   return (
-    <IrisLabLogo
+    <ExurLogo
       decorative
       variant="gradient"
       size={isHero ? 64 : 28}

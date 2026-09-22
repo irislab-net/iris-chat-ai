@@ -2,16 +2,17 @@
 
 import { gsap } from "gsap"
 import { CheckIcon, MonitorIcon, MoonIcon, SunIcon, UserRoundIcon, XIcon } from "lucide-react"
+import dynamic from "next/dynamic"
 import { useTranslations } from "next-intl"
 import { useTheme } from "@wrksz/themes/client/use-theme"
 import { useEffect, useState } from "react"
 
-import { ChatAccountMenu } from "@/components/app-shell/chat-account-menu"
 import { useAuth } from "@/components/auth/auth-provider"
 import { GoogleGlyph } from "@/components/auth/google-glyph"
-import { AnimatedIrisLabLogo } from "@/components/brand/animated-iris-lab-logo"
-import { IrisLabLogo } from "@/components/brand/iris-lab-logo"
+import { AnimatedExurLogo } from "@/components/brand/animated-exur-logo"
+import { ExurLogo } from "@/components/brand/exur-logo"
 import { LocaleSwitcher } from "@/components/i18n/locale-switcher"
+import { useLandingActiveSection } from "@/components/landing/modern/landing-scroll-context"
 import { SphereCta } from "@/components/landing/modern/sphere-ui"
 import { ThemeModeControl } from "@/components/landing/modern/theme-mode-control"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
@@ -30,7 +31,6 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet"
-import { useLandingActiveSection } from "@/components/landing/modern/landing-scroll-context"
 import { displayPlanName } from "@/lib/billing/catalog"
 import { NAV_LINKS } from "@/lib/landing-modern-data"
 import { LANDING_MOTION, scrollToSection } from "@/lib/landing-motion"
@@ -46,6 +46,22 @@ import {
 import { getLaunchAppHref } from "@/lib/site"
 import { userAccountLabel, userAccountSubline } from "@/lib/user-profile"
 import { cn } from "@/lib/utils"
+
+const ChatAccountMenu = dynamic(
+  () =>
+    import("@/components/app-shell/chat-account-menu").then(
+      (m) => m.ChatAccountMenu
+    ),
+  {
+    ssr: false,
+    loading: () => (
+      <span
+        className="inline-flex size-10 shrink-0 rounded-full bg-muted/40"
+        aria-hidden
+      />
+    ),
+  }
+)
 
 function scrollAndClose(id: string, close: () => void) {
   close()
@@ -258,7 +274,7 @@ export function LandingNav() {
             className="flex size-11 shrink-0 items-center justify-center rounded-full bg-card p-1 shadow-[0_6px_18px_rgba(15,23,42,0.06)] dark:shadow-[0_6px_18px_rgba(0,0,0,0.28)]"
             aria-hidden
           >
-            <AnimatedIrisLabLogo replayOnHover shimmer className="size-9" />
+            <AnimatedExurLogo replayOnHover shimmer className="size-9" />
           </span>
           <span className={landingTitleBrand}>Exur</span>
         </Button>
@@ -340,7 +356,7 @@ export function LandingNav() {
                     "flex items-center gap-2.5"
                   )}
                 >
-                  <IrisLabLogo
+                  <ExurLogo
                     decorative
                     size={36}
                     variant="auto"

@@ -43,7 +43,7 @@ export const SOCIAL_LINKS = {
 } as const
 
 /** Default brand mark for sitemap / metadata (light theme SVG). */
-export const Exur_LAB_LOGO_MARK = "/exur-logo-light.svg"
+export const EXUR_LOGO_MARK = "/exur-logo-light.svg"
 
 /** Square mark for Google Search / Knowledge Panel (min 112×112). */
 export const ORGANIZATION_LOGO = {
@@ -117,7 +117,7 @@ export const INDEXABLE_ROUTES = [
     path: "/",
     changeFrequency: "weekly" as const,
     priority: 1,
-    images: ["/home-bg-header.webp", Exur_LAB_LOGO_MARK, "/opengraph-image"] as const,
+    images: ["/home-bg-header.webp", EXUR_LOGO_MARK, "/opengraph-image"] as const,
   },
   {
     path: "/about",

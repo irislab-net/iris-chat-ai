@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl"
 
-import { AnimatedIrisLabLogo } from "@/components/brand/animated-iris-lab-logo"
+import { AnimatedExurLogo } from "@/components/brand/animated-exur-logo"
 import { TelegramIcon } from "@/components/brand/telegram-icon"
 import { XIcon } from "@/components/brand/x-icon"
 import { ScrollReveal } from "@/components/landing/modern/scroll-reveal"
@@ -123,7 +123,7 @@ export function ModernFooter() {
                 aria-label={SITE_NAME}
                 className="h-auto w-fit gap-2.5 rounded-full px-0 py-0 text-foreground hover:bg-transparent"
               >
-                <AnimatedIrisLabLogo scrollTrigger replayOnHover shimmer className="size-10" />
+                <AnimatedExurLogo scrollTrigger replayOnHover shimmer className="size-10" />
                 <span className={landingTitleFooter}>{SITE_NAME}</span>
               </Button>
               <p className="mt-4 text-sm leading-relaxed text-muted-foreground">

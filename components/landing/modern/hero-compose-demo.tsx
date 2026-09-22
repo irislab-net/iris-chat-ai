@@ -14,7 +14,7 @@ import {
   type ReactNode,
 } from "react"
 
-import { IrisLabLogo } from "@/components/brand/iris-lab-logo"
+import { ExurLogo } from "@/components/brand/exur-logo"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -130,7 +130,7 @@ function DemoUserAvatar({
   return (
     <GlassOrb className="p-0.5">
       <Avatar size="sm" className="size-full after:hidden">
-        <AvatarImage src={src} alt="" />
+        <AvatarImage src={src} alt="" loading="lazy" />
         <AvatarFallback className="bg-white/40 text-[9px] font-medium text-muted-foreground dark:bg-white/10">
           {initials}
         </AvatarFallback>
@@ -142,7 +142,7 @@ function DemoUserAvatar({
 function DemoSystemAvatar() {
   return (
     <GlassOrb className="mt-0.5 p-1.5">
-            <IrisLabLogo variant="auto" size={20} className="size-full" decorative />
+            <ExurLogo variant="auto" size={20} className="size-full" decorative />
     </GlassOrb>
   )
 }

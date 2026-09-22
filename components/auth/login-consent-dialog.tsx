@@ -4,7 +4,7 @@ import * as React from "react"
 import { ExternalLinkIcon } from "lucide-react"
 
 import { GoogleGlyph } from "@/components/auth/google-glyph"
-import { IrisLabLogo } from "@/components/brand/iris-lab-logo"
+import { ExurLogo } from "@/components/brand/exur-logo"
 import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
 import {
@@ -117,7 +117,7 @@ function ConsentCheck({
 function LoginConsentBrand() {
   return (
     <div className="flex items-center gap-2.5">
-      <IrisLabLogo
+      <ExurLogo
         decorative
         size={36}
         className="size-9 shrink-0 rounded-full"

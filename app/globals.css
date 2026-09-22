@@ -783,7 +783,7 @@ html.display-standalone[data-app-shell="true"] [data-slot="sheet-content"] .app-
   pointer-events: none;
 }
 
-@keyframes iris-logo-shimmer {
+@keyframes exur-logo-shimmer {
   0% {
     transform: translateX(-140%) skewX(-14deg);
     opacity: 0;
@@ -803,12 +803,12 @@ html.display-standalone[data-app-shell="true"] [data-slot="sheet-content"] .app-
   }
 }
 
-.animate-iris-logo-shimmer {
-  animation: iris-logo-shimmer 2.8s ease-in-out infinite;
+.animate-exur-logo-shimmer {
+  animation: exur-logo-shimmer 2.8s ease-in-out infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .animate-iris-logo-shimmer {
+  .animate-exur-logo-shimmer {
     animation: none;
   }
 }

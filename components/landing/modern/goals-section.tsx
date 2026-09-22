@@ -155,7 +155,7 @@ export function GoalsSection() {
                 </g>
                 <g ref={poolRef} className={styles.pool}>
                   {Array.from({ length: GOALS_STORY_POOL_SIZE }, (_, i) => (
-                    <circle key={i} r="0" />
+                    <circle key={i} cx="0" cy="0" r="1" />
                   ))}
                 </g>
               </svg>

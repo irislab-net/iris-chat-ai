@@ -1,7 +1,7 @@
 import { getLocale, getTranslations } from "next-intl/server"
 
 import { HeroComposeDemoLazy } from "@/components/landing/modern/hero-compose-demo-lazy"
-import { HeroLiquidGlassBg } from "@/components/landing/modern/hero-liquid-glass-bg"
+import { HeroLiquidGlassBgLazy } from "@/components/landing/modern/hero-liquid-glass-bg-lazy"
 import { LandingBelowFold } from "@/components/landing/modern/landing-below-fold"
 import { LandingFooterLazy } from "@/components/landing/modern/landing-footer-lazy"
 import { LandingNav } from "@/components/landing/modern/landing-nav"
@@ -22,7 +22,6 @@ import {
 import { cn } from "@/lib/utils"
 
 import "@/app/styles/landing-modern.css"
-import "@/app/styles/chat-gemini.css"
 
 const MAIN_CONTENT_ID = "main-content"
 
@@ -78,7 +77,7 @@ export async function ModernLandingPage() {
           <LandingNav />
 
           <div id="hero" className={cn(landingHeroCard, landingHeroGlass)}>
-            <HeroLiquidGlassBg tone="blue" />
+            <HeroLiquidGlassBgLazy tone="blue" />
             <div className="relative z-10 flex min-h-0 flex-1 flex-col">
               <section className="flex min-h-0 flex-1 flex-col">
                 <div

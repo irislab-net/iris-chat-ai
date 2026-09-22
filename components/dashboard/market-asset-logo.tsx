@@ -34,7 +34,8 @@ function MarketAssetLogo({
           alt=""
           width={size}
           height={size}
-          unoptimized
+          unoptimized={src.endsWith(".svg")}
+          loading="lazy"
           referrerPolicy="no-referrer"
           onError={() => setFailed(true)}
           className={cn(

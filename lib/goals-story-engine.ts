@@ -241,21 +241,23 @@ export function initGoalsStory(dom: GoalsStoryDom) {
 
       if (r < 0.05 || (so < 0.002 && s.f < 0.002)) {
         if (!hidden[k]) {
-          e.setAttribute("r", "0")
+          e.style.transform = "translate3d(0,0,0) scale(0)"
+          e.style.visibility = "hidden"
           hidden[k] = true
         }
         continue
       }
 
       hidden[k] = false
-      e.setAttribute("cx", x.toFixed(2))
-      e.setAttribute("cy", y.toFixed(2))
-      e.setAttribute("r", r.toFixed(2))
-      e.setAttribute("stroke-opacity", so.toFixed(3))
-      e.setAttribute("fill-opacity", s.f.toFixed(3))
+      // Compositor-friendly: fixed SVG geometry (cx/cy=0, r=1) + CSS transform/opacity.
+      e.style.visibility = "visible"
+      e.style.transform = `translate3d(${x.toFixed(2)}px, ${y.toFixed(2)}px, 0) scale(${r.toFixed(2)})`
+      e.style.strokeOpacity = so.toFixed(3)
+      e.style.fillOpacity = s.f.toFixed(3)
     }
 
-    dom.pings.setAttribute("opacity", (W.w1 * amb).toFixed(3))
+    dom.pings.style.opacity = (W.w1 * amb).toFixed(3)
+    // Two ping rings only — keep geometry attrs so CSS scale keyframes own `transform`.
     const signalR = Math.max(0, st[SIGNAL].r).toFixed(2)
     dom.pg1.setAttribute("cx", px[SIGNAL].toFixed(2))
     dom.pg1.setAttribute("cy", py[SIGNAL].toFixed(2))
@@ -264,7 +266,7 @@ export function initGoalsStory(dom: GoalsStoryDom) {
     dom.pg2.setAttribute("cy", py[SIGNAL].toFixed(2))
     dom.pg2.setAttribute("r", signalR)
 
-    dom.pings4.setAttribute("opacity", (Lf.v * amb).toFixed(3))
+    dom.pings4.style.opacity = (Lf.v * amb).toFixed(3)
   }
 
   if (reduce) {
@@ -370,8 +372,27 @@ export function initGoalsStory(dom: GoalsStoryDom) {
   }
   window.addEventListener("load", refresh)
 
+  // Pause the per-frame pool when the story is off-screen (cuts TBT below the fold).
+  let ticking = true
+  const io = new IntersectionObserver(
+    ([entry]) => {
+      const on = Boolean(entry?.isIntersecting)
+      if (on === ticking) return
+      ticking = on
+      if (on) {
+        gsap.ticker.add(render)
+        render()
+      } else {
+        gsap.ticker.remove(render)
+      }
+    },
+    { rootMargin: "10% 0px", threshold: 0 }
+  )
+  io.observe(dom.story)
+
   return () => {
     window.removeEventListener("load", refresh)
+    io.disconnect()
     gsap.ticker.remove(render)
     ctx.revert()
   }

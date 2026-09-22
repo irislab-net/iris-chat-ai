@@ -3,6 +3,8 @@
 import { ChatMobileGeminiBackground } from "@/components/app-shell/chat-mobile-gemini-background"
 import { cn } from "@/lib/utils"
 
+import "@/app/styles/chat-gemini.css"
+
 /** Gemini dot mesh + orbs — same system as chat, clipped to the hero card. */
 export function HeroLiquidGlassBg({
   /** `blue` pins the orb cycle to the brand hue instead of sweeping to teal/green. */

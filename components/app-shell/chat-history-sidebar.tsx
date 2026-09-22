@@ -26,7 +26,7 @@ import { useTheme } from "@wrksz/themes/client/use-theme"
 import { AttentionPulseDot } from "@/components/app-shell/attention-pulse-dot"
 import { ChatAccountAvatar } from "@/components/app-shell/chat-account-avatar"
 import { ChatGeminiNewChatIcon } from "@/components/app-shell/chat-gemini-new-chat-icon"
-import { IrisLabLogo } from "@/components/brand/iris-lab-logo"
+import { ExurLogo } from "@/components/brand/exur-logo"
 import { useAuth } from "@/components/auth/auth-provider"
 import { displayPlanName } from "@/lib/billing/catalog"
 import { GoogleGlyph } from "@/components/auth/google-glyph"
@@ -480,7 +480,7 @@ function ChatHistorySidebar({
         {isMobileDrawer ? (
           <header className="app-mobile-safe-header flex shrink-0 items-center justify-between gap-3 px-4 pb-3">
             <div className="flex min-w-0 items-center gap-2.5">
-              <IrisLabLogo
+              <ExurLogo
                 decorative
                 variant="gradient"
                 priority
@@ -519,7 +519,7 @@ function ChatHistorySidebar({
                   : "flex-1 px-1"
               )}
             >
-              <IrisLabLogo
+              <ExurLogo
                 decorative
                 variant="gradient"
                 size={32}

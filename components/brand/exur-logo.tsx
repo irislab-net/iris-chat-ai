@@ -1,12 +1,12 @@
 import { cn } from "@/lib/utils"
 
-export const IRIS_LAB_LOGO_LIGHT_SRC = "/exur-logo-light.svg"
-export const IRIS_LAB_LOGO_DARK_SRC = "/exur-logo-dark.svg"
-export const IRIS_LAB_LOGO_BRAND_SRC = "/exur-logo-brand.svg"
-export const IRIS_LAB_LOGO_MARK_WHITE_SRC = "/exur-logo-mark-white.svg"
-export const IRIS_LAB_LOGO_GRADIENT_SRC = "/exur-logo-gradient.svg"
+export const EXUR_LOGO_LIGHT_SRC = "/exur-logo-light.svg"
+export const EXUR_LOGO_DARK_SRC = "/exur-logo-dark.svg"
+export const EXUR_LOGO_BRAND_SRC = "/exur-logo-brand.svg"
+export const EXUR_LOGO_MARK_WHITE_SRC = "/exur-logo-mark-white.svg"
+export const EXUR_LOGO_GRADIENT_SRC = "/exur-logo-gradient.svg"
 
-type IrisLabLogoProps = {
+type ExurLogoProps = {
   className?: string
   imageClassName?: string
   /** Intrinsic pixel size (layout scales via className). */
@@ -39,6 +39,7 @@ function LogoPicture({
         width={size}
         height={size}
         decoding="async"
+        loading={priority ? "eager" : "lazy"}
         fetchPriority={priority ? "high" : "auto"}
         className={className}
       />
@@ -46,7 +47,7 @@ function LogoPicture({
   )
 }
 
-function IrisLabLogo({
+function ExurLogo({
   className,
   imageClassName,
   size = 32,
@@ -54,7 +55,7 @@ function IrisLabLogo({
   alt = "Exur",
   decorative = false,
   variant = "auto",
-}: IrisLabLogoProps) {
+}: ExurLogoProps) {
   const label = decorative ? undefined : alt
   const shared = cn("size-full object-contain", imageClassName)
   const showThemePair = variant === "auto"
@@ -66,7 +67,7 @@ function IrisLabLogo({
     >
       {(variant === "auto" || variant === "on-dark") && (
         <LogoPicture
-          src={IRIS_LAB_LOGO_LIGHT_SRC}
+          src={EXUR_LOGO_LIGHT_SRC}
           size={size}
           priority={priority}
           className={cn(
@@ -77,7 +78,7 @@ function IrisLabLogo({
       )}
       {variant === "on-hero" && (
         <LogoPicture
-          src={IRIS_LAB_LOGO_MARK_WHITE_SRC}
+          src={EXUR_LOGO_MARK_WHITE_SRC}
           size={size}
           priority={priority}
           className={shared}
@@ -85,7 +86,7 @@ function IrisLabLogo({
       )}
       {variant === "brand" && (
         <LogoPicture
-          src={IRIS_LAB_LOGO_BRAND_SRC}
+          src={EXUR_LOGO_BRAND_SRC}
           size={size}
           priority={priority}
           className={shared}
@@ -93,7 +94,7 @@ function IrisLabLogo({
       )}
       {variant === "gradient" && (
         <LogoPicture
-          src={IRIS_LAB_LOGO_GRADIENT_SRC}
+          src={EXUR_LOGO_GRADIENT_SRC}
           size={size}
           priority={priority}
           className={shared}
@@ -101,7 +102,7 @@ function IrisLabLogo({
       )}
       {(variant === "auto" || variant === "on-light") && (
         <LogoPicture
-          src={IRIS_LAB_LOGO_DARK_SRC}
+          src={EXUR_LOGO_DARK_SRC}
           size={size}
           priority={priority}
           className={cn(shared, showThemePair && "dark:hidden")}
@@ -111,4 +112,4 @@ function IrisLabLogo({
   )
 }
 
-export { IrisLabLogo }
+export { ExurLogo }

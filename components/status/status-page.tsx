@@ -2,7 +2,7 @@
 
 import type { ReactNode } from "react"
 
-import { AnimatedIrisLabLogo } from "@/components/brand/animated-iris-lab-logo"
+import { AnimatedExurLogo } from "@/components/brand/animated-exur-logo"
 import { HeroLiquidGlassBg } from "@/components/landing/modern/hero-liquid-glass-bg"
 import { jetbrainsMono, plusJakarta } from "@/components/landing/modern/fonts"
 import { Button } from "@/components/ui/button"
@@ -134,7 +134,7 @@ export function StatusPage({
                 <span
                   className={cn(landingGlassSheen, "pointer-events-none absolute inset-0 rounded-full")}
                 />
-                <AnimatedIrisLabLogo
+                <AnimatedExurLogo
                   replayOnHover
                   shimmer
                   className="relative z-10 size-9 sm:size-10"

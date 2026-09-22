@@ -16,7 +16,7 @@ import { Link, usePathname } from "@/i18n/navigation"
 
 import { useAuth } from "@/components/auth/auth-provider"
 import { GoogleGlyph } from "@/components/auth/google-glyph"
-import { IrisLabLogo } from "@/components/brand/iris-lab-logo"
+import { ExurLogo } from "@/components/brand/exur-logo"
 import { useUserAvatarUrl } from "@/hooks/use-user-avatar-url"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
@@ -187,7 +187,7 @@ function WebsiteToolbar({
             onCloseToChat && "hidden lg:block"
           )}
         >
-          <IrisLabLogo
+          <ExurLogo
             alt="Exur"
             size={32}
             className="size-8 rounded-full"

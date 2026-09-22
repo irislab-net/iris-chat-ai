@@ -17,7 +17,7 @@ import {
 
 import { ChatAccountFooter } from "@/components/app-shell/chat-account-footer"
 import { ChatAccountMenu } from "@/components/app-shell/chat-account-menu"
-import { IrisLabLogo } from "@/components/brand/iris-lab-logo"
+import { ExurLogo } from "@/components/brand/exur-logo"
 import { ChatMobileGeminiBackground } from "@/components/app-shell/chat-mobile-gemini-background"
 import { chatEmptyHeroPromptsClass, chatMobileScrollDownClass, chatMobileThreadBottomFadeClass, chatMobileThreadBottomSpacerClass, chatMobileThreadClass, chatMobileThreadFirstTurnClass, chatMobileThreadScrollMaskClass, chatMobileEmptyHeroContentClass, chatMobileEmptyHeroMarkClass, chatMobileEmptyHeroTitleClass, chatMobileEmptyHeroWrapClass, chatSamplePromptButtonClass, chatSamplePromptCarouselClass, chatSamplePromptCarouselContentClass, chatSamplePromptCarouselDotsClass, chatSamplePromptCarouselItemClass, chatSamplePromptDescriptionClass, chatSamplePromptIconClass, chatSamplePromptStaticListClass, chatSamplePromptTextClass, chatSamplePromptTitleClass } from "@/components/app-shell/chat-mobile-gemini-styles"
 import { ChatMobileHeader } from "@/components/app-shell/chat-mobile-header"
@@ -2064,7 +2064,7 @@ function ChatAside({
           aria-label={common("brand")}
           className="shrink-0 rounded-md outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
         >
-          <IrisLabLogo
+          <ExurLogo
             decorative
             variant="gradient"
             size={28}

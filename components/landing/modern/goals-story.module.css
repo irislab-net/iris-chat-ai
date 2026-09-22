@@ -150,6 +150,10 @@
   fill: var(--foreground);
   stroke: var(--foreground);
   stroke-width: 1.5;
+  vector-effect: non-scaling-stroke;
+  transform-box: view-box;
+  transform-origin: 0 0;
+  will-change: transform, opacity;
 }
 
 .ping {

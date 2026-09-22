@@ -1,10 +1,10 @@
 "use client"
 
 import { AnimatedSvgIcon } from "@/components/landing/modern/animated-svg-icon"
-import { IRIS_LAB_LOGO_MARK_PATH, IRIS_LAB_LOGO_VIEWBOX } from "@/lib/iris-lab-logo-path"
+import { EXUR_LOGO_MARK_PATH, EXUR_LOGO_VIEWBOX } from "@/lib/exur-logo-path"
 import { cn } from "@/lib/utils"
 
-type AnimatedIrisLabLogoProps = {
+type AnimatedExurLogoProps = {
   className?: string
   scrollTrigger?: boolean
   play?: boolean
@@ -13,14 +13,14 @@ type AnimatedIrisLabLogoProps = {
   variant?: "on-light" | "on-hero"
 }
 
-export function AnimatedIrisLabLogo({
+export function AnimatedExurLogo({
   className,
   scrollTrigger = false,
   play = true,
   replayOnHover = false,
   shimmer = false,
   variant = "on-light",
-}: AnimatedIrisLabLogoProps) {
+}: AnimatedExurLogoProps) {
   const colorClass = variant === "on-hero" ? "text-white" : "text-foreground"
 
   const icon = (
@@ -32,12 +32,12 @@ export function AnimatedIrisLabLogo({
       replayOnHover={replayOnHover}
     >
       <svg
-        viewBox={IRIS_LAB_LOGO_VIEWBOX}
+        viewBox={EXUR_LOGO_VIEWBOX}
         className="size-full overflow-visible"
         fill="none"
         aria-hidden
       >
-        <path data-logo-mark d={IRIS_LAB_LOGO_MARK_PATH} fill="currentColor" />
+        <path data-logo-mark d={EXUR_LOGO_MARK_PATH} fill="currentColor" />
       </svg>
     </AnimatedSvgIcon>
   )
@@ -60,7 +60,7 @@ export function AnimatedIrisLabLogo({
           className={cn(
             "absolute inset-y-[-12%] left-0 w-[62%]",
             "bg-linear-to-r from-transparent via-white/55 to-transparent",
-            "animate-iris-logo-shimmer will-change-transform",
+            "animate-exur-logo-shimmer will-change-transform",
             variant === "on-hero" && "via-white/35"
           )}
         />

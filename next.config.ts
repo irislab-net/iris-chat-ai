@@ -173,6 +173,24 @@ const nextConfig: NextConfig = {
         ],
       },
       {
+        source: "/landing/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, stale-while-revalidate=86400",
+          },
+        ],
+      },
+      {
+        source: "/exur-logo-:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, stale-while-revalidate=86400",
+          },
+        ],
+      },
+      {
         source: "/:locale(ar|fa|nl|pt|es|ru|tr)/home",
         headers: [
           {

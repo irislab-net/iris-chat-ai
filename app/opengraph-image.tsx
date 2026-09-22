@@ -1,3 +1,5 @@
+import { readFile } from "node:fs/promises"
+import { join } from "node:path"
 import { ImageResponse } from "next/og"
 
 export const alt = "Exur: AI Financial Assistant"
@@ -5,7 +7,10 @@ export const size = { width: 1200, height: 630 }
 export const contentType = "image/png"
 
 /** Keep this file free of next-intl / app providers — OG routes have no intl context. */
-export default function OpenGraphImage() {
+export default async function OpenGraphImage() {
+  const logoPng = await readFile(join(process.cwd(), "public/icon-512.png"))
+  const logoSrc = `data:image/png;base64,${logoPng.toString("base64")}`
+
   return new ImageResponse(
     (
       <div
@@ -29,22 +34,13 @@ export default function OpenGraphImage() {
             gap: 20,
           }}
         >
-          <div
-            style={{
-              width: 72,
-              height: 72,
-              borderRadius: 18,
-              border: "2px solid rgba(255,255,255,0.35)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: 34,
-              fontWeight: 700,
-              letterSpacing: "-0.04em",
-            }}
-          >
-            E
-          </div>
+          <img
+            src={logoSrc}
+            alt=""
+            width={72}
+            height={72}
+            style={{ borderRadius: 9999 }}
+          />
           <div
             style={{
               fontSize: 36,
