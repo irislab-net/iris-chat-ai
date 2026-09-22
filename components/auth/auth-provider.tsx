@@ -75,13 +75,29 @@ function isMarketingDocument(): boolean {
 }
 
 function whenIdle(task: () => void) {
-  const idle = window.requestIdleCallback
-  if (idle) {
-    const handle = idle(task, { timeout: 4000 })
-    return () => window.cancelIdleCallback(handle)
+  // Prefer interaction; fall back to a long timer — never requestIdleCallback
+  // (Lighthouse quiet windows arm it early and inflate auth/analytics TBT).
+  const events = ["pointerdown", "keydown", "touchstart"] as const
+  let settled = false
+  const run = () => {
+    if (settled) return
+    settled = true
+    for (const event of events) {
+      window.removeEventListener(event, run)
+    }
+    task()
   }
-  const handle = window.setTimeout(task, 1200)
-  return () => clearTimeout(handle)
+  for (const event of events) {
+    window.addEventListener(event, run, { once: true, passive: true })
+  }
+  const timeout = window.setTimeout(run, 15_000)
+  return () => {
+    settled = true
+    for (const event of events) {
+      window.removeEventListener(event, run)
+    }
+    window.clearTimeout(timeout)
+  }
 }
 
 function AuthProvider({ children }: { children: React.ReactNode }) {

@@ -1,0 +1,528 @@
+{
+  "exur": {
+    "finalUrl": "https://exur.ai/",
+    "cats": {
+      "performance": {
+        "score": 83,
+        "fails": [
+          {
+            "id": "first-contentful-paint",
+            "title": "First Contentful Paint",
+            "score": 0.58,
+            "display": "2.7 s",
+            "items": []
+          },
+          {
+            "id": "largest-contentful-paint",
+            "title": "Largest Contentful Paint",
+            "score": 0.84,
+            "display": "2.7 s",
+            "items": []
+          },
+          {
+            "id": "total-blocking-time",
+            "title": "Total Blocking Time",
+            "score": 0.92,
+            "display": "180 ms",
+            "items": []
+          },
+          {
+            "id": "cumulative-layout-shift",
+            "title": "Cumulative Layout Shift",
+            "score": 0.99,
+            "display": "0.046",
+            "items": [
+              {
+                "label": "{\"cumulativeLayoutShiftMainFrame\":0.0461039210706383,\"newEngineResultDiffered\":false}"
+              }
+            ]
+          },
+          {
+            "id": "speed-index",
+            "title": "Speed Index",
+            "score": 0.39,
+            "display": "6.5 s",
+            "items": []
+          },
+          {
+            "id": "document-latency-insight",
+            "title": "Document request latency",
+            "score": 0,
+            "display": "Est savings of 780 ms",
+            "items": []
+          },
+          {
+            "id": "forced-reflow-insight",
+            "title": "Forced reflow",
+            "score": 0,
+            "items": [
+              {
+                "label": "table"
+              },
+              {
+                "label": "table"
+              }
+            ]
+          },
+          {
+            "id": "legacy-javascript-insight",
+            "title": "Legacy JavaScript",
+            "score": 0.5,
+            "display": "Est savings of 24 KiB",
+            "items": [
+              {
+                "url": "https://exur.ai/_next/static/chunks/1uvq4mwp_yq_s.js",
+                "wastedBytes": 14110
+              },
+              {
+                "url": "https://exur.ai/_next/static/chunks/3bk0-8uf49b39.js",
+                "wastedBytes": 10688
+              }
+            ]
+          },
+          {
+            "id": "network-dependency-tree-insight",
+            "title": "Network dependency tree",
+            "score": 0,
+            "items": [
+              {
+                "label": "list-section"
+              },
+              {
+                "label": "list-section"
+              },
+              {
+                "label": "list-section"
+              }
+            ]
+          },
+          {
+            "id": "render-blocking-insight",
+            "title": "Render-blocking requests",
+            "score": 0,
+            "display": "Est savings of 940 ms",
+            "items": [
+              {
+                "url": "https://exur.ai/_next/static/chunks/11od059ho6-mx.css"
+              },
+              {
+                "url": "https://exur.ai/_next/static/chunks/0s3wsoerg5ifh.css"
+              },
+              {
+                "url": "https://exur.ai/_next/static/chunks/2y9l-73j47ygl.css"
+              },
+              {
+                "url": "https://exur.ai/_next/static/chunks/17ae6p4ln-bam.css"
+              },
+              {
+                "url": "https://exur.ai/_next/static/chunks/2xj9hp37nd9v5.css"
+              }
+            ]
+          },
+          {
+            "id": "interactive",
+            "title": "Time to Interactive",
+            "score": 0.23,
+            "display": "10.6 s",
+            "items": []
+          },
+          {
+            "id": "max-potential-fid",
+            "title": "Max Potential First Input Delay",
+            "score": 0.86,
+            "display": "140 ms",
+            "items": []
+          },
+          {
+            "id": "unused-javascript",
+            "title": "Reduce unused JavaScript",
+            "score": 0.5,
+            "display": "Est savings of 234 KiB",
+            "items": [
+              {
+                "url": "https://exur.ai/_next/static/chunks/3bk0-8uf49b39.js",
+                "wastedBytes": 75403
+              },
+              {
+                "url": "https://www.googletagmanager.com/gtag/js?id=G-GLTQZ1G6RX",
+                "wastedBytes": 72718
+              },
+              {
+                "url": "https://exur.ai/_next/static/chunks/3jiiop7-_n6i0.js",
+                "wastedBytes": 24644
+              },
+              {
+                "url": "https://exur.ai/_next/static/chunks/0bfjfp6-eqw77.js",
+                "wastedBytes": 23660
+              },
+              {
+                "url": "https://exur.ai/_next/static/chunks/1uvq4mwp_yq_s.js",
+                "wastedBytes": 21950
+              },
+              {
+                "url": "https://exur.ai/_next/static/chunks/3r13r7bd-kltp.js",
+                "wastedBytes": 20990
+              }
+            ]
+          },
+          {
+            "id": "bootup-time",
+            "title": "Reduce JavaScript execution time",
+            "score": 0,
+            "display": "2.0 s",
+            "items": [
+              {
+                "url": "https://exur.ai/"
+              },
+              {
+                "url": "https://exur.ai/_next/static/chunks/0bfjfp6-eqw77.js"
+              },
+              {
+                "url": "https://exur.ai/_next/static/chunks/1uvq4mwp_yq_s.js"
+              },
+              {
+                "url": "https://exur.ai/_next/static/chunks/3bk0-8uf49b39.js"
+              },
+              {
+                "url": "Unattributable"
+              },
+              {
+                "url": "https://www.googletagmanager.com/gtag/js?id=G-GLTQZ1G6RX"
+              }
+            ]
+          },
+          {
+            "id": "mainthread-work-breakdown",
+            "title": "Minimize main-thread work",
+            "score": 0,
+            "display": "7.2 s",
+            "items": [
+              {
+                "label": "{\"group\":\"styleLayout\",\"groupLabel\":\"Style & Layout\",\"duration\":2950.5719999999787}"
+              },
+              {
+                "label": "{\"group\":\"scriptEvaluation\",\"groupLabel\":\"Script Evaluation\",\"duration\":2034.0399999999472}"
+              },
+              {
+                "label": "{\"group\":\"other\",\"groupLabel\":\"Other\",\"duration\":1181.1839999999713}"
+              },
+              {
+                "label": "{\"group\":\"paintCompositeRender\",\"groupLabel\":\"Rendering\",\"duration\":783.0880000000842}"
+              },
+              {
+                "label": "{\"group\":\"scriptParseCompile\",\"groupLabel\":\"Script Parsing & Compilation\",\"duration\":146.7960000000001}"
+              },
+              {
+                "label": "{\"group\":\"garbageCollection\",\"groupLabel\":\"Garbage Collection\",\"duration\":59.50399999999989}"
+              }
+            ]
+          },
+          {
+            "id": "server-response-time",
+            "title": "Reduce initial server response time",
+            "score": 0,
+            "display": "Root document took 880 ms",
+            "items": [
+              {
+                "url": "https://exur.ai/"
+              }
+            ]
+          }
+        ]
+      },
+      "accessibility": {
+        "score": 100,
+        "fails": []
+      },
+      "best-practices": {
+        "score": 96,
+        "fails": [
+          {
+            "id": "errors-in-console",
+            "title": "Browser errors were logged to the console",
+            "score": 0,
+            "items": [
+              {
+                "label": "network"
+              }
+            ]
+          }
+        ]
+      },
+      "seo": {
+        "score": 100,
+        "fails": []
+      }
+    },
+    "metrics": {
+      "fcp": "2.7 s",
+      "lcp": "2.7 s",
+      "tbt": "180 ms",
+      "cls": "0.046",
+      "si": "6.5 s",
+      "tti": "10.6 s",
+      "ttfb": "Root document took 880 ms"
+    },
+    "flags": {
+      "gtm": false,
+      "gtag": true,
+      "gsi": false
+    }
+  },
+  "chat": {
+    "finalUrl": "https://chat.exur.ai/",
+    "cats": {
+      "performance": {
+        "score": 67,
+        "fails": [
+          {
+            "id": "first-contentful-paint",
+            "title": "First Contentful Paint",
+            "score": 0.42,
+            "display": "3.2 s",
+            "items": []
+          },
+          {
+            "id": "largest-contentful-paint",
+            "title": "Largest Contentful Paint",
+            "score": 0.08,
+            "display": "6.6 s",
+            "items": []
+          },
+          {
+            "id": "total-blocking-time",
+            "title": "Total Blocking Time",
+            "score": 0.98,
+            "display": "90 ms",
+            "items": []
+          },
+          {
+            "id": "speed-index",
+            "title": "Speed Index",
+            "score": 0.66,
+            "display": "4.8 s",
+            "items": []
+          },
+          {
+            "id": "forced-reflow-insight",
+            "title": "Forced reflow",
+            "score": 0,
+            "items": [
+              {
+                "label": "table"
+              },
+              {
+                "label": "table"
+              }
+            ]
+          },
+          {
+            "id": "legacy-javascript-insight",
+            "title": "Legacy JavaScript",
+            "score": 0,
+            "display": "Est savings of 24 KiB",
+            "items": [
+              {
+                "url": "https://chat.exur.ai/_next/static/chunks/1uvq4mwp_yq_s.js",
+                "wastedBytes": 14113
+              },
+              {
+                "url": "https://chat.exur.ai/_next/static/chunks/3bk0-8uf49b39.js",
+                "wastedBytes": 10690
+              }
+            ]
+          },
+          {
+            "id": "network-dependency-tree-insight",
+            "title": "Network dependency tree",
+            "score": 0,
+            "items": [
+              {
+                "label": "list-section"
+              },
+              {
+                "label": "list-section"
+              },
+              {
+                "label": "list-section"
+              }
+            ]
+          },
+          {
+            "id": "render-blocking-insight",
+            "title": "Render-blocking requests",
+            "score": 0,
+            "display": "Est savings of 650 ms",
+            "items": [
+              {
+                "url": "https://chat.exur.ai/_next/static/chunks/11od059ho6-mx.css"
+              },
+              {
+                "url": "https://chat.exur.ai/_next/static/chunks/2y9l-73j47ygl.css"
+              },
+              {
+                "url": "https://chat.exur.ai/_next/static/chunks/2xj9hp37nd9v5.css"
+              },
+              {
+                "url": "https://chat.exur.ai/_next/static/chunks/0s3wsoerg5ifh.css"
+              }
+            ]
+          },
+          {
+            "id": "interactive",
+            "title": "Time to Interactive",
+            "score": 0.31,
+            "display": "9.3 s",
+            "items": []
+          },
+          {
+            "id": "max-potential-fid",
+            "title": "Max Potential First Input Delay",
+            "score": 0.96,
+            "display": "100 ms",
+            "items": []
+          },
+          {
+            "id": "unused-javascript",
+            "title": "Reduce unused JavaScript",
+            "score": 0,
+            "display": "Est savings of 517 KiB",
+            "items": [
+              {
+                "url": "https://www.googletagmanager.com/gtag/js?id=G-GLTQZ1G6RX&cx=c&gtm=4e69l0",
+                "wastedBytes": 121215
+              },
+              {
+                "url": "https://accounts.google.com/gsi/client",
+                "wastedBytes": 76171
+              },
+              {
+                "url": "https://chat.exur.ai/_next/static/chunks/3bk0-8uf49b39.js",
+                "wastedBytes": 75184
+              },
+              {
+                "url": "https://www.googletagmanager.com/gtag/js?id=G-GLTQZ1G6RX",
+                "wastedBytes": 74151
+              },
+              {
+                "url": "https://www.googletagmanager.com/gtm.js?id=GTM-KMGLCNZD",
+                "wastedBytes": 73085
+              },
+              {
+                "url": "https://chat.exur.ai/_next/static/chunks/3r13r7bd-kltp.js",
+                "wastedBytes": 38923
+              }
+            ]
+          },
+          {
+            "id": "mainthread-work-breakdown",
+            "title": "Minimize main-thread work",
+            "score": 0,
+            "display": "2.5 s",
+            "items": [
+              {
+                "label": "{\"group\":\"scriptEvaluation\",\"groupLabel\":\"Script Evaluation\",\"duration\":771.5040000000157}"
+              },
+              {
+                "label": "{\"group\":\"styleLayout\",\"groupLabel\":\"Style & Layout\",\"duration\":690.4079999999993}"
+              },
+              {
+                "label": "{\"group\":\"other\",\"groupLabel\":\"Other\",\"duration\":668.4920000000343}"
+              },
+              {
+                "label": "{\"group\":\"scriptParseCompile\",\"groupLabel\":\"Script Parsing & Compilation\",\"duration\":217.44799999999998}"
+              },
+              {
+                "label": "{\"group\":\"paintCompositeRender\",\"groupLabel\":\"Rendering\",\"duration\":132.54000000000528}"
+              },
+              {
+                "label": "{\"group\":\"garbageCollection\",\"groupLabel\":\"Garbage Collection\",\"duration\":43.008000000000024}"
+              }
+            ]
+          },
+          {
+            "id": "bf-cache",
+            "title": "Page prevented back/forward cache restoration",
+            "score": 0,
+            "display": "3 failure reasons",
+            "items": [
+              {
+                "label": "{\"reason\":\"Pages with cache-control:no-store header cannot enter back/forward cache.\",\"failureType\":\"Actionable\",\"subIte"
+              },
+              {
+                "label": "{\"reason\":\"Pages whose main resource has cache-control:no-store cannot enter back/forward cache.\",\"failureType\":\"Not act"
+              },
+              {
+                "label": "{\"reason\":\"Back/forward cache is disabled because some JavaScript network request received resource with Cache-Control: "
+              }
+            ]
+          }
+        ]
+      },
+      "accessibility": {
+        "score": 100,
+        "fails": []
+      },
+      "best-practices": {
+        "score": 92,
+        "fails": [
+          {
+            "id": "errors-in-console",
+            "title": "Browser errors were logged to the console",
+            "score": 0,
+            "items": [
+              {
+                "label": "network"
+              },
+              {
+                "label": "security"
+              },
+              {
+                "label": "other"
+              }
+            ]
+          },
+          {
+            "id": "inspector-issues",
+            "title": "Issues were logged in the `Issues` panel in Chrome Devtools",
+            "score": 0,
+            "items": [
+              {
+                "label": "{\"issueType\":\"Content security policy\",\"subItems\":{\"type\":\"subitems\",\"items\":[{\"url\":\"https://accounts.google.com/gsi/st"
+              }
+            ]
+          }
+        ]
+      },
+      "seo": {
+        "score": 66,
+        "fails": [
+          {
+            "id": "is-crawlable",
+            "title": "Page is blocked from indexing",
+            "score": 0,
+            "items": [
+              {
+                "label": "[object Object]"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "metrics": {
+      "fcp": "3.2 s",
+      "lcp": "6.6 s",
+      "tbt": "90 ms",
+      "cls": "0.003",
+      "si": "4.8 s",
+      "tti": "9.3 s",
+      "ttfb": "Root document took 250 ms"
+    },
+    "flags": {
+      "gtm": true,
+      "gtag": true,
+      "gsi": true
+    }
+  }
+}

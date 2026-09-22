@@ -53,6 +53,20 @@ describe("proxyIrisApiRequest", () => {
     })
   })
 
+  it("short-circuits refresh without a refresh_token cookie", async () => {
+    const res = await proxyIrisApiRequest(
+      new Request("https://chat.exur.ai/v1/auth/refresh", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: "{}",
+      }),
+      "/v1/auth/refresh"
+    )
+
+    expect(fetchMock).not.toHaveBeenCalled()
+    expect(res.status).toBe(204)
+  })
+
   it("proxies news requests to IRIS_API_ORIGIN", async () => {
     fetchMock.mockResolvedValue(
       new Response(JSON.stringify({ data: [] }), {

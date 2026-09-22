@@ -152,7 +152,7 @@ const nextConfig: NextConfig = {
               "form-action 'self' https:",
               "upgrade-insecure-requests",
               "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://www.google.com https://accounts.google.com https://apis.google.com https://browser.sentry-cdn.com https://*.sentry-cdn.com",
-              "style-src 'self' 'unsafe-inline'",
+              "style-src 'self' 'unsafe-inline' https://accounts.google.com",
               "img-src 'self' data: blob: https:",
               "font-src 'self' data:",
               "connect-src 'self' https://api.exur.ai https://*.exur.ai https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com https://accounts.google.com https://*.sentry.io https://*.ingest.sentry.io wss: https:",

@@ -188,6 +188,10 @@ export async function refreshAccessToken(): Promise<TokenPair> {
       headers: { "Content-Type": "application/json" },
       body: "{}",
     })
+    // Local proxy returns 204 when no refresh cookie (avoids Chrome console 400 noise).
+    if (res.status === 204) {
+      throw Object.assign(new Error("no session"), { status: 401 })
+    }
     const body = await res.json().catch(() => ({}))
     if (!res.ok) {
       throw Object.assign(new Error(body.error || "refresh failed"), {

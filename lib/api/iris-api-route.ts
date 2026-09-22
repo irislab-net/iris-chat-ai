@@ -4,6 +4,15 @@ function readIrisApiOrigin(): string {
   return process.env.IRIS_API_ORIGIN?.replace(/\/$/, "") ?? IRIS_API_ORIGIN
 }
 
+function cookieHasName(cookieHeader: string | null, name: string): boolean {
+  if (!cookieHeader) return false
+  for (const part of cookieHeader.split(";")) {
+    const key = part.trim().split("=")[0]
+    if (key === name) return true
+  }
+  return false
+}
+
 function forwardSetCookie(upstream: Headers, downstream: Headers) {
   if (typeof upstream.getSetCookie === "function") {
     for (const cookie of upstream.getSetCookie()) {
@@ -20,6 +29,16 @@ export async function proxyIrisApiRequest(
   req: Request,
   apiPath: string
 ): Promise<Response> {
+  // Guests have no refresh cookie — avoid proxying a guaranteed 400 that
+  // Chrome logs as a console error (hurts Lighthouse Best Practices).
+  if (
+    apiPath === "/v1/auth/refresh" &&
+    req.method === "POST" &&
+    !cookieHasName(req.headers.get("cookie"), "refresh_token")
+  ) {
+    return new Response(null, { status: 204 })
+  }
+
   const origin = readIrisApiOrigin()
   const requestUrl = new URL(req.url)
   const url = `${origin}${apiPath}${requestUrl.search}`

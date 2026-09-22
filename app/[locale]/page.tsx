@@ -13,9 +13,9 @@ import {
 import { isMarketingRequest } from "@/lib/request-host"
 import {
   APP_PATH,
-  AUTH_SUCCESS_ROBOTS,
   getLandingHref,
   PRODUCTION_ORIGIN,
+  ROOT_ROBOTS,
 } from "@/lib/site"
 import { resolveWorkspaceTab } from "@/lib/workspace-tab"
 import type { AppLocale } from "@/i18n/routing"
@@ -49,8 +49,8 @@ const newsMetadata: Metadata = {
     absolute: `News · ${SITE_NAME}`,
   },
   description: SITE_DESCRIPTION,
-  // Desk lives on chat.exur.ai; marketing acquisition is exur.ai.
-  robots: AUTH_SUCCESS_ROBOTS,
+  // Public desk entry on chat.exur.ai — indexable; marketing acquisition stays on exur.ai.
+  robots: ROOT_ROBOTS,
   alternates: {
     canonical: PRODUCTION_ORIGIN,
   },

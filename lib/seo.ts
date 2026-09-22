@@ -7,7 +7,7 @@ export const SITE_SHORT_NAME = "Exur"
 
 /**
  * Marketing SEO origin (metadataBase, sitemap, canonicals).
- * Never use the chat desk host here — chat.exur.ai is noindex for `/`.
+ * Chat desk (`chat.exur.ai`) is a separate indexable host with its own canonical.
  */
 export const SITE_URL = (
   process.env.NEXT_PUBLIC_MARKETING_URL ||
