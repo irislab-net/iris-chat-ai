@@ -1,0 +1,730 @@
+{
+  "timeline": {
+    "baseline": {
+      "exur": {
+        "score": 78,
+        "fcp": "3.1 s",
+        "lcp": "3.1 s",
+        "tbt": "130 ms",
+        "cls": "0.046",
+        "si": "10.8 s",
+        "tti": "11.7 s",
+        "ttfb": "Root document took 770 ms",
+        "unusedKB": 237,
+        "thirdPartyFlags": {
+          "gtm": false,
+          "gtag": true,
+          "gsi": false,
+          "sentry": true
+        }
+      },
+      "chat": {
+        "score": 56,
+        "fcp": "5.7 s",
+        "lcp": "12.1 s",
+        "tbt": "100 ms",
+        "cls": "0.003",
+        "si": "8.8 s",
+        "tti": "16.5 s",
+        "ttfb": "Root document took 1,420 ms",
+        "unusedKB": 400,
+        "thirdPartyFlags": {
+          "gtm": true,
+          "gtag": true,
+          "gsi": true,
+          "sentry": true
+        }
+      }
+    },
+    "rerun": {
+      "exur": {
+        "score": 80,
+        "fcp": "2.3 s",
+        "lcp": "2.3 s",
+        "tbt": "390 ms",
+        "cls": "0.045",
+        "si": "6.4 s",
+        "tti": "8.6 s",
+        "ttfb": "Root document took 690 ms",
+        "unusedKB": 162,
+        "thirdPartyFlags": {
+          "gtm": false,
+          "gtag": true,
+          "gsi": false,
+          "sentry": true
+        }
+      },
+      "chat": {
+        "score": 32,
+        "fcp": "3.6 s",
+        "lcp": "6.6 s",
+        "tbt": "5,740 ms",
+        "cls": "0.003",
+        "si": "8.1 s",
+        "tti": "12.7 s",
+        "ttfb": "Root document took 1,750 ms",
+        "unusedKB": 517,
+        "thirdPartyFlags": {
+          "gtm": true,
+          "gtag": true,
+          "gsi": true,
+          "sentry": true
+        }
+      }
+    },
+    "v3": {
+      "exur": {
+        "score": 59,
+        "fcp": "2.7 s",
+        "lcp": "2.7 s",
+        "tbt": "1,130 ms",
+        "cls": "0.045",
+        "si": "11.0 s",
+        "tti": "11.4 s",
+        "ttfb": "Root document took 2,430 ms",
+        "unusedKB": 163,
+        "thirdPartyFlags": {
+          "gtm": false,
+          "gtag": true,
+          "gsi": false,
+          "sentry": true
+        }
+      },
+      "chat": {
+        "score": 35,
+        "fcp": "3.9 s",
+        "lcp": "7.6 s",
+        "tbt": "1,700 ms",
+        "cls": "0.003",
+        "si": "7.0 s",
+        "tti": "12.0 s",
+        "ttfb": "Root document took 1,440 ms",
+        "unusedKB": 400,
+        "thirdPartyFlags": {
+          "gtm": true,
+          "gtag": true,
+          "gsi": true,
+          "sentry": true
+        }
+      }
+    }
+  },
+  "v3_detail": {
+    "exur": {
+      "score": 59,
+      "fcp": {
+        "v": "2.7 s",
+        "s": 0.6,
+        "n": 2686.812
+      },
+      "lcp": {
+        "v": "2.7 s",
+        "s": 0.86,
+        "n": 2686.812
+      },
+      "tbt": {
+        "v": "1,130 ms",
+        "s": 0.22,
+        "n": 1130.4059999999981
+      },
+      "cls": {
+        "v": "0.045",
+        "s": 0.99,
+        "n": 0.04454177016727627
+      },
+      "si": {
+        "v": "11.0 s",
+        "s": 0.06,
+        "n": 10963.426609902119
+      },
+      "tti": {
+        "v": "11.4 s",
+        "s": 0.19,
+        "n": 11433.363399999998
+      },
+      "ttfb": "Root document took 2,430 ms",
+      "unusedKB": 163,
+      "unusedItems": [
+        {
+          "url": "/_next/static/chunks/3bk0-8uf49b39.js",
+          "full": "https://exur.ai/_next/static/chunks/3bk0-8uf49b39.js",
+          "wastedKB": 74
+        },
+        {
+          "url": "/_next/static/chunks/3jiiop7-_n6i0.js",
+          "full": "https://exur.ai/_next/static/chunks/3jiiop7-_n6i0.js",
+          "wastedKB": 24
+        },
+        {
+          "url": "/_next/static/chunks/0bfjfp6-eqw77.js",
+          "full": "https://exur.ai/_next/static/chunks/0bfjfp6-eqw77.js",
+          "wastedKB": 23
+        },
+        {
+          "url": "/_next/static/chunks/1uvq4mwp_yq_s.js",
+          "full": "https://exur.ai/_next/static/chunks/1uvq4mwp_yq_s.js",
+          "wastedKB": 21
+        },
+        {
+          "url": "/_next/static/chunks/3r13r7bd-kltp.js",
+          "full": "https://exur.ai/_next/static/chunks/3r13r7bd-kltp.js",
+          "wastedKB": 21
+        }
+      ],
+      "opportunities": [
+        {
+          "id": "server-response-time",
+          "title": "Reduce initial server response time",
+          "savings": "Root document took 2,430 ms",
+          "ms": 2434
+        }
+      ],
+      "mainthread": [
+        {
+          "group": "Style & Layout",
+          "ms": 6669
+        },
+        {
+          "group": "Script Evaluation",
+          "ms": 3781
+        },
+        {
+          "group": "Other",
+          "ms": 2962
+        },
+        {
+          "group": "Rendering",
+          "ms": 1676
+        },
+        {
+          "group": "Script Parsing & Compilation",
+          "ms": 254
+        },
+        {
+          "group": "Garbage Collection",
+          "ms": 158
+        },
+        {
+          "group": "Parse HTML & CSS",
+          "ms": 52
+        }
+      ],
+      "bootup": [
+        {
+          "url": "/",
+          "total": 8045,
+          "scripting": 22
+        },
+        {
+          "url": "/_next/static/chunks/0bfjfp6-eqw77.js",
+          "total": 2446,
+          "scripting": 582
+        },
+        {
+          "url": "/_next/static/chunks/1uvq4mwp_yq_s.js",
+          "total": 1831,
+          "scripting": 1411
+        },
+        {
+          "url": "/_next/static/chunks/3bk0-8uf49b39.js",
+          "total": 1312,
+          "scripting": 1247
+        },
+        {
+          "url": "Unattributable",
+          "total": 1218,
+          "scripting": 19
+        },
+        {
+          "url": "/_next/static/chunks/3jiiop7-_n6i0.js",
+          "total": 216,
+          "scripting": 196
+        },
+        {
+          "url": "/scripts/browser-chrome-init.js",
+          "total": 174,
+          "scripting": 174
+        }
+      ],
+      "third": [],
+      "nets": [
+        {
+          "type": "Script",
+          "url": "/_next/static/chunks/3bk0-8uf49b39.js",
+          "fullHost": "exur.ai",
+          "kb": 111,
+          "start": 9028
+        },
+        {
+          "type": "Script",
+          "url": "/_next/static/chunks/1uvq4mwp_yq_s.js",
+          "fullHost": "exur.ai",
+          "kb": 74,
+          "start": 3249
+        },
+        {
+          "type": "Script",
+          "url": "/_next/static/chunks/3r13r7bd-kltp.js",
+          "fullHost": "exur.ai",
+          "kb": 52,
+          "start": 3252
+        },
+        {
+          "type": "Script",
+          "url": "/_next/static/chunks/0bfjfp6-eqw77.js",
+          "fullHost": "exur.ai",
+          "kb": 50,
+          "start": 3249
+        },
+        {
+          "type": "Script",
+          "url": "/_next/static/chunks/3jiiop7-_n6i0.js",
+          "fullHost": "exur.ai",
+          "kb": 43,
+          "start": 3250
+        },
+        {
+          "type": "Stylesheet",
+          "url": "/_next/static/chunks/11od059ho6-mx.css",
+          "fullHost": "exur.ai",
+          "kb": 36,
+          "start": 2834
+        },
+        {
+          "type": "Document",
+          "url": "/",
+          "fullHost": "exur.ai",
+          "kb": 33,
+          "start": 1
+        },
+        {
+          "type": "Script",
+          "url": "/_next/static/chunks/3tvdpdkyb2o_f.js",
+          "fullHost": "exur.ai",
+          "kb": 31,
+          "start": 3251
+        },
+        {
+          "type": "Script",
+          "url": "/_next/static/chunks/3n2va2-b9i_nr.js",
+          "fullHost": "exur.ai",
+          "kb": 18,
+          "start": 3251
+        },
+        {
+          "type": "Script",
+          "url": "/_next/static/chunks/2aq3ppfn0iyn2.js",
+          "fullHost": "exur.ai",
+          "kb": 17,
+          "start": 3253
+        },
+        {
+          "type": "Script",
+          "url": "/_next/static/chunks/3olu8xvymg_ce.js",
+          "fullHost": "exur.ai",
+          "kb": 16,
+          "start": 3251
+        },
+        {
+          "type": "Script",
+          "url": "/_next/static/chunks/1q-ndqa-cilfb.js",
+          "fullHost": "exur.ai",
+          "kb": 16,
+          "start": 3248
+        }
+      ],
+      "thirdPartyFlags": {
+        "gtm": false,
+        "gtag": true,
+        "gsi": false,
+        "sentry": true
+      },
+      "lcpPhases": [
+        {
+          "type": "table",
+          "headings": [
+            {
+              "key": "label",
+              "valueType": "text",
+              "label": "Subpart"
+            },
+            {
+              "key": "duration",
+              "valueType": "ms",
+              "label": "Duration"
+            }
+          ],
+          "items": [
+            {
+              "subpart": "timeToFirstByte",
+              "label": "Time to first byte",
+              "duration": 2777.658
+            },
+            {
+              "subpart": "elementRenderDelay",
+              "label": "Element render delay",
+              "duration": 667.521
+            }
+          ]
+        },
+        {
+          "type": "node",
+          "lhId": "page-0-H1",
+          "path": "1,HTML,1,BODY,8,DIV,1,DIV,1,DIV,1,DIV,0,SECTION,0,DIV,0,DIV,0,H1",
+          "selector": "section.flex > div.px-4.5 > div.shrink-0 > h1.[font-family:var(--font-display),var(--font-sans)]",
+          "boundingRect": {
+            "top": 148,
+            "bottom": 228,
+            "left": 36,
+            "right": 376,
+            "width": 340,
+            "height": 80
+          },
+          "snippet": "<h1 class=\"[font-family:var(--font-display),var(--font-sans)] text-[2.35rem] font-nor…\">",
+          "nodeLabel": "Your money,\nhandled."
+        }
+      ],
+      "diagnostics": [
+        {
+          "id": "mainthread-work-breakdown",
+          "score": 0,
+          "display": "15.6 s",
+          "title": "Minimize main-thread work"
+        },
+        {
+          "id": "bootup-time",
+          "score": 0,
+          "display": "3.8 s",
+          "title": "Reduce JavaScript execution time"
+        },
+        {
+          "id": "server-response-time",
+          "score": 0,
+          "display": "Root document took 2,430 ms",
+          "title": "Reduce initial server response time"
+        }
+      ]
+    },
+    "chat": {
+      "score": 35,
+      "fcp": {
+        "v": "3.9 s",
+        "s": 0.25,
+        "n": 3890.8260000000005
+      },
+      "lcp": {
+        "v": "7.6 s",
+        "s": 0.04,
+        "n": 7576.272000000001
+      },
+      "tbt": {
+        "v": "1,700 ms",
+        "s": 0.11,
+        "n": 1697.7457499999991
+      },
+      "cls": {
+        "v": "0.003",
+        "s": 1,
+        "n": 0.002890508516125024
+      },
+      "si": {
+        "v": "7.0 s",
+        "s": 0.32,
+        "n": 6984.574396511515
+      },
+      "tti": {
+        "v": "12.0 s",
+        "s": 0.16,
+        "n": 12034.935100000004
+      },
+      "ttfb": "Root document took 1,440 ms",
+      "unusedKB": 400,
+      "unusedItems": [
+        {
+          "url": "/gsi/client",
+          "full": "https://accounts.google.com/gsi/client",
+          "wastedKB": 74
+        },
+        {
+          "url": "/gtm.js?id=GTM-KMGLCNZD",
+          "full": "https://www.googletagmanager.com/gtm.js?id=GTM-KMGLCNZD",
+          "wastedKB": 74
+        },
+        {
+          "url": "/_next/static/chunks/3bk0-8uf49b39.js",
+          "full": "https://chat.exur.ai/_next/static/chunks/3bk0-8uf49b39.js",
+          "wastedKB": 74
+        },
+        {
+          "url": "/gtag/js?id=G-GLTQZ1G6RX",
+          "full": "https://www.googletagmanager.com/gtag/js?id=G-GLTQZ1G6RX",
+          "wastedKB": 71
+        },
+        {
+          "url": "/_next/static/chunks/3r13r7bd-kltp.js",
+          "full": "https://chat.exur.ai/_next/static/chunks/3r13r7bd-kltp.js",
+          "wastedKB": 38
+        },
+        {
+          "url": "/_next/static/chunks/3jiiop7-_n6i0.js",
+          "full": "https://chat.exur.ai/_next/static/chunks/3jiiop7-_n6i0.js",
+          "wastedKB": 24
+        },
+        {
+          "url": "/_next/static/chunks/0bfjfp6-eqw77.js",
+          "full": "https://chat.exur.ai/_next/static/chunks/0bfjfp6-eqw77.js",
+          "wastedKB": 23
+        },
+        {
+          "url": "/_next/static/chunks/1uvq4mwp_yq_s.js",
+          "full": "https://chat.exur.ai/_next/static/chunks/1uvq4mwp_yq_s.js",
+          "wastedKB": 22
+        }
+      ],
+      "opportunities": [
+        {
+          "id": "server-response-time",
+          "title": "Reduce initial server response time",
+          "savings": "Root document took 1,440 ms",
+          "ms": 1436
+        },
+        {
+          "id": "unused-javascript",
+          "title": "Reduce unused JavaScript",
+          "savings": "Est savings of 400 KiB",
+          "ms": 240
+        }
+      ],
+      "mainthread": [
+        {
+          "group": "Script Evaluation",
+          "ms": 3245
+        },
+        {
+          "group": "Other",
+          "ms": 1546
+        },
+        {
+          "group": "Style & Layout",
+          "ms": 1530
+        },
+        {
+          "group": "Script Parsing & Compilation",
+          "ms": 424
+        },
+        {
+          "group": "Rendering",
+          "ms": 236
+        },
+        {
+          "group": "Garbage Collection",
+          "ms": 64
+        },
+        {
+          "group": "Parse HTML & CSS",
+          "ms": 44
+        }
+      ],
+      "bootup": [
+        {
+          "url": "/",
+          "total": 2032,
+          "scripting": 19
+        },
+        {
+          "url": "/_next/static/chunks/1uvq4mwp_yq_s.js",
+          "total": 1504,
+          "scripting": 1312
+        },
+        {
+          "url": "/_next/static/chunks/0bfjfp6-eqw77.js",
+          "total": 863,
+          "scripting": 239
+        },
+        {
+          "url": "/_next/static/chunks/3bk0-8uf49b39.js",
+          "total": 622,
+          "scripting": 565
+        },
+        {
+          "url": "Unattributable",
+          "total": 527,
+          "scripting": 47
+        },
+        {
+          "url": "/gtag/js?id=G-GLTQZ1G6RX",
+          "total": 498,
+          "scripting": 431
+        },
+        {
+          "url": "/scripts/browser-chrome-init.js",
+          "total": 186,
+          "scripting": 184
+        },
+        {
+          "url": "/gsi/client",
+          "total": 179,
+          "scripting": 126
+        }
+      ],
+      "third": [],
+      "nets": [
+        {
+          "type": "Script",
+          "url": "/gtag/js?id=G-GLTQZ1G6RX",
+          "fullHost": "www.googletagmanager.com",
+          "kb": 172,
+          "start": 3978
+        },
+        {
+          "type": "Script",
+          "url": "/gtm.js?id=GTM-KMGLCNZD",
+          "fullHost": "www.googletagmanager.com",
+          "kb": 115,
+          "start": 4882
+        },
+        {
+          "type": "Script",
+          "url": "/_next/static/chunks/3bk0-8uf49b39.js",
+          "fullHost": "chat.exur.ai",
+          "kb": 111,
+          "start": 3180
+        },
+        {
+          "type": "Script",
+          "url": "/gsi/client",
+          "fullHost": "accounts.google.com",
+          "kb": 99,
+          "start": 4038
+        },
+        {
+          "type": "Script",
+          "url": "/_next/static/chunks/1uvq4mwp_yq_s.js",
+          "fullHost": "chat.exur.ai",
+          "kb": 74,
+          "start": 2035
+        },
+        {
+          "type": "Script",
+          "url": "/_next/static/chunks/3r13r7bd-kltp.js",
+          "fullHost": "chat.exur.ai",
+          "kb": 52,
+          "start": 2038
+        },
+        {
+          "type": "Script",
+          "url": "/_next/static/chunks/0bfjfp6-eqw77.js",
+          "fullHost": "chat.exur.ai",
+          "kb": 50,
+          "start": 2035
+        },
+        {
+          "type": "Script",
+          "url": "/_next/static/chunks/3jiiop7-_n6i0.js",
+          "fullHost": "chat.exur.ai",
+          "kb": 43,
+          "start": 2035
+        },
+        {
+          "type": "Stylesheet",
+          "url": "/_next/static/chunks/11od059ho6-mx.css",
+          "fullHost": "chat.exur.ai",
+          "kb": 36,
+          "start": 1811
+        },
+        {
+          "type": "Script",
+          "url": "/_next/static/chunks/44tu5lrmjfvda.js",
+          "fullHost": "chat.exur.ai",
+          "kb": 34,
+          "start": 3045
+        },
+        {
+          "type": "Script",
+          "url": "/_next/static/chunks/3tvdpdkyb2o_f.js",
+          "fullHost": "chat.exur.ai",
+          "kb": 31,
+          "start": 2037
+        },
+        {
+          "type": "Document",
+          "url": "/",
+          "fullHost": "chat.exur.ai",
+          "kb": 24,
+          "start": 2
+        }
+      ],
+      "thirdPartyFlags": {
+        "gtm": true,
+        "gtag": true,
+        "gsi": true,
+        "sentry": true
+      },
+      "lcpPhases": [
+        {
+          "type": "table",
+          "headings": [
+            {
+              "key": "label",
+              "valueType": "text",
+              "label": "Subpart"
+            },
+            {
+              "key": "duration",
+              "valueType": "ms",
+              "label": "Duration"
+            }
+          ],
+          "items": [
+            {
+              "subpart": "timeToFirstByte",
+              "label": "Time to first byte",
+              "duration": 1782.118
+            },
+            {
+              "subpart": "elementRenderDelay",
+              "label": "Element render delay",
+              "duration": 1807.626
+            }
+          ]
+        },
+        {
+          "type": "node",
+          "lhId": "page-0-P",
+          "path": "1,HTML,1,BODY,23,DIV,3,DIV,2,DIV,0,DIV,1,P",
+          "selector": "div#_r_1_ > div.space-y-3 > div.rounded-[1.25rem] > p.mt-1",
+          "boundingRect": {
+            "top": 481,
+            "bottom": 523,
+            "left": 36,
+            "right": 376,
+            "width": 340,
+            "height": 41
+          },
+          "snippet": "<p class=\"mt-1 text-[15px] leading-snug text-foreground/90\">",
+          "nodeLabel": "Open this when you want a quick take on the news, a level, or a trade idea."
+        }
+      ],
+      "diagnostics": [
+        {
+          "id": "mainthread-work-breakdown",
+          "score": 0,
+          "display": "7.1 s",
+          "title": "Minimize main-thread work"
+        },
+        {
+          "id": "bootup-time",
+          "score": 0,
+          "display": "3.5 s",
+          "title": "Reduce JavaScript execution time"
+        },
+        {
+          "id": "server-response-time",
+          "score": 0,
+          "display": "Root document took 1,440 ms",
+          "title": "Reduce initial server response time"
+        }
+      ]
+    }
+  }
+}

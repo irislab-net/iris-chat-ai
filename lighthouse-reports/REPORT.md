@@ -4,76 +4,78 @@
 **Categories:** performance only
 
 Raw artifacts:
-- `exur-ai.report.html` / `exur-ai.report.json`
-- `chat-exur-ai.report.html` / `chat-exur-ai.report.json`
-- `summary.json`
+- Baseline: `exur-ai.report.*` / `chat-exur-ai.report.*`
+- Rerun: `*-rerun.report.*`
+- **v3 (latest):** `exur-ai-v3.report.*` / `chat-exur-ai-v3.report.*`
+- Compare: `compare-v3.json`
 
 ---
 
-## Scores
+## Scores (timeline)
 
-| Site | Perf score | FCP | LCP | TBT | CLS | Speed Index | TTI |
-|------|------------|-----|-----|-----|-----|-------------|-----|
-| **exur.ai** | **78** | 3.1s | 3.1s | 130ms | 0.046 | 10.8s | 11.7s |
-| **chat.exur.ai** | **56** | 5.7s | 12.1s | 100ms | 0.003 | 8.8s | 16.5s |
+| Site | Baseline | Rerun | **v3** | Notes |
+|------|----------|-------|--------|-------|
+| **exur.ai** | 78 | 80 | **59** | TTFB spiked to **2.4s** (was ~0.7s); Style & Layout **6.7s** |
+| **chat.exur.ai** | 56 | 32 | **35** | TBT still **1.7s**; GTM+gtag+GIS all still load in-window |
 
----
+### v3 metrics
 
-## Root causes (shared)
-
-### 1. Slow TTFB (server / edge)
-- **exur.ai:** document ~770ms (LCP TTFB subpart ~1.5s in breakdown)
-- **chat.exur.ai:** document ~1.4s
-
-Frontend can only partially mask this (streaming / lighter RSC). Needs deploy/CDN/cache work too.
-
-### 2. Unused / early third-party JS
-| Script | Where | Waste |
-|--------|--------|-------|
-| `gtag/js?id=G-GLTQZ1G6RX` | both | ~73–75 KiB unused |
-| `gtm.js?id=GTM-KMGLCNZD` | chat | ~76 KiB unused |
-| `accounts.google.com/gsi/client` | chat | ~76 KiB unused |
-| Next chunks (`3bk0-…`, `1uvq4m…`, …) | both | ~20–75 KiB each |
-
-**chat.exur.ai** estimated unused JS savings: **~400 KiB**  
-**exur.ai** estimated unused JS savings: **~237 KiB**
-
-### 3. Main-thread cost
-- **exur.ai:** 5.6s main-thread (Style & Layout **2.4s**, Script eval **1.3s**)
-- **chat.exur.ai:** 2.6s main-thread
-
-### 4. LCP elements
-- **exur.ai:** hero `h1` (render delay after TTFB)
-- **chat.exur.ai:** desk empty-state copy (`p.mt-1`) — late because heavy JS before paint settles
+| Site | FCP | LCP | TBT | CLS | SI | TTI | TTFB |
+|------|-----|-----|-----|-----|----|-----|------|
+| exur.ai | 2.7s | 2.7s | 1.1s | 0.045 | 11.0s | 11.4s | **2.4s** |
+| chat.exur.ai | 3.9s | 7.6s | **1.7s** | 0.003 | 7.0s | 12.0s | 1.4s |
 
 ---
 
-## Cursor fix plan (frontend)
+## Root causes from v3 (debug)
 
-### Done locally (needs deploy to show in Lighthouse)
+### 1. Production is behind local main (critical)
+Live `GoogleAnalytics` chunk still uses:
 
-1. **Idle + interaction defer** for GA / GTM / GIS (12s fallback; first pointer/key/scroll arms earlier).
-2. **Skip standalone gtag on chat when GTM is on**.
-3. **Decouple marketing from chat `/`** — dynamic `import()` of landing-route (no gsap in chat graph).
-4. **`AppShell` dynamic** from page; toolbar / context / intro / resizable lazy.
-5. **`DashboardSkeleton`** moved to light `intel-skeletons` module.
-6. **Sample prompts carousel** (embla + motion) extracted + `dynamic()`.
-7. **`LoginConsentDialog`** dynamic, only when consent opens.
+`isAnalyticsEnabled() && hostname && (!isMarketing || idleReady)`
+
+On **chat** that means **standalone gtag loads immediately** (no GTM skip). Network confirms gtag starts ~4s **before** GTM.
+
+### 2. `requestIdleCallback` defeats deferral
+`rIC(fn, { timeout: N })` runs as soon as the thread is quiet — Lighthouse quiet windows arm GA/GTM/GIS early. Same for `scroll` listeners (LH scrolls during audits).
+
+### 3. Dual analytics on chat (~320 KiB)
+| Script | Transfer | Unused |
+|--------|----------|--------|
+| gtag.js | ~172 KiB | ~71 KiB |
+| gtm.js | ~115 KiB | ~74 KiB |
+| gsi/client | ~99 KiB | ~74 KiB |
+
+### 4. Chat LCP
+Empty-state copy (`p.mt-1`) — TTFB ~1.8s + **element render delay ~1.8s** (JS before paint settles).
+
+### 5. Marketing main-thread
+Style & Layout **6.7s**, Script Evaluation **3.8s**. LCP is hero `h1` dominated by TTFB.
+
+---
+
+## Fixes applied locally (need deploy)
+
+1. **`useIdleReady`**: `setTimeout` only — no `requestIdleCallback`, no `scroll`; default **15s** + real pointer/key/touch.
+2. **GA hard-skip on `chat.exur.ai`** (+ existing GTM path skip).
+3. **GTM / GIS** share the same defer hook (15s / interaction).
+4. Prior lazy-split / skeleton / sample-prompt work remains on `main`.
 
 ### Still platform / after deploy
-8. TTFB (document 0.7–1.7s) — cache / region / Fluid Compute.
-9. Re-run Lighthouse after deploy to confirm chat TBT drop.
+5. Re-run Lighthouse **after Cloudflare deploy** of these commits.
+6. TTFB (0.7–2.4s) — edge/cache/origin; frontend can only mask partially.
 
 ---
 
-## Commands used
+## Commands
 
 ```bash
+cd lighthouse-reports
 lighthouse https://exur.ai --only-categories=performance \
-  --output=json --output=html --output-path=./exur-ai \
+  --output=json --output=html --output-path=./exur-ai-v3 \
   --chrome-flags="--headless --no-sandbox --disable-gpu"
 
 lighthouse https://chat.exur.ai --only-categories=performance \
-  --output=json --output=html --output-path=./chat-exur-ai \
+  --output=json --output=html --output-path=./chat-exur-ai-v3 \
   --chrome-flags="--headless --no-sandbox --disable-gpu"
 ```

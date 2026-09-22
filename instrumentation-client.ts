@@ -13,13 +13,16 @@ Sentry.init({
 })
 
 if (dsn && typeof window !== "undefined") {
-  const schedule =
-    "requestIdleCallback" in window
-      ? (cb: () => void) =>
-          window.requestIdleCallback(cb, { timeout: 4_000 })
-      : (cb: () => void) => window.setTimeout(cb, 2_000)
+  // Avoid requestIdleCallback — LH quiet windows arm it early and inflate TBT.
+  const events = ["pointerdown", "keydown", "touchstart"] as const
+  let settled = false
 
-  schedule(() => {
+  function armReplay() {
+    if (settled) return
+    settled = true
+    for (const event of events) {
+      window.removeEventListener(event, armReplay)
+    }
     void import("@sentry/nextjs")
       .then((lazySentry) => {
         Sentry.addIntegration(
@@ -32,7 +35,12 @@ if (dsn && typeof window !== "undefined") {
       .catch(() => {
         // Replay is optional — never block the app if the chunk fails.
       })
-  })
+  }
+
+  for (const event of events) {
+    window.addEventListener(event, armReplay, { once: true, passive: true })
+  }
+  window.setTimeout(armReplay, 15_000)
 }
 
 export const onRouterTransitionStart = Sentry.captureRouterTransitionStart

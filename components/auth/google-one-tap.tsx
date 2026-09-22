@@ -9,6 +9,7 @@ import {
   syncDocumentColorScheme,
   type BrowserChromeTheme,
 } from "@/lib/browser-chrome"
+import { useIdleReady } from "@/hooks/use-idle-ready"
 import {
   cancelGoogleOneTap,
   isGoogleOneTapDismissed,
@@ -93,53 +94,33 @@ export function GoogleOneTap({ enabled, onCredential }: GoogleOneTapProps) {
 
   const colorScheme = resolveGoogleOneTapColorScheme(resolvedTheme)
   const themeReady = resolvedTheme === "light" || resolvedTheme === "dark"
+  // Keep ~100KB GIS off the chat critical path (Lighthouse unused-JS / TBT).
+  const deferReady = useIdleReady(Boolean(shouldRun && clientId && themeReady), 15_000)
 
   React.useEffect(() => {
-    if (!shouldRun || !clientId || !themeReady || promptedRef.current) return
+    if (!shouldRun || !clientId || !themeReady || !deferReady || promptedRef.current)
+      return
 
     let cancelled = false
     const scheme = resolveGoogleOneTapColorScheme(resolvedTheme)
 
-    const start = () => {
-      if (cancelled || promptedRef.current) return
-      void loadGoogleIdentityScript()
-        .then(() => {
-          if (cancelled || promptedRef.current) return
-          promptedRef.current = true
-          lastColorSchemeRef.current = scheme
-          runGoogleOneTapPrompt(clientId, scheme, (credential) => {
-            onCredentialRef.current(credential)
-          })
+    void loadGoogleIdentityScript()
+      .then(() => {
+        if (cancelled || promptedRef.current) return
+        promptedRef.current = true
+        lastColorSchemeRef.current = scheme
+        runGoogleOneTapPrompt(clientId, scheme, (credential) => {
+          onCredentialRef.current(credential)
         })
-        .catch(() => {
-          // GIS blocked or failed to load — fall back to manual Google sign-in.
-        })
-    }
-
-    // Keep ~100KB GIS off the chat critical path (Lighthouse unused-JS / TBT).
-    const idle = window.requestIdleCallback
-    let idleHandle: number | undefined
-    let timeoutHandle: number | undefined
-    const events = ["pointerdown", "keydown", "touchstart"] as const
-    const onInteract = () => start()
-    for (const event of events) {
-      window.addEventListener(event, onInteract, { once: true, passive: true })
-    }
-    if (typeof idle === "function") {
-      idleHandle = idle(start, { timeout: 12_000 })
-    } else {
-      timeoutHandle = window.setTimeout(start, 12_000)
-    }
+      })
+      .catch(() => {
+        // GIS blocked or failed to load — fall back to manual Google sign-in.
+      })
 
     return () => {
       cancelled = true
-      for (const event of events) {
-        window.removeEventListener(event, onInteract)
-      }
-      if (idleHandle !== undefined) window.cancelIdleCallback(idleHandle)
-      if (timeoutHandle !== undefined) window.clearTimeout(timeoutHandle)
     }
-  }, [shouldRun, clientId, pathname, themeReady, resolvedTheme])
+  }, [shouldRun, clientId, themeReady, deferReady, resolvedTheme])
 
   React.useEffect(() => {
     if (!shouldRun || !clientId || !themeReady || !promptedRef.current) return

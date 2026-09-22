@@ -11,7 +11,7 @@ import {
   isChatGtmEnabled,
   trackPageView,
 } from "@/lib/analytics"
-import { isMarketingHost } from "@/lib/hosts"
+import { isMarketingHost, isProductionChatHost } from "@/lib/hosts"
 
 declare global {
   interface Window {
@@ -32,17 +32,20 @@ function GoogleAnalytics() {
   const hostname = useHostname()
   const initialPath = React.useRef<string | null>(null)
 
-  const isMarketing = Boolean(hostname) && isMarketingHost(hostname)
+  const isChatHost = Boolean(hostname) && isProductionChatHost(hostname)
   const gtmCoversChat =
     Boolean(hostname) &&
-    !isMarketing &&
+    !isMarketingHost(hostname) &&
     isChatGtmEnabled(pathname ?? "/", hostname)
 
-  // Standalone gtag is marketing-only when GTM already ships GA4 on chat.
+  // Standalone gtag is marketing-only. Chat ships GA4 via GTM — never dual-load.
   const wantsGa =
-    isAnalyticsEnabled() && Boolean(hostname) && !gtmCoversChat
+    isAnalyticsEnabled() &&
+    Boolean(hostname) &&
+    !isChatHost &&
+    !gtmCoversChat
 
-  const idleReady = useIdleReady(wantsGa, isMarketing ? 8000 : 12_000)
+  const idleReady = useIdleReady(wantsGa, 15_000)
 
   // SPA navigations — initial load is covered by gtag config / GTM.
   React.useEffect(() => {
