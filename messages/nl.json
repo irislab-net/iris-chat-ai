@@ -115,10 +115,11 @@
       }
     },
     "desk": {
-      "title": "Van headline naar antwoord.",
-      "subtitle": "Geen feed om te scrollen. Alleen het verhaal dat een vraag waard is.",
-      "onTheDesk": "Op de desk",
+      "title": "Gescoorde koppen. Geen feed.",
+      "subtitle": "Impact rangschikt de tape. De lead springt eruit — de rest blijft stil.",
       "you": "Jij",
+      "lead": "Lead",
+      "impactLabel": "Impact",
       "news": {
         "0": {
           "source": "Bloomberg",
@@ -135,15 +136,12 @@
           "time": "27m",
           "headline": "Exchange-reserves dalen naar het laagste niveau sinds maart"
         }
-      },
-      "ask": {
-        "question": "Doet de ETF-headline er vandaag toe voor ETH?",
-        "answer": "Ja. Instroom tilt meestal eerst beta. Let op of funding negatief blijft terwijl spot leidt."
       }
     },
     "signalWait": {
       "title": "Handel alleen als het duidelijk is.",
       "subtitle": "Vraag één keer. Krijg een setup, of een stil nee.",
+      "you": "Jij",
       "composerPlaceholder": "Vraag over een trade…",
       "ticket": {
         "setup": "Spot leidt terwijl funding zacht blijft",

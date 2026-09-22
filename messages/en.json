@@ -411,10 +411,11 @@
       }
     },
     "desk": {
-      "title": "From headline to answer.",
-      "subtitle": "No feed to scroll. Just the story worth a question.",
-      "onTheDesk": "On the desk",
+      "title": "Scored headlines. Not a feed.",
+      "subtitle": "Impact ranks the tape. The lead stands out — the rest stays quiet.",
       "you": "You",
+      "lead": "Lead",
+      "impactLabel": "Impact",
       "news": {
         "0": {
           "source": "Bloomberg",
@@ -431,15 +432,12 @@
           "time": "27m",
           "headline": "Exchange reserves drop to the lowest level since March"
         }
-      },
-      "ask": {
-        "question": "Does the ETF headline matter for ETH today?",
-        "answer": "Yes. Inflows usually lift beta first. Watch whether funding stays negative while spot leads."
       }
     },
     "signalWait": {
       "title": "Act only when it’s clear.",
       "subtitle": "Ask once. Get a setup, or a quiet no.",
+      "you": "You",
       "composerPlaceholder": "Ask about a trade…",
       "ticket": {
         "setup": "Spot leads while funding stays soft",

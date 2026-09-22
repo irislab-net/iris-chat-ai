@@ -29,7 +29,6 @@ import {
   landingContentWide,
   landingGlassSheen,
   landingGlassSurface,
-  landingInner,
   landingSection,
   landingSectionBody,
   landingTitleCard,
@@ -190,40 +189,38 @@ export function SignalsMarketsSection() {
 
   return (
     <section id="signals" className={cn(landingSection, landingSectionBody)}>
-      <div className={landingInner}>
-        <ScrollReveal>
-          <SectionHeader title={t("title")} subtitle={t("subtitle")} />
-        </ScrollReveal>
+      <ScrollReveal>
+        <SectionHeader title={t("title")} subtitle={t("subtitle")} />
+      </ScrollReveal>
 
-        <ScrollRevealGroup
-          className={cn(
-            landingContentWide,
-            "grid grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-5",
-            landingAfterHeader
-          )}
-        >
-          <ul className="contents list-none">
-            {SIGNALS_LIVE_MARKETS.map((market) => (
-              <li key={market.id} className="min-h-0">
-                <LiveMarketCard {...market} prices={prices} />
-              </li>
+      <ScrollRevealGroup
+        className={cn(
+          landingContentWide,
+          "grid grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-5",
+          landingAfterHeader
+        )}
+      >
+        <ul className="contents list-none">
+          {SIGNALS_LIVE_MARKETS.map((market) => (
+            <li key={market.id} className="min-h-0">
+              <LiveMarketCard {...market} prices={prices} />
+            </li>
+          ))}
+        </ul>
+      </ScrollRevealGroup>
+
+      <ScrollReveal delay={0.12} className={cn(landingContent, landingAfterHeader)}>
+        <div className="text-center">
+          <p className="text-sm font-medium text-muted-foreground">
+            {t("soonHint")}
+          </p>
+          <ul className="mt-6 flex flex-wrap items-start justify-center gap-x-5 gap-y-6 sm:gap-x-7">
+            {SIGNALS_SOON_MARKETS.map((market) => (
+              <SoonMarketChip key={market.id} {...market} />
             ))}
           </ul>
-        </ScrollRevealGroup>
-
-        <ScrollReveal delay={0.12} className={cn(landingContent, landingAfterHeader)}>
-          <div className="text-center">
-            <p className="text-sm font-medium text-muted-foreground">
-              {t("soonHint")}
-            </p>
-            <ul className="mt-6 flex flex-wrap items-start justify-center gap-x-5 gap-y-6 sm:gap-x-7">
-              {SIGNALS_SOON_MARKETS.map((market) => (
-                <SoonMarketChip key={market.id} {...market} />
-              ))}
-            </ul>
-          </div>
-        </ScrollReveal>
-      </div>
+        </div>
+      </ScrollReveal>
     </section>
   )
 }

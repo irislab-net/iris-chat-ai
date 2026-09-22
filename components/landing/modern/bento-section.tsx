@@ -15,7 +15,6 @@ import {
   landingGlassSheen,
   landingGlassSurface,
   landingAfterHeader,
-  landingInner,
   landingSection,
   landingSectionBody,
   landingTitleCard,
@@ -42,27 +41,26 @@ export function BentoSection() {
 
   return (
     <section id="how-it-works" className={cn(landingSection, landingSectionBody)}>
-      <div className={landingInner}>
-        <ScrollReveal>
-          <SectionHeader
-            title={tSection("title")}
-            subtitle={tSection("subtitle")}
-          />
-        </ScrollReveal>
+      <ScrollReveal>
+        <SectionHeader
+          title={tSection("title")}
+          subtitle={tSection("subtitle")}
+        />
+      </ScrollReveal>
 
-        <ScrollRevealGroup
-          className={cn(landingContentWide, landingAfterHeader)}
-        >
-          <ol className="relative m-0 grid list-none grid-cols-1 gap-6 p-0 md:grid-cols-3 md:gap-4">
-            {HOW_IT_WORKS_STEP_KEYS.map((key, index) => (
-              <li key={key}>
-                <article
-                  className={cn(
-                    landingGlassSurface,
-                    "group relative flex h-full flex-col items-center overflow-hidden rounded-[1.75rem] bg-white/42 text-center dark:bg-white/8",
-                    "px-6 py-8 sm:px-7 sm:py-9"
-                  )}
-                >
+      <ScrollRevealGroup
+        className={cn(landingContentWide, landingAfterHeader)}
+      >
+        <ol className="relative m-0 grid list-none grid-cols-1 gap-6 p-0 md:grid-cols-3 md:gap-4">
+          {HOW_IT_WORKS_STEP_KEYS.map((key, index) => (
+            <li key={key}>
+              <article
+                className={cn(
+                  landingGlassSurface,
+                  "group relative flex h-full flex-col items-center overflow-hidden rounded-[1.75rem] bg-white/42 text-center dark:bg-white/8",
+                  "px-6 py-8 sm:px-7 sm:py-9"
+                )}
+              >
                   <span
                     aria-hidden
                     className={cn(
@@ -82,7 +80,6 @@ export function BentoSection() {
             ))}
           </ol>
         </ScrollRevealGroup>
-      </div>
     </section>
   )
 }

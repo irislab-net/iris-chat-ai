@@ -59,6 +59,10 @@ export const landingOuter = "mx-auto w-full max-w-6xl"
 /** Frame + centered column — single shell for the whole landing page. */
 export const landingShell = `${landingFrame} ${landingOuter}`
 
+/**
+ * Content inset for chrome and glass cards (nav, hero, footer).
+ * Open sections stay flush to the page frame.
+ */
 export const landingInner = "px-4.5 sm:px-5 lg:px-6"
 
 /** Shared gap between `SectionHeader` and the section body. */
@@ -67,8 +71,7 @@ export const landingAfterHeader = "mt-12 lg:mt-14"
 export const landingContainer = `${landingOuter} ${landingInner}`
 
 /**
- * Shared content measure inside `landingInner`.
- * Section headers (`max-w-3xl`) and editorial bodies share this so columns align.
+ * Shared content measure for section headers (`max-w-3xl`) and editorial bodies.
  */
 export const landingContent = "mx-auto w-full max-w-3xl"
 
@@ -158,9 +161,10 @@ export const landingHeroComposeGrid =
 /**
  * Signal/wait demo — fixed rows (mobile-safe).
  * [chat: user + optional EX] [result] [composer]
+ * Result row needs room for the full ChatSignalCard (no clip).
  */
 export const landingSignalWaitComposeGrid =
-  "grid h-full grid-rows-[auto_minmax(0,1fr)_3.5rem] gap-2.5 sm:gap-3"
+  "grid h-full grid-rows-[auto_minmax(0,1fr)_3.75rem] gap-3 sm:gap-3.5"
 
 /**
  * Landing CTAs.

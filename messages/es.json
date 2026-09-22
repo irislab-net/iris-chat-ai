@@ -115,10 +115,11 @@
       }
     },
     "desk": {
-      "title": "Del titular a la respuesta.",
-      "subtitle": "Sin feed que recorrer. Solo la historia que merece una pregunta.",
-      "onTheDesk": "En el desk",
+      "title": "Titulares con puntuación. No un feed.",
+      "subtitle": "El impacto ordena la cinta. El lead destaca — el resto se queda en silencio.",
       "you": "Tú",
+      "lead": "Lead",
+      "impactLabel": "Impacto",
       "news": {
         "0": {
           "source": "Bloomberg",
@@ -135,15 +136,12 @@
           "time": "27m",
           "headline": "Las reservas en exchanges caen al nivel más bajo desde marzo"
         }
-      },
-      "ask": {
-        "question": "¿Importa el titular del ETF para ETH hoy?",
-        "answer": "Sí. Las entradas suelen levantar primero el beta. Mira si el funding sigue negativo mientras el spot lidera."
       }
     },
     "signalWait": {
       "title": "Actúa solo cuando esté claro.",
       "subtitle": "Pregunta una vez. Recibe un setup, o un no silencioso.",
+      "you": "Tú",
       "composerPlaceholder": "Pregunta por una operación…",
       "ticket": {
         "setup": "El spot lidera mientras el funding sigue suave",

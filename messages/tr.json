@@ -115,10 +115,11 @@
       }
     },
     "desk": {
-      "title": "Manşetten yanıta.",
-      "subtitle": "Kaydırılacak bir akış yok. Sadece sorulmaya değer hikâye.",
-      "onTheDesk": "Desk’te",
+      "title": "Puanlı manşetler. Bir akış değil.",
+      "subtitle": "Etki bandı sıralar. Lead öne çıkar — geri kalan sessiz kalır.",
       "you": "Siz",
+      "lead": "Lead",
+      "impactLabel": "Etki",
       "news": {
         "0": {
           "source": "Bloomberg",
@@ -135,15 +136,12 @@
           "time": "27m",
           "headline": "Borsa rezervleri Mart’tan bu yana en düşük seviyeye indi"
         }
-      },
-      "ask": {
-        "question": "ETF manşeti bugün ETH için önemli mi?",
-        "answer": "Evet. Girişler genelde önce betayı yükseltir. Spot öndeyken funding’in negatif kalıp kalmadığına bakın."
       }
     },
     "signalWait": {
       "title": "Yalnızca net olduğunda hareket edin.",
       "subtitle": "Bir kez sorun. Bir setup alın — ya da sessiz bir hayır.",
+      "you": "Siz",
       "composerPlaceholder": "Bir işlem hakkında sorun…",
       "ticket": {
         "setup": "Funding yumuşak kalırken spot önde",

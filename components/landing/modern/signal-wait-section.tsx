@@ -115,7 +115,7 @@ function SignalResult({
       <div
         className={cn(
           landingGlassSurface,
-          "relative w-full origin-top scale-[0.92] overflow-visible rounded-[1.5rem] bg-white/55 p-1 shadow-[0_24px_56px_-28px_rgba(37,99,235,0.26),inset_0_1px_1px_rgba(255,255,255,0.95)] sm:scale-100 sm:rounded-[1.75rem] sm:p-1.5 dark:bg-white/10 dark:shadow-[0_28px_64px_-24px_rgba(0,0,0,0.55),inset_0_1px_1px_rgba(255,255,255,0.12)]"
+          "relative w-full origin-top overflow-visible rounded-[1.5rem] bg-white/55 p-1 shadow-[0_24px_56px_-28px_rgba(37,99,235,0.26),inset_0_1px_1px_rgba(255,255,255,0.95)] sm:rounded-[1.75rem] sm:p-1.5 dark:bg-white/10 dark:shadow-[0_28px_64px_-24px_rgba(0,0,0,0.55),inset_0_1px_1px_rgba(255,255,255,0.12)]"
         )}
       >
         <span
@@ -164,7 +164,6 @@ function HoldResult({ label, reason }: { label: string; reason: string }) {
 
 export function SignalWaitSection() {
   const t = useTranslations("modern.signalWait")
-  const tDesk = useTranslations("modern.desk")
   const reducedMotion = useReducedMotion()
   const rootRef = useRef<HTMLDivElement>(null)
   const userRef = useRef<HTMLDivElement>(null)
@@ -183,7 +182,7 @@ export function SignalWaitSection() {
   const holdAnswer = t("hold.answer")
   const holdLabel = t("hold.label")
   const holdReason = t("hold.reason")
-  const youLabel = tDesk("you")
+  const youLabel = t("you")
   const composerPlaceholder = t("composerPlaceholder")
 
   const ticket = useMemo(
@@ -251,8 +250,8 @@ export function SignalWaitSection() {
           className={cn(
             "relative isolate overflow-visible",
             landingCardRadius,
-            // Fixed height only — never grows/shrinks with beats.
-            "flex h-95 flex-col bg-white/40 text-foreground shadow-[0_28px_80px_rgba(15,23,42,0.07)] backdrop-blur-2xl sm:h-100 dark:bg-white/6 dark:shadow-[0_28px_80px_rgba(0,0,0,0.45)] lg:h-105"
+            // Fixed shell: ChatSignalCard + chat row + composer must fit without clipping.
+            "flex h-[38rem] flex-col bg-white/40 text-foreground shadow-[0_28px_80px_rgba(15,23,42,0.07)] backdrop-blur-2xl sm:h-[41rem] dark:bg-white/6 dark:shadow-[0_28px_80px_rgba(0,0,0,0.45)] lg:h-[43rem]"
           )}
         >
           <HeroLiquidGlassBg tone="blue" />
@@ -260,7 +259,7 @@ export function SignalWaitSection() {
           <div
             className={cn(
               landingSignalWaitComposeGrid,
-              "relative z-10 mx-auto w-full max-w-xl px-4 py-6 sm:max-w-2xl sm:px-8 sm:py-9 lg:px-10 lg:py-10"
+              "relative z-10 mx-auto w-full max-w-xl px-4 py-5 sm:max-w-2xl sm:px-8 sm:py-8 lg:px-10 lg:py-9"
             )}
           >
             <div className="relative flex min-h-0 flex-col gap-3.5 sm:gap-4">

@@ -12,7 +12,6 @@ import { GOALS_STORY_COUNT } from "@/lib/landing-modern-data"
 import {
   landingGlassSheen,
   landingGlassSurface,
-  landingInner,
   landingSection,
   landingSubheading,
   landingTitleSection,
@@ -78,7 +77,7 @@ export function GoalsSection() {
     >
       <div ref={storyRef} className={styles.story}>
         <div className={styles.stage}>
-          <div className={cn(landingInner, styles.inner)}>
+          <div className={styles.inner}>
             <div>
               {/* Animated blocks are decorative; full story stays available to assistive tech. */}
               <ol className="sr-only">

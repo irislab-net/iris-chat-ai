@@ -21,7 +21,6 @@ import {
   landingGlassBlueSheen,
   landingGlassSheen,
   landingGlassSurface,
-  landingInner,
   landingSection,
   landingSectionBody,
   landingTitlePlan,
@@ -178,27 +177,25 @@ export function PricingSection() {
 
   return (
     <section id="pricing" className={cn(landingSection, landingSectionBody)}>
-      <div className={landingInner}>
-        <ScrollReveal>
-          <SectionHeader title={t("title")} subtitle={t("subtitle")} />
-        </ScrollReveal>
+      <ScrollReveal>
+        <SectionHeader title={t("title")} subtitle={t("subtitle")} />
+      </ScrollReveal>
 
-        <ScrollRevealGroup className={cn(landingContentWide, "grid gap-6 lg:grid-cols-3 lg:items-stretch lg:gap-5", landingAfterHeader)}>
-          <ul className="contents list-none">
-            {PRICING_PLAN_META.map((plan) => (
-              <li key={plan.key} className="min-h-0 h-full">
-                <PlanCard
-                  planKey={plan.key}
-                  featured={plan.featured}
-                  featureCount={plan.featureCount}
-                  hasPriceWas={plan.hasPriceWas}
-                  hasBadge={plan.hasBadge}
-                />
-              </li>
-            ))}
-          </ul>
-        </ScrollRevealGroup>
-      </div>
+      <ScrollRevealGroup className={cn(landingContentWide, "grid gap-6 lg:grid-cols-3 lg:items-stretch lg:gap-5", landingAfterHeader)}>
+        <ul className="contents list-none">
+          {PRICING_PLAN_META.map((plan) => (
+            <li key={plan.key} className="min-h-0 h-full">
+              <PlanCard
+                planKey={plan.key}
+                featured={plan.featured}
+                featureCount={plan.featureCount}
+                hasPriceWas={plan.hasPriceWas}
+                hasBadge={plan.hasBadge}
+              />
+            </li>
+          ))}
+        </ul>
+      </ScrollRevealGroup>
     </section>
   )
 }

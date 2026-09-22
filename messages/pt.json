@@ -115,10 +115,11 @@
       }
     },
     "desk": {
-      "title": "Da manchete à resposta.",
-      "subtitle": "Sem feed para rolar. Só a história que merece uma pergunta.",
-      "onTheDesk": "No desk",
+      "title": "Manchetes com nota. Não um feed.",
+      "subtitle": "O impacto ordena a fita. O lead se destaca — o resto fica quieto.",
       "you": "Você",
+      "lead": "Lead",
+      "impactLabel": "Impacto",
       "news": {
         "0": {
           "source": "Bloomberg",
@@ -135,15 +136,12 @@
           "time": "27m",
           "headline": "Reservas em exchanges caem ao nível mais baixo desde março"
         }
-      },
-      "ask": {
-        "question": "A manchete do ETF importa para ETH hoje?",
-        "answer": "Sim. Entradas costumam levantar o beta primeiro. Veja se o funding continua negativo enquanto o spot lidera."
       }
     },
     "signalWait": {
       "title": "Aja só quando estiver claro.",
       "subtitle": "Pergunte uma vez. Receba um setup, ou um não silencioso.",
+      "you": "Você",
       "composerPlaceholder": "Pergunte sobre uma operação…",
       "ticket": {
         "setup": "Spot lidera enquanto o funding segue suave",
