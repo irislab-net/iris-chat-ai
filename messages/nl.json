@@ -12,6 +12,10 @@
     "launchApp": "App openen",
     "analysisNotAdvice": "Analyse, geen advies."
   },
+  "nav": {
+    "aria": "Startpagina",
+    "skipToContent": "Ga naar inhoud"
+  },
   "modern": {
     "nav": {
       "features": "Waarom Exur",

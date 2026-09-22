@@ -4,7 +4,10 @@ export const BROWSER_CHROME_COLORS = {
   dark: "#252525",
 } as const
 
-/** Runs before React so installed PWA / Safari chrome matches stored theme. */
+/**
+ * Pre-hydration chrome sync lives in `/public/scripts/browser-chrome-init.js`
+ * (loaded via next/script beforeInteractive). Keep colors in sync with that file.
+ */
 export const BROWSER_CHROME_INIT_SCRIPT = `(function(){try{var k="theme",s=localStorage.getItem(k),m=matchMedia("(prefers-color-scheme: dark)").matches,d=s==="dark"||(s!=="light"&&m),scheme=d?"dark":"light",c=d?"${BROWSER_CHROME_COLORS.dark}":"${BROWSER_CHROME_COLORS.light}",r=document.documentElement;r.style.setProperty("color-scheme",scheme,"important");r.style.setProperty("--browser-chrome-color",c);var colorSchemeMeta=document.querySelector('meta[name="color-scheme"]');if(!colorSchemeMeta){colorSchemeMeta=document.createElement("meta");colorSchemeMeta.setAttribute("name","color-scheme");document.head.appendChild(colorSchemeMeta);}colorSchemeMeta.setAttribute("content",scheme);var metas=document.querySelectorAll('meta[name="theme-color"]');if(metas.length){for(var i=0;i<metas.length;i++)metas[i].setAttribute("content",c);}else{var meta=document.createElement("meta");meta.setAttribute("name","theme-color");meta.setAttribute("content",c);document.head.appendChild(meta);}var apple=document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]');if(!apple){apple=document.createElement("meta");apple.setAttribute("name","apple-mobile-web-app-status-bar-style");document.head.appendChild(apple);}apple.setAttribute("content",d?"black-translucent":"default");}catch(e){}})();`
 
 export type BrowserChromeTheme = keyof typeof BROWSER_CHROME_COLORS

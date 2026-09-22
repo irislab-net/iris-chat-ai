@@ -1761,3 +1761,36 @@ html.display-standalone[data-app-shell="true"] [data-slot="sheet-content"] .app-
     animation: none;
   }
 }
+
+/* Print: keep copy, drop chrome/motion surfaces. */
+@media print {
+  .landing-modern header,
+  .landing-modern [aria-hidden="true"],
+  .landing-modern .chat-gemini-bg,
+  .landing-modern [data-slot="sheet-trigger"],
+  .landing-modern [data-demo-send],
+  .landing-modern button[aria-label="Theme"],
+  .landing-modern button[aria-label="Language"],
+  .landing-modern button[aria-label="Open menu"] {
+    display: none !important;
+  }
+
+  .landing-modern,
+  .landing-modern * {
+    background: transparent !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    color: #000 !important;
+  }
+
+  .landing-modern a[href]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.85em;
+    font-weight: 400;
+  }
+
+  .landing-modern a[href^="#"]::after,
+  .landing-modern a[href^="/"]::after {
+    content: "";
+  }
+}

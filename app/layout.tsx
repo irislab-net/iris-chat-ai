@@ -15,7 +15,6 @@ import { ThemeProvider } from "@wrksz/themes/next"
 import { isChatGtmEnabled } from "@/lib/analytics"
 import {
   BROWSER_CHROME_COLORS,
-  BROWSER_CHROME_INIT_SCRIPT,
 } from "@/lib/browser-chrome"
 import { localeDirection } from "@/lib/i18n/locale"
 import {
@@ -145,10 +144,29 @@ export default async function RootLayout({
     >
       <body>
         <GoogleTagManager enabled={chatGtmEnabled} />
+        <noscript>
+          <div
+            style={{
+              padding: "1rem 1.25rem",
+              fontFamily: "system-ui, sans-serif",
+              fontSize: "0.95rem",
+              lineHeight: 1.5,
+              background: "#f5f5f5",
+              color: "#171717",
+            }}
+          >
+            <p style={{ margin: 0 }}>
+              {SITE_NAME} — {SITE_DESCRIPTION}{" "}
+              <a href={SITE_URL} style={{ color: "inherit" }}>
+                {SITE_URL.replace(/^https:\/\//, "")}
+              </a>
+            </p>
+          </div>
+        </noscript>
         <Script
           id="browser-chrome-init"
+          src="/scripts/browser-chrome-init.js"
           strategy="beforeInteractive"
-          dangerouslySetInnerHTML={{ __html: BROWSER_CHROME_INIT_SCRIPT }}
         />
         <JsonLd id="json-ld-organization" data={organizationJsonLd()} />
         <JsonLd id="json-ld-website" data={websiteJsonLd()} />

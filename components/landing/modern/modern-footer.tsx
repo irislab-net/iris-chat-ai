@@ -155,9 +155,13 @@ export function ModernFooter() {
               {footerColumns.map((column) => (
                 <nav key={column.heading} className="flex flex-col gap-3" aria-label={column.heading}>
                   <p className="text-sm font-semibold text-foreground">{column.heading}</p>
-                  {column.links.map((link) => (
-                    <FooterColumnLink key={link.label} link={link} />
-                  ))}
+                  <ul className="flex list-none flex-col gap-3">
+                    {column.links.map((link) => (
+                      <li key={link.label}>
+                        <FooterColumnLink link={link} />
+                      </li>
+                    ))}
+                  </ul>
                 </nav>
               ))}
             </div>
@@ -169,17 +173,18 @@ export function ModernFooter() {
             <p className="text-muted-foreground">
               © {year} {SITE_NAME}. All rights reserved.
             </p>
-            <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
+            <ul className="flex list-none flex-wrap items-center gap-x-6 gap-y-2">
               {legalLinks.map((link) => (
-                <Link
-                  key={link.label}
-                  href={link.href}
-                  className="text-muted-foreground underline decoration-border underline-offset-4 transition-colors hover:text-foreground hover:decoration-foreground"
-                >
-                  {link.label}
-                </Link>
+                <li key={link.label}>
+                  <Link
+                    href={link.href}
+                    className="text-muted-foreground underline decoration-border underline-offset-4 transition-colors hover:text-foreground hover:decoration-foreground"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
               ))}
-            </div>
+            </ul>
           </div>
         </div>
       </ScrollReveal>

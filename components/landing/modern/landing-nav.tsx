@@ -263,32 +263,33 @@ export function LandingNav() {
           <span className={landingTitleBrand}>Exur</span>
         </Button>
 
-        <div
+        <ul
           className={cn(
             landingNavPill,
-            "hidden transition-all duration-300 lg:col-start-2 lg:row-start-1 lg:flex",
+            "hidden list-none transition-all duration-300 lg:col-start-2 lg:row-start-1 lg:flex",
             stuck && "bg-muted/70 shadow-none"
           )}
         >
           {NAV_LINKS.map((link) => {
             const isActive = activeSectionId === link.id
             return (
-              <Button
-                key={link.id}
-                type="button"
-                variant="ghost"
-                onClick={() => scrollToSection(link.id)}
-                aria-current={isActive ? "true" : undefined}
-                className={cn(
-                  "h-8 rounded-full px-3 py-0 text-[13px] tracking-[-0.01em] transition-all duration-200",
-                  isActive ? landingNavLinkActive : landingNavLinkInactive
-                )}
-              >
-                {tNav(link.id)}
-              </Button>
+              <li key={link.id}>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={() => scrollToSection(link.id)}
+                  aria-current={isActive ? "true" : undefined}
+                  className={cn(
+                    "h-8 rounded-full px-3 py-0 text-[13px] tracking-[-0.01em] transition-all duration-200",
+                    isActive ? landingNavLinkActive : landingNavLinkInactive
+                  )}
+                >
+                  {tNav(link.id)}
+                </Button>
+              </li>
             )
           })}
-        </div>
+        </ul>
 
         <div className="flex shrink-0 items-center justify-end gap-1.5 justify-self-end sm:gap-2 lg:col-start-3 lg:row-start-1">
           <div className="hidden items-center gap-1.5 lg:flex">
@@ -369,26 +370,29 @@ export function LandingNav() {
                 <div className="mb-2">
                   <LandingSheetAccount onDone={() => setOpen(false)} />
                 </div>
-                {NAV_LINKS.map((link) => {
-                  const isActive = activeSectionId === link.id
-                  return (
-                    <Button
-                      key={link.id}
-                      type="button"
-                      variant="ghost"
-                      onClick={() => scrollAndClose(link.id, () => setOpen(false))}
-                      aria-current={isActive ? "true" : undefined}
-                      className={cn(
-                        "h-12 justify-start rounded-2xl px-4 text-[15px] tracking-[-0.01em]",
-                        isActive
-                          ? "bg-muted font-semibold text-foreground hover:bg-muted hover:text-foreground"
-                          : "font-medium text-muted-foreground hover:bg-muted/60 hover:text-foreground"
-                      )}
-                    >
-                      {tNav(link.id)}
-                    </Button>
-                  )
-                })}
+                <ul className="flex list-none flex-col gap-1">
+                  {NAV_LINKS.map((link) => {
+                    const isActive = activeSectionId === link.id
+                    return (
+                      <li key={link.id}>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          onClick={() => scrollAndClose(link.id, () => setOpen(false))}
+                          aria-current={isActive ? "true" : undefined}
+                          className={cn(
+                            "h-12 w-full justify-start rounded-2xl px-4 text-[15px] tracking-[-0.01em]",
+                            isActive
+                              ? "bg-muted font-semibold text-foreground hover:bg-muted hover:text-foreground"
+                              : "font-medium text-muted-foreground hover:bg-muted/60 hover:text-foreground"
+                          )}
+                        >
+                          {tNav(link.id)}
+                        </Button>
+                      </li>
+                    )
+                  })}
+                </ul>
               </nav>
 
               <div className="mt-auto flex flex-col gap-3 p-5 pt-4 pb-[max(1.25rem,env(safe-area-inset-bottom))]">

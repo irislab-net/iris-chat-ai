@@ -1,17 +1,14 @@
-import Script from "next/script"
-
 type JsonLdProps = {
   id: string
   data: Record<string, unknown> | Record<string, unknown>[]
 }
 
-/** Invisible structured data for search engines. */
+/** Invisible structured data for search engines (JSON-LD, not executable JS). */
 function JsonLd({ id, data }: JsonLdProps) {
   return (
-    <Script
+    <script
       id={id}
       type="application/ld+json"
-      strategy="afterInteractive"
       dangerouslySetInnerHTML={{
         __html: JSON.stringify(data).replace(/</g, "\\u003c"),
       }}

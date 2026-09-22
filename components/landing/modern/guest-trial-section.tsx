@@ -47,7 +47,6 @@ export function GuestTrialSection() {
                 landingDisplay,
                 "text-[5.5rem] leading-none tracking-[-0.06em] text-foreground sm:text-[6.5rem]"
               )}
-              aria-hidden
             >
               {GUEST_TRIAL_STAT}
             </p>

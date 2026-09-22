@@ -12,6 +12,10 @@
     "launchApp": "Uygulamayı aç",
     "analysisNotAdvice": "Analiz, tavsiye değil."
   },
+  "nav": {
+    "aria": "Ana sayfa",
+    "skipToContent": "İçeriğe geç"
+  },
   "modern": {
     "nav": {
       "features": "Neden Exur",

@@ -8,7 +8,6 @@ import { ChatSignalCard } from "@/components/app-shell/chat-signal-card"
 import { HeroLiquidGlassBg } from "@/components/landing/modern/hero-liquid-glass-bg"
 import { ScrollReveal } from "@/components/landing/modern/scroll-reveal"
 import { SectionHeader } from "@/components/landing/modern/sphere-ui"
-import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { SIGNAL_WAIT_TICKET } from "@/lib/landing-modern-data"
 import { useReducedMotion } from "@/lib/landing-motion"
@@ -324,6 +323,7 @@ export function SignalWaitSection() {
                 className={cn(landingGlassSheen, "rounded-full")}
               />
               <Input
+                type="text"
                 value={shownDraft}
                 readOnly
                 tabIndex={-1}
@@ -331,16 +331,12 @@ export function SignalWaitSection() {
                 className="relative z-10 h-10 min-w-0 flex-1 border-0 bg-transparent px-2 text-sm text-foreground shadow-none placeholder:text-muted-foreground/90 focus-visible:ring-0 read-only:cursor-default sm:px-3 sm:text-base"
                 aria-label={composerPlaceholder}
               />
-              <span ref={sendRef} className="relative z-10 inline-flex shrink-0">
-                <Button
-                  type="button"
-                  size="icon"
-                  tabIndex={-1}
-                  className="pointer-events-none size-10 shrink-0 rounded-full bg-[#2563EB] text-white shadow-[0_8px_24px_rgba(37,99,235,0.32)] hover:bg-[#1D4ED8]"
-                  aria-hidden
-                >
-                  <ArrowUpIcon className="size-4" />
-                </Button>
+              <span
+                ref={sendRef}
+                className="relative z-10 inline-flex size-10 shrink-0 items-center justify-center rounded-full bg-[#2563EB] text-white shadow-[0_8px_24px_rgba(37,99,235,0.32)]"
+                aria-hidden
+              >
+                <ArrowUpIcon className="size-4" />
               </span>
             </div>
           </div>

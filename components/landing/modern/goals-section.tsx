@@ -80,15 +80,23 @@ export function GoalsSection() {
         <div className={styles.stage}>
           <div className={cn(landingInner, styles.inner)}>
             <div>
-              <div ref={blocksRef} className={styles.blocks}>
+              {/* Animated blocks are decorative; full story stays available to assistive tech. */}
+              <ol className="sr-only">
+                {Array.from({ length: GOALS_STORY_COUNT }, (_, index) => (
+                  <li key={index}>
+                    <h2>{t(`${index}.heading`)}</h2>
+                    <p>{t(`${index}.sub`)}</p>
+                  </li>
+                ))}
+              </ol>
+              <div ref={blocksRef} className={styles.blocks} aria-hidden="true">
                 {Array.from({ length: GOALS_STORY_COUNT }, (_, index) => (
                   <div
                     key={index}
                     data-story-block
                     className={styles.block}
-                    aria-hidden={index === 0 ? "false" : "true"}
                   >
-                    <h2
+                    <p
                       className={cn(
                         styles.heading,
                         landingTitleSection,
@@ -96,7 +104,7 @@ export function GoalsSection() {
                       )}
                     >
                       {t(`${index}.heading`)}
-                    </h2>
+                    </p>
                     <p
                       className={cn(
                         styles.sub,

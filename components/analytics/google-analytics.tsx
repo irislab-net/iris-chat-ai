@@ -10,6 +10,12 @@ import {
   trackPageView,
 } from "@/lib/analytics"
 
+declare global {
+  interface Window {
+    __exurBootGa?: (id: string) => void
+  }
+}
+
 function GoogleAnalytics() {
   const pathname = usePathname()
   const initialPath = React.useRef<string | null>(null)
@@ -28,23 +34,21 @@ function GoogleAnalytics() {
 
   if (!isAnalyticsEnabled()) return null
 
+  // Google CDN scripts rotate content, so Subresource Integrity hashes are not viable.
   return (
     <>
       <Script
         src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
-        strategy="afterInteractive"
+        strategy="lazyOnload"
       />
-      <Script id="google-analytics" strategy="afterInteractive">
-        {`
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
-          gtag('config', '${GA_MEASUREMENT_ID}', {
-            send_page_view: true,
-            anonymize_ip: true
-          });
-        `}
-      </Script>
+      <Script
+        id="google-analytics-boot"
+        src="/scripts/google-analytics-boot.js"
+        strategy="lazyOnload"
+        onLoad={() => {
+          window.__exurBootGa?.(GA_MEASUREMENT_ID)
+        }}
+      />
     </>
   )
 }

@@ -7,6 +7,10 @@ import { HeroLiquidGlassBg } from "@/components/landing/modern/hero-liquid-glass
 import { HeroSection } from "@/components/landing/modern/hero-section"
 import { LandingNav } from "@/components/landing/modern/landing-nav"
 import { LandingScrollProvider } from "@/components/landing/modern/landing-scroll-context"
+import {
+  MAIN_CONTENT_ID,
+  SkipToContent,
+} from "@/components/landing/modern/skip-to-content"
 import { jetbrainsMono, plusJakarta } from "@/components/landing/modern/fonts"
 import { localeDirection } from "@/lib/i18n/locale"
 import {
@@ -115,6 +119,7 @@ export function ModernLandingPage() {
         )}
         style={{ ["--font-display" as string]: displayFont }}
       >
+        <SkipToContent />
         <div
           className={cn(
             landingShell,
@@ -132,7 +137,11 @@ export function ModernLandingPage() {
             </div>
           </div>
 
-          <main className={cn(landingMainStack, landingHeroToMain)}>
+          <main
+            id={MAIN_CONTENT_ID}
+            tabIndex={-1}
+            className={cn(landingMainStack, landingHeroToMain, "outline-none")}
+          >
             <GoalsSection />
             <BentoSection />
             <DeskSurfacesSection />

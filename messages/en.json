@@ -29,7 +29,8 @@
     "filled": "Filled"
   },
   "nav": {
-    "aria": "Landing"
+    "aria": "Landing",
+    "skipToContent": "Skip to content"
   },
   "landing": {
     "hero": {

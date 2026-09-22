@@ -12,6 +12,10 @@
     "launchApp": "Abrir app",
     "analysisNotAdvice": "Análise, não conselho."
   },
+  "nav": {
+    "aria": "Início",
+    "skipToContent": "Ir para o conteúdo"
+  },
   "modern": {
     "nav": {
       "features": "Por que Exur",

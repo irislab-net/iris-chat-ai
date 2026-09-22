@@ -12,6 +12,10 @@
     "launchApp": "باز کردن اپ",
     "analysisNotAdvice": "تحلیل است، نه توصیه."
   },
+  "nav": {
+    "aria": "صفحه‌ی اصلی",
+    "skipToContent": "پرش به محتوا"
+  },
   "modern": {
     "nav": {
       "features": "چرا Exur",

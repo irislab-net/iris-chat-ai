@@ -765,6 +765,9 @@ export function HeroComposeDemo() {
         >
         <GlassSheen className="rounded-full" />
         <Input
+          type="search"
+          enterKeyHint="send"
+          autoComplete="off"
           value={composerValue}
           onChange={(e) => {
             if (demoActive) enterInteractiveMode()
@@ -782,6 +785,7 @@ export function HeroComposeDemo() {
             handleAction()
           }}
           placeholder={tHero("inputPlaceholder")}
+          aria-label={tHero("inputPlaceholder")}
           readOnly={demoActive && phase !== "typing-question"}
           className="relative z-10 h-10 min-w-0 flex-1 border-0 bg-transparent px-2 text-sm text-foreground shadow-none placeholder:text-muted-foreground/90 focus-visible:ring-0 read-only:cursor-default sm:px-3 sm:text-base"
         />
