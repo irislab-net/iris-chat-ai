@@ -1748,12 +1748,6 @@ html.display-standalone[data-app-shell="true"] [data-slot="sheet-content"] .app-
   font-family: var(--font-mono-modern), ui-monospace, monospace;
 }
 
-.landing-modern [class*="--font-display"] {
-  /* Plus Jakarta is Latin-only; IRIS Sans carries Vazirmatn for Arabic/Persian. */
-  font-family: var(--font-display), "IRIS Sans", ui-sans-serif, system-ui,
-    sans-serif;
-}
-
 @media (prefers-reduced-motion: reduce) {
   .landing-modern .hero-fluid-wave,
   .landing-modern .hero-fluid-glow,

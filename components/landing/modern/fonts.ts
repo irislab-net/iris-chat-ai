@@ -5,6 +5,9 @@ export const plusJakarta = Plus_Jakarta_Sans({
   variable: "--font-display",
   weight: ["400", "500", "600"],
   display: "swap",
+  // Without this, Next injects a size-adjusted Arial fallback that covers
+  // Arabic/Persian glyphs and blocks IRIS Sans (Vazirmatn) from ever applying.
+  adjustFontFallback: false,
 })
 
 export const jetbrainsMono = JetBrains_Mono({

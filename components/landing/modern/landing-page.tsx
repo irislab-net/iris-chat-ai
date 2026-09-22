@@ -1,12 +1,14 @@
 "use client"
 
 import dynamic from "next/dynamic"
+import { useLocale } from "next-intl"
 
 import { HeroLiquidGlassBg } from "@/components/landing/modern/hero-liquid-glass-bg"
 import { HeroSection } from "@/components/landing/modern/hero-section"
 import { LandingNav } from "@/components/landing/modern/landing-nav"
 import { LandingScrollProvider } from "@/components/landing/modern/landing-scroll-context"
 import { jetbrainsMono, plusJakarta } from "@/components/landing/modern/fonts"
+import { localeDirection } from "@/lib/i18n/locale"
 import {
   landingHeroCard,
   landingHeroGlass,
@@ -92,6 +94,16 @@ const ModernFooter = dynamic(
 )
 
 export function ModernLandingPage() {
+  const locale = useLocale()
+  // next/font injects a size-adjusted "Fallback" face that covers Arabic glyphs
+  // and steals Persian/Arabic from IRIS Sans (Vazirmatn). Override the variable:
+  // RTL → IRIS Sans; LTR → Plus Jakarta primary only (no Fallback).
+  const displayFont =
+    localeDirection(locale) === "rtl"
+      ? '"IRIS Sans"'
+      : (plusJakarta.style.fontFamily.split(",")[0]?.trim() ??
+        '"Plus Jakarta Sans"')
+
   return (
     <LandingScrollProvider>
       <div
@@ -101,6 +113,7 @@ export function ModernLandingPage() {
           jetbrainsMono.variable,
           "landing-modern min-h-dvh bg-background font-sans text-foreground antialiased selection:bg-foreground/10 selection:text-foreground"
         )}
+        style={{ ["--font-display" as string]: displayFont }}
       >
         <div
           className={cn(

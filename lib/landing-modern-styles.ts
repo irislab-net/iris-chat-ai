@@ -1,7 +1,8 @@
 /** Cubic-bezier twin of the GSAP `heroDemo` ease registered in `ensureGsapScroll`. */
 export const LANDING_EASE = [0.16, 1, 0.3, 1] as const
 
-export const landingDisplay = "font-[family-name:var(--font-display)]"
+export const landingDisplay =
+  '[font-family:var(--font-display),var(--font-sans)]'
 
 /** Apple-like display titles — regular weight, tight tracking, soft leading. */
 export const landingTitleHero =
