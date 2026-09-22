@@ -131,3 +131,29 @@ export async function fetchHyperliquidCandles(input: {
     .filter((c): c is CandleBar => c != null)
     .sort((a, b) => a.t - b.t)
 }
+
+/** Latest mid prices keyed by Hyperliquid coin (BTC, ETH, PAXG, …). */
+export async function fetchHyperliquidMids(
+  signal?: AbortSignal
+): Promise<Record<string, number>> {
+  const res = await fetch(HL_INFO, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ type: "allMids" }),
+    signal,
+    cache: "no-store",
+  })
+
+  if (!res.ok) return {}
+
+  const raw = (await res.json()) as unknown
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return {}
+
+  const out: Record<string, number> = {}
+  for (const [coin, value] of Object.entries(raw as Record<string, unknown>)) {
+    const price = typeof value === "number" ? value : Number(value)
+    if (!Number.isFinite(price) || !(price > 0)) continue
+    out[coin.toUpperCase()] = price
+  }
+  return out
+}

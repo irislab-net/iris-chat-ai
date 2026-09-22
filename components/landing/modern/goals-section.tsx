@@ -20,7 +20,6 @@ import { cn } from "@/lib/utils"
 
 export function GoalsSection() {
   const storyRef = useRef<HTMLDivElement>(null)
-  const hintRef = useRef<HTMLDivElement>(null)
   const blocksRef = useRef<HTMLDivElement>(null)
   const barsRef = useRef<HTMLDivElement>(null)
   const poolRef = useRef<SVGGElement>(null)
@@ -31,7 +30,6 @@ export function GoalsSection() {
 
   useLayoutEffect(() => {
     const story = storyRef.current
-    const hint = hintRef.current
     const blocksRoot = blocksRef.current
     const barsRoot = barsRef.current
     const pool = poolRef.current
@@ -40,7 +38,7 @@ export function GoalsSection() {
     const pg2 = pg2Ref.current
     const pings4 = pings4Ref.current
 
-    if (!story || !hint || !blocksRoot || !barsRoot || !pool || !pings || !pg1 || !pg2 || !pings4) {
+    if (!story || !blocksRoot || !barsRoot || !pool || !pings || !pg1 || !pg2 || !pings4) {
       return
     }
 
@@ -58,7 +56,6 @@ export function GoalsSection() {
 
     return initGoalsStory({
       story,
-      hint,
       blocks,
       bars,
       poolEls,
@@ -153,11 +150,6 @@ export function GoalsSection() {
                 </g>
               </svg>
             </figure>
-          </div>
-
-          <div ref={hintRef} className={styles.hint}>
-            SCROLL
-            <span />
           </div>
         </div>
       </div>

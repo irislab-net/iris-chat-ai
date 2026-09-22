@@ -177,7 +177,7 @@ export function SectionHeader({
       {subtitle && (
         <p
           className={cn(
-            "mt-5 text-base leading-relaxed sm:text-lg",
+            "mx-auto mt-5 max-w-2xl text-base leading-relaxed sm:text-lg",
             light ? "text-white/75" : "text-muted-foreground"
           )}
         >

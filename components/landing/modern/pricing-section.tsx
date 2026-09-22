@@ -11,6 +11,8 @@ import { Button } from "@/components/ui/button"
 import { Link } from "@/i18n/navigation"
 import { PRICING_PLANS, PRICING_SECTION, type PricingPlan } from "@/lib/landing-modern-data"
 import {
+  landingAfterHeader,
+  landingContentWide,
   landingCta,
   landingGlassBlueSheen,
   landingGlassSheen,
@@ -110,11 +112,18 @@ function PlanCard({ plan }: { plan: PricingPlan }) {
         </div>
 
         <div className="mt-5">
-          <p className={landingTitlePrice}>
-            {plan.price}
-            {plan.key === "plus" ? (
-              <span className="ml-1 text-lg font-normal text-muted-foreground">/mo</span>
+          <p className={cn(landingTitlePrice, "flex flex-wrap items-baseline gap-x-2.5")}>
+            {plan.priceWas ? (
+              <span className="text-2xl font-normal tracking-[-0.02em] text-muted-foreground/55 line-through decoration-muted-foreground/40">
+                {plan.priceWas}
+              </span>
             ) : null}
+            <span>
+              {plan.price}
+              {plan.key === "plus" ? (
+                <span className="ml-1 text-lg font-normal text-muted-foreground">/mo</span>
+              ) : null}
+            </span>
           </p>
           <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{plan.desc}</p>
         </div>
@@ -140,7 +149,7 @@ export function PricingSection() {
           />
         </ScrollReveal>
 
-        <ScrollRevealGroup className="mx-auto mt-14 grid max-w-5xl gap-6 lg:mt-16 lg:grid-cols-3 lg:items-stretch lg:gap-5">
+        <ScrollRevealGroup className={cn(landingContentWide, "grid gap-6 lg:grid-cols-3 lg:items-stretch lg:gap-5", landingAfterHeader)}>
           {PRICING_PLANS.map((plan) => (
             <PlanCard key={plan.key} plan={plan} />
           ))}

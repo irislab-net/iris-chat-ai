@@ -1,4 +1,5 @@
 import { getLocale, getTranslations } from "next-intl/server"
+import { hasLocale } from "next-intl"
 import type { Metadata } from "next"
 
 import { StatusPage } from "@/components/status/status-page"
@@ -6,16 +7,19 @@ import {
   statusHomeAction,
   statusLaunchAppAction,
 } from "@/components/status/status-page-actions"
-import { routing } from "@/i18n/routing"
+import { routing, type AppLocale } from "@/i18n/routing"
 
 export const metadata: Metadata = {
   robots: { index: false, follow: true },
 }
 
 export default async function LocaleNotFound() {
-  let locale = routing.defaultLocale
+  let locale: AppLocale = routing.defaultLocale
   try {
-    locale = await getLocale()
+    const resolved = await getLocale()
+    if (hasLocale(routing.locales, resolved)) {
+      locale = resolved
+    }
   } catch {
     // Invalid locale segments may reach not-found before request locale is set.
   }

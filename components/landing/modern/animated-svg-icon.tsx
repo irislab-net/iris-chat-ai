@@ -86,8 +86,11 @@ export function AnimatedSvgIcon({
 
     ensureGsapScroll()
     const ctx = gsap.context(() => {
+      // When nested under ScrollReveal (invisible until enter), a short delay
+      // keeps the stroke draw visible after the fade-up has started.
       const timeline = gsap.timeline({
         paused: true,
+        delay: scrollTrigger ? 0.35 : 0,
         onComplete,
         scrollTrigger: scrollTrigger ? buildScrollTrigger(scope) : undefined,
       })

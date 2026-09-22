@@ -42,7 +42,7 @@ export const ABOUT_NARRATION_CUES: NarrationCue[] = [
   {
     start: 10.43,
     end: 14.19,
-    text: "Today, the global financial world is overwhelming —",
+    text: "Today, the global financial world is overwhelming,",
   },
   {
     start: 14.19,
@@ -68,7 +68,7 @@ export const ABOUT_NARRATION_CUES: NarrationCue[] = [
   {
     start: 37.13,
     end: 41.27,
-    text: "and combine them with an understanding of you — your goals, your portfolio, and your risk.",
+    text: "and combine them with an understanding of you, your goals, your portfolio, and your risk.",
   },
   {
     start: 41.27,
@@ -80,7 +80,7 @@ export const ABOUT_NARRATION_CUES: NarrationCue[] = [
   {
     start: 50.69,
     end: 55.98,
-    text: "I am Exur — the intelligence layer responsible for your financial life.",
+    text: "I am Exur, the intelligence layer responsible for your financial life.",
   },
   {
     start: 55.98,

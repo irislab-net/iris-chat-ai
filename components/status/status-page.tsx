@@ -2,7 +2,7 @@
 
 import type { ReactNode } from "react"
 
-import { IrisLabLogo } from "@/components/brand/iris-lab-logo"
+import { AnimatedIrisLabLogo } from "@/components/brand/animated-iris-lab-logo"
 import { HeroLiquidGlassBg } from "@/components/landing/modern/hero-liquid-glass-bg"
 import { jetbrainsMono, plusJakarta } from "@/components/landing/modern/fonts"
 import { Button } from "@/components/ui/button"
@@ -11,9 +11,12 @@ import {
   landingCta,
   landingDisplay,
   landingGlassBlueSheen,
+  landingGlassSheen,
+  landingGlassSurface,
   landingHeroGlass,
   landingInner,
   landingShell,
+  landingTitleFooter,
   landingTitleSection,
 } from "@/lib/landing-modern-styles"
 import { getLandingHref, SITE_NAME } from "@/lib/site"
@@ -76,7 +79,7 @@ export function StatusPage({
   note,
 }: StatusPageProps) {
   const homeHref = getLandingHref()
-  const watermark = /^\d+$/.test(code.trim()) ? code.trim() : "!"
+  const numericCode = /^\d+$/.test(code.trim()) ? code.trim() : null
 
   return (
     <div
@@ -101,20 +104,10 @@ export function StatusPage({
           "relative z-10 flex flex-1 flex-col justify-center py-10 sm:py-14"
         )}
       >
-        <a
-          href={homeHref}
-          className="mb-8 inline-flex w-fit items-center gap-2.5 self-center rounded-full px-2 py-1 transition-opacity hover:opacity-80 sm:self-start"
-        >
-          <IrisLabLogo variant="brand" size={28} className="size-7" decorative />
-          <span className={cn(landingDisplay, "text-base tracking-[-0.02em]")}>
-            {SITE_NAME}
-          </span>
-        </a>
-
         <section
           className={cn(
             landingHeroGlass,
-            "relative flex min-h-[22rem] flex-col justify-center overflow-hidden rounded-[2.5rem] sm:min-h-[24rem]",
+            "relative flex min-h-[22rem] flex-col overflow-hidden rounded-[2.5rem] sm:min-h-[24rem]",
             "animate-in fade-in zoom-in-95 duration-500"
           )}
         >
@@ -123,24 +116,59 @@ export function StatusPage({
           <div
             className={cn(
               landingInner,
-              "relative z-10 flex flex-col items-center px-6 py-14 text-center sm:px-10 sm:py-16"
+              "relative z-10 flex flex-1 flex-col items-center justify-center px-6 py-14 text-center sm:px-10 sm:py-16"
             )}
           >
-            <p className="font-[family-name:var(--font-mono-modern)] text-[0.7rem] font-medium tracking-[0.28em] text-muted-foreground uppercase">
-              {code}
-            </p>
+            <a
+              href={homeHref}
+              aria-label={SITE_NAME}
+              className="group inline-flex items-center gap-3.5 rounded-full transition-opacity hover:opacity-90"
+            >
+              <span
+                className={cn(
+                  landingGlassSurface,
+                  "relative flex size-14 shrink-0 items-center justify-center rounded-full bg-white/55 p-2.5 dark:bg-white/10 sm:size-16 sm:p-3"
+                )}
+                aria-hidden
+              >
+                <span
+                  className={cn(landingGlassSheen, "pointer-events-none absolute inset-0 rounded-full")}
+                />
+                <AnimatedIrisLabLogo
+                  replayOnHover
+                  shimmer
+                  className="relative z-10 size-9 sm:size-10"
+                />
+              </span>
+              <span
+                className={cn(
+                  landingTitleFooter,
+                  "tracking-[-0.03em] transition-transform duration-300 group-hover:translate-x-0.5"
+                )}
+              >
+                {SITE_NAME}
+              </span>
+            </a>
 
-            <p
-              aria-hidden
+            {numericCode ? (
+              <p
+                aria-hidden
+                className={cn(
+                  landingDisplay,
+                  "pointer-events-none mt-8 select-none text-[5.5rem] leading-none tracking-[-0.06em] text-foreground/8 sm:text-[7.5rem] dark:text-foreground/10"
+                )}
+              >
+                {numericCode}
+              </p>
+            ) : null}
+
+            <h1
               className={cn(
-                landingDisplay,
-                "pointer-events-none mt-2 select-none text-[5.5rem] leading-none tracking-[-0.06em] text-foreground/8 sm:text-[7.5rem] dark:text-foreground/10"
+                landingTitleSection,
+                "max-w-xl",
+                numericCode ? "-mt-10 sm:-mt-12" : "mt-8"
               )}
             >
-              {watermark}
-            </p>
-
-            <h1 className={cn(landingTitleSection, "-mt-10 max-w-xl sm:-mt-12")}>
               {title}
             </h1>
             <p className="mx-auto mt-4 max-w-md text-base leading-relaxed text-muted-foreground sm:text-lg">

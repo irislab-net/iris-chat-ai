@@ -75,6 +75,16 @@ const nextConfig: NextConfig = {
         hostname: "images.unsplash.com",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "assets.coingecko.com",
+        pathname: "/coins/images/**",
+      },
+      {
+        protocol: "https",
+        hostname: "s3-symbol-logo.tradingview.com",
+        pathname: "/**",
+      },
     ],
   },
   // /v1/* is handled by app/v1/[...path]/route.ts (Cloudflare-safe proxy dispatch).

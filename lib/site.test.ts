@@ -12,6 +12,7 @@ import {
   PUBLIC_INDEXABLE_PATHS,
   ROOT_ROBOTS,
   SITE_DESCRIPTION,
+  SOCIAL_TELEGRAM_URL,
   SOCIAL_X_URL,
   UPGRADE_PATH,
   UPGRADE_ROBOTS,
@@ -65,6 +66,7 @@ describe("public SEO site policy (S1/S2)", () => {
 
   it("exposes verified social URL for trust / Organization sameAs", () => {
     expect(SOCIAL_X_URL).toBe("https://x.com/exur_ai")
+    expect(SOCIAL_TELEGRAM_URL).toBe("https://t.me/exur_ai")
   })
 
   it("keeps homepage meta description aligned with financial-assistant copy", () => {

@@ -690,31 +690,36 @@ export function AboutExperience() {
               <div className="relative w-full max-w-sm sm:max-w-md">
                 <div
                   className={cn(
-                    "pointer-events-none absolute inset-x-1 top-1/2 h-6 -translate-y-1/2 rounded-full",
-                    "bg-[#2563EB]/22 blur-lg dark:bg-[#2563EB]/32"
+                    "pointer-events-none absolute inset-x-6 top-1/2 h-5 -translate-y-1/2 rounded-full",
+                    "bg-[#2563EB]/16 blur-2xl dark:bg-[#2563EB]/22"
                   )}
                 />
                 <div
                   className={cn(
-                    "relative h-1.5 overflow-visible rounded-full",
-                    "bg-slate-300/60 shadow-[inset_0_1px_1px_rgba(15,23,42,0.08)]",
-                    "dark:bg-white/14 dark:shadow-[inset_0_1px_1px_rgba(0,0,0,0.25)]"
+                    landingGlassSurface,
+                    "relative overflow-visible rounded-full bg-white/55 p-1 dark:bg-white/10"
                   )}
                 >
-                  <div
-                    ref={progressRef}
-                    className="about-narration-progress relative h-full w-0 min-w-0 will-change-[width]"
-                    style={{ width: "0%" }}
-                  >
-                    <span className="absolute inset-0 rounded-full bg-linear-to-r from-[#93C5FD] via-[#3B82F6] to-[#1D4ED8]" />
-                    <span className="about-narration-progress-sheen absolute inset-y-0 left-0 w-2/5 rounded-full bg-linear-to-r from-transparent via-white/75 to-transparent" />
-                    <span
-                      className={cn(
-                        "absolute top-1/2 right-0 size-3 -translate-y-1/2 translate-x-1/2 rounded-full",
-                        "bg-white",
-                        "shadow-[0_0_0_3px_rgba(37,99,235,0.28),0_0_16px_rgba(37,99,235,0.9),0_0_6px_rgba(255,255,255,1)]"
-                      )}
-                    />
+                  <span
+                    aria-hidden
+                    className={cn(landingGlassSheen, "rounded-full")}
+                  />
+                  <div className="relative h-1 overflow-visible rounded-full bg-foreground/6 dark:bg-white/10">
+                    <div
+                      ref={progressRef}
+                      className="about-narration-progress relative h-full w-0 min-w-0 will-change-[width]"
+                      style={{ width: "0%" }}
+                    >
+                      <span className="absolute inset-0 rounded-full bg-[#2563EB]" />
+                      <span className="about-narration-progress-sheen absolute inset-y-0 left-0 w-1/3 rounded-full bg-linear-to-r from-transparent via-white/70 to-transparent" />
+                      <span
+                        className={cn(
+                          "absolute top-1/2 right-0 z-10 size-3.5 -translate-y-1/2 translate-x-1/2 rounded-full",
+                          "bg-white shadow-[0_1px_4px_rgba(15,23,42,0.18),0_0_0_3px_rgba(37,99,235,0.22)]",
+                          "dark:shadow-[0_1px_4px_rgba(0,0,0,0.45),0_0_0_3px_rgba(37,99,235,0.35)]"
+                        )}
+                      />
+                    </div>
                   </div>
                 </div>
               </div>

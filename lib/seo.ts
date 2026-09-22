@@ -1,5 +1,6 @@
 import { routing } from "@/i18n/routing"
 import { MARKETING_ORIGIN } from "@/lib/hosts"
+import { SOCIAL_TELEGRAM_URL, SOCIAL_X_URL } from "@/lib/site"
 
 export const SITE_NAME = "Exur"
 export const SITE_SHORT_NAME = "Exur"
@@ -37,8 +38,8 @@ export const SITE_KEYWORDS = [
 ] as const
 
 export const SOCIAL_LINKS = {
-  x: "https://x.com/exur_ai",
-  telegram: "https://t.me/exur_ai",
+  x: SOCIAL_X_URL,
+  telegram: SOCIAL_TELEGRAM_URL,
 } as const
 
 /** Default brand mark for sitemap / metadata (light theme SVG). */

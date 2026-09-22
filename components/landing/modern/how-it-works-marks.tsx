@@ -24,7 +24,7 @@ function Mark({ children }: { children: ReactNode }) {
   )
 }
 
-/** See — four accounts gathered inside a single frame. */
+/** Read — scored headlines gathering into one frame. */
 function SeeMark() {
   return (
     <Mark>
@@ -49,7 +49,7 @@ function AskMark() {
   )
 }
 
-/** Decide — two options, one of them settled on. */
+/** Act — two options, one of them settled on. */
 function DecideMark() {
   return (
     <Mark>

@@ -32,6 +32,9 @@ export const REFUND_DESCRIPTION =
 /** Verified public contact from product UI (`website-toolbar` CONTACT.x). */
 export const SOCIAL_X_URL = "https://x.com/exur_ai"
 
+/** Public Telegram channel. */
+export const SOCIAL_TELEGRAM_URL = "https://t.me/exur_ai"
+
 /** Authenticated / public market desk (Launch App target on chat.exur.ai). */
 export const APP_PATH = "/"
 

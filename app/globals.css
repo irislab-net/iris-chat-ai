@@ -1534,7 +1534,7 @@ html.display-standalone[data-app-shell="true"] [data-slot="sheet-content"] .app-
 }
 
 .about-narration-progress {
-  filter: drop-shadow(0 0 12px rgba(37, 99, 235, 0.65));
+  filter: drop-shadow(0 0 8px rgba(37, 99, 235, 0.35));
 }
 
 @keyframes about-narration-progress-sheen {
@@ -1542,17 +1542,17 @@ html.display-standalone[data-app-shell="true"] [data-slot="sheet-content"] .app-
     transform: translateX(-120%);
     opacity: 0;
   }
-  35% {
-    opacity: 0.9;
+  40% {
+    opacity: 0.85;
   }
   100% {
-    transform: translateX(320%);
+    transform: translateX(340%);
     opacity: 0;
   }
 }
 
 .about-narration-progress-sheen {
-  animation: about-narration-progress-sheen 2.6s ease-in-out infinite;
+  animation: about-narration-progress-sheen 3.2s ease-in-out infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1562,13 +1562,12 @@ html.display-standalone[data-app-shell="true"] [data-slot="sheet-content"] .app-
   }
 
   .about-narration-progress {
-    filter: drop-shadow(0 0 6px rgba(37, 99, 235, 0.35));
+    filter: none;
   }
 
   .about-narration-progress-sheen {
     animation: none;
-    opacity: 0.45;
-    transform: none;
+    opacity: 0;
   }
 }
 

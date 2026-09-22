@@ -41,7 +41,7 @@ type LfValue = { v: number }
 
 export type GoalsStoryDom = {
   story: HTMLElement
-  hint: HTMLElement
+  hint?: HTMLElement | null
   blocks: HTMLElement[]
   bars: HTMLElement[]
   poolEls: SVGCircleElement[]
@@ -287,8 +287,10 @@ export function initGoalsStory(dom: GoalsStoryDom) {
     dom.bars.forEach((bar, index) => {
       bar.style.setProperty("--bar-fill", index === 3 ? "1" : "0.14")
     })
-    dom.hint.style.opacity = "0"
-    dom.hint.style.visibility = "hidden"
+    if (dom.hint) {
+      dom.hint.style.opacity = "0"
+      dom.hint.style.visibility = "hidden"
+    }
 
     render()
     return () => {
@@ -327,7 +329,9 @@ export function initGoalsStory(dom: GoalsStoryDom) {
       },
     })
 
-    tl.to(hint, { opacity: 0, duration: 0.4 }, 0.1)
+    if (hint) {
+      tl.to(hint, { opacity: 0, duration: 0.4 }, 0.1)
+    }
 
     for (let k = 0; k < 3; k++) {
       const T = STARTS[k]

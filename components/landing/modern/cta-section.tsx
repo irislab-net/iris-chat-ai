@@ -6,6 +6,7 @@ import { HeroLiquidGlassBg } from "@/components/landing/modern/hero-liquid-glass
 import { ScrollRevealGroup } from "@/components/landing/modern/scroll-reveal"
 import { SectionHeader, SphereCta } from "@/components/landing/modern/sphere-ui"
 import {
+  landingAfterHeader,
   landingInner,
   landingSection,
   landingSectionBody,
@@ -35,10 +36,9 @@ export function CtaSection() {
           <SectionHeader
             title={t("title")}
             subtitle={t("subtitle")}
-            className="max-w-2xl"
           />
 
-          <div className="mt-9 flex justify-center">
+          <div className={cn(landingAfterHeader, "flex justify-center")}>
             <SphereCta href={getLaunchAppHref()} variant="glass">
               {t("cta")}
             </SphereCta>

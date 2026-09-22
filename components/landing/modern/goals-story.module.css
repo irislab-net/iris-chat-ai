@@ -1,12 +1,12 @@
 .story {
   position: relative;
-  height: 280vh;
+  height: 240vh;
 }
 
 .story[data-reduced-motion="true"] {
   height: auto;
-  min-height: 100vh;
-  min-height: 100dvh;
+  min-height: min(100vh, 52rem);
+  min-height: min(100dvh, 52rem);
 }
 
 .story[data-reduced-motion="true"] .stage {
@@ -25,6 +25,40 @@
      the stage is exactly as wide as the container, so `hidden` would cut it. */
   overflow: clip;
   overflow-clip-margin: 72px;
+}
+
+/* Desktop: content-sized sticky stage + shorter scrub track — avoid a tall
+   empty viewport while the copy + tile sit in a small band. */
+@media (min-width: 1024px) {
+  .story {
+    height: 150vh;
+  }
+
+  .stage {
+    top: 5.5rem;
+    height: auto;
+    min-height: 0;
+    max-height: none;
+    padding-block: 2.5rem 3rem;
+  }
+
+  .hint {
+    bottom: 0.75rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .story {
+    height: 140vh;
+  }
+
+  .stage {
+    padding-block: 2rem 2.5rem;
+  }
+
+  .inner {
+    gap: 56px;
+  }
 }
 
 .inner {

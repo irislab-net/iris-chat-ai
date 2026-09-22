@@ -283,7 +283,7 @@
       "inputPlaceholder": "Where is my money going this month?"
     },
     "footer": {
-      "tagline": "The financial brain behind your accounts.",
+      "tagline": "News and Exur for the market you follow.",
       "product": "Product",
       "resources": "Resources",
       "contact": "Contact",
@@ -295,16 +295,17 @@
       "about": "About Exur",
       "signals": "AI trading signals",
       "onX": "Exur on X",
+      "onTelegram": "Exur on Telegram",
       "terms": "Terms of Service",
       "privacy": "Privacy Policy",
       "refund": "Refund Policy",
       "cookies": "Cookie Settings"
     },
     "cta": {
-      "title": "Stop guessing about money.",
-      "subtitle": "One question is enough to tell whether this is useful to you.",
-      "cta": "Start free",
-      "note": "Free to start. No signup to look around."
+      "title": "Stop guessing the tape.",
+      "subtitle": "One question on a live headline is enough to tell if this fits you.",
+      "cta": "Open the desk",
+      "note": "News is free. Guest chat included. No wallet to look around."
     },
     "context": {
       "description": "Exur is your AI financial assistant. See where your money is going, ask in plain language, and get a clear next step, not another feed."

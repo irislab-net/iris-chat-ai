@@ -6,6 +6,8 @@ import { SectionHeader } from "@/components/landing/modern/sphere-ui"
 import { MEET_EXUR_SECTION } from "@/lib/landing-modern-data"
 import { LANDING_REVEAL } from "@/lib/landing-motion"
 import {
+  landingAfterHeader,
+  landingContentWide,
   landingInner,
   landingSection,
   landingSectionBody,
@@ -26,7 +28,7 @@ export function AboutSection() {
 
         <ScrollReveal
           delay={LANDING_REVEAL.stagger}
-          className="mx-auto mt-12 max-w-4xl lg:mt-14"
+          className={cn(landingContentWide, landingAfterHeader)}
         >
           <AboutExperience />
         </ScrollReveal>

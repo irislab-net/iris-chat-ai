@@ -8,10 +8,13 @@ function MarketAssetLogo({
   symbol,
   className,
   imageClassName,
+  size = 32,
 }: {
   symbol: string
   className?: string
   imageClassName?: string
+  /** Intrinsic image size for Next/Image (CSS size comes from `className`). */
+  size?: number
 }) {
   const key = symbol.trim().toUpperCase()
   const src = marketAssetLogoSrc(key)
@@ -29,8 +32,8 @@ function MarketAssetLogo({
         <Image
           src={src}
           alt=""
-          width={32}
-          height={32}
+          width={size}
+          height={size}
           unoptimized
           referrerPolicy="no-referrer"
           onError={() => setFailed(true)}

@@ -60,7 +60,19 @@ export const landingShell = `${landingFrame} ${landingOuter}`
 
 export const landingInner = "px-4.5 sm:px-5 lg:px-6"
 
+/** Shared gap between `SectionHeader` and the section body. */
+export const landingAfterHeader = "mt-12 lg:mt-14"
+
 export const landingContainer = `${landingOuter} ${landingInner}`
+
+/**
+ * Shared content measure inside `landingInner`.
+ * Section headers (`max-w-3xl`) and editorial bodies share this so columns align.
+ */
+export const landingContent = "mx-auto w-full max-w-3xl"
+
+/** Full inner width for multi-column grids (how-it-works, markets, pricing). */
+export const landingContentWide = "mx-auto w-full"
 
 export const landingCardRadius = "rounded-[2.5rem]"
 
@@ -141,6 +153,13 @@ export const landingHeroGlass =
  */
 export const landingHeroComposeGrid =
   "grid overflow-visible grid-rows-[5.5rem_10rem_3.5rem] gap-3 sm:grid-rows-[4rem_9.5rem_3.5rem] sm:gap-3.5"
+
+/**
+ * Signal/wait demo — fixed rows (mobile-safe).
+ * [chat: user + optional EX] [result] [composer]
+ */
+export const landingSignalWaitComposeGrid =
+  "grid h-full grid-rows-[auto_minmax(0,1fr)_3.5rem] gap-2.5 sm:gap-3"
 
 /**
  * Landing CTAs.

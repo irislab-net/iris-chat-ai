@@ -10,6 +10,7 @@ import { jetbrainsMono, plusJakarta } from "@/components/landing/modern/fonts"
 import {
   landingHeroCard,
   landingHeroGlass,
+  landingHeroToMain,
   landingMainStack,
   landingPageStack,
   landingShell,
@@ -23,6 +24,13 @@ const GoalsSection = dynamic(
     ),
   { ssr: true }
 )
+const DeskSurfacesSection = dynamic(
+  () =>
+    import("@/components/landing/modern/desk-surfaces-section").then(
+      (m) => m.DeskSurfacesSection
+    ),
+  { ssr: true }
+)
 const BentoSection = dynamic(
   () =>
     import("@/components/landing/modern/bento-section").then(
@@ -30,10 +38,31 @@ const BentoSection = dynamic(
     ),
   { ssr: true }
 )
+const SignalWaitSection = dynamic(
+  () =>
+    import("@/components/landing/modern/signal-wait-section").then(
+      (m) => m.SignalWaitSection
+    ),
+  { ssr: true }
+)
+const SignalsMarketsSection = dynamic(
+  () =>
+    import("@/components/landing/modern/signals-markets-section").then(
+      (m) => m.SignalsMarketsSection
+    ),
+  { ssr: true }
+)
 const AboutSection = dynamic(
   () =>
     import("@/components/landing/modern/about-section").then(
       (m) => m.AboutSection
+    ),
+  { ssr: true }
+)
+const GuestTrialSection = dynamic(
+  () =>
+    import("@/components/landing/modern/guest-trial-section").then(
+      (m) => m.GuestTrialSection
     ),
   { ssr: true }
 )
@@ -90,17 +119,21 @@ export function ModernLandingPage() {
             </div>
           </div>
 
-          <main className={landingMainStack}>
+          <main className={cn(landingMainStack, landingHeroToMain)}>
             <GoalsSection />
             <BentoSection />
+            <DeskSurfacesSection />
+            <SignalWaitSection />
+            <SignalsMarketsSection />
             <AboutSection />
             {/* Testimonials hidden until we have real X posts — see X_POSTS in
                 lib/landing-modern-data.ts. Re-enable together with the "Reviews"
                 entries in NAV_LINKS and LANDING_SCROLL_SECTIONS. */}
             {/* <TestimonialsSection /> */}
-            <CtaSection />
-            <FaqSection />
+            <GuestTrialSection />
             <PricingSection />
+            <FaqSection />
+            <CtaSection />
           </main>
 
           <ModernFooter />

@@ -10,7 +10,13 @@ import {
 } from "@/components/ui/accordion"
 import { FAQ_ITEMS, FAQ_SECTION } from "@/lib/landing-modern-data"
 import { LANDING_REVEAL } from "@/lib/landing-motion"
-import { landingInner, landingSection, landingSectionBody } from "@/lib/landing-modern-styles"
+import {
+  landingAfterHeader,
+  landingContent,
+  landingInner,
+  landingSection,
+  landingSectionBody,
+} from "@/lib/landing-modern-styles"
 import { cn } from "@/lib/utils"
 
 export function FaqSection() {
@@ -23,7 +29,7 @@ export function FaqSection() {
 
         <ScrollReveal
           delay={LANDING_REVEAL.stagger}
-          className="mx-auto mt-10 max-w-2xl sm:mt-12"
+          className={cn(landingContent, landingAfterHeader)}
         >
           <Accordion defaultValue={["what"]}>
             {FAQ_ITEMS.map((faq) => (

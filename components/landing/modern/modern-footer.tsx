@@ -3,13 +3,19 @@
 import { useTranslations } from "next-intl"
 
 import { AnimatedIrisLabLogo } from "@/components/brand/animated-iris-lab-logo"
+import { TelegramIcon } from "@/components/brand/telegram-icon"
 import { XIcon } from "@/components/brand/x-icon"
 import { ScrollReveal } from "@/components/landing/modern/scroll-reveal"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { Link } from "@/i18n/navigation"
 import { scrollToSection } from "@/lib/landing-motion"
-import { getLaunchAppHref, SITE_NAME, SOCIAL_X_URL } from "@/lib/site"
+import {
+  getLaunchAppHref,
+  SITE_NAME,
+  SOCIAL_TELEGRAM_URL,
+  SOCIAL_X_URL,
+} from "@/lib/site"
 import {
   landingCard,
   landingFooterCard,
@@ -92,6 +98,7 @@ export function ModernFooter() {
       links: [
         { label: CONTACT_EMAIL, href: `mailto:${CONTACT_EMAIL}`, external: true },
         { label: t("onX"), href: SOCIAL_X_URL, external: true },
+        { label: t("onTelegram"), href: SOCIAL_TELEGRAM_URL, external: true },
       ],
     },
   ]
@@ -122,15 +129,26 @@ export function ModernFooter() {
               <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
                 {t("tagline")}
               </p>
-              <a
-                href={SOCIAL_X_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={`${SITE_NAME} on X`}
-                className="mt-5 inline-flex size-9 items-center justify-center rounded-full bg-muted text-muted-foreground transition-colors hover:bg-foreground hover:text-background"
-              >
-                <XIcon className="size-3.5" />
-              </a>
+              <div className="mt-5 flex items-center gap-2">
+                <a
+                  href={SOCIAL_X_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`${SITE_NAME} on X`}
+                  className="inline-flex size-9 items-center justify-center rounded-full bg-muted text-muted-foreground transition-colors hover:bg-foreground hover:text-background"
+                >
+                  <XIcon className="size-3.5" />
+                </a>
+                <a
+                  href={SOCIAL_TELEGRAM_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`${SITE_NAME} on Telegram`}
+                  className="inline-flex size-9 items-center justify-center rounded-full bg-muted text-muted-foreground transition-colors hover:bg-foreground hover:text-background"
+                >
+                  <TelegramIcon className="size-3.5" />
+                </a>
+              </div>
             </div>
 
             <div className="grid grid-cols-2 gap-x-8 gap-y-8 sm:grid-cols-3 lg:gap-x-16">

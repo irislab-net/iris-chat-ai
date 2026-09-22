@@ -12,10 +12,9 @@ import {
 
 export const NAV_LINKS = [
   { label: "Why Exur", id: "features" },
-  { label: "How it works", id: "how-it-works" },
+  { label: "Desk", id: "desk" },
+  { label: "Signals", id: "signals" },
   { label: "About", id: "about" },
-  // { label: "Reviews", id: "testimonials" },
-  { label: "FAQ", id: "faq" },
   { label: "Pricing", id: "pricing" },
 ] as const
 
@@ -32,11 +31,15 @@ export const LANDING_SCROLL_SECTIONS = [
   { id: "hero", label: "Home" },
   { id: "features", label: "Why Exur" },
   { id: "how-it-works", label: "How it works" },
+  { id: "desk", label: "The desk" },
+  { id: "signal-wait", label: "Signal or wait" },
+  { id: "signals", label: "Signals" },
   { id: "about", label: "About" },
   // { id: "testimonials", label: "Reviews" },
-  { id: "get-started", label: "Get started" },
-  { id: "faq", label: "FAQ" },
+  { id: "try", label: "Try free" },
   { id: "pricing", label: "Pricing" },
+  { id: "faq", label: "FAQ" },
+  { id: "get-started", label: "Get started" },
 ] as const
 
 export const HERO = {
@@ -156,35 +159,140 @@ export const TRUSTED_LOGOS = [
   { name: "Pulse", icon: Activity },
 ] as const
 
-/** Copy is deliberately thin — the orb narration carries this section. */
+/** Copy is deliberately thin. The orb narration carries this section. */
 export const MEET_EXUR_SECTION = {
   title: "Let Exur explain.",
   subtitle: "A minute, in its own words.",
 } as const
 
 export const ARCHITECTURE_SECTION = {
-  title: "How it works",
-  subtitle: "Three steps. After that it’s just a conversation.",
+  title: "How the desk works.",
+  subtitle: "Read the tape. Ask once. Then act, or wait.",
+} as const
+
+/** Live desks vs. upcoming tokens for the signals coverage band. */
+export const SIGNALS_MARKETS_SECTION = {
+  title: "Deep data where it counts.",
+  subtitle: "BTC, ETH, and gold are live. More desks soon.",
+  soonLabel: "Soon",
+  soonHint: "More desks rolling out soon",
+  cardAction: "Get signal",
+} as const
+
+export const SIGNALS_LIVE_MARKETS = [
+  { id: "btc", symbol: "BTC", name: "Bitcoin" },
+  { id: "eth", symbol: "ETH", name: "Ethereum" },
+  { id: "xau", symbol: "XAU", name: "Gold" },
+] as const
+
+export const SIGNALS_SOON_MARKETS = [
+  { id: "sol", symbol: "SOL", name: "Solana" },
+  { id: "bnb", symbol: "BNB", name: "BNB" },
+  { id: "xrp", symbol: "XRP", name: "XRP" },
+  { id: "link", symbol: "LINK", name: "Chainlink" },
+  { id: "avax", symbol: "AVAX", name: "Avalanche" },
+  { id: "doge", symbol: "DOGE", name: "Dogecoin" },
+  { id: "arb", symbol: "ARB", name: "Arbitrum" },
+  { id: "op", symbol: "OP", name: "Optimism" },
+] as const
+
+export const DESK_SECTION = {
+  title: "From headline to answer.",
+  subtitle: "No feed to scroll. Just the story worth a question.",
+} as const
+
+export const DESK_NEWS_ITEMS = [
+  {
+    source: "Bloomberg",
+    time: "3m",
+    impact: 92,
+    tone: "up" as const,
+    headline: "Spot ETF flows turn positive after three weeks of outflows",
+  },
+  {
+    source: "CoinDesk",
+    time: "12m",
+    impact: 78,
+    tone: "down" as const,
+    headline: "Funding flips negative as leverage resets ahead of CPI",
+  },
+  {
+    source: "The Block",
+    time: "27m",
+    impact: 64,
+    tone: "up" as const,
+    headline: "Exchange reserves drop to the lowest level since March",
+  },
+] as const
+
+export const DESK_ASK = {
+  question: "Does the ETF headline matter for ETH today?",
+  answer:
+    "Yes. Inflows usually lift beta first. Watch whether funding stays negative while spot leads.",
+} as const
+
+export const SIGNAL_WAIT_SECTION = {
+  title: "Act only when it’s clear.",
+  subtitle: "Ask once. Get a setup, or a quiet no.",
+  composerPlaceholder: "Ask about a trade…",
+} as const
+
+/** Demo ticket for the landing signal card. Same shape as chat `ChatSignalCard`. */
+export const SIGNAL_WAIT_TICKET = {
+  symbol: "ETH",
+  side: "LONG" as const,
+  quantity: 0,
+  markPrice: 3242,
+  stopLoss: 3188,
+  takeProfit: 3390,
+  leverage: 5,
+  setup: "Spot leads while funding stays soft",
+  thesis: "Spot leads; funding still soft.",
+  timeHorizon: "Intraday",
+  entryReason: "Above session VWAP",
+  stopLossReason: "Below prior swing",
+  takeProfitReason: "Prior supply shelf",
+}
+
+export const SIGNAL_WAIT_TRADE_BEAT = {
+  question: "Long ETH from here?",
+} as const
+
+export const SIGNAL_WAIT_HOLD = {
+  label: "No trade",
+  question: "Short this bounce?",
+  answer: "No. Tape is mixed and leverage is still resetting.",
+  reason: "No edge worth forcing today.",
+} as const
+
+export const GUEST_TRIAL_SECTION = {
+  title: "Browse the desk. Ask a few times.",
+  subtitle:
+    "News is open without an account. Guest chat gives you three messages a week, then sign in with Google to keep going.",
+  stat: "3",
+  statLabel: "guest messages / week",
+  cta: "Open the desk",
+  note: "No wallet. No card. Just the market.",
 } as const
 
 export const HOW_IT_WORKS_STEPS = [
   {
     step: "01",
-    title: "See",
-    headline: "Where your money is",
-    desc: "Accounts, spending, and savings in one view.",
+    title: "Read",
+    headline: "Scored headlines",
+    desc: "Impact-ranked news for the market you’re on, not another endless feed.",
   },
   {
     step: "02",
     title: "Ask",
     headline: "In plain language",
-    desc: "What happened, and whether it actually affects you.",
+    desc: "Follow up on a story or the wider tape. Short answers, grounded in context.",
   },
   {
     step: "03",
-    title: "Decide",
-    headline: "What to do next",
-    desc: "If there’s a move worth making, Exur says so. If not, it says wait.",
+    title: "Act",
+    headline: "Setup or wait",
+    desc: "If there’s a move worth making, Exur shows levels. If not, it says wait.",
   },
 ] as const
 
@@ -195,7 +303,7 @@ export const TESTIMONIALS_SECTION = {
 } as const
 
 export const FAQ_SECTION = {
-  title: "Frequently asked questions",
+  title: "Frequently asked questions.",
   subtitle: "What Exur is and what it isn’t.",
 } as const
 
@@ -210,43 +318,43 @@ export const FAQ_ITEMS: FaqItem[] = [
     id: "what",
     question: "What is Exur?",
     answer:
-      "An assistant that reads your accounts and answers in plain language — grounded in your actual numbers, not generic advice.",
+      "A market desk: scored headlines on one side, an Exur co-pilot on the other, grounded in live context, not generic chat.",
   },
   {
     id: "news",
-    question: "Does it need my accounts?",
+    question: "Do I need an account to read news?",
     answer:
-      "You can start with questions. Connect accounts when you want answers grounded in your real money.",
+      "No. The news desk is open. Sign in when you want history, higher limits, and a co-pilot that remembers you.",
   },
   {
     id: "chatbot",
     question: "Is this a generic chatbot?",
     answer:
-      "No. Exur is built for personal finance with your context, not open-ended chat.",
+      "No. Exur answers about the market and headlines you’re looking at. Short takes, not endless chat.",
   },
   {
     id: "ask",
     question: "What can I ask?",
     answer:
-      "Where money is going, what to cut, whether you can afford something, and what to do next.",
+      "Whether a headline matters, what the tape is saying, levels to watch, or whether there’s a setup worth taking.",
   },
   {
     id: "account",
-    question: "Do I need an account?",
+    question: "What’s the guest trial?",
     answer:
-      "Not to look around. Sign in to save history and get a co-pilot that remembers you.",
+      "Three free chat messages a week without signing in. Browse news anytime. Google sign-in unlocks the rest.",
   },
   {
     id: "free",
     question: "How do Free and Plus differ?",
     answer:
-      "Free lets you start. Plus raises limits if you use Exur every day.",
+      "Free covers the desk with daily caps. Plus raises limits when Exur is part of your routine.",
   },
   {
     id: "profits",
     question: "Is this financial advice?",
     answer:
-      "No. Exur helps you see tradeoffs clearly. It is not a broker, and it does not promise returns.",
+      "No. Exur helps you read the tape clearly. It is not a broker, and it does not promise returns.",
   },
 ]
 
@@ -311,6 +419,8 @@ export type PricingPlan = {
   key: string
   name: string
   price: string
+  /** Struck-through compare-at price (landing only). */
+  priceWas?: string
   desc: string
   cta: string
   features: string[]
@@ -319,8 +429,8 @@ export type PricingPlan = {
 }
 
 export const PRICING_SECTION = {
-  title: "Simple plans.",
-  subtitle: "Start free. Upgrade if you hit the daily limit.",
+  title: "Pick your depth.",
+  subtitle: "Free to browse news. Plus when Exur is part of your routine.",
 } as const
 
 export const PRICING_PLANS: PricingPlan[] = [
@@ -328,28 +438,29 @@ export const PRICING_PLANS: PricingPlan[] = [
     key: "free",
     name: "Free",
     price: "Free",
-    desc: "Look around. Ask a few things. No signup.",
+    desc: "Browse news. Co-pilot on a daily cap.",
     cta: "Start free",
     features: [
-      "Ask in your own words",
-      "No account required to try",
-      "Daily ask limit",
-      "Connect accounts when you want",
+      "Scored market headlines",
+      "Guest chat, 3 messages / week",
+      "Daily co-pilot send limit",
+      "BTC, ETH, and gold desks",
     ],
   },
   {
     key: "plus",
     name: "Plus",
-    price: "$49",
-    desc: "If you use it every day, this is the room you need.",
+    price: "$19",
+    priceWas: "$49",
+    desc: "When the desk is part of every session.",
     cta: "Go Plus",
     featured: true,
-    badge: "Popular",
+    badge: "Most chosen",
     features: [
       "Everything in Free",
       "Higher daily and weekly limits",
       "Saved chat history",
-      "A co-pilot that remembers you",
+      "Deeper signal and planning context",
     ],
   },
   {
@@ -362,21 +473,21 @@ export const PRICING_PLANS: PricingPlan[] = [
     features: [
       "Everything in Plus",
       "Limits we set with you",
-      "Direct line — we set it up",
+      "Direct line. We set it up",
     ],
   },
 ]
 
 /**
- * Footer blurb. Deliberately not `SITE_DESCRIPTION` — that string is tuned for
+ * Footer blurb. Deliberately not `SITE_DESCRIPTION`. That string is tuned for
  * search results and repeats the hero subtitle almost word for word.
  */
-export const FOOTER_TAGLINE = "The financial brain behind your accounts."
+export const FOOTER_TAGLINE = "News and Exur for the market you follow."
 
-/** Closing CTA band — the page's last ask, just before the FAQ. */
+/** Closing CTA band. The page's last ask, just before the FAQ. */
 export const CTA_SECTION = {
-  title: "Stop guessing about money.",
-  subtitle: "One question is enough to tell whether this is useful to you.",
-  cta: "Start free",
-  note: "Free to start. No signup to look around.",
+  title: "Stop guessing the tape.",
+  subtitle: "One question on a live headline is enough to tell if this fits you.",
+  cta: "Open the desk",
+  note: "News is free. Guest chat included. No wallet to look around.",
 } as const

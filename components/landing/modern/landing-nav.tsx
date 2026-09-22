@@ -195,7 +195,7 @@ export function LandingNav() {
       <nav
         className={cn(
           landingInner,
-          "grid grid-cols-[1fr_auto] items-center gap-4 lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]",
+          "grid grid-cols-[1fr_auto] items-center gap-3 sm:gap-4 lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]",
           "rounded-[28px] transition-[background-color,box-shadow,backdrop-filter,padding] duration-300 ease-out",
           stuck
             ? "bg-white/72 py-2 shadow-[0_10px_40px_rgba(15,23,42,0.08),inset_0_1px_1px_rgba(255,255,255,0.9)] backdrop-blur-2xl dark:bg-background/72 dark:shadow-[0_10px_40px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.08)]"
@@ -236,7 +236,7 @@ export function LandingNav() {
                 onClick={() => scrollToSection(link.id)}
                 aria-current={isActive ? "true" : undefined}
                 className={cn(
-                  "h-8 rounded-full px-3.5 py-0 text-[13px] tracking-[-0.01em] transition-all duration-200 lg:px-4",
+                  "h-8 rounded-full px-3 py-0 text-[13px] tracking-[-0.01em] transition-all duration-200",
                   isActive ? landingNavLinkActive : landingNavLinkInactive
                 )}
               >

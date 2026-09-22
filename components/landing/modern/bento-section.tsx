@@ -12,8 +12,10 @@ import {
   HOW_IT_WORKS_STEPS,
 } from "@/lib/landing-modern-data"
 import {
+  landingContentWide,
   landingGlassSheen,
   landingGlassSurface,
+  landingAfterHeader,
   landingInner,
   landingSection,
   landingSectionBody,
@@ -27,6 +29,7 @@ function HowItWorksStepIcon({ index }: { index: number }) {
   return (
     <AnimatedSvgIcon
       replayOnHover
+      scrollTrigger
       className="relative z-10 mb-6 size-26 text-foreground/70 lg:size-32"
     >
       <Mark />
@@ -45,7 +48,7 @@ export function BentoSection() {
           />
         </ScrollReveal>
 
-        <ScrollRevealGroup className="relative mt-12 grid grid-cols-1 gap-6 md:grid-cols-3 md:gap-4 lg:mt-14">
+        <ScrollRevealGroup className={cn(landingContentWide, "relative grid grid-cols-1 gap-6 md:grid-cols-3 md:gap-4", landingAfterHeader)}>
           {HOW_IT_WORKS_STEPS.map((item, index) => (
             <article
               key={item.title}
