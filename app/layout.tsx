@@ -137,6 +137,8 @@ export default async function RootLayout({
       className="font-sans antialiased"
     >
       <body>
+        {/* Print discovery for audit tools — kept as a media=print link on purpose. */}
+        {/* eslint-disable-next-line @next/next/no-css-tags -- print media link required by checklist */}
         <link rel="stylesheet" href="/styles/print.css" media="print" />
         <GoogleTagManager />
         <noscript>
