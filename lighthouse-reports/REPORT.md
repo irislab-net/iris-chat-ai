@@ -50,18 +50,19 @@ Frontend can only partially mask this (streaming / lighter RSC). Needs deploy/CD
 
 ## Cursor fix plan (frontend)
 
-### High priority
-1. **Idle-defer GA + GTM** on chat (marketing GA already idle-gated).
-2. **Skip standalone gtag on chat when GTM is on** — avoid double analytics stack (~172KB + 115KB).
-3. **Idle-defer Google One Tap / GIS** until after first idle or ~3–4s.
-4. Keep landing chat islands lazy (already partially done).
+### Done locally (needs deploy to show in Lighthouse)
 
-### Medium
-5. Reduce marketing Style & Layout work (goals ticker pause when off-screen — done; review GSAP ScrollTriggers).
-6. Fonts: avoid shipping unused IRIS Sans faces on LTR chat when possible.
+1. **Idle + interaction defer** for GA / GTM / GIS (12s fallback; first pointer/key/scroll arms earlier).
+2. **Skip standalone gtag on chat when GTM is on**.
+3. **Decouple marketing from chat `/`** — dynamic `import()` of landing-route (no gsap in chat graph).
+4. **`AppShell` dynamic** from page; toolbar / context / intro / resizable lazy.
+5. **`DashboardSkeleton`** moved to light `intel-skeletons` module.
+6. **Sample prompts carousel** (embla + motion) extracted + `dynamic()`.
+7. **`LoginConsentDialog`** dynamic, only when consent opens.
 
-### Platform / not pure frontend
-7. Improve HTML TTFB (cache headers, region, Fluid Compute warmup, ISR already 900s on `/home`).
+### Still platform / after deploy
+8. TTFB (document 0.7–1.7s) — cache / region / Fluid Compute.
+9. Re-run Lighthouse after deploy to confirm chat TBT drop.
 
 ---
 

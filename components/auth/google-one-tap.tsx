@@ -116,18 +116,26 @@ export function GoogleOneTap({ enabled, onCredential }: GoogleOneTapProps) {
         })
     }
 
-    // Keep ~100KB GIS off the chat critical path (Lighthouse unused-JS).
+    // Keep ~100KB GIS off the chat critical path (Lighthouse unused-JS / TBT).
     const idle = window.requestIdleCallback
     let idleHandle: number | undefined
     let timeoutHandle: number | undefined
+    const events = ["pointerdown", "keydown", "touchstart"] as const
+    const onInteract = () => start()
+    for (const event of events) {
+      window.addEventListener(event, onInteract, { once: true, passive: true })
+    }
     if (typeof idle === "function") {
-      idleHandle = idle(start, { timeout: 4000 })
+      idleHandle = idle(start, { timeout: 12_000 })
     } else {
-      timeoutHandle = window.setTimeout(start, 2500)
+      timeoutHandle = window.setTimeout(start, 12_000)
     }
 
     return () => {
       cancelled = true
+      for (const event of events) {
+        window.removeEventListener(event, onInteract)
+      }
       if (idleHandle !== undefined) window.cancelIdleCallback(idleHandle)
       if (timeoutHandle !== undefined) window.clearTimeout(timeoutHandle)
     }

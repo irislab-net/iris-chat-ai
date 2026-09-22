@@ -21,7 +21,7 @@ function GoogleTagManager() {
     () => isChatGtmEnabled(pathname, window.location.hostname),
     () => false
   )
-  const idleReady = useIdleReady(enabled, 4000)
+  const idleReady = useIdleReady(enabled, 12_000)
 
   if (!enabled || !idleReady) return null
 

@@ -3,7 +3,7 @@
 import * as React from "react"
 
 import { GoogleOneTap } from "@/components/auth/google-one-tap"
-import { LoginConsentDialog } from "@/components/auth/login-consent-dialog"
+import dynamic from "next/dynamic"
 import {
   AUTH_POPUP_CLOSED_EVENT,
   AUTH_SESSION_EXPIRED_EVENT,
@@ -16,6 +16,14 @@ import {
   logoutRemote,
   startLoginWithGoogle,
 } from "@/lib/api/auth"
+
+const LoginConsentDialog = dynamic(
+  () =>
+    import("@/components/auth/login-consent-dialog").then(
+      (m) => m.LoginConsentDialog
+    ),
+  { ssr: false }
+)
 import { cancelGoogleOneTap, clearGoogleOneTapDismissed } from "@/lib/google-one-tap"
 import { setChatRegisteredUserId } from "@/lib/chat-auth-session"
 import { readChatStore } from "@/lib/chat-storage"
@@ -378,12 +386,14 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         enabled={oneTapEnabled}
         onCredential={handleOneTapCredential}
       />
-      <LoginConsentDialog
-        open={consentOpen}
-        onOpenChange={onConsentOpenChange}
-        onConfirm={confirmLegalAndLogin}
-        confirming={loginPending}
-      />
+      {consentOpen ? (
+        <LoginConsentDialog
+          open={consentOpen}
+          onOpenChange={onConsentOpenChange}
+          onConfirm={confirmLegalAndLogin}
+          confirming={loginPending}
+        />
+      ) : null}
     </AuthContext.Provider>
   )
 }

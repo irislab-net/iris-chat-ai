@@ -7,15 +7,7 @@ import { useSearchParams } from "next/navigation"
 import "@/app/styles/chat-gemini.css"
 
 import { ChatAsideSkeleton } from "@/components/app-shell/shell-skeletons"
-import { ContextMain } from "@/components/app-shell/context-main"
-import { WebsiteToolbar } from "@/components/app-shell/website-toolbar"
 import { AppViewportSync } from "@/components/app-shell/app-viewport-sync"
-import { WorkspacePageIntroSheet } from "@/components/app-shell/workspace-page-info-sheet"
-import {
-  ResizableHandle,
-  ResizablePanel,
-  ResizablePanelGroup,
-} from "@/components/ui/resizable"
 import { useIsDesktop } from "@/hooks/use-media-query"
 import { usePathname, useRouter } from "@/i18n/navigation"
 import { useAuth } from "@/components/auth/auth-provider"
@@ -46,6 +38,42 @@ const ChatAside = dynamic(
     ssr: false,
     loading: () => <ChatAsideSkeleton variant="responsive" />,
   }
+)
+
+const WebsiteToolbar = dynamic(
+  () =>
+    import("@/components/app-shell/website-toolbar").then(
+      (m) => m.WebsiteToolbar
+    ),
+  { ssr: false }
+)
+
+const ContextMain = dynamic(
+  () =>
+    import("@/components/app-shell/context-main").then((m) => m.ContextMain),
+  { ssr: false }
+)
+
+const WorkspacePageIntroSheet = dynamic(
+  () =>
+    import("@/components/app-shell/workspace-page-info-sheet").then(
+      (m) => m.WorkspacePageIntroSheet
+    ),
+  { ssr: false }
+)
+
+const ResizablePanelGroup = dynamic(
+  () =>
+    import("@/components/ui/resizable").then((m) => m.ResizablePanelGroup),
+  { ssr: false }
+)
+const ResizablePanel = dynamic(
+  () => import("@/components/ui/resizable").then((m) => m.ResizablePanel),
+  { ssr: false }
+)
+const ResizableHandle = dynamic(
+  () => import("@/components/ui/resizable").then((m) => m.ResizableHandle),
+  { ssr: false }
 )
 
 type AppShellProps = {

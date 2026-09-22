@@ -1,0 +1,227 @@
+{
+  "before": {
+    "exur": {
+      "score": 78,
+      "fcp": {
+        "v": "3.1 s",
+        "s": 0.47
+      },
+      "lcp": {
+        "v": "3.1 s",
+        "s": 0.75
+      },
+      "tbt": {
+        "v": "130 ms",
+        "s": 0.96
+      },
+      "cls": {
+        "v": "0.046",
+        "s": 0.99
+      },
+      "si": {
+        "v": "10.8 s",
+        "s": 0.07
+      },
+      "tti": {
+        "v": "11.7 s",
+        "s": 0.18
+      },
+      "ttfb": "Root document took 770 ms",
+      "unusedJs": "Est savings of 237 KiB",
+      "unusedTop": [
+        {
+          "url": "/_next/static/chunks/3bk0-8uf49b39.js",
+          "wastedKB": 74
+        },
+        {
+          "url": "/gtag/js?id=G-GLTQZ1G6RX",
+          "wastedKB": 73
+        },
+        {
+          "url": "/_next/static/chunks/3jiiop7-_n6i0.js",
+          "wastedKB": 24
+        },
+        {
+          "url": "/_next/static/chunks/0bfjfp6-eqw77.js",
+          "wastedKB": 23
+        },
+        {
+          "url": "/_next/static/chunks/1uvq4mwp_yq_s.js",
+          "wastedKB": 22
+        },
+        {
+          "url": "/_next/static/chunks/3r13r7bd-kltp.js",
+          "wastedKB": 21
+        }
+      ],
+      "thirdParty": []
+    },
+    "chat": {
+      "score": 56,
+      "fcp": {
+        "v": "5.7 s",
+        "s": 0.05
+      },
+      "lcp": {
+        "v": "12.1 s",
+        "s": 0
+      },
+      "tbt": {
+        "v": "100 ms",
+        "s": 0.98
+      },
+      "cls": {
+        "v": "0.003",
+        "s": 1
+      },
+      "si": {
+        "v": "8.8 s",
+        "s": 0.16
+      },
+      "tti": {
+        "v": "16.5 s",
+        "s": 0.05
+      },
+      "ttfb": "Root document took 1,420 ms",
+      "unusedJs": "Est savings of 400 KiB",
+      "unusedTop": [
+        {
+          "url": "/gtm.js?id=GTM-KMGLCNZD",
+          "wastedKB": 74
+        },
+        {
+          "url": "/gsi/client",
+          "wastedKB": 74
+        },
+        {
+          "url": "/_next/static/chunks/3bk0-8uf49b39.js",
+          "wastedKB": 74
+        },
+        {
+          "url": "/gtag/js?id=G-GLTQZ1G6RX",
+          "wastedKB": 71
+        },
+        {
+          "url": "/_next/static/chunks/3r13r7bd-kltp.js",
+          "wastedKB": 38
+        },
+        {
+          "url": "/_next/static/chunks/3jiiop7-_n6i0.js",
+          "wastedKB": 24
+        }
+      ],
+      "thirdParty": []
+    }
+  },
+  "after": {
+    "exur": {
+      "score": 80,
+      "fcp": {
+        "v": "2.3 s",
+        "s": 0.73
+      },
+      "lcp": {
+        "v": "2.3 s",
+        "s": 0.93
+      },
+      "tbt": {
+        "v": "390 ms",
+        "s": 0.69
+      },
+      "cls": {
+        "v": "0.045",
+        "s": 0.99
+      },
+      "si": {
+        "v": "6.4 s",
+        "s": 0.41
+      },
+      "tti": {
+        "v": "8.6 s",
+        "s": 0.37
+      },
+      "ttfb": "Root document took 690 ms",
+      "unusedJs": "Est savings of 162 KiB",
+      "unusedTop": [
+        {
+          "url": "/_next/static/chunks/3bk0-8uf49b39.js",
+          "wastedKB": 73
+        },
+        {
+          "url": "/_next/static/chunks/3jiiop7-_n6i0.js",
+          "wastedKB": 24
+        },
+        {
+          "url": "/_next/static/chunks/0bfjfp6-eqw77.js",
+          "wastedKB": 23
+        },
+        {
+          "url": "/_next/static/chunks/1uvq4mwp_yq_s.js",
+          "wastedKB": 22
+        },
+        {
+          "url": "/_next/static/chunks/3r13r7bd-kltp.js",
+          "wastedKB": 20
+        }
+      ],
+      "thirdParty": []
+    },
+    "chat": {
+      "score": 32,
+      "fcp": {
+        "v": "3.6 s",
+        "s": 0.31
+      },
+      "lcp": {
+        "v": "6.6 s",
+        "s": 0.08
+      },
+      "tbt": {
+        "v": "5,740 ms",
+        "s": 0
+      },
+      "cls": {
+        "v": "0.003",
+        "s": 1
+      },
+      "si": {
+        "v": "8.1 s",
+        "s": 0.21
+      },
+      "tti": {
+        "v": "12.7 s",
+        "s": 0.13
+      },
+      "ttfb": "Root document took 1,750 ms",
+      "unusedJs": "Est savings of 517 KiB",
+      "unusedTop": [
+        {
+          "url": "/gtag/js?id=G-GLTQZ1G6RX&cx=c&gtm=4e69l1h2",
+          "wastedKB": 119
+        },
+        {
+          "url": "/gsi/client",
+          "wastedKB": 74
+        },
+        {
+          "url": "/_next/static/chunks/3bk0-8uf49b39.js",
+          "wastedKB": 74
+        },
+        {
+          "url": "/gtag/js?id=G-GLTQZ1G6RX",
+          "wastedKB": 72
+        },
+        {
+          "url": "/gtm.js?id=GTM-KMGLCNZD",
+          "wastedKB": 71
+        },
+        {
+          "url": "/_next/static/chunks/3r13r7bd-kltp.js",
+          "wastedKB": 38
+        }
+      ],
+      "thirdParty": []
+    }
+  },
+  "comparedAt": "2026-09-22T19:51:38.628Z"
+}

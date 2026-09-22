@@ -92,4 +92,12 @@ function IntelWorkspaceSkeleton({
   )
 }
 
-export { IntelWorkspaceSkeleton, NewsBulletinSkeleton }
+function DashboardSkeleton() {
+  return (
+    <div className="flex min-h-0 w-full flex-1 flex-col">
+      <IntelWorkspaceSkeleton panel="news" />
+    </div>
+  )
+}
+
+export { IntelWorkspaceSkeleton, NewsBulletinSkeleton, DashboardSkeleton }

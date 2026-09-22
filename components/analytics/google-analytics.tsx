@@ -42,7 +42,7 @@ function GoogleAnalytics() {
   const wantsGa =
     isAnalyticsEnabled() && Boolean(hostname) && !gtmCoversChat
 
-  const idleReady = useIdleReady(wantsGa, isMarketing ? 5000 : 4000)
+  const idleReady = useIdleReady(wantsGa, isMarketing ? 8000 : 12_000)
 
   // SPA navigations — initial load is covered by gtag config / GTM.
   React.useEffect(() => {

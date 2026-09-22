@@ -3,13 +3,8 @@ import { Link } from "@/i18n/navigation"
 import dynamic from "next/dynamic"
 import { Suspense } from "react"
 
-import {
-  generateLandingMetadata,
-  MarketingLandingPage,
-} from "@/components/landing/modern/landing-route"
 import { fetchPublicHomeSnapshot } from "@/lib/api/public-home"
-import { AppShell } from "@/components/app-shell/app-shell"
-import { DashboardSkeleton } from "@/components/dashboard/dashboard"
+import { DashboardSkeleton } from "@/components/dashboard/intel-skeletons"
 import {
   SITE_DESCRIPTION,
   SITE_NAME,
@@ -24,6 +19,18 @@ import {
 } from "@/lib/site"
 import { resolveWorkspaceTab } from "@/lib/workspace-tab"
 import type { AppLocale } from "@/i18n/routing"
+
+const AppShell = dynamic(
+  () =>
+    import("@/components/app-shell/app-shell").then((m) => m.AppShell),
+  {
+    loading: () => (
+      <div className="flex h-app overflow-hidden bg-background">
+        <DashboardSkeleton />
+      </div>
+    ),
+  }
+)
 
 const HomeView = dynamic(
   () =>
@@ -67,6 +74,9 @@ export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
   if (await isMarketingRequest()) {
+    const { generateLandingMetadata } = await import(
+      "@/components/landing/modern/landing-route"
+    )
     return generateLandingMetadata({ params })
   }
   return newsMetadata
@@ -91,9 +101,13 @@ async function NewsWithSnapshot({
  * Chat desk at `/` (chat.exur.ai / local).
  * Marketing apex: proxy rewrites `/` → `/home`; this host check is a safety net
  * if the rewrite is skipped (e.g. preview hosts still hit this page).
+ * Landing is dynamically imported so gsap/landing never enter the chat graph.
  */
 export default async function RootPage({ params, searchParams }: PageProps) {
   if (await isMarketingRequest()) {
+    const { MarketingLandingPage } = await import(
+      "@/components/landing/modern/landing-route"
+    )
     return <MarketingLandingPage params={params} />
   }
 

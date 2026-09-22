@@ -3,7 +3,7 @@
 import * as React from "react"
 
 import {
-  IntelWorkspaceSkeleton,
+  DashboardSkeleton,
 } from "@/components/dashboard/intel-skeletons"
 import { MarketContextWorkspace } from "@/components/dashboard/market-context-workspace"
 import { useAuth } from "@/components/auth/auth-provider"
@@ -21,14 +21,6 @@ import {
   shouldRefreshAfterResume,
 } from "@/lib/format"
 import { cn } from "@/lib/utils"
-
-function DashboardSkeleton() {
-  return (
-    <div className="flex min-h-0 w-full flex-1 flex-col">
-      <IntelWorkspaceSkeleton panel="news" />
-    </div>
-  )
-}
 
 type DashboardProps = {
   /** Guest-safe SSR snapshot from the public API (optional). */
