@@ -35,9 +35,15 @@ type PriceColumn = {
   emphasis?: boolean
 }
 
-function PriceTile({ column }: { column: PriceColumn }) {
+function PriceTile({
+  column,
+  reasonSkeleton,
+}: {
+  column: PriceColumn
+  reasonSkeleton?: boolean
+}) {
   const Icon = column.icon
-  const hasReason = Boolean(column.reason)
+  const hasReason = Boolean(column.reason) || reasonSkeleton
 
   return (
     <div
@@ -65,7 +71,12 @@ function PriceTile({ column }: { column: PriceColumn }) {
       >
         {column.value}
       </p>
-      {column.reason ? (
+      {reasonSkeleton ? (
+        <span
+          aria-hidden
+          className="chat-skeleton-shimmer mt-2 h-3 w-[88%] rounded-sm"
+        />
+      ) : column.reason ? (
         <p className="mt-2 text-[11px] leading-snug text-muted-foreground">
           {column.reason}
         </p>
@@ -74,11 +85,21 @@ function PriceTile({ column }: { column: PriceColumn }) {
   )
 }
 
-function PriceBand({ columns }: { columns: PriceColumn[] }) {
+function PriceBand({
+  columns,
+  reasonSkeleton,
+}: {
+  columns: PriceColumn[]
+  reasonSkeleton?: boolean
+}) {
   return (
     <div className="grid grid-cols-3 gap-2 sm:gap-2.5">
       {columns.map((column) => (
-        <PriceTile key={column.label} column={column} />
+        <PriceTile
+          key={column.label}
+          column={column}
+          reasonSkeleton={reasonSkeleton}
+        />
       ))}
     </div>
   )
@@ -111,9 +132,12 @@ function MetaItem({
 function ChatSignalCard({
   ticket,
   className,
+  /** Landing demo: swap setup / reasons / thesis for shimmer bars. */
+  proseSkeleton = false,
 }: {
   ticket: PaperTradeTicket
   className?: string
+  proseSkeleton?: boolean
 }) {
   const t = useTranslations("workspace")
   const isLong = ticket.side === "LONG"
@@ -121,12 +145,14 @@ function ChatSignalCard({
   const rewardRisk = signalRewardRiskRatio(ticket)
   const hasLeverage = ticket.leverage > 0
   const hasSize = ticket.quantity > 0
-  const setup = ticket.setup.trim()
-  const thesis = ticket.thesis.trim()
+  const setup = proseSkeleton ? "" : ticket.setup.trim()
+  const thesis = proseSkeleton ? "" : ticket.thesis.trim()
   const timeHorizon = ticket.timeHorizon?.trim() ?? ""
-  const stopLossReason = ticket.stopLossReason?.trim() ?? ""
-  const entryReason = ticket.entryReason?.trim() ?? ""
-  const takeProfitReason = ticket.takeProfitReason?.trim() ?? ""
+  const stopLossReason = proseSkeleton ? "" : ticket.stopLossReason?.trim() ?? ""
+  const entryReason = proseSkeleton ? "" : ticket.entryReason?.trim() ?? ""
+  const takeProfitReason = proseSkeleton
+    ? ""
+    : ticket.takeProfitReason?.trim() ?? ""
 
   const priceColumns: PriceColumn[] = [
     {
@@ -205,7 +231,12 @@ function ChatSignalCard({
             {t("signalCardTitle")}
           </span>
         </div>
-        {setup ? (
+        {proseSkeleton ? (
+          <span
+            aria-hidden
+            className="chat-skeleton-shimmer mt-2 block h-3.5 w-[72%] max-w-md rounded-sm"
+          />
+        ) : setup ? (
           <p className="mt-2 max-w-md text-[13px] leading-relaxed text-muted-foreground">
             {setup}
           </p>
@@ -213,7 +244,7 @@ function ChatSignalCard({
       </header>
 
       <div className="space-y-4 px-4 pb-4">
-        <PriceBand columns={priceColumns} />
+        <PriceBand columns={priceColumns} reasonSkeleton={proseSkeleton} />
 
         {metaItems.length > 0 ? (
           <div className="grid grid-cols-2 gap-x-4 gap-y-3 sm:grid-cols-3">
@@ -221,7 +252,17 @@ function ChatSignalCard({
           </div>
         ) : null}
 
-        {thesis ? (
+        {proseSkeleton ? (
+          <div className="border-t border-foreground/[0.06] pt-3">
+            <p className="text-[10px] font-medium tracking-[0.08em] text-muted-foreground uppercase">
+              {t("signalCardThesisHeading")}
+            </p>
+            <div className="mt-2 space-y-2" aria-hidden>
+              <span className="chat-skeleton-shimmer block h-3.5 w-full rounded-sm" />
+              <span className="chat-skeleton-shimmer block h-3.5 w-[82%] rounded-sm" />
+            </div>
+          </div>
+        ) : thesis ? (
           <div className="border-t border-foreground/[0.06] pt-3">
             <p className="text-[10px] font-medium tracking-[0.08em] text-muted-foreground uppercase">
               {t("signalCardThesisHeading")}
