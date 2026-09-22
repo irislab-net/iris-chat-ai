@@ -182,7 +182,7 @@ const nextConfig: NextConfig = {
         ],
       },
       {
-        source: "/exur-logo-:path*",
+        source: "/exur-logo-:variant",
         headers: [
           {
             key: "Cache-Control",
