@@ -728,7 +728,7 @@ function ChatComposer({
               }
             }}
             dir={textDir}
-            className="chat-bidi min-h-6 min-w-32 flex-1 field-sizing-content resize-none rounded-none border-0 bg-transparent p-0 text-start text-[16px] leading-6 shadow-none placeholder:text-muted-foreground/35 focus-visible:border-transparent focus-visible:ring-0 dark:bg-transparent dark:placeholder:text-muted-foreground/30 sm:text-[14px] sm:leading-[1.45]"
+            className="chat-bidi min-h-6 min-w-32 flex-1 field-sizing-content resize-none rounded-none border-0 bg-transparent p-0 text-start text-base leading-6 shadow-none placeholder:text-muted-foreground/35 focus-visible:border-transparent focus-visible:ring-0 dark:bg-transparent dark:placeholder:text-muted-foreground/30 sm:text-sm sm:leading-[1.45]"
           />
         </div>
         )}

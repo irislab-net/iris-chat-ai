@@ -38,7 +38,7 @@ function UsageMeter({
             </span>
           </p>
         </div>
-        <p className="text-[12px] tabular-nums text-muted-foreground">
+        <p className="text-xs tabular-nums text-muted-foreground">
           {formatCreditCount(period.used)} used
         </p>
       </div>

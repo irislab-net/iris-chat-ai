@@ -45,7 +45,7 @@ const AboutSection = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="min-h-[28rem] w-full" aria-hidden />
+      <div className="min-h-70 w-full" aria-hidden />
     ),
   }
 )

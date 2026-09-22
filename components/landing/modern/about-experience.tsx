@@ -516,7 +516,7 @@ export function AboutExperience() {
         "relative w-full rounded-[1.75rem] bg-muted",
         // Idle stage is taller so the play cue has presence; playing keeps 16:9.
         phase === "idle"
-          ? "aspect-[4/5] sm:aspect-[5/4] lg:aspect-[16/10]"
+          ? "aspect-4/5 sm:aspect-5/4 lg:aspect-16/10"
           : "aspect-video"
       )}
     >
@@ -525,7 +525,7 @@ export function AboutExperience() {
           key="about-backdrop"
           ref={backdropRef}
           aria-hidden
-          className="fixed inset-0 z-[89] bg-background"
+          className="fixed inset-0 z-89 bg-background"
         />
       ) : null}
 
@@ -555,7 +555,7 @@ export function AboutExperience() {
             />
             <div
               aria-hidden
-              className="pointer-events-none absolute inset-0 opacity-[0.35] dark:opacity-25 [background-image:radial-gradient(rgba(37,99,235,0.14)_1px,transparent_1px)] [background-size:26px_26px] mask-[radial-gradient(ellipse_at_center,black_18%,transparent_68%)]"
+              className="pointer-events-none absolute inset-0 opacity-[0.35] dark:opacity-25 bg-[radial-gradient(rgba(37,99,235,0.14)_1px,transparent_1px)] bg-size-[26px_26px] mask-[radial-gradient(ellipse_at_center,black_18%,transparent_68%)]"
             />
             <div
               aria-hidden
@@ -588,7 +588,7 @@ export function AboutExperience() {
               aria-hidden
               className="size-1.5 shrink-0 rounded-full bg-[#2563EB] shadow-[0_0_0_3px_rgba(37,99,235,0.16)]"
             />
-            <span className="font-[family-name:var(--font-mono-modern)] text-[10px] font-medium tracking-[0.16em] text-muted-foreground uppercase">
+            <span className="font-(family-name:--font-mono-modern) text-[10px] font-medium tracking-[0.16em] text-muted-foreground uppercase">
               {t("listenLabel")}
             </span>
           </div>
@@ -618,11 +618,11 @@ export function AboutExperience() {
                 <>
                   <span
                     aria-hidden
-                    className="about-play-ring pointer-events-none absolute size-[5.25rem] rounded-full border border-[#2563EB]/22 sm:size-[5.75rem]"
+                    className="about-play-ring pointer-events-none absolute size-21 rounded-full border border-[#2563EB]/22 sm:size-23"
                   />
                   <span
                     aria-hidden
-                    className="about-play-ring-delayed pointer-events-none absolute size-[6.5rem] rounded-full border border-[#2563EB]/12 sm:size-[7rem]"
+                    className="about-play-ring-delayed pointer-events-none absolute size-26 rounded-full border border-[#2563EB]/12 sm:size-28"
                   />
                 </>
               ) : null}
@@ -666,7 +666,7 @@ export function AboutExperience() {
                 "pointer-events-none absolute inset-x-0 bottom-0 z-20 px-5 sm:px-10",
                 expanded
                   ? "pt-28 pb-[max(5.75rem,calc(env(safe-area-inset-bottom)+4rem))]"
-                  : "pt-20 pb-16 sm:pb-[4.5rem]"
+                  : "pt-20 pb-16 sm:pb-18"
               )}
             >
               <div className="mx-auto max-w-2xl">

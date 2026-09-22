@@ -42,10 +42,10 @@ export const landingSectionBody =
   "relative isolate overflow-hidden rounded-[2.5rem] py-16 sm:py-20 lg:py-24"
 
 /** White space between sections inside main (min 50px). */
-export const landingMainStack = "flex flex-col gap-[50px] sm:gap-20 lg:gap-24"
+export const landingMainStack = "flex flex-col gap-12.5 sm:gap-20 lg:gap-24"
 
 /** White space between nav, hero, main, and footer (min 50px). */
-export const landingPageStack = "flex flex-col gap-[50px] sm:gap-16 lg:gap-20"
+export const landingPageStack = "flex flex-col gap-12.5 sm:gap-16 lg:gap-20"
 
 /** Extra space between hero card and first section (on top of page stack gap). */
 export const landingHeroToMain = "mt-32 sm:mt-32 lg:mt-40"

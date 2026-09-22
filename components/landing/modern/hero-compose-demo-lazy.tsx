@@ -12,7 +12,7 @@ const HeroComposeDemo = dynamic(
     ssr: false,
     loading: () => (
       <div
-        className="mx-auto h-[220px] w-full max-w-xl rounded-2xl bg-foreground/[0.04]"
+        className="mx-auto h-55 w-full max-w-xl rounded-2xl bg-foreground/4"
         aria-hidden
       />
     ),

@@ -131,7 +131,7 @@ function ChatAssistantTurn({
             "min-w-0 cursor-text select-text chat-bidi [&::selection]:bg-primary/20",
             isGemini
               ? chatMobileAssistantClass
-              : "text-[14px] leading-[1.6] text-foreground/92 sm:text-[13px]"
+              : "text-sm leading-[1.6] text-foreground/92 sm:text-[13px]"
           )}
           data-chat-assistant-bubble=""
         >
@@ -190,7 +190,7 @@ function ChatSystemNote({
         )}
       >
         <div className="h-px min-w-0 flex-1 bg-border/70" aria-hidden />
-        <p className="shrink-0 text-[12px] leading-5 text-muted-foreground">
+        <p className="shrink-0 text-xs leading-5 text-muted-foreground">
           {children}
         </p>
         <div className="h-px min-w-0 flex-1 bg-border/70" aria-hidden />

@@ -1,0 +1,28 @@
+diff --git a/dist/cjs/lucide-react.js b/dist/cjs/lucide-react.js
+index 4024c6578dc0f96a1d298cf8685579994932a982..0f201ec07f9485346d70fef9de261e6e35127580 100644
+--- a/dist/cjs/lucide-react.js
++++ b/dist/cjs/lucide-react.js
+@@ -10,7 +10,8 @@
+ var react = require('react');
+ 
+ const defaultAttributes = {
+-  xmlns: "http://www.w3.org/2000/svg",
++  // Omit xmlns — HTML5 SVG doesn't need the XML namespace URI, and scanners
++  // false-flag  as an HTTPS downgrade.
+   width: 24,
+   height: 24,
+   viewBox: "0 0 24 24",
+diff --git a/dist/esm/shared/src/build/defaultAttributes.mjs b/dist/esm/shared/src/build/defaultAttributes.mjs
+index 440515682ab46d3965e9faa8e290643af9f5b62f..9b887839004dd34cc4502f29072cab17dd68fa04 100644
+--- a/dist/esm/shared/src/build/defaultAttributes.mjs
++++ b/dist/esm/shared/src/build/defaultAttributes.mjs
+@@ -6,7 +6,8 @@
+  */
+ 
+ const defaultAttributes = {
+-  xmlns: "http://www.w3.org/2000/svg",
++  // Omit xmlns — HTML5 SVG doesn't need the XML namespace URI, and scanners
++  // false-flag  as an HTTPS downgrade.
+   width: 24,
+   height: 24,
+   viewBox: "0 0 24 24",

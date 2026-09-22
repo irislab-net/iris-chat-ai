@@ -6,7 +6,7 @@ function ChatGeminiMenuIcon({ className }: { className?: string }) {
       viewBox="0 0 24 24"
       fill="none"
       aria-hidden
-      className={cn("size-[22px] shrink-0", className)}
+      className={cn("size-5.5 shrink-0", className)}
     >
       <path
         d="M5.5 9.25h13"

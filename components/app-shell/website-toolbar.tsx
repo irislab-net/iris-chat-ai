@@ -255,11 +255,11 @@ function WebsiteToolbar({
                       planName={accountPlanName}
                     />
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-[14px] font-medium leading-tight tracking-[-0.01em]">
+                      <p className="truncate text-sm font-medium leading-tight tracking-[-0.01em]">
                         {userAccountLabel(user)}
                       </p>
                       {accountSubline ? (
-                        <p className="truncate text-[12px] leading-snug text-muted-foreground">
+                        <p className="truncate text-xs leading-snug text-muted-foreground">
                           {accountSubline}
                         </p>
                       ) : null}

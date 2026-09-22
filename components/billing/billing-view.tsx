@@ -92,7 +92,7 @@ function InvoiceRow({
   return (
     <li className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-3 gap-y-1 border-b border-border/50 px-4 py-3.5 last:border-b-0 sm:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_auto_auto] sm:items-center sm:px-5">
       <div className="min-w-0">
-        <p className="truncate text-[14px] font-medium text-foreground">
+        <p className="truncate text-sm font-medium text-foreground">
           {formatInvoicePlanLabel(invoice.plan_id)}
         </p>
         <p className="mt-0.5 truncate font-mono text-[11px] text-muted-foreground">
@@ -115,7 +115,7 @@ function InvoiceRow({
           {statusLabel(status)}
         </Badge>
       </div>
-      <p className="col-span-2 text-[12px] text-muted-foreground sm:hidden">
+      <p className="col-span-2 text-xs text-muted-foreground sm:hidden">
         {when}
       </p>
     </li>

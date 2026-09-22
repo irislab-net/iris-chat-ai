@@ -35,7 +35,7 @@ function ChatReplyChip({
           Reply to {target.role}
           {target.createdAt ? ` · ${formatChatTime(target.createdAt)}` : ""}
         </p>
-        <p className="mt-0.5 line-clamp-2 text-[12px] leading-snug text-foreground/85">
+        <p className="mt-0.5 line-clamp-2 text-xs leading-snug text-foreground/85">
           {target.excerpt}
         </p>
       </div>

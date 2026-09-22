@@ -69,7 +69,7 @@ export function DeskSurfacesSection() {
           </ScrollRevealGroup>
 
           <ScrollReveal className={landingAfterHeader}>
-            <p className="mb-4 text-center font-[family-name:var(--font-mono-modern)] text-[9px] tracking-[0.2em] text-muted-foreground/60 uppercase">
+            <p className="mb-4 text-center font-(family-name:--font-mono-modern) text-[9px] tracking-[0.2em] text-muted-foreground/60 uppercase">
               {t("onTheDesk")}
             </p>
             <ul className="flex flex-col gap-2.5">
@@ -81,7 +81,7 @@ export function DeskSurfacesSection() {
                   <span className="text-foreground/55">
                     {t(`news.${item.id}.headline`)}
                   </span>
-                  <span className="mt-1 block font-[family-name:var(--font-mono-modern)] text-[9px] tracking-[0.14em] text-muted-foreground/45 uppercase">
+                  <span className="mt-1 block font-(family-name:--font-mono-modern) text-[9px] tracking-[0.14em] text-muted-foreground/45 uppercase">
                     {t(`news.${item.id}.source`)} · {t(`news.${item.id}.time`)}
                   </span>
                 </li>

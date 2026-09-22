@@ -124,10 +124,10 @@ function LoginConsentBrand() {
         priority
       />
       <div className="min-w-0">
-        <p className="text-[14px] font-semibold leading-none tracking-tight text-foreground">
+        <p className="text-sm font-semibold leading-none tracking-tight text-foreground">
           Exur
         </p>
-        <p className="mt-1 text-[12px] leading-none text-muted-foreground">
+        <p className="mt-1 text-xs leading-none text-muted-foreground">
           Secure sign-in with Google
         </p>
       </div>
@@ -154,7 +154,7 @@ function LoginConsentActions({
         type="button"
         size="lg"
         className={cn(
-          "h-11 w-full gap-2 rounded-full px-5 text-[14px] font-medium shadow-none disabled:opacity-45",
+          "h-11 w-full gap-2 rounded-full px-5 text-sm font-medium shadow-none disabled:opacity-45",
           mobile && chatMobileSheetPrimaryButtonClass
         )}
         disabled={!canContinue}
@@ -268,7 +268,7 @@ function LoginConsentDialog({
           <div className="flex flex-col gap-4 px-5 pt-5 pb-1">
             <LoginConsentBrand />
             <DialogHeader className="gap-1 space-y-0 text-left">
-              <DialogTitle className="text-[18px] font-semibold tracking-tight">
+              <DialogTitle className="text-lg font-semibold tracking-tight">
                 {TITLE}
               </DialogTitle>
               <DialogDescription className="text-pretty text-[13px] leading-relaxed text-muted-foreground">
@@ -301,7 +301,7 @@ function LoginConsentDialog({
         <div className={cn(chatMobileSheetBodyClass, "gap-4 pb-2")}>
           <LoginConsentBrand />
           <SheetHeader className={chatMobileSheetHeaderClass}>
-            <SheetTitle className={cn(chatMobileSheetTitleClass, "text-[18px]")}>
+            <SheetTitle className={cn(chatMobileSheetTitleClass, "text-lg")}>
               {TITLE}
             </SheetTitle>
             <SheetDescription

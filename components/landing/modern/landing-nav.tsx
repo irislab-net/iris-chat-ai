@@ -212,7 +212,7 @@ function LandingSheetAccount({ onDone }: { onDone?: () => void }) {
         <p className="truncate text-[15px] font-medium leading-tight text-foreground">
           {userAccountLabel(user)}
         </p>
-        <p className="truncate text-[12px] text-muted-foreground">
+        <p className="truncate text-xs text-muted-foreground">
           {userAccountSubline(user) ?? displayPlanName(user.tier)}
         </p>
       </div>

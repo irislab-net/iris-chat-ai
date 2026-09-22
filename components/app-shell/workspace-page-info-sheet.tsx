@@ -82,7 +82,7 @@ function WorkspacePageIntroSheet({
           <SheetDescription
             className={cn(
               chatMobileSheetDescriptionClass,
-              "mx-auto mt-2.5 max-w-72 text-pretty text-[14px] leading-relaxed text-muted-foreground/90"
+              "mx-auto mt-2.5 max-w-72 text-pretty text-sm leading-relaxed text-muted-foreground/90"
             )}
           >
             {info.summary}
@@ -91,7 +91,7 @@ function WorkspacePageIntroSheet({
 
         <div className="space-y-3 px-5 pb-1 pt-5">
           <div className="rounded-[1.25rem] bg-muted/45 px-4 py-3.5 ring-1 ring-border/40">
-            <p className="text-[12px] font-medium tracking-[0.02em] text-muted-foreground">
+            <p className="text-xs font-medium tracking-[0.02em] text-muted-foreground">
               Best for
             </p>
             <p className="mt-1 text-[15px] leading-snug text-foreground/90">

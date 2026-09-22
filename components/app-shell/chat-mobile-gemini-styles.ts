@@ -22,7 +22,7 @@ const chatMobileHeaderCircleClass =
   `rounded-full ${chatMobileGlassSurfaceClass} text-foreground transition-[transform,background-color,box-shadow] active:scale-[0.96]`
 
 const chatMobileHeaderButtonClass =
-  `size-10 shrink-0 ${chatMobileHeaderCircleClass} ${chatMobileHeaderShadowClass} ${chatMobileHeaderShadowHoverClass} [&_svg:not([class*='size-'])]:size-[22px] [&_svg]:stroke-[1.75]`
+  `size-10 shrink-0 ${chatMobileHeaderCircleClass} ${chatMobileHeaderShadowClass} ${chatMobileHeaderShadowHoverClass} [&_svg:not([class*='size-'])]:size-5.5 [&_svg]:stroke-[1.75]`
 
 const chatMobileHeaderNewChatClass = chatMobileHeaderButtonClass
 
@@ -103,7 +103,7 @@ const chatMobileComposerTrailingClass =
   "[grid-area:trailing] flex shrink-0 items-center justify-end"
 
 const chatMobileComposerTextareaClass =
-  "chat-bidi w-full min-w-0 flex-1 field-sizing-content resize-none rounded-none border-0 bg-transparent px-2.5 text-[16px] leading-6 break-words text-foreground shadow-none placeholder:text-muted-foreground/35 focus-visible:border-transparent focus-visible:ring-0 dark:bg-transparent dark:placeholder:text-muted-foreground/30"
+  "chat-bidi w-full min-w-0 flex-1 field-sizing-content resize-none rounded-none border-0 bg-transparent px-2.5 text-base leading-6 break-words text-foreground shadow-none placeholder:text-muted-foreground/35 focus-visible:border-transparent focus-visible:ring-0 dark:bg-transparent dark:placeholder:text-muted-foreground/30"
 
 const chatMobileComposerTextareaCompactClass =
   "min-h-8 max-h-8 w-full py-1 overflow-hidden leading-8 [field-sizing:fixed]"
@@ -128,7 +128,7 @@ const chatDesktopComposerIconButtonClass =
   `${chatDesktopComposerControlClass} size-9 rounded-xl text-muted-foreground hover:text-foreground sm:size-8 [&_svg]:stroke-[1.75]`
 
 const chatDesktopComposerEffortButtonClass =
-  `${chatDesktopComposerControlClass} h-9 gap-1 rounded-xl px-2.5 text-[12px] font-medium text-muted-foreground hover:text-foreground sm:h-8 [&_svg]:opacity-70`
+  `${chatDesktopComposerControlClass} h-9 gap-1 rounded-xl px-2.5 text-xs font-medium text-muted-foreground hover:text-foreground sm:h-8 [&_svg]:opacity-70`
 
 const chatDesktopComposerSendClass =
   "size-10 rounded-full border-0 bg-primary text-primary-foreground shadow-[0_2px_8px_-2px_color-mix(in_oklch,var(--foreground)_18%,transparent)] transition-[transform,background-color,box-shadow] hover:bg-primary/90 active:scale-[0.96] sm:size-9"
@@ -138,7 +138,7 @@ const chatDesktopComposerSendDisabledClass =
 
 /** Empty-state sample prompt cards — liquid glass, Apple-like inset padding. */
 const chatSamplePromptButtonClass =
-  `flex h-full w-full min-w-0 items-start justify-start rounded-[20px] border-0 px-[18px] py-4 text-left transition-[background-color,box-shadow,transform] active:scale-[0.985] sm:rounded-[22px] sm:px-5 sm:py-[18px] lg:rounded-[16px] lg:px-3.5 lg:py-3 ${chatMobileGlassSurfaceClass} ${chatMobileHeaderShadowClass} ${chatMobileHeaderShadowHoverClass}`
+  `flex h-full w-full min-w-0 items-start justify-start rounded-[20px] border-0 px-4.5 py-4 text-left transition-[background-color,box-shadow,transform] active:scale-[0.985] sm:rounded-[22px] sm:px-5 sm:py-4.5 lg:rounded-[16px] lg:px-3.5 lg:py-3 ${chatMobileGlassSurfaceClass} ${chatMobileHeaderShadowClass} ${chatMobileHeaderShadowHoverClass}`
 
 const chatSamplePromptIconClass =
   "mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-[14px] bg-white/50 shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_82%,transparent),0_1px_2px_color-mix(in_oklch,var(--foreground)_4%,transparent)] backdrop-blur-md backdrop-saturate-150 text-muted-foreground dark:bg-white/[0.1] sm:size-9 sm:rounded-[15px] lg:size-7 lg:rounded-[12px]"
@@ -185,7 +185,7 @@ const chatMobileComposerToolChipClass =
   `${chatComposerToolChipClass} h-7 gap-1.5 rounded-full px-2.5 py-0 text-[13px] tracking-[-0.01em]`
 
 const chatDesktopComposerToolChipClass =
-  `${chatComposerToolChipClass} mt-0.5 h-6 gap-1 rounded-lg px-2 py-0 text-[12px]`
+  `${chatComposerToolChipClass} mt-0.5 h-6 gap-1 rounded-lg px-2 py-0 text-xs`
 
 const chatMobileComposerToolChipCloseClass =
   `${chatComposerToolChipCloseClass} size-4`
@@ -208,7 +208,7 @@ const chatMobileDrawerSectionLabelClass =
   "px-3 pb-2 pt-5 text-[13px] font-normal text-muted-foreground first:pt-2"
 
 const chatMobileDrawerUpgradeClass =
-  `h-9 shrink-0 rounded-full px-5 text-[14px] font-medium ${chatMobilePrimaryButtonClass}`
+  `h-9 shrink-0 rounded-full px-5 text-sm font-medium ${chatMobilePrimaryButtonClass}`
 
 const chatMobileDrawerFooterWrapClass = "relative z-10 shrink-0"
 
@@ -271,10 +271,10 @@ const chatMobileToolsMenuItemClass =
   "flex w-full flex-col items-start gap-0.5 rounded-xl px-2.5 py-2.5 text-left transition-colors hover:bg-foreground/[0.05] data-[highlighted]:bg-foreground/[0.05] data-[selected=true]:bg-foreground/[0.07]"
 
 const chatMobileToolsMenuItemTitleClass =
-  "text-[14px] font-medium tracking-[-0.01em] text-foreground"
+  "text-sm font-medium tracking-[-0.01em] text-foreground"
 
 const chatMobileToolsMenuItemDescClass =
-  "text-[12px] leading-snug text-muted-foreground"
+  "text-xs leading-snug text-muted-foreground"
 
 /** Trade signal card — liquid glass, no border. */
 const chatSignalCardClass =

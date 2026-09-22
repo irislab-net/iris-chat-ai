@@ -118,7 +118,7 @@ function ChatRenameDialog({
         >
           <div className="flex flex-col gap-4 px-5 pt-5 pb-1">
             <DialogHeader className="gap-1 space-y-0 text-left">
-              <DialogTitle className="text-[18px] font-semibold tracking-tight">
+              <DialogTitle className="text-lg font-semibold tracking-tight">
                 {t("renameChat")}
               </DialogTitle>
             </DialogHeader>
@@ -173,7 +173,7 @@ function ChatRenameDialog({
               value={draft}
               onValueChange={setDraft}
               onSubmit={handleSubmit}
-              inputClassName="h-12 rounded-2xl border-border/60 bg-card/75 px-4 text-[16px]"
+              inputClassName="h-12 rounded-2xl border-border/60 bg-card/75 px-4 text-base"
             />
           ) : null}
         </div>

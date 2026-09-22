@@ -27,7 +27,7 @@ function ChatMessageQuote({
         {quote.role}
         {quote.created_at ? ` · ${formatChatTime(quote.created_at)}` : ""}
       </p>
-      <p className="mt-1 line-clamp-2 text-[12px] leading-snug text-foreground/80">
+      <p className="mt-1 line-clamp-2 text-xs leading-snug text-foreground/80">
         {quote.excerpt}
       </p>
     </button>

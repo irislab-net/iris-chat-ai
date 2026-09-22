@@ -66,7 +66,7 @@ function PriceTile({
           "mt-1.5 font-semibold tabular-nums tracking-tight text-foreground",
           column.emphasis
             ? "text-[1.15rem] leading-none sm:text-[1.25rem]"
-            : "text-[15px] leading-none sm:text-[16px]"
+            : "text-[15px] leading-none sm:text-base"
         )}
       >
         {column.value}
@@ -218,7 +218,7 @@ function ChatSignalCard({
       <header className="px-4 pt-4 pb-3">
         <div className="flex items-center justify-between gap-3">
           <div className="flex min-w-0 flex-wrap items-center gap-2">
-            <h3 className="text-[18px] font-semibold tracking-[-0.03em] text-foreground">
+            <h3 className="text-lg font-semibold tracking-[-0.03em] text-foreground">
               {ticket.symbol}
             </h3>
             <span className={chatSignalCardChipClass}>
@@ -253,7 +253,7 @@ function ChatSignalCard({
         ) : null}
 
         {proseSkeleton ? (
-          <div className="border-t border-foreground/[0.06] pt-3">
+          <div className="border-t border-foreground/6 pt-3">
             <p className="text-[10px] font-medium tracking-[0.08em] text-muted-foreground uppercase">
               {t("signalCardThesisHeading")}
             </p>
@@ -263,7 +263,7 @@ function ChatSignalCard({
             </div>
           </div>
         ) : thesis ? (
-          <div className="border-t border-foreground/[0.06] pt-3">
+          <div className="border-t border-foreground/6 pt-3">
             <p className="text-[10px] font-medium tracking-[0.08em] text-muted-foreground uppercase">
               {t("signalCardThesisHeading")}
             </p>

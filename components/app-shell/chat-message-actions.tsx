@@ -99,7 +99,7 @@ function ChatMessageActions({
           disabled={disabled}
           onClick={onReply}
         >
-          <ReplyIcon className={isGemini ? "size-[18px]" : undefined} />
+          <ReplyIcon className={isGemini ? "size-4.5" : undefined} />
         </Button>
       ) : null}
       <Button
@@ -113,9 +113,9 @@ function ChatMessageActions({
         onClick={() => void onCopy()}
       >
         {copied ? (
-          <CheckIcon className={cn("text-emerald-600", isGemini && "size-[18px]")} />
+          <CheckIcon className={cn("text-emerald-600", isGemini && "size-4.5")} />
         ) : (
-          <CopyIcon className={isGemini ? "size-[18px]" : undefined} />
+          <CopyIcon className={isGemini ? "size-4.5" : undefined} />
         )}
       </Button>
       <Button
@@ -131,7 +131,7 @@ function ChatMessageActions({
       >
         <ThumbsUpIcon
           className={cn(
-            isGemini && "size-[18px]",
+            isGemini && "size-4.5",
             feedback === "up" ? "text-foreground" : undefined
           )}
           fill={feedback === "up" ? "currentColor" : "none"}
@@ -150,7 +150,7 @@ function ChatMessageActions({
       >
         <ThumbsDownIcon
           className={cn(
-            isGemini && "size-[18px]",
+            isGemini && "size-4.5",
             feedback === "down" ? "text-foreground" : undefined
           )}
           fill={feedback === "down" ? "currentColor" : "none"}

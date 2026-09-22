@@ -133,7 +133,7 @@ function SignalResult({
             "dark:[&_.grid.grid-cols-3_p.tabular-nums]:[text-shadow:0_1px_0_rgba(255,255,255,0.12),0_0_32px_rgba(37,99,235,0.45)]",
             "[&_.grid.grid-cols-3>div]:px-2 [&_.grid.grid-cols-3>div]:py-3 sm:[&_.grid.grid-cols-3>div]:px-3 sm:[&_.grid.grid-cols-3>div]:py-4",
             "[&_.grid.grid-cols-3]:gap-2 sm:[&_.grid.grid-cols-3]:gap-3",
-            "[&_.grid.grid-cols-2_p.tabular-nums]:text-[14px] [&_.grid.grid-cols-2_p.tabular-nums]:font-semibold sm:[&_.grid.grid-cols-2_p.tabular-nums]:text-base",
+            "[&_.grid.grid-cols-2_p.tabular-nums]:text-sm [&_.grid.grid-cols-2_p.tabular-nums]:font-semibold sm:[&_.grid.grid-cols-2_p.tabular-nums]:text-base",
             "[&_article]:rounded-[1.25rem] [&_article]:bg-white/70 [&_article]:shadow-none sm:[&_article]:rounded-[1.35rem] dark:[&_article]:bg-white/8"
           )}
         >
@@ -252,7 +252,7 @@ export function SignalWaitSection() {
             "relative isolate overflow-visible",
             landingCardRadius,
             // Fixed height only — never grows/shrinks with beats.
-            "flex h-[38rem] flex-col bg-white/40 text-foreground shadow-[0_28px_80px_rgba(15,23,42,0.07)] backdrop-blur-2xl sm:h-[40rem] dark:bg-white/6 dark:shadow-[0_28px_80px_rgba(0,0,0,0.45)] lg:h-[42rem]"
+            "flex h-95 flex-col bg-white/40 text-foreground shadow-[0_28px_80px_rgba(15,23,42,0.07)] backdrop-blur-2xl sm:h-100 dark:bg-white/6 dark:shadow-[0_28px_80px_rgba(0,0,0,0.45)] lg:h-105"
           )}
         >
           <HeroLiquidGlassBg tone="blue" />
