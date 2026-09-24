@@ -36,6 +36,7 @@
 	},
 	// Public Google OAuth web client ID (One Tap / GIS). Client secret lives on the API.
 	"vars": {
+		"NEXT_PUBLIC_GA_MEASUREMENT_ID": "G-6B72W49JQE",
 		"NEXT_PUBLIC_GOOGLE_CLIENT_ID": "50876205060-0j6l4c2b286q18e0vluvp7eadqcs15vq.apps.googleusercontent.com"
 	},
 	// Workers Logs + Traces (dashboard Observability). Redeploy required after change.
