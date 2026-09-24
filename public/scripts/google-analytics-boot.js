@@ -6,8 +6,5 @@ window.__exurBootGa = function (id) {
   }
   window.gtag = gtag
   gtag("js", new Date())
-  gtag("config", id, {
-    send_page_view: true,
-    anonymize_ip: true,
-  })
+  gtag("config", id, { anonymize_ip: true, send_page_view: true })
 }

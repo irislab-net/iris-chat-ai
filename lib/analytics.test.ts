@@ -28,7 +28,7 @@ describe("analytics", () => {
   })
 
   it("uses the production measurement id fallback", () => {
-    expect(GA_MEASUREMENT_ID).toBe("G-GLTQZ1G6RX")
+    expect(GA_MEASUREMENT_ID).toBe("G-6B72W49JQE")
   })
 
   it("no-ops trackEvent when gtag is unavailable", () => {

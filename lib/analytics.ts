@@ -3,7 +3,7 @@ import type { BillingCycle, PlanKey } from "@/lib/billing/catalog"
 import { isMarketingHost } from "@/lib/hosts"
 
 export const GA_MEASUREMENT_ID =
-  process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID ?? "G-GLTQZ1G6RX"
+  process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID ?? "G-6B72W49JQE"
 
 export const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID ?? "GTM-KMGLCNZD"
 
