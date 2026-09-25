@@ -229,6 +229,18 @@ const nextConfig: NextConfig = {
         ],
       },
       {
+        // Favicons / PWA icons — short browser cache so Exur mark updates are not stuck
+        // behind a long-lived Iris-era entry. CF/edge still revalidates via etag.
+        source:
+          "/:file(favicon.ico|favicon-32.png|favicon-48.png|apple-touch-icon.png|icon-192.png|icon-512.png|icon-512-maskable.png|organization-logo.png)",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=86400, must-revalidate",
+          },
+        ],
+      },
+      {
         source: "/:locale(ar|fa|nl|pt|es|ru|tr)/home",
         headers: [
           {

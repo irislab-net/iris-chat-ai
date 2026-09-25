@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next"
 
+import { brandIconUrl } from "@/lib/brand-icons"
 import { SITE_DESCRIPTION, SITE_NAME, SITE_SHORT_NAME } from "@/lib/seo"
 
 export default function manifest(): MetadataRoute.Manifest {
@@ -16,31 +17,31 @@ export default function manifest(): MetadataRoute.Manifest {
     lang: "en",
     icons: [
       {
-        src: "/favicon-48.png",
+        src: brandIconUrl("/favicon-48.png"),
         sizes: "48x48",
         type: "image/png",
         purpose: "any",
       },
       {
-        src: "/apple-touch-icon.png",
+        src: brandIconUrl("/apple-touch-icon.png"),
         sizes: "180x180",
         type: "image/png",
         purpose: "any",
       },
       {
-        src: "/icon-192.png",
+        src: brandIconUrl("/icon-192.png"),
         sizes: "192x192",
         type: "image/png",
         purpose: "any",
       },
       {
-        src: "/icon-512.png",
+        src: brandIconUrl("/icon-512.png"),
         sizes: "512x512",
         type: "image/png",
         purpose: "any",
       },
       {
-        src: "/icon-512-maskable.png",
+        src: brandIconUrl("/icon-512-maskable.png"),
         sizes: "512x512",
         type: "image/png",
         purpose: "maskable",
