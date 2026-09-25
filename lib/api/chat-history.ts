@@ -21,6 +21,8 @@ export type ConversationHistoryItem = {
   reply_to?: MessageQuote
   /** Persisted client tools (e.g. show_trade_signal) — source of truth for signal cards. */
   client_actions?: ChatToolCallResult[]
+  /** Joined model reasoning when the server stores it on history rows. */
+  reasoning?: string
 }
 
 export type ConversationHistoryResult = {
@@ -88,6 +90,10 @@ function normalizeHistoryItem(raw: unknown): ConversationHistoryItem | null {
     item.reply_to && typeof item.reply_to === "object"
       ? (item.reply_to as MessageQuote)
       : undefined
+  const reasoning =
+    typeof item.reasoning === "string" && item.reasoning.trim()
+      ? item.reasoning.trim()
+      : undefined
 
   return {
     id: item.id,
@@ -98,6 +104,7 @@ function normalizeHistoryItem(raw: unknown): ConversationHistoryItem | null {
     ...(replyToId != null ? { reply_to_id: replyToId } : {}),
     ...(replyTo ? { reply_to: replyTo } : {}),
     ...(clientActions ? { client_actions: clientActions } : {}),
+    ...(reasoning ? { reasoning } : {}),
   }
 }
 
@@ -241,6 +248,7 @@ export function historyItemsToUiMessages(
         createdAt: item.created_at,
         ...(item.reply_to_id != null ? { replyToId: item.reply_to_id } : {}),
         ...(item.reply_to ? { replyTo: item.reply_to } : {}),
+        ...(item.reasoning ? { reasoning: item.reasoning } : {}),
         ...(clientResult?.paperTicket
           ? { paperTicket: clientResult.paperTicket }
           : {}),

@@ -805,6 +805,13 @@
         "concluding": "Forming a conclusion…"
       }
     },
+    "thinkingTrace": {
+      "aria": "Model thinking steps",
+      "live": "Thinking…",
+      "done": "Thought process",
+      "waiting": "Working on your request…",
+      "usingTool": "Using {tool}…"
+    },
     "loadingExur": "Loading Exur",
     "errors": {
       "recovery": "Something went wrong while receiving the response.",

@@ -1,4 +1,5 @@
 import type { CoPilotHistoryMessage, MessageQuote } from "@/lib/api/types"
+import type { ChatThinkingStep } from "@/lib/api/chat-sse"
 import type { PaperTradeTicket } from "@/lib/iris-paper-trade/types"
 import type { ChatClientActionSummary } from "@/lib/chat/client-tools"
 
@@ -27,6 +28,10 @@ export type ChatUiMessage = {
   retryUserMessage?: string
   /** Optional follow-up chips returned by IRIS metadata. */
   suggestedPrompts?: string[]
+  /** Joined model reasoning (SSE / history) — shown in a collapsed details block. */
+  reasoning?: string
+  /** Live + final chronological thinking steps (reasoning passes + MCP tools). */
+  thinkingTrace?: ChatThinkingStep[]
   /** User quality signal for assistant replies. */
   feedback?: "up" | "down"
 }

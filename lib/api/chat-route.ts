@@ -29,6 +29,8 @@ async function proxyChatRequest(
   if (authorization) headers.set("authorization", authorization)
   const contentType = req.headers.get("content-type")
   if (contentType) headers.set("content-type", contentType)
+  const accept = req.headers.get("accept")
+  if (accept) headers.set("accept", accept)
   const cookie = req.headers.get("cookie")
   if (cookie) headers.set("cookie", cookie)
 
@@ -61,6 +63,13 @@ async function proxyChatRequest(
   responseHeaders.set("x-iris-chat-proxy", origin)
   const upstreamType = res.headers.get("content-type")
   if (upstreamType) responseHeaders.set("content-type", upstreamType)
+  const accel = res.headers.get("x-accel-buffering")
+  if (accel) responseHeaders.set("x-accel-buffering", accel)
+  // Keep SSE responses unbuffered through CDNs / reverse proxies.
+  if (upstreamType?.includes("text/event-stream")) {
+    responseHeaders.set("cache-control", "no-cache, no-transform")
+    responseHeaders.set("x-accel-buffering", "no")
+  }
 
   return new Response(res.body, {
     status: res.status,

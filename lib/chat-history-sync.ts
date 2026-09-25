@@ -49,6 +49,8 @@ function overlayLocalFields(
     content: preferLocalContent ? local.content : serverMessage.content,
     feedback: local.feedback ?? serverMessage.feedback,
     suggestedPrompts: local.suggestedPrompts ?? serverMessage.suggestedPrompts,
+    reasoning: serverMessage.reasoning ?? local.reasoning,
+    thinkingTrace: local.thinkingTrace ?? serverMessage.thinkingTrace,
     // Server history `client_actions` is the source of truth for signal cards.
     paperTicket: serverMessage.paperTicket ?? local.paperTicket,
     noTradeReason: serverMessage.noTradeReason ?? local.noTradeReason,

@@ -280,6 +280,8 @@ export type TradeSignalItem = {
 export type ChatMessageResponse = {
   session_id?: string
   output_text?: string
+  /** Joined hidden reasoning across model passes (SSE `done` / history). */
+  reasoning?: string
   tool_calls?: ChatToolCallResult[]
   client_actions?: ChatToolCallResult[]
   suggested_actions?: string[]
@@ -330,6 +332,7 @@ export type CoPilotToolCall = {
 export type CoPilotChatJsonResponse = {
   message?: string
   output_text?: string
+  reasoning?: string
   conversation_id?: string
   session_id?: string
   usage?: CoPilotUsage

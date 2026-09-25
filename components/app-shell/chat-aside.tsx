@@ -64,6 +64,7 @@ import {
   applySessionListToStore,
   patchChatSession,
 } from "@/lib/api/chat-sessions"
+import { appendThinkingStep } from "@/lib/api/chat-sse"
 import { fetchCoPilotUsage, streamCoPilotChat } from "@/lib/api/co-pilot"
 import {
   consumePlanUpgradePendingRefresh,
@@ -409,28 +410,6 @@ function ChatAside({
   const [pendingAssistantId, setPendingAssistantId] = React.useState<string | null>(
     null
   )
-  /** Thinking-mode wait UI — hold the reply until the progress bar finishes. */
-  const [thinkingGate, setThinkingGate] = React.useState<{
-    assistantId: string
-    ready: boolean
-  } | null>(null)
-  const thinkingDoneRef = React.useRef<(() => void) | null>(null)
-  const clearThinkingGate = React.useCallback(() => {
-    const resolve = thinkingDoneRef.current
-    thinkingDoneRef.current = null
-    setThinkingGate(null)
-    resolve?.()
-  }, [])
-  const waitForThinkingReveal = React.useCallback(() => {
-    return new Promise<void>((resolve) => {
-      thinkingDoneRef.current = resolve
-    })
-  }, [])
-  const handleThinkingComplete = React.useCallback(() => {
-    const resolve = thinkingDoneRef.current
-    thinkingDoneRef.current = null
-    resolve?.()
-  }, [])
   const bottomRef = React.useRef<HTMLDivElement>(null)
   const scrollViewportRef = React.useRef<HTMLDivElement>(null)
   const stickToBottomRef = React.useRef(true)
@@ -794,7 +773,6 @@ function ChatAside({
       abortRef.current = null
       setSending(false)
       setPendingAssistantId(null)
-      clearThinkingGate()
       setHistoryOpen(false)
       setDraft("")
       setReplyTarget(null)
@@ -808,7 +786,7 @@ function ChatAside({
 
     window.addEventListener(SESSION_RESET_EVENT, onSessionReset)
     return () => window.removeEventListener(SESSION_RESET_EVENT, onSessionReset)
-  }, [clearThinkingGate])
+  }, [])
 
   /** State updaters may run during render in React 19; useEffectEvent cannot. */
   function setMessagesAndPersist(
@@ -837,7 +815,6 @@ function ChatAside({
     abortRef.current = null
     setSending(false)
     setPendingAssistantId(null)
-    clearThinkingGate()
     closeHistoryPanelIfNeeded()
 
     if (hasUserMessages(messages)) {
@@ -862,7 +839,6 @@ function ChatAside({
     abortRef.current?.abort()
     abortRef.current = null
     setPendingAssistantId(null)
-    clearThinkingGate()
 
     if (hasUserMessages(messages) && id !== conversationId) {
       persistCurrent({
@@ -1038,12 +1014,6 @@ function ChatAside({
 
     setSending(true)
     setPendingAssistantId(assistantId)
-    const useThinkingUi = effort === "high"
-    if (useThinkingUi) {
-      setThinkingGate({ assistantId, ready: false })
-    } else {
-      clearThinkingGate()
-    }
     window.clearTimeout(persistTimer.current)
 
     const controller = new AbortController()
@@ -1051,7 +1021,6 @@ function ChatAside({
     let partialContent = ""
 
     if (shouldRunPaperTradePipeline(userMessage, historySnapshot)) {
-      clearThinkingGate()
       try {
         const { runIrisPaperTradeRequest } = await import(
           "@/lib/iris-paper-trade/run"
@@ -1161,7 +1130,6 @@ function ChatAside({
         )
       } finally {
         if (abortRef.current === controller) abortRef.current = null
-        clearThinkingGate()
         setPendingAssistantId(null)
         setSending(false)
       }
@@ -1184,6 +1152,36 @@ function ChatAside({
             if (meta.conversation_id && meta.conversation_id !== activeId) {
               setConversationId(meta.conversation_id)
             }
+          },
+          onReasoning: (text) => {
+            setMessages((prev) =>
+              prev.map((m) =>
+                m.id === assistantId
+                  ? {
+                      ...m,
+                      thinkingTrace: appendThinkingStep(m.thinkingTrace, {
+                        type: "reasoning",
+                        text,
+                      }),
+                    }
+                  : m
+              )
+            )
+          },
+          onTool: (tool) => {
+            setMessages((prev) =>
+              prev.map((m) =>
+                m.id === assistantId
+                  ? {
+                      ...m,
+                      thinkingTrace: appendThinkingStep(m.thinkingTrace, {
+                        type: "tool",
+                        name: tool,
+                      }),
+                    }
+                  : m
+              )
+            )
           },
         },
         coPilotSessionRefresh
@@ -1288,6 +1286,11 @@ function ChatAside({
                 noTradeReason: extras?.noTradeReason,
                 retryUserMessage: undefined,
                 suggestedPrompts,
+                ...(result.reasoning
+                  ? { reasoning: result.reasoning }
+                  : m.reasoning
+                    ? { reasoning: m.reasoning }
+                    : {}),
               }
               return stampUiMessageFromRef(updated, result.assistantMessage)
             }),
@@ -1350,15 +1353,6 @@ function ChatAside({
         finalizeSuccess(displayText, result.suggestedPrompts, turnExtras)
       }
 
-      if (useThinkingUi) {
-        setThinkingGate({ assistantId, ready: true })
-        await waitForThinkingReveal()
-        if (controller.signal.aborted) {
-          setMessages((prev) => removeEmptyAssistantTurn(prev, assistantId))
-          return
-        }
-      }
-
       // Skip typewriter when stream already painted content via onDelta,
       // when there is no prose (signal / no-trade card only), or when a signal
       // card will replace the typed block (avoids flash-then-hide of setup text).
@@ -1409,7 +1403,6 @@ function ChatAside({
         completeCoPilotTurn()
       }
     } catch (error) {
-      clearThinkingGate()
       if (isAbortError(error)) {
         setMessages((prev) => removeEmptyAssistantTurn(prev, assistantId))
         return
@@ -1457,7 +1450,6 @@ function ChatAside({
       )
     } finally {
         if (abortRef.current === controller) abortRef.current = null
-        clearThinkingGate()
         setPendingAssistantId(null)
         setSending(false)
       }
@@ -1475,7 +1467,6 @@ function ChatAside({
     abortRef.current = null
     setSending(false)
     setPendingAssistantId(null)
-    clearThinkingGate()
 
     const truncatedMessages = messages.slice(0, index)
     const truncatedHistory = truncateHistoryBeforeMessageIndex(
@@ -2376,15 +2367,8 @@ function ChatAside({
                   <ChatAssistantTurn
                     messageId={message.id}
                     waiting={isWaiting}
-                    thinking={
-                      thinkingGate?.assistantId === message.id && isWaiting
-                    }
-                    thinkingReady={
-                      thinkingGate?.assistantId === message.id
-                        ? thinkingGate.ready
-                        : false
-                    }
-                    onThinkingComplete={handleThinkingComplete}
+                    thinkingTrace={message.thinkingTrace}
+                    reasoning={message.reasoning}
                     streaming={isStreamingAssistant && Boolean(message.content)}
                     compact={sameRole}
                     content={showSignalCard ? undefined : message.content}

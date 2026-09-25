@@ -160,6 +160,10 @@ export function adaptChatMessageResponse(
   ].filter((call) => call.execution_target !== "server")
   const toolCalls = clientTargeted.map(chatToolToLegacy)
   const message = (data.output_text || "").trim()
+  const reasoning =
+    typeof data.reasoning === "string" && data.reasoning.trim()
+      ? data.reasoning.trim()
+      : undefined
   const suggestedFromField = parseSuggestedActionList(data.suggested_actions)
   const suggestedPrompts =
     suggestedFromField.length > 0
@@ -168,6 +172,7 @@ export function adaptChatMessageResponse(
   return {
     message,
     output_text: data.output_text,
+    ...(reasoning ? { reasoning } : {}),
     conversation_id: data.session_id,
     session_id: data.session_id,
     usage: usageFromCreditBalance(data.credit_balance) ?? usageFromTrial(data.trial),

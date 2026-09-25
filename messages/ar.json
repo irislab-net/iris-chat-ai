@@ -805,6 +805,13 @@
         "concluding": "يصوغ الخلاصة…"
       }
     },
+    "thinkingTrace": {
+      "aria": "خطوات تفكير النموذج",
+      "live": "يفكر…",
+      "done": "عملية التفكير",
+      "waiting": "يعمل على طلبك…",
+      "usingTool": "يستخدم {tool}…"
+    },
     "loadingExur": "جاري تحميل Exur",
     "errors": {
       "recovery": "حدث خطأ أثناء استلام الرد.",

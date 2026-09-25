@@ -521,6 +521,13 @@
         "concluding": "Een conclusie vormen…"
       }
     },
+    "thinkingTrace": {
+      "aria": "Denkstappen van het model",
+      "live": "Nadenken…",
+      "done": "Denkproces",
+      "waiting": "Bezig met je verzoek…",
+      "usingTool": "{tool} gebruiken…"
+    },
     "loadingExur": "Exur laden",
     "errors": {
       "recovery": "Er ging iets mis bij het ontvangen van het antwoord.",

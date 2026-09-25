@@ -6,8 +6,9 @@ import dynamic from "next/dynamic"
 import { ExurLogo } from "@/components/brand/exur-logo"
 import { ChatMessageQuote } from "@/components/app-shell/chat-message-quote"
 import { chatUserBubbleClass } from "@/components/app-shell/chat-turn-actions"
-import { ChatThinkingProgress } from "@/components/app-shell/chat-thinking-progress"
+import { ChatThinkingTrace } from "@/components/app-shell/chat-thinking-trace"
 import { TypingDots } from "@/components/app-shell/chat-typing"
+import type { ChatThinkingStep } from "@/lib/api/chat-sse"
 import type { MessageQuote } from "@/lib/api/types"
 import { parseServerMessageId } from "@/lib/chat-message-id"
 import { formatChatTime } from "@/lib/chat-storage"
@@ -88,9 +89,8 @@ function ChatAssistantTurn({
   createdAt,
   replyTo,
   waiting,
-  thinking,
-  thinkingReady,
-  onThinkingComplete,
+  thinkingTrace,
+  reasoning,
   streaming,
   children,
   actions,
@@ -104,11 +104,9 @@ function ChatAssistantTurn({
   createdAt?: string
   replyTo?: MessageQuote
   waiting?: boolean
-  /** Thinking effort — progress + rotating status instead of dots. */
-  thinking?: boolean
-  /** Model reply is ready; finish the thinking bar then reveal. */
-  thinkingReady?: boolean
-  onThinkingComplete?: () => void
+  /** Live / persisted SSE thinking steps (reasoning + MCP tools). */
+  thinkingTrace?: ChatThinkingStep[]
+  reasoning?: string
   /** While typewriter/stream paints, skip markdown parse (cheap plain text). */
   streaming?: boolean
   compact?: boolean
@@ -122,8 +120,14 @@ function ChatAssistantTurn({
   const isGemini = variant === "gemini"
   const serverId = messageId ? parseServerMessageId(messageId) : null
   const anchorId = serverId != null ? `msg-${serverId}` : undefined
+  const hasThinking =
+    Boolean(thinkingTrace?.length) || Boolean(reasoning?.trim())
   const hasBody =
-    waiting || Boolean(content?.trim()) || Boolean(children) || Boolean(replyTo)
+    waiting ||
+    hasThinking ||
+    Boolean(content?.trim()) ||
+    Boolean(children) ||
+    Boolean(replyTo)
   const timestamp = createdAt ? (
     <p className="min-w-0 truncate text-[10px] leading-none text-muted-foreground/80">
       {formatChatTime(createdAt, locale)}
@@ -146,16 +150,17 @@ function ChatAssistantTurn({
           )}
           data-chat-assistant-bubble=""
         >
-          {waiting ? (
-            thinking ? (
-              <ChatThinkingProgress
-                ready={Boolean(thinkingReady)}
-                onComplete={onThinkingComplete ?? (() => {})}
-              />
-            ) : (
-              <TypingDots className="text-muted-foreground/70" />
-            )
-          ) : (
+          {waiting && !hasThinking ? (
+            <TypingDots className="text-muted-foreground/70" />
+          ) : null}
+          {hasThinking || (waiting && hasThinking) ? (
+            <ChatThinkingTrace
+              steps={thinkingTrace}
+              reasoning={reasoning}
+              live={Boolean(waiting)}
+            />
+          ) : null}
+          {waiting && hasThinking ? null : (
             <>
               {replyTo ? <ChatMessageQuote quote={replyTo} /> : null}
               {content?.trim() ? (

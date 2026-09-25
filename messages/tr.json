@@ -521,6 +521,13 @@
         "concluding": "Sonuca varıyor…"
       }
     },
+    "thinkingTrace": {
+      "aria": "Model düşünme adımları",
+      "live": "Düşünüyor…",
+      "done": "Düşünme süreci",
+      "waiting": "İsteğin üzerinde çalışıyor…",
+      "usingTool": "{tool} kullanılıyor…"
+    },
     "loadingExur": "Exur yükleniyor",
     "errors": {
       "recovery": "Yanıt alınırken bir sorun oluştu.",

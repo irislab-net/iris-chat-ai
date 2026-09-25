@@ -521,6 +521,13 @@
         "concluding": "Formando uma conclusão…"
       }
     },
+    "thinkingTrace": {
+      "aria": "Passos de raciocínio do modelo",
+      "live": "Pensando…",
+      "done": "Processo de pensamento",
+      "waiting": "Trabalhando no seu pedido…",
+      "usingTool": "Usando {tool}…"
+    },
     "loadingExur": "Carregando Exur",
     "errors": {
       "recovery": "Algo deu errado ao receber a resposta.",
