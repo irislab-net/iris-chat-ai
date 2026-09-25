@@ -72,11 +72,11 @@ const chatMobileThreadBottomSpacerClass =
 
 /** Soft scroll fades — content dissolves under absolute header + composer. */
 const chatMobileThreadScrollMaskClass =
-  "[&_[data-slot=scroll-area-viewport]]:mask-[linear-gradient(to_bottom,transparent_0%,rgba(0,0,0,0.35)_4%,rgba(0,0,0,0.75)_8%,black_14%,black_72%,rgba(0,0,0,0.75)_84%,rgba(0,0,0,0.35)_93%,transparent_100%)] [&_[data-slot=scroll-area-viewport]]:[-webkit-mask-image:linear-gradient(to_bottom,transparent_0%,rgba(0,0,0,0.35)_4%,rgba(0,0,0,0.75)_8%,black_14%,black_72%,rgba(0,0,0,0.75)_84%,rgba(0,0,0,0.35)_93%,transparent_100%)]"
+  "[&_[data-slot=scroll-area-viewport]]:mask-[linear-gradient(to_bottom,transparent_0%,rgba(0,0,0,0.45)_3%,rgba(0,0,0,0.85)_7%,black_12%,black_78%,rgba(0,0,0,0.8)_88%,rgba(0,0,0,0.4)_95%,transparent_100%)] [&_[data-slot=scroll-area-viewport]]:[-webkit-mask-image:linear-gradient(to_bottom,transparent_0%,rgba(0,0,0,0.45)_3%,rgba(0,0,0,0.85)_7%,black_12%,black_78%,rgba(0,0,0,0.8)_88%,rgba(0,0,0,0.4)_95%,transparent_100%)]"
 
 /** Bottom blur + fade overlay — strip behind floating composer. */
 const chatMobileThreadBottomFadeClass =
-  "pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-28 bg-gradient-to-t from-background from-0% via-background/60 via-45% to-transparent to-100% backdrop-blur-sm backdrop-saturate-150 [mask-image:linear-gradient(to_top,black_0%,black_32%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_top,black_0%,black_32%,transparent_100%)] supports-[backdrop-filter]:from-background/90 supports-[backdrop-filter]:via-background/25 supports-[backdrop-filter]:to-transparent"
+  "pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-28 bg-gradient-to-t from-background/80 from-0% via-background/35 via-40% to-transparent to-100% backdrop-blur-[6px] backdrop-saturate-150 [mask-image:linear-gradient(to_top,black_0%,black_28%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_top,black_0%,black_28%,transparent_100%)] supports-[backdrop-filter]:from-background/55 supports-[backdrop-filter]:via-background/15 supports-[backdrop-filter]:to-transparent"
 
 /**
  * Header overlay shell — floats over the thread (Gemini absolute chrome).
@@ -84,9 +84,12 @@ const chatMobileThreadBottomFadeClass =
  */
 const chatMobileHeaderShellClass = "absolute inset-x-0 top-0 z-20"
 
-/** Single scrim behind mobile chat header — fades content scrolling underneath. */
+/**
+ * Soft header fade — mostly transparent so thread text ghosts under the
+ * glass controls (Gemini), solid only near the very top edge.
+ */
 const chatMobileHeaderScrimClass =
-  "pointer-events-none absolute inset-x-0 top-0 -bottom-16 z-0 bg-gradient-to-b from-background from-0% via-background/75 via-40% to-transparent to-100% backdrop-blur-sm backdrop-saturate-150 [mask-image:linear-gradient(to_bottom,black_0%,black_42%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_bottom,black_0%,black_42%,transparent_100%)] supports-[backdrop-filter]:from-background/95 supports-[backdrop-filter]:via-background/40 supports-[backdrop-filter]:to-transparent dark:via-background/70"
+  "pointer-events-none absolute inset-x-0 top-0 -bottom-20 z-0 bg-gradient-to-b from-background/70 from-0% via-background/25 via-35% to-transparent to-100% backdrop-blur-md backdrop-saturate-150 [mask-image:linear-gradient(to_bottom,black_0%,black_30%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_bottom,black_0%,black_30%,transparent_100%)] supports-[backdrop-filter]:from-background/45 supports-[backdrop-filter]:via-background/12 supports-[backdrop-filter]:to-transparent dark:from-background/75 dark:via-background/30 dark:supports-[backdrop-filter]:from-background/55 dark:supports-[backdrop-filter]:via-background/18"
 
 /** Floating composer dock — absolute over the thread bottom. */
 const chatMobileComposerDockClass =
