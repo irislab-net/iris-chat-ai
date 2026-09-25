@@ -41,8 +41,9 @@ const chatMobileHeaderModelPrimaryClass = "text-foreground"
 
 const chatMobileHeaderModelSecondaryClass = "text-muted-foreground"
 
+/** Empty hero — vertical padding clears absolute header + composer chrome. */
 const chatMobileEmptyHeroWrapClass =
-  "flex min-h-full flex-col items-center justify-center px-6 pb-6 pt-4"
+  "flex min-h-full flex-col items-center justify-center px-6 pt-[max(5.5rem,calc(var(--app-safe-top)+4.25rem))] pb-[calc(6rem+env(safe-area-inset-bottom,0px))]"
 
 const chatMobileEmptyHeroContentClass =
   "chat-empty-hero flex flex-col items-center gap-5 text-center"
@@ -55,23 +56,41 @@ const chatMobileEmptyHeroTitleClass =
 
 const chatMobileThreadClass = "px-6 pt-5 pb-2"
 
+/**
+ * Top clearance spacer — matches absolute header height (safe-area + 40px
+ * controls) so the first turn clears the overlay fade.
+ */
+const chatMobileThreadTopSpacerClass =
+  "app-mobile-safe-header pointer-events-none h-10 shrink-0 pb-8"
+
 /** Extra breathing room below the header fade for the first turn. */
-const chatMobileThreadFirstTurnClass = "mt-8 sm:mt-10"
+const chatMobileThreadFirstTurnClass = "mt-2 sm:mt-3"
 
-/** Scroll tail room so the last turn clears the composer. */
-const chatMobileThreadBottomSpacerClass = "h-20 shrink-0"
+/** Scroll tail room so the last turn clears the floating composer. */
+const chatMobileThreadBottomSpacerClass =
+  "h-[calc(5.75rem+env(safe-area-inset-bottom,0px))] shrink-0"
 
-/** Soft bottom fade — only the last slice of scroll content. */
+/** Soft scroll fades — content dissolves under absolute header + composer. */
 const chatMobileThreadScrollMaskClass =
-  "[&_[data-slot=scroll-area-viewport]]:mask-[linear-gradient(to_bottom,black_0%,black_82%,rgba(0,0,0,0.75)_90%,rgba(0,0,0,0.35)_96%,transparent_100%)] [&_[data-slot=scroll-area-viewport]]:[-webkit-mask-image:linear-gradient(to_bottom,black_0%,black_82%,rgba(0,0,0,0.75)_90%,rgba(0,0,0,0.35)_96%,transparent_100%)]"
+  "[&_[data-slot=scroll-area-viewport]]:mask-[linear-gradient(to_bottom,transparent_0%,rgba(0,0,0,0.35)_4%,rgba(0,0,0,0.75)_8%,black_14%,black_72%,rgba(0,0,0,0.75)_84%,rgba(0,0,0,0.35)_93%,transparent_100%)] [&_[data-slot=scroll-area-viewport]]:[-webkit-mask-image:linear-gradient(to_bottom,transparent_0%,rgba(0,0,0,0.35)_4%,rgba(0,0,0,0.75)_8%,black_14%,black_72%,rgba(0,0,0,0.75)_84%,rgba(0,0,0,0.35)_93%,transparent_100%)]"
 
-/** Bottom blur + fade overlay — short strip above composer. */
+/** Bottom blur + fade overlay — strip behind floating composer. */
 const chatMobileThreadBottomFadeClass =
-  "pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-14 bg-gradient-to-t from-background from-0% via-background/60 via-55% to-transparent to-100% backdrop-blur-sm backdrop-saturate-150 [mask-image:linear-gradient(to_top,black_0%,black_28%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_top,black_0%,black_28%,transparent_100%)] supports-[backdrop-filter]:from-background/90 supports-[backdrop-filter]:via-background/25 supports-[backdrop-filter]:to-transparent"
+  "pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-28 bg-gradient-to-t from-background from-0% via-background/60 via-45% to-transparent to-100% backdrop-blur-sm backdrop-saturate-150 [mask-image:linear-gradient(to_top,black_0%,black_32%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_top,black_0%,black_32%,transparent_100%)] supports-[backdrop-filter]:from-background/90 supports-[backdrop-filter]:via-background/25 supports-[backdrop-filter]:to-transparent"
 
-/** Single scrim behind mobile chat header — solid at bottom, transparent at top. */
+/**
+ * Header overlay shell — floats over the thread (Gemini absolute chrome).
+ * Scrim is sized to the header box and extends below for the fade.
+ */
+const chatMobileHeaderShellClass = "absolute inset-x-0 top-0 z-20"
+
+/** Single scrim behind mobile chat header — fades content scrolling underneath. */
 const chatMobileHeaderScrimClass =
-  "pointer-events-none absolute inset-x-0 top-0 -bottom-2 z-0 bg-gradient-to-b from-transparent from-20% via-background/90 via-[72%] to-background to-100% dark:via-background/85"
+  "pointer-events-none absolute inset-x-0 top-0 -bottom-16 z-0 bg-gradient-to-b from-background from-0% via-background/75 via-40% to-transparent to-100% backdrop-blur-sm backdrop-saturate-150 [mask-image:linear-gradient(to_bottom,black_0%,black_42%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_bottom,black_0%,black_42%,transparent_100%)] supports-[backdrop-filter]:from-background/95 supports-[backdrop-filter]:via-background/40 supports-[backdrop-filter]:to-transparent dark:via-background/70"
+
+/** Floating composer dock — absolute over the thread bottom. */
+const chatMobileComposerDockClass =
+  "absolute inset-x-0 bottom-0 z-20 mx-auto w-full bg-transparent"
 
 const chatMobileUserBubbleClass =
   "w-full rounded-[24px] border border-transparent bg-secondary px-4 py-3 text-[15px] leading-[1.55] text-secondary-foreground dark:border-border/50"
@@ -197,7 +216,7 @@ const chatMobileComposerSendClass =
   "size-10 rounded-full border-0 bg-primary text-primary-foreground shadow-[0_2px_8px_-2px_color-mix(in_oklch,var(--foreground)_18%,transparent)] transition-[transform,background-color,box-shadow] hover:bg-primary/90 active:scale-[0.96] active:shadow-[0_1px_4px_-1px_color-mix(in_oklch,var(--foreground)_14%,transparent)]"
 
 const chatMobileScrollDownClass =
-  "absolute bottom-3 left-1/2 z-10 size-9 -translate-x-1/2 rounded-full border-0 bg-white/78 text-foreground backdrop-blur-2xl backdrop-saturate-[180%] supports-[backdrop-filter]:bg-white/62 shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_75%,transparent),0_2px_10px_-3px_color-mix(in_oklch,var(--foreground)_7%,transparent),0_8px_24px_-10px_color-mix(in_oklch,var(--foreground)_8%,transparent)] hover:bg-white/88 dark:bg-white/[0.08] dark:supports-[backdrop-filter]:bg-white/[0.06] dark:hover:bg-white/[0.12]"
+  "absolute bottom-[calc(5.5rem+env(safe-area-inset-bottom,0px))] left-1/2 z-10 size-9 -translate-x-1/2 rounded-full border-0 bg-white/78 text-foreground backdrop-blur-2xl backdrop-saturate-[180%] supports-[backdrop-filter]:bg-white/62 shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_75%,transparent),0_2px_10px_-3px_color-mix(in_oklch,var(--foreground)_7%,transparent),0_8px_24px_-10px_color-mix(in_oklch,var(--foreground)_8%,transparent)] hover:bg-white/88 dark:bg-white/[0.08] dark:supports-[backdrop-filter]:bg-white/[0.06] dark:hover:bg-white/[0.12]"
 
 const chatMobileDrawerSurfaceClass = "bg-background text-foreground"
 
@@ -361,7 +380,9 @@ export {
   chatMobileDrawerSurfaceClass,
   chatMobileDrawerUpgradeClass,
   chatMobileHeaderButtonClass,
+  chatMobileHeaderShellClass,
   chatMobileHeaderScrimClass,
+  chatMobileComposerDockClass,
   chatMobileHeaderModelClass,
   chatMobileHeaderNewChatClass,
   chatMobileHeaderAvatarButtonClass,
@@ -415,6 +436,7 @@ export {
   chatLoginConsentDialogClass,
   chatMobileThreadClass,
   chatMobileThreadFirstTurnClass,
+  chatMobileThreadTopSpacerClass,
   chatMobileThreadBottomSpacerClass,
   chatMobileThreadBottomFadeClass,
   chatMobileThreadScrollMaskClass,

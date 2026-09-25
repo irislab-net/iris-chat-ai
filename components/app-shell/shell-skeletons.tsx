@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl"
 import { ChatMobileGeminiBackground } from "@/components/app-shell/chat-mobile-gemini-background"
 import {
   chatEmptyHeroPromptsClass,
+  chatMobileComposerDockClass,
   chatMobileComposerLeadingClass,
   chatMobileComposerPillClass,
   chatMobileComposerPillCompactClass,
@@ -17,6 +18,7 @@ import {
   chatMobileHeaderButtonClass,
   chatMobileHeaderModelClass,
   chatMobileHeaderScrimClass,
+  chatMobileHeaderShellClass,
   chatSamplePromptButtonClass,
   chatSamplePromptCarouselDotsClass,
   chatSamplePromptIconClass,
@@ -75,7 +77,7 @@ function ChatComposerSkeleton({ className }: { className?: string }) {
 
 function ChatMobileHeaderSkeleton() {
   return (
-    <div className="relative shrink-0">
+    <div className={chatMobileHeaderShellClass}>
       <div aria-hidden className={chatMobileHeaderScrimClass} />
       <header className="app-mobile-safe-header relative z-1 flex items-center justify-between gap-2 bg-transparent px-6 pb-2">
         <div className="flex min-w-0 items-center gap-3">
@@ -165,7 +167,7 @@ function ChatMobileComposerSkeleton() {
     <form
       data-slot="chat-composer"
       aria-hidden
-      className={cn("relative mx-auto w-full max-w-3xl shrink-0", chatMobileComposerShellClass)}
+      className={cn("relative mx-auto w-full max-w-3xl", chatMobileComposerShellClass)}
     >
       <div
         className={cn(
@@ -210,10 +212,12 @@ function ChatMobileAsideSkeleton({ className }: { className?: string }) {
     >
       <ChatMobileGeminiBackground visible intro />
       <div className="relative z-10 flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-transparent text-foreground chat-mobile-gemini-empty">
-        <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
-          <ChatMobileHeaderSkeleton />
+        <ChatMobileHeaderSkeleton />
+        <div className="relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
           <ChatMobileEmptyHeroSkeleton />
-          <ChatMobileComposerSkeleton />
+          <div className={cn(chatMobileComposerDockClass, "max-w-3xl")}>
+            <ChatMobileComposerSkeleton />
+          </div>
         </div>
       </div>
     </aside>
