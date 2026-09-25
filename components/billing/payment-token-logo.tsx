@@ -47,7 +47,7 @@ export const PAYMENT_NETWORK_LOGO =
 
 const discShell =
   "relative flex shrink-0 items-center justify-center overflow-hidden rounded-full " +
-  "bg-white p-[12%] " +
+  "bg-white " +
   "shadow-[0_0_0_1px_color-mix(in_oklch,var(--foreground)_8%,transparent)] " +
   "dark:bg-white dark:shadow-[0_0_0_1px_color-mix(in_oklch,var(--foreground)_12%,transparent)]"
 
@@ -67,7 +67,7 @@ export function PaymentTokenLogo({
 
   return (
     <span
-      className={cn(discShell, TOKEN_CLASS[size], className)}
+      className={cn(discShell, "p-[7%]", TOKEN_CLASS[size], className)}
       aria-hidden
     >
       {!failed ? (
@@ -106,6 +106,7 @@ export function PaymentNetworkLogo({
     <span
       className={cn(
         discShell,
+        "p-px",
         NETWORK_CLASS[size],
         "ring-2 ring-background dark:ring-background",
         className
@@ -121,7 +122,7 @@ export function PaymentNetworkLogo({
           loading="lazy"
           referrerPolicy="no-referrer"
           onError={() => setFailed(true)}
-          className="size-full rounded-full object-contain"
+          className="size-full rounded-full object-cover"
         />
       ) : (
         <span className="text-[7px] font-bold text-muted-foreground">ETH</span>

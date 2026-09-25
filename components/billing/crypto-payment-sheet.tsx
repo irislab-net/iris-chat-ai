@@ -37,6 +37,7 @@ import {
   invoiceMsRemaining,
   paymentCurrencyForInvoice,
 } from "@/lib/billing/invoice-session"
+import { PAYMENT_NETWORK } from "@/lib/billing/payment-options"
 import {
   landingCta,
   landingGlassSheen,
@@ -60,25 +61,19 @@ type CryptoPaymentSheetProps = {
   onPaid: () => void | Promise<void>
 }
 
-function PaymentQuoteSkeleton() {
+function PaymentQuoteSkeleton({ compact }: { compact?: boolean }) {
   return (
-    <div className="space-y-4">
+    <div className={cn("flex flex-col", compact ? "gap-3" : "gap-4")}>
       <BillingGlassPanel>
-        <div className="px-3.5 py-3">
+        <div className={cn(compact ? "px-3 py-2.5" : "px-3.5 py-3")}>
           <Skeleton className="h-3 w-20 rounded-full" />
           <Skeleton className="mt-1.5 h-7 w-40 rounded-md" />
-          <Skeleton className="mt-1.5 h-3.5 w-28 rounded-full" />
         </div>
       </BillingGlassPanel>
-      <BillingGlassPanel>
-        <div className="flex justify-center border-b border-white/55 px-4 py-5 dark:border-white/10">
-          <Skeleton className="size-40 rounded-xl" />
-        </div>
-        <div className="space-y-3 p-4">
-          <Skeleton className="h-14 w-full rounded-xl" />
-          <Skeleton className="h-10 w-full rounded-xl" />
-        </div>
-      </BillingGlassPanel>
+      <div className="flex flex-col items-center gap-2.5">
+        <Skeleton className={cn("rounded-lg", compact ? "size-32" : "size-40")} />
+        <Skeleton className="h-8 w-full rounded-lg" />
+      </div>
     </div>
   )
 }
@@ -103,13 +98,18 @@ function PaymentWatcherBanner({
           <p className={cn("font-medium", compact ? "text-xs" : "text-sm")}>
             {t("watchingTitle")}
           </p>
-          {!compact ? (
-            <p className="mt-1 text-xs text-muted-foreground">{t("watchingBody")}</p>
-          ) : null}
+          <p
+            className={cn(
+              "text-muted-foreground",
+              compact ? "mt-0.5 text-[11px] leading-snug" : "mt-1 text-xs"
+            )}
+          >
+            {t("footerGuide", { network: PAYMENT_NETWORK.name })}
+          </p>
           <div
             className={cn(
               "flex items-center justify-between gap-2 text-muted-foreground",
-              compact ? "mt-1 text-[11px]" : "mt-2 h-4 text-xs"
+              compact ? "mt-1.5 text-[11px]" : "mt-2 h-4 text-xs"
             )}
           >
             <span className="inline-flex min-w-0 items-center gap-1">
@@ -308,6 +308,7 @@ export function CryptoPaymentSheet({
   const isAwaitingPayment =
     Boolean(current?.status === "pending" && payAddress && !expired)
   const sheetSide = isDesktop ? "right" : "bottom"
+  const isMobileSheet = isDesktop === false
 
   return (
     <Sheet open={open} onOpenChange={handleOpenChange}>
@@ -316,27 +317,31 @@ export function CryptoPaymentSheet({
         showCloseButton={isDesktop === true}
         className={cn(
           "landing-modern flex w-full flex-col gap-0 border-0 bg-transparent p-0 shadow-none",
-          isDesktop ? "sm:max-w-95" : "max-h-[92dvh]"
+          isDesktop
+            ? "sm:max-w-95"
+            : "data-[side=bottom]:inset-x-0 data-[side=bottom]:bottom-0 data-[side=bottom]:h-[100dvh] data-[side=bottom]:max-h-[100dvh]"
         )}
       >
         <div
           className={cn(
             landingGlassSurface,
-            "flex h-full min-h-0 flex-col overflow-hidden bg-white/72 dark:bg-white/10",
+            "flex h-full min-h-0 flex-col overflow-hidden bg-white/78 dark:bg-white/10",
             isDesktop
               ? "rounded-none rounded-s-[1.75rem]"
-              : "mx-2 mb-[max(0.5rem,env(safe-area-inset-bottom,0px))] rounded-[1.75rem]"
+              : "rounded-t-[1.75rem] rounded-b-none"
           )}
         >
           <span
             aria-hidden
             className={cn(
               landingGlassSheen,
-              isDesktop ? "rounded-s-[1.75rem]" : "rounded-[1.75rem]"
+              isDesktop
+                ? "rounded-s-[1.75rem]"
+                : "rounded-t-[1.75rem] rounded-b-none"
             )}
           />
 
-          {!isDesktop ? (
+          {isMobileSheet ? (
             <div
               aria-hidden
               className="relative z-10 mx-auto mt-2.5 h-1 w-10 shrink-0 rounded-full bg-foreground/15"
@@ -345,14 +350,21 @@ export function CryptoPaymentSheet({
 
           <SheetHeader
             className={cn(
-              "relative z-10 space-y-2 border-b border-white/55 p-0 px-5 py-5 dark:border-white/10",
-              !isDesktop && "pb-3"
+              "relative z-10 shrink-0 space-y-1 border-b border-white/55 p-0 dark:border-white/10",
+              isDesktop ? "px-5 py-5" : "px-4 pb-2.5 pt-2"
             )}
           >
-            <SheetTitle className={cn(landingTitleCard, "text-lg")}>
+            <SheetTitle
+              className={cn(landingTitleCard, isDesktop ? "text-lg" : "text-base")}
+            >
               {t("title")}
             </SheetTitle>
-            <SheetDescription className="text-sm leading-relaxed text-muted-foreground">
+            <SheetDescription
+              className={cn(
+                "leading-snug text-muted-foreground",
+                isDesktop ? "text-sm" : "text-xs"
+              )}
+            >
               {t("subtitle")}
             </SheetDescription>
           </SheetHeader>
@@ -360,8 +372,10 @@ export function CryptoPaymentSheet({
           <div className="relative z-10 flex min-h-0 flex-1 flex-col overflow-hidden">
             <div
               className={cn(
-                "flex flex-col overflow-y-auto",
-                isDesktop ? "gap-5 px-5 py-5" : "gap-3.5 px-3.5 py-3"
+                "flex min-h-0 flex-1 flex-col",
+                isDesktop
+                  ? "gap-5 overflow-y-auto px-5 py-5"
+                  : "gap-2.5 overflow-hidden px-4 py-2.5"
               )}
             >
               <PaymentMethodPicker
@@ -372,7 +386,7 @@ export function CryptoPaymentSheet({
 
               {error ? (
                 <p
-                  className="rounded-2xl bg-destructive/8 px-3 py-2.5 text-sm text-destructive"
+                  className="shrink-0 rounded-2xl bg-destructive/8 px-3 py-2 text-sm text-destructive"
                   role="alert"
                 >
                   {error}
@@ -380,7 +394,7 @@ export function CryptoPaymentSheet({
               ) : null}
 
               {showQuoteSkeleton ? (
-                <div className="space-y-3">
+                <div className="min-h-0 flex-1 space-y-2.5">
                   {loading ? (
                     <div
                       className="flex items-center gap-2 text-sm text-muted-foreground"
@@ -390,27 +404,38 @@ export function CryptoPaymentSheet({
                       {t("gettingDetails")}
                     </div>
                   ) : null}
-                  <PaymentQuoteSkeleton />
+                  <PaymentQuoteSkeleton compact={isMobileSheet} />
                 </div>
               ) : (
-                <div className="space-y-5">
+                <div
+                  className={cn(
+                    "flex min-h-0 flex-1 flex-col",
+                    isDesktop ? "gap-5" : "gap-2.5"
+                  )}
+                >
                   <BillingGlassPanel>
                     <div
                       className={cn(
                         "flex items-center gap-3",
-                        isDesktop ? "px-3.5 py-3" : "px-3 py-3"
+                        isDesktop ? "px-3.5 py-3" : "px-3 py-2.5"
                       )}
                     >
                       <div className="min-w-0 flex-1">
                         <p className="text-xs font-medium text-muted-foreground">
                           {t("sendExactly")}
                         </p>
-                        <div className="mt-1 flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
-                          <p className="text-[1.375rem] font-semibold leading-none tracking-tight tabular-nums text-foreground">
+                        <div className="mt-1 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+                          <p
+                            className={cn(
+                              "font-semibold leading-none tracking-tight tabular-nums text-foreground",
+                              isDesktop ? "text-[1.375rem]" : "text-[1.25rem]"
+                            )}
+                          >
                             {amountLabel}
                           </p>
-                          <span className="text-sm leading-none text-muted-foreground">
-                            {t("aboutUsd", {
+                          <span
+                            className="text-sm leading-none tabular-nums text-muted-foreground"
+                            aria-label={t("approxUsd", {
                               amount: formatUsd(
                                 aboutUsdFromCryptoLabel(
                                   amountLabel,
@@ -418,6 +443,14 @@ export function CryptoPaymentSheet({
                                 )
                               ),
                             })}
+                          >
+                            ≈{" "}
+                            {formatUsd(
+                              aboutUsdFromCryptoLabel(
+                                amountLabel,
+                                current!.amount_usd
+                              )
+                            )}
                           </span>
                           {current!.original_amount_usd > current!.amount_usd ? (
                             <span className="text-sm leading-none text-muted-foreground line-through">
@@ -438,7 +471,7 @@ export function CryptoPaymentSheet({
                     </div>
                   </BillingGlassPanel>
 
-                  <div className="space-y-2">
+                  <div className="shrink-0 space-y-1.5">
                     <div className="flex items-center justify-between gap-3">
                       <Label
                         htmlFor="payment-coupon-toggle"
@@ -476,7 +509,7 @@ export function CryptoPaymentSheet({
                           autoComplete="off"
                           spellCheck={false}
                           disabled={loading || !checkout}
-                          className="h-11 rounded-xl border-white/50 bg-white/45 pe-20 dark:border-white/10 dark:bg-white/8"
+                          className="h-10 rounded-xl border-white/50 bg-white/45 pe-20 dark:border-white/10 dark:bg-white/8"
                           onKeyDown={(event) => {
                             if (event.key === "Enter") {
                               event.preventDefault()
@@ -489,7 +522,7 @@ export function CryptoPaymentSheet({
                           size="sm"
                           className={cn(
                             landingCta("glass", "sm"),
-                            "absolute top-1/2 inset-e-1.5 h-8 -translate-y-1/2 px-3 text-xs"
+                            "absolute top-1/2 inset-e-1.5 h-7 -translate-y-1/2 px-3 text-xs"
                           )}
                           disabled={loading || !checkout || !couponCode.trim()}
                           onClick={handleApplyCoupon}
@@ -500,20 +533,23 @@ export function CryptoPaymentSheet({
                     ) : null}
                   </div>
 
-                  <DepositAddressCard
-                    address={payAddress}
-                    currency={paymentCurrency}
-                  />
+                  <div className="min-h-0 flex-1">
+                    <DepositAddressCard
+                      address={payAddress}
+                      currency={paymentCurrency}
+                      compact={isMobileSheet}
+                    />
+                  </div>
 
                   {current!.status === "paid" ? (
-                    <div className="rounded-2xl bg-emerald-500/10 px-4 py-3 text-sm text-emerald-700 dark:text-emerald-300">
+                    <div className="shrink-0 rounded-2xl bg-emerald-500/10 px-3 py-2 text-sm text-emerald-700 dark:text-emerald-300">
                       {t("paymentReceived")}
                     </div>
                   ) : null}
 
                   {(current!.status === "failed" || expired) &&
                   current!.status !== "paid" ? (
-                    <div className="rounded-2xl bg-destructive/8 px-4 py-3 text-sm text-destructive">
+                    <div className="shrink-0 rounded-2xl bg-destructive/8 px-3 py-2 text-sm text-destructive">
                       {expired ? t("windowExpired") : t("paymentFailed")}
                     </div>
                   ) : null}
@@ -525,12 +561,14 @@ export function CryptoPaymentSheet({
               <div
                 className={cn(
                   "shrink-0 border-t border-white/55 dark:border-white/10",
-                  isDesktop ? "px-5 py-4" : "px-3.5 py-2"
+                  isDesktop
+                    ? "px-5 py-4"
+                    : "px-4 pb-[max(0.75rem,env(safe-area-inset-bottom,0px))] pt-2.5"
                 )}
               >
                 <PaymentWatcherBanner
                   expiresIn={formatCountdown(msRemaining)}
-                  compact={isDesktop === false}
+                  compact={isMobileSheet}
                 />
               </div>
             ) : null}

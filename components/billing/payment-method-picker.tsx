@@ -46,7 +46,7 @@ export function PaymentMethodPicker({
             variant="ghost"
             className={cn(
               landingGlassSurface,
-              "h-14 w-full justify-between gap-3 rounded-2xl bg-white/50 px-3.5 shadow-none hover:bg-white/60 dark:bg-white/10 dark:hover:bg-white/14"
+              "h-12 w-full justify-between gap-3 rounded-2xl bg-white/50 px-3 shadow-none hover:bg-white/60 sm:h-14 sm:px-3.5 dark:bg-white/10 dark:hover:bg-white/14"
             )}
             aria-label={t("tokenAria", {
               token: selected.id,
