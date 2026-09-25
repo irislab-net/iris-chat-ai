@@ -2,10 +2,14 @@
 
 import { CheckIcon } from "lucide-react"
 
-import { Badge } from "@/components/ui/badge"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import type { PlanKey } from "@/lib/billing/catalog"
 import { parsePriceAmount } from "@/lib/billing/prices"
+import {
+  landingGlassBlueSheen,
+  landingGlassSheen,
+  landingTitlePlan,
+  landingTitlePrice,
+} from "@/lib/landing-modern-styles"
 import { cn } from "@/lib/utils"
 
 type UpgradePlanCardProps = {
@@ -13,6 +17,8 @@ type UpgradePlanCardProps = {
   name: string
   description: string
   price: string
+  /** Crossed-out compare-at price (e.g. $49 next to $19). */
+  priceWas?: string | null
   cadence: string
   features: readonly string[]
   selected: boolean
@@ -28,6 +34,7 @@ export function UpgradePlanCard({
   name,
   description,
   price,
+  priceWas,
   cadence,
   features,
   selected,
@@ -41,14 +48,16 @@ export function UpgradePlanCard({
   const showCadence = priceAmount !== null && priceAmount > 0
 
   return (
-    <div className="relative">
+    <div className="relative h-full">
       {badge ? (
         <div className="absolute inset-x-0 -top-3 z-20 flex justify-center">
-          <Badge className="rounded-full px-3 shadow-sm">{badge}</Badge>
+          <span className="rounded-full bg-white/75 px-2.5 py-1 font-mono text-[9px] font-medium tracking-[0.18em] text-muted-foreground uppercase shadow-[0_4px_12px_rgba(15,23,42,0.04)] dark:bg-white/10">
+            {badge}
+          </span>
         </div>
       ) : null}
 
-      <Card
+      <article
         role="radio"
         aria-checked={selected}
         tabIndex={0}
@@ -60,61 +69,100 @@ export function UpgradePlanCard({
           }
         }}
         className={cn(
-          "cursor-pointer border bg-card/90 py-0 transition-all hover:border-foreground/30",
-          featured && !selected && "border-foreground/25 bg-muted/20",
-          selected && "border-foreground shadow-[0_0_0_1px_var(--foreground)]"
+          "relative flex h-full cursor-pointer flex-col overflow-hidden rounded-[1.75rem] transition-shadow",
+          "bg-white/38 backdrop-blur-2xl shadow-[0_16px_48px_rgba(15,23,42,0.08),inset_0_1px_1px_rgba(255,255,255,0.92),inset_0_-1px_2px_rgba(255,255,255,0.28)] dark:bg-white/8 dark:shadow-[0_16px_48px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.12),inset_0_-1px_2px_rgba(255,255,255,0.04)]",
+          featured &&
+            !selected &&
+            "bg-white/55 shadow-[0_28px_80px_rgba(37,99,235,0.1),inset_0_1px_1px_rgba(255,255,255,0.95)] ring-1 ring-[#2563EB]/10 dark:bg-white/10",
+          selected &&
+            "bg-white/58 shadow-[0_28px_80px_rgba(37,99,235,0.16),inset_0_1px_1px_rgba(255,255,255,0.96)] ring-1 ring-[#2563EB]/35 dark:bg-white/12 dark:ring-[#2563EB]/40"
         )}
       >
-        <CardHeader className="gap-4 border-b border-border/50 px-5 pt-6 pb-5">
+        {(featured || selected) && (
+          <span
+            aria-hidden
+            className={cn(
+              landingGlassBlueSheen,
+              "pointer-events-none absolute inset-0 opacity-40"
+            )}
+          />
+        )}
+        <span
+          aria-hidden
+          className={cn(
+            landingGlassSheen,
+            "pointer-events-none absolute inset-0 rounded-[1.75rem]"
+          )}
+        />
+
+        <div className="relative z-10 flex h-full flex-col p-7 sm:p-8">
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0 space-y-1">
-              <CardTitle className="text-xl font-semibold tracking-tight">
-                {name}
-              </CardTitle>
-              <CardDescription className="text-sm leading-relaxed">
+              <h3 className={landingTitlePlan}>{name}</h3>
+              <p className="text-sm leading-relaxed text-muted-foreground">
                 {description}
-              </CardDescription>
+              </p>
             </div>
             <span
               className={cn(
-                "mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full border transition-colors",
+                "mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full transition-colors",
                 selected
-                  ? "border-foreground bg-foreground text-background"
-                  : "border-border/80 bg-background"
+                  ? "bg-[#2563EB] text-white shadow-[0_4px_12px_rgba(37,99,235,0.35)]"
+                  : "bg-white/70 text-transparent shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] dark:bg-white/10"
               )}
               aria-hidden
             >
-              {selected ? <CheckIcon className="size-3" strokeWidth={3} /> : null}
+              {selected ? (
+                <CheckIcon className="size-3" strokeWidth={3} />
+              ) : null}
             </span>
           </div>
 
-          <div className="flex flex-wrap items-end gap-x-2 gap-y-1">
-            <span className="text-3xl font-semibold tracking-tight">{price}</span>
-            {showCadence ? (
-              <span className="pb-0.5 text-sm text-muted-foreground">{cadence}</span>
-            ) : null}
+          <div className="mt-5">
+            <p
+              className={cn(
+                landingTitlePrice,
+                "flex flex-wrap items-baseline gap-x-2.5 text-4xl sm:text-5xl"
+              )}
+            >
+              {priceWas ? (
+                <span className="text-2xl font-normal tracking-[-0.02em] text-muted-foreground/55 line-through decoration-muted-foreground/40">
+                  {priceWas}
+                </span>
+              ) : null}
+              <span>
+                {price}
+                {showCadence ? (
+                  <span className="ms-1 text-lg font-normal text-muted-foreground">
+                    {cadence}
+                  </span>
+                ) : null}
+              </span>
+            </p>
             {isCurrent ? (
-              <Badge variant="outline" className="mb-0.5 rounded-full">
+              <span className="mt-2 inline-flex rounded-full bg-white/75 px-2.5 py-1 text-[10px] font-medium tracking-wide text-muted-foreground uppercase dark:bg-white/10">
                 {currentLabel}
-              </Badge>
+              </span>
             ) : null}
           </div>
-        </CardHeader>
 
-        <CardContent className="px-5 py-5">
-          <ul className="space-y-2.5 text-sm text-muted-foreground">
-            {features.map((feature) => (
-              <li key={`${planKey}-${feature}`} className="flex gap-2.5">
-                <CheckIcon
-                  className="mt-0.5 size-3.5 shrink-0 text-foreground/70"
-                  strokeWidth={2.5}
-                />
-                <span>{feature}</span>
-              </li>
-            ))}
-          </ul>
-        </CardContent>
-      </Card>
+          <div className="mt-7 flex-1 border-t border-white/55 pt-6 dark:border-white/10">
+            <ul className="space-y-3 text-sm text-muted-foreground">
+              {features.map((feature) => (
+                <li key={`${planKey}-${feature}`} className="flex gap-3">
+                  <span
+                    className="mt-0.5 flex size-4 shrink-0 items-center justify-center rounded-full bg-white/70 text-muted-foreground shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] dark:bg-white/10 dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.12)]"
+                    aria-hidden
+                  >
+                    <CheckIcon className="size-2.5" strokeWidth={2} />
+                  </span>
+                  <span>{feature}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </article>
     </div>
   )
 }

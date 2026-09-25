@@ -3,16 +3,18 @@
 import * as React from "react"
 import { Link, useRouter } from "@/i18n/navigation"
 import { Clock3Icon, XIcon } from "lucide-react"
-import { useTranslations } from "next-intl"
+import { useLocale, useTranslations } from "next-intl"
 
 import { useAuth } from "@/components/auth/auth-provider"
 import { markPlanUpgradePendingRefresh } from "@/lib/api/auth"
-import { ExurLogo } from "@/components/brand/exur-logo"
+import { AnimatedExurLogo } from "@/components/brand/animated-exur-logo"
+import { BillingGlassPanel } from "@/components/billing/billing-glass"
 import type { CryptoCheckoutRequest } from "@/components/billing/crypto-payment-sheet"
 import { CryptoPaymentSheet } from "@/components/billing/crypto-payment-sheet"
 import { UpgradePlanCard } from "@/components/billing/upgrade-plan-card"
+import { plusJakarta } from "@/components/landing/modern/fonts"
 import { Button } from "@/components/ui/button"
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Separator } from "@/components/ui/separator"
 import {
   BILLING_PRICES,
   UPGRADE_PLANS,
@@ -20,7 +22,7 @@ import {
   type BillingCycle,
   type PlanKey,
 } from "@/lib/billing/catalog"
-import { parsePriceAmount } from "@/lib/billing/prices"
+import { getLandingPlanPrice, parsePriceAmount } from "@/lib/billing/prices"
 import {
   formatCountdown,
   formatCryptoAmount,
@@ -32,9 +34,7 @@ import {
 } from "@/lib/billing/invoice-session"
 import { useNow } from "@/hooks/use-now"
 import { usePendingPaymentInvoice } from "@/hooks/use-pending-payment-invoice"
-import { APP_NEWS_PATH, SOCIAL_X_URL } from "@/lib/site"
-import { chatMobileSheetFooterBarClass } from "@/components/app-shell/chat-mobile-gemini-styles"
-import { useIsDesktop } from "@/hooks/use-media-query"
+import { APP_NEWS_PATH, SITE_NAME, SOCIAL_X_URL } from "@/lib/site"
 import {
   trackCheckoutStart,
   trackContactClick,
@@ -42,8 +42,20 @@ import {
   trackUpgradePlanSelect,
   trackUpgradeView,
 } from "@/lib/analytics"
-import { landingCta } from "@/lib/landing-modern-styles"
+import { localeDirection } from "@/lib/i18n/locale"
+import {
+  landingCta,
+  landingGlassNavIcon,
+  landingGlassSheen,
+  landingGlassSurface,
+  landingHeroGlass,
+  landingInner,
+  landingShell,
+  landingTitleSection,
+} from "@/lib/landing-modern-styles"
 import { cn } from "@/lib/utils"
+
+import "@/app/styles/landing-modern.css"
 
 function isCurrentPlan(
   plan: PlanKey,
@@ -56,8 +68,10 @@ function isCurrentPlan(
 
 function UpgradeView() {
   const t = useTranslations("upgradePage")
+  const locale = useLocale()
+  const dir = localeDirection(locale)
+  const isRtl = dir === "rtl"
   const router = useRouter()
-  const isDesktop = useIsDesktop()
   const {
     user,
     isAuthenticated,
@@ -66,7 +80,8 @@ function UpgradeView() {
     loginPending,
     refreshAfterUpgrade,
   } = useAuth()
-  const [billing, setBilling] = React.useState<BillingCycle>("monthly")
+  // Annual billing is temporarily disabled in the UI.
+  const billing: BillingCycle = "monthly"
   const [selected, setSelected] = React.useState<PlanKey>("plus")
   const [checkout, setCheckout] = React.useState<CryptoCheckoutRequest | null>(
     null
@@ -83,6 +98,12 @@ function UpgradeView() {
   const canTrackPendingPayment = isAuthenticated && !isProUser
 
   const paidHandledRef = React.useRef(false)
+
+  const displayFont = isRtl
+    ? '"IRIS Sans"'
+    : (plusJakarta.style.fontFamily.split(",")[0]?.trim() ??
+      '"Plus Jakarta Sans"')
+  const fontVariables = isRtl ? undefined : plusJakarta.variable
 
   const handleInvoicePaid = React.useCallback(async () => {
     if (paidHandledRef.current) return
@@ -114,9 +135,7 @@ function UpgradeView() {
 
   function resumePendingCheckout() {
     if (!pendingInvoice) return
-    const cycle = billingCycleForInvoice(pendingInvoice)
-    if (!cycle) return
-    setBilling(cycle)
+    const cycle = billingCycleForInvoice(pendingInvoice) ?? "monthly"
     setSelected("plus")
     beginPlusCheckout(cycle)
   }
@@ -202,110 +221,152 @@ function UpgradeView() {
     return raw
   }
 
+  function planPriceWas(key: PlanKey): string | null {
+    if (key !== "plus") return null
+    return getLandingPlanPrice("plus").priceWas
+  }
+
   return (
-    <div className="flex min-h-dvh flex-col bg-background text-foreground">
-      <header className="flex h-14 shrink-0 items-center gap-3 border-b border-border/60 px-4 sm:px-6">
-        <ExurLogo alt="Exur" size={32} className="size-8 rounded-full" priority />
-        <div className="min-w-0 flex-1">
-          <p className="text-sm font-medium leading-none">{t("title")}</p>
-          <p className="mt-0.5 truncate text-xs text-muted-foreground">
-            {t("currentPlanLine", { plan: currentPlan })}
-          </p>
-        </div>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="size-8 text-muted-foreground hover:text-foreground"
-          nativeButton={false}
-          render={<Link href={APP_NEWS_PATH} aria-label={t("backToDesk")} />}
-        >
-          <XIcon />
-        </Button>
-      </header>
-
-      <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col px-4 py-8 sm:px-6 sm:py-10">
-        <div className="mx-auto max-w-2xl text-center">
-          <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-            {t("heading")}
-          </h1>
-          <p className="mt-2 text-sm leading-relaxed text-muted-foreground sm:text-base">
-            {t("subtitle")}
-          </p>
-        </div>
-
-        <Tabs
-          value={billing}
-          onValueChange={(value) => setBilling(value as BillingCycle)}
-          className="mt-8 items-center"
-        >
-          <TabsList className="h-11 rounded-full p-1.5 group-data-horizontal/tabs:h-11">
-            <TabsTrigger value="monthly" className="h-8 rounded-full px-5 text-sm">
-              {t("monthly")}
-            </TabsTrigger>
-            <TabsTrigger value="annual" className="h-8 rounded-full px-5 text-sm">
-              {t("annual")}
-              <span className="text-muted-foreground">{t("annualSave")}</span>
-            </TabsTrigger>
-          </TabsList>
-        </Tabs>
-
-        {pendingInvoice && !isProUser ? (
-          <button
-            type="button"
-            onClick={resumePendingCheckout}
-            className="mt-6 w-full rounded-2xl border border-primary/20 bg-primary/5 px-4 py-4 text-start transition-colors hover:bg-primary/10"
+    <div
+      dir={dir}
+      className={cn(
+        fontVariables,
+        "landing-modern flex min-h-dvh flex-col bg-background text-foreground antialiased selection:bg-foreground/10 selection:text-foreground",
+        isRtl ? "font-sans" : null
+      )}
+      style={{
+        ["--font-display" as string]: displayFont,
+        ...(isRtl
+          ? {}
+          : {
+              ["--font-sans" as string]: displayFont,
+              fontFamily: `var(--font-display), ${displayFont}, ui-sans-serif, system-ui, sans-serif`,
+            }),
+      }}
+    >
+      <div className={cn(landingShell, "relative z-10 flex flex-1 flex-col pb-28 sm:pb-32")}>
+        <header className="mt-3 flex items-center gap-3 sm:mt-5">
+          <div
+            className={cn(
+              landingGlassSurface,
+              "flex min-w-0 flex-1 items-center gap-3 rounded-full bg-white/44 px-3 py-2.5 dark:bg-white/10 sm:px-4"
+            )}
           >
-            <div className="flex items-start justify-between gap-3">
-              <div className="min-w-0">
-                <p className="text-sm font-medium">{t("pendingTitle")}</p>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  {t("pendingBody", { amount: pendingAmountLabel })}
-                </p>
-              </div>
-              <div className="flex shrink-0 items-center gap-1.5 text-xs text-muted-foreground">
-                <Clock3Icon className="size-3.5" />
-                <span className="font-medium tabular-nums text-foreground">
-                  {formatCountdown(pendingMsRemaining)}
-                </span>
+            <span
+              aria-hidden
+              className={cn(landingGlassSheen, "rounded-full")}
+            />
+            <AnimatedExurLogo
+              className="relative z-10 size-9 shrink-0"
+              scrollTrigger
+            />
+            <div className="relative z-10 min-w-0 flex-1">
+              <p className="text-sm font-medium leading-none tracking-tight">
+                {t("title")}
+              </p>
+              <p className="mt-1 truncate text-xs text-muted-foreground">
+                {t("currentPlanLine", { plan: currentPlan })}
+              </p>
+            </div>
+          </div>
+          <Button
+            variant="ghost"
+            size="icon"
+            className={cn(landingGlassNavIcon, "text-foreground")}
+            nativeButton={false}
+            render={<Link href={APP_NEWS_PATH} aria-label={t("backToDesk")} />}
+          >
+            <span aria-hidden className={cn(landingGlassSheen, "rounded-full")} />
+            <XIcon className="relative z-10 size-4" />
+          </Button>
+        </header>
+
+        <article
+          className={cn(
+            landingHeroGlass,
+            "mt-6 min-h-0 flex-1 rounded-[2rem] sm:rounded-[2.5rem]"
+          )}
+        >
+          <div className={cn(landingInner, "py-10 sm:py-12 lg:py-14")}>
+            <header className="mx-auto max-w-3xl text-center sm:text-start">
+              <p className="text-[11px] font-medium tracking-[0.18em] text-muted-foreground uppercase">
+                {SITE_NAME}
+              </p>
+              <h1 className={cn(landingTitleSection, "mt-3")}>{t("heading")}</h1>
+              <p className="mt-4 max-w-2xl text-[0.9375rem] leading-relaxed text-muted-foreground sm:text-base">
+                {t("subtitle")}
+              </p>
+            </header>
+
+            <Separator className="mx-auto my-8 max-w-3xl bg-foreground/8 sm:my-10" />
+
+            <div className="mx-auto flex w-full max-w-5xl flex-col items-center">
+              {pendingInvoice && !isProUser ? (
+                <button
+                  type="button"
+                  onClick={resumePendingCheckout}
+                  className="w-full max-w-3xl text-start"
+                >
+                  <BillingGlassPanel className="bg-white/50 transition-colors hover:bg-white/58 dark:bg-white/10 dark:hover:bg-white/14">
+                    <div className="flex items-start justify-between gap-3 px-5 py-4 sm:px-6">
+                      <div className="min-w-0">
+                        <p className="text-sm font-medium">{t("pendingTitle")}</p>
+                        <p className="mt-1 text-sm text-muted-foreground">
+                          {t("pendingBody", { amount: pendingAmountLabel })}
+                        </p>
+                      </div>
+                      <div className="flex shrink-0 items-center gap-1.5 text-xs text-muted-foreground">
+                        <Clock3Icon className="size-3.5" />
+                        <span className="font-medium tabular-nums text-foreground">
+                          {formatCountdown(pendingMsRemaining)}
+                        </span>
+                      </div>
+                    </div>
+                  </BillingGlassPanel>
+                </button>
+              ) : null}
+
+              <div
+                role="radiogroup"
+                aria-label={t("plansAria")}
+                className={cn(
+                  "grid w-full gap-4 lg:grid-cols-3 lg:items-stretch",
+                  pendingInvoice && !isProUser ? "mt-8" : "mt-0"
+                )}
+              >
+                {UPGRADE_PLANS.map((plan) => {
+                  const features = t.raw(`plans.${plan.key}.features`) as string[]
+                  return (
+                    <UpgradePlanCard
+                      key={plan.key}
+                      planKey={plan.key}
+                      name={t(`plans.${plan.key}.name`)}
+                      description={t(`plans.${plan.key}.description`)}
+                      price={planPrice(plan.key)}
+                      priceWas={planPriceWas(plan.key)}
+                      cadence={cadence}
+                      features={features}
+                      selected={selected === plan.key}
+                      isCurrent={isCurrentPlan(plan.key, currentPlan)}
+                      currentLabel={t("currentBadge")}
+                      badge={
+                        "badge" in plan && plan.badge ? t("mostChosen") : undefined
+                      }
+                      featured={"featured" in plan ? plan.featured : undefined}
+                      onSelect={() => {
+                        if (selected !== plan.key) {
+                          trackUpgradePlanSelect({ plan: plan.key })
+                        }
+                        setSelected(plan.key)
+                      }}
+                    />
+                  )
+                })}
               </div>
             </div>
-          </button>
-        ) : null}
-
-        <div
-          role="radiogroup"
-          aria-label={t("plansAria")}
-          className="mt-8 grid gap-4 lg:grid-cols-3 lg:items-start"
-        >
-          {UPGRADE_PLANS.map((plan) => {
-            const features = t.raw(`plans.${plan.key}.features`) as string[]
-            return (
-              <UpgradePlanCard
-                key={plan.key}
-                planKey={plan.key}
-                name={t(`plans.${plan.key}.name`)}
-                description={t(`plans.${plan.key}.description`)}
-                price={planPrice(plan.key)}
-                cadence={cadence}
-                features={features}
-                selected={selected === plan.key}
-                isCurrent={isCurrentPlan(plan.key, currentPlan)}
-                currentLabel={t("currentBadge")}
-                badge={
-                  "badge" in plan && plan.badge ? t("mostChosen") : undefined
-                }
-                featured={"featured" in plan ? plan.featured : undefined}
-                onSelect={() => {
-                  if (selected !== plan.key) {
-                    trackUpgradePlanSelect({ plan: plan.key })
-                  }
-                  setSelected(plan.key)
-                }}
-              />
-            )
-          })}
-        </div>
-      </main>
+          </div>
+        </article>
+      </div>
 
       <CryptoPaymentSheet
         checkout={checkout}
@@ -314,35 +375,36 @@ function UpgradeView() {
         onPaid={handleInvoicePaid}
       />
 
-      <footer
-        className={cn(
-          "sticky bottom-0 px-4 py-4 sm:px-6",
-          isDesktop
-            ? "border-t border-border/60 bg-background/95 backdrop-blur-sm"
-            : cn(
-                chatMobileSheetFooterBarClass,
-                "border-0 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom,0px))] pt-4"
-              )
-        )}
-      >
-        <div className="mx-auto flex w-full max-w-5xl flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-sm text-muted-foreground">{footerHint()}</p>
-          <Button
-            className={cn(
-              landingCta("glass", "md"),
-              "w-full sm:w-auto sm:min-w-44"
-            )}
-            disabled={busy || plusLocked}
-            onClick={() => {
-              if (selected === "plus" && hasPendingPayment) {
-                resumePendingCheckout()
-                return
-              }
-              void onContinue()
-            }}
-          >
-            {busy ? t("continuing") : cta}
-          </Button>
+      <footer className="pointer-events-none fixed inset-x-0 bottom-0 z-40 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom,0px))] pt-4 sm:px-6">
+        <div
+          className={cn(
+            landingGlassSurface,
+            "pointer-events-auto mx-auto w-full max-w-5xl rounded-[1.75rem] bg-white/55 px-4 py-3.5 dark:bg-white/10 sm:px-5"
+          )}
+        >
+          <span
+            aria-hidden
+            className={cn(landingGlassSheen, "rounded-[1.75rem]")}
+          />
+          <div className="relative z-10 flex flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-sm text-muted-foreground">{footerHint()}</p>
+            <Button
+              className={cn(
+                landingCta("glass", "md"),
+                "w-full sm:w-auto sm:min-w-44"
+              )}
+              disabled={busy || plusLocked}
+              onClick={() => {
+                if (selected === "plus" && hasPendingPayment) {
+                  resumePendingCheckout()
+                  return
+                }
+                void onContinue()
+              }}
+            >
+              {busy ? t("continuing") : cta}
+            </Button>
+          </div>
         </div>
       </footer>
     </div>

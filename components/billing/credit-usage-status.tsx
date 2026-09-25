@@ -4,6 +4,8 @@ import * as React from "react"
 import { GaugeIcon } from "lucide-react"
 import { useTranslations } from "next-intl"
 
+import { Button } from "@/components/ui/button"
+import { BillingGlassPanel } from "@/components/billing/billing-glass"
 import { fetchCoPilotUsage } from "@/lib/api/co-pilot"
 import type { ChatCreditBalance, TrialInfo } from "@/lib/api/types"
 import {
@@ -12,6 +14,7 @@ import {
   formatCreditResetAt,
   type CreditUsagePeriod,
 } from "@/lib/api/credit-usage"
+import { landingCta, landingTitleCard } from "@/lib/landing-modern-styles"
 import { cn } from "@/lib/utils"
 
 function UsageMeter({
@@ -26,13 +29,13 @@ function UsageMeter({
   const t = useTranslations("billingPage")
   const pct = Math.round(period.usedFraction * 100)
   return (
-    <div className={cn("min-w-0 px-5 py-4", className)}>
+    <div className={cn("min-w-0 px-5 py-4 sm:px-6", className)}>
       <div className="flex items-start justify-between gap-3">
         <div>
-          <p className="text-[11px] font-medium tracking-wide text-muted-foreground uppercase">
+          <p className="text-[11px] font-medium tracking-[0.14em] text-muted-foreground uppercase">
             {title}
           </p>
-          <p className="mt-1.5 text-[17px] font-semibold tracking-tight tabular-nums">
+          <p className="mt-1.5 text-[1.05rem] font-medium tracking-tight tabular-nums">
             {formatCreditCount(period.remaining)}
             <span className="text-sm font-medium text-muted-foreground">
               {" "}
@@ -44,11 +47,11 @@ function UsageMeter({
           {t("usedCount", { count: formatCreditCount(period.used) })}
         </p>
       </div>
-      <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-muted">
+      <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-white/55 dark:bg-white/10">
         <div
           className={cn(
             "h-full rounded-full transition-[width]",
-            pct >= 90 ? "bg-destructive" : "bg-foreground/80"
+            pct >= 90 ? "bg-destructive" : "bg-[#2563EB]"
           )}
           style={{ width: `${pct}%` }}
         />
@@ -82,71 +85,76 @@ function CreditUsageStatusPanel({
     <section className={cn("space-y-4", className)}>
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h2 className="text-lg font-semibold tracking-tight">
-            {t("creditsTitle")}
-          </h2>
-          <p className="mt-1 text-sm text-muted-foreground">
+          <h2 className={landingTitleCard}>{t("creditsTitle")}</h2>
+          <p className="mt-1.5 text-sm text-muted-foreground">
             {t("creditsSubtitle")}
           </p>
         </div>
         {onRefresh ? (
-          <button
+          <Button
             type="button"
-            className="rounded-xl px-2 py-1 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground disabled:opacity-50"
+            size="sm"
+            className={landingCta("secondary", "sm")}
             disabled={loading}
             onClick={onRefresh}
           >
             {loading ? t("refreshing") : t("refresh")}
-          </button>
+          </Button>
         ) : null}
       </div>
 
       {error ? (
-        <p className="rounded-xl border border-destructive/30 bg-destructive/5 px-3 py-2 text-sm text-destructive">
+        <p className="rounded-2xl bg-destructive/8 px-4 py-3 text-sm text-destructive">
           {error}
         </p>
       ) : null}
 
       {usage ? (
-        <div className="overflow-hidden rounded-2xl border border-border/60 bg-card/90">
+        <BillingGlassPanel>
           <div className="grid sm:grid-cols-2">
             <UsageMeter
               title={t("dailyRemaining")}
               period={usage.daily}
-              className="border-b border-border/50 sm:border-e sm:border-b-0"
+              className="border-b border-white/45 dark:border-white/10 sm:border-e sm:border-b-0"
             />
             <UsageMeter title={t("weeklyRemaining")} period={usage.weekly} />
           </div>
-        </div>
+        </BillingGlassPanel>
       ) : trial ? (
-        <div className="overflow-hidden rounded-2xl border border-border/60 bg-card/90 px-5 py-4">
-          <p className="text-[11px] font-medium tracking-wide text-muted-foreground uppercase">
-            {t("guestTrial")}
-          </p>
-          <p className="mt-1.5 text-[17px] font-semibold tracking-tight tabular-nums">
-            {formatCreditCount(trial.messages_remaining)}
-            <span className="text-sm font-medium text-muted-foreground">
-              {" "}
-              {t("leftOf", {
-                limit: formatCreditCount(trial.messages_limit),
+        <BillingGlassPanel>
+          <div className="px-5 py-5 sm:px-6">
+            <p className="text-[11px] font-medium tracking-[0.14em] text-muted-foreground uppercase">
+              {t("guestTrial")}
+            </p>
+            <p className="mt-1.5 text-[1.05rem] font-medium tracking-tight tabular-nums">
+              {formatCreditCount(trial.messages_remaining)}
+              <span className="text-sm font-medium text-muted-foreground">
+                {" "}
+                {t("leftOf", {
+                  limit: formatCreditCount(trial.messages_limit),
+                })}
+              </span>
+            </p>
+            <p className="mt-2 text-[11px] text-muted-foreground">
+              {t("resetsAt", {
+                date: formatCreditResetAt(trial.weekly_reset_at),
               })}
-            </span>
-          </p>
-          <p className="mt-2 text-[11px] text-muted-foreground">
-            {t("resetsAt", {
-              date: formatCreditResetAt(trial.weekly_reset_at),
-            })}
-          </p>
-        </div>
+            </p>
+          </div>
+        </BillingGlassPanel>
       ) : loading ? (
-        <div className="overflow-hidden rounded-2xl border border-border/60 bg-card/90 px-5 py-8">
-          <p className="text-sm text-muted-foreground">{t("loadingCredits")}</p>
-        </div>
+        <BillingGlassPanel>
+          <div className="px-5 py-8 sm:px-6">
+            <p className="text-sm text-muted-foreground">{t("loadingCredits")}</p>
+          </div>
+        </BillingGlassPanel>
       ) : (
-        <div className="flex items-start gap-3 rounded-2xl border border-border/60 bg-card/90 px-5 py-4">
-          <GaugeIcon className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
-          <p className="text-sm text-muted-foreground">{t("signInForCredits")}</p>
-        </div>
+        <BillingGlassPanel>
+          <div className="flex items-start gap-3 px-5 py-4 sm:px-6">
+            <GaugeIcon className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
+            <p className="text-sm text-muted-foreground">{t("signInForCredits")}</p>
+          </div>
+        </BillingGlassPanel>
       )}
     </section>
   )

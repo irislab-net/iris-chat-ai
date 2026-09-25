@@ -9,14 +9,16 @@ import {
   WalletIcon,
   XIcon,
 } from "lucide-react"
-import { useTranslations } from "next-intl"
+import { useLocale, useTranslations } from "next-intl"
 
 import { useAuth } from "@/components/auth/auth-provider"
-import { ExurLogo } from "@/components/brand/exur-logo"
+import { AnimatedExurLogo } from "@/components/brand/animated-exur-logo"
+import { BillingGlassPanel } from "@/components/billing/billing-glass"
 import {
   CreditUsageStatusPanel,
   useCreditUsage,
 } from "@/components/billing/credit-usage-status"
+import { plusJakarta } from "@/components/landing/modern/fonts"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -26,6 +28,7 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty"
+import { Separator } from "@/components/ui/separator"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { displayPlanName } from "@/lib/billing/catalog"
 import { formatCryptoAmount } from "@/lib/billing/crypto-format"
@@ -42,9 +45,22 @@ import {
   listPaymentInvoices,
 } from "@/lib/billing/invoices"
 import type { PaymentInvoice } from "@/lib/billing/invoice-types"
-import { APP_NEWS_PATH, UPGRADE_PATH } from "@/lib/site"
-import { landingCta } from "@/lib/landing-modern-styles"
+import { localeDirection } from "@/lib/i18n/locale"
+import {
+  landingCta,
+  landingGlassNavIcon,
+  landingGlassSheen,
+  landingGlassSurface,
+  landingHeroGlass,
+  landingInner,
+  landingShell,
+  landingTitleCard,
+  landingTitleSection,
+} from "@/lib/landing-modern-styles"
+import { APP_NEWS_PATH, SITE_NAME, UPGRADE_PATH } from "@/lib/site"
 import { cn } from "@/lib/utils"
+
+import "@/app/styles/landing-modern.css"
 
 function statusBadgeVariant(
   status: ReturnType<typeof normalizeInvoiceStatus>
@@ -96,7 +112,7 @@ function InvoiceRow({
             : "statusUnknown"
 
   return (
-    <li className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-3 gap-y-1 border-b border-border/50 px-4 py-3.5 last:border-b-0 sm:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_auto_auto] sm:items-center sm:px-5">
+    <li className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-3 gap-y-1 border-b border-white/45 px-5 py-4 last:border-b-0 dark:border-white/10 sm:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_auto_auto] sm:items-center sm:px-6">
       <div className="min-w-0">
         <p className="truncate text-sm font-medium text-foreground">
           {formatInvoicePlanLabel(invoice.plan_id)}
@@ -117,7 +133,10 @@ function InvoiceRow({
         </p>
       </div>
       <div className="col-start-2 row-start-1 justify-self-end sm:col-auto sm:row-auto">
-        <Badge variant={statusBadgeVariant(status)} className="rounded-full">
+        <Badge
+          variant={statusBadgeVariant(status)}
+          className="rounded-full bg-white/55 dark:bg-white/10"
+        >
           {t(statusKey)}
         </Badge>
       </div>
@@ -172,11 +191,11 @@ function StatCell({
   className?: string
 }) {
   return (
-    <div className={cn("min-w-0 px-5 py-4", className)}>
-      <p className="text-[11px] font-medium tracking-wide text-muted-foreground uppercase">
+    <div className={cn("min-w-0 px-5 py-4 sm:px-6", className)}>
+      <p className="text-[11px] font-medium tracking-[0.14em] text-muted-foreground uppercase">
         {label}
       </p>
-      <p className="mt-1.5 truncate text-[17px] font-semibold tracking-tight">
+      <p className="mt-1.5 truncate text-[1.05rem] font-medium tracking-tight">
         {value}
       </p>
     </div>
@@ -185,6 +204,9 @@ function StatCell({
 
 function BillingView() {
   const t = useTranslations("billingPage")
+  const locale = useLocale()
+  const dir = localeDirection(locale)
+  const isRtl = dir === "rtl"
   const { user, isAuthenticated, isProUser, login, loginPending } = useAuth()
   const [invoices, setInvoices] = React.useState<PaymentInvoice[] | null>(null)
   const [error, setError] = React.useState<string | null>(null)
@@ -194,6 +216,12 @@ function BillingView() {
   const planName = displayPlanName(user?.tier)
   const proExpires = formatExpiry(user?.pro_expires_at)
   const trialEnds = formatExpiry(user?.trial_ends_at)
+
+  const displayFont = isRtl
+    ? '"IRIS Sans"'
+    : (plusJakarta.style.fontFamily.split(",")[0]?.trim() ??
+      '"Plus Jakarta Sans"')
+  const fontVariables = isRtl ? undefined : plusJakarta.variable
 
   const loadInvoices = React.useCallback(async () => {
     if (!isAuthenticated) {
@@ -252,229 +280,279 @@ function BillingView() {
       : "—"
 
   return (
-    <div className="flex min-h-dvh flex-col bg-background text-foreground">
-      <header className="flex h-14 shrink-0 items-center gap-3 border-b border-border/60 px-4 sm:px-6">
-        <ExurLogo alt="Exur" size={32} className="size-8 rounded-full" priority />
-        <div className="min-w-0 flex-1">
-          <p className="text-sm font-medium leading-none">{t("title")}</p>
-          <p className="mt-0.5 truncate text-xs text-muted-foreground">
-            {t("currentPlanLine", {
-              plan: isAuthenticated ? planName : "—",
-            })}
-          </p>
-        </div>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="size-8 text-muted-foreground hover:text-foreground"
-          nativeButton={false}
-          render={<Link href={APP_NEWS_PATH} aria-label={t("backToDesk")} />}
+    <div
+      dir={dir}
+      className={cn(
+        fontVariables,
+        "landing-modern min-h-dvh bg-background text-foreground antialiased selection:bg-foreground/10 selection:text-foreground",
+        isRtl ? "font-sans" : null
+      )}
+      style={{
+        ["--font-display" as string]: displayFont,
+        ...(isRtl
+          ? {}
+          : {
+              ["--font-sans" as string]: displayFont,
+              fontFamily: `var(--font-display), ${displayFont}, ui-sans-serif, system-ui, sans-serif`,
+            }),
+      }}
+    >
+      <div className={cn(landingShell, "relative z-10 pb-8 sm:pb-10")}>
+        <header className="mt-3 flex items-center gap-3 sm:mt-5">
+          <div
+            className={cn(
+              landingGlassSurface,
+              "flex min-w-0 flex-1 items-center gap-3 rounded-full bg-white/44 px-3 py-2.5 dark:bg-white/10 sm:px-4"
+            )}
+          >
+            <span
+              aria-hidden
+              className={cn(landingGlassSheen, "rounded-full")}
+            />
+            <AnimatedExurLogo
+              className="relative z-10 size-9 shrink-0"
+              scrollTrigger
+            />
+            <div className="relative z-10 min-w-0 flex-1">
+              <p className="text-sm font-medium leading-none tracking-tight">
+                {t("title")}
+              </p>
+              <p className="mt-1 truncate text-xs text-muted-foreground">
+                {t("currentPlanLine", {
+                  plan: isAuthenticated ? planName : "—",
+                })}
+              </p>
+            </div>
+          </div>
+          <Button
+            variant="ghost"
+            size="icon"
+            className={cn(landingGlassNavIcon, "text-foreground")}
+            nativeButton={false}
+            render={<Link href={APP_NEWS_PATH} aria-label={t("backToDesk")} />}
+          >
+            <span aria-hidden className={cn(landingGlassSheen, "rounded-full")} />
+            <XIcon className="relative z-10 size-4" />
+          </Button>
+        </header>
+
+        <article
+          className={cn(
+            landingHeroGlass,
+            "mt-6 min-h-0 rounded-[2rem] sm:rounded-[2.5rem]"
+          )}
         >
-          <XIcon className="size-4" />
-        </Button>
-      </header>
+          <div className={cn(landingInner, "py-10 sm:py-12 lg:py-14")}>
+            <header className="mx-auto max-w-3xl text-center sm:text-start">
+              <p className="text-[11px] font-medium tracking-[0.18em] text-muted-foreground uppercase">
+                {SITE_NAME}
+              </p>
+              <h1 className={cn(landingTitleSection, "mt-3")}>{t("heading")}</h1>
+              <p className="mt-4 max-w-2xl text-[0.9375rem] leading-relaxed text-muted-foreground sm:text-base">
+                {t("subtitle")}
+              </p>
+            </header>
 
-      <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-10 px-4 py-8 sm:px-6 sm:py-10">
-        <div className="mx-auto max-w-2xl text-center">
-          <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-            {t("heading")}
-          </h1>
-          <p className="mt-2 text-sm leading-relaxed text-muted-foreground sm:text-base">
-            {t("subtitle")}
-          </p>
-        </div>
+            <Separator className="mx-auto my-10 max-w-3xl bg-foreground/8" />
 
-        <section className="space-y-4">
-          <div className="overflow-hidden rounded-2xl border border-border/60 bg-card/90">
-            <div className="flex flex-wrap items-start justify-between gap-4 border-b border-border/50 px-5 py-5">
-              <div className="min-w-0">
-                <p className="text-[11px] font-medium tracking-wide text-muted-foreground uppercase">
-                  {t("currentPlan")}
-                </p>
-                <p className="mt-1.5 text-2xl font-semibold tracking-tight">
-                  {isAuthenticated ? planName : "—"}
-                </p>
-                {isProUser && proExpires ? (
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    {t("renews", { date: proExpires })}
-                  </p>
-                ) : !isProUser && trialEnds ? (
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    {t("trialEnds", { date: trialEnds })}
-                  </p>
-                ) : !isAuthenticated ? (
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    {t("signInForPlan")}
-                  </p>
-                ) : pendingCount > 0 ? (
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    {t("paymentPendingHint")}
+            <div className="mx-auto flex max-w-3xl flex-col gap-10">
+              <section className="space-y-4">
+                <BillingGlassPanel>
+                  <div className="flex flex-wrap items-start justify-between gap-4 border-b border-white/55 px-5 py-6 dark:border-white/10 sm:px-6">
+                    <div className="min-w-0">
+                      <p className="text-[11px] font-medium tracking-[0.14em] text-muted-foreground uppercase">
+                        {t("currentPlan")}
+                      </p>
+                      <p className={cn(landingTitleCard, "mt-2 text-2xl sm:text-[1.75rem]")}>
+                        {isAuthenticated ? planName : "—"}
+                      </p>
+                      {isProUser && proExpires ? (
+                        <p className="mt-1.5 text-sm text-muted-foreground">
+                          {t("renews", { date: proExpires })}
+                        </p>
+                      ) : !isProUser && trialEnds ? (
+                        <p className="mt-1.5 text-sm text-muted-foreground">
+                          {t("trialEnds", { date: trialEnds })}
+                        </p>
+                      ) : !isAuthenticated ? (
+                        <p className="mt-1.5 text-sm text-muted-foreground">
+                          {t("signInForPlan")}
+                        </p>
+                      ) : pendingCount > 0 ? (
+                        <p className="mt-1.5 text-sm text-muted-foreground">
+                          {t("paymentPendingHint")}
+                        </p>
+                      ) : null}
+                    </div>
+                    {!isProUser ? (
+                      <Button
+                        size="sm"
+                        className={landingCta("glass", "sm")}
+                        nativeButton={false}
+                        render={<Link href={UPGRADE_PATH} />}
+                      >
+                        {t("upgrade")}
+                        <ArrowUpRightIcon className="size-3.5" />
+                      </Button>
+                    ) : (
+                      <Badge
+                        variant="outline"
+                        className="rounded-full border-white/50 bg-white/50 dark:border-white/15 dark:bg-white/10"
+                      >
+                        {t("active")}
+                      </Badge>
+                    )}
+                  </div>
+
+                  <div className="grid sm:grid-cols-3">
+                    <StatCell
+                      label={t("status")}
+                      value={statusValue}
+                      className="border-b border-white/45 dark:border-white/10 sm:border-e sm:border-b-0"
+                    />
+                    <StatCell
+                      label={isProUser ? t("renewsExpires") : t("trial")}
+                      value={renewValue}
+                      className="border-b border-white/45 dark:border-white/10 sm:border-e sm:border-b-0"
+                    />
+                    <StatCell
+                      label={t("pendingInvoices")}
+                      value={isAuthenticated ? String(pendingCount) : "—"}
+                    />
+                  </div>
+                </BillingGlassPanel>
+
+                {!isAuthenticated ? (
+                  <BillingGlassPanel className="bg-white/50 dark:bg-white/10">
+                    <div className="flex flex-wrap items-center gap-3 px-5 py-4 sm:px-6">
+                      <p className="min-w-0 flex-1 text-sm text-muted-foreground">
+                        {t("signInForHistory")}
+                      </p>
+                      <Button
+                        size="sm"
+                        className={landingCta("glass", "sm")}
+                        disabled={loginPending}
+                        onClick={() => login({ source: "billing" })}
+                      >
+                        {loginPending ? t("connecting") : t("signIn")}
+                      </Button>
+                    </div>
+                  </BillingGlassPanel>
+                ) : null}
+              </section>
+
+              <CreditUsageStatusPanel
+                balance={creditUsage.balance}
+                trial={creditUsage.trial}
+                loading={creditUsage.loading}
+                error={creditUsage.error}
+                onRefresh={() => void creditUsage.refresh()}
+              />
+
+              <section className="space-y-4">
+                <div className="flex flex-wrap items-end justify-between gap-3">
+                  <div>
+                    <h2 className={landingTitleCard}>{t("history")}</h2>
+                    <p className="mt-1.5 text-sm text-muted-foreground">
+                      {t("historySubtitle")}
+                    </p>
+                  </div>
+                  <Button
+                    type="button"
+                    size="sm"
+                    className={landingCta("secondary", "sm")}
+                    disabled={!isAuthenticated || loading}
+                    onClick={() => void loadInvoices()}
+                  >
+                    <RefreshCwIcon
+                      className={cn("size-3.5", loading && "animate-spin")}
+                    />
+                    {t("refresh")}
+                  </Button>
+                </div>
+
+                {error ? (
+                  <p className="rounded-2xl bg-destructive/8 px-4 py-3 text-sm text-destructive">
+                    {error}
                   </p>
                 ) : null}
-              </div>
-              {!isProUser ? (
-                <Button
-                  size="sm"
-                  className={landingCta("glass", "sm")}
-                  nativeButton={false}
-                  render={<Link href={UPGRADE_PATH} />}
-                >
-                  {t("upgrade")}
-                  <ArrowUpRightIcon className="size-3.5" />
-                </Button>
-              ) : (
-                <Badge variant="outline" className="rounded-full">
-                  {t("active")}
-                </Badge>
-              )}
-            </div>
 
-            <div className="grid sm:grid-cols-3">
-              <StatCell
-                label={t("status")}
-                value={statusValue}
-                className="border-b border-border/50 sm:border-e sm:border-b-0"
-              />
-              <StatCell
-                label={isProUser ? t("renewsExpires") : t("trial")}
-                value={renewValue}
-                className="border-b border-border/50 sm:border-e sm:border-b-0"
-              />
-              <StatCell
-                label={t("pendingInvoices")}
-                value={isAuthenticated ? String(pendingCount) : "—"}
-              />
-            </div>
-          </div>
+                <BillingGlassPanel>
+                  <Tabs defaultValue="invoices" className="gap-0">
+                    <div className="flex justify-center border-b border-white/55 px-4 py-3 dark:border-white/10">
+                      <TabsList className="h-11 rounded-full bg-white/45 p-1.5 group-data-horizontal/tabs:h-11 dark:bg-white/10">
+                        <TabsTrigger
+                          value="invoices"
+                          className="h-8 rounded-full px-5 text-sm data-active:bg-white data-active:shadow-sm dark:data-active:bg-white/15"
+                        >
+                          {t("invoices")}
+                          {invoiceRows.length > 0 ? (
+                            <span className="text-muted-foreground">
+                              ({invoiceRows.length})
+                            </span>
+                          ) : null}
+                        </TabsTrigger>
+                        <TabsTrigger
+                          value="payments"
+                          className="h-8 rounded-full px-5 text-sm data-active:bg-white data-active:shadow-sm dark:data-active:bg-white/15"
+                        >
+                          {t("payments")}
+                          {paymentRows.length > 0 ? (
+                            <span className="text-muted-foreground">
+                              ({paymentRows.length})
+                            </span>
+                          ) : null}
+                        </TabsTrigger>
+                      </TabsList>
+                    </div>
+                    <TabsContent value="invoices" className="mt-0">
+                      {loading && invoices == null ? (
+                        <p className="py-12 text-center text-sm text-muted-foreground">
+                          {t("loadingInvoices")}
+                        </p>
+                      ) : (
+                        <HistoryList
+                          rows={invoiceRows}
+                          mode="invoice"
+                          emptyTitle={t("noInvoicesTitle")}
+                          emptyBody={t("noInvoicesBody")}
+                        />
+                      )}
+                    </TabsContent>
+                    <TabsContent value="payments" className="mt-0">
+                      {loading && invoices == null ? (
+                        <p className="py-12 text-center text-sm text-muted-foreground">
+                          {t("loadingPayments")}
+                        </p>
+                      ) : (
+                        <HistoryList
+                          rows={paymentRows}
+                          mode="payment"
+                          emptyTitle={t("noPaymentsTitle")}
+                          emptyBody={t("noPaymentsBody")}
+                        />
+                      )}
+                    </TabsContent>
+                  </Tabs>
+                </BillingGlassPanel>
+              </section>
 
-          {!isAuthenticated ? (
-            <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-primary/20 bg-primary/5 px-4 py-4">
-              <p className="min-w-0 flex-1 text-sm text-muted-foreground">
-                {t("signInForHistory")}
+              <p className="pb-2 text-center text-[11px] text-muted-foreground">
+                {t.rich("managePlans", {
+                  upgrade: (chunks) => (
+                    <Link
+                      href={UPGRADE_PATH}
+                      className="underline decoration-border underline-offset-4 transition-colors hover:text-foreground hover:decoration-foreground"
+                    >
+                      {chunks}
+                    </Link>
+                  ),
+                })}
               </p>
-              <Button
-                size="sm"
-                className={landingCta("glass", "sm")}
-                disabled={loginPending}
-                onClick={() => login({ source: "billing" })}
-              >
-                {loginPending ? t("connecting") : t("signIn")}
-              </Button>
             </div>
-          ) : null}
-        </section>
-
-        <CreditUsageStatusPanel
-          balance={creditUsage.balance}
-          trial={creditUsage.trial}
-          loading={creditUsage.loading}
-          error={creditUsage.error}
-          onRefresh={() => void creditUsage.refresh()}
-        />
-
-        <section className="space-y-4">
-          <div className="flex flex-wrap items-end justify-between gap-3">
-            <div>
-              <h2 className="text-lg font-semibold tracking-tight">
-                {t("history")}
-              </h2>
-              <p className="mt-1 text-sm text-muted-foreground">
-                {t("historySubtitle")}
-              </p>
-            </div>
-            <Button
-              type="button"
-              size="sm"
-              className={landingCta("secondary", "sm")}
-              disabled={!isAuthenticated || loading}
-              onClick={() => void loadInvoices()}
-            >
-              <RefreshCwIcon
-                className={cn("size-3.5", loading && "animate-spin")}
-              />
-              {t("refresh")}
-            </Button>
           </div>
-
-          {error ? (
-            <p className="rounded-xl border border-destructive/30 bg-destructive/5 px-3 py-2 text-sm text-destructive">
-              {error}
-            </p>
-          ) : null}
-
-          <div className="overflow-hidden rounded-2xl border border-border/60 bg-card/90">
-            <Tabs defaultValue="invoices" className="gap-0">
-              <div className="flex justify-center border-b border-border/50 px-4 py-3">
-                <TabsList className="h-11 rounded-full p-1.5 group-data-horizontal/tabs:h-11">
-                  <TabsTrigger
-                    value="invoices"
-                    className="h-8 rounded-full px-5 text-sm"
-                  >
-                    {t("invoices")}
-                    {invoiceRows.length > 0 ? (
-                      <span className="text-muted-foreground">
-                        ({invoiceRows.length})
-                      </span>
-                    ) : null}
-                  </TabsTrigger>
-                  <TabsTrigger
-                    value="payments"
-                    className="h-8 rounded-full px-5 text-sm"
-                  >
-                    {t("payments")}
-                    {paymentRows.length > 0 ? (
-                      <span className="text-muted-foreground">
-                        ({paymentRows.length})
-                      </span>
-                    ) : null}
-                  </TabsTrigger>
-                </TabsList>
-              </div>
-              <TabsContent value="invoices" className="mt-0">
-                {loading && invoices == null ? (
-                  <p className="py-12 text-center text-sm text-muted-foreground">
-                    {t("loadingInvoices")}
-                  </p>
-                ) : (
-                  <HistoryList
-                    rows={invoiceRows}
-                    mode="invoice"
-                    emptyTitle={t("noInvoicesTitle")}
-                    emptyBody={t("noInvoicesBody")}
-                  />
-                )}
-              </TabsContent>
-              <TabsContent value="payments" className="mt-0">
-                {loading && invoices == null ? (
-                  <p className="py-12 text-center text-sm text-muted-foreground">
-                    {t("loadingPayments")}
-                  </p>
-                ) : (
-                  <HistoryList
-                    rows={paymentRows}
-                    mode="payment"
-                    emptyTitle={t("noPaymentsTitle")}
-                    emptyBody={t("noPaymentsBody")}
-                  />
-                )}
-              </TabsContent>
-            </Tabs>
-          </div>
-        </section>
-
-        <p className="pb-6 text-center text-[11px] text-muted-foreground">
-          {t.rich("managePlans", {
-            upgrade: (chunks) => (
-              <Link
-                href={UPGRADE_PATH}
-                className="underline underline-offset-2 hover:text-foreground"
-              >
-                {chunks}
-              </Link>
-            ),
-          })}
-        </p>
-      </main>
+        </article>
+      </div>
     </div>
   )
 }
