@@ -12,6 +12,7 @@ import {
   coPilotUserFacingError,
   getRetryUserMessage,
   isAbortError,
+  isCreditExhaustedError,
   isGuestTrialExhaustedError,
   isLowSignalUserMessage,
   prepareMessagesForRetry,
@@ -59,6 +60,33 @@ describe("co-pilot recovery helpers", () => {
     expect(COPILOT_CREDIT_MESSAGE).not.toMatch(/402|HTTP/i)
   })
 
+  it("maps SSE credit codes without HTTP 402 to the paywall", () => {
+    for (const code of [
+      "daily_limit_reached",
+      "weekly_limit_reached",
+      "insufficient_credit",
+    ] as const) {
+      const err = Object.assign(new Error("daily usage limit reached"), {
+        code,
+      })
+      expect(isCreditExhaustedError(err)).toBe(true)
+      expect(coPilotUserFacingError(err)).toBe(COPILOT_CREDIT_MESSAGE)
+      expect(coPilotFailureAction(err)).toBe("retry")
+    }
+  })
+
+  it("does not treat agent or reserve failures as out-of-credit", () => {
+    for (const message of [
+      "agent execution failed",
+      "failed to reserve credit",
+    ]) {
+      const err = Object.assign(new Error(message), { code: "" })
+      expect(isCreditExhaustedError(err)).toBe(false)
+      expect(coPilotUserFacingError(err)).toBe(COPILOT_RECOVERY_MESSAGE)
+      expect(coPilotFailureAction(err)).toBe("retry")
+    }
+  })
+
   it("maps 401 to sign-in copy and connect action for registered users", () => {
     setChatRegisteredUserId("user-123")
     const err = Object.assign(new Error("unauthorized"), { status: 401 })
@@ -82,6 +110,16 @@ describe("co-pilot recovery helpers", () => {
       status: 403,
       code: "login_required",
     })
+    expect(isGuestTrialExhaustedError(err)).toBe(true)
+    expect(coPilotUserFacingError(err)).toBe(COPILOT_TRIAL_EXHAUSTED_MESSAGE)
+    expect(coPilotFailureAction(err)).toBe("connect")
+  })
+
+  it("maps SSE login_required without HTTP 403 to sign-in", () => {
+    const err = Object.assign(
+      new Error("Guest trial exhausted for this week. Sign in to continue."),
+      { code: "login_required" }
+    )
     expect(isGuestTrialExhaustedError(err)).toBe(true)
     expect(coPilotUserFacingError(err)).toBe(COPILOT_TRIAL_EXHAUSTED_MESSAGE)
     expect(coPilotFailureAction(err)).toBe("connect")

@@ -1096,11 +1096,12 @@ function ChatAside({
 
         setPendingAssistantId(null)
         if (!isAuthenticated && isGuestTrialExhaustedError(error)) {
+          const trial = await trialFromChatError(error)
           replaceAssistantWithGuestLoginPrompt(
             assistantId,
             activeId,
             historySnapshot,
-            (error as { trial?: TrialInfo }).trial
+            trial
           )
           return
         }
@@ -1123,6 +1124,7 @@ function ChatAside({
                   errorText: coPilotUserFacingError(error, { isProUser }),
                   action: coPilotFailureAction(error),
                   retryUserMessage: failed.retryUserMessage,
+                  thinkingTrace: undefined,
                   }
                 : m
             ),
@@ -1413,9 +1415,8 @@ function ChatAside({
       }
 
       setPendingAssistantId(null)
-      const trial = (error as { trial?: TrialInfo }).trial
-      if (trial) setGuestTrial(trial)
       if (!isAuthenticated && isGuestTrialExhaustedError(error)) {
+        const trial = await trialFromChatError(error)
         replaceAssistantWithGuestLoginPrompt(
           assistantId,
           activeId,
@@ -1443,6 +1444,7 @@ function ChatAside({
                   errorText: coPilotUserFacingError(error, { isProUser }),
                   action: coPilotFailureAction(error),
                   retryUserMessage: failed.retryUserMessage,
+                  thinkingTrace: undefined,
                 }
               : m
           ),
@@ -1552,11 +1554,29 @@ function ChatAside({
                 action: "connect" as const,
                 errorText: undefined,
                 retryUserMessage: undefined,
+                thinkingTrace: undefined,
+                reasoning: undefined,
               }
             : m
         ),
       { id: activeId, history: historySnapshot, ownerId: chatOwnerId }
     )
+  }
+
+  /** Stream login_required has no trial object — refresh from GET /credits. */
+  async function trialFromChatError(error: unknown): Promise<TrialInfo | undefined> {
+    const attached = (error as { trial?: TrialInfo } | null)?.trial
+    if (attached) {
+      setGuestTrial(attached)
+      return attached
+    }
+    try {
+      const usage = await fetchCoPilotUsage()
+      if (usage.trial) setGuestTrial(usage.trial)
+      return usage.trial
+    } catch {
+      return undefined
+    }
   }
 
   async function handleSend(content: string) {
@@ -2293,6 +2313,7 @@ function ChatAside({
               const hasAction =
                 message.action === "connect" ||
                 message.action === "retry" ||
+                (message.errorText === COPILOT_CREDIT_MESSAGE && !isProUser) ||
                 Boolean(message.suggestedPrompts?.length)
 
               if (message.role === "user") {
