@@ -70,12 +70,12 @@ const aiMessageClassName = cn(
   "[&_code]:rounded-md [&_code]:bg-foreground/6 [&_code]:px-1 [&_code]:py-0.5 [&_code]:font-mono [&_code]:text-[0.92em]",
   "[&_pre]:my-3 [&_pre]:overflow-x-auto [&_pre]:rounded-xl [&_pre]:border [&_pre]:border-border/50 [&_pre]:bg-foreground/4 [&_pre]:p-3.5 [&_pre:last-child]:mb-0",
   "[&_pre_code]:block [&_pre_code]:bg-transparent [&_pre_code]:p-0 [&_pre_code]:text-xs [&_pre_code]:leading-[1.55]",
-  "[&_table]:my-4 [&_table]:w-full [&_table]:min-w-[28rem] [&_table]:border-collapse [&_table]:text-xs [&_table]:leading-[1.5] sm:[&_table]:min-w-[36rem]",
+  "[&_table]:my-4 [&_table]:w-full [&_table]:min-w-0 [&_table]:border-collapse [&_table]:text-xs [&_table]:leading-[1.5] max-md:[&_table]:table-fixed sm:[&_table]:min-w-[32rem]",
   "[&_thead]:border-b [&_thead]:border-border/60 [&_thead]:bg-muted/40",
   "[&_tbody]:divide-y [&_tbody]:divide-border/50",
   "[&_tr]:align-top",
-  "[&_th]:px-3.5 [&_th]:py-2.5 [&_th]:text-start [&_th]:font-semibold [&_th]:whitespace-normal [&_th]:text-foreground",
-  "[&_td]:px-3.5 [&_td]:py-2.5 [&_td]:text-start [&_td]:align-top [&_td]:whitespace-normal [&_td]:text-foreground/90"
+  "[&_th]:px-2.5 [&_th]:py-2 [&_th]:text-start [&_th]:font-semibold [&_th]:whitespace-normal [&_th]:break-words [&_th]:wrap-anywhere [&_th]:text-foreground max-md:[&_th]:max-w-0 sm:[&_th]:px-3.5 sm:[&_th]:py-2.5",
+  "[&_td]:px-2.5 [&_td]:py-2 [&_td]:text-start [&_td]:align-top [&_td]:whitespace-normal [&_td]:break-words [&_td]:wrap-anywhere [&_td]:text-foreground/90 max-md:[&_td]:max-w-0 sm:[&_td]:px-3.5 sm:[&_td]:py-2.5"
 )
 
 function renderAssistantHtml(content: string) {
