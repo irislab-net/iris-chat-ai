@@ -18,19 +18,19 @@ const NETWORK_CLASS: Record<NetworkSize, string> = {
   md: "size-5",
 }
 
-/** Light glass disc — barely frosted, keeps brand glyphs readable. */
+/** Solid-enough disc so brand glyphs read as badges, not bare icons. */
 const glassDisc =
   "relative flex shrink-0 items-center justify-center overflow-hidden rounded-full " +
-  "bg-white/35 shadow-[inset_0_0.5px_0_0_color-mix(in_oklch,white_55%,transparent)] " +
-  "backdrop-blur-[6px] backdrop-saturate-125 " +
-  "supports-[backdrop-filter]:bg-white/25 " +
-  "dark:bg-white/[0.06] dark:shadow-[inset_0_0.5px_0_0_color-mix(in_oklch,white_8%,transparent)] " +
-  "dark:supports-[backdrop-filter]:bg-white/[0.04]"
+  "shadow-[inset_0_0.5px_0_0_color-mix(in_oklch,white_70%,transparent),0_1px_2px_color-mix(in_oklch,var(--foreground)_6%,transparent)] " +
+  "backdrop-blur-[8px] backdrop-saturate-150 " +
+  "bg-white/88 supports-[backdrop-filter]:bg-white/72 " +
+  "dark:bg-white/[0.14] dark:shadow-[inset_0_0.5px_0_0_color-mix(in_oklch,white_12%,transparent),0_1px_2px_rgba(0,0,0,0.35)] " +
+  "dark:supports-[backdrop-filter]:bg-white/[0.1]"
 
 const TINT = {
-  USDT: "bg-[#26A17B]/10 dark:bg-[#26A17B]/14",
-  USDC: "bg-[#2775CA]/10 dark:bg-[#2775CA]/14",
-  ETH: "bg-[#627EEA]/12 dark:bg-[#627EEA]/16",
+  USDT: "bg-[#26A17B]/20 dark:bg-[#26A17B]/28",
+  USDC: "bg-[#2775CA]/20 dark:bg-[#2775CA]/28",
+  ETH: "bg-[#627EEA]/22 dark:bg-[#627EEA]/30",
 } as const
 
 /** Tether T — brand green glyph on glass. */
@@ -87,9 +87,10 @@ export function PaymentTokenLogo({
 
   return (
     <span
-      className={cn(glassDisc, TOKEN_CLASS[size], TINT[currency], className)}
+      className={cn(glassDisc, TOKEN_CLASS[size], className)}
       aria-hidden
     >
+      <span className={cn("absolute inset-0 rounded-full", TINT[currency])} />
       <Glyph className={cn("relative", glyphPad)} />
     </span>
   )
@@ -106,9 +107,10 @@ export function PaymentNetworkLogo({
 }: PaymentNetworkLogoProps) {
   return (
     <span
-      className={cn(glassDisc, NETWORK_CLASS[size], TINT.ETH, className)}
+      className={cn(glassDisc, NETWORK_CLASS[size], className)}
       aria-hidden
     >
+      <span className={cn("absolute inset-0 rounded-full", TINT.ETH)} />
       <EthGlyph className="relative size-[78%]" />
     </span>
   )
