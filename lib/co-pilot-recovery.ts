@@ -1,3 +1,9 @@
+import {
+  isChatCreditErrorCode,
+  isChatLoginRequiredCode,
+  isChatRetryableFailureMessage,
+  normalizeChatErrorCode,
+} from "@/lib/api/chat-errors"
 import { isGuestChatSession } from "@/lib/chat-auth-session"
 
 /** User-facing copy for recoverable co-pilot failures (no status codes / stack traces). */
@@ -69,16 +75,29 @@ export function isLowSignalUserMessage(text: string): boolean {
  * Never surface HTTP codes, stack traces, or raw infrastructure text.
  */
 function coPilotErrorCode(error: unknown): string | undefined {
-  const direct = (error as { code?: string } | null)?.code
+  const direct = normalizeChatErrorCode(
+    (error as { code?: string } | null)?.code
+  )
   if (direct) return direct
-  const body = (error as { body?: { code?: string } } | null)?.body
-  return body?.code
+  return normalizeChatErrorCode(
+    (error as { body?: { code?: string } } | null)?.body?.code
+  )
 }
 
 export function isCreditExhaustedError(error: unknown): boolean {
+  // Agent / credit-store failures must never open the out-of-credit paywall.
+  if (error instanceof Error && isChatRetryableFailureMessage(error.message)) {
+    return false
+  }
+  const code = coPilotErrorCode(error)
+  if (isChatCreditErrorCode(code)) return true
   const status = (error as { status?: number } | null)?.status
   if (status === 402) return true
-  if (error instanceof Error && /insufficient credit/i.test(error.message)) {
+  if (
+    error instanceof Error &&
+    (/insufficient credit/i.test(error.message) ||
+      /usage limit reached/i.test(error.message))
+  ) {
     return true
   }
   return false
@@ -92,10 +111,16 @@ export function coPilotUserFacingError(
   if (isAbortError(error)) return ""
   const status = (error as { status?: number } | null)?.status
   const code = coPilotErrorCode(error)
-  if (status === 403 && code === "login_required") {
+  if (isChatLoginRequiredCode(code) || isGuestTrialExhaustedError(error)) {
     return COPILOT_TRIAL_EXHAUSTED_MESSAGE
   }
-  if (status === 401) return COPILOT_AUTH_MESSAGE
+  if (
+    status === 401 ||
+    code === "unauthorized" ||
+    code === "invalid_token"
+  ) {
+    return COPILOT_AUTH_MESSAGE
+  }
   if (isCreditExhaustedError(error)) {
     return options?.isProUser
       ? COPILOT_PRO_SESSION_REFRESH_MESSAGE
@@ -104,7 +129,7 @@ export function coPilotUserFacingError(
   // Known empty-completion path uses a friendly Error already — keep if it matches product tone.
   if (error instanceof Error) {
     const msg = error.message.trim()
-    if (/insufficient credit/i.test(msg)) {
+    if (/insufficient credit/i.test(msg) || /usage limit reached/i.test(msg)) {
       return options?.isProUser
         ? COPILOT_PRO_SESSION_REFRESH_MESSAGE
         : COPILOT_CREDIT_MESSAGE
@@ -117,6 +142,7 @@ export function coPilotUserFacingError(
     if (/failed to fetch/i.test(msg)) return COPILOT_RECOVERY_MESSAGE
     if (/network/i.test(msg)) return COPILOT_RECOVERY_MESSAGE
     if (/streaming response has no body/i.test(msg)) return COPILOT_RECOVERY_MESSAGE
+    if (isChatRetryableFailureMessage(msg)) return COPILOT_RECOVERY_MESSAGE
     if (msg.length > 0 && msg.length < 160 && !/[<>{}]/.test(msg) && !/\bHTTP\b/i.test(msg)) {
       // Short opaque API `error` strings may be user-safe; still prefer recovery copy
       // unless we know the backend writes human copy. Default to recovery message.
@@ -197,15 +223,22 @@ export function prepareMessagesForRetry<
 
 /** Find retry payload for a failed assistant turn. */
 export function isGuestTrialExhaustedError(error: unknown): boolean {
-  const status = (error as { status?: number } | null)?.status
-  const code = coPilotErrorCode(error)
-  return status === 403 && code === "login_required"
+  // Stream path: HTTP 200 + event:error with code login_required (no 403).
+  return isChatLoginRequiredCode(coPilotErrorCode(error))
 }
 
 export function coPilotFailureAction(error: unknown): "connect" | "retry" {
   if (isGuestTrialExhaustedError(error)) return "connect"
   const status = (error as { status?: number } | null)?.status
-  if (status === 401 && !isGuestChatSession()) return "connect"
+  const code = coPilotErrorCode(error)
+  if (
+    (status === 401 ||
+      code === "unauthorized" ||
+      code === "invalid_token") &&
+    !isGuestChatSession()
+  ) {
+    return "connect"
+  }
   return "retry"
 }
 

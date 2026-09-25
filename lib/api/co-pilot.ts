@@ -8,6 +8,10 @@ import {
   unwrapChatPayload,
 } from "@/lib/api/chat"
 import {
+  chatStreamErrorFromEvent,
+  normalizeChatErrorCode,
+} from "@/lib/api/chat-errors"
+import {
   joinReasoningTexts,
   readChatSseStream,
 } from "@/lib/api/chat-sse"
@@ -22,6 +26,10 @@ import type {
 } from "@/lib/api/types"
 import { isGuestChatSession } from "@/lib/chat-auth-session"
 import { ensureGuestSession } from "@/lib/guest-chat"
+import {
+  isCreditExhaustedError,
+  isGuestTrialExhaustedError,
+} from "@/lib/co-pilot-recovery"
 
 /** Abort chat POSTs that hang without a response body. */
 export const CHAT_REQUEST_TIMEOUT_MS = 90_000
@@ -70,7 +78,9 @@ function chatErrorPayload(raw: unknown) {
   }>(raw)
   return {
     message: payload.error || "Chat request failed",
-    code: payload.code ?? (raw as { code?: string }).code,
+    code: normalizeChatErrorCode(
+      payload.code ?? (raw as { code?: string }).code
+    ),
     trial: payload.trial ?? (raw as { trial?: TrialInfo }).trial,
   }
 }
@@ -162,12 +172,13 @@ export async function sendCoPilotChat(input: {
 
     if (!res.ok) {
       const err = chatErrorPayload(raw)
+      const code = err.code ?? normalizeChatErrorCode(adapted.code)
       throw Object.assign(
         new Error(payload.error || err.message || adapted.message || `HTTP ${res.status}`),
         {
           status: res.status,
           body: raw,
-          code: err.code ?? adapted.code,
+          ...(code ? { code } : {}),
           trial: err.trial ?? adapted.trial,
         }
       )
@@ -186,12 +197,10 @@ export async function sendCoPilotChatWithSessionRetry(
   try {
     return await sendCoPilotChat(input)
   } catch (error) {
-    const status = (error as { status?: number } | null)?.status
-    const code = (error as { code?: string } | null)?.code
-    if (status === 403 && code === "login_required") throw error
+    if (isGuestTrialExhaustedError(error)) throw error
 
     if (
-      status === 402 &&
+      isCreditExhaustedError(error) &&
       !isGuestChatSession() &&
       session?.refreshAfterUpgrade
     ) {
@@ -199,6 +208,7 @@ export async function sendCoPilotChatWithSessionRetry(
       return await sendCoPilotChat(input)
     }
 
+    const status = (error as { status?: number } | null)?.status
     if (status !== 401) throw error
 
     if (isGuestChatSession()) {
@@ -264,7 +274,7 @@ async function streamCoPilotChatOnce(input: {
       )
       const adapted = adaptChatMessageResponse(payload)
       const err = chatErrorPayload(raw)
-      const code = err.code ?? adapted.code
+      const code = err.code ?? normalizeChatErrorCode(adapted.code)
 
       // Older gateways may not support SSE yet — fall back to JSON /message.
       if (res.status === 404 || code === "stream_unsupported") {
@@ -286,7 +296,7 @@ async function streamCoPilotChatOnce(input: {
         {
           status: res.status,
           body: raw,
-          code,
+          ...(code ? { code } : {}),
           trial: err.trial ?? adapted.trial,
         }
       )
@@ -308,9 +318,7 @@ async function streamCoPilotChatOnce(input: {
           return
         }
         if (event.event === "error") {
-          throw Object.assign(new Error(event.data.message), {
-            code: event.data.code,
-          })
+          throw chatStreamErrorFromEvent(event.data)
         }
         if (event.event === "done") {
           donePayload = event.data
@@ -344,12 +352,10 @@ export async function streamCoPilotChatWithSessionRetry(
   try {
     return await streamCoPilotChatOnce(input)
   } catch (error) {
-    const status = (error as { status?: number } | null)?.status
-    const code = (error as { code?: string } | null)?.code
-    if (status === 403 && code === "login_required") throw error
+    if (isGuestTrialExhaustedError(error)) throw error
 
     if (
-      status === 402 &&
+      isCreditExhaustedError(error) &&
       !isGuestChatSession() &&
       session?.refreshAfterUpgrade
     ) {
@@ -357,6 +363,7 @@ export async function streamCoPilotChatWithSessionRetry(
       return await streamCoPilotChatOnce(input)
     }
 
+    const status = (error as { status?: number } | null)?.status
     if (status !== 401) throw error
 
     if (isGuestChatSession()) {
