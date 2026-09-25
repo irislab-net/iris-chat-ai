@@ -1,7 +1,7 @@
 "use client"
 
 import { gsap } from "gsap"
-import { useTranslations } from "next-intl"
+import { useLocale, useTranslations } from "next-intl"
 import { useReducedMotion } from "@/lib/landing-motion"
 import { ensureGsapScroll } from "@/lib/gsap-scroll"
 import { ArrowUpIcon, SquareIcon } from "lucide-react"
@@ -9,6 +9,7 @@ import { useRouter } from "@/i18n/navigation"
 import {
   useCallback,
   useLayoutEffect,
+  useMemo,
   useRef,
   useState,
   type ReactNode,
@@ -23,14 +24,17 @@ import {
   HERO_DEMO_EXCHANGE_COUNT,
 } from "@/lib/landing-modern-data"
 import {
+  landingGlassBlueSheen,
   landingGlassBubbleAi,
   landingGlassBubbleThinking,
   landingGlassBubbleUser,
   landingGlassOrb,
   landingGlassPill,
+  landingGlassSheen,
   landingHeroComposeGrid,
 } from "@/lib/landing-modern-styles"
 import { buildLandingChatHref } from "@/lib/landing-chat-handoff"
+import { localeDirection } from "@/lib/i18n/locale"
 import { cn } from "@/lib/utils"
 
 
@@ -52,8 +56,34 @@ const SEND_PUNCH_FRAMES = 7
 const DOT_CYCLE_FRAMES = 24
 const CARET_CYCLE_FRAMES = 28
 
-const USER_ORIGIN = "100% 100%"
-const AI_ORIGIN = "0% 0%"
+type DemoAxis = {
+  userOrigin: string
+  aiOrigin: string
+  userFromX: number
+  aiFromX: number
+  userOutX: number
+  aiOutX: number
+}
+
+function demoAxis(isRtl: boolean): DemoAxis {
+  return isRtl
+    ? {
+        userOrigin: "0% 100%",
+        aiOrigin: "100% 0%",
+        userFromX: -14,
+        aiFromX: 14,
+        userOutX: -10,
+        aiOutX: 8,
+      }
+    : {
+        userOrigin: "100% 100%",
+        aiOrigin: "0% 0%",
+        userFromX: 14,
+        aiFromX: -14,
+        userOutX: 10,
+        aiOutX: -8,
+      }
+}
 
 type DemoPhase =
   | "typing-question"
@@ -92,15 +122,13 @@ function GlassSheen({ className }: { className?: string }) {
   return (
     <div
       aria-hidden
-      className={cn(
-        "pointer-events-none absolute inset-0 bg-[linear-gradient(145deg,rgba(255,255,255,0.72)_0%,rgba(255,255,255,0.18)_38%,rgba(255,255,255,0.04)_62%,rgba(255,255,255,0)_100%)]",
-        className
-      )}
+      className={cn(landingGlassSheen, className)}
     />
   )
 }
 
-function GlassOrb({
+/** Dual-layer liquid-glass ring for hero chat avatars. */
+function HeroGlassAvatar({
   children,
   className,
 }: {
@@ -109,12 +137,30 @@ function GlassOrb({
 }) {
   return (
     <span
-      className={cn("inline-flex shrink-0", landingGlassOrb, className)}
       aria-hidden
+      className={cn(
+        landingGlassPill,
+        "inline-flex size-12 shrink-0 items-center justify-center rounded-full p-[3px] sm:size-[3.25rem]",
+        "shadow-[0_14px_40px_rgba(15,23,42,0.1),inset_0_1px_1px_rgba(255,255,255,0.98),inset_0_-1px_2px_rgba(255,255,255,0.35)]",
+        "dark:shadow-[0_14px_40px_rgba(0,0,0,0.45),inset_0_1px_1px_rgba(255,255,255,0.16),inset_0_-1px_2px_rgba(255,255,255,0.05)]",
+        className
+      )}
     >
-      <GlassSheen className="rounded-full" />
-      <span className="relative z-10 flex size-full items-center justify-center">
-        {children}
+      <span aria-hidden className={cn(landingGlassSheen, "rounded-full")} />
+      <span
+        aria-hidden
+        className={cn(landingGlassBlueSheen, "rounded-full opacity-70")}
+      />
+      <span
+        className={cn(
+          landingGlassOrb,
+          "relative z-10 flex size-full items-center justify-center overflow-hidden rounded-full bg-white/55 p-0.5 dark:bg-white/12"
+        )}
+      >
+        <span aria-hidden className={cn(landingGlassSheen, "rounded-full")} />
+        <span className="relative z-10 flex size-full items-center justify-center overflow-hidden rounded-full">
+          {children}
+        </span>
       </span>
     </span>
   )
@@ -128,22 +174,24 @@ function DemoUserAvatar({
   initials: string
 }) {
   return (
-    <GlassOrb className="p-0.5">
-      <Avatar size="sm" className="size-full after:hidden">
-        <AvatarImage src={src} alt="" loading="lazy" />
-        <AvatarFallback className="bg-white/40 text-[9px] font-medium text-muted-foreground dark:bg-white/10">
+    <HeroGlassAvatar>
+      <Avatar size="lg" className="size-full after:hidden">
+        <AvatarImage src={src} alt="" loading="lazy" className="object-cover" />
+        <AvatarFallback className="bg-white/45 text-[10px] font-medium tracking-wide text-muted-foreground dark:bg-white/10">
           {initials}
         </AvatarFallback>
       </Avatar>
-    </GlassOrb>
+    </HeroGlassAvatar>
   )
 }
 
 function DemoSystemAvatar() {
   return (
-    <GlassOrb className="mt-0.5 p-1.5">
-            <ExurLogo variant="auto" size={20} className="size-full" decorative />
-    </GlassOrb>
+    <HeroGlassAvatar className="mt-0.5">
+      <span className="flex size-full items-center justify-center rounded-full bg-white/25 p-0 dark:bg-white/8">
+        <ExurLogo variant="auto" size={44} className="size-9 sm:size-10" decorative />
+      </span>
+    </HeroGlassAvatar>
   )
 }
 
@@ -202,10 +250,10 @@ function hideShot(shot: ChatShot, origin: string, fromX: number) {
   })
 }
 
-function resetDemoShots(elements: DemoShotElements) {
-  hideShot(elements.user, USER_ORIGIN, 14)
-  hideShot(elements.thinking, AI_ORIGIN, -14)
-  hideShot(elements.answer, AI_ORIGIN, -14)
+function resetDemoShots(elements: DemoShotElements, axis: DemoAxis) {
+  hideShot(elements.user, axis.userOrigin, axis.userFromX)
+  hideShot(elements.thinking, axis.aiOrigin, axis.aiFromX)
+  hideShot(elements.answer, axis.aiOrigin, axis.aiFromX)
   gsap.set(elements.caret, { autoAlpha: 0 })
   gsap.set(elements.dots, { y: 0, opacity: 1 })
   gsap.set(elements.send, { scale: 1, transformOrigin: "50% 50%" })
@@ -338,6 +386,7 @@ function playHeroComposeTimeline({
   answer,
   reducedMotion,
   startAt,
+  axis,
   onDraft,
   onAnswer,
   onPhase,
@@ -351,6 +400,7 @@ function playHeroComposeTimeline({
   answer: string
   reducedMotion: boolean
   startAt: DemoStartAt
+  axis: DemoAxis
   onDraft: (value: string) => void
   onAnswer: (value: string) => void
   onPhase: (phase: DemoPhase) => void
@@ -368,7 +418,7 @@ function playHeroComposeTimeline({
     onComplete,
   })
 
-  resetDemoShots(elements)
+  resetDemoShots(elements, axis)
   onUserText(question)
   onAnswer("")
   onDraft("")
@@ -404,16 +454,16 @@ function playHeroComposeTimeline({
     "send"
   )
   revealShot(timeline, elements.user, {
-    origin: USER_ORIGIN,
-    fromX: 14,
+    origin: axis.userOrigin,
+    fromX: axis.userFromX,
     at: "send",
     vis,
   })
 
   timeline.addLabel("think", `send+=${vis(12)}`)
   revealShot(timeline, elements.thinking, {
-    origin: AI_ORIGIN,
-    fromX: -14,
+    origin: axis.aiOrigin,
+    fromX: axis.aiFromX,
     at: "think",
     vis,
   })
@@ -446,14 +496,14 @@ function playHeroComposeTimeline({
     onPhase("typing-answer")
   })
   dismissShot(timeline, elements.thinking, {
-    toX: -8,
+    toX: axis.aiOutX,
     toY: -12,
     at: "answer",
     vis,
   })
   revealShot(timeline, elements.answer, {
-    origin: AI_ORIGIN,
-    fromX: -10,
+    origin: axis.aiOrigin,
+    fromX: axis.aiFromX,
     at: `answer+=${vis(6)}`,
     vis,
   })
@@ -496,13 +546,13 @@ function playHeroComposeTimeline({
   timeline.addLabel("fade")
   timeline.call(() => onPhase("fading"))
   dismissShot(timeline, elements.user, {
-    toX: 10,
+    toX: axis.userOutX,
     toY: -12,
     at: "fade",
     vis,
   })
   dismissShot(timeline, elements.answer, {
-    toX: -8,
+    toX: axis.aiOutX,
     toY: -12,
     at: `fade+=${vis(5)}`,
     vis,
@@ -514,6 +564,10 @@ function playHeroComposeTimeline({
 
 export function HeroComposeDemo() {
   const tHero = useTranslations("modern.hero")
+  const locale = useLocale()
+  const textDir = localeDirection(locale)
+  const isRtl = textDir === "rtl"
+  const axis = useMemo(() => demoAxis(isRtl), [isRtl])
   const router = useRouter()
   const reducedMotion = Boolean(useReducedMotion())
 
@@ -565,8 +619,8 @@ export function HeroComposeDemo() {
     const root = rootRef.current
     if (!root) return
     const elements = collectDemoShots(root)
-    if (elements) resetDemoShots(elements)
-  }, [])
+    if (elements) resetDemoShots(elements, axis)
+  }, [axis])
 
   const enterInteractiveMode = useCallback(() => {
     killDemoMotion()
@@ -619,32 +673,42 @@ export function HeroComposeDemo() {
     }
 
     const playDemo = (startAt: DemoStartAt, sendQuestion?: string) => {
-      const elements = collectDemoShots(root)
-      if (!elements) return
+      try {
+        const elements = collectDemoShots(root)
+        if (!elements) return
 
-      killDemoMotion()
+        killDemoMotion()
 
-      const nextQuestion = sendQuestion ?? question
+        const nextQuestion = sendQuestion ?? question
 
-      timelineRef.current = playHeroComposeTimeline({
-        elements,
-        question: nextQuestion,
-        answer,
-        reducedMotion,
-        startAt,
-        onDraft: (value) => {
-          composerDraftRef.current = value
-          setComposerDraft(value)
-        },
-        onAnswer: setAnswerText,
-        onPhase: setPhase,
-        onUserText: setUserBubbleText,
-        onDotsTween: assignDots,
-        onCaretTween: assignCaret,
-        onComplete: () => {
-          setScenarioIndex((current) => pickRandomScenarioIndex(current))
-        },
-      })
+        timelineRef.current = playHeroComposeTimeline({
+          elements,
+          question: nextQuestion,
+          answer,
+          reducedMotion,
+          startAt,
+          axis,
+          onDraft: (value) => {
+            composerDraftRef.current = value
+            setComposerDraft(value)
+          },
+          onAnswer: setAnswerText,
+          onPhase: setPhase,
+          onUserText: setUserBubbleText,
+          onDotsTween: assignDots,
+          onCaretTween: assignCaret,
+          onComplete: () => {
+            setScenarioIndex((current) => pickRandomScenarioIndex(current))
+          },
+        })
+      } catch {
+        killDemoMotion()
+        hideDemoShots()
+        setPhase("typing-question")
+        setComposerDraft("")
+        setUserBubbleText(null)
+        setAnswerText("")
+      }
     }
 
     playDemoRef.current = playDemo
@@ -663,6 +727,7 @@ export function HeroComposeDemo() {
     }
   }, [
     answer,
+    axis,
     demoActive,
     hideDemoShots,
     killDemoMotion,
@@ -673,6 +738,7 @@ export function HeroComposeDemo() {
   return (
     <div
       ref={rootRef}
+      dir={textDir}
       className="mx-auto w-full max-w-lg lg:max-w-2xl"
       aria-live="polite"
       aria-atomic="false"
@@ -691,7 +757,7 @@ export function HeroComposeDemo() {
               )}
             >
               <GlassSheen />
-              <p className="relative z-10 line-clamp-2 text-left text-[0.8125rem] font-normal leading-snug text-foreground sm:text-base">
+              <p className="relative z-10 line-clamp-2 text-start text-[0.9375rem] font-normal leading-snug text-foreground sm:text-lg sm:leading-snug">
                 {userBubbleText ?? "\u00A0"}
               </p>
             </div>
@@ -744,11 +810,11 @@ export function HeroComposeDemo() {
                 <p className="relative z-10 mb-0.5 font-mono text-[9px] font-medium uppercase tracking-[0.25em] text-muted-foreground sm:mb-1">
                   Exur
                 </p>
-                <p className="relative z-10 line-clamp-4 text-left text-[0.8125rem] font-normal leading-snug text-muted-foreground sm:text-base sm:leading-relaxed">
+                <p className="relative z-10 line-clamp-4 text-start text-[0.9375rem] font-normal leading-snug text-muted-foreground sm:text-lg sm:leading-relaxed">
                   {answerText}
                   <span
                     data-demo-caret
-                    className="ml-0.5 inline-block h-[1.1em] w-0.5 bg-muted-foreground align-[-2px] opacity-0"
+                    className="ms-0.5 inline-block h-[1.1em] w-0.5 bg-muted-foreground align-[-2px] opacity-0"
                     aria-hidden
                   />
                 </p>
@@ -768,6 +834,7 @@ export function HeroComposeDemo() {
           type="search"
           enterKeyHint="send"
           autoComplete="off"
+          dir={textDir}
           value={composerValue}
           onChange={(e) => {
             if (demoActive) enterInteractiveMode()

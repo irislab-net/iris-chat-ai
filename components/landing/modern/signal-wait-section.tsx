@@ -1,7 +1,7 @@
 "use client"
 
 import { ArrowUpIcon } from "lucide-react"
-import { useTranslations } from "next-intl"
+import { useLocale, useTranslations } from "next-intl"
 import { useLayoutEffect, useMemo, useRef, useState } from "react"
 
 import { ChatSignalCard } from "@/components/app-shell/chat-signal-card"
@@ -11,6 +11,7 @@ import { SectionHeader } from "@/components/landing/modern/sphere-ui"
 import { Input } from "@/components/ui/input"
 import { SIGNAL_WAIT_TICKET } from "@/lib/landing-modern-data"
 import { useReducedMotion } from "@/lib/landing-motion"
+import { localeDirection } from "@/lib/i18n/locale"
 import {
   landingAfterHeader,
   landingCardRadius,
@@ -42,7 +43,7 @@ function UserBubble({
       <div
         className={cn(
           landingGlassBubbleUser,
-          "max-w-[min(100%,20rem)] px-3.5 py-2.5 text-left text-[13px] leading-snug text-foreground sm:max-w-md sm:px-4 sm:py-3 sm:text-sm"
+          "max-w-[min(100%,20rem)] px-3.5 py-2.5 text-start text-[13px] leading-snug text-foreground sm:max-w-md sm:px-4 sm:py-3 sm:text-sm"
         )}
       >
         {children}
@@ -79,13 +80,13 @@ function AiBubble({
       <div
         className={cn(
           landingGlassBubbleAi,
-          "line-clamp-3 max-w-[min(100%,20rem)] px-3.5 py-2.5 text-left text-[13px] leading-snug text-foreground/90 sm:max-w-md sm:px-4 sm:py-3 sm:text-sm"
+          "line-clamp-3 max-w-[min(100%,20rem)] px-3.5 py-2.5 text-start text-[13px] leading-snug text-foreground/90 sm:max-w-md sm:px-4 sm:py-3 sm:text-sm"
         )}
       >
         {children}
         {typing ? (
           <span
-            className="ml-0.5 inline-block h-[1.1em] w-0.5 translate-y-0.5 animate-pulse bg-muted-foreground align-[-2px]"
+            className="ms-0.5 inline-block h-[1.1em] w-0.5 translate-y-0.5 animate-pulse bg-muted-foreground align-[-2px]"
             aria-hidden
           />
         ) : null}
@@ -164,6 +165,7 @@ function HoldResult({ label, reason }: { label: string; reason: string }) {
 
 export function SignalWaitSection() {
   const t = useTranslations("modern.signalWait")
+  const textDir = localeDirection(useLocale())
   const reducedMotion = useReducedMotion()
   const rootRef = useRef<HTMLDivElement>(null)
   const userRef = useRef<HTMLDivElement>(null)
@@ -247,6 +249,7 @@ export function SignalWaitSection() {
       <ScrollReveal className={cn("w-full", landingAfterHeader)}>
         <div
           ref={rootRef}
+          dir={textDir}
           className={cn(
             "relative isolate overflow-visible",
             landingCardRadius,
@@ -323,6 +326,7 @@ export function SignalWaitSection() {
               />
               <Input
                 type="text"
+                dir={textDir}
                 value={shownDraft}
                 readOnly
                 tabIndex={-1}

@@ -3,7 +3,7 @@
 import * as React from "react"
 import { useSearchParams } from "next/navigation"
 import { Link, usePathname, useRouter } from "@/i18n/navigation"
-import { useTranslations } from "next-intl"
+import { useLocale, useTranslations } from "next-intl"
 import {
   ChevronDownIcon,
   HistoryIcon,
@@ -145,6 +145,7 @@ import {
   writeHistoryRailCollapsed,
 } from "@/lib/chat-history-rail-prefs"
 import { cn } from "@/lib/utils"
+import { localeDirection } from "@/lib/i18n/locale"
 
 const ChatNewsSidePanel = dynamic(
   () =>
@@ -295,7 +296,7 @@ function IrisFollowUpPrompts({
             variant="ghost"
             size="xs"
             disabled={disabled}
-            className="h-auto max-w-full items-start justify-start rounded-xl bg-muted/20 px-2.5 py-1.5 text-left text-[11px] leading-5 font-normal whitespace-normal hover:bg-muted/35"
+            className="h-auto max-w-full items-start justify-start rounded-xl bg-muted/20 px-2.5 py-1.5 text-start text-[11px] leading-5 font-normal whitespace-normal hover:bg-muted/35"
             onClick={() => onSelect(prompt)}
           >
             {prompt}
@@ -314,6 +315,7 @@ function ChatAside({
 }: ChatAsideProps) {
   const t = useTranslations("workspace")
   const common = useTranslations("common")
+  const textDir = localeDirection(useLocale())
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
@@ -1835,6 +1837,7 @@ function ChatAside({
   return (
     <aside
       data-slot="chat-aside"
+      dir={textDir}
       className={cn(
         "relative flex h-full min-h-0 w-full overflow-hidden",
         isMobileOverlay
@@ -1842,7 +1845,7 @@ function ChatAside({
           : historyRailVisible || isFocusedLayout
             ? "flex-row bg-sidebar text-sidebar-foreground"
             : "flex-col bg-sidebar text-sidebar-foreground",
-        displayMode === "docked" && !isMobileOverlay ? "rounded-r-2xl" : "rounded-none",
+        displayMode === "docked" && !isMobileOverlay ? "rounded-e-2xl" : "rounded-none",
         className
       )}
     >
@@ -2154,7 +2157,7 @@ function ChatAside({
                       onClick={() => login({ source: "chat" })}
                     >
                       <GoogleGlyph className="size-4" />
-                      Continue with Google
+                      {t("continueWithGoogle")}
                     </Button>
                   ) : null}
                   {message.action === "retry" ? (
@@ -2166,7 +2169,7 @@ function ChatAside({
                       className="rounded-lg bg-muted/25 hover:bg-muted/40"
                       onClick={() => void handleRetry(message.id)}
                     >
-                      Try again
+                      {t("tryAgain")}
                     </Button>
                   ) : null}
                   {message.errorText === COPILOT_CREDIT_MESSAGE && !isProUser ? (

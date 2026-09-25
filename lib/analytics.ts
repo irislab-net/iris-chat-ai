@@ -1,5 +1,6 @@
 import type { User } from "@/lib/api/types"
 import type { BillingCycle, PlanKey } from "@/lib/billing/catalog"
+import { getPlusUsdValue } from "@/lib/billing/prices"
 import { isMarketingHost } from "@/lib/hosts"
 
 export const GA_MEASUREMENT_ID =
@@ -45,9 +46,8 @@ export function isChatGtmEnabled(
   return isGtmEnabled() && isChatAnalyticsPath(pathname)
 }
 
-const PLUS_USD_VALUE: Record<BillingCycle, number> = {
-  monthly: 49,
-  annual: 492,
+function plusUsdValue(billing: BillingCycle): number {
+  return getPlusUsdValue(billing)
 }
 
 export type LoginSource =
@@ -239,7 +239,7 @@ export function trackCheckoutStart(params: { billing: BillingCycle }) {
     billing: params.billing,
     plan: "plus",
     currency: "USD",
-    value: PLUS_USD_VALUE[params.billing],
+    value: plusUsdValue(params.billing),
   })
 }
 
@@ -248,7 +248,7 @@ export function trackPurchase(params: {
   currency?: string
   value?: number
 }) {
-  const value = params.value ?? PLUS_USD_VALUE[params.billing]
+  const value = params.value ?? plusUsdValue(params.billing)
   trackEvent("purchase", {
     billing: params.billing,
     plan: "plus",

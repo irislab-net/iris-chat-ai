@@ -3,6 +3,7 @@
 import * as React from "react"
 import { Link, useRouter } from "@/i18n/navigation"
 import { Clock3Icon, XIcon } from "lucide-react"
+import { useTranslations } from "next-intl"
 
 import { useAuth } from "@/components/auth/auth-provider"
 import { markPlanUpgradePendingRefresh } from "@/lib/api/auth"
@@ -19,6 +20,7 @@ import {
   type BillingCycle,
   type PlanKey,
 } from "@/lib/billing/catalog"
+import { parsePriceAmount } from "@/lib/billing/prices"
 import {
   formatCountdown,
   formatCryptoAmount,
@@ -31,7 +33,7 @@ import {
 import { useNow } from "@/hooks/use-now"
 import { usePendingPaymentInvoice } from "@/hooks/use-pending-payment-invoice"
 import { APP_NEWS_PATH, SOCIAL_X_URL } from "@/lib/site"
-import { chatMobileSheetFooterBarClass, chatMobileSheetPrimaryButtonClass } from "@/components/app-shell/chat-mobile-gemini-styles"
+import { chatMobileSheetFooterBarClass } from "@/components/app-shell/chat-mobile-gemini-styles"
 import { useIsDesktop } from "@/hooks/use-media-query"
 import {
   trackCheckoutStart,
@@ -40,56 +42,20 @@ import {
   trackUpgradePlanSelect,
   trackUpgradeView,
 } from "@/lib/analytics"
+import { landingCta } from "@/lib/landing-modern-styles"
 import { cn } from "@/lib/utils"
 
-function continueLabel(
+function isCurrentPlan(
   plan: PlanKey,
-  current: ReturnType<typeof displayPlanName>,
-  plusLocked: boolean
+  current: ReturnType<typeof displayPlanName>
 ) {
-  if (plan === "free") {
-    return current === "Free" ? "Continue with Free" : "Back to desk"
-  }
-  if (plan === "plus") {
-    return plusLocked ? "Current plan" : "Pay with crypto"
-  }
-  return current === "Ultimate" ? "Current plan" : "Contact us"
-}
-
-function isCurrentPlan(plan: PlanKey, current: ReturnType<typeof displayPlanName>) {
   if (plan === "plus") return current === "Plus"
   if (plan === "ultimate") return current === "Ultimate"
   return current === "Free"
 }
 
-function footerHint({
-  selected,
-  hasPendingPayment,
-  pendingMsRemaining,
-  isAuthenticated,
-  prices,
-}: {
-  selected: PlanKey
-  hasPendingPayment: boolean
-  pendingMsRemaining: number
-  isAuthenticated: boolean
-  prices: (typeof BILLING_PRICES)[BillingCycle]
-}) {
-  if (selected === "plus" && hasPendingPayment) {
-    return `Finish your payment · ${formatCountdown(pendingMsRemaining)} left`
-  }
-  if (selected === "plus") {
-    return isAuthenticated
-      ? `${prices.plus}${prices.cadence} · USDT or USDC on Ethereum`
-      : "Sign in to continue to payment"
-  }
-  if (selected === "ultimate") {
-    return "We’ll set Ultimate up with you on X"
-  }
-  return "No charge on Free"
-}
-
 function UpgradeView() {
+  const t = useTranslations("upgradePage")
   const router = useRouter()
   const isDesktop = useIsDesktop()
   const {
@@ -113,6 +79,7 @@ function UpgradeView() {
 
   const currentPlan = displayPlanName(user?.tier)
   const prices = BILLING_PRICES[billing]
+  const cadence = t("cadence")
   const canTrackPendingPayment = isAuthenticated && !isProUser
 
   const paidHandledRef = React.useRef(false)
@@ -196,19 +163,53 @@ function UpgradeView() {
         paymentCurrencyForInvoice(pendingInvoice)
       )
     : ""
+
+  function continueLabel(plan: PlanKey) {
+    if (plan === "free") {
+      return currentPlan === "Free" ? t("continueFree") : t("backToDeskCta")
+    }
+    if (plan === "plus") {
+      return plusLocked ? t("currentPlanCta") : t("payWithCrypto")
+    }
+    return currentPlan === "Ultimate" ? t("currentPlanCta") : t("contactUs")
+  }
+
+  function footerHint() {
+    if (selected === "plus" && hasPendingPayment) {
+      return t("hintPending", { time: formatCountdown(pendingMsRemaining) })
+    }
+    if (selected === "plus") {
+      return isAuthenticated
+        ? t("hintPlusAuth", { price: prices.plus, cadence })
+        : t("hintPlusGuest")
+    }
+    if (selected === "ultimate") {
+      return t("hintUltimate")
+    }
+    return t("hintFree")
+  }
+
   const cta =
     selected === "plus" && hasPendingPayment
-      ? "Finish payment"
-      : continueLabel(selected, currentPlan, plusLocked)
+      ? t("finishPayment")
+      : continueLabel(selected)
+
+  function planPrice(key: PlanKey) {
+    const raw = prices[key]
+    if (key === "ultimate" && parsePriceAmount(raw) === null) {
+      return t("customPrice")
+    }
+    return raw
+  }
 
   return (
     <div className="flex min-h-dvh flex-col bg-background text-foreground">
       <header className="flex h-14 shrink-0 items-center gap-3 border-b border-border/60 px-4 sm:px-6">
         <ExurLogo alt="Exur" size={32} className="size-8 rounded-full" priority />
         <div className="min-w-0 flex-1">
-          <p className="text-sm font-medium leading-none">Upgrade</p>
+          <p className="text-sm font-medium leading-none">{t("title")}</p>
           <p className="mt-0.5 truncate text-xs text-muted-foreground">
-            Current plan: {currentPlan}
+            {t("currentPlanLine", { plan: currentPlan })}
           </p>
         </div>
         <Button
@@ -216,7 +217,7 @@ function UpgradeView() {
           size="icon"
           className="size-8 text-muted-foreground hover:text-foreground"
           nativeButton={false}
-          render={<Link href={APP_NEWS_PATH} aria-label="Back to desk" />}
+          render={<Link href={APP_NEWS_PATH} aria-label={t("backToDesk")} />}
         >
           <XIcon />
         </Button>
@@ -225,11 +226,10 @@ function UpgradeView() {
       <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col px-4 py-8 sm:px-6 sm:py-10">
         <div className="mx-auto max-w-2xl text-center">
           <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-            Choose a plan
+            {t("heading")}
           </h1>
           <p className="mt-2 text-sm leading-relaxed text-muted-foreground sm:text-base">
-            Start free, or upgrade to Plus for the full desk. Pay with crypto in
-            a few simple steps.
+            {t("subtitle")}
           </p>
         </div>
 
@@ -240,11 +240,11 @@ function UpgradeView() {
         >
           <TabsList className="h-11 rounded-full p-1.5 group-data-horizontal/tabs:h-11">
             <TabsTrigger value="monthly" className="h-8 rounded-full px-5 text-sm">
-              Monthly
+              {t("monthly")}
             </TabsTrigger>
             <TabsTrigger value="annual" className="h-8 rounded-full px-5 text-sm">
-              Annual
-              <span className="text-muted-foreground">Save 17%</span>
+              {t("annual")}
+              <span className="text-muted-foreground">{t("annualSave")}</span>
             </TabsTrigger>
           </TabsList>
         </Tabs>
@@ -253,13 +253,13 @@ function UpgradeView() {
           <button
             type="button"
             onClick={resumePendingCheckout}
-            className="mt-6 w-full rounded-2xl border border-primary/20 bg-primary/5 px-4 py-4 text-left transition-colors hover:bg-primary/10"
+            className="mt-6 w-full rounded-2xl border border-primary/20 bg-primary/5 px-4 py-4 text-start transition-colors hover:bg-primary/10"
           >
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0">
-                <p className="text-sm font-medium">You have a payment in progress</p>
+                <p className="text-sm font-medium">{t("pendingTitle")}</p>
                 <p className="mt-1 text-sm text-muted-foreground">
-                  Send {pendingAmountLabel} to finish upgrading to Plus.
+                  {t("pendingBody", { amount: pendingAmountLabel })}
                 </p>
               </div>
               <div className="flex shrink-0 items-center gap-1.5 text-xs text-muted-foreground">
@@ -274,30 +274,36 @@ function UpgradeView() {
 
         <div
           role="radiogroup"
-          aria-label="Plans"
+          aria-label={t("plansAria")}
           className="mt-8 grid gap-4 lg:grid-cols-3 lg:items-start"
         >
-          {UPGRADE_PLANS.map((plan) => (
-            <UpgradePlanCard
-              key={plan.key}
-              planKey={plan.key}
-              name={plan.name}
-              description={plan.description}
-              price={prices[plan.key]}
-              cadence={prices.cadence}
-              features={plan.features}
-              selected={selected === plan.key}
-              isCurrent={isCurrentPlan(plan.key, currentPlan)}
-              badge={"badge" in plan ? plan.badge : undefined}
-              featured={"featured" in plan ? plan.featured : undefined}
-              onSelect={() => {
-                if (selected !== plan.key) {
-                  trackUpgradePlanSelect({ plan: plan.key })
+          {UPGRADE_PLANS.map((plan) => {
+            const features = t.raw(`plans.${plan.key}.features`) as string[]
+            return (
+              <UpgradePlanCard
+                key={plan.key}
+                planKey={plan.key}
+                name={t(`plans.${plan.key}.name`)}
+                description={t(`plans.${plan.key}.description`)}
+                price={planPrice(plan.key)}
+                cadence={cadence}
+                features={features}
+                selected={selected === plan.key}
+                isCurrent={isCurrentPlan(plan.key, currentPlan)}
+                currentLabel={t("currentBadge")}
+                badge={
+                  "badge" in plan && plan.badge ? t("mostChosen") : undefined
                 }
-                setSelected(plan.key)
-              }}
-            />
-          ))}
+                featured={"featured" in plan ? plan.featured : undefined}
+                onSelect={() => {
+                  if (selected !== plan.key) {
+                    trackUpgradePlanSelect({ plan: plan.key })
+                  }
+                  setSelected(plan.key)
+                }}
+              />
+            )
+          })}
         </div>
       </main>
 
@@ -320,20 +326,11 @@ function UpgradeView() {
         )}
       >
         <div className="mx-auto flex w-full max-w-5xl flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-sm text-muted-foreground">
-            {footerHint({
-              selected,
-              hasPendingPayment,
-              pendingMsRemaining,
-              isAuthenticated,
-              prices,
-            })}
-          </p>
+          <p className="text-sm text-muted-foreground">{footerHint()}</p>
           <Button
-            size="lg"
             className={cn(
-              "h-11 px-8",
-              isDesktop ? "rounded-xl" : cn(chatMobileSheetPrimaryButtonClass, "h-12")
+              landingCta("glass", "md"),
+              "w-full sm:w-auto sm:min-w-44"
             )}
             disabled={busy || plusLocked}
             onClick={() => {
@@ -344,7 +341,7 @@ function UpgradeView() {
               void onContinue()
             }}
           >
-            {busy ? "Continuing…" : cta}
+            {busy ? t("continuing") : cta}
           </Button>
         </div>
       </footer>

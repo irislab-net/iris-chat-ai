@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { XIcon } from "lucide-react"
-import { useTranslations } from "next-intl"
+import { useLocale, useTranslations } from "next-intl"
 
 import { NewsBulletin, NewsReadAllButton } from "@/components/dashboard/news-bulletin"
 import { NewsBulletinSkeleton } from "@/components/dashboard/intel-skeletons"
@@ -27,6 +27,7 @@ import {
   mergeNewsHome,
 } from "@/lib/dashboard/intel-load"
 import { newsFeedUpdatedLabel } from "@/lib/format"
+import { localeDirection } from "@/lib/i18n/locale"
 import { cn } from "@/lib/utils"
 
 function useChatNewsFeed(enabled: boolean) {
@@ -148,11 +149,13 @@ type ChatNewsSidePanelProps = {
 }
 
 function ChatNewsSidePanel({ open, onOpenChange }: ChatNewsSidePanelProps) {
+  const dir = localeDirection(useLocale())
   if (!open) return null
 
   return (
     <aside
       data-slot="chat-news-panel"
+      dir={dir}
       className={cn(
         "flex h-full min-h-0 w-[min(36rem,48vw)] min-w-104 shrink-0 flex-col overflow-hidden",
         chatNewsPanelShellClass
@@ -171,15 +174,21 @@ type ChatNewsMobileSheetProps = {
 
 function ChatNewsMobileSheet({ open, onOpenChange }: ChatNewsMobileSheetProps) {
   const t = useTranslations("workspace")
+  const isRtl = localeDirection(useLocale()) === "rtl"
+  const sheetSide = isRtl ? "left" : "right"
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
-        side="right"
+        side={sheetSide}
+        dir={isRtl ? "rtl" : "ltr"}
         showCloseButton={false}
         data-slot="sheet-content"
         className={cn(
-          "gap-0 border-0 p-0 shadow-none data-[side=right]:w-full data-[side=right]:max-w-none data-[side=right]:border-0",
+          "gap-0 border-0 p-0 shadow-none",
+          isRtl
+            ? "data-[side=left]:w-full data-[side=left]:max-w-none data-[side=left]:border-0"
+            : "data-[side=right]:w-full data-[side=right]:max-w-none data-[side=right]:border-0",
           chatNewsPanelShellClass
         )}
       >

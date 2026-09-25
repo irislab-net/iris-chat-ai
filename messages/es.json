@@ -29,51 +29,51 @@
       "mobileNav": "Móvil"
     },
     "hero": {
-      "badge": "Tu asistente financiero con IA",
-      "titleBefore": "Tu dinero,",
-      "titleAfter": "bajo control.",
-      "subtitle": "Pregunta por gastos, ahorro y qué sigue, con tus propias palabras.",
-      "inputPlaceholder": "¿A dónde va mi dinero este mes?",
+      "badge": "Asesor de mercados con IA",
+      "titleBefore": "Noticias del mercado,",
+      "titleAfter": "respuestas claras.",
+      "subtitle": "Lee el desk y pregunta a Exur en la misma pantalla. Respuestas cortas ligadas al titular delante de ti.",
+      "inputPlaceholder": "¿Importa la noticia de ETF de hoy para ETH?",
       "exchanges": {
         "0": {
-          "q": "¿Puedes vigilar mis cuentas esta semana?",
-          "a": "Sí. Solo te aviso si algo realmente te necesita."
+          "q": "¿Importa la noticia de ETF de hoy para ETH?",
+          "a": "Sí. Los flujos spot volvieron a positivo. Mira si el funding sigue suave mientras sube el precio."
         },
         "1": {
-          "q": "¿A dónde va mi dinero?",
-          "a": "340 $/mes en suscripciones sin uso. Corta eso primero."
+          "q": "¿Long ETH desde aquí?",
+          "a": "Aún no. Spot lidera, pero no hay setup limpio. Espera sobre VWAP; stop bajo el mínimo previo."
         },
         "2": {
-          "q": "¿Puedo permitirme este piso?",
-          "a": "Aún no. Guarda 6 meses de alquiler en efectivo y luego mira."
+          "q": "¿Qué significa funding negativo?",
+          "a": "Se está desapalancando — la multitud aún no está long. No apresures la entrada."
         },
         "3": {
-          "q": "¿Qué hago con mis ahorros?",
-          "a": "Guarda 3 meses en efectivo. El resto, a un índice simple."
+          "q": "Reservas de exchanges bajas — ¿bien o mal?",
+          "a": "Suele ser menos presión vendedora. Solo no es señal de compra sin confirmación spot."
         },
         "4": {
-          "q": "¿Gasto demasiado en restaurantes?",
-          "a": "Sí. El 22% del gasto. Limítalo al 12% y estarás bien."
+          "q": "¿Short en este spike?",
+          "a": "No. Tape mixtos y el apalancamiento aún baja. Sin edge claro hoy."
         },
         "5": {
-          "q": "Ayúdame a comprar casa en 2 años.",
-          "a": "Protege la entrada. Menos riesgo, más efectivo, hasta estar cerca."
+          "q": "¿Señal de BTC ahora?",
+          "a": "Débil. Precio quieto y ningún titular fuerte. Espera noticia o ruptura de nivel."
         },
         "6": {
-          "q": "¿Mi fondo de emergencia basta?",
-          "a": "Casi. Estás en 4 meses. Llega a 6 y luego invierte el resto."
+          "q": "¿Oro o cripto ahora?",
+          "a": "Oro cerca de máximos con dólar suave. Prefiere oro si quieres menos riesgo; espera señal clara de cripto."
         },
         "7": {
-          "q": "¿Pago la tarjeta o invierto?",
-          "a": "Paga primero la tarjeta al 19%. Luego invierte lo que quede."
+          "q": "¿Qué titular importa de verdad?",
+          "a": "Flujos de ETF spot volviendo a positivo. El resto puedes ignorarlo por ahora."
         },
         "8": {
-          "q": "Resume mi dinero en una línea.",
-          "a": "Estás bien. Ahorra más, gasta un poco menos, no persigas nada."
+          "q": "¿Mercado en una línea?",
+          "a": "Spot un poco más fuerte, apalancamiento aún cauto. No persigas — espera un nivel confirmado."
         },
         "9": {
-          "q": "¿Qué necesita mi atención hoy?",
-          "a": "Nada urgente. Te aviso en el momento en que cambie."
+          "q": "¿Algo urgente hoy?",
+          "a": "Ninguna señal fuerte. Te aviso en el momento en que un titular o nivel cambie."
         }
       }
     },
@@ -120,6 +120,9 @@
       "you": "Tú",
       "lead": "Lead",
       "impactLabel": "Impacto",
+      "tonePositive": "Positivo",
+      "toneNegative": "Negativo",
+      "toneNeutral": "Neutral",
       "news": {
         "0": {
           "source": "Bloomberg",
@@ -135,6 +138,21 @@
           "source": "The Block",
           "time": "27m",
           "headline": "Las reservas en exchanges caen al nivel más bajo desde marzo"
+        },
+        "3": {
+          "source": "Reuters",
+          "time": "41m",
+          "headline": "Stablecoin supply expands on major chains"
+        },
+        "4": {
+          "source": "WSJ",
+          "time": "1h",
+          "headline": "Regulators signal tighter rules for crypto custody"
+        },
+        "5": {
+          "source": "FT",
+          "time": "2h",
+          "headline": "Gold holds near highs as dollar softens"
         }
       }
     },
@@ -339,6 +357,18 @@
     "pinChat": "Fijar chat",
     "unpinChat": "Desfijar",
     "newChat": "Nuevo chat",
-    "chatHistory": "Historial del chat"
+    "chatHistory": "Historial del chat",
+    "connecting": "Conectando…",
+    "signIn": "Iniciar sesión",
+    "continueWithGoogle": "Continuar con Google",
+    "continueWithGoogleShort": "Continuar",
+    "agreeContinueWithGoogle": "Aceptar y continuar con Google",
+    "secureSignInWithGoogle": "Inicio de sesión seguro con Google",
+    "loginConsentDescription": "Acepta los términos abajo para iniciar sesión de forma segura.",
+    "loginConsentDisclaimer": "Debes tener 18+ y no estar en una jurisdicción bajo sanciones integrales. Exur ofrece análisis solo informativo — no es asesoramiento financiero.",
+    "agreeTerms": "Acepto los <link>Términos de Servicio</link>",
+    "agreePrivacy": "Acepto la <link>Política de Privacidad</link>",
+    "cancel": "Cancelar",
+    "tryAgain": "Intentar de nuevo"
   }
 }

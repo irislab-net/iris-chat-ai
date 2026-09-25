@@ -36,7 +36,7 @@ export function FaqSection() {
         <Accordion defaultValue={["what"]}>
           {FAQ_ITEM_IDS.map((id) => (
             <AccordionItem key={id} value={id} className="border-border">
-              <AccordionTrigger className="py-4 text-left text-sm font-normal text-foreground hover:no-underline sm:text-base">
+              <AccordionTrigger className="py-4 text-start text-sm font-normal text-foreground hover:no-underline sm:text-base">
                 {t(`items.${id}.question`)}
               </AccordionTrigger>
               <AccordionContent className="pb-4 text-sm leading-relaxed text-muted-foreground sm:text-[0.9375rem]">

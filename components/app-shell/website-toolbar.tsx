@@ -311,7 +311,7 @@ function WebsiteToolbar({
             variant="outline"
             size="default"
             className="h-8 gap-2 px-2.5 sm:px-3"
-            aria-label="Continue with Google"
+            aria-label={t("continueWithGoogle")}
             disabled={loginPending}
             onClick={() => login()}
           >
@@ -320,8 +320,8 @@ function WebsiteToolbar({
               <span>{t("connecting")}</span>
             ) : (
               <>
-                <span className="sm:hidden">Continue</span>
-                <span className="hidden sm:inline">Continue with Google</span>
+                <span className="sm:hidden">{t("continueWithGoogleShort")}</span>
+                <span className="hidden sm:inline">{t("continueWithGoogle")}</span>
               </>
             )}
           </Button>

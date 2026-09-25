@@ -1,6 +1,7 @@
 "use client"
 
 import { LogInIcon } from "lucide-react"
+import { useTranslations } from "next-intl"
 
 import { useAuth } from "@/components/auth/auth-provider"
 import { GoogleGlyph } from "@/components/auth/google-glyph"
@@ -28,6 +29,7 @@ function WorkspaceLoginGate({
   className?: string
   compact?: boolean
 }) {
+  const t = useTranslations("workspace")
   const { login, loginPending } = useAuth()
   const copy = WORKSPACE_LOGIN_COPY[page]
 
@@ -59,7 +61,7 @@ function WorkspaceLoginGate({
           onClick={() => login({ source: "data_access_notice" })}
         >
           <GoogleGlyph className="size-4" />
-          {loginPending ? "Connecting…" : "Continue with Google"}
+          {loginPending ? t("connecting") : t("continueWithGoogle")}
         </Button>
       </EmptyContent>
     </Empty>

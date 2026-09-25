@@ -14,6 +14,7 @@ import {
   PRICING_PLAN_META,
   type PricingPlanKey,
 } from "@/lib/landing-modern-data"
+import { getLandingPlanPrice } from "@/lib/billing/prices"
 import {
   landingAfterHeader,
   landingContentWide,
@@ -91,13 +92,11 @@ function PlanCard({
   planKey,
   featured,
   featureCount,
-  hasPriceWas,
   hasBadge,
 }: {
   planKey: PricingPlanKey
   featured?: boolean
   featureCount: number
-  hasPriceWas?: boolean
   hasBadge?: boolean
 }) {
   const t = useTranslations("modern.pricing")
@@ -105,6 +104,7 @@ function PlanCard({
   const features = Array.from({ length: featureCount }, (_, i) =>
     t(`plans.${planKey}.features.${i}`)
   )
+  const { price, priceWas } = getLandingPlanPrice(planKey)
 
   return (
     <article
@@ -139,15 +139,15 @@ function PlanCard({
 
         <div className="mt-5">
           <p className={cn(landingTitlePrice, "flex flex-wrap items-baseline gap-x-2.5")}>
-            {hasPriceWas ? (
+            {priceWas ? (
               <span className="text-2xl font-normal tracking-[-0.02em] text-muted-foreground/55 line-through decoration-muted-foreground/40">
-                {t(`plans.${planKey}.priceWas`)}
+                {priceWas}
               </span>
             ) : null}
             <span>
-              {t(`plans.${planKey}.price`)}
+              {price}
               {planKey === "plus" ? (
-                <span className="ml-1 text-lg font-normal text-muted-foreground">
+                <span className="ms-1 text-lg font-normal text-muted-foreground">
                   {t("perMonth")}
                 </span>
               ) : null}
@@ -189,7 +189,6 @@ export function PricingSection() {
                 planKey={plan.key}
                 featured={plan.featured}
                 featureCount={plan.featureCount}
-                hasPriceWas={plan.hasPriceWas}
                 hasBadge={plan.hasBadge}
               />
             </li>

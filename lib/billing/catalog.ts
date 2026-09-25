@@ -1,23 +1,12 @@
 import type { UserTier } from "@/lib/api/types"
+import { getBillingDisplayPrices } from "@/lib/billing/prices"
 
 export type BillingCycle = "monthly" | "annual"
 export type PlanKey = "free" | "plus" | "ultimate"
 export type CheckoutPlan = "plus"
 
-export const BILLING_PRICES = {
-  monthly: {
-    free: "$0",
-    plus: "$49",
-    ultimate: "Custom",
-    cadence: "/ month",
-  },
-  annual: {
-    free: "$0",
-    plus: "$41",
-    ultimate: "Custom",
-    cadence: "/ month",
-  },
-} as const
+/** Plan prices from NEXT_PUBLIC_PRICE_* env — see `lib/billing/prices.ts`. */
+export const BILLING_PRICES = getBillingDisplayPrices()
 
 export const UPGRADE_PLANS = [
   {

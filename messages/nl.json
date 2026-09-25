@@ -29,51 +29,51 @@
       "mobileNav": "Mobiel"
     },
     "hero": {
-      "badge": "Jouw AI financiële assistent",
-      "titleBefore": "Jouw geld,",
-      "titleAfter": "onder controle.",
-      "subtitle": "Vraag over uitgaven, spaargeld en wat hierna komt — in je eigen woorden.",
-      "inputPlaceholder": "Waar gaat mijn geld deze maand naartoe?",
+      "badge": "AI-marktadviseur",
+      "titleBefore": "Marktniews,",
+      "titleAfter": "heldere antwoorden.",
+      "subtitle": "Lees de desk, vraag Exur op hetzelfde scherm. Korte antwoorden gekoppeld aan de headline voor je.",
+      "inputPlaceholder": "Doet het ETF-nieuws van vandaag ertoe voor ETH?",
       "exchanges": {
         "0": {
-          "q": "Kun je deze week mijn rekeningen in de gaten houden?",
-          "a": "Ja. Ik ping je alleen als er echt iets nodig is."
+          "q": "Doet het ETF-nieuws van vandaag ertoe voor ETH?",
+          "a": "Ja. Spot-instroom is weer positief. Kijk of funding zacht blijft terwijl de prijs stijgt."
         },
         "1": {
-          "q": "Waar gaat mijn geld naartoe?",
-          "a": "$340/mnd aan ongebruikte abonnementen. Snijd die eerst weg."
+          "q": "Long ETH vanaf hier?",
+          "a": "Nog niet. Spot leidt, maar geen schone setup. Wacht boven VWAP; stop onder het vorige low."
         },
         "2": {
-          "q": "Kan ik dit appartement betalen?",
-          "a": "Nog niet. Houd 6 maanden huur cash, kijk dan verder."
+          "q": "Wat betekent negatieve funding?",
+          "a": "Leverage wordt afgebouwd — de crowd is nog niet long. Geen haast met een entry."
         },
         "3": {
-          "q": "Wat moet ik met mijn spaargeld?",
-          "a": "Houd 3 maanden cash. De rest in een simpele index."
+          "q": "Lage exchange-reserves — goed of slecht?",
+          "a": "Meestal minder verkoopdruk. Alleen is het geen koopsignaal zonder spot-bevestiging."
         },
         "4": {
-          "q": "Geef ik te veel uit aan eten?",
-          "a": "Ja. 22% van de uitgaven. Cap op 12% en je zit goed."
+          "q": "Deze spike shorten?",
+          "a": "Nee. Tape is gemengd en leverage komt nog af. Geen duidelijke edge vandaag."
         },
         "5": {
-          "q": "Help me over 2 jaar een huis te kopen.",
-          "a": "Bescherm de aanbetaling. Minder risico, meer cash, tot je dichtbij bent."
+          "q": "BTC-signaal nu?",
+          "a": "Zwak. Prijs stil, geen sterke headline. Wacht op nieuws of een level-break."
         },
         "6": {
-          "q": "Is mijn noodfonds genoeg?",
-          "a": "Bijna. Je zit op 4 maanden. Ga naar 6, investeer daarna de rest."
+          "q": "Goud of crypto nu?",
+          "a": "Goud nabij highs met zachte dollar. Goud voor lager risico; wacht op een duidelijk crypto-signaal."
         },
         "7": {
-          "q": "Kaart aflossen of beleggen?",
-          "a": "Los eerst de 19%-kaart af. Beleg daarna wat overblijft."
+          "q": "Welke headline telt echt?",
+          "a": "Spot-ETF-instroom die weer positief flipte. De rest kun je nu negeren."
         },
         "8": {
-          "q": "Vat mijn geld in één zin samen.",
-          "a": "Je zit goed. Meer sparen, iets minder uitgeven, niks najagen."
+          "q": "Markt in één zin?",
+          "a": "Spot iets sterker, leverage nog voorzichtig. Niet najagen — wacht op een bevestigd level."
         },
         "9": {
-          "q": "Wat vraagt vandaag mijn aandacht?",
-          "a": "Niets urgents. Ik zeg het zodra dat verandert."
+          "q": "Iets urgents vandaag?",
+          "a": "Geen sterk signaal. Ik ping je zodra een headline of level kantelt."
         }
       }
     },
@@ -120,6 +120,9 @@
       "you": "Jij",
       "lead": "Lead",
       "impactLabel": "Impact",
+      "tonePositive": "Positief",
+      "toneNegative": "Negatief",
+      "toneNeutral": "Neutraal",
       "news": {
         "0": {
           "source": "Bloomberg",
@@ -135,6 +138,21 @@
           "source": "The Block",
           "time": "27m",
           "headline": "Exchange-reserves dalen naar het laagste niveau sinds maart"
+        },
+        "3": {
+          "source": "Reuters",
+          "time": "41m",
+          "headline": "Stablecoin supply expands on major chains"
+        },
+        "4": {
+          "source": "WSJ",
+          "time": "1h",
+          "headline": "Regulators signal tighter rules for crypto custody"
+        },
+        "5": {
+          "source": "FT",
+          "time": "2h",
+          "headline": "Gold holds near highs as dollar softens"
         }
       }
     },
@@ -339,6 +357,18 @@
     "pinChat": "Chat vastzetten",
     "unpinChat": "Losmaken",
     "newChat": "Nieuwe chat",
-    "chatHistory": "Chatgeschiedenis"
+    "chatHistory": "Chatgeschiedenis",
+    "connecting": "Verbinden…",
+    "signIn": "Inloggen",
+    "continueWithGoogle": "Doorgaan met Google",
+    "continueWithGoogleShort": "Doorgaan",
+    "agreeContinueWithGoogle": "Akkoord & doorgaan met Google",
+    "secureSignInWithGoogle": "Veilig inloggen met Google",
+    "loginConsentDescription": "Accepteer de voorwaarden hieronder om veilig in te loggen.",
+    "loginConsentDisclaimer": "Je moet 18+ zijn en niet in een volledig gesanctioneerd rechtsgebied wonen. Exur geeft alleen analyse ter informatie — geen financieel advies.",
+    "agreeTerms": "Ik ga akkoord met de <link>Servicevoorwaarden</link>",
+    "agreePrivacy": "Ik ga akkoord met het <link>Privacybeleid</link>",
+    "cancel": "Annuleren",
+    "tryAgain": "Opnieuw proberen"
   }
 }

@@ -2,20 +2,16 @@
 
 import * as React from "react"
 import { CheckIcon, CopyIcon, LoaderCircleIcon, TimerIcon } from "lucide-react"
+import { useTranslations } from "next-intl"
 
 import { DepositAddressCard } from "@/components/billing/deposit-address-card"
 import { PaymentMethodPicker } from "@/components/billing/payment-method-picker"
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Skeleton } from "@/components/ui/skeleton"
+import { Switch } from "@/components/ui/switch"
 import {
   Sheet,
   SheetContent,
@@ -48,6 +44,7 @@ import {
   invoiceMsRemaining,
   paymentCurrencyForInvoice,
 } from "@/lib/billing/invoice-session"
+import { landingCta } from "@/lib/landing-modern-styles"
 import { cn } from "@/lib/utils"
 
 const POLL_MS = 5_000
@@ -63,61 +60,12 @@ type CryptoPaymentSheetProps = {
   onPaid: () => void | Promise<void>
 }
 
-function planSummary(billing: BillingCycle) {
-  return billing === "annual" ? "Plus · billed annually" : "Plus · billed monthly"
-}
-
-function PaymentStep({
-  number,
-  title,
-  active,
-  complete,
-  compact,
-}: {
-  number: number
-  title: string
-  active: boolean
-  complete: boolean
-  compact?: boolean
-}) {
-  return (
-    <div className="flex items-center gap-1.5">
-      <span
-        className={cn(
-          "flex shrink-0 items-center justify-center rounded-full font-semibold",
-          compact ? "size-5 text-[10px]" : "size-6 text-xs",
-          complete
-            ? "bg-foreground text-background"
-            : active
-              ? "bg-foreground/10 text-foreground"
-              : "bg-muted text-muted-foreground"
-        )}
-      >
-        {complete ? (
-          <CheckIcon className={compact ? "size-3" : "size-3.5"} />
-        ) : (
-          number
-        )}
-      </span>
-      <span
-        className={cn(
-          compact ? "text-xs" : "text-sm",
-          active || complete ? "font-medium text-foreground" : "text-muted-foreground"
-        )}
-      >
-        {title}
-      </span>
-    </div>
-  )
-}
-
 function PaymentQuoteSkeleton() {
   return (
     <div className="space-y-4">
-      <div className="rounded-2xl border border-border/60 bg-card p-5">
-        <Skeleton className="h-3 w-20 rounded-full" />
-        <Skeleton className="mt-3 h-10 w-44 rounded-lg" />
-        <Skeleton className="mt-2 h-3 w-24 rounded-full" />
+      <div className="rounded-xl border border-border/60 bg-card px-3.5 py-2.5">
+        <Skeleton className="h-2.5 w-24 rounded-full" />
+        <Skeleton className="mt-1.5 h-6 w-36 rounded-md" />
       </div>
       <div className="overflow-hidden rounded-2xl border border-border/60">
         <div className="flex justify-center border-b border-border/50 px-4 py-5">
@@ -139,6 +87,8 @@ function PaymentWatcherBanner({
   expiresIn: string
   compact?: boolean
 }) {
+  const t = useTranslations("upgradePage.crypto")
+
   return (
     <div
       className={cn(
@@ -155,12 +105,10 @@ function PaymentWatcherBanner({
         </span>
         <div className="min-w-0 flex-1">
           <p className={cn("font-medium", compact ? "text-xs" : "text-sm")}>
-            Waiting for payment
+            {t("watchingTitle")}
           </p>
           {!compact ? (
-            <p className="mt-1 text-xs text-muted-foreground">
-              We&apos;ll unlock Plus as soon as the transfer arrives.
-            </p>
+            <p className="mt-1 text-xs text-muted-foreground">{t("watchingBody")}</p>
           ) : null}
           <div
             className={cn(
@@ -171,7 +119,7 @@ function PaymentWatcherBanner({
             <span className="inline-flex min-w-0 items-center gap-1">
               <TimerIcon className="size-3 shrink-0" />
               <span className="truncate">
-                {compact ? null : "Time left "}
+                {compact ? null : t("timeLeft")}
                 <span className="font-medium tabular-nums text-foreground">
                   {expiresIn}
                 </span>
@@ -179,7 +127,7 @@ function PaymentWatcherBanner({
             </span>
             <span className="inline-flex shrink-0 items-center gap-1">
               <LoaderCircleIcon className="size-3 shrink-0 animate-spin opacity-60" />
-              <span>{compact ? "Checking…" : "Checking"}</span>
+              <span>{compact ? t("checkingShort") : t("checking")}</span>
             </span>
           </div>
         </div>
@@ -189,6 +137,7 @@ function PaymentWatcherBanner({
 }
 
 function CopyAmountButton({ value }: { value: string }) {
+  const t = useTranslations("upgradePage.crypto")
   const [copied, setCopied] = React.useState(false)
 
   async function onCopy() {
@@ -205,12 +154,12 @@ function CopyAmountButton({ value }: { value: string }) {
     <Button
       type="button"
       variant="outline"
-      size="sm"
-      className="rounded-lg"
+      size="icon-sm"
+      className="size-8 shrink-0 rounded-lg"
       onClick={() => void onCopy()}
+      aria-label={copied ? t("copied") : t("copyAmount")}
     >
-      {copied ? <CheckIcon data-icon="inline-start" /> : <CopyIcon data-icon="inline-start" />}
-      {copied ? "Copied" : "Copy amount"}
+      {copied ? <CheckIcon className="size-3.5" /> : <CopyIcon className="size-3.5" />}
     </Button>
   )
 }
@@ -221,6 +170,7 @@ export function CryptoPaymentSheet({
   onOpenChange,
   onPaid,
 }: CryptoPaymentSheetProps) {
+  const t = useTranslations("upgradePage.crypto")
   const isDesktop = useIsDesktop()
   const [currency, setCurrency] = React.useState<PaymentCurrency>("USDT")
   const [couponCode, setCouponCode] = React.useState(
@@ -257,14 +207,14 @@ export function CryptoPaymentSheet({
       } catch (caught) {
         setInvoice(null)
         setError(
-          caught instanceof Error ? caught.message : "Could not create invoice"
+          caught instanceof Error ? caught.message : t("createInvoiceError")
         )
         return null
       } finally {
         setLoading(false)
       }
     },
-    []
+    [t]
   )
 
   const handleOpenChange = React.useCallback(
@@ -397,17 +347,14 @@ export function CryptoPaymentSheet({
               isDesktop ? "text-lg font-semibold tracking-tight" : chatMobileSheetTitleClass
             )}
           >
-            Pay for Plus
+            {t("title")}
           </SheetTitle>
           <SheetDescription
             className={cn(
               isDesktop ? "text-sm leading-relaxed" : chatMobileSheetDescriptionClass
             )}
           >
-            {checkout ? planSummary(checkout.billing) : "Plus upgrade"}
-            {isDesktop
-              ? " · send from any wallet and we'll unlock access automatically."
-              : " · send from your wallet."}
+            {t("subtitle")}
           </SheetDescription>
         </SheetHeader>
 
@@ -418,72 +365,11 @@ export function CryptoPaymentSheet({
               isDesktop ? "gap-5 px-5 py-5" : "gap-3.5 px-3.5 py-3"
             )}
           >
-            <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
-              <PaymentStep
-                number={1}
-                title="Choose coin"
-                active={!hasQuote}
-                complete={hasQuote}
-                compact={isDesktop === false}
-              />
-              <div className="h-px bg-border" />
-              <PaymentStep
-                number={2}
-                title="Send payment"
-                active={hasQuote}
-                complete={current?.status === "paid"}
-                compact={isDesktop === false}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label className="text-sm font-medium">Pay with</Label>
-              <PaymentMethodPicker
-                currency={paymentCurrency}
-                disabled={loading || !checkout}
-                onCurrencyChange={handleCurrencyChange}
-              />
-            </div>
-
-            <Accordion
-              value={couponOpen ? ["coupon"] : []}
-              onValueChange={(value) => setCouponOpen(value.includes("coupon"))}
-            >
-              <AccordionItem value="coupon" className="border-0">
-                <AccordionTrigger className="py-2 text-sm text-muted-foreground hover:no-underline">
-                  Have a promo code?
-                </AccordionTrigger>
-                <AccordionContent className="pb-0">
-                  <div className="flex gap-2 pt-1">
-                    <Input
-                      id="payment-coupon"
-                      value={couponCode}
-                      onChange={(event) => setCouponCode(event.target.value)}
-                      placeholder="Enter code"
-                      autoComplete="off"
-                      spellCheck={false}
-                      disabled={loading || !checkout}
-                      className="h-10 rounded-xl"
-                      onKeyDown={(event) => {
-                        if (event.key === "Enter") {
-                          event.preventDefault()
-                          handleApplyCoupon()
-                        }
-                      }}
-                    />
-                    <Button
-                      type="button"
-                      variant="secondary"
-                      className="h-10 shrink-0 rounded-xl px-4"
-                      disabled={loading || !checkout}
-                      onClick={handleApplyCoupon}
-                    >
-                      Apply
-                    </Button>
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
+            <PaymentMethodPicker
+              currency={paymentCurrency}
+              disabled={loading || !checkout}
+              onCurrencyChange={handleCurrencyChange}
+            />
 
             {error ? (
               <p
@@ -502,29 +388,43 @@ export function CryptoPaymentSheet({
                     role="status"
                   >
                     <LoaderCircleIcon className="size-4 animate-spin" />
-                    Getting your payment details…
+                    {t("gettingDetails")}
                   </div>
                 ) : null}
                 <PaymentQuoteSkeleton />
               </div>
             ) : (
               <div className="space-y-5">
-                <section className={cn(isDesktop ? "rounded-2xl border border-border/60 bg-card p-5" : cn(chatMobileSheetCardClass, "p-4"))}>
-                  <p className="text-sm text-muted-foreground">Send exactly</p>
-                  <div className="mt-2 flex items-start justify-between gap-3">
-                    <div className="min-w-0">
-                      <p className="font-mono text-3xl font-semibold tracking-tight tabular-nums">
-                        {amountLabel}
+                <section
+                  className={cn(
+                    "rounded-xl border border-border/60 bg-card",
+                    isDesktop ? "px-3.5 py-2.5" : cn(chatMobileSheetCardClass, "px-3 py-2.5")
+                  )}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="min-w-0 flex-1">
+                      <p className="text-[11px] leading-none text-muted-foreground">
+                        {t("sendExactly")}
                       </p>
-                      <div className="mt-2 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
-                        <span>About {formatUsd(current!.amount_usd)}</span>
+                      <div className="mt-1 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+                        <p className="font-mono text-xl font-semibold tracking-tight tabular-nums">
+                          {amountLabel}
+                        </p>
+                        <span className="text-xs text-muted-foreground">
+                          {t("aboutUsd", {
+                            amount: formatUsd(current!.amount_usd),
+                          })}
+                        </span>
                         {current!.original_amount_usd > current!.amount_usd ? (
-                          <span className="line-through">
+                          <span className="text-xs text-muted-foreground line-through">
                             {formatUsd(current!.original_amount_usd)}
                           </span>
                         ) : null}
                         {current!.coupon_code ? (
-                          <Badge variant="outline" className="rounded-full px-2 py-0 text-[10px]">
+                          <Badge
+                            variant="outline"
+                            className="rounded-full px-1.5 py-0 text-[10px]"
+                          >
                             {current!.coupon_code}
                           </Badge>
                         ) : null}
@@ -534,26 +434,78 @@ export function CryptoPaymentSheet({
                   </div>
                 </section>
 
-                <section className="space-y-2">
-                  <p className="text-sm font-medium">To this wallet address</p>
-                  <DepositAddressCard
-                    address={payAddress}
-                    currency={paymentCurrency}
-                  />
-                </section>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between gap-3">
+                    <Label
+                      htmlFor="payment-coupon-toggle"
+                      id="payment-coupon-label"
+                      className="cursor-pointer text-sm font-medium text-muted-foreground"
+                    >
+                      {t("havePromo")}
+                    </Label>
+                    <Switch
+                      id="payment-coupon-toggle"
+                      checked={couponOpen}
+                      disabled={loading || !checkout}
+                      aria-labelledby="payment-coupon-label"
+                      onCheckedChange={(checked) => {
+                        setCouponOpen(checked)
+                        if (!checked && checkout) {
+                          setCouponCode(defaultCoupon)
+                          void loadInvoice(checkout, currency, "")
+                        }
+                      }}
+                    />
+                  </div>
+                  {couponOpen ? (
+                    <div className="relative">
+                      <Input
+                        id="payment-coupon"
+                        value={couponCode}
+                        onChange={(event) => setCouponCode(event.target.value)}
+                        placeholder={t("enterCode")}
+                        autoComplete="off"
+                        spellCheck={false}
+                        disabled={loading || !checkout}
+                        className="h-11 rounded-xl pe-20"
+                        onKeyDown={(event) => {
+                          if (event.key === "Enter") {
+                            event.preventDefault()
+                            handleApplyCoupon()
+                          }
+                        }}
+                      />
+                      <Button
+                        type="button"
+                        size="sm"
+                        className={cn(
+                          landingCta("glass", "sm"),
+                          "absolute top-1/2 inset-e-1.5 h-8 -translate-y-1/2 px-3 text-xs"
+                        )}
+                        disabled={loading || !checkout || !couponCode.trim()}
+                        onClick={handleApplyCoupon}
+                      >
+                        {t("apply")}
+                      </Button>
+                    </div>
+                  ) : null}
+                </div>
+
+                <DepositAddressCard
+                  address={payAddress}
+                  currency={paymentCurrency}
+                />
 
                 {current!.status === "paid" ? (
                   <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-700 dark:text-emerald-300">
-                    Payment received. Plus is being activated now.
+                    {t("paymentReceived")}
                   </div>
                 ) : null}
 
                 {(current!.status === "failed" || expired) &&
                 current!.status !== "paid" ? (
                   <div className="rounded-xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
-                    {expired
-                      ? "This payment window expired. Choose a coin again to get a new address."
-                      : "This payment could not be completed. Try again or switch coin."}
+                    {expired ? t("windowExpired") : t("paymentFailed")}
                   </div>
                 ) : null}
               </div>

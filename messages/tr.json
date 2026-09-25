@@ -29,51 +29,51 @@
       "mobileNav": "Mobil"
     },
     "hero": {
-      "badge": "Yapay zekâ finans asistanınız",
-      "titleBefore": "Paranız,",
-      "titleAfter": "kontrol altında.",
-      "subtitle": "Harcamalar, birikimler ve sırada ne var diye kendi kelimelerinizle sorun.",
-      "inputPlaceholder": "Bu ay param nereye gidiyor?",
+      "badge": "YZ piyasa danışmanı",
+      "titleBefore": "Piyasa haberleri,",
+      "titleAfter": "net cevaplar.",
+      "subtitle": "Deski oku, aynı ekranda Exur’a sor. Önündeki manşete bağlı kısa cevaplar.",
+      "inputPlaceholder": "Bugünkü ETF haberi ETH için önemli mi?",
       "exchanges": {
         "0": {
-          "q": "Bu hafta hesaplarımı izleyebilir misin?",
-          "a": "Evet. Yalnızca gerçekten sizi gerektiren bir şey olursa haber veririm."
+          "q": "Bugünkü ETF haberi ETH için önemli mi?",
+          "a": "Evet. Spot girişleri yeniden pozitif. Fiyat yükselirken funding yumuşak kalıyor mu bak."
         },
         "1": {
-          "q": "Param nereye gidiyor?",
-          "a": "Kullanılmayan aboneliklerde 340 $/ay. Önce onları kesin."
+          "q": "Buradan ETH long mu?",
+          "a": "Henüz değil. Spot önde ama temiz setup yok. VWAP üstünü bekle; stop önceki dip altında."
         },
         "2": {
-          "q": "Bu daireyi karşılayabilir miyim?",
-          "a": "Henüz değil. 6 aylık kirayı nakitte tutun, sonra bakın."
+          "q": "Negatif funding ne demek?",
+          "a": "Kaldıraç kapanıyor — kalabalık henüz long değil. Girişte acele etme."
         },
         "3": {
-          "q": "Birikimlerimle ne yapmalıyım?",
-          "a": "3 ayı nakitte tutun. Kalanı basit bir endekse koyun."
+          "q": "Borsa rezervleri düşük — iyi mi kötü mü?",
+          "a": "Genelde satış baskısı az. Spot onayı olmadan tek başına al sinyali değil."
         },
         "4": {
-          "q": "Restoranlarda fazla mı harcıyorum?",
-          "a": "Evet. Harcamanın %22’si. %12’ye sabitleyin, sorun olmaz."
+          "q": "Bu sıçramayı shortlayayım mı?",
+          "a": "Hayır. Bant karışık, kaldıraç hâlâ azalıyor. Bugün net avantaj yok."
         },
         "5": {
-          "q": "2 yılda ev almama yardım et.",
-          "a": "Peşinatı koruyun. Yaklaşana kadar daha az risk, daha fazla nakit."
+          "q": "BTC sinyali var mı?",
+          "a": "Zayıf. Fiyat sakin, güçlü manşet yok. Haber veya seviye kırılımı bekle."
         },
         "6": {
-          "q": "Acil durum fonum yeterli mi?",
-          "a": "Neredeyse. 4 aydasınız. 6’ya çıkın, sonra kalanı yatırın."
+          "q": "Şimdi altın mı kripto mu?",
+          "a": "Altın zirveye yakın, dolar yumuşak. Daha az risk için altın; net kripto sinyali bekle."
         },
         "7": {
-          "q": "Kartı mı ödeyeyim yoksa yatırım mı yapayım?",
-          "a": "Önce %19’luk kartı ödeyin. Sonra kalanı yatırın."
+          "q": "Hangi manşet gerçekten önemli?",
+          "a": "Spot ETF girişlerinin yeniden pozitife dönmesi. Gerisini şimdilik yok say."
         },
         "8": {
-          "q": "Paramı bir satırda özetle.",
-          "a": "İyisiniz. Daha çok biriktirin, biraz daha az harcayın, hiçbir şeyin peşinden koşmayın."
+          "q": "Piyasayı bir satırda söyle.",
+          "a": "Spot biraz daha güçlü, kaldıraç hâlâ temkinli. Peşinden koşma — onaylı seviye bekle."
         },
         "9": {
-          "q": "Bugün neye dikkat etmeliyim?",
-          "a": "Acil bir şey yok. Değiştiği an size söylerim."
+          "q": "Bugün acil bir şey var mı?",
+          "a": "Güçlü sinyal yok. Manşet veya seviye değişince haber veririm."
         }
       }
     },
@@ -120,6 +120,9 @@
       "you": "Siz",
       "lead": "Lead",
       "impactLabel": "Etki",
+      "tonePositive": "Pozitif",
+      "toneNegative": "Negatif",
+      "toneNeutral": "Nötr",
       "news": {
         "0": {
           "source": "Bloomberg",
@@ -135,6 +138,21 @@
           "source": "The Block",
           "time": "27m",
           "headline": "Borsa rezervleri Mart’tan bu yana en düşük seviyeye indi"
+        },
+        "3": {
+          "source": "Reuters",
+          "time": "41m",
+          "headline": "Stablecoin supply expands on major chains"
+        },
+        "4": {
+          "source": "WSJ",
+          "time": "1h",
+          "headline": "Regulators signal tighter rules for crypto custody"
+        },
+        "5": {
+          "source": "FT",
+          "time": "2h",
+          "headline": "Gold holds near highs as dollar softens"
         }
       }
     },
@@ -339,6 +357,18 @@
     "pinChat": "Sohbeti sabitle",
     "unpinChat": "Sabitlemeyi kaldır",
     "newChat": "Yeni sohbet",
-    "chatHistory": "Sohbet geçmişi"
+    "chatHistory": "Sohbet geçmişi",
+    "connecting": "Bağlanıyor…",
+    "signIn": "Giriş yap",
+    "continueWithGoogle": "Google ile devam et",
+    "continueWithGoogleShort": "Devam et",
+    "agreeContinueWithGoogle": "Kabul et ve Google ile devam et",
+    "secureSignInWithGoogle": "Google ile güvenli giriş",
+    "loginConsentDescription": "Güvenli giriş için aşağıdaki şartları kabul edin.",
+    "loginConsentDisclaimer": "18+ olmalısınız ve kapsamlı yaptırımlı bir yargı bölgesinde olmamalısınız. Exur yalnızca bilgilendirme amaçlı analiz sunar — finansal tavsiye değildir.",
+    "agreeTerms": "<link>Hizmet Şartları</link>’nı kabul ediyorum",
+    "agreePrivacy": "<link>Gizlilik Politikası</link>’nı kabul ediyorum",
+    "cancel": "İptal",
+    "tryAgain": "Tekrar dene"
   }
 }

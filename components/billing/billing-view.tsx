@@ -9,6 +9,7 @@ import {
   WalletIcon,
   XIcon,
 } from "lucide-react"
+import { useTranslations } from "next-intl"
 
 import { useAuth } from "@/components/auth/auth-provider"
 import { ExurLogo } from "@/components/brand/exur-logo"
@@ -42,6 +43,7 @@ import {
 } from "@/lib/billing/invoices"
 import type { PaymentInvoice } from "@/lib/billing/invoice-types"
 import { APP_NEWS_PATH, UPGRADE_PATH } from "@/lib/site"
+import { landingCta } from "@/lib/landing-modern-styles"
 import { cn } from "@/lib/utils"
 
 function statusBadgeVariant(
@@ -51,14 +53,6 @@ function statusBadgeVariant(
   if (status === "pending") return "secondary"
   if (status === "failed") return "destructive"
   return "outline"
-}
-
-function statusLabel(status: ReturnType<typeof normalizeInvoiceStatus>): string {
-  if (status === "paid") return "Paid"
-  if (status === "pending") return "Pending"
-  if (status === "failed") return "Failed"
-  if (status === "expired") return "Expired"
-  return "Unknown"
 }
 
 function formatExpiry(value?: string | null): string | null {
@@ -77,6 +71,7 @@ function InvoiceRow({
   invoice: PaymentInvoice
   mode: "invoice" | "payment"
 }) {
+  const t = useTranslations("billingPage")
   const status = normalizeInvoiceStatus(invoice.status)
   const cryptoLabel = formatCryptoAmount(
     mode === "payment" && invoice.paid_amount_crypto
@@ -88,6 +83,17 @@ function InvoiceRow({
     mode === "payment"
       ? formatInvoiceDate(invoice.paid_at ?? invoice.updated_at)
       : formatInvoiceDate(invoice.created_at)
+
+  const statusKey =
+    status === "paid"
+      ? "statusPaid"
+      : status === "pending"
+        ? "statusPending"
+        : status === "failed"
+          ? "statusFailed"
+          : status === "expired"
+            ? "statusExpired"
+            : "statusUnknown"
 
   return (
     <li className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-3 gap-y-1 border-b border-border/50 px-4 py-3.5 last:border-b-0 sm:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_auto_auto] sm:items-center sm:px-5">
@@ -111,8 +117,8 @@ function InvoiceRow({
         </p>
       </div>
       <div className="col-start-2 row-start-1 justify-self-end sm:col-auto sm:row-auto">
-        <Badge variant={statusBadgeVariant(status)} className="rounded-full capitalize">
-          {statusLabel(status)}
+        <Badge variant={statusBadgeVariant(status)} className="rounded-full">
+          {t(statusKey)}
         </Badge>
       </div>
       <p className="col-span-2 text-xs text-muted-foreground sm:hidden">
@@ -178,6 +184,7 @@ function StatCell({
 }
 
 function BillingView() {
+  const t = useTranslations("billingPage")
   const { user, isAuthenticated, isProUser, login, loginPending } = useAuth()
   const [invoices, setInvoices] = React.useState<PaymentInvoice[] | null>(null)
   const [error, setError] = React.useState<string | null>(null)
@@ -205,13 +212,13 @@ function BillingView() {
           ? err.message
           : err instanceof Error
             ? err.message
-            : "Could not load billing history"
+            : t("loadError")
       setError(message)
       setInvoices([])
     } finally {
       setLoading(false)
     }
-  }, [isAuthenticated])
+  }, [isAuthenticated, t])
 
   React.useEffect(() => {
     let cancelled = false
@@ -231,17 +238,17 @@ function BillingView() {
   ).length
 
   const statusValue = !isAuthenticated
-    ? "Signed out"
+    ? t("statusSignedOut")
     : isProUser
-      ? "Active"
+      ? t("statusActive")
       : pendingCount > 0
-        ? "Payment pending"
-        : "Free"
+        ? t("statusPaymentPending")
+        : t("statusFree")
 
   const renewValue = isProUser
     ? (proExpires ?? "—")
     : trialEnds
-      ? `Ends ${trialEnds}`
+      ? t("endsDate", { date: trialEnds })
       : "—"
 
   return (
@@ -249,9 +256,11 @@ function BillingView() {
       <header className="flex h-14 shrink-0 items-center gap-3 border-b border-border/60 px-4 sm:px-6">
         <ExurLogo alt="Exur" size={32} className="size-8 rounded-full" priority />
         <div className="min-w-0 flex-1">
-          <p className="text-sm font-medium leading-none">Billing</p>
+          <p className="text-sm font-medium leading-none">{t("title")}</p>
           <p className="mt-0.5 truncate text-xs text-muted-foreground">
-            Current plan: {isAuthenticated ? planName : "—"}
+            {t("currentPlanLine", {
+              plan: isAuthenticated ? planName : "—",
+            })}
           </p>
         </div>
         <Button
@@ -259,7 +268,7 @@ function BillingView() {
           size="icon"
           className="size-8 text-muted-foreground hover:text-foreground"
           nativeButton={false}
-          render={<Link href={APP_NEWS_PATH} aria-label="Back to desk" />}
+          render={<Link href={APP_NEWS_PATH} aria-label={t("backToDesk")} />}
         >
           <XIcon className="size-4" />
         </Button>
@@ -268,11 +277,10 @@ function BillingView() {
       <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-10 px-4 py-8 sm:px-6 sm:py-10">
         <div className="mx-auto max-w-2xl text-center">
           <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-            Your billing
+            {t("heading")}
           </h1>
           <p className="mt-2 text-sm leading-relaxed text-muted-foreground sm:text-base">
-            Plan status, co-pilot credits, and crypto payment history in one
-            place.
+            {t("subtitle")}
           </p>
         </div>
 
@@ -281,62 +289,60 @@ function BillingView() {
             <div className="flex flex-wrap items-start justify-between gap-4 border-b border-border/50 px-5 py-5">
               <div className="min-w-0">
                 <p className="text-[11px] font-medium tracking-wide text-muted-foreground uppercase">
-                  Current plan
+                  {t("currentPlan")}
                 </p>
                 <p className="mt-1.5 text-2xl font-semibold tracking-tight">
                   {isAuthenticated ? planName : "—"}
                 </p>
                 {isProUser && proExpires ? (
                   <p className="mt-1 text-sm text-muted-foreground">
-                    Renews {proExpires}
+                    {t("renews", { date: proExpires })}
                   </p>
                 ) : !isProUser && trialEnds ? (
                   <p className="mt-1 text-sm text-muted-foreground">
-                    Trial ends {trialEnds}
+                    {t("trialEnds", { date: trialEnds })}
                   </p>
                 ) : !isAuthenticated ? (
                   <p className="mt-1 text-sm text-muted-foreground">
-                    Sign in to see your plan details
+                    {t("signInForPlan")}
                   </p>
                 ) : pendingCount > 0 ? (
                   <p className="mt-1 text-sm text-muted-foreground">
-                    Payment pending · finish checkout on Upgrade
+                    {t("paymentPendingHint")}
                   </p>
                 ) : null}
               </div>
               {!isProUser ? (
                 <Button
                   size="sm"
-                  className="rounded-xl"
+                  className={landingCta("glass", "sm")}
                   nativeButton={false}
                   render={<Link href={UPGRADE_PATH} />}
                 >
-                  Upgrade
+                  {t("upgrade")}
                   <ArrowUpRightIcon className="size-3.5" />
                 </Button>
               ) : (
                 <Badge variant="outline" className="rounded-full">
-                  Active
+                  {t("active")}
                 </Badge>
               )}
             </div>
 
             <div className="grid sm:grid-cols-3">
               <StatCell
-                label="Status"
+                label={t("status")}
                 value={statusValue}
-                className="border-b border-border/50 sm:border-r sm:border-b-0"
+                className="border-b border-border/50 sm:border-e sm:border-b-0"
               />
               <StatCell
-                label={isProUser ? "Renews / expires" : "Trial"}
+                label={isProUser ? t("renewsExpires") : t("trial")}
                 value={renewValue}
-                className="border-b border-border/50 sm:border-r sm:border-b-0"
+                className="border-b border-border/50 sm:border-e sm:border-b-0"
               />
               <StatCell
-                label="Pending invoices"
-                value={
-                  isAuthenticated ? String(pendingCount) : "—"
-                }
+                label={t("pendingInvoices")}
+                value={isAuthenticated ? String(pendingCount) : "—"}
               />
             </div>
           </div>
@@ -344,15 +350,15 @@ function BillingView() {
           {!isAuthenticated ? (
             <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-primary/20 bg-primary/5 px-4 py-4">
               <p className="min-w-0 flex-1 text-sm text-muted-foreground">
-                Sign in to view invoices, payments, and credit usage.
+                {t("signInForHistory")}
               </p>
               <Button
                 size="sm"
-                className="rounded-xl"
+                className={landingCta("glass", "sm")}
                 disabled={loginPending}
                 onClick={() => login({ source: "billing" })}
               >
-                {loginPending ? "Connecting…" : "Sign in"}
+                {loginPending ? t("connecting") : t("signIn")}
               </Button>
             </div>
           ) : null}
@@ -369,23 +375,24 @@ function BillingView() {
         <section className="space-y-4">
           <div className="flex flex-wrap items-end justify-between gap-3">
             <div>
-              <h2 className="text-lg font-semibold tracking-tight">History</h2>
+              <h2 className="text-lg font-semibold tracking-tight">
+                {t("history")}
+              </h2>
               <p className="mt-1 text-sm text-muted-foreground">
-                Crypto invoices and confirmed payments.
+                {t("historySubtitle")}
               </p>
             </div>
             <Button
               type="button"
-              variant="ghost"
               size="sm"
-              className="rounded-xl"
+              className={landingCta("secondary", "sm")}
               disabled={!isAuthenticated || loading}
               onClick={() => void loadInvoices()}
             >
               <RefreshCwIcon
                 className={cn("size-3.5", loading && "animate-spin")}
               />
-              Refresh
+              {t("refresh")}
             </Button>
           </div>
 
@@ -403,7 +410,7 @@ function BillingView() {
                     value="invoices"
                     className="h-8 rounded-full px-5 text-sm"
                   >
-                    Invoices
+                    {t("invoices")}
                     {invoiceRows.length > 0 ? (
                       <span className="text-muted-foreground">
                         ({invoiceRows.length})
@@ -414,7 +421,7 @@ function BillingView() {
                     value="payments"
                     className="h-8 rounded-full px-5 text-sm"
                   >
-                    Payments
+                    {t("payments")}
                     {paymentRows.length > 0 ? (
                       <span className="text-muted-foreground">
                         ({paymentRows.length})
@@ -426,28 +433,28 @@ function BillingView() {
               <TabsContent value="invoices" className="mt-0">
                 {loading && invoices == null ? (
                   <p className="py-12 text-center text-sm text-muted-foreground">
-                    Loading invoices…
+                    {t("loadingInvoices")}
                   </p>
                 ) : (
                   <HistoryList
                     rows={invoiceRows}
                     mode="invoice"
-                    emptyTitle="No invoices yet"
-                    emptyBody="When you start a Plus checkout, invoices will show up here."
+                    emptyTitle={t("noInvoicesTitle")}
+                    emptyBody={t("noInvoicesBody")}
                   />
                 )}
               </TabsContent>
               <TabsContent value="payments" className="mt-0">
                 {loading && invoices == null ? (
                   <p className="py-12 text-center text-sm text-muted-foreground">
-                    Loading payments…
+                    {t("loadingPayments")}
                   </p>
                 ) : (
                   <HistoryList
                     rows={paymentRows}
                     mode="payment"
-                    emptyTitle="No payments yet"
-                    emptyBody="Confirmed crypto payments will appear in this list."
+                    emptyTitle={t("noPaymentsTitle")}
+                    emptyBody={t("noPaymentsBody")}
                   />
                 )}
               </TabsContent>
@@ -456,13 +463,16 @@ function BillingView() {
         </section>
 
         <p className="pb-6 text-center text-[11px] text-muted-foreground">
-          Manage plans on{" "}
-          <Link
-            href={UPGRADE_PATH}
-            className="underline underline-offset-2 hover:text-foreground"
-          >
-            Upgrade
-          </Link>
+          {t.rich("managePlans", {
+            upgrade: (chunks) => (
+              <Link
+                href={UPGRADE_PATH}
+                className="underline underline-offset-2 hover:text-foreground"
+              >
+                {chunks}
+              </Link>
+            ),
+          })}
         </p>
       </main>
     </div>

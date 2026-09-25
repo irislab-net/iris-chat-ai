@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import { GaugeIcon } from "lucide-react"
+import { useTranslations } from "next-intl"
 
 import { fetchCoPilotUsage } from "@/lib/api/co-pilot"
 import type { ChatCreditBalance, TrialInfo } from "@/lib/api/types"
@@ -22,6 +23,7 @@ function UsageMeter({
   period: CreditUsagePeriod
   className?: string
 }) {
+  const t = useTranslations("billingPage")
   const pct = Math.round(period.usedFraction * 100)
   return (
     <div className={cn("min-w-0 px-5 py-4", className)}>
@@ -39,7 +41,7 @@ function UsageMeter({
           </p>
         </div>
         <p className="text-xs tabular-nums text-muted-foreground">
-          {formatCreditCount(period.used)} used
+          {t("usedCount", { count: formatCreditCount(period.used) })}
         </p>
       </div>
       <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-muted">
@@ -52,7 +54,7 @@ function UsageMeter({
         />
       </div>
       <p className="mt-2 text-[11px] text-muted-foreground">
-        Resets {formatCreditResetAt(period.resetAt)}
+        {t("resetsAt", { date: formatCreditResetAt(period.resetAt) })}
       </p>
     </div>
   )
@@ -73,15 +75,18 @@ function CreditUsageStatusPanel({
   onRefresh?: () => void
   className?: string
 }) {
+  const t = useTranslations("billingPage")
   const usage = balance ? creditUsageFromBalance(balance) : null
 
   return (
     <section className={cn("space-y-4", className)}>
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h2 className="text-lg font-semibold tracking-tight">Credit usage</h2>
+          <h2 className="text-lg font-semibold tracking-tight">
+            {t("creditsTitle")}
+          </h2>
           <p className="mt-1 text-sm text-muted-foreground">
-            Daily and weekly co-pilot limits for your plan.
+            {t("creditsSubtitle")}
           </p>
         </div>
         {onRefresh ? (
@@ -91,7 +96,7 @@ function CreditUsageStatusPanel({
             disabled={loading}
             onClick={onRefresh}
           >
-            {loading ? "Refreshing…" : "Refresh"}
+            {loading ? t("refreshing") : t("refresh")}
           </button>
         ) : null}
       </div>
@@ -106,39 +111,41 @@ function CreditUsageStatusPanel({
         <div className="overflow-hidden rounded-2xl border border-border/60 bg-card/90">
           <div className="grid sm:grid-cols-2">
             <UsageMeter
-              title="Daily remaining"
+              title={t("dailyRemaining")}
               period={usage.daily}
-              className="border-b border-border/50 sm:border-r sm:border-b-0"
+              className="border-b border-border/50 sm:border-e sm:border-b-0"
             />
-            <UsageMeter title="Weekly remaining" period={usage.weekly} />
+            <UsageMeter title={t("weeklyRemaining")} period={usage.weekly} />
           </div>
         </div>
       ) : trial ? (
         <div className="overflow-hidden rounded-2xl border border-border/60 bg-card/90 px-5 py-4">
           <p className="text-[11px] font-medium tracking-wide text-muted-foreground uppercase">
-            Guest trial
+            {t("guestTrial")}
           </p>
           <p className="mt-1.5 text-[17px] font-semibold tracking-tight tabular-nums">
             {formatCreditCount(trial.messages_remaining)}
             <span className="text-sm font-medium text-muted-foreground">
               {" "}
-              / {formatCreditCount(trial.messages_limit)} left
+              {t("leftOf", {
+                limit: formatCreditCount(trial.messages_limit),
+              })}
             </span>
           </p>
           <p className="mt-2 text-[11px] text-muted-foreground">
-            Resets {formatCreditResetAt(trial.weekly_reset_at)}
+            {t("resetsAt", {
+              date: formatCreditResetAt(trial.weekly_reset_at),
+            })}
           </p>
         </div>
       ) : loading ? (
         <div className="overflow-hidden rounded-2xl border border-border/60 bg-card/90 px-5 py-8">
-          <p className="text-sm text-muted-foreground">Loading credit usage…</p>
+          <p className="text-sm text-muted-foreground">{t("loadingCredits")}</p>
         </div>
       ) : (
         <div className="flex items-start gap-3 rounded-2xl border border-border/60 bg-card/90 px-5 py-4">
           <GaugeIcon className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
-          <p className="text-sm text-muted-foreground">
-            Sign in to see daily and weekly credit limits.
-          </p>
+          <p className="text-sm text-muted-foreground">{t("signInForCredits")}</p>
         </div>
       )}
     </section>
@@ -146,6 +153,7 @@ function CreditUsageStatusPanel({
 }
 
 function useCreditUsage(enabled: boolean) {
+  const t = useTranslations("billingPage")
   const [balance, setBalance] = React.useState<ChatCreditBalance | null>(null)
   const [trial, setTrial] = React.useState<TrialInfo | null>(null)
   const [loading, setLoading] = React.useState(false)
@@ -169,12 +177,12 @@ function useCreditUsage(enabled: boolean) {
       setBalance(null)
       setTrial(null)
       setError(
-        err instanceof Error ? err.message : "Could not load credit usage"
+        err instanceof Error ? err.message : t("creditsLoadError")
       )
     } finally {
       setLoading(false)
     }
-  }, [enabled])
+  }, [enabled, t])
 
   React.useEffect(() => {
     let cancelled = false

@@ -325,51 +325,51 @@
       "mobileNav": "Mobile"
     },
     "hero": {
-      "badge": "Your AI financial assistant",
-      "titleBefore": "Your money,",
-      "titleAfter": "handled.",
-      "subtitle": "Ask about spending, savings, and what’s next, in your own words.",
-      "inputPlaceholder": "Where is my money going this month?",
+      "badge": "AI market advisor",
+      "titleBefore": "Market news,",
+      "titleAfter": "clear answers.",
+      "subtitle": "Read the desk, ask Exur on the same screen. Short answers tied to the headline in front of you.",
+      "inputPlaceholder": "Does today’s ETF news matter for ETH?",
       "exchanges": {
         "0": {
-          "q": "Can you watch my accounts this week?",
-          "a": "Yes. I’ll ping you only if something actually needs you."
+          "q": "Does today’s ETF news matter for ETH?",
+          "a": "Yes. Spot inflows flipped positive. Watch if funding stays soft while price lifts."
         },
         "1": {
-          "q": "Where is my money going?",
-          "a": "$340/mo in unused subscriptions. Cut those first."
+          "q": "Long ETH from here?",
+          "a": "Not yet. Spot leads, but no clean setup. Wait above VWAP; stop under the prior low."
         },
         "2": {
-          "q": "Can I afford this apartment?",
-          "a": "Not yet. Keep 6 months of rent in cash, then look."
+          "q": "What does negative funding mean?",
+          "a": "Leverage is unwinding — the crowd isn’t long yet. Don’t rush an entry."
         },
         "3": {
-          "q": "What should I do with my savings?",
-          "a": "Keep 3 months in cash. Put the rest in a simple index fund."
+          "q": "Exchange reserves are low — good or bad?",
+          "a": "Usually less sell pressure. Alone it isn’t a buy signal without spot confirmation."
         },
         "4": {
-          "q": "Am I overspending on dining?",
-          "a": "Yes. 22% of spend. Cap it at 12% and you’re fine."
+          "q": "Should I short this spike?",
+          "a": "No. Tape is mixed and leverage is still coming off. No clear edge today."
         },
         "5": {
-          "q": "Help me buy a house in 2 years.",
-          "a": "Protect the down payment. Less risk, more cash, until you’re close."
+          "q": "Any BTC signal right now?",
+          "a": "Weak. Price is quiet and no headline is strong. Wait for news or a level break."
         },
         "6": {
-          "q": "Is my emergency fund enough?",
-          "a": "Almost. You’re at 4 months. Get to 6, then invest the rest."
+          "q": "Gold or crypto right now?",
+          "a": "Gold is near highs with a soft dollar. Prefer gold for lower risk; wait for a clear crypto signal."
         },
         "7": {
-          "q": "Should I pay the card or invest?",
-          "a": "Pay the 19% card first. Then invest what’s left."
+          "q": "Which headline actually matters?",
+          "a": "Spot ETF inflows flipping positive. You can ignore the rest for now."
         },
         "8": {
-          "q": "Summarize my money in one line.",
-          "a": "You’re fine. Save more, spend a little less, don’t chase anything."
+          "q": "One-line market read?",
+          "a": "Spot a bit stronger, leverage still cautious. Don’t chase — wait for a confirmed level."
         },
         "9": {
-          "q": "What needs my attention today?",
-          "a": "Nothing urgent. I’ll tell you the moment that changes."
+          "q": "Anything urgent today?",
+          "a": "No strong signal. I’ll ping you the moment a headline or level flips."
         }
       }
     },
@@ -411,11 +411,14 @@
       }
     },
     "desk": {
-      "title": "Scored headlines. Not a feed.",
-      "subtitle": "Impact ranks the tape. The lead stands out — the rest stays quiet.",
+      "title": "The important story leads.",
+      "subtitle": "The rest stays quiet — not another noisy feed.",
       "you": "You",
       "lead": "Lead",
       "impactLabel": "Impact",
+      "tonePositive": "Positive",
+      "toneNegative": "Negative",
+      "toneNeutral": "Neutral",
       "news": {
         "0": {
           "source": "Bloomberg",
@@ -431,6 +434,21 @@
           "source": "The Block",
           "time": "27m",
           "headline": "Exchange reserves drop to the lowest level since March"
+        },
+        "3": {
+          "source": "Reuters",
+          "time": "41m",
+          "headline": "Stablecoin supply expands on major chains"
+        },
+        "4": {
+          "source": "WSJ",
+          "time": "1h",
+          "headline": "Regulators signal tighter rules for crypto custody"
+        },
+        "5": {
+          "source": "FT",
+          "time": "2h",
+          "headline": "Gold holds near highs as dollar softens"
         }
       }
     },
@@ -653,6 +671,16 @@
     "logOut": "Log out",
     "connecting": "Connecting…",
     "signIn": "Sign in",
+    "continueWithGoogle": "Continue with Google",
+    "continueWithGoogleShort": "Continue",
+    "agreeContinueWithGoogle": "Agree & continue with Google",
+    "secureSignInWithGoogle": "Secure sign-in with Google",
+    "loginConsentDescription": "Accept the terms below to sign in securely.",
+    "loginConsentDisclaimer": "You must be 18+ and not located in a comprehensively sanctioned jurisdiction. Exur provides analytics for information only — not financial advice.",
+    "agreeTerms": "I agree to the <link>Terms of Service</link>",
+    "agreePrivacy": "I agree to the <link>Privacy Policy</link>",
+    "cancel": "Cancel",
+    "tryAgain": "Try again",
     "chatHistory": "Chat history",
     "closeChatHistory": "Close chat history",
     "closeNews": "Close news",
@@ -695,6 +723,24 @@
     "signalCardThesisHeading": "Thesis — why this setup",
     "signalCardDisclaimer": "Exur provides market information only, not financial advice.",
     "samplePromptsLabel": "Starters",
+    "samplePrompts": {
+      "usePrompt": "Use prompt: {title}",
+      "btc-signal": {
+        "title": "BTC trade signal",
+        "description": "Ask for a live setup — card only when the model has a clear read.",
+        "text": "@signal BTC"
+      },
+      "market-pulse": {
+        "title": "Market pulse",
+        "description": "Stance, model bias, and news — analysis only.",
+        "text": "What is Exur's stance and model bias on BTC right now, and what does the news pulse say? Keep it factual and concise. Analysis only — no trade card."
+      },
+      "key-levels": {
+        "title": "Key levels",
+        "description": "Nearest support and resistance that matter now.",
+        "text": "Map BTC's key support and resistance from recent structure and live price. Call out the nearest levels and whether price is pressing, rejecting, or mid-range. Analysis only — no trade card."
+      }
+    },
     "emptySignedIn": "Start from a prompt or ask in plain language.",
     "emptySignedOut": "Explore the chat. Sign in when you want a real answer.",
     "emptyGuestTrial": "Ask Exur anything. You get 3 free messages per week before signing in.",
@@ -712,6 +758,166 @@
     "deleteChat": "Delete",
     "chatOptions": "Chat options",
     "cancelRename": "Cancel",
-    "saveRename": "Save"
+    "saveRename": "Save",
+    "effort": {
+      "label": "Response depth",
+      "aria": "Response depth: {mode}",
+      "instant": "Fast",
+      "instantHint": "Quick, concise replies",
+      "high": "Thinking",
+      "highHint": "Deeper analysis, slower"
+    }
+  },
+  "billingPage": {
+    "title": "Billing",
+    "currentPlanLine": "Current plan: {plan}",
+    "backToDesk": "Back to desk",
+    "heading": "Your billing",
+    "subtitle": "Plan status, co-pilot credits, and crypto payment history in one place.",
+    "currentPlan": "Current plan",
+    "renews": "Renews {date}",
+    "trialEnds": "Trial ends {date}",
+    "signInForPlan": "Sign in to see your plan details",
+    "paymentPendingHint": "Payment pending · finish checkout on Upgrade",
+    "upgrade": "Upgrade",
+    "active": "Active",
+    "status": "Status",
+    "statusSignedOut": "Signed out",
+    "statusActive": "Active",
+    "statusPaymentPending": "Payment pending",
+    "statusFree": "Free",
+    "renewsExpires": "Renews / expires",
+    "trial": "Trial",
+    "endsDate": "Ends {date}",
+    "pendingInvoices": "Pending invoices",
+    "signInForHistory": "Sign in to view invoices, payments, and credit usage.",
+    "connecting": "Connecting…",
+    "signIn": "Sign in",
+    "history": "History",
+    "historySubtitle": "Crypto invoices and confirmed payments.",
+    "refresh": "Refresh",
+    "invoices": "Invoices",
+    "payments": "Payments",
+    "loadingInvoices": "Loading invoices…",
+    "loadingPayments": "Loading payments…",
+    "noInvoicesTitle": "No invoices yet",
+    "noInvoicesBody": "When you start a Plus checkout, invoices will show up here.",
+    "noPaymentsTitle": "No payments yet",
+    "noPaymentsBody": "Confirmed crypto payments will appear in this list.",
+    "managePlans": "Manage plans on <upgrade>Upgrade</upgrade>",
+    "loadError": "Could not load billing history",
+    "statusPaid": "Paid",
+    "statusPending": "Pending",
+    "statusFailed": "Failed",
+    "statusExpired": "Expired",
+    "statusUnknown": "Unknown",
+    "creditsTitle": "Credit usage",
+    "creditsSubtitle": "Daily and weekly co-pilot limits for your plan.",
+    "refreshing": "Refreshing…",
+    "dailyRemaining": "Daily remaining",
+    "weeklyRemaining": "Weekly remaining",
+    "usedCount": "{count} used",
+    "resetsAt": "Resets {date}",
+    "guestTrial": "Guest trial",
+    "leftOf": "/ {limit} left",
+    "loadingCredits": "Loading credit usage…",
+    "signInForCredits": "Sign in to see daily and weekly credit limits.",
+    "creditsLoadError": "Could not load credit usage"
+  },
+  "upgradePage": {
+    "title": "Upgrade",
+    "currentPlanLine": "Current plan: {plan}",
+    "backToDesk": "Back to desk",
+    "heading": "Choose a plan",
+    "subtitle": "Start free, or upgrade to Plus for the full desk. Pay with crypto in a few simple steps.",
+    "monthly": "Monthly",
+    "annual": "Annual",
+    "annualSave": "Save 17%",
+    "plansAria": "Plans",
+    "cadence": "/ month",
+    "customPrice": "Custom",
+    "currentBadge": "Current",
+    "mostChosen": "Most chosen",
+    "pendingTitle": "You have a payment in progress",
+    "pendingBody": "Send {amount} to finish upgrading to Plus.",
+    "finishPayment": "Finish payment",
+    "continuing": "Continuing…",
+    "continueFree": "Continue with Free",
+    "backToDeskCta": "Back to desk",
+    "currentPlanCta": "Current plan",
+    "payWithCrypto": "Pay with crypto",
+    "contactUs": "Contact us",
+    "hintPending": "Finish your payment · {time} left",
+    "hintPlusAuth": "{price}{cadence} · USDT or USDC on Ethereum",
+    "hintPlusGuest": "Sign in to continue to payment",
+    "hintUltimate": "We’ll set Ultimate up with you on X",
+    "hintFree": "No charge on Free",
+    "plans": {
+      "free": {
+        "name": "Free",
+        "description": "Read the desk with a capped co-pilot — enough to try the flow, not to run it all day.",
+        "features": [
+          "Live public market pulse",
+          "News, signal board, and stance view",
+          "Daily co-pilot send limit",
+          "Weekly usage cap"
+        ]
+      },
+      "plus": {
+        "name": "Plus",
+        "description": "The full IRIS workflow with chart, signal, and co-pilot in one desk.",
+        "features": [
+          "Higher daily send allowance",
+          "Raised weekly usage cap",
+          "IRIS co-pilot trade planning",
+          "Chart-first workflow with signal context"
+        ]
+      },
+      "ultimate": {
+        "name": "Ultimate",
+        "description": "A tailored setup when Plus limits are not enough. We shape access with you.",
+        "features": [
+          "Custom send and weekly limits",
+          "Team onboarding and custom flows",
+          "Priority research and rollout support",
+          "Direct line for commercial requests"
+        ]
+      }
+    },
+    "crypto": {
+      "title": "Pay for Plus",
+      "subtitle": "Easy crypto payment — send and you're in.",
+      "plusUpgrade": "Plus upgrade",
+      "billedMonthly": "Plus · billed monthly",
+      "billedAnnually": "Plus · billed annually",
+      "descDesktop": " · send from any wallet and we'll unlock access automatically.",
+      "descMobile": " · send from your wallet.",
+      "stepChooseCoin": "Choose coin",
+      "stepSendPayment": "Send payment",
+      "payWith": "Pay with",
+      "havePromo": "Have a promo code?",
+      "enterCode": "Enter code",
+      "apply": "Apply",
+      "gettingDetails": "Getting your payment details…",
+      "sendExactly": "Send exactly",
+      "aboutUsd": "About {amount}",
+      "toWallet": "To this wallet address",
+      "paymentReceived": "Payment received. Plus is being activated now.",
+      "windowExpired": "This payment window expired. Choose a coin again to get a new address.",
+      "paymentFailed": "This payment could not be completed. Try again or switch coin.",
+      "createInvoiceError": "Could not create invoice",
+      "watchingTitle": "Waiting for payment",
+      "watchingBody": "We'll unlock Plus as soon as the transfer arrives.",
+      "timeLeft": "Time left ",
+      "checking": "Checking",
+      "checkingShort": "Checking…",
+      "copyAmount": "Copy amount",
+      "copied": "Copied",
+      "copyAddress": "Copy wallet address",
+      "addressCopied": "Address copied",
+      "networkOnly": "Use {currency} on {network} only.",
+      "tokenAria": "Payment token: {token} on {network}",
+      "networkLabel": "Network"
+    }
   }
 }

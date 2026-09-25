@@ -100,7 +100,7 @@ function AccountLanguageItems() {
       <DropdownMenuSub>
         <DropdownMenuSubTrigger className={cn(chatContextMenuItemClass, "gap-3")}>
           <LanguagesIcon className={chatContextMenuIconClass} />
-          <span className="flex-1 text-left">{common("language")}</span>
+          <span className="flex-1 text-start">{common("language")}</span>
           <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
             <LocaleFlag locale={locale} tone="color" className="size-3.5" />
             <span className="max-w-16 truncate">{currentLabel}</span>

@@ -71,15 +71,18 @@ function Carousel({
 
   const handleKeyDown = React.useCallback(
     (event: React.KeyboardEvent) => {
+      const rtl = opts?.direction === "rtl"
       if (event.key === "ArrowLeft") {
         event.preventDefault()
-        scrollPrev()
+        if (rtl) scrollNext()
+        else scrollPrev()
       } else if (event.key === "ArrowRight") {
         event.preventDefault()
-        scrollNext()
+        if (rtl) scrollPrev()
+        else scrollNext()
       }
     },
-    [scrollPrev, scrollNext]
+    [opts?.direction, scrollPrev, scrollNext]
   )
 
   React.useEffect(() => {
@@ -125,6 +128,7 @@ function Carousel({
         role="region"
         aria-roledescription="carousel"
         data-slot="carousel"
+        dir={opts?.direction}
         {...props}
       >
         {children}
@@ -149,7 +153,7 @@ function CarouselContent({
       <div
         className={cn(
           "flex",
-          orientation === "horizontal" ? "-ml-3" : "-mt-3 flex-col",
+          orientation === "horizontal" ? "-ms-3" : "-mt-3 flex-col",
           className
         )}
         {...props}
@@ -168,7 +172,7 @@ function CarouselItem({ className, ...props }: React.ComponentProps<"div">) {
       data-slot="carousel-item"
       className={cn(
         "min-w-0 shrink-0 grow-0 basis-full",
-        orientation === "horizontal" ? "pl-3" : "pt-3",
+        orientation === "horizontal" ? "ps-3" : "pt-3",
         className
       )}
       {...props}

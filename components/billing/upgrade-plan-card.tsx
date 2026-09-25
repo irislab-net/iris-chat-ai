@@ -5,6 +5,7 @@ import { CheckIcon } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import type { PlanKey } from "@/lib/billing/catalog"
+import { parsePriceAmount } from "@/lib/billing/prices"
 import { cn } from "@/lib/utils"
 
 type UpgradePlanCardProps = {
@@ -16,6 +17,7 @@ type UpgradePlanCardProps = {
   features: readonly string[]
   selected: boolean
   isCurrent: boolean
+  currentLabel?: string
   badge?: string
   featured?: boolean
   onSelect: () => void
@@ -30,10 +32,14 @@ export function UpgradePlanCard({
   features,
   selected,
   isCurrent,
+  currentLabel = "Current",
   badge,
   featured,
   onSelect,
 }: UpgradePlanCardProps) {
+  const priceAmount = parsePriceAmount(price)
+  const showCadence = priceAmount !== null && priceAmount > 0
+
   return (
     <div className="relative">
       {badge ? (
@@ -84,12 +90,12 @@ export function UpgradePlanCard({
 
           <div className="flex flex-wrap items-end gap-x-2 gap-y-1">
             <span className="text-3xl font-semibold tracking-tight">{price}</span>
-            {price === "Custom" ? null : (
+            {showCadence ? (
               <span className="pb-0.5 text-sm text-muted-foreground">{cadence}</span>
-            )}
+            ) : null}
             {isCurrent ? (
               <Badge variant="outline" className="mb-0.5 rounded-full">
-                Current
+                {currentLabel}
               </Badge>
             ) : null}
           </div>

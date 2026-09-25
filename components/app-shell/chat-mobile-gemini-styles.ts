@@ -156,7 +156,7 @@ const chatEmptyHeroPromptsClass =
   "chat-empty-hero-prompts mt-1 flex w-full min-w-0 self-stretch flex-col items-center gap-2"
 
 const chatSamplePromptCarouselClass =
-  "w-full min-w-0 touch-pan-y lg:hidden [&_[data-slot=carousel-content]]:overflow-x-clip [&_[data-slot=carousel-content]]:px-1.5 [&_[data-slot=carousel-content]]:py-2.5 [&_[data-slot=carousel-content]]:[mask-image:linear-gradient(to_right,transparent_0%,black_10%,black_90%,transparent_100%)] [&_[data-slot=carousel-content]]:[-webkit-mask-image:linear-gradient(to_right,transparent_0%,black_10%,black_90%,transparent_100%)]"
+  "w-full min-w-0 touch-pan-y lg:hidden [&_[data-slot=carousel-content]]:overflow-x-clip [&_[data-slot=carousel-content]]:px-1.5 [&_[data-slot=carousel-content]]:py-2.5 [&_[data-slot=carousel-content]]:[mask-image:linear-gradient(to_right,transparent_0%,black_10%,black_90%,transparent_100%)] [&_[data-slot=carousel-content]]:[-webkit-mask-image:linear-gradient(to_right,transparent_0%,black_10%,black_90%,transparent_100%)] rtl:[&_[data-slot=carousel-content]]:[mask-image:linear-gradient(to_left,transparent_0%,black_10%,black_90%,transparent_100%)] rtl:[&_[data-slot=carousel-content]]:[-webkit-mask-image:linear-gradient(to_left,transparent_0%,black_10%,black_90%,transparent_100%)]"
 
 const chatSamplePromptCarouselContentClass = "-ml-5 w-full items-stretch"
 

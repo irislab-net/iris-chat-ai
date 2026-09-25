@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import { ExternalLinkIcon } from "lucide-react"
+import { useTranslations } from "next-intl"
 
 import { GoogleGlyph } from "@/components/auth/google-glyph"
 import { ExurLogo } from "@/components/brand/exur-logo"
@@ -49,11 +50,6 @@ type LoginConsentDialogProps = {
   confirming?: boolean
 }
 
-const TITLE = "Continue with Google"
-const DESCRIPTION = "Accept the terms below to sign in securely."
-const DISCLAIMER =
-  "You must be 18+ and not located in a comprehensively sanctioned jurisdiction. Exur provides analytics for information only — not financial advice."
-
 function LegalLink({
   href,
   children,
@@ -92,7 +88,7 @@ function ConsentCheck({
     <label
       htmlFor={id}
       className={cn(
-        "flex min-h-12 cursor-pointer items-center gap-3 rounded-2xl px-3.5 py-3 text-left transition-[background-color,box-shadow]",
+        "flex min-h-12 cursor-pointer items-center gap-3 rounded-2xl px-3.5 py-3 text-start transition-[background-color,box-shadow]",
         checked
           ? chatMobileSheetConsentCheckedClass
           : chatMobileSheetConsentUncheckedClass
@@ -120,8 +116,10 @@ function ConsentCheck({
 }
 
 function LoginConsentBrand() {
+  const t = useTranslations("workspace")
+
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex items-center gap-3 pe-8">
       <span className={chatLoginConsentBrandMarkClass}>
         <ExurLogo
           decorative
@@ -130,12 +128,12 @@ function LoginConsentBrand() {
           priority
         />
       </span>
-      <div className="min-w-0">
+      <div className="min-w-0 text-start">
         <p className="text-[15px] font-semibold leading-none tracking-[-0.02em] text-foreground">
           Exur
         </p>
         <p className="mt-1.5 text-[12px] leading-none text-muted-foreground">
-          Secure sign-in with Google
+          {t("secureSignInWithGoogle")}
         </p>
       </div>
     </div>
@@ -154,6 +152,8 @@ function LoginConsentActions({
   onCancel: () => void
   mobile?: boolean
 }) {
+  const t = useTranslations("workspace")
+
   return (
     <div className="flex w-full flex-col gap-2.5">
       <Button
@@ -165,8 +165,8 @@ function LoginConsentActions({
         disabled={!canContinue}
         onClick={onConfirm}
       >
-        <GoogleGlyph className="size-4 shrink-0" />
-        {confirming ? "Connecting…" : "Agree & continue with Google"}
+        <GoogleGlyph className="size-4 shrink-0 rtl:order-last" />
+        {confirming ? t("connecting") : t("agreeContinueWithGoogle")}
       </Button>
       <Button
         type="button"
@@ -177,7 +177,7 @@ function LoginConsentActions({
         disabled={confirming}
         onClick={onCancel}
       >
-        Cancel
+        {t("cancel")}
       </Button>
     </div>
   )
@@ -194,6 +194,8 @@ function LoginConsentBody({
   onTermsChange: (checked: boolean) => void
   onPrivacyChange: (checked: boolean) => void
 }) {
+  const t = useTranslations("workspace")
+
   return (
     <div className="flex flex-col gap-3">
       <div className="flex flex-col gap-2">
@@ -202,21 +204,27 @@ function LoginConsentBody({
           checked={termsAccepted}
           onCheckedChange={onTermsChange}
         >
-          I agree to the{" "}
-          <LegalLink href={TERMS_OF_SERVICE_URL}>Terms of Service</LegalLink>
+          {t.rich("agreeTerms", {
+            link: (chunks) => (
+              <LegalLink href={TERMS_OF_SERVICE_URL}>{chunks}</LegalLink>
+            ),
+          })}
         </ConsentCheck>
         <ConsentCheck
           id="accept-privacy"
           checked={privacyAccepted}
           onCheckedChange={onPrivacyChange}
         >
-          I agree to the{" "}
-          <LegalLink href={PRIVACY_NOTICE_URL}>Privacy Policy</LegalLink>
+          {t.rich("agreePrivacy", {
+            link: (chunks) => (
+              <LegalLink href={PRIVACY_NOTICE_URL}>{chunks}</LegalLink>
+            ),
+          })}
         </ConsentCheck>
       </div>
 
       <p className="text-pretty px-0.5 text-[11.5px] leading-relaxed text-muted-foreground">
-        {DISCLAIMER}
+        {t("loginConsentDisclaimer")}
       </p>
     </div>
   )
@@ -228,6 +236,7 @@ function LoginConsentDialog({
   onConfirm,
   confirming = false,
 }: LoginConsentDialogProps) {
+  const t = useTranslations("workspace")
   const isDesktop = useIsDesktop()
   const [termsAccepted, setTermsAccepted] = React.useState(false)
   const [privacyAccepted, setPrivacyAccepted] = React.useState(false)
@@ -268,12 +277,12 @@ function LoginConsentDialog({
         >
           <div className="flex flex-col gap-4 px-5 pt-5 pb-1">
             <LoginConsentBrand />
-            <DialogHeader className="gap-1.5 space-y-0 text-left">
+            <DialogHeader className="gap-1.5 space-y-0 text-start">
               <DialogTitle className="text-[1.25rem] font-semibold tracking-[-0.02em]">
-                {TITLE}
+                {t("continueWithGoogle")}
               </DialogTitle>
               <DialogDescription className="text-pretty text-[13px] leading-relaxed text-muted-foreground">
-                {DESCRIPTION}
+                {t("loginConsentDescription")}
               </DialogDescription>
             </DialogHeader>
             <LoginConsentBody
@@ -303,12 +312,12 @@ function LoginConsentDialog({
           <LoginConsentBrand />
           <SheetHeader className={chatMobileSheetHeaderClass}>
             <SheetTitle className={cn(chatMobileSheetTitleClass, "text-lg")}>
-              {TITLE}
+              {t("continueWithGoogle")}
             </SheetTitle>
             <SheetDescription
               className={cn(chatMobileSheetDescriptionClass, "text-[13px]")}
             >
-              {DESCRIPTION}
+              {t("loginConsentDescription")}
             </SheetDescription>
           </SheetHeader>
           <LoginConsentBody

@@ -3,6 +3,7 @@
 import * as React from "react"
 import QRCode from "react-qr-code"
 import { CheckIcon, CopyIcon } from "lucide-react"
+import { useTranslations } from "next-intl"
 
 import { Button } from "@/components/ui/button"
 import type { PaymentCurrency } from "@/lib/billing/invoice-types"
@@ -14,6 +15,7 @@ type DepositAddressCardProps = {
 }
 
 export function DepositAddressCard({ address, currency }: DepositAddressCardProps) {
+  const t = useTranslations("upgradePage.crypto")
   const [copied, setCopied] = React.useState(false)
 
   async function onCopy() {
@@ -40,29 +42,32 @@ export function DepositAddressCard({ address, currency }: DepositAddressCardProp
         </div>
       </div>
 
-      <div className="space-y-3 p-4">
-        <div className="rounded-xl bg-muted/30 px-3 py-2.5">
-          <code className="block break-all text-left font-mono text-[11px] leading-relaxed text-foreground/90">
+      <div className="space-y-2.5 p-3.5">
+        <div className="flex items-center gap-2 rounded-xl bg-muted/30 py-1.5 ps-3 pe-1.5">
+          <code className="min-w-0 flex-1 truncate text-start font-mono text-[11px] leading-none text-foreground/90">
             {address}
           </code>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon-sm"
+            className="size-8 shrink-0 rounded-lg"
+            onClick={() => void onCopy()}
+            aria-label={copied ? t("addressCopied") : t("copyAddress")}
+          >
+            {copied ? (
+              <CheckIcon className="size-3.5" />
+            ) : (
+              <CopyIcon className="size-3.5" />
+            )}
+          </Button>
         </div>
 
-        <Button
-          type="button"
-          variant="outline"
-          className="h-10 w-full rounded-xl"
-          onClick={() => void onCopy()}
-        >
-          {copied ? (
-            <CheckIcon data-icon="inline-start" />
-          ) : (
-            <CopyIcon data-icon="inline-start" />
-          )}
-          {copied ? "Address copied" : "Copy wallet address"}
-        </Button>
-
         <p className="text-center text-xs leading-relaxed text-muted-foreground">
-          Use {currency} on {PAYMENT_NETWORK.name} only.
+          {t("networkOnly", {
+            currency,
+            network: PAYMENT_NETWORK.name,
+          })}
         </p>
       </div>
     </div>

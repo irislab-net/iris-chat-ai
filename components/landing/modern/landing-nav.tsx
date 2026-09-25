@@ -3,7 +3,7 @@
 import { gsap } from "gsap"
 import { CheckIcon, MonitorIcon, MoonIcon, SunIcon, UserRoundIcon, XIcon } from "lucide-react"
 import dynamic from "next/dynamic"
-import { useTranslations } from "next-intl"
+import { useLocale, useTranslations } from "next-intl"
 import { useTheme } from "@wrksz/themes/client/use-theme"
 import { useEffect, useState } from "react"
 
@@ -44,6 +44,7 @@ import {
   landingNavPill,
 } from "@/lib/landing-modern-styles"
 import { getLaunchAppHref } from "@/lib/site"
+import { localeDirection } from "@/lib/i18n/locale"
 import { userAccountLabel, userAccountSubline } from "@/lib/user-profile"
 import { cn } from "@/lib/utils"
 
@@ -127,7 +128,7 @@ function LandingThemeToggle() {
             <Icon className="size-4" strokeWidth={1.75} />
             {t(labelKey)}
             {active === value ? (
-              <CheckIcon className="ml-auto size-4 opacity-70" aria-hidden />
+              <CheckIcon className="ms-auto size-4 opacity-70" aria-hidden />
             ) : null}
           </DropdownMenuItem>
         ))}
@@ -212,7 +213,7 @@ function LandingSheetAccount({ onDone }: { onDone?: () => void }) {
       >
         <GoogleGlyph className="size-5 shrink-0" />
         <span className="truncate">
-          {loginPending ? t("connecting") : "Continue with Google"}
+          {loginPending ? t("connecting") : t("continueWithGoogle")}
         </span>
       </Button>
     )
@@ -239,6 +240,9 @@ function LandingSheetAccount({ onDone }: { onDone?: () => void }) {
 export function LandingNav() {
   const tNav = useTranslations("modern.nav")
   const tAria = useTranslations("nav")
+  const locale = useLocale()
+  const isRtl = localeDirection(locale) === "rtl"
+  const sheetSide = isRtl ? "left" : "right"
   const [open, setOpen] = useState(false)
   const [stuck, setStuck] = useState(false)
   const { activeSectionId } = useLandingActiveSection()
@@ -339,17 +343,19 @@ export function LandingNav() {
               }
             />
             <SheetContent
-              side="right"
+              side={sheetSide}
+              dir={isRtl ? "rtl" : "ltr"}
               showCloseButton={false}
               className={cn(
                 "gap-0 border-0 bg-card p-0 text-foreground shadow-[0_24px_80px_rgba(15,23,42,0.14)]",
                 "dark:shadow-[0_24px_80px_rgba(0,0,0,0.45)]",
-                "top-3 right-3 bottom-3 left-auto h-auto w-[min(calc(100vw-1.5rem),20rem)] rounded-[1.75rem]",
-                "data-[side=right]:top-3 data-[side=right]:right-3 data-[side=right]:bottom-3 data-[side=right]:left-auto",
-                "data-[side=right]:h-auto data-[side=right]:w-[min(calc(100vw-1.5rem),20rem)] data-[side=right]:sm:max-w-none"
+                "top-3 bottom-3 h-auto w-[min(calc(100vw-1.5rem),20rem)] rounded-[1.75rem]",
+                isRtl
+                  ? "right-auto left-3 data-[side=left]:top-3 data-[side=left]:right-auto data-[side=left]:bottom-3 data-[side=left]:left-3 data-[side=left]:h-auto data-[side=left]:w-[min(calc(100vw-1.5rem),20rem)] data-[side=left]:sm:max-w-none"
+                  : "right-3 left-auto data-[side=right]:top-3 data-[side=right]:right-3 data-[side=right]:bottom-3 data-[side=right]:left-auto data-[side=right]:h-auto data-[side=right]:w-[min(calc(100vw-1.5rem),20rem)] data-[side=right]:sm:max-w-none"
               )}
             >
-              <SheetHeader className="flex-row items-center justify-between gap-3 p-5 pb-3 text-left">
+              <SheetHeader className="flex-row items-center justify-between gap-3 p-5 pb-3 text-start">
                 <SheetTitle
                   className={cn(
                     landingTitleBrand,

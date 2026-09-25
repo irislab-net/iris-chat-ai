@@ -19,7 +19,7 @@ import {
   XIcon,
   HouseIcon,
 } from "lucide-react"
-import { useTranslations } from "next-intl"
+import { useLocale, useTranslations } from "next-intl"
 
 import { AttentionPulseDot } from "@/components/app-shell/attention-pulse-dot"
 import { ChatAccountAvatar } from "@/components/app-shell/chat-account-avatar"
@@ -87,12 +87,22 @@ import {
   type StoredConversation,
 } from "@/lib/chat-storage"
 import { CHAT_HISTORY_RAIL_COLLAPSED_WIDTH } from "@/lib/chat-history-rail-prefs"
+import { localeDirection } from "@/lib/i18n/locale"
 import { BILLING_PATH, getLandingHref, UPGRADE_PATH } from "@/lib/site"
 import {
   userAccountLabel,
   userAccountSubline,
 } from "@/lib/user-profile"
 import { cn } from "@/lib/utils"
+
+function useSidebarDir() {
+  const dir = localeDirection(useLocale())
+  return {
+    dir,
+    isRtl: dir === "rtl",
+    tooltipSide: (dir === "rtl" ? "left" : "right") as "left" | "right",
+  }
+}
 
 const rowMenuButtonClass =
   "size-8 shrink-0 rounded-full text-muted-foreground hover:bg-muted/60 hover:text-foreground"
@@ -112,6 +122,7 @@ function HistoryRailToggleButton({
   onToggle: () => void
 }) {
   const t = useTranslations("workspace")
+  const { isRtl, tooltipSide } = useSidebarDir()
   const label = collapsed ? t("expandChatHistory") : t("collapseChatHistory")
   const Icon = collapsed ? PanelLeftOpenIcon : PanelLeftCloseIcon
 
@@ -130,9 +141,9 @@ function HistoryRailToggleButton({
           />
         }
       >
-        <Icon className="size-4" />
+        <Icon className={cn("size-4", isRtl && "rtl-mirror")} />
       </TooltipTrigger>
-      <TooltipContent side="right">{label}</TooltipContent>
+      <TooltipContent side={tooltipSide}>{label}</TooltipContent>
     </Tooltip>
   )
 }
@@ -149,6 +160,7 @@ function HistoryNewsNav({
   showSpotlight?: boolean
 }) {
   const t = useTranslations("workspace")
+  const { tooltipSide } = useSidebarDir()
 
   if (minimal) {
     return (
@@ -175,7 +187,7 @@ function HistoryNewsNav({
         >
           <NewspaperIcon className="size-4.5" />
         </TooltipTrigger>
-        <TooltipContent side="right">{t("news")}</TooltipContent>
+        <TooltipContent side={tooltipSide}>{t("news")}</TooltipContent>
       </Tooltip>
     )
   }
@@ -217,6 +229,7 @@ function HistoryHomeNav({
   minimal?: boolean
 }) {
   const t = useTranslations("workspace")
+  const { tooltipSide } = useSidebarDir()
   const landingHref = getLandingHref()
 
   if (minimal) {
@@ -238,7 +251,7 @@ function HistoryHomeNav({
         >
           <HouseIcon className="size-4.5" />
         </TooltipTrigger>
-        <TooltipContent side="right">{t("home")}</TooltipContent>
+        <TooltipContent side={tooltipSide}>{t("home")}</TooltipContent>
       </Tooltip>
     )
   }
@@ -451,6 +464,7 @@ function ChatHistorySidebar({
   className,
 }: ChatHistorySidebarProps) {
   const t = useTranslations("workspace")
+  const { dir, tooltipSide } = useSidebarDir()
   const isMobileDrawer = variant === "mobile-drawer"
   const [renameTarget, setRenameTarget] =
     React.useState<StoredConversation | null>(null)
@@ -473,6 +487,7 @@ function ChatHistorySidebar({
   return (
     <>
       <div
+        dir={dir}
         className={cn(
           "flex h-full min-h-0 flex-col",
           isMobileDrawer && chatMobileDrawerSurfaceClass,
@@ -571,7 +586,7 @@ function ChatHistorySidebar({
                   >
                     <ChatGeminiNewChatIcon className="h-4.5" />
                   </TooltipTrigger>
-                  <TooltipContent side="right">{t("newChat")}</TooltipContent>
+                  <TooltipContent side={tooltipSide}>{t("newChat")}</TooltipContent>
                 </Tooltip>
               ) : (
                 <Button
@@ -852,7 +867,7 @@ function ConversationRow({
         type="button"
         variant="ghost"
         className={cn(
-          "min-w-0 flex-1 justify-start text-left font-normal shadow-none hover:bg-transparent",
+          "min-w-0 flex-1 justify-start text-start font-normal shadow-none hover:bg-transparent",
           compact
             ? "h-11 gap-0 rounded-full px-4 pe-1 text-[15px]"
             : "h-9 gap-2.5 rounded-md px-2 text-sm"
@@ -950,8 +965,10 @@ function ChatHistoryRail({
   sidebarWidth: string
 }) {
   const t = useTranslations("workspace")
+  const { dir } = useSidebarDir()
   return (
     <aside
+      dir={dir}
       className={cn(
         "relative flex h-full min-h-0 shrink-0 flex-col overflow-hidden bg-sidebar text-sidebar-foreground transition-[width] duration-200 ease-out",
         className

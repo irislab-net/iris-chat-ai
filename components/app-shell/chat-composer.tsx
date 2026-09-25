@@ -23,7 +23,6 @@ import {
 import { Textarea } from "@/components/ui/textarea"
 import {
   CHAT_EFFORT_OPTIONS,
-  chatEffortLabel,
   DEFAULT_CHAT_EFFORT,
   type ChatEffort,
 } from "@/lib/chat-effort"
@@ -780,12 +779,14 @@ function ChatComposer({
                     type="button"
                     variant="ghost"
                     size="sm"
-                    aria-label={`Response depth: ${chatEffortLabel(effort)}`}
+                    aria-label={t("effort.aria", {
+                      mode: t(`effort.${effort}`),
+                    })}
                     className={chatDesktopComposerEffortButtonClass}
                   />
                 }
               >
-                {chatEffortLabel(effort)}
+                {t(`effort.${effort}`)}
                 <ChevronDownIcon className="size-3.5 opacity-70" />
               </DropdownMenuTrigger>
               <DropdownMenuContent
@@ -794,8 +795,8 @@ function ChatComposer({
                 side={isMobile ? "bottom" : "top"}
               >
                 <DropdownMenuGroup>
-                  <p className="px-2 pb-1 pt-1.5 text-[10px] font-medium tracking-wide text-muted-foreground uppercase">
-                    Response depth
+                  <p className="px-2 pb-1 pt-1.5 text-start text-[10px] font-medium tracking-wide text-muted-foreground uppercase">
+                    {t("effort.label")}
                   </p>
                   {CHAT_EFFORT_OPTIONS.map((item) => (
                     <DropdownMenuItem
@@ -803,10 +804,12 @@ function ChatComposer({
                       className="items-start py-2"
                       onClick={() => onEffortChange?.(item.value)}
                     >
-                      <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-                        <span className="text-[13px]">{item.label}</span>
+                      <span className="flex min-w-0 flex-1 flex-col gap-0.5 text-start">
+                        <span className="text-[13px]">
+                          {t(`effort.${item.value}`)}
+                        </span>
                         <span className="text-[11px] text-muted-foreground">
-                          {item.hint}
+                          {t(`effort.${item.value}Hint`)}
                         </span>
                       </span>
                       {effort === item.value ? (

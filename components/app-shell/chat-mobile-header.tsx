@@ -26,7 +26,6 @@ import {
 } from "@/components/ui/dropdown-menu"
 import {
   CHAT_EFFORT_OPTIONS,
-  chatEffortLabel,
   type ChatEffort,
 } from "@/lib/chat-effort"
 import { cn } from "@/lib/utils"
@@ -69,7 +68,8 @@ function ChatMobileHeader({
   className,
 }: ChatMobileHeaderProps) {
   const t = useTranslations("workspace")
-  const effortLabel = effort ? chatEffortLabel(effort) : chatEffortLabel("instant")
+  const effortValue = effort ?? "instant"
+  const effortLabel = t(`effort.${effortValue}`)
 
   const effortTriggerClass = cn(
     chatMobileHeaderModelClass,
@@ -84,7 +84,7 @@ function ChatMobileHeader({
             <Button
               type="button"
               variant="ghost"
-              aria-label={`Response depth: ${effortLabel}`}
+              aria-label={t("effort.aria", { mode: effortLabel })}
               aria-haspopup="menu"
               className={effortTriggerClass}
             />
@@ -99,8 +99,8 @@ function ChatMobileHeader({
           className={cn(chatContextMenuContentClass, "min-w-44")}
         >
           <DropdownMenuGroup>
-            <p className="px-2.5 pb-1 pt-1.5 text-[10px] font-medium tracking-wide text-muted-foreground uppercase">
-              Response depth
+            <p className="px-2.5 pb-1 pt-1.5 text-start text-[10px] font-medium tracking-wide text-muted-foreground uppercase">
+              {t("effort.label")}
             </p>
             {CHAT_EFFORT_OPTIONS.map((item) => (
               <DropdownMenuItem
@@ -108,13 +108,15 @@ function ChatMobileHeader({
                 className="items-start py-2"
                 onClick={() => onEffortChange(item.value)}
               >
-                <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-                  <span className="text-[13px] font-medium">{item.label}</span>
+                <span className="flex min-w-0 flex-1 flex-col gap-0.5 text-start">
+                  <span className="text-[13px] font-medium">
+                    {t(`effort.${item.value}`)}
+                  </span>
                   <span className="text-[11px] text-muted-foreground">
-                    {item.hint}
+                    {t(`effort.${item.value}Hint`)}
                   </span>
                 </span>
-                {(effort ?? "instant") === item.value ? (
+                {effortValue === item.value ? (
                   <CheckIcon className="mt-0.5 size-3.5" />
                 ) : null}
               </DropdownMenuItem>

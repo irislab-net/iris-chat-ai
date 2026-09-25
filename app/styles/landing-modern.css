@@ -177,10 +177,67 @@
   font-family: var(--font-mono-modern), ui-monospace, monospace;
 }
 
+@keyframes landing-skeleton-shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.landing-modern .landing-skeleton-shimmer {
+  position: relative;
+  overflow: hidden;
+  background-color: color-mix(in oklch, var(--foreground) 7%, transparent);
+}
+
+.landing-modern .landing-skeleton-shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in oklch, var(--foreground) 10%, transparent),
+    transparent
+  );
+  animation: landing-skeleton-shimmer 1.6s ease-in-out infinite;
+}
+
+/* Soft wash over desk rows while they shift — text stays readable */
+.landing-modern .landing-desk-shift-shimmer {
+  overflow: hidden;
+  background: linear-gradient(
+    180deg,
+    color-mix(in oklch, var(--background) 8%, transparent),
+    color-mix(in oklch, var(--background) 22%, transparent)
+  );
+}
+
+.landing-modern .landing-desk-shift-shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-120%);
+  background: linear-gradient(
+    105deg,
+    transparent 0%,
+    color-mix(in oklch, var(--foreground) 5%, transparent) 42%,
+    color-mix(in oklch, var(--foreground) 9%, transparent) 50%,
+    color-mix(in oklch, var(--foreground) 5%, transparent) 58%,
+    transparent 100%
+  );
+  animation: landing-skeleton-shimmer 1.25s ease-in-out 1;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .landing-modern .hero-fluid-wave,
   .landing-modern .hero-fluid-glow,
   .landing-modern .hero-liquid-orb {
+    animation: none;
+  }
+
+  .landing-modern .landing-skeleton-shimmer::after,
+  .landing-modern .landing-desk-shift-shimmer::after {
     animation: none;
   }
 

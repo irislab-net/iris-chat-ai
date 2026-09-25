@@ -50,6 +50,7 @@ export async function ModernLandingPage() {
     <LandingScrollProvider>
       <div
         id="top"
+        dir={dir}
         className={cn(
           fontVariables,
           "landing-modern min-h-dvh bg-background text-foreground antialiased selection:bg-foreground/10 selection:text-foreground",

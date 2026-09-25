@@ -37,7 +37,7 @@ type FooterColumn = {
 }
 
 const linkClass =
-  "w-fit text-left text-sm text-muted-foreground transition-colors hover:text-foreground"
+  "w-fit text-start text-sm text-muted-foreground transition-colors hover:text-foreground"
 
 function FooterColumnLink({ link }: { link: FooterLink }) {
   if ("section" in link) {

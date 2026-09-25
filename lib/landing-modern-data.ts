@@ -135,10 +135,22 @@ export type SignalsMarketId =
 
 /** Desk news structure — copy in `modern.desk.news`. */
 export const DESK_NEWS_META = [
-  { id: "0", impact: 92, tone: "up" as const },
-  { id: "1", impact: 78, tone: "down" as const },
-  { id: "2", impact: 64, tone: "up" as const },
+  { id: "0", impact: 92, tone: "positive" as const },
+  { id: "1", impact: 78, tone: "negative" as const },
+  { id: "2", impact: 64, tone: "neutral" as const },
+  { id: "3", impact: 88, tone: "positive" as const },
+  { id: "4", impact: 71, tone: "negative" as const },
+  { id: "5", impact: 55, tone: "neutral" as const },
 ] as const
+
+export type DeskNewsTone = (typeof DESK_NEWS_META)[number]["tone"]
+export type DeskNewsItem = (typeof DESK_NEWS_META)[number]
+
+/** How many headlines stay visible in the desk list demo. */
+export const DESK_NEWS_VISIBLE = 3
+
+/** Board rotation interval for the desk list GSAP demo (ms). */
+export const DESK_NEWS_CYCLE_MS = 5600
 
 /** Demo ticket for the landing signal card. Same shape as chat `ChatSignalCard`. */
 export const SIGNAL_WAIT_TICKET = {
@@ -171,11 +183,10 @@ export const PRICING_PLAN_META: {
   key: PricingPlanKey
   featured?: boolean
   featureCount: number
-  hasPriceWas?: boolean
   hasBadge?: boolean
 }[] = [
   { key: "free", featureCount: 4 },
-  { key: "plus", featured: true, featureCount: 4, hasPriceWas: true, hasBadge: true },
+  { key: "plus", featured: true, featureCount: 4, hasBadge: true },
   { key: "ultimate", featureCount: 3, hasBadge: true },
 ]
 

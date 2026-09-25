@@ -10,12 +10,7 @@ const LEGACY_TWO_MODE_MIGRATION_KEY = "iris-chat-effort-fast-thinking-v1"
 
 export const CHAT_EFFORT_OPTIONS: {
   value: ChatEffort
-  label: string
-  hint: string
-}[] = [
-  { value: "instant", label: "Fast", hint: "Quick, concise replies" },
-  { value: "high", label: "Thinking", hint: "Deeper analysis, slower" },
-]
+}[] = [{ value: "instant" }, { value: "high" }]
 
 export function isChatEffort(value: unknown): value is ChatEffort {
   return (
@@ -29,12 +24,6 @@ export function normalizeChatEffort(value: unknown): ChatEffort {
   if (value === "high") return "high"
   // "medium" / unknown / "instant" → Fast
   return DEFAULT_CHAT_EFFORT
-}
-
-export function chatEffortLabel(value: ChatEffort) {
-  return (
-    CHAT_EFFORT_OPTIONS.find((item) => item.value === value)?.label ?? "Fast"
-  )
 }
 
 export function readChatEffort(): ChatEffort {

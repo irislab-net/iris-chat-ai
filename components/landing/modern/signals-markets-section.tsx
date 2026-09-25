@@ -132,7 +132,7 @@ function LiveMarketCard({
       </AnimatedSvgIcon>
 
       <h3 className={cn("relative z-10", landingTitleCard)}>
-        <span className="mr-2 font-(family-name:--font-mono-modern) text-[0.65em] font-medium tracking-[0.14em] text-muted-foreground/70 uppercase">
+        <span className="me-2 font-(family-name:--font-mono-modern) text-[0.65em] font-medium tracking-[0.14em] text-muted-foreground/70 uppercase">
           {symbol}
         </span>
         {t(`markets.${id}`)}

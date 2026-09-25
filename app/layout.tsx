@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next"
 import Script from "next/script"
-import { getLocale } from "next-intl/server"
+import { NextIntlClientProvider } from "next-intl"
+import { getLocale, getMessages } from "next-intl/server"
 
 import "./globals.css"
 import { GoogleAnalytics } from "@/components/analytics/google-analytics"
@@ -15,6 +16,7 @@ import {
   BROWSER_CHROME_COLORS,
 } from "@/lib/browser-chrome"
 import { localeDirection } from "@/lib/i18n/locale"
+import enMessages from "@/messages/en.json"
 import {
   organizationJsonLd,
   SITE_DESCRIPTION,
@@ -121,9 +123,13 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  // AuthProvider (login consent, etc.) lives outside `[locale]` — provide intl
+  // here so client hooks under AuthProvider still resolve translations.
   let locale = "en"
+  let messages: typeof enMessages = enMessages
   try {
     locale = await getLocale()
+    messages = (await getMessages()) as typeof enMessages
   } catch {
     // Image / metadata routes (e.g. opengraph-image) have no intl provider.
   }
@@ -181,11 +187,13 @@ export default async function RootLayout({
         >
           <ThemeExtras />
           <TooltipProvider>
-            <AuthProvider>
-              {children}
-              <Toaster position="top-right" />
-              <GoogleAnalytics />
-            </AuthProvider>
+            <NextIntlClientProvider locale={locale} messages={messages}>
+              <AuthProvider>
+                {children}
+                <Toaster position="top-right" />
+                <GoogleAnalytics />
+              </AuthProvider>
+            </NextIntlClientProvider>
           </TooltipProvider>
         </ThemeProvider>
       </body>

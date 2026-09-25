@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import Autoplay from "embla-carousel-autoplay"
-import { useTranslations } from "next-intl"
+import { useLocale, useTranslations } from "next-intl"
 import { ActivityIcon, BitcoinIcon, LayersIcon } from "lucide-react"
 
 import {
@@ -25,6 +25,7 @@ import {
   CarouselItem,
 } from "@/components/ui/carousel"
 import { IRIS_SAMPLE_PROMPTS } from "@/lib/iris-paper-trade/types"
+import { localeDirection } from "@/lib/i18n/locale"
 import { cn } from "@/lib/utils"
 
 const SAMPLE_PROMPT_ICONS = {
@@ -35,6 +36,13 @@ const SAMPLE_PROMPT_ICONS = {
 
 const SAMPLE_PROMPT_TAP_SLOP_PX = 8
 const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)"
+
+type LocalizedSamplePrompt = {
+  id: (typeof IRIS_SAMPLE_PROMPTS)[number]["id"]
+  title: string
+  description: string
+  text: string
+}
 
 function subscribeReducedMotion(onStoreChange: () => void) {
   const media = window.matchMedia(REDUCED_MOTION_QUERY)
@@ -52,10 +60,12 @@ function getReducedMotionServerSnapshot() {
 
 function IrisSamplePromptCard({
   prompt,
+  usePromptLabel,
   disabled,
   onEdit,
 }: {
-  prompt: (typeof IRIS_SAMPLE_PROMPTS)[number]
+  prompt: LocalizedSamplePrompt
+  usePromptLabel: string
   disabled?: boolean
   onEdit: (text: string) => void
 }) {
@@ -86,7 +96,7 @@ function IrisSamplePromptCard({
       role="button"
       tabIndex={disabled ? -1 : 0}
       aria-disabled={disabled || undefined}
-      aria-label={`Use prompt: ${prompt.title}`}
+      aria-label={usePromptLabel}
       className={cn(
         chatSamplePromptButtonClass,
         "cursor-pointer select-none",
@@ -131,6 +141,7 @@ export function IrisSamplePrompts({
   onEdit: (text: string) => void
 }) {
   const t = useTranslations("workspace")
+  const textDir = localeDirection(useLocale())
   const reduceMotion = React.useSyncExternalStore(
     subscribeReducedMotion,
     getReducedMotionSnapshot,
@@ -147,22 +158,37 @@ export function IrisSamplePrompts({
     []
   )
 
+  const prompts = React.useMemo(
+    () =>
+      IRIS_SAMPLE_PROMPTS.map((prompt) => ({
+        id: prompt.id,
+        title: t(`samplePrompts.${prompt.id}.title`),
+        description: t(`samplePrompts.${prompt.id}.description`),
+        text: t(`samplePrompts.${prompt.id}.text`),
+      })),
+    [t]
+  )
+
   return (
-    <div className={chatEmptyHeroPromptsClass}>
+    <div className={chatEmptyHeroPromptsClass} dir={textDir}>
       <p className="self-center px-0.5 text-[10px] font-medium tracking-wide text-muted-foreground uppercase">
         {t("samplePromptsLabel")}
       </p>
       <div className={chatSamplePromptStaticListClass}>
-        {IRIS_SAMPLE_PROMPTS.map((prompt) => (
+        {prompts.map((prompt) => (
           <IrisSamplePromptCard
             key={prompt.id}
             prompt={prompt}
+            usePromptLabel={t("samplePrompts.usePrompt", {
+              title: prompt.title,
+            })}
             disabled={disabled}
             onEdit={onEdit}
           />
         ))}
       </div>
       <Carousel
+        key={textDir}
         className={chatSamplePromptCarouselClass}
         opts={{
           align: "center",
@@ -170,17 +196,21 @@ export function IrisSamplePrompts({
           dragFree: false,
           duration: 32,
           skipSnaps: false,
+          direction: textDir,
         }}
         plugins={reduceMotion ? undefined : [autoplayPlugin]}
       >
         <CarouselContent className={chatSamplePromptCarouselContentClass}>
-          {IRIS_SAMPLE_PROMPTS.map((prompt) => (
+          {prompts.map((prompt) => (
             <CarouselItem
               key={prompt.id}
               className={chatSamplePromptCarouselItemClass}
             >
               <IrisSamplePromptCard
                 prompt={prompt}
+                usePromptLabel={t("samplePrompts.usePrompt", {
+                  title: prompt.title,
+                })}
                 disabled={disabled}
                 onEdit={onEdit}
               />
