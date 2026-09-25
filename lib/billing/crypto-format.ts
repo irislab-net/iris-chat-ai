@@ -40,3 +40,19 @@ export function formatCountdown(msRemaining: number): string {
   const seconds = totalSeconds % 60
   return `${minutes}:${seconds.toString().padStart(2, "0")}`
 }
+
+/**
+ * USD “About” figure for a stablecoin send row — use the same number the user
+ * sees in the crypto amount label so the two stay in lockstep.
+ */
+export function aboutUsdFromCryptoLabel(
+  cryptoLabel: string,
+  fallbackUsd: number
+): number {
+  const match = cryptoLabel.trim().match(/^([\d]+(?:\.[\d]+)?)/)
+  if (match) {
+    const parsed = Number(match[1])
+    if (Number.isFinite(parsed) && parsed > 0) return parsed
+  }
+  return Number.isFinite(fallbackUsd) ? fallbackUsd : 0
+}

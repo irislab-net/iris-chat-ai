@@ -47,8 +47,9 @@ export const PAYMENT_NETWORK_LOGO =
 
 const discShell =
   "relative flex shrink-0 items-center justify-center overflow-hidden rounded-full " +
-  "bg-white shadow-[0_0_0_1px_color-mix(in_oklch,var(--foreground)_8%,transparent)] " +
-  "dark:bg-white/10 dark:shadow-[0_0_0_1px_color-mix(in_oklch,white_14%,transparent)]"
+  "bg-white p-[12%] " +
+  "shadow-[0_0_0_1px_color-mix(in_oklch,var(--foreground)_8%,transparent)] " +
+  "dark:bg-white dark:shadow-[0_0_0_1px_color-mix(in_oklch,var(--foreground)_12%,transparent)]"
 
 type PaymentTokenLogoProps = {
   currency: PaymentCurrency
@@ -78,7 +79,7 @@ export function PaymentTokenLogo({
           loading="lazy"
           referrerPolicy="no-referrer"
           onError={() => setFailed(true)}
-          className="size-full rounded-full object-cover"
+          className="size-full rounded-full object-contain"
         />
       ) : (
         <span className="font-mono text-[9px] font-bold text-muted-foreground">
@@ -120,7 +121,7 @@ export function PaymentNetworkLogo({
           loading="lazy"
           referrerPolicy="no-referrer"
           onError={() => setFailed(true)}
-          className="size-full rounded-full object-cover"
+          className="size-full rounded-full object-contain"
         />
       ) : (
         <span className="text-[7px] font-bold text-muted-foreground">ETH</span>

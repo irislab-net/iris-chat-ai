@@ -8,6 +8,7 @@ import type {
 } from "@/lib/billing/invoice-types"
 import { isPaymentCurrency } from "@/lib/billing/invoice-types"
 import { planIdForBilling } from "@/lib/billing/plan-ids"
+import { getPlusUsdValue } from "@/lib/billing/prices"
 import { findResumableInvoice } from "@/lib/billing/invoice-session"
 
 export class InvoiceError extends Error {
@@ -119,12 +120,16 @@ export async function resolvePlusCryptoCheckout(
   input: StartPlusCheckoutInput
 ): Promise<PaymentInvoice> {
   const body = buildCreateInvoiceBody(input)
+  const expectedAmountUsd = getPlusUsdValue(input.billing)
   const existing = await listPaymentInvoices()
   const resumable = findResumableInvoice(existing, {
     planId: body.plan_id,
     currency: body.currency,
     couponCode: body.coupon_code,
+    expectedAmountUsd,
   })
+  // Prefer a catalog-priced invoice. Skip stale amounts (e.g. old $39.99
+  // while NEXT_PUBLIC_PRICE_PLUS_MONTHLY is $19) and mint a fresh quote.
   if (resumable) return resumable
   return createPaymentInvoice(body)
 }
