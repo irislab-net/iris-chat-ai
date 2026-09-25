@@ -1,4 +1,5 @@
 import { routing } from "@/i18n/routing"
+import { brandIconUrl } from "@/lib/brand-icons"
 import { MARKETING_ORIGIN } from "@/lib/hosts"
 import {
   SECURITY_DEFINITION,
@@ -81,7 +82,7 @@ export const EXUR_LOGO_MARK = "/exur-logo-light.svg"
 
 /** Square mark for Google Search / Knowledge Panel (min 112×112). */
 export const ORGANIZATION_LOGO = {
-  path: "/organization-logo.png",
+  path: brandIconUrl("/organization-logo.png"),
   width: 512,
   height: 512,
   caption: "Exur",

@@ -11,6 +11,7 @@ import { ThemeExtras } from "@/components/theme-provider"
 import { Toaster } from "@/components/ui/sonner"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { ThemeProvider } from "@wrksz/themes/next"
+import { brandIconUrl } from "@/lib/brand-icons"
 import {
   BROWSER_CHROME_COLORS,
 } from "@/lib/browser-chrome"
@@ -57,17 +58,39 @@ export const metadata: Metadata = {
     },
   },
   icons: {
+    // 48×48 PNG first — Google Search favicon guideline (multiples of 48).
+    // Versioned URLs bust stale Iris-era browser / SERP caches.
     icon: [
-      { url: "/favicon.ico", sizes: "any" },
-      { url: "/favicon-32.png", sizes: "32x32", type: "image/png" },
-      { url: "/favicon-48.png", sizes: "48x48", type: "image/png" },
-      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
-      { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
+      {
+        url: brandIconUrl("/favicon-48.png"),
+        sizes: "48x48",
+        type: "image/png",
+      },
+      {
+        url: brandIconUrl("/favicon-32.png"),
+        sizes: "32x32",
+        type: "image/png",
+      },
+      { url: brandIconUrl("/favicon.ico"), sizes: "any" },
+      {
+        url: brandIconUrl("/icon-192.png"),
+        sizes: "192x192",
+        type: "image/png",
+      },
+      {
+        url: brandIconUrl("/icon-512.png"),
+        sizes: "512x512",
+        type: "image/png",
+      },
     ],
     apple: [
-      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+      {
+        url: brandIconUrl("/apple-touch-icon.png"),
+        sizes: "180x180",
+        type: "image/png",
+      },
     ],
-    shortcut: ["/favicon.ico"],
+    shortcut: [brandIconUrl("/favicon.ico")],
   },
   manifest: "/manifest.webmanifest",
   openGraph: {
