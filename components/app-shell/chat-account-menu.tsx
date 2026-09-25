@@ -65,7 +65,14 @@ function ChatAccountMenu({
   const t = useTranslations("workspace")
   const { user, isProUser, login, logout, loginPending } = useAuth()
   const avatarUrl = useUserAvatarUrl(user)
-  const planName = user ? displayPlanName(user.tier) : "Free"
+  const rawPlan = user ? displayPlanName(user.tier) : "Free"
+  const planName =
+    rawPlan === "Plus"
+      ? t("planPlus")
+      : rawPlan === "Ultimate"
+        ? t("planUltimate")
+        : t("planFree")
+
   const isDesktop = variant === "desktop"
 
   if (!user) {
@@ -108,7 +115,7 @@ function ChatAccountMenu({
                 )}
                 aria-hidden
               >
-                Free
+                {t("planFree")}
               </Badge>
             </span>
           )}
@@ -148,7 +155,9 @@ function ChatAccountMenu({
                 : chatMobileHeaderAvatarButtonClass,
               className
             )}
-            aria-label={`Account menu for ${userAccountLabel(user)}`}
+            aria-label={t("accountMenuFor", {
+              name: userAccountLabel(user),
+            })}
           />
         }
       >

@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { useTranslations } from "next-intl"
 
 import { cn } from "@/lib/utils"
 
@@ -10,10 +11,11 @@ const TYPEWRITER_MIN_EMIT_MS = 40
 const TYPEWRITER_MIN_CHAR_STEP = 12
 
 function TypingDots({ className }: { className?: string }) {
+  const t = useTranslations("workspace")
   return (
     <span
       className={cn("chat-typing-dots inline-flex items-center gap-1 px-0.5", className)}
-      aria-label="Assistant is typing"
+      aria-label={t("assistantTyping")}
       role="status"
     >
       <span />

@@ -32,6 +32,16 @@ const COMPACT_LAYOUT: ShellSidebarLayout = {
   contextMinSize: "45%",
 }
 
+/** Windows classic scrollbars eat into the rail — give chat history a bit more room. */
+const COMPACT_LAYOUT_WINDOWS: ShellSidebarLayout = {
+  ...COMPACT_LAYOUT,
+  chat: {
+    defaultSize: "16.5rem",
+    minSize: "16.5rem",
+    maxSize: "23.5rem",
+  },
+}
+
 const COMFORTABLE_LAYOUT: ShellSidebarLayout = {
   tier: "comfortable",
   chat: {
@@ -47,10 +57,30 @@ const COMFORTABLE_LAYOUT: ShellSidebarLayout = {
   contextMinSize: "35%",
 }
 
-export function shellSidebarLayoutForWidth(width: number): ShellSidebarLayout {
-  return width <= SHELL_SIDEBAR_COMPACT_MAX_WIDTH
-    ? COMPACT_LAYOUT
-    : COMFORTABLE_LAYOUT
+const COMFORTABLE_LAYOUT_WINDOWS: ShellSidebarLayout = {
+  ...COMFORTABLE_LAYOUT,
+  chat: {
+    defaultSize: "19.5rem",
+    minSize: "16.5rem",
+    maxSize: "29.5rem",
+  },
+}
+
+export function isWindowsUserAgent(
+  userAgent = typeof navigator !== "undefined" ? navigator.userAgent : ""
+): boolean {
+  return /Windows/i.test(userAgent)
+}
+
+export function shellSidebarLayoutForWidth(
+  width: number,
+  options?: { windows?: boolean }
+): ShellSidebarLayout {
+  const windows = options?.windows === true
+  if (width <= SHELL_SIDEBAR_COMPACT_MAX_WIDTH) {
+    return windows ? COMPACT_LAYOUT_WINDOWS : COMPACT_LAYOUT
+  }
+  return windows ? COMFORTABLE_LAYOUT_WINDOWS : COMFORTABLE_LAYOUT
 }
 
 export const SHELL_SIDEBAR_COMPACT_FALLBACK = COMPACT_LAYOUT

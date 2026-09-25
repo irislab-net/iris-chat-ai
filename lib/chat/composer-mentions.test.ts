@@ -53,6 +53,25 @@ describe("composer mentions", () => {
     })
   })
 
+  it("parses Persian and Arabic signal tags into chip drafts", () => {
+    expect(parseComposerToolTag("سیگنال BTC")).toEqual({
+      tool: "signal",
+      text: "BTC",
+    })
+    expect(parseComposerToolTag("إشارة ETH")).toEqual({
+      tool: "signal",
+      text: "ETH",
+    })
+  })
+
+  it("expands Persian signal drafts to @signal for the API", () => {
+    expect(expandComposerDraft({ tool: "signal", text: "BTC" })).toBe(
+      "@signal BTC"
+    )
+    expect(expandComposerMentions("سیگنال BTC")).toBe("@signal BTC")
+    expect(expandComposerMentions("إشارة SOL")).toBe("@signal SOL")
+  })
+
   it("applies mention selection by removing @ fragment", () => {
     const result = applyMentionSelection({
       text: "check @sig",
@@ -65,6 +84,12 @@ describe("composer mentions", () => {
 
   it("summarizes @signal commands for history", () => {
     expect(summarizeSignalUserMessage("@signal ETH")).toBe("Signal · ETH")
+    expect(summarizeSignalUserMessage("سیگنال BTC", "سیگنال")).toBe(
+      "سیگنال · BTC"
+    )
+    expect(summarizeSignalUserMessage("إشارة ETH", "إشارة")).toBe(
+      "إشارة · ETH"
+    )
     expect(summarizeSignalUserMessage("What is ETH doing today?")).toBe(
       "What is ETH doing today?"
     )
@@ -74,6 +99,21 @@ describe("composer mentions", () => {
     expect(expandSummarizedSignalUserMessage("Signal · ETH")).toBe(
       "@signal ETH"
     )
+    expect(expandSummarizedSignalUserMessage("سیگنال · BTC")).toBe(
+      "@signal BTC"
+    )
+    expect(expandSummarizedSignalUserMessage("إشارة · ETH")).toBe(
+      "@signal ETH"
+    )
+  })
+
+  it("filters mention options by Persian and Arabic aliases", () => {
+    expect(filterMentionOptions("سیگنال").map((item) => item.id)).toEqual([
+      "signal",
+    ])
+    expect(filterMentionOptions("إشارة").map((item) => item.id)).toEqual([
+      "signal",
+    ])
   })
 
   it("still summarizes legacy desk prompts for history", () => {

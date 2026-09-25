@@ -588,7 +588,7 @@ export function AboutExperience() {
               aria-hidden
               className="size-1.5 shrink-0 rounded-full bg-[#2563EB] shadow-[0_0_0_3px_rgba(37,99,235,0.16)]"
             />
-            <span className="font-(family-name:--font-mono-modern) text-[10px] font-medium tracking-[0.16em] text-muted-foreground uppercase">
+            <span className="text-[11px] font-medium tracking-wide text-muted-foreground">
               {t("listenLabel")}
             </span>
           </div>

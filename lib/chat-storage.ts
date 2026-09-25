@@ -156,9 +156,12 @@ export function writeChatStore(ownerId: ChatOwnerId, store: ChatStore) {
   }
 }
 
+/** Default conversation title sentinel — localize with workspace.newChat when displaying. */
+export const NEW_CHAT_TITLE = "New chat"
+
 export function conversationTitleFromMessages(messages: ChatUiMessage[]) {
   const firstUser = messages.find((m) => m.role === "user" && m.content.trim())
-  if (!firstUser) return "New chat"
+  if (!firstUser) return NEW_CHAT_TITLE
   const text = firstUser.content.trim().replace(/\s+/g, " ")
   return text.length > 48 ? `${text.slice(0, 48)}…` : text
 }
@@ -313,7 +316,7 @@ export function setActiveConversation(
   return { ...store, activeId: id, deletedIds: store.deletedIds ?? [] }
 }
 
-export function formatChatTime(iso: string) {
+export function formatChatTime(iso: string, locale?: string) {
   const date = new Date(iso)
   if (Number.isNaN(date.getTime())) return ""
   const now = Date.now()
@@ -321,10 +324,18 @@ export function formatChatTime(iso: string) {
   const minute = 60_000
   const hour = 60 * minute
   const day = 24 * hour
-  if (diff < minute) return "Just now"
-  if (diff < hour) return `${Math.floor(diff / minute)}m ago`
-  if (diff < day) return `${Math.floor(diff / hour)}h ago`
-  return date.toLocaleDateString(undefined, {
+  const tag = locale || undefined
+  try {
+    const rtf = new Intl.RelativeTimeFormat(tag, { numeric: "auto" })
+    if (diff < minute) return rtf.format(0, "second")
+    if (diff < hour) return rtf.format(-Math.floor(diff / minute), "minute")
+    if (diff < day) return rtf.format(-Math.floor(diff / hour), "hour")
+  } catch {
+    if (diff < minute) return "Just now"
+    if (diff < hour) return `${Math.floor(diff / minute)}m ago`
+    if (diff < day) return `${Math.floor(diff / hour)}h ago`
+  }
+  return date.toLocaleDateString(tag, {
     month: "short",
     day: "numeric",
   })

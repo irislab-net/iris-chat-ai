@@ -97,15 +97,16 @@ import {
   removeEmptyAssistantTurn,
   COPILOT_CREDIT_MESSAGE,
   COPILOT_PRO_SESSION_REFRESH_MESSAGE,
-  COPILOT_RECOVERY_MESSAGE,
   coPilotUserFacingError,
   coPilotFailureAction,
   isGuestTrialExhaustedError,
+  localizeCoPilotErrorText,
 } from "@/lib/co-pilot-recovery"
 import {
   conversationTitleFromMessages,
   deleteConversation,
   hasUserMessages,
+  NEW_CHAT_TITLE,
   readChatStore,
   restoreMessages,
   sanitizeMessages,
@@ -124,6 +125,10 @@ import {
 } from "@/lib/chat-effort"
 import { SESSION_RESET_EVENT } from "@/lib/session-reset"
 import type { ChatDisplayMode } from "@/lib/shell-layout-prefs"
+import {
+  readShellLayoutPrefs,
+  writeShellLayoutPrefs,
+} from "@/lib/shell-layout-prefs"
 import { SHELL_SIDEBAR_COMPACT_FALLBACK } from "@/lib/shell-sidebar-layout"
 import { stripUnrequestedIrisSetupFromReply } from "@/lib/chat/strip-paper-setup"
 import { summarizeSignalUserMessage } from "@/lib/chat/composer-mentions"
@@ -282,11 +287,12 @@ function IrisFollowUpPrompts({
   disabled?: boolean
   onSelect: (text: string) => void
 }) {
+  const t = useTranslations("workspace")
   if (prompts.length === 0) return null
   return (
     <div className="flex flex-col gap-1.5">
       <p className="text-[10px] font-medium tracking-wide text-muted-foreground uppercase">
-        Continue with
+        {t("continueWith")}
       </p>
       <div className="flex flex-wrap gap-1.5">
         {prompts.map((prompt) => (
@@ -384,7 +390,17 @@ function ChatAside({
   const [sending, setSending] = React.useState(false)
   const sendingRef = React.useRef(false)
   sendingRef.current = sending
-  const [newsOpen, setNewsOpen] = React.useState(false)
+  const [newsOpen, setNewsOpenState] = React.useState(() =>
+    typeof window !== "undefined" ? readShellLayoutPrefs().newsOpen : false
+  )
+
+  const setNewsOpen = React.useCallback((next: boolean | ((prev: boolean) => boolean)) => {
+    setNewsOpenState((prev) => {
+      const value = typeof next === "function" ? next(prev) : next
+      writeShellLayoutPrefs({ newsOpen: value })
+      return value
+    })
+  }, [])
   const [historyRailCollapsed, setHistoryRailCollapsed] = React.useState(false)
   const [historyOpen, setHistoryOpen] = React.useState(
     () => displayMode === "focused"
@@ -965,7 +981,10 @@ function ChatAside({
       optimisticUserId,
       replyToId,
     } = input
-    const displayUserMessage = summarizeSignalUserMessage(userMessage)
+    const displayUserMessage = summarizeSignalUserMessage(
+      userMessage,
+      t("composerToolSignalLabel")
+    )
 
     setSending(true)
     setPendingAssistantId(assistantId)
@@ -1567,7 +1586,10 @@ function ChatAside({
     const historySnapshot = history
     const activeId = conversationId
 
-    const displayUserMessage = summarizeSignalUserMessage(userMessage)
+    const displayUserMessage = summarizeSignalUserMessage(
+      userMessage,
+      t("composerToolSignalLabel")
+    )
     const withUser: ChatUiMessage[] = [
       ...messages,
       { id: optimisticUserId, role: "user", content: displayUserMessage },
@@ -1686,9 +1708,13 @@ function ChatAside({
     threadHasUserMessages &&
     !showMainColumnHeader &&
     !isMobileOverlay
-  const threadTitle =
+  const threadTitleRaw =
     activeConversation?.title?.trim() ||
     conversationTitleFromMessages(messages)
+  const threadTitle =
+    !threadTitleRaw || threadTitleRaw === NEW_CHAT_TITLE
+      ? t("newChat")
+      : threadTitleRaw
 
   React.useEffect(() => {
     const viewport = scrollViewportRef.current
@@ -2145,7 +2171,7 @@ function ChatAside({
                       message.content ? "mt-2" : undefined
                     )}
                   >
-                    {message.errorText || COPILOT_RECOVERY_MESSAGE}
+                    {localizeCoPilotErrorText(message.errorText, t)}
                   </span>
                 ) : null
               const actions = (
@@ -2179,7 +2205,7 @@ function ChatAside({
                       nativeButton={false}
                       render={<Link href={UPGRADE_PATH} />}
                     >
-                      Upgrade
+                      {t("upgrade")}
                     </Button>
                   ) : null}
                   {message.suggestedPrompts?.length ? (

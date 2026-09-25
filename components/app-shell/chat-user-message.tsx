@@ -8,6 +8,7 @@ import {
   PencilIcon,
   ReplyIcon,
 } from "lucide-react"
+import { useLocale, useTranslations } from "next-intl"
 
 import {
   chatContextMenuContentClass,
@@ -63,6 +64,8 @@ function ChatUserTurn({
   className,
   variant = "default",
 }: ChatUserTurnProps) {
+  const t = useTranslations("workspace")
+  const locale = useLocale()
   const [copied, setCopied] = React.useState(false)
   const [expanded, setExpanded] = React.useState(false)
   const copyTimerRef = React.useRef(0)
@@ -109,7 +112,7 @@ function ChatUserTurn({
       className={chatUserBubbleExpandToggleClass}
       onClick={() => setExpanded((value) => !value)}
     >
-      {expanded ? "Show less" : "Show more"}
+      {expanded ? t("showLess") : t("showMore")}
       <ChevronDownIcon
         className={cn(
           "size-3.5 transition-transform",
@@ -127,8 +130,8 @@ function ChatUserTurn({
           variant="ghost"
           size="icon-sm"
           className={chatUserBubbleInlineActionClass}
-          aria-label="Reply to message"
-          title="Reply"
+          aria-label={t("replyToMessage")}
+          title={t("reply")}
           disabled={disabled}
           onClick={onReply}
         >
@@ -140,8 +143,8 @@ function ChatUserTurn({
         variant="ghost"
         size="icon-sm"
         className={chatUserBubbleInlineActionClass}
-        aria-label={copied ? "Copied message" : "Copy message"}
-        title={copied ? "Copied" : "Copy"}
+        aria-label={copied ? t("copiedMessage") : t("copyMessage")}
+        title={copied ? t("copied") : t("copy")}
         disabled={disabled || !trimmed}
         onClick={() => void copyMessage()}
       >
@@ -157,8 +160,8 @@ function ChatUserTurn({
           variant="ghost"
           size="icon-sm"
           className={chatUserBubbleInlineActionClass}
-          aria-label="Edit message"
-          title="Edit"
+          aria-label={t("editMessage")}
+          title={t("edit")}
           disabled={disabled}
           onClick={onEdit}
         >
@@ -170,7 +173,7 @@ function ChatUserTurn({
 
   const timestamp = createdAt ? (
     <p className="min-w-0 truncate text-[10px] leading-none text-muted-foreground/80">
-      {formatChatTime(createdAt)}
+      {formatChatTime(createdAt, locale)}
     </p>
   ) : null
 
@@ -249,7 +252,7 @@ function ChatUserTurn({
             onClick={onReply}
           >
             <ReplyIcon className={chatContextMenuIconClass} />
-            Reply
+            {t("reply")}
           </ContextMenuItem>
         ) : null}
         <ContextMenuItem
@@ -258,7 +261,7 @@ function ChatUserTurn({
           onClick={() => void copyMessage(false)}
         >
           <CopyIcon className={chatContextMenuIconClass} />
-          Copy text
+          {t("copy")}
         </ContextMenuItem>
         {onEdit ? (
           <ContextMenuItem
@@ -267,7 +270,7 @@ function ChatUserTurn({
             onClick={onEdit}
           >
             <PencilIcon className={chatContextMenuIconClass} />
-            Edit
+            {t("edit")}
           </ContextMenuItem>
         ) : null}
       </ContextMenuContent>

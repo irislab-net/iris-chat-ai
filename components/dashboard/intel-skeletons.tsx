@@ -10,7 +10,69 @@ function Bone({ className }: { className?: string }) {
   )
 }
 
-function NewsBulletinSkeleton() {
+function NewsBulletinSkeleton({
+  sidebar = false,
+}: {
+  /** Chat news layout: lead + feed rows (bones only — no real card chrome). */
+  sidebar?: boolean
+}) {
+  if (sidebar) {
+    return (
+      <div
+        className="flex min-h-0 flex-1 flex-col gap-4"
+        aria-busy="true"
+        aria-label="Loading news"
+      >
+        {/* Lead — mirrors featured sidebar card spacing */}
+        <div className="flex flex-col gap-2.5 px-1 py-1 sm:px-0.5">
+          <Bone className="h-4 w-10 rounded-full" />
+          <div className="flex items-start gap-2.5">
+            <Bone className="size-9 shrink-0 rounded-xl" />
+            <div className="min-w-0 flex-1 space-y-2 pt-0.5">
+              <Bone className="h-4 w-[92%]" />
+              <Bone className="h-4 w-[68%]" />
+            </div>
+          </div>
+          <div className="space-y-1.5">
+            <Bone className="h-3 w-full" />
+            <Bone className="h-3 w-[90%]" />
+            <Bone className="h-3 w-[55%]" />
+          </div>
+          <div className="mt-1 flex items-center gap-2">
+            <Bone className="size-7 rounded-full" />
+            <Bone className="size-7 rounded-full" />
+            <Bone className="ms-auto h-2.5 w-14" />
+          </div>
+        </div>
+
+        {/* Feed rows */}
+        {Array.from({ length: 5 }, (_, index) => (
+          <div
+            key={index}
+            className="flex flex-col gap-1.5 px-1 py-1 sm:px-0.5"
+          >
+            <div className="flex items-start gap-2">
+              <Bone className="size-8 shrink-0 rounded-lg" />
+              <div className="min-w-0 flex-1 space-y-2 pt-0.5">
+                <Bone className="h-3.5 w-[88%]" />
+                <Bone className="h-3.5 w-[52%]" />
+              </div>
+            </div>
+            <div className="space-y-1.5 ps-10">
+              <Bone className="h-2.5 w-full" />
+              <Bone className="h-2.5 w-[70%]" />
+            </div>
+            <div className="flex items-center gap-2 ps-10">
+              <Bone className="size-7 rounded-full" />
+              <Bone className="size-7 rounded-full" />
+              <Bone className="ms-auto h-2.5 w-12" />
+            </div>
+          </div>
+        ))}
+      </div>
+    )
+  }
+
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-4" aria-busy="true">
       <div className="space-y-2">
@@ -19,10 +81,7 @@ function NewsBulletinSkeleton() {
       </div>
       <div className="space-y-3">
         {Array.from({ length: 6 }, (_, index) => (
-          <div
-            key={index}
-            className="flex gap-3 rounded-2xl bg-muted/18 p-3"
-          >
+          <div key={index} className="flex gap-3 rounded-2xl p-3">
             <Bone className="size-10 shrink-0 rounded-xl" />
             <div className="min-w-0 flex-1 space-y-2">
               <Bone className="h-3 w-[88%]" />

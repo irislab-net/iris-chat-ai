@@ -24,7 +24,7 @@ const LoginConsentDialog = dynamic(
     ),
   { ssr: false }
 )
-import { cancelGoogleOneTap, clearGoogleOneTapDismissed } from "@/lib/google-one-tap"
+import { clearGoogleOneTapDismissed } from "@/lib/google-one-tap"
 import { setChatRegisteredUserId } from "@/lib/chat-auth-session"
 import { readChatStore } from "@/lib/chat-storage"
 import { mergeGuestAccount } from "@/lib/guest-chat"
@@ -351,10 +351,6 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     },
     [loginPending]
   )
-
-  React.useEffect(() => {
-    if (consentOpen) cancelGoogleOneTap()
-  }, [consentOpen])
 
   const logout = React.useCallback(async () => {
     const userId = user?.id

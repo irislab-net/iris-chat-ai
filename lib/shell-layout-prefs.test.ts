@@ -34,6 +34,7 @@ describe("shell-layout-prefs", () => {
     expect(readShellLayoutPrefs()).toEqual({
       chatOpen: true,
       chatMode: "docked",
+      newsOpen: false,
       panelLayouts: {},
     })
   })
@@ -43,8 +44,16 @@ describe("shell-layout-prefs", () => {
     expect(readShellLayoutPrefs()).toEqual({
       chatOpen: false,
       chatMode: "focused",
+      newsOpen: false,
       panelLayouts: {},
     })
+  })
+
+  it("persists news panel open state across reads", () => {
+    writeShellLayoutPrefs({ newsOpen: true })
+    expect(readShellLayoutPrefs().newsOpen).toBe(true)
+    writeShellLayoutPrefs({ newsOpen: false })
+    expect(readShellLayoutPrefs().newsOpen).toBe(false)
   })
 
   it("stores panel layouts per viewport tier", () => {

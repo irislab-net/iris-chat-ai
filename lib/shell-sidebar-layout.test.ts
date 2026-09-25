@@ -17,6 +17,16 @@ describe("shellSidebarLayoutForWidth", () => {
     expect(layout.ticket.defaultSize).toBe("14rem")
   })
 
+  it("uses a slightly wider chat rail on Windows", () => {
+    const layout = shellSidebarLayoutForWidth(SHELL_SIDEBAR_COMPACT_MAX_WIDTH, {
+      windows: true,
+    })
+
+    expect(layout.tier).toBe("compact")
+    expect(layout.chat.defaultSize).toBe("16.5rem")
+    expect(layout.chat.minSize).toBe("16.5rem")
+  })
+
   it("uses wider defaults on large desktops", () => {
     const layout = shellSidebarLayoutForWidth(
       SHELL_SIDEBAR_COMPACT_MAX_WIDTH + 1

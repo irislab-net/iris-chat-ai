@@ -50,7 +50,7 @@ function AccountPlanBadge({
   planName,
   isProUser,
 }: {
-  planName: ReturnType<typeof displayPlanName>
+  planName: string
   isProUser: boolean
 }) {
   return (
@@ -147,7 +147,13 @@ function ChatAccountFooter({
     )
   }
 
-  const planName = displayPlanName(user.tier)
+  const rawPlan = displayPlanName(user.tier)
+  const planName =
+    rawPlan === "Plus"
+      ? t("planPlus")
+      : rawPlan === "Ultimate"
+        ? t("planUltimate")
+        : t("planFree")
   const subline = userAccountSubline(user)
   return (
     <div
@@ -169,7 +175,9 @@ function ChatAccountFooter({
                   ? "size-9 rounded-lg hover:bg-muted/40"
                   : "h-auto min-w-0 flex-1 justify-start gap-2 rounded-lg px-2 py-2 hover:bg-muted/40"
               }
-              aria-label={`Account menu for ${userAccountLabel(user)}`}
+              aria-label={t("accountMenuFor", {
+                name: userAccountLabel(user),
+              })}
             />
           }
         >
@@ -236,7 +244,7 @@ function ChatAccountFooter({
                   nativeButton={false}
                   render={<Link href={UPGRADE_PATH} />}
                 >
-                  Upgrade to Plus
+                  {t("upgradeToPlus")}
                 </Button>
               </div>
             ) : null}
@@ -273,7 +281,7 @@ function ChatAccountFooter({
           nativeButton={false}
           render={<Link href={UPGRADE_PATH} />}
         >
-          Upgrade
+          {t("upgrade")}
         </Button>
       ) : null}
     </div>

@@ -19,6 +19,30 @@ export const COPILOT_AUTH_MESSAGE =
 export const COPILOT_TRIAL_EXHAUSTED_MESSAGE =
   "Your free messages this week are used up. Sign in to continue."
 
+/** Map stored English error sentinels to workspace.errors.* translation keys. */
+export function localizeCoPilotErrorText(
+  text: string | undefined,
+  t: (key: string) => string
+): string {
+  switch (text) {
+    case COPILOT_TIMEOUT_MESSAGE:
+      return t("errors.timeout")
+    case COPILOT_CREDIT_MESSAGE:
+      return t("errors.credits")
+    case COPILOT_PRO_SESSION_REFRESH_MESSAGE:
+      return t("errors.proSessionRefresh")
+    case COPILOT_AUTH_MESSAGE:
+      return t("errors.auth")
+    case COPILOT_TRIAL_EXHAUSTED_MESSAGE:
+      return t("errors.trialExhausted")
+    case COPILOT_RECOVERY_MESSAGE:
+    case undefined:
+    case "":
+      return t("errors.recovery")
+    default:
+      return text
+  }
+}
 export function isTimeoutError(error: unknown): boolean {
   if (!error || typeof error !== "object") return false
   const name = (error as { name?: string }).name

@@ -38,11 +38,12 @@ function resolveGoogleOneTapColorScheme(
 }
 
 function handlePromptMoment(notification: GooglePromptMomentNotification) {
-  if (notification.isSkippedMoment()) {
-    const reason = notification.getSkippedReason()
-    if (reason === "user_cancel" || reason === "tap_outside") {
-      markGoogleOneTapDismissed()
-    }
+  // FedCM no longer exposes skip reasons; only mark dismiss on explicit user close.
+  if (notification.isDismissedMoment()) {
+    const reason = notification.getDismissedReason()
+    if (reason === "credential_returned") return
+    if (reason === "cancel_called") return
+    markGoogleOneTapDismissed()
   }
 }
 
@@ -67,7 +68,8 @@ function runGoogleOneTapPrompt(
     color_scheme: colorScheme,
     context: "signin",
     itp_support: true,
-    use_fedcm_for_prompt: false,
+    // FedCM is required in current Chrome; keep it explicit.
+    use_fedcm_for_prompt: true,
   })
 
   window.google.accounts.id.prompt(handlePromptMoment)
@@ -79,8 +81,8 @@ export function GoogleOneTap({ enabled, onCredential }: GoogleOneTapProps) {
   const clientId = getGoogleClientId()
   const onCredentialRef = React.useRef(onCredential)
   const promptedRef = React.useRef(false)
-  const themePromptTimerRef = React.useRef<number | null>(null)
-  const lastColorSchemeRef = React.useRef<BrowserChromeTheme | null>(null)
+  const activePromptRef = React.useRef(false)
+  const loadGenerationRef = React.useRef(0)
 
   React.useEffect(() => {
     onCredentialRef.current = onCredential
@@ -95,21 +97,34 @@ export function GoogleOneTap({ enabled, onCredential }: GoogleOneTapProps) {
   const colorScheme = resolveGoogleOneTapColorScheme(resolvedTheme)
   const themeReady = resolvedTheme === "light" || resolvedTheme === "dark"
   // Keep ~100KB GIS off the chat critical path (Lighthouse unused-JS / TBT).
-  const deferReady = useIdleReady(Boolean(shouldRun && clientId && themeReady), 15_000)
+  const deferReady = useIdleReady(
+    Boolean(shouldRun && clientId && themeReady),
+    15_000
+  )
+
+  const dismissActivePrompt = React.useCallback(() => {
+    if (!activePromptRef.current) return
+    activePromptRef.current = false
+    cancelGoogleOneTap()
+  }, [])
 
   React.useEffect(() => {
-    if (!shouldRun || !clientId || !themeReady || !deferReady || promptedRef.current)
-      return
+    if (!shouldRun || !clientId || !themeReady || !deferReady) return
+    if (promptedRef.current) return
 
-    let cancelled = false
+    const generation = ++loadGenerationRef.current
     const scheme = resolveGoogleOneTapColorScheme(resolvedTheme)
 
     void loadGoogleIdentityScript()
       .then(() => {
-        if (cancelled || promptedRef.current) return
+        // Stale load after disable / Strict Mode remount — do not prompt or cancel.
+        if (generation !== loadGenerationRef.current) return
+        if (!shouldRun || promptedRef.current || isGoogleOneTapDismissed()) return
+
         promptedRef.current = true
-        lastColorSchemeRef.current = scheme
+        activePromptRef.current = true
         runGoogleOneTapPrompt(clientId, scheme, (credential) => {
+          activePromptRef.current = false
           onCredentialRef.current(credential)
         })
       })
@@ -118,52 +133,23 @@ export function GoogleOneTap({ enabled, onCredential }: GoogleOneTapProps) {
       })
 
     return () => {
-      cancelled = true
+      // Invalidate in-flight script loads without calling cancel() — canceling an
+      // active FedCM request logs AbortError in GSI_LOGGER (React Strict Mode).
+      loadGenerationRef.current += 1
     }
   }, [shouldRun, clientId, themeReady, deferReady, resolvedTheme])
 
   React.useEffect(() => {
-    if (!shouldRun || !clientId || !themeReady || !promptedRef.current) return
-    if (lastColorSchemeRef.current === colorScheme) return
+    if (shouldRun) return
+    promptedRef.current = false
+    dismissActivePrompt()
+  }, [shouldRun, dismissActivePrompt])
 
-    if (themePromptTimerRef.current !== null) {
-      window.clearTimeout(themePromptTimerRef.current)
-    }
-
-    themePromptTimerRef.current = window.setTimeout(() => {
-      themePromptTimerRef.current = null
-      if (!shouldRun || isGoogleOneTapDismissed()) return
-
-      lastColorSchemeRef.current = colorScheme
-      cancelGoogleOneTap()
-
-      void loadGoogleIdentityScript().then(() => {
-        runGoogleOneTapPrompt(clientId, colorScheme, (credential) => {
-          onCredentialRef.current(credential)
-        })
-      })
-    }, 400)
-
-    return () => {
-      if (themePromptTimerRef.current !== null) {
-        window.clearTimeout(themePromptTimerRef.current)
-        themePromptTimerRef.current = null
-      }
-    }
-  }, [colorScheme, shouldRun, clientId, themeReady])
-
+  // Keep document color-scheme in sync; do not cancel/re-prompt (FedCM abort noise).
   React.useEffect(() => {
-    if (!enabled) {
-      cancelGoogleOneTap()
-    }
-  }, [enabled])
-
-  React.useEffect(() => {
-    if (!shouldRun) {
-      promptedRef.current = false
-      lastColorSchemeRef.current = null
-    }
-  }, [shouldRun])
+    if (!shouldRun || !themeReady) return
+    syncDocumentColorScheme(colorScheme)
+  }, [colorScheme, shouldRun, themeReady])
 
   return null
 }

@@ -1,4 +1,7 @@
+"use client"
+
 import type { ComponentProps } from "react"
+import { useTranslations } from "next-intl"
 
 import { ChatMobileGeminiBackground } from "@/components/app-shell/chat-mobile-gemini-background"
 import {
@@ -74,7 +77,7 @@ function ChatMobileHeaderSkeleton() {
   return (
     <div className="relative shrink-0">
       <div aria-hidden className={chatMobileHeaderScrimClass} />
-      <header className="app-mobile-safe-header relative z-[1] flex items-center justify-between gap-2 bg-transparent px-6 pb-2">
+      <header className="app-mobile-safe-header relative z-1 flex items-center justify-between gap-2 bg-transparent px-6 pb-2">
         <div className="flex min-w-0 items-center gap-3">
           <div
             aria-hidden
@@ -84,7 +87,7 @@ function ChatMobileHeaderSkeleton() {
             aria-hidden
             className={cn(
               chatMobileHeaderModelClass,
-              "h-10 w-[6.25rem] shrink-0"
+              "h-10 w-25 shrink-0"
             )}
           />
         </div>
@@ -179,7 +182,7 @@ function ChatMobileComposerSkeleton() {
         <div className="[grid-area:field] flex min-h-8 min-w-0 items-center px-2.5">
           <MobileBone
             stagger={3}
-            className="h-3 w-[4.75rem] rounded-full opacity-80"
+            className="h-3 w-19 rounded-full opacity-80"
           />
         </div>
         <div className={chatMobileComposerTrailingClass}>
@@ -194,6 +197,7 @@ function ChatMobileComposerSkeleton() {
 }
 
 function ChatMobileAsideSkeleton({ className }: { className?: string }) {
+  const t = useTranslations("workspace")
   return (
     <aside
       data-slot="chat-aside"
@@ -202,7 +206,7 @@ function ChatMobileAsideSkeleton({ className }: { className?: string }) {
         className
       )}
       aria-busy="true"
-      aria-label="Loading Exur"
+      aria-label={t("loadingExur")}
     >
       <ChatMobileGeminiBackground visible intro />
       <div className="relative z-10 flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-transparent text-foreground chat-mobile-gemini-empty">
@@ -272,7 +276,7 @@ function ChatHeaderSkeleton({
     <div
       className={cn(
         "flex min-h-12 shrink-0 items-center gap-1 px-2 sm:gap-2 sm:px-3",
-        mobile && "pt-[var(--app-safe-top,0px)]"
+        mobile && "pt-(--app-safe-top,0px)"
       )}
     >
       {mobile ? (
@@ -359,6 +363,7 @@ function ChatDesktopAsideSkeleton({
   sidebarWidth?: string
   isAuthenticated?: boolean
 }) {
+  const t = useTranslations("workspace")
   const focused = variant === "focused"
   const guest = !isAuthenticated
   const showHistoryRail = focused
@@ -393,7 +398,7 @@ function ChatDesktopAsideSkeleton({
           className
         )}
         aria-busy="true"
-        aria-label="Loading Exur"
+        aria-label={t("loadingExur")}
       >
         {showHistoryRail ? (
           <ChatHistoryRailSkeleton sidebarWidth={sidebarWidth} />
@@ -411,7 +416,7 @@ function ChatDesktopAsideSkeleton({
         className
       )}
       aria-busy="true"
-      aria-label="Loading Exur"
+      aria-label={t("loadingExur")}
     >
       {mainColumn}
     </div>

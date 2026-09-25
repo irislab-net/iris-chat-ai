@@ -8,6 +8,7 @@ export type IrisMentionTool = "signal"
 export type IrisMentionOption = {
   id: string
   tool: IrisMentionTool
+  /** English fallback — UI should prefer i18n `composerToolSignalLabel`. */
   label: string
 }
 
@@ -21,6 +22,12 @@ export type ComposerDraft = {
   tool: IrisMentionTool | null
   text: string
 }
+
+/** Local aliases that open the signal tool chip (typed or from sample prompts). */
+const SIGNAL_TOOL_TAG_RE =
+  /^(?:@signal|سیگنال|إشارة)(?:\s+([\s\S]*))?$/iu
+
+const SIGNAL_SUMMARY_RE = /^(?:Signal|سیگنال|إشارة) · (.+)$/u
 
 export const IRIS_MENTION_OPTIONS: IrisMentionOption[] = [
   {
@@ -82,30 +89,36 @@ export function filterMentionOptions(query: string): IrisMentionOption[] {
   if (!key) return IRIS_MENTION_OPTIONS
 
   return IRIS_MENTION_OPTIONS.filter((option) => {
-    const haystack = normalizeMentionQuery(`${option.tool} ${option.label}`)
+    const haystack = normalizeMentionQuery(
+      `${option.tool} ${option.label} signal سیگنال إشارة`
+    )
     return key.split(" ").every((part) => haystack.includes(part))
   })
 }
 
-/** Expand tool tag + user text before send. */
-
 /** Short history/UI label for signal commands so follow-ups are not re-primed. */
-export function summarizeSignalUserMessage(text: string): string {
+export function summarizeSignalUserMessage(
+  text: string,
+  label = "Signal"
+): string {
   const trimmed = stripMarketContextAppendix(text)
-  const mention = trimmed.match(/^@signal\s+(.+)$/u)
-  if (mention?.[1]) return `Signal · ${mention[1].trim()}`
+  const mention = trimmed.match(SIGNAL_TOOL_TAG_RE)
+  if (mention) {
+    const asset = (mention[1] ?? "").trim()
+    return asset ? `${label} · ${asset}` : label
+  }
   // Legacy desk prompts still stored in older threads.
   const en = trimmed.match(/^Trading desk request for\s+(.+?)\./u)
-  if (en?.[1]) return `Signal · ${en[1].trim()}`
+  if (en?.[1]) return `${label} · ${en[1].trim()}`
   const fa = trimmed.match(/^درخواست\s+میز\s+معاملاتی\s+برای\s+(.+?)\./u)
-  if (fa?.[1]) return `Signal · ${fa[1].trim()}`
+  if (fa?.[1]) return `${label} · ${fa[1].trim()}`
   return trimmed
 }
 
 /** Re-expand a summarized signal label back into the @signal chat payload. */
 export function expandSummarizedSignalUserMessage(text: string): string {
   const trimmed = text.trim()
-  const summarized = trimmed.match(/^Signal · (.+)$/u)
+  const summarized = trimmed.match(SIGNAL_SUMMARY_RE)
   if (summarized?.[1]) return formatSignalCommand(summarized[1].trim())
   return trimmed
 }
@@ -123,6 +136,13 @@ export function expandComposerDraft(input: ComposerDraft): string {
 export function expandComposerMentions(text: string): string {
   const trimmed = text.trim()
   if (!trimmed) return ""
+
+  const tagged = trimmed.match(SIGNAL_TOOL_TAG_RE)
+  if (tagged) {
+    const asset = (tagged[1] ?? "").trim()
+    if (isLowSignalUserMessage(asset)) return trimmed
+    return formatSignalCommand(asset)
+  }
 
   const inline = trimmed.match(/@signal\s+([^\s@]+)/u)
   if (inline) {
@@ -146,9 +166,9 @@ export function applyMentionSelection(input: {
   return { nextText, nextCursor }
 }
 
-/** Convert a typed `@signal …` draft into chip + continuation text. */
+/** Convert a typed `@signal` / `سیگنال` / `إشارة` draft into chip + continuation text. */
 export function parseComposerToolTag(text: string): ComposerDraft | null {
-  const match = text.match(/^@signal(?:\s+([\s\S]*))?$/u)
+  const match = text.match(SIGNAL_TOOL_TAG_RE)
   if (!match) return null
   return {
     tool: "signal",

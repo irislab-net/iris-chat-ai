@@ -1,9 +1,11 @@
 /* Modern marketing landing motion utilities. */
 
 .landing-modern {
-  /* System mono — avoids a second next/font Google fetch under Turbopack. */
+  /* Mono for numerals; falls back to IRIS Sans so fa/ar UI labels still render. */
   --font-mono-modern: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
-    "Liberation Mono", monospace;
+    "Liberation Mono", var(--font-sans), "IRIS Sans", monospace;
+  --font-display: var(--font-sans), "IRIS Sans", ui-sans-serif, system-ui,
+    sans-serif;
 }
 
 @keyframes hero-fluid-drift-a {

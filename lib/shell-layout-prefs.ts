@@ -9,6 +9,8 @@ export type ChatDisplayMode = (typeof CHAT_DISPLAY_MODES)[number]
 export type ShellLayoutPrefs = {
   chatOpen: boolean
   chatMode: ChatDisplayMode
+  /** Chat news panel — persist until the user explicitly closes it. */
+  newsOpen: boolean
   panelLayouts: Partial<Record<ShellSidebarTier, Layout>>
 }
 
@@ -17,6 +19,7 @@ const STORAGE_KEY = "iris-shell-layout-prefs"
 const DEFAULT_PREFS: ShellLayoutPrefs = {
   chatOpen: true,
   chatMode: "docked",
+  newsOpen: false,
   panelLayouts: {},
 }
 
@@ -63,6 +66,10 @@ function parsePrefs(raw: string | null): ShellLayoutPrefs {
           : isChatDisplayMode(parsed.chatMode)
             ? parsed.chatMode
             : DEFAULT_PREFS.chatMode,
+      newsOpen:
+        typeof parsed.newsOpen === "boolean"
+          ? parsed.newsOpen
+          : DEFAULT_PREFS.newsOpen,
       panelLayouts,
     }
   } catch {
@@ -86,6 +93,7 @@ export function writeShellLayoutPrefs(patch: Partial<ShellLayoutPrefs>) {
     const next: ShellLayoutPrefs = {
       chatOpen: patch.chatOpen ?? current.chatOpen,
       chatMode: patch.chatMode ?? current.chatMode,
+      newsOpen: patch.newsOpen ?? current.newsOpen,
       panelLayouts: patch.panelLayouts ?? current.panelLayouts,
     }
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next))

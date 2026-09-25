@@ -12,6 +12,7 @@ import { parseServerMessageId } from "@/lib/chat-message-id"
 import { formatChatTime } from "@/lib/chat-storage"
 import { cn } from "@/lib/utils"
 import { chatMobileAssistantClass } from "@/components/app-shell/chat-mobile-gemini-styles"
+import { useLocale } from "next-intl"
 
 const AIMessageRenderer = dynamic(
   () =>
@@ -108,6 +109,7 @@ function ChatAssistantTurn({
   className?: string
   variant?: "default" | "gemini"
 }) {
+  const locale = useLocale()
   const isGemini = variant === "gemini"
   const serverId = messageId ? parseServerMessageId(messageId) : null
   const anchorId = serverId != null ? `msg-${serverId}` : undefined
@@ -115,7 +117,7 @@ function ChatAssistantTurn({
     waiting || Boolean(content?.trim()) || Boolean(children) || Boolean(replyTo)
   const timestamp = createdAt ? (
     <p className="min-w-0 truncate text-[10px] leading-none text-muted-foreground/80">
-      {formatChatTime(createdAt)}
+      {formatChatTime(createdAt, locale)}
     </p>
   ) : null
 

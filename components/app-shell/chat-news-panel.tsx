@@ -121,7 +121,7 @@ function ChatNewsPanelBody({
       <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain select-text [-webkit-overflow-scrolling:touch]">
         <div className="px-4 py-4">
           {loading ? (
-            <NewsBulletinSkeleton />
+            <NewsBulletinSkeleton sidebar />
           ) : (
             <NewsBulletin
               analytics={analytics}
@@ -149,6 +149,7 @@ type ChatNewsSidePanelProps = {
 }
 
 function ChatNewsSidePanel({ open, onOpenChange }: ChatNewsSidePanelProps) {
+  const t = useTranslations("workspace")
   const dir = localeDirection(useLocale())
   if (!open) return null
 
@@ -157,10 +158,10 @@ function ChatNewsSidePanel({ open, onOpenChange }: ChatNewsSidePanelProps) {
       data-slot="chat-news-panel"
       dir={dir}
       className={cn(
-        "flex h-full min-h-0 w-[min(36rem,48vw)] min-w-104 shrink-0 flex-col overflow-hidden",
+        "flex h-full min-h-0 w-[min(29rem,38vw)] min-w-88 shrink-0 flex-col overflow-hidden",
         chatNewsPanelShellClass
       )}
-      aria-label="News"
+      aria-label={t("news")}
     >
       <ChatNewsPanelBody onClose={() => onOpenChange(false)} />
     </aside>

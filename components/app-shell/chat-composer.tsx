@@ -133,6 +133,14 @@ function ChatComposer({
   const activeToolOption = effectiveActiveTool
     ? findIrisMentionOption(effectiveActiveTool)
     : undefined
+  const signalToolLabel = t("composerToolSignalLabel")
+  function mentionOptionLabel(option: IrisMentionOption) {
+    return option.tool === "signal" ? signalToolLabel : option.label
+  }
+  const activeToolLabel =
+    effectiveActiveTool === "signal"
+      ? signalToolLabel
+      : (activeToolOption?.label ?? effectiveActiveTool)
   const [floatingPastSingleLine, setFloatingPastSingleLine] =
     React.useState(false)
   const floatingExpandedRef = React.useRef(false)
@@ -246,22 +254,21 @@ function ChatComposer({
     return () => observer.disconnect()
   }, [isFloating, syncFloatingComposerLayout])
 
+  // Remeasure after programmatic value changes (sample prompts). Layout setState
+  // runs on the next frame — not synchronously inside the effect body.
   React.useEffect(() => {
     if (!isFloating) return
-    syncFloatingComposerLayout()
+    const id = requestAnimationFrame(() => syncFloatingComposerLayout())
+    return () => cancelAnimationFrame(id)
   }, [composerValue, isFloating, syncFloatingComposerLayout])
 
   React.useEffect(() => {
     if (!deferMobileKeyboard) return
-    let cancelled = false
-    queueMicrotask(() => {
-      if (cancelled) return
+    keyboardUnlockAllowedAtRef.current = Date.now() + 500
+    const id = window.setTimeout(() => {
       setUserUnlockedKeyboard(false)
-      keyboardUnlockAllowedAtRef.current = Date.now() + 500
-    })
-    return () => {
-      cancelled = true
-    }
+    }, 0)
+    return () => window.clearTimeout(id)
   }, [deferMobileKeyboard])
 
   React.useEffect(() => {
@@ -331,12 +338,24 @@ function ChatComposer({
   }
 
   function setValue(next: string) {
-    const parsed = parseComposerToolTag(next)
-    if (parsed) {
-      setActiveTool(parsed.tool)
-      if (!isControlled) setUncontrolled(parsed.text)
-      onValueChange?.(parsed.text)
+    const parsedNext = parseComposerToolTag(next)
+    if (parsedNext) {
+      setActiveTool(parsedNext.tool)
+      if (!isControlled) setUncontrolled(parsedNext.text)
+      onValueChange?.(parsedNext.text)
       return
+    }
+
+    // Sample prompts may set a tagged value (e.g. «سیگنال BTC») while the textarea
+    // shows only the continuation — promote the chip on the first edit.
+    if (!activeTool) {
+      const taggedValue = parseComposerToolTag(value)
+      if (taggedValue) {
+        setActiveTool(taggedValue.tool)
+        if (!isControlled) setUncontrolled(next)
+        onValueChange?.(next)
+        return
+      }
     }
 
     if (!isControlled) setUncontrolled(next)
@@ -381,11 +400,11 @@ function ChatComposer({
   }
 
   function clearActiveTool() {
+    const taggedValue = parseComposerToolTag(value)
     setActiveTool(null)
-    const parsed = parseComposerToolTag(value)
-    if (parsed) {
-      if (!isControlled) setUncontrolled(parsed.text)
-      onValueChange?.(parsed.text)
+    if (taggedValue) {
+      if (!isControlled) setUncontrolled(taggedValue.text)
+      onValueChange?.(taggedValue.text)
     }
     if (isDesktop === true) focusComposer()
   }
@@ -465,6 +484,7 @@ function ChatComposer({
   return (
     <form
       data-slot="chat-composer"
+      dir={textDir}
       className={cn(
         "relative shrink-0",
         isFloating ? chatMobileComposerShellClass : chatDesktopComposerShellClass,
@@ -501,7 +521,9 @@ function ChatComposer({
                     applyMention(option)
                   }}
                 >
-                  <span className={chatMobileToolsMenuItemTitleClass}>{option.label}</span>
+                  <span className={chatMobileToolsMenuItemTitleClass}>
+                    {mentionOptionLabel(option)}
+                  </span>
                   <span className={chatMobileToolsMenuItemDescClass}>
                     {t("composerToolSignalDesc")}
                   </span>
@@ -562,7 +584,7 @@ function ChatComposer({
                     side="top"
                     className={cn(
                       chatMobileToolsMenuClass,
-                      "min-w-[13.5rem] border-0 p-1.5 shadow-none ring-0 !bg-white/78 dark:!bg-white/[0.08]"
+                      "min-w-54 border-0 p-1.5 shadow-none ring-0 bg-white/78! dark:bg-white/8!"
                     )}
                   >
                     <DropdownMenuGroup>
@@ -576,7 +598,7 @@ function ChatComposer({
                           onClick={() => insertMentionToken(option)}
                         >
                           <span className={chatMobileToolsMenuItemTitleClass}>
-                            {option.label}
+                            {mentionOptionLabel(option)}
                           </span>
                           <span
                             className={cn(
@@ -597,7 +619,7 @@ function ChatComposer({
                   variant="outline"
                   className={chatMobileComposerToolChipClass}
                 >
-                  {activeToolOption?.label ?? effectiveActiveTool}
+                  {activeToolLabel}
                   <button
                     type="button"
                     aria-label={t("composerRemoveTool")}
@@ -662,8 +684,8 @@ function ChatComposer({
                 type="submit"
                 size="icon-sm"
                 variant={canSend ? "default" : "ghost"}
-                aria-label="Send message"
-                title="Send · Enter"
+                aria-label={t("composerSend")}
+                title={t("composerSendTitle")}
                 disabled={!canSend}
                 className={
                   canSend
@@ -682,7 +704,7 @@ function ChatComposer({
               variant="outline"
               className={chatDesktopComposerToolChipClass}
             >
-              {activeToolOption?.label ?? effectiveActiveTool}
+              {activeToolLabel}
               <button
                 type="button"
                 aria-label={t("composerRemoveTool")}
@@ -750,7 +772,7 @@ function ChatComposer({
               >
                 <PlusIcon className="size-4" />
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" side="top" className={cn(chatMobileToolsMenuClass, "min-w-[13.5rem] border-0 p-1.5 shadow-none ring-0 !bg-white/78 dark:!bg-white/[0.08]")}>
+              <DropdownMenuContent align="start" side="top" className={cn(chatMobileToolsMenuClass, "min-w-54 border-0 p-1.5 shadow-none ring-0 bg-white/78! dark:bg-white/8!")}>
                 <DropdownMenuGroup>
                   <DropdownMenuLabel className={chatMobileToolsMenuLabelClass}>
                     {t("composerToolsMenu")}
@@ -761,7 +783,9 @@ function ChatComposer({
                       className={cn(chatMobileToolsMenuItemClass, "py-2.5")}
                       onClick={() => insertMentionToken(option)}
                     >
-                      <span className={chatMobileToolsMenuItemTitleClass}>{option.label}</span>
+                      <span className={chatMobileToolsMenuItemTitleClass}>
+                        {mentionOptionLabel(option)}
+                      </span>
                       <span className={cn(chatMobileToolsMenuItemDescClass, "line-clamp-2")}>
                         {t("composerToolSignalDesc")}
                       </span>
@@ -829,14 +853,14 @@ function ChatComposer({
             type="submit"
             size="icon"
             variant={canSend ? "default" : "ghost"}
-            aria-label="Send message"
-            title="Send · Enter"
-            disabled={!canSend}
-            className={
-              canSend
-                ? chatDesktopComposerSendClass
-                : chatDesktopComposerSendDisabledClass
-            }
+                aria-label={t("composerSend")}
+                title={t("composerSendTitle")}
+                disabled={!canSend}
+                className={
+                  canSend
+                    ? chatDesktopComposerSendClass
+                    : chatDesktopComposerSendDisabledClass
+                }
           >
             <ArrowUpIcon className={canSend ? undefined : "opacity-50"} />
           </Button>

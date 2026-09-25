@@ -3,6 +3,7 @@
 import * as React from "react"
 
 import {
+  isWindowsUserAgent,
   shellSidebarLayoutForWidth,
   type ShellSidebarLayout,
 } from "@/lib/shell-sidebar-layout"
@@ -16,7 +17,11 @@ function useShellSidebarLayout(): ShellSidebarLayout | null {
 
   React.useEffect(() => {
     const update = () => {
-      setLayout(shellSidebarLayoutForWidth(window.innerWidth))
+      setLayout(
+        shellSidebarLayoutForWidth(window.innerWidth, {
+          windows: isWindowsUserAgent(),
+        })
+      )
     }
     update()
     window.addEventListener("resize", update)

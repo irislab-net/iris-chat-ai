@@ -1222,7 +1222,7 @@ function NewsHeadlineList({
   authLoading?: boolean
 }) {
   if (loading && news.length === 0) {
-    return <NewsBulletinSkeleton />
+    return <NewsBulletinSkeleton sidebar={sidebar} />
   }
 
   if (

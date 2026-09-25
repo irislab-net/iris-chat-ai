@@ -58,7 +58,7 @@ export const IRIS_COMPOSER_QUICK_PROMPTS: IrisComposerQuickPrompt[] = [
   {
     id: "btc-signal-fa",
     label: "سیگنال BTC",
-    text: "@signal BTC",
+    text: "سیگنال BTC",
   },
   {
     id: "market-pulse",

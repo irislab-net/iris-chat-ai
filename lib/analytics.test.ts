@@ -52,7 +52,7 @@ describe("analytics", () => {
       billing: "monthly",
       plan: "plus",
       currency: "USD",
-      value: 49,
+      value: 19,
     })
     expect(gtag).toHaveBeenCalledWith("event", "purchase", {
       billing: "annual",

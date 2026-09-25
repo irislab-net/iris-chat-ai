@@ -19,6 +19,9 @@ describe("isPaperTradeIntent", () => {
     expect(isPaperTradeIntent("@signal ETH")).toBe(false)
     expect(isPaperTradeIntent("@signal BTC")).toBe(false)
     expect(isPaperTradeIntent("Signal · ETH")).toBe(false)
+    expect(isPaperTradeIntent("سیگنال BTC")).toBe(false)
+    expect(isPaperTradeIntent("سیگنال · BTC")).toBe(false)
+    expect(isPaperTradeIntent("إشارة ETH")).toBe(false)
   })
 
   it("matches legacy desk signal starters through the paper-trade pipeline", () => {

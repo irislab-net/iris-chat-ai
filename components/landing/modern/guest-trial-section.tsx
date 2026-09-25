@@ -50,7 +50,7 @@ export function GuestTrialSection() {
             >
               {GUEST_TRIAL_STAT}
             </p>
-            <p className="mt-2 font-(family-name:--font-mono-modern) text-xs tracking-[0.2em] text-muted-foreground uppercase">
+            <p className="mt-2 text-xs font-medium tracking-wide text-muted-foreground">
               {t("statLabel")}
             </p>
           </div>

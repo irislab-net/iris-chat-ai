@@ -88,8 +88,8 @@ export function StatusPage({
         aria-hidden
         className="pointer-events-none absolute inset-0 overflow-hidden"
       >
-        <div className="absolute -top-24 left-1/2 size-[42rem] -translate-x-1/2 rounded-full bg-[#2563EB]/12 blur-3xl dark:bg-[#2563EB]/18" />
-        <div className="absolute right-[-10%] bottom-[-10%] size-[28rem] rounded-full bg-[#93C5FD]/20 blur-3xl dark:bg-[#1E3A8A]/30" />
+        <div className="absolute -top-24 left-1/2 size-168 -translate-x-1/2 rounded-full bg-[#2563EB]/12 blur-3xl dark:bg-[#2563EB]/18" />
+        <div className="absolute right-[-10%] bottom-[-10%] size-112 rounded-full bg-[#93C5FD]/20 blur-3xl dark:bg-[#1E3A8A]/30" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(255,255,255,0.55),transparent_55%)] dark:bg-[radial-gradient(ellipse_at_top,rgba(255,255,255,0.06),transparent_55%)]" />
       </div>
 
@@ -102,7 +102,7 @@ export function StatusPage({
         <section
           className={cn(
             landingHeroGlass,
-            "relative flex min-h-[22rem] flex-col overflow-hidden rounded-[2.5rem] sm:min-h-[24rem]",
+            "relative flex min-h-88 flex-col overflow-hidden rounded-[2.5rem] sm:min-h-96",
             "animate-in fade-in zoom-in-95 duration-500"
           )}
         >

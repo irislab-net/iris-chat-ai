@@ -223,7 +223,7 @@ function ChatSignalCard({
             </h3>
             <span className={chatSignalCardChipClass}>
               <SideIcon className="size-3 shrink-0 opacity-80" aria-hidden />
-              {ticket.side}
+              {isLong ? t("signalSideLong") : t("signalSideShort")}
             </span>
           </div>
           <span className={cn(chatSignalCardChipClass, "shrink-0 uppercase")}>

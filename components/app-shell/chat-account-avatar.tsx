@@ -11,7 +11,7 @@ type ChatAccountAvatarProps = {
   user: User
   avatarUrl: string | null
   isProUser: boolean
-  planName?: ReturnType<typeof displayPlanName>
+  planName?: string
   className?: string
   avatarClassName?: string
   compact?: boolean

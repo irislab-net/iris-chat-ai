@@ -1,5 +1,7 @@
 "use client"
 
+import { useTranslations } from "next-intl"
+
 import { chatSignalCardClass } from "@/components/app-shell/chat-mobile-gemini-styles"
 import { cn } from "@/lib/utils"
 
@@ -10,6 +12,7 @@ function ChatNoTradeCard({
   reason: string
   className?: string
 }) {
+  const t = useTranslations("workspace")
   const text = reason.trim()
   if (!text) return null
 
@@ -17,7 +20,7 @@ function ChatNoTradeCard({
     <article className={cn("mt-1.5", chatSignalCardClass, className)}>
       <div className="px-4 py-4">
         <p className="text-[10px] font-medium tracking-[0.08em] text-muted-foreground uppercase">
-          No trade
+          {t("noTradeTitle")}
         </p>
         <p className="mt-2 text-[13px] leading-relaxed text-muted-foreground">
           {text}

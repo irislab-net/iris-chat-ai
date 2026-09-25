@@ -83,6 +83,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import {
+  NEW_CHAT_TITLE,
   sortConversations,
   type StoredConversation,
 } from "@/lib/chat-storage"
@@ -845,6 +846,10 @@ function ConversationRow({
 }) {
   const t = useTranslations("workspace")
   const pinned = Boolean(chat.pinned)
+  const title =
+    !chat.title.trim() || chat.title === NEW_CHAT_TITLE
+      ? t("newChat")
+      : chat.title
 
   const row = (
     <div
@@ -881,7 +886,7 @@ function ConversationRow({
             <MessageSquareIcon className="size-4 shrink-0 text-muted-foreground" />
           )
         ) : null}
-        <span className="truncate">{chat.title}</span>
+        <span className="truncate">{title}</span>
       </Button>
 
       <DropdownMenu modal={undefined}>

@@ -8,6 +8,7 @@ import {
   ThumbsDownIcon,
   ThumbsUpIcon,
 } from "lucide-react"
+import { useTranslations } from "next-intl"
 
 import {
   chatTurnActionButtonClass,
@@ -44,6 +45,7 @@ function ChatMessageActions({
   className,
   variant = "default",
 }: ChatMessageActionsProps) {
+  const t = useTranslations("workspace")
   const [copied, setCopied] = React.useState(false)
   const copyTimerRef = React.useRef(0)
   const isGemini = variant === "gemini"
@@ -94,8 +96,8 @@ function ChatMessageActions({
           variant="ghost"
           size="icon-sm"
           className={buttonClass}
-          aria-label="Reply to message"
-          title="Reply"
+          aria-label={t("replyToMessage")}
+          title={t("reply")}
           disabled={disabled}
           onClick={onReply}
         >
@@ -107,8 +109,8 @@ function ChatMessageActions({
         variant="ghost"
         size="icon-sm"
         className={buttonClass}
-        aria-label={copied ? "Copied response" : "Copy response"}
-        title={copied ? "Copied" : "Copy"}
+        aria-label={copied ? t("copiedResponse") : t("copyResponse")}
+        title={copied ? t("copied") : t("copy")}
         disabled={disabled || !content.trim()}
         onClick={() => void onCopy()}
       >
@@ -123,8 +125,8 @@ function ChatMessageActions({
         variant="ghost"
         size="icon-sm"
         className={buttonClass}
-        aria-label="Helpful response"
-        title="Helpful"
+        aria-label={t("helpfulResponse")}
+        title={t("helpful")}
         aria-pressed={feedback === "up"}
         disabled={disabled}
         onClick={() => onReaction("up")}
@@ -142,8 +144,8 @@ function ChatMessageActions({
         variant="ghost"
         size="icon-sm"
         className={buttonClass}
-        aria-label="Unhelpful response"
-        title="Not helpful"
+        aria-label={t("unhelpfulResponse")}
+        title={t("notHelpful")}
         aria-pressed={feedback === "down"}
         disabled={disabled}
         onClick={() => onReaction("down")}
