@@ -138,7 +138,7 @@ function SignalResult({
             "[&_article]:rounded-[1.25rem] [&_article]:bg-white/70 [&_article]:shadow-none sm:[&_article]:rounded-[1.35rem] dark:[&_article]:bg-white/8"
           )}
         >
-          <ChatSignalCard ticket={ticket} proseSkeleton className="mt-0" />
+          <ChatSignalCard ticket={ticket} className="mt-0" />
         </div>
       </div>
     </div>
