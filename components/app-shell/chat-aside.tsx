@@ -14,7 +14,7 @@ import { ChatAccountFooter } from "@/components/app-shell/chat-account-footer"
 import { ChatAccountMenu } from "@/components/app-shell/chat-account-menu"
 import { ExurLogo } from "@/components/brand/exur-logo"
 import { ChatMobileGeminiBackground } from "@/components/app-shell/chat-mobile-gemini-background"
-import { chatMobileScrollDownClass, chatMobileThreadBottomFadeClass, chatMobileThreadBottomSpacerClass, chatMobileThreadClass, chatMobileThreadFirstTurnClass, chatMobileThreadScrollMaskClass, chatMobileEmptyHeroContentClass, chatMobileEmptyHeroMarkClass, chatMobileEmptyHeroTitleClass, chatMobileEmptyHeroWrapClass } from "@/components/app-shell/chat-mobile-gemini-styles"
+import { chatMobileScrollDownClass, chatMobileThreadBottomFadeClass, chatMobileThreadBottomSpacerClass, chatMobileThreadClass, chatMobileThreadFirstTurnClass, chatMobileThreadScrollMaskClass, chatMobileThreadTopSpacerClass, chatMobileComposerDockClass, chatMobileEmptyHeroContentClass, chatMobileEmptyHeroMarkClass, chatMobileEmptyHeroTitleClass, chatMobileEmptyHeroWrapClass } from "@/components/app-shell/chat-mobile-gemini-styles"
 import { ChatMobileHeader } from "@/components/app-shell/chat-mobile-header"
 import { ChatGeminiNewChatIcon } from "@/components/app-shell/chat-gemini-new-chat-icon"
 import { ChatComposer } from "@/components/app-shell/chat-composer"
@@ -2143,7 +2143,7 @@ function ChatAside({
       ) : null}
 
       <div className="flex min-h-0 min-w-0 flex-1 overflow-hidden">
-        <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
+        <div className="relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
           {showStandaloneThreadToolbar ? (
             <ChatThreadToolbar
               title={threadTitle}
@@ -2169,6 +2169,9 @@ function ChatAside({
                   chatMobileThreadScrollMaskClass
               )}
             >
+              {isMobileOverlay && messages.length > 0 ? (
+                <div aria-hidden className={chatMobileThreadTopSpacerClass} />
+              ) : null}
               {showMobileEmptyHero ? (
                 <div
                   className={cn(
@@ -2442,10 +2445,9 @@ function ChatAside({
                 variant="outline"
                 size="icon-sm"
                 className={cn(
-                  "absolute bottom-3 left-1/2 z-10 -translate-x-1/2",
                   isMobileOverlay
                     ? chatMobileScrollDownClass
-                    : "size-8 rounded-full border-border/70 bg-background/95 shadow-md backdrop-blur-sm hover:bg-background"
+                    : "absolute bottom-3 left-1/2 z-10 size-8 -translate-x-1/2 rounded-full border-border/70 bg-background/95 shadow-md backdrop-blur-sm hover:bg-background"
                 )}
                 aria-label={t("scrollToLatest")}
                 title={t("scrollToLatest")}
@@ -2474,10 +2476,10 @@ function ChatAside({
           {showThread ? (
             <div
               className={cn(
-                "mx-auto w-full shrink-0",
+                "mx-auto w-full",
                 isMobileOverlay
-                  ? "bg-transparent"
-                  : "bg-background/95 backdrop-blur-md supports-backdrop-filter:bg-background/90",
+                  ? chatMobileComposerDockClass
+                  : "shrink-0 bg-background/95 backdrop-blur-md supports-backdrop-filter:bg-background/90",
                 CHAT_CONTENT_MAX_WIDTH
               )}
             >

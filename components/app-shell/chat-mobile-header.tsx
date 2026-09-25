@@ -13,6 +13,7 @@ import {
   chatMobileHeaderButtonClass,
   chatMobileHeaderModelClass,
   chatMobileHeaderScrimClass,
+  chatMobileHeaderShellClass,
 } from "@/components/app-shell/chat-mobile-gemini-styles"
 import { ChatAccountMenu } from "@/components/app-shell/chat-account-menu"
 import { ChatThreadOptionsMenu } from "@/components/app-shell/chat-thread-toolbar"
@@ -127,7 +128,7 @@ function ChatMobileHeader({
     ) : null
 
   return (
-    <div className="relative shrink-0">
+    <div className={chatMobileHeaderShellClass}>
       <div aria-hidden className={chatMobileHeaderScrimClass} />
       <header
         className={cn(
