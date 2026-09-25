@@ -166,6 +166,13 @@ async function AboutPage() {
               <Button
                 className={landingCta("light", "sm")}
                 nativeButton={false}
+                render={<Link href="/what-is-exur" />}
+              >
+                {footer("whatIsExur")}
+              </Button>
+              <Button
+                className={landingCta("light", "sm")}
+                nativeButton={false}
                 render={<Link href="/privacy" />}
               >
                 {footer("privacy")}

@@ -15,7 +15,6 @@ import { Link } from "@/i18n/navigation"
 import {
   COMPANY_NUMBER,
   COMPANIES_HOUSE_URL,
-  DISSOLVED_ON,
   LEGAL_ENTITY_NAME,
 } from "@/lib/company"
 import { LEGAL_DOCS_REPO_URL } from "@/lib/legal"
@@ -72,7 +71,12 @@ function PrivacyPage() {
           Policy explains how we collect, process, store, and protect your data
           when you interact with the Exur platform, its Model Context Protocol
           (MCP) integrations, conversational financial interfaces, and
-          algorithmic signal engines.
+          algorithmic signal engines. For SOC 2, ISO 27001, penetration testing,
+          independent audits, and the bug bounty program, see{" "}
+          <Link href="/security" className={legalLinkClass}>
+            Security
+          </Link>
+          .
         </LegalP>
       }
       footerLinks={<LegalNavButtons showPrivacy={false} />}
@@ -88,19 +92,14 @@ function PrivacyPage() {
           </span>{" "}
           (Company No.{" "}
           <span className="font-mono text-foreground/90">{COMPANY_NUMBER}</span>
-          ), a UK private limited company incorporated in England. Companies
-          House records show that company as dissolved on {DISSOLVED_ON}
-          following a voluntary strike-off.
+          ), a UK private limited company incorporated in England.
         </LegalP>
         <LegalP>
           The Exur platform (
-          <span className="font-mono text-foreground/90">exur.ai</span>) is
-          currently operated by the{" "}
-          <span className="font-medium text-foreground">Exur Core Team</span>,
-          which acts as the Data Controller under applicable data protection
-          legislation, including the European Union General Data Protection
-          Regulation (EU GDPR). Official Companies House details for the
-          historical development entity are available at the{" "}
+          <span className="font-mono text-foreground/90">exur.ai</span>) acts
+          as the Data Controller under applicable data protection legislation,
+          including the European Union General Data Protection Regulation (EU
+          GDPR). Official Companies House details are available at the{" "}
           <a
             href={COMPANIES_HOUSE_URL}
             target="_blank"

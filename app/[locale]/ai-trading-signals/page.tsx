@@ -1,6 +1,5 @@
 import type { Metadata } from "next"
 
-import { JsonLd } from "@/components/seo/json-ld"
 import {
   LegalDocShell,
   LegalList,
@@ -8,7 +7,10 @@ import {
   LegalNavButtons,
   LegalP,
   LegalSection,
+  legalLinkClass,
 } from "@/components/legal/legal-doc"
+import { JsonLd } from "@/components/seo/json-ld"
+import { Link } from "@/i18n/navigation"
 import { ROOT_ROBOTS } from "@/lib/site"
 import {
   AI_SIGNALS_DESCRIPTION,
@@ -60,7 +62,11 @@ function AiTradingSignalsPage() {
             <LegalP>
               Exur is an AI financial assistant. Ask about spending, savings,
               and what’s next, in your own words. This is decision support,
-              not brokerage, and not a promise of profit.
+              not brokerage, and not a promise of profit. Prefer the official{" "}
+              <Link href="/what-is-exur" className={legalLinkClass}>
+                What is Exur?
+              </Link>{" "}
+              page when citing the product.
             </LegalP>
           </>
         }

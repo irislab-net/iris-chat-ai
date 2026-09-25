@@ -1,8 +1,7 @@
 import {
   COMPANY_DEVELOPMENT_ATTRIBUTION,
-  COMPANY_HISTORICAL_DESCRIPTION,
+  COMPANY_DESCRIPTION,
   COMPANY_NUMBER,
-  COMPANY_STATUS_NOTICE,
   COMPANIES_HOUSE_URL,
   LEGAL_ENTITY_NAME,
   REGISTERED_OFFICE,
@@ -20,8 +19,8 @@ type CompanyInformationProps = {
 }
 
 /**
- * Discreet historical company attribution.
- * Does not claim current ownership/operation; omits director/PSC details.
+ * Company attribution for legal pages and footer.
+ * Omits director/PSC details.
  */
 function CompanyInformation({
   className,
@@ -56,8 +55,7 @@ function CompanyInformation({
       ) : null}
       <div className={cn("space-y-1.5", isFooter && heading ? "mt-1.5" : undefined)}>
         <p>{COMPANY_DEVELOPMENT_ATTRIBUTION}</p>
-        <p>{COMPANY_HISTORICAL_DESCRIPTION}</p>
-        <p>{COMPANY_STATUS_NOTICE}</p>
+        <p>{COMPANY_DESCRIPTION}</p>
         <p>
           <span className="text-muted-foreground/90">Company No.</span>{" "}
           <span className="font-mono text-foreground/80">{COMPANY_NUMBER}</span>

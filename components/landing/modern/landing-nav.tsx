@@ -31,7 +31,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet"
-import { Link, usePathname } from "@/i18n/navigation"
+import { Link, usePathname, useRouter } from "@/i18n/navigation"
 import { displayPlanName } from "@/lib/billing/catalog"
 import { NAV_LINKS } from "@/lib/landing-modern-data"
 import { LANDING_MOTION, scrollToSection } from "@/lib/landing-motion"
@@ -247,6 +247,7 @@ export function LandingNav() {
   const tAria = useTranslations("nav")
   const locale = useLocale()
   const pathname = usePathname()
+  const router = useRouter()
   const isRtl = localeDirection(locale) === "rtl"
   const sheetSide = isRtl ? "left" : "right"
   const [open, setOpen] = useState(false)
@@ -261,7 +262,7 @@ export function LandingNav() {
       scrollToSection(id)
       return
     }
-    window.location.assign(`${homePath}#${id}`)
+    router.push(`${homePath}#${id}`)
   }
 
   function goHome() {

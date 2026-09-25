@@ -2,26 +2,20 @@ import { describe, expect, it } from "vitest"
 
 import {
   COMPANY_DEVELOPMENT_ATTRIBUTION,
-  COMPANY_HISTORICAL_DESCRIPTION,
+  COMPANY_DESCRIPTION,
   COMPANY_NUMBER,
-  COMPANY_STATUS,
-  COMPANY_STATUS_NOTICE,
   COMPANIES_HOUSE_URL,
-  DISSOLVED_ON,
   LEGAL_ENTITY_NAME,
   REGISTERED_OFFICE,
 } from "@/lib/company"
 
-describe("historical company record (Companies House)", () => {
+describe("company record (Companies House)", () => {
   it("uses the exact legal name and company number", () => {
     expect(LEGAL_ENTITY_NAME).toBe("IRIS DIGITAL VENTURES LTD")
     expect(COMPANY_NUMBER).toBe("14995497")
   })
 
-  it("records dissolved status and does not claim active operation", () => {
-    expect(COMPANY_STATUS).toBe("Dissolved")
-    expect(DISSOLVED_ON).toBe("22 October 2024")
-    expect(COMPANY_STATUS_NOTICE.toLowerCase()).toContain("dissolved")
+  it("attributes development without ownership or operator claims", () => {
     expect(COMPANY_DEVELOPMENT_ATTRIBUTION.toLowerCase()).toContain(
       "developed under"
     )
@@ -31,7 +25,7 @@ describe("historical company record (Companies House)", () => {
     expect(COMPANY_DEVELOPMENT_ATTRIBUTION.toLowerCase()).not.toContain(
       "operated by"
     )
-    expect(COMPANY_HISTORICAL_DESCRIPTION).toContain(
+    expect(COMPANY_DESCRIPTION).toContain(
       "UK private limited company incorporated in England"
     )
   })

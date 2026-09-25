@@ -48,31 +48,32 @@ function useOnLanding() {
   return pathname === "/home" || pathname === "/" || pathname === homePath
 }
 
-function goToLandingSection(id: string, onLanding: boolean) {
-  const homePath = getMarketingHomePath()
-  if (onLanding) {
-    scrollToSection(id)
-    return
-  }
-  window.location.assign(`${homePath}#${id}`)
-}
-
 function FooterColumnLink({
   link,
   onLanding,
+  homePath,
 }: {
   link: FooterLink
   onLanding: boolean
+  homePath: string
 }) {
   if ("section" in link) {
+    if (onLanding) {
+      return (
+        <button
+          type="button"
+          onClick={() => scrollToSection(link.section)}
+          className={linkClass}
+        >
+          {link.label}
+        </button>
+      )
+    }
+
     return (
-      <button
-        type="button"
-        onClick={() => goToLandingSection(link.section, onLanding)}
-        className={linkClass}
-      >
+      <Link href={`${homePath}#${link.section}`} className={linkClass}>
         {link.label}
-      </button>
+      </Link>
     )
   }
 
@@ -119,6 +120,7 @@ export function ModernFooter() {
       heading: t("resources"),
       links: [
         { label: t("faq"), section: "faq" },
+        { label: t("whatIsExur"), href: "/what-is-exur" },
         { label: t("about"), href: "/about" },
         { label: t("signals"), href: "/ai-trading-signals" },
       ],
@@ -136,6 +138,7 @@ export function ModernFooter() {
   const legalLinks = [
     { label: t("terms"), href: "/terms" as const },
     { label: t("privacy"), href: "/privacy" as const },
+    { label: t("security"), href: "/security" as const },
     { label: t("refund"), href: "/refund" as const },
   ]
 
@@ -202,7 +205,11 @@ export function ModernFooter() {
                   <ul className="flex list-none flex-col gap-3">
                     {column.links.map((link) => (
                       <li key={link.label}>
-                        <FooterColumnLink link={link} onLanding={onLanding} />
+                        <FooterColumnLink
+                          link={link}
+                          onLanding={onLanding}
+                          homePath={homePath}
+                        />
                       </li>
                     ))}
                   </ul>

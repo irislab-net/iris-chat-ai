@@ -1,12 +1,8 @@
 /**
- * Historical UK company record for Exur development attribution.
+ * UK company record for Exur development attribution.
  *
  * Source of truth (Companies House):
  * https://find-and-update.company-information.service.gov.uk/company/14995497
- *
- * Status: DISSOLVED (voluntary strike-off). Do not describe this entity as an
- * active operating company, current parent, or current owner/operator of Exur.
- * Prefer “developed under” language in public UI.
  */
 
 export const LEGAL_ENTITY_NAME = "IRIS DIGITAL VENTURES LTD" as const
@@ -17,11 +13,6 @@ export const COMPANY_TYPE = "Private limited company" as const
 
 /** ISO-style display date; Companies House: incorporated on 11 July 2023. */
 export const INCORPORATED_ON = "11 July 2023" as const
-
-/** Companies House: dissolved on 22 October 2024. */
-export const DISSOLVED_ON = "22 October 2024" as const
-
-export const COMPANY_STATUS = "Dissolved" as const
 
 export const REGISTERED_OFFICE =
   "34-35 Hatton Garden, Unit 3a, Suite 3227, London, England, EC1N 8DX" as const
@@ -40,9 +31,6 @@ export const COMPANY_SIC_CODES = [
   },
 ] as const
 
-/** Careful public attribution — historical development, not current ownership. */
 export const COMPANY_DEVELOPMENT_ATTRIBUTION = `Exur was developed under ${LEGAL_ENTITY_NAME} (Company No. ${COMPANY_NUMBER}).` as const
 
-export const COMPANY_HISTORICAL_DESCRIPTION = `${LEGAL_ENTITY_NAME}, a UK private limited company incorporated in England.` as const
-
-export const COMPANY_STATUS_NOTICE = `Companies House records show this company as dissolved on ${DISSOLVED_ON}.` as const
+export const COMPANY_DESCRIPTION = `${LEGAL_ENTITY_NAME}, a UK private limited company incorporated in England.` as const

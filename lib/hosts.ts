@@ -76,10 +76,14 @@ export function isMarketingOnlyPath(pathnameWithoutLocale: string): boolean {
   if (pathnameWithoutLocale.startsWith("/home/")) return true
   if (pathnameWithoutLocale === "/about") return true
   if (pathnameWithoutLocale.startsWith("/about/")) return true
+  if (pathnameWithoutLocale === "/what-is-exur") return true
+  if (pathnameWithoutLocale.startsWith("/what-is-exur/")) return true
   if (pathnameWithoutLocale === "/ai-trading-signals") return true
   if (pathnameWithoutLocale.startsWith("/ai-trading-signals/")) return true
   if (pathnameWithoutLocale === "/privacy") return true
   if (pathnameWithoutLocale.startsWith("/privacy/")) return true
+  if (pathnameWithoutLocale === "/security") return true
+  if (pathnameWithoutLocale.startsWith("/security/")) return true
   if (pathnameWithoutLocale === "/terms") return true
   if (pathnameWithoutLocale.startsWith("/terms/")) return true
   if (pathnameWithoutLocale === "/refund") return true

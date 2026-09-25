@@ -129,6 +129,9 @@ export default async function RootPage({ params, searchParams }: PageProps) {
               <a href={landingHref}>Exur landing</a>
             </li>
             <li>
+              <Link href="/what-is-exur">What is Exur?</Link>
+            </li>
+            <li>
               <Link href="/about">About Exur</Link>
             </li>
             <li>

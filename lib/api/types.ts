@@ -5,13 +5,14 @@ export type User = {
   created_at: string
   updated_at: string
   deleted_at?: string | null
-  x_id: string
-  x_username: string
-  x_name: string
-  x_profile_image_url: string
+  /** X / Twitter identity — absent for Google-only accounts. */
+  x_id?: string | null
+  x_username?: string | null
+  x_name?: string | null
+  x_profile_image_url?: string | null
   /** Google OAuth / generic profile image when x_profile_image_url is empty. */
   profile_image_url?: string | null
-  x_verified: boolean
+  x_verified?: boolean | null
   email?: string | null
   wallet_address?: string | null
   tier: UserTier

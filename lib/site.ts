@@ -29,6 +29,12 @@ export const TERMS_DESCRIPTION =
 export const REFUND_DESCRIPTION =
   "Refund Policy for Exur premium subscriptions: non-refundable payments, cancellation, and billing support."
 
+export {
+  SECURITY_DESCRIPTION,
+  SECURITY_PATH,
+  SECURITY_TITLE,
+} from "@/lib/security"
+
 /** Verified public contact from product UI (`website-toolbar` CONTACT.x). */
 export const SOCIAL_X_URL = "https://x.com/exur_ai"
 
@@ -81,9 +87,11 @@ export const BILLING_PATH = "/billing"
 /** Public indexable paths (sitemap + IA) — keep in sync with INDEXABLE_ROUTES. */
 export const PUBLIC_INDEXABLE_PATHS = [
   APP_PATH,
+  "/what-is-exur",
   "/about",
   "/ai-trading-signals",
   "/privacy",
+  "/security",
   "/terms",
   "/refund",
 ] as const

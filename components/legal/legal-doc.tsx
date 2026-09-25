@@ -141,13 +141,17 @@ function LegalMetaChip({ children }: { children: ReactNode }) {
 function LegalNavButtons({
   showTerms = true,
   showPrivacy = true,
+  showSecurity = true,
   showRefund = true,
   showAbout = true,
+  showWhatIs = true,
 }: {
   showTerms?: boolean
   showPrivacy?: boolean
+  showSecurity?: boolean
   showRefund?: boolean
   showAbout?: boolean
+  showWhatIs?: boolean
 }) {
   return (
     <>
@@ -158,6 +162,15 @@ function LegalNavButtons({
       >
         Launch App
       </Button>
+      {showWhatIs ? (
+        <Button
+          className={landingCta("secondary", "sm")}
+          nativeButton={false}
+          render={<Link href="/what-is-exur" />}
+        >
+          What is Exur?
+        </Button>
+      ) : null}
       {showTerms ? (
         <Button
           className={landingCta("secondary", "sm")}
@@ -174,6 +187,15 @@ function LegalNavButtons({
           render={<Link href="/privacy" />}
         >
           Privacy Policy
+        </Button>
+      ) : null}
+      {showSecurity ? (
+        <Button
+          className={landingCta("secondary", "sm")}
+          nativeButton={false}
+          render={<Link href="/security" />}
+        >
+          Security
         </Button>
       ) : null}
       {showRefund ? (

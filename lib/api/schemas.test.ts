@@ -45,6 +45,25 @@ describe("api schemas", () => {
     expect(user.tier).toBe("free")
   })
 
+  it("parses Google-only users without X identity fields", () => {
+    const user = parseUser({
+      id: "g1",
+      created_at: "a",
+      updated_at: "b",
+      email: "user@gmail.com",
+      profile_image_url: "https://lh3.googleusercontent.com/a/photo",
+      tier: "free",
+      role: "user",
+      last_login_at: "c",
+    })
+    expect(user.id).toBe("g1")
+    expect(user.email).toBe("user@gmail.com")
+    expect(user.x_id).toBeUndefined()
+    expect(user.x_username).toBeUndefined()
+    expect(user.x_name).toBeUndefined()
+    expect(user.x_verified).toBe(false)
+  })
+
   it("soft-parses chat done payloads", () => {
     expect(
       parseChatMessageResponse({

@@ -14,7 +14,6 @@ import { Link } from "@/i18n/navigation"
 import {
   COMPANY_NUMBER,
   COMPANIES_HOUSE_URL,
-  DISSOLVED_ON,
   LEGAL_ENTITY_NAME,
 } from "@/lib/company"
 import { LEGAL_DOCS_REPO_URL } from "@/lib/legal"
@@ -77,13 +76,8 @@ function TermsPage() {
             </span>{" "}
             (Company No.{" "}
             <span className="font-mono text-foreground/90">{COMPANY_NUMBER}</span>
-            ), a UK private limited company incorporated in England. Companies
-            House records show that company as dissolved on {DISSOLVED_ON}
-            following a voluntary strike-off. The Service is currently operated
-            and maintained by the{" "}
-            <span className="font-medium text-foreground">Exur Core Team</span>.
-            By accessing or using the Service, you agree to be bound by these
-            Terms. See the{" "}
+            ), a UK private limited company incorporated in England. By accessing
+            or using the Service, you agree to be bound by these Terms. See the{" "}
             <a
               href={COMPANIES_HOUSE_URL}
               target="_blank"
@@ -92,7 +86,7 @@ function TermsPage() {
             >
               Companies House record
             </a>{" "}
-            for the historical company filing.
+            for company filing details.
           </LegalP>
         </>
       }

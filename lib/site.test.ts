@@ -45,9 +45,11 @@ describe("public SEO site policy (S1/S2)", () => {
   it("lists only real public indexable paths for sitemap IA", () => {
     expect(PUBLIC_INDEXABLE_PATHS).toEqual([
       "/",
+      "/what-is-exur",
       "/about",
       "/ai-trading-signals",
       "/privacy",
+      "/security",
       "/terms",
       "/refund",
     ])

@@ -5,10 +5,13 @@ import {
   AI_CRAWLER_USER_AGENTS,
   AI_SIGNALS_FAQS,
   AI_SIGNALS_PATH,
+  EXUR_DEFINITION,
+  EXUR_IS_NOT,
   SITE_DESCRIPTION,
   SITE_KEYWORDS,
   SITE_TITLE,
   SITE_URL,
+  WHAT_IS_EXUR_PATH,
   buildSitemapEntries,
   faqPageJsonLd,
   INDEXABLE_ROUTES,
@@ -16,6 +19,7 @@ import {
   ORGANIZATION_LOGO,
   organizationJsonLd,
   webApplicationJsonLd,
+  whatIsExurJsonLd,
 } from "@/lib/seo"
 
 describe("search / AI citation identity", () => {
@@ -29,22 +33,26 @@ describe("search / AI citation identity", () => {
     expect(SITE_DESCRIPTION.toLowerCase()).toContain("ai financial assistant")
     expect(SITE_DESCRIPTION.toLowerCase()).not.toContain("crypto")
     expect(SITE_KEYWORDS).toContain("AI financial assistant")
+    expect(SITE_KEYWORDS).toContain("what is Exur")
   })
 
   it("does not promise profits in public metadata", () => {
     expect(SITE_DESCRIPTION.toLowerCase()).not.toContain("guaranteed profit")
+    expect(EXUR_DEFINITION.toLowerCase()).not.toContain("guaranteed")
+    expect(
+      EXUR_IS_NOT.some((line) => line.toLowerCase().includes("profit"))
+    ).toBe(true)
   })
 
-  it("indexes the AI trading-signals page in sitemap IA", () => {
+  it("indexes the citation and AI trading-signals pages in sitemap IA", () => {
     expect(INDEXABLE_ROUTES.map((route) => route.path)).toEqual([
       ...PUBLIC_INDEXABLE_PATHS,
     ])
+    expect(PUBLIC_INDEXABLE_PATHS).toContain(WHAT_IS_EXUR_PATH)
     expect(PUBLIC_INDEXABLE_PATHS).toContain(AI_SIGNALS_PATH)
-    expect(
-      buildSitemapEntries().some((entry) =>
-        entry.url.endsWith(AI_SIGNALS_PATH)
-      )
-    ).toBe(true)
+    const urls = buildSitemapEntries().map((entry) => entry.url)
+    expect(urls.some((url) => url.endsWith(WHAT_IS_EXUR_PATH))).toBe(true)
+    expect(urls.some((url) => url.endsWith(AI_SIGNALS_PATH))).toBe(true)
   })
 
   it("keeps FAQ schema text identical to the published Q&A list", () => {
@@ -55,6 +63,21 @@ describe("search / AI citation identity", () => {
       expect(jsonLd.mainEntity[index]?.name).toBe(faq.question)
       expect(jsonLd.mainEntity[index]?.acceptedAnswer.text).toBe(faq.answer)
     }
+  })
+
+  it("publishes a citation graph for What is Exur", () => {
+    const graph = whatIsExurJsonLd()
+    expect(graph["@graph"]).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ "@type": "WebPage" }),
+        expect.objectContaining({
+          "@type": "DefinedTerm",
+          name: "Exur",
+          description: EXUR_DEFINITION,
+        }),
+        expect.objectContaining({ "@type": "FAQPage" }),
+      ])
+    )
   })
 
   it("describes a finance web app with an AI assistant category", () => {
@@ -82,7 +105,15 @@ describe("search / AI citation identity", () => {
     expect(AI_CRAWLER_USER_AGENTS).toContain("PerplexityBot")
     expect(AI_CRAWLER_USER_AGENTS).toContain("GPTBot")
     const txt = llmsTxt()
+    expect(txt).toContain(WHAT_IS_EXUR_PATH)
     expect(txt).toContain(AI_SIGNALS_PATH)
+    expect(txt).toContain("/security")
+    expect(txt).toContain(EXUR_DEFINITION)
     expect(txt.toLowerCase()).toContain("ai financial assistant")
+    expect(txt.toLowerCase()).toContain("citation")
+    expect(txt.toLowerCase()).toContain("soc 2")
+    expect(txt.toLowerCase()).toContain("iso 27001")
+    expect(txt.toLowerCase()).toContain("bug bounty")
+    expect(txt.toLowerCase()).not.toContain("guaranteed profit")
   })
 })
