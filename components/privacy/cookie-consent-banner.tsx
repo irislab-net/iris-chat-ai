@@ -313,7 +313,7 @@ function CookieConsentBanner() {
           aria-modal="false"
           aria-labelledby="cookie-consent-title"
           aria-describedby="cookie-consent-desc"
-          className="fixed end-4 bottom-4 z-60 w-full max-w-md text-foreground"
+          className="fixed inset-e-4 bottom-4 z-60 w-full max-w-md text-foreground"
         >
           <div className={cn("rounded-[1.5rem] p-5", cookieBannerSurfaceClass)}>
             <h2
