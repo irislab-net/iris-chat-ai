@@ -19,6 +19,7 @@ import {
   chatNewsFreshnessBadgeClass,
   chatNewsPanelHeaderClass,
   chatNewsPanelShellClass,
+  chatNewsPanelShellMobileClass,
 } from "@/components/app-shell/chat-mobile-gemini-styles"
 import { fetchNewsHome, fetchNewsLatest } from "@/lib/api/data"
 import type { NewsHome } from "@/lib/api/types"
@@ -190,7 +191,7 @@ function ChatNewsMobileSheet({ open, onOpenChange }: ChatNewsMobileSheetProps) {
           isRtl
             ? "data-[side=left]:w-full data-[side=left]:max-w-none data-[side=left]:border-0"
             : "data-[side=right]:w-full data-[side=right]:max-w-none data-[side=right]:border-0",
-          chatNewsPanelShellClass
+          chatNewsPanelShellMobileClass
         )}
       >
         <SheetHeader className="sr-only">

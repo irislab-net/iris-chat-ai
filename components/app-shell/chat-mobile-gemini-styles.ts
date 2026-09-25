@@ -303,8 +303,11 @@ const chatSignalCardEntryShellClass =
 const chatSignalCardMetricTileClass =
   "rounded-xl border-0 bg-white/50 shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_78%,transparent),0_3px_14px_-10px_color-mix(in_oklch,var(--foreground)_9%,transparent)] backdrop-blur-md backdrop-saturate-150 supports-[backdrop-filter]:bg-white/36 dark:bg-white/[0.08] dark:shadow-[inset_0_1px_0_0_color-mix(in_oklch,var(--foreground)_10%,transparent),0_4px_16px_-12px_color-mix(in_oklch,black_32%,transparent)] dark:supports-[backdrop-filter]:bg-white/[0.06]"
 
-/** News / Intel panel shell — solid surface; glass stays on cards/controls. */
+/** Desktop news panel — distinct sidebar surface; glass stays on cards/controls. */
 const chatNewsPanelShellClass = "border-0 bg-sidebar text-sidebar-foreground"
+
+/** Mobile news sheet — same solid fill as the main app / history drawer. */
+const chatNewsPanelShellMobileClass = `border-0 ${chatMobileDrawerSurfaceClass}`
 
 const chatNewsPanelHeaderClass =
   "app-mobile-safe-header flex shrink-0 items-start justify-between gap-3 px-4 pb-3 pt-1"
@@ -374,6 +377,7 @@ export {
   chatNewsGlassTileClass,
   chatNewsPanelHeaderClass,
   chatNewsPanelShellClass,
+  chatNewsPanelShellMobileClass,
   chatNewsReadAllButtonClass,
   chatSignalCardChipClass,
   chatSignalCardClass,
