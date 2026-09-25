@@ -1,5 +1,11 @@
 /* Modern marketing landing motion utilities. */
 
+.landing-modern {
+  /* System mono — avoids a second next/font Google fetch under Turbopack. */
+  --font-mono-modern: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+    "Liberation Mono", monospace;
+}
+
 @keyframes hero-fluid-drift-a {
   0%,
   100% {

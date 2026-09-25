@@ -4,7 +4,6 @@ import type { ReactNode } from "react"
 
 import { AnimatedExurLogo } from "@/components/brand/animated-exur-logo"
 import { HeroLiquidGlassBg } from "@/components/landing/modern/hero-liquid-glass-bg"
-import { jetbrainsMono, plusJakarta } from "@/components/landing/modern/fonts"
 import { Button } from "@/components/ui/button"
 import type { StatusPageAction } from "@/components/status/status-page-actions"
 import {
@@ -83,11 +82,7 @@ export function StatusPage({
 
   return (
     <div
-      className={cn(
-        plusJakarta.variable,
-        jetbrainsMono.variable,
-        "landing-modern relative flex min-h-dvh flex-col bg-background font-sans text-foreground antialiased"
-      )}
+      className="landing-modern relative flex min-h-dvh flex-col bg-background font-sans text-foreground antialiased"
     >
       <div
         aria-hidden

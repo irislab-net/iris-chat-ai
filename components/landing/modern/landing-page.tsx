@@ -7,7 +7,7 @@ import { LandingFooterLazy } from "@/components/landing/modern/landing-footer-la
 import { LandingNav } from "@/components/landing/modern/landing-nav"
 import { LandingScrollProvider } from "@/components/landing/modern/landing-scroll-context"
 import { SkipToContent } from "@/components/landing/modern/skip-to-content"
-import { jetbrainsMono, plusJakarta } from "@/components/landing/modern/fonts"
+import { plusJakarta } from "@/components/landing/modern/fonts"
 import { localeDirection } from "@/lib/i18n/locale"
 import {
   landingHeroCard,
@@ -42,9 +42,7 @@ export async function ModernLandingPage() {
     : (plusJakarta.style.fontFamily.split(",")[0]?.trim() ??
       '"Plus Jakarta Sans"')
 
-  const fontVariables = isRtl
-    ? jetbrainsMono.variable
-    : cn(plusJakarta.variable, jetbrainsMono.variable)
+  const fontVariables = isRtl ? undefined : plusJakarta.variable
 
   return (
     <LandingScrollProvider>
