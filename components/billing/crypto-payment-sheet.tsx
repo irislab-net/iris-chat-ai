@@ -91,48 +91,42 @@ function PaymentWatcherBanner({
   const t = useTranslations("upgradePage.crypto")
 
   return (
-    <BillingGlassPanel className="bg-white/55 dark:bg-white/10">
-      <div
-        className={cn(compact ? "px-3 py-2" : "px-4 py-3")}
-        role="status"
-        aria-live="polite"
-      >
-        <div className="flex items-start gap-2.5">
-          <span className="relative mt-0.5 flex size-2 shrink-0">
-            <span className="absolute inline-flex size-full animate-ping rounded-full bg-[#2563EB]/50 opacity-75" />
-            <span className="relative inline-flex size-2 rounded-full bg-[#2563EB]" />
-          </span>
-          <div className="min-w-0 flex-1">
-            <p className={cn("font-medium", compact ? "text-xs" : "text-sm")}>
-              {t("watchingTitle")}
-            </p>
-            {!compact ? (
-              <p className="mt-1 text-xs text-muted-foreground">{t("watchingBody")}</p>
-            ) : null}
-            <div
-              className={cn(
-                "flex items-center justify-between gap-2 text-muted-foreground",
-                compact ? "mt-1 text-[11px]" : "mt-2 h-4 text-xs"
-              )}
-            >
-              <span className="inline-flex min-w-0 items-center gap-1">
-                <TimerIcon className="size-3 shrink-0" />
-                <span className="truncate">
-                  {compact ? null : t("timeLeft")}
-                  <span className="font-medium tabular-nums text-foreground">
-                    {expiresIn}
-                  </span>
+    <div role="status" aria-live="polite">
+      <div className="flex items-start gap-2.5">
+        <span className="relative mt-0.5 flex size-2 shrink-0">
+          <span className="absolute inline-flex size-full animate-ping rounded-full bg-[#2563EB]/50 opacity-75" />
+          <span className="relative inline-flex size-2 rounded-full bg-[#2563EB]" />
+        </span>
+        <div className="min-w-0 flex-1">
+          <p className={cn("font-medium", compact ? "text-xs" : "text-sm")}>
+            {t("watchingTitle")}
+          </p>
+          {!compact ? (
+            <p className="mt-1 text-xs text-muted-foreground">{t("watchingBody")}</p>
+          ) : null}
+          <div
+            className={cn(
+              "flex items-center justify-between gap-2 text-muted-foreground",
+              compact ? "mt-1 text-[11px]" : "mt-2 h-4 text-xs"
+            )}
+          >
+            <span className="inline-flex min-w-0 items-center gap-1">
+              <TimerIcon className="size-3 shrink-0" />
+              <span className="truncate">
+                {compact ? null : t("timeLeft")}
+                <span className="font-medium tabular-nums text-foreground">
+                  {expiresIn}
                 </span>
               </span>
-              <span className="inline-flex shrink-0 items-center gap-1">
-                <LoaderCircleIcon className="size-3 shrink-0 animate-spin opacity-60" />
-                <span>{compact ? t("checkingShort") : t("checking")}</span>
-              </span>
-            </div>
+            </span>
+            <span className="inline-flex shrink-0 items-center gap-1">
+              <LoaderCircleIcon className="size-3 shrink-0 animate-spin opacity-60" />
+              <span>{compact ? t("checkingShort") : t("checking")}</span>
+            </span>
           </div>
         </div>
       </div>
-    </BillingGlassPanel>
+    </div>
   )
 }
 
@@ -451,6 +445,11 @@ export function CryptoPaymentSheet({
                         checked={couponOpen}
                         disabled={loading || !checkout}
                         aria-labelledby="payment-coupon-label"
+                        className={cn(
+                          "bg-foreground/12 dark:bg-white/15",
+                          couponOpen &&
+                            "bg-[#2563EB] hover:bg-[#1D4ED8] focus-visible:ring-[#2563EB]/40 dark:bg-[#2563EB]"
+                        )}
                         onCheckedChange={(checked) => {
                           setCouponOpen(checked)
                           if (!checked && checkout) {
