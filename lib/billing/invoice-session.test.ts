@@ -4,6 +4,7 @@ import type { PaymentInvoice } from "@/lib/billing/invoice-types"
 import {
   findLatestResumableInvoice,
   findResumableInvoice,
+  invoiceMatchesExpectedAmount,
   isInvoiceExpired,
   isResumableInvoice,
 } from "@/lib/billing/invoice-session"
@@ -82,6 +83,35 @@ describe("invoice session", () => {
         currency: "USDC",
       })
     ).toBeNull()
+  })
+
+  it("skips resumable invoices priced under a stale catalog amount", () => {
+    const invoices = [
+      invoice({
+        uid: "stale",
+        amount_usd: 39.99,
+        original_amount_usd: 39.99,
+        amount_crypto: "39990000",
+      }),
+      invoice({
+        uid: "current",
+        amount_usd: 19,
+        original_amount_usd: 19,
+        amount_crypto: "19000000",
+        created_at: "2026-01-02T00:00:00.000Z",
+      }),
+    ]
+
+    expect(invoiceMatchesExpectedAmount(invoices[0]!, 19)).toBe(false)
+    expect(invoiceMatchesExpectedAmount(invoices[1]!, 19)).toBe(true)
+
+    expect(
+      findResumableInvoice(invoices, {
+        planId: "pro_monthly",
+        currency: "USDT",
+        expectedAmountUsd: 19,
+      })?.uid
+    ).toBe("current")
   })
 
   it("returns the newest resumable invoice", () => {

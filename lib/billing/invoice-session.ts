@@ -51,6 +51,8 @@ export function findResumableInvoice(
     planId: string
     currency: PaymentCurrency
     couponCode?: string
+    /** Catalog Plus USD — skip stale invoices priced under an old plan amount. */
+    expectedAmountUsd?: number
   },
   now = Date.now()
 ): PaymentInvoice | null {
@@ -60,11 +62,28 @@ export function findResumableInvoice(
       .filter((invoice) => invoice.plan_id === options.planId)
       .filter((invoice) => invoice.currency === options.currency)
       .filter((invoice) => couponMatchesInvoice(invoice, options.couponCode))
+      .filter((invoice) =>
+        invoiceMatchesExpectedAmount(invoice, options.expectedAmountUsd)
+      )
       .sort(
         (left, right) =>
           Date.parse(right.created_at) - Date.parse(left.created_at)
       )[0] ?? null
   )
+}
+
+/** True when invoice USD matches catalog (or coupon base) within a cent. */
+export function invoiceMatchesExpectedAmount(
+  invoice: PaymentInvoice,
+  expectedAmountUsd?: number
+): boolean {
+  if (expectedAmountUsd == null || !Number.isFinite(expectedAmountUsd)) {
+    return true
+  }
+  const baseline = invoice.coupon_code?.trim()
+    ? invoice.original_amount_usd
+    : invoice.amount_usd
+  return Math.abs(baseline - expectedAmountUsd) < 0.05
 }
 
 export function findLatestResumableInvoice(

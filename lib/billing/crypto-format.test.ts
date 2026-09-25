@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest"
 
 import {
+  aboutUsdFromCryptoLabel,
   formatCountdown,
   formatCryptoAmount,
   formatUsd,
@@ -21,5 +22,11 @@ describe("crypto-format", () => {
   it("formats countdown timers", () => {
     expect(formatCountdown(125_000)).toBe("2:05")
     expect(formatCountdown(4_500)).toBe("0:04")
+  })
+
+  it("keeps About USD locked to the crypto amount label", () => {
+    expect(aboutUsdFromCryptoLabel("19 USDT", 19)).toBe(19)
+    expect(aboutUsdFromCryptoLabel("39.99 USDT", 19)).toBe(39.99)
+    expect(aboutUsdFromCryptoLabel("bad", 19)).toBe(19)
   })
 })

@@ -24,6 +24,7 @@ import { useNow } from "@/hooks/use-now"
 import { useIsDesktop } from "@/hooks/use-media-query"
 import type { BillingCycle } from "@/lib/billing/catalog"
 import {
+  aboutUsdFromCryptoLabel,
   formatCountdown,
   formatCryptoAmount,
   formatUsd,
@@ -404,17 +405,22 @@ export function CryptoPaymentSheet({
                         <p className="text-xs font-medium text-muted-foreground">
                           {t("sendExactly")}
                         </p>
-                        <p className="mt-1 text-[1.375rem] font-semibold leading-none tracking-tight tabular-nums text-foreground">
-                          {amountLabel}
-                        </p>
-                        <div className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted-foreground">
-                          <span>
+                        <div className="mt-1 flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
+                          <p className="text-[1.375rem] font-semibold leading-none tracking-tight tabular-nums text-foreground">
+                            {amountLabel}
+                          </p>
+                          <span className="text-sm leading-none text-muted-foreground">
                             {t("aboutUsd", {
-                              amount: formatUsd(current!.amount_usd),
+                              amount: formatUsd(
+                                aboutUsdFromCryptoLabel(
+                                  amountLabel,
+                                  current!.amount_usd
+                                )
+                              ),
                             })}
                           </span>
                           {current!.original_amount_usd > current!.amount_usd ? (
-                            <span className="line-through">
+                            <span className="text-sm leading-none text-muted-foreground line-through">
                               {formatUsd(current!.original_amount_usd)}
                             </span>
                           ) : null}
