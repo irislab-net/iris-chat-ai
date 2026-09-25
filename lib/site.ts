@@ -50,6 +50,11 @@ export function getLandingHref(): string {
   return MARKETING_ORIGIN
 }
 
+/** In-app path to the marketing landing (nav/logo off-landing). */
+export function getMarketingHomePath(): string {
+  return process.env.NODE_ENV === "development" ? "/home" : "/"
+}
+
 /** Launch App lands on the news tab (canonical in-app entry). */
 export const APP_NEWS_PATH = `${APP_PATH}?tab=news`
 

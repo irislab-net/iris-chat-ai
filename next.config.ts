@@ -3,12 +3,16 @@ import { join } from "node:path"
 
 import type { NextConfig } from "next"
 import { withSentryConfig } from "@sentry/nextjs/config"
+import withBundleAnalyzer from "@next/bundle-analyzer"
 import createNextIntlPlugin from "next-intl/plugin"
 
 import { allowedDevOrigins } from "./lib/dev-access"
 import { CHAT_API_ORIGIN } from "./lib/api/origins"
 
 const withNextIntl = createNextIntlPlugin("./i18n/request.ts")
+const withAnalyzer = withBundleAnalyzer({
+  enabled: process.env.ANALYZE === "true",
+})
 
 function readDevVarsFile(): Record<string, string> {
   const devVarsPath = join(process.cwd(), ".dev.vars")
@@ -54,6 +58,21 @@ if (devPublicEnv.NEXT_PUBLIC_GOOGLE_CLIENT_ID) {
     `[iris] Google One Tap client ID loaded from .dev.vars (${devPublicEnv.NEXT_PUBLIC_GOOGLE_CLIENT_ID.slice(0, 8)}…)`
   )
 }
+
+const isDev = process.env.NODE_ENV !== "production"
+/** React DevTools / Turbopack need eval in development only. */
+const scriptSrc = [
+  "'self'",
+  "'unsafe-inline'",
+  ...(isDev ? ["'unsafe-eval'"] : []),
+  "https://www.googletagmanager.com",
+  "https://www.google-analytics.com",
+  "https://www.google.com",
+  "https://accounts.google.com",
+  "https://apis.google.com",
+  "https://browser.sentry-cdn.com",
+  "https://*.sentry-cdn.com",
+].join(" ")
 
 const nextConfig: NextConfig = {
   env: {
@@ -135,7 +154,9 @@ const nextConfig: NextConfig = {
           { key: "Referrer-Policy", value: referrerPolicy },
           {
             key: "Permissions-Policy",
-            value: "camera=(), microphone=(), geolocation=()",
+            // identity-credentials-get=* — FedCM One Tap (default is self; * is explicit).
+            value:
+              "camera=(), microphone=(), geolocation=(), identity-credentials-get=*",
           },
           { key: "X-Frame-Options", value: "SAMEORIGIN" },
           {
@@ -151,11 +172,28 @@ const nextConfig: NextConfig = {
               "frame-ancestors 'self'",
               "form-action 'self' https:",
               "upgrade-insecure-requests",
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://www.google.com https://accounts.google.com https://apis.google.com https://browser.sentry-cdn.com https://*.sentry-cdn.com",
+              `script-src ${scriptSrc}`,
               "style-src 'self' 'unsafe-inline' https://accounts.google.com",
               "img-src 'self' data: blob: https:",
               "font-src 'self' data:",
               "connect-src 'self' https://api.exur.ai https://*.exur.ai https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com https://accounts.google.com https://*.sentry.io https://*.ingest.sentry.io wss: https:",
+              "frame-src 'self' https://accounts.google.com https://www.google.com https://www.googletagmanager.com https://js.stripe.com https://buy.stripe.com",
+              "worker-src 'self' blob:",
+              "media-src 'self' https://files.exur.ai blob:",
+            ].join("; "),
+          },
+          {
+            key: "Content-Security-Policy-Report-Only",
+            value: [
+              "default-src 'self'",
+              "base-uri 'self'",
+              "object-src 'none'",
+              "frame-ancestors 'self'",
+              `script-src ${scriptSrc}`,
+              "style-src 'self' 'unsafe-inline' https://accounts.google.com",
+              "img-src 'self' data: blob: https://images.unsplash.com https://assets.coingecko.com https://s3-symbol-logo.tradingview.com https://*.google-analytics.com https://*.googletagmanager.com https://*.exur.ai",
+              "font-src 'self' data:",
+              "connect-src 'self' https://api.exur.ai https://*.exur.ai https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com https://accounts.google.com https://*.sentry.io https://*.ingest.sentry.io",
               "frame-src 'self' https://accounts.google.com https://www.google.com https://www.googletagmanager.com https://js.stripe.com https://buy.stripe.com",
               "worker-src 'self' blob:",
               "media-src 'self' https://files.exur.ai blob:",
@@ -213,7 +251,7 @@ const nextConfig: NextConfig = {
   allowedDevOrigins: allowedDevOrigins(),
 }
 
-export default withSentryConfig(withNextIntl(nextConfig), {
+export default withSentryConfig(withAnalyzer(withNextIntl(nextConfig)), {
   org: process.env.SENTRY_ORG,
   project: process.env.SENTRY_PROJECT,
   authToken: process.env.SENTRY_AUTH_TOKEN,

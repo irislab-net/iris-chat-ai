@@ -3,12 +3,21 @@ import type { Metadata } from "next"
 import {
   LegalDocShell,
   LegalList,
+  LegalMetaChip,
   LegalNavButtons,
   LegalOrderedList,
   LegalP,
   LegalSection,
+  legalLinkClass,
 } from "@/components/legal/legal-doc"
+import { CompanyInformation } from "@/components/legal/company-information"
 import { Link } from "@/i18n/navigation"
+import {
+  COMPANY_NUMBER,
+  COMPANIES_HOUSE_URL,
+  DISSOLVED_ON,
+  LEGAL_ENTITY_NAME,
+} from "@/lib/company"
 import { LEGAL_DOCS_REPO_URL } from "@/lib/legal"
 import {
   PRIVACY_DESCRIPTION,
@@ -44,13 +53,13 @@ function PrivacyPage() {
       title="Privacy Policy & GDPR Notice"
       meta={
         <>
-          <p>Effective Date: September 21, 2026</p>
-          <p>Version: 2.1.0</p>
-          <p>
+          <LegalMetaChip>Effective Date: September 21, 2026</LegalMetaChip>
+          <LegalMetaChip>Version: 2.1.0</LegalMetaChip>
+          <LegalMetaChip>
             Scope: Exur (
             <span className="font-mono text-foreground/90">exur.ai</span>
-            ), an AI-native financial intelligence platform.
-          </p>
+            )
+          </LegalMetaChip>
         </>
       }
       intro={
@@ -73,16 +82,34 @@ function PrivacyPage() {
         title="1. Operator & Controller Notice"
       >
         <LegalP>
-          Exur is currently operated as an independent financial technology
-          initiative by the{" "}
-          <span className="font-medium text-foreground">Exur Core Team</span>.
-          Pending formal legal entity incorporation in a designated
-          jurisdiction, the platform operator functions as the Data Controller
-          under applicable data protection legislation, including the European
-          Union General Data Protection Regulation (EU GDPR). Upon completion of
-          legal entity registration, data processing responsibilities will
-          seamlessly transfer to the official corporate entity without reducing
-          your privacy rights.
+          Exur was developed under{" "}
+          <span className="font-medium text-foreground">
+            {LEGAL_ENTITY_NAME}
+          </span>{" "}
+          (Company No.{" "}
+          <span className="font-mono text-foreground/90">{COMPANY_NUMBER}</span>
+          ), a UK private limited company incorporated in England. Companies
+          House records show that company as dissolved on {DISSOLVED_ON}
+          following a voluntary strike-off.
+        </LegalP>
+        <LegalP>
+          The Exur platform (
+          <span className="font-mono text-foreground/90">exur.ai</span>) is
+          currently operated by the{" "}
+          <span className="font-medium text-foreground">Exur Core Team</span>,
+          which acts as the Data Controller under applicable data protection
+          legislation, including the European Union General Data Protection
+          Regulation (EU GDPR). Official Companies House details for the
+          historical development entity are available at the{" "}
+          <a
+            href={COMPANIES_HOUSE_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={legalLinkClass}
+          >
+            Companies House record
+          </a>
+          .
         </LegalP>
       </LegalSection>
 
@@ -349,14 +376,14 @@ function PrivacyPage() {
             is completed. See our{" "}
             <Link
               href="/refund"
-              className="font-medium text-foreground underline underline-offset-3 hover:text-foreground/80"
+              className={legalLinkClass}
             >
               Refund Policy
             </Link>{" "}
             and{" "}
             <Link
               href="/terms"
-              className="font-medium text-foreground underline underline-offset-3 hover:text-foreground/80"
+              className={legalLinkClass}
             >
               Terms of Service
             </Link>
@@ -423,7 +450,15 @@ function PrivacyPage() {
               Exercising Your Rights:
             </span>{" "}
             To request account deletion or data exports, please submit an
-            official request to our legal team.
+            official request to our legal team.{" "}
+            <a
+              id="request-data-deletion"
+              href="mailto:legal@exur.ai?subject=Data%20deletion%20request"
+              className={legalLinkClass}
+            >
+              Email legal@exur.ai to request deletion
+            </a>
+            .
           </li>
         </LegalList>
       </LegalSection>
@@ -441,7 +476,14 @@ function PrivacyPage() {
         </LegalP>
       </LegalSection>
 
-      <LegalSection id="privacy-contact" title="11. Contact Information">
+      <LegalSection id="privacy-company" title="12. Company Information">
+        <CompanyInformation
+          registerLabel="Companies House record"
+          variant="legal"
+        />
+      </LegalSection>
+
+      <LegalSection id="privacy-contact" title="13. Contact Information">
         <LegalP>
           For privacy inquiries, GDPR data requests, or legal notices, please
           contact:
@@ -453,7 +495,7 @@ function PrivacyPage() {
             </span>{" "}
             <a
               href="mailto:legal@exur.ai"
-              className="font-medium text-foreground underline underline-offset-3 hover:text-foreground/80"
+              className={legalLinkClass}
             >
               legal@exur.ai
             </a>
@@ -466,7 +508,7 @@ function PrivacyPage() {
               href={LEGAL_DOCS_REPO_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="font-medium text-foreground underline underline-offset-3 hover:text-foreground/80"
+              className={legalLinkClass}
             >
               github.com/exur-ai/exur-legal-docs
             </a>

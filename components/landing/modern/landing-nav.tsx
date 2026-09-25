@@ -31,6 +31,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet"
+import { Link, usePathname } from "@/i18n/navigation"
 import { displayPlanName } from "@/lib/billing/catalog"
 import { NAV_LINKS } from "@/lib/landing-modern-data"
 import { LANDING_MOTION, scrollToSection } from "@/lib/landing-motion"
@@ -43,7 +44,7 @@ import {
   landingNavLinkInactive,
   landingNavPill,
 } from "@/lib/landing-modern-styles"
-import { getLaunchAppHref } from "@/lib/site"
+import { getLaunchAppHref, getMarketingHomePath } from "@/lib/site"
 import { localeDirection } from "@/lib/i18n/locale"
 import { userAccountLabel, userAccountSubline } from "@/lib/user-profile"
 import { cn } from "@/lib/utils"
@@ -64,9 +65,13 @@ const ChatAccountMenu = dynamic(
   }
 )
 
-function scrollAndClose(id: string, close: () => void) {
+function scrollAndClose(
+  id: string,
+  close: () => void,
+  navigate: (id: string) => void
+) {
   close()
-  gsap.delayedCall(LANDING_MOTION.durationFast * 0.3, () => scrollToSection(id))
+  gsap.delayedCall(LANDING_MOTION.durationFast * 0.3, () => navigate(id))
 }
 
 function NavMenuIcon() {
@@ -241,11 +246,30 @@ export function LandingNav() {
   const tNav = useTranslations("modern.nav")
   const tAria = useTranslations("nav")
   const locale = useLocale()
+  const pathname = usePathname()
   const isRtl = localeDirection(locale) === "rtl"
   const sheetSide = isRtl ? "left" : "right"
   const [open, setOpen] = useState(false)
   const [stuck, setStuck] = useState(false)
   const { activeSectionId } = useLandingActiveSection()
+  const homePath = getMarketingHomePath()
+  const onLanding =
+    pathname === "/home" || pathname === "/" || pathname === homePath
+
+  function goToSection(id: string) {
+    if (onLanding) {
+      scrollToSection(id)
+      return
+    }
+    window.location.assign(`${homePath}#${id}`)
+  }
+
+  function goHome() {
+    if (onLanding) {
+      scrollToSection("top")
+      return
+    }
+  }
 
   useEffect(() => {
     const onScroll = () => setStuck(window.scrollY > 24)
@@ -267,21 +291,37 @@ export function LandingNav() {
         )}
         aria-label={tAria("aria")}
       >
-        <Button
-          type="button"
-          variant="ghost"
-          onClick={() => scrollToSection("top")}
-          aria-label="Exur"
-          className="h-auto min-w-0 shrink-0 justify-self-start gap-2.5 rounded-full px-0 py-0 text-foreground hover:bg-muted"
-        >
-          <span
-            className="flex size-11 shrink-0 items-center justify-center rounded-full bg-card p-1 shadow-[0_6px_18px_rgba(15,23,42,0.06)] dark:shadow-[0_6px_18px_rgba(0,0,0,0.28)]"
-            aria-hidden
+        {onLanding ? (
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={goHome}
+            aria-label="Exur"
+            className="h-auto min-w-0 shrink-0 justify-self-start gap-2.5 rounded-full px-0 py-0 text-foreground hover:bg-muted"
           >
-            <AnimatedExurLogo replayOnHover shimmer className="size-9" />
-          </span>
-          <span className={landingTitleBrand}>Exur</span>
-        </Button>
+            <span
+              className="flex size-11 shrink-0 items-center justify-center rounded-full bg-card p-1 shadow-[0_6px_18px_rgba(15,23,42,0.06)] dark:shadow-[0_6px_18px_rgba(0,0,0,0.28)]"
+              aria-hidden
+            >
+              <AnimatedExurLogo replayOnHover shimmer className="size-9" />
+            </span>
+            <span className={landingTitleBrand}>Exur</span>
+          </Button>
+        ) : (
+          <Link
+            href={homePath}
+            aria-label="Exur"
+            className="inline-flex h-auto min-w-0 shrink-0 items-center justify-self-start gap-2.5 rounded-full px-0 py-0 text-foreground transition-colors hover:bg-muted"
+          >
+            <span
+              className="flex size-11 shrink-0 items-center justify-center rounded-full bg-card p-1 shadow-[0_6px_18px_rgba(15,23,42,0.06)] dark:shadow-[0_6px_18px_rgba(0,0,0,0.28)]"
+              aria-hidden
+            >
+              <AnimatedExurLogo replayOnHover shimmer className="size-9" />
+            </span>
+            <span className={landingTitleBrand}>Exur</span>
+          </Link>
+        )}
 
         <ul
           className={cn(
@@ -291,13 +331,13 @@ export function LandingNav() {
           )}
         >
           {NAV_LINKS.map((link) => {
-            const isActive = activeSectionId === link.id
+            const isActive = onLanding && activeSectionId === link.id
             return (
               <li key={link.id}>
                 <Button
                   type="button"
                   variant="ghost"
-                  onClick={() => scrollToSection(link.id)}
+                  onClick={() => goToSection(link.id)}
                   aria-current={isActive ? "true" : undefined}
                   className={cn(
                     "h-8 rounded-full px-3 py-0 text-[13px] tracking-[-0.01em] transition-all duration-200",
@@ -350,9 +390,9 @@ export function LandingNav() {
                 "gap-0 border-0 bg-card p-0 text-foreground shadow-[0_24px_80px_rgba(15,23,42,0.14)]",
                 "dark:shadow-[0_24px_80px_rgba(0,0,0,0.45)]",
                 "top-3 bottom-3 h-auto w-[min(calc(100vw-1.5rem),20rem)] rounded-[1.75rem]",
-                isRtl
-                  ? "right-auto left-3 data-[side=left]:top-3 data-[side=left]:right-auto data-[side=left]:bottom-3 data-[side=left]:left-3 data-[side=left]:h-auto data-[side=left]:w-[min(calc(100vw-1.5rem),20rem)] data-[side=left]:sm:max-w-none"
-                  : "right-3 left-auto data-[side=right]:top-3 data-[side=right]:right-3 data-[side=right]:bottom-3 data-[side=right]:left-auto data-[side=right]:h-auto data-[side=right]:w-[min(calc(100vw-1.5rem),20rem)] data-[side=right]:sm:max-w-none"
+                "inset-s-auto inset-e-3 left-auto right-auto",
+                "data-[side=left]:top-3 data-[side=left]:bottom-3 data-[side=left]:inset-s-auto data-[side=left]:inset-e-3 data-[side=left]:left-auto data-[side=left]:right-auto data-[side=left]:h-auto data-[side=left]:w-[min(calc(100vw-1.5rem),20rem)] data-[side=left]:sm:max-w-none",
+                "data-[side=right]:top-3 data-[side=right]:bottom-3 data-[side=right]:inset-s-auto data-[side=right]:inset-e-3 data-[side=right]:left-auto data-[side=right]:right-auto data-[side=right]:h-auto data-[side=right]:w-[min(calc(100vw-1.5rem),20rem)] data-[side=right]:sm:max-w-none"
               )}
             >
               <SheetHeader className="flex-row items-center justify-between gap-3 p-5 pb-3 text-start">
@@ -394,13 +434,15 @@ export function LandingNav() {
                 </div>
                 <ul className="flex list-none flex-col gap-1">
                   {NAV_LINKS.map((link) => {
-                    const isActive = activeSectionId === link.id
+                    const isActive = onLanding && activeSectionId === link.id
                     return (
                       <li key={link.id}>
                         <Button
                           type="button"
                           variant="ghost"
-                          onClick={() => scrollAndClose(link.id, () => setOpen(false))}
+                          onClick={() =>
+                            scrollAndClose(link.id, () => setOpen(false), goToSection)
+                          }
                           aria-current={isActive ? "true" : undefined}
                           className={cn(
                             "h-12 w-full justify-start rounded-2xl px-4 text-[15px] tracking-[-0.01em]",

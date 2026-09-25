@@ -3,9 +3,11 @@ import type { Metadata } from "next"
 import {
   LegalDocShell,
   LegalList,
+  LegalMetaChip,
   LegalNavButtons,
   LegalP,
   LegalSection,
+  legalLinkClass,
 } from "@/components/legal/legal-doc"
 import { LEGAL_DOCS_REPO_URL } from "@/lib/legal"
 import {
@@ -42,13 +44,13 @@ function RefundPage() {
       title="Refund Policy"
       meta={
         <>
-          <p>Effective Date: September 21, 2026</p>
-          <p>Version: 2.1.0</p>
-          <p>
-            Scope: Exur Subscriptions &amp; Premium Services (
+          <LegalMetaChip>Effective Date: September 21, 2026</LegalMetaChip>
+          <LegalMetaChip>Version: 2.1.0</LegalMetaChip>
+          <LegalMetaChip>
+            Scope: Exur Subscriptions (
             <span className="font-mono text-foreground/90">exur.ai</span>
-            ).
-          </p>
+            )
+          </LegalMetaChip>
         </>
       }
       intro={
@@ -176,7 +178,7 @@ function RefundPage() {
             </span>{" "}
             <a
               href="mailto:legal@exur.ai"
-              className="font-medium text-foreground underline underline-offset-3 hover:text-foreground/80"
+              className={legalLinkClass}
             >
               legal@exur.ai
             </a>
@@ -189,7 +191,7 @@ function RefundPage() {
               href={LEGAL_DOCS_REPO_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="font-medium text-foreground underline underline-offset-3 hover:text-foreground/80"
+              className={legalLinkClass}
             >
               github.com/exur-ai/exur-legal-docs
             </a>

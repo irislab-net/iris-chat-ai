@@ -28,6 +28,21 @@
     "demo": "Demo",
     "filled": "Filled"
   },
+  "consent": {
+    "title": "We use cookies",
+    "description": "We use essential cookies to run Exur and optional analytics cookies to understand product usage. You can accept, reject, or manage analytics cookies.",
+    "privacyLink": "Privacy Policy",
+    "accept": "Accept all",
+    "reject": "Reject non-essential",
+    "manage": "Manage preferences",
+    "manageTitle": "Cookie preferences",
+    "manageDescription": "Essential cookies are required for login and locale. Analytics cookies help us improve Exur and are optional.",
+    "necessary": "Strictly necessary",
+    "necessaryHint": "Required for authentication, security, and language preferences.",
+    "analytics": "Analytics",
+    "analyticsHint": "Helps us understand how Exur is used (Google Analytics / Tag Manager).",
+    "save": "Save preferences"
+  },
   "nav": {
     "aria": "Landing",
     "skipToContent": "Skip to content"
@@ -315,6 +330,7 @@
   "modern": {
     "nav": {
       "features": "Why Exur",
+      "how-it-works": "How it works",
       "desk": "Desk",
       "signals": "Signals",
       "about": "About",
@@ -627,7 +643,9 @@
       "terms": "Terms of Service",
       "privacy": "Privacy Policy",
       "refund": "Refund Policy",
-      "cookies": "Cookie Settings"
+      "cookies": "Cookie Settings",
+      "companyInfo": "Company information",
+      "companiesHouse": "Companies House record"
     },
     "context": {
       "description": "Exur is your AI financial assistant. See where your money is going, ask in plain language, and get a clear next step, not another feed."
@@ -699,6 +717,7 @@
     "primaryNav": "Primary",
     "composerPlaceholder": "Ask Exur or type @ for tools…",
     "composerMobilePlaceholder": "Ask Exur",
+    "composerAriaLabel": "Message Exur",
     "composerVoiceInput": "Voice input",
     "composerVoiceMode": "Voice mode",
     "mobileGreeting": "What can I help with, <highlight>{name}</highlight>?",
@@ -981,5 +1000,38 @@
       "tokenAria": "Payment token: {token} on {network}",
       "networkLabel": "Network"
     }
+  },
+  "about": {
+    "title": "What is Exur?",
+    "intro": "Exur is a market-intel desk: public insight for the current candle, model context, news bullets (distilled headlines and summaries, not a raw wire), and an Exur co-pilot you can talk to in plain language when you connect an account.",
+    "whatHeading": "What Exur is",
+    "whatBody": "We're building a tool away from marketing theater: no slides, no empty promises, just the product. The homepage is the desk: pulse stance, model board, payoff geometry, and news bullets in one place, with Exur available as a co-pilot for signed-in users.",
+    "publicHeading": "Public market intelligence",
+    "publicBody": "Guests can open the <desk>public desk</desk> and see market pulse, insights, model context, and news bullets without signing in. Freshness labels use timestamps from the API, such as when an insight was generated or when a story was published, not login state. We do not treat authentication as proof of “live” or delayed data.",
+    "helpsHeading": "How Exur helps",
+    "helpsBody": "Exur organizes market information for the candle you're looking at: headline stance, how models sit relative to each other, payoff shape, and news bullets: short distilled stories with source context, not a raw news feed. The co-pilot is there to answer questions about that desk in plain English, as support for analysis, not a substitute for your own judgment.",
+    "privateHeading": "Private and member tools",
+    "privateBody": "Connecting with Google unlocks account features such as co-pilot chat. Trade Desk and related premium guidance are treated as private / member capabilities when available. Turn-by-turn desk guidance is the product direction, not brokerage order execution on this site. Public pages do not expose private account data for search engines.",
+    "trustHeading": "Transparency",
+    "trustBody": "Markets change. Timestamps describe when available content was generated or published. Insights and co-pilot replies are tools for analysis and decision-making, not guaranteed outcomes. Nothing on Exur promises profit, risk-free trades, or guaranteed accuracy.",
+    "helloHeading": "Say hello",
+    "helloBody": "Still curious? Reach us on X.",
+    "xTwitter": "X (Twitter)"
+  },
+  "dashboard": {
+    "loadingNews": "Loading news",
+    "noHeadlinesYet": "No headlines yet",
+    "noHeadlinesHint": "The tape updates with the next market cycle.",
+    "marketNews": "Market news",
+    "newsTitle": "News",
+    "newsSubtitle": "Scored headlines and tape, not a raw wire.",
+    "latest": "Latest",
+    "stopReadingAloud": "Stop reading aloud",
+    "listenToArticle": "Listen to article",
+    "copied": "Copied",
+    "copyArticle": "Copy article",
+    "openOriginalArticle": "Open original article",
+    "stop": "Stop",
+    "readAll": "Read all"
   }
 }

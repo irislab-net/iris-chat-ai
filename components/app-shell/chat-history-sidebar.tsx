@@ -24,6 +24,7 @@ import { useLocale, useTranslations } from "next-intl"
 import { AttentionPulseDot } from "@/components/app-shell/attention-pulse-dot"
 import { ChatAccountAvatar } from "@/components/app-shell/chat-account-avatar"
 import {
+  AccountCookieSettingsItem,
   AccountLanguageItems,
   AccountThemeItems,
 } from "@/components/app-shell/chat-account-preferences"
@@ -424,6 +425,7 @@ function MobileHistoryDrawerFooter({
           <AccountThemeItems />
           <DropdownMenuSeparator className={chatContextMenuSeparatorClass} />
           <AccountLanguageItems />
+          <AccountCookieSettingsItem />
           {user ? (
             <>
               <DropdownMenuSeparator className={chatContextMenuSeparatorClass} />

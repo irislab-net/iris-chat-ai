@@ -5,6 +5,7 @@ import {
   loginWithGoogleUrl,
 } from "@/lib/api/config"
 import type { TokenPair, User } from "@/lib/api/types"
+import { parseTokenPair, parseUser } from "@/lib/api/schemas"
 import {
   AUTH_PRIVACY_NOTICE_ACCEPTED,
   AUTH_TERMS_ACCEPTED,
@@ -14,27 +15,75 @@ import { normalizeUser } from "@/lib/user-avatar"
 const ACCESS_KEY = "access_token"
 const EXPIRES_KEY = "expires_at"
 
+/**
+ * Access token storage (SEC-005):
+ * - In-memory is the primary source (clears on full page unload of the JS heap).
+ * - sessionStorage mirrors the pair for same-tab reloads / soft navigations.
+ * - Refresh remains HttpOnly cookie (API). XSS can still read memory/sessionStorage;
+ *   keep DOMPurify + CSP as the primary XSS mitigations. Guest tokens stay in
+ *   localStorage (cross-session) and must be cleared on logout/merge.
+ */
+let memoryAccessToken: string | null = null
+let memoryExpiresAt: string | null = null
+
 /** Coalesce concurrent refresh calls — reuse detection kills the whole session. */
 let refreshInFlight: Promise<TokenPair> | null = null
 
+function getSessionStorage(): Storage | null {
+  try {
+    if (typeof sessionStorage === "undefined") return null
+    return sessionStorage
+  } catch {
+    return null
+  }
+}
+
+function readSession(key: string): string | null {
+  return getSessionStorage()?.getItem(key) ?? null
+}
+
+function writeSession(key: string, value: string) {
+  try {
+    getSessionStorage()?.setItem(key, value)
+  } catch {
+    // Private mode / quota — memory still holds the token for this page life.
+  }
+}
+
+function removeSession(key: string) {
+  try {
+    getSessionStorage()?.removeItem(key)
+  } catch {
+    // ignore
+  }
+}
+
 export function getStoredAccessToken() {
-  if (typeof window === "undefined") return null
-  return sessionStorage.getItem(ACCESS_KEY)
+  if (memoryAccessToken) return memoryAccessToken
+  const fromSession = readSession(ACCESS_KEY)
+  if (fromSession) memoryAccessToken = fromSession
+  return fromSession
 }
 
 export function getStoredExpiresAt() {
-  if (typeof window === "undefined") return null
-  return sessionStorage.getItem(EXPIRES_KEY)
+  if (memoryExpiresAt) return memoryExpiresAt
+  const fromSession = readSession(EXPIRES_KEY)
+  if (fromSession) memoryExpiresAt = fromSession
+  return fromSession
 }
 
 export function storeTokenPair(pair: Pick<TokenPair, "access_token" | "expires_at">) {
-  sessionStorage.setItem(ACCESS_KEY, pair.access_token)
-  sessionStorage.setItem(EXPIRES_KEY, pair.expires_at)
+  memoryAccessToken = pair.access_token
+  memoryExpiresAt = pair.expires_at
+  writeSession(ACCESS_KEY, pair.access_token)
+  writeSession(EXPIRES_KEY, pair.expires_at)
 }
 
 export function clearStoredTokens() {
-  sessionStorage.removeItem(ACCESS_KEY)
-  sessionStorage.removeItem(EXPIRES_KEY)
+  memoryAccessToken = null
+  memoryExpiresAt = null
+  removeSession(ACCESS_KEY)
+  removeSession(EXPIRES_KEY)
 }
 
 export const AUTH_SUCCESS_MESSAGE = "iris-auth-success"
@@ -126,10 +175,11 @@ export async function exchangeGoogleOneTapCredential(options: {
     payload &&
     typeof payload === "object" &&
     "access_token" in payload &&
-    typeof payload.access_token === "string"
+    typeof (payload as { access_token?: unknown }).access_token === "string"
   ) {
-    storeTokenPair(payload as TokenPair)
-    return payload as TokenPair
+    const pair = parseTokenPair(payload)
+    storeTokenPair(pair)
+    return pair
   }
 
   const pair = await refreshAccessToken()
@@ -198,7 +248,7 @@ export async function refreshAccessToken(): Promise<TokenPair> {
         status: res.status,
       })
     }
-    return body as TokenPair
+    return parseTokenPair(body)
   })()
 
   try {
@@ -220,17 +270,20 @@ export async function getMe(accessToken: string): Promise<User> {
     })
   }
   // Some responses wrap user in { data } / { user }
+  let raw: unknown = body
   if (
     body &&
     typeof body === "object" &&
     "id" in body &&
     ("x_username" in body || "email" in body || "tier" in body)
   ) {
-    return normalizeUser(body)
+    raw = body
+  } else if (body?.user) {
+    raw = body.user
+  } else if (body?.data) {
+    raw = body.data
   }
-  if (body?.user) return normalizeUser(body.user)
-  if (body?.data) return normalizeUser(body.data)
-  return normalizeUser(body)
+  return normalizeUser(parseUser(raw))
 }
 
 export async function logoutRemote() {

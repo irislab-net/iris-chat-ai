@@ -4,9 +4,8 @@ import { NextIntlClientProvider } from "next-intl"
 import { getLocale, getMessages } from "next-intl/server"
 
 import "./globals.css"
-import { GoogleAnalytics } from "@/components/analytics/google-analytics"
-import { GoogleTagManager } from "@/components/analytics/google-tag-manager"
 import { AuthProvider } from "@/components/auth/auth-provider"
+import { AnalyticsConsentGate } from "@/components/privacy/analytics-consent-gate"
 import { JsonLd } from "@/components/seo/json-ld"
 import { ThemeExtras } from "@/components/theme-provider"
 import { Toaster } from "@/components/ui/sonner"
@@ -146,7 +145,6 @@ export default async function RootLayout({
         {/* Print discovery for audit tools — kept as a media=print link on purpose. */}
         {/* eslint-disable-next-line @next/next/no-css-tags -- print media link required by checklist */}
         <link rel="stylesheet" href="/styles/print.css" media="print" />
-        <GoogleTagManager />
         <noscript>
           <div
             style={{
@@ -166,6 +164,11 @@ export default async function RootLayout({
             </p>
           </div>
         </noscript>
+        <Script
+          id="consent-defaults"
+          src="/scripts/consent-defaults.js"
+          strategy="beforeInteractive"
+        />
         <Script
           id="browser-chrome-init"
           src="/scripts/browser-chrome-init.js"
@@ -189,9 +192,10 @@ export default async function RootLayout({
           <TooltipProvider>
             <NextIntlClientProvider locale={locale} messages={messages}>
               <AuthProvider>
-                {children}
-                <Toaster position="top-right" />
-                <GoogleAnalytics />
+                <AnalyticsConsentGate>
+                  {children}
+                  <Toaster position="top-right" />
+                </AnalyticsConsentGate>
               </AuthProvider>
             </NextIntlClientProvider>
           </TooltipProvider>

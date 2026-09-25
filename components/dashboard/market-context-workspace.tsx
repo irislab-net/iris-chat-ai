@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import { useSearchParams } from "next/navigation"
+import { useTranslations } from "next-intl"
 
 import { NewsBulletin, NewsReadAllButton } from "@/components/dashboard/news-bulletin"
 import { IntelWorkspaceSkeleton } from "@/components/dashboard/intel-skeletons"
@@ -49,6 +50,7 @@ function MarketContextWorkspaceInner({
   isAuthenticated = false,
   authLoading = false,
 }: MarketContextWorkspaceProps) {
+  const t = useTranslations("dashboard")
   const isDesktop = useIsDesktop()
   const searchParams = useSearchParams()
   const tabFromUrl = resolveWorkspaceTab(searchParams.get("tab"))
@@ -60,7 +62,7 @@ function MarketContextWorkspaceInner({
   return (
     <Card
       data-slot="context-workspace"
-      aria-label="Market news"
+      aria-label={t("marketNews")}
       className="h-full min-h-0 flex-1 gap-0 overflow-hidden border-0 bg-transparent py-0 shadow-none"
     >
       <div className="flex h-full min-h-0 flex-1 flex-col overflow-hidden">
@@ -71,10 +73,10 @@ function MarketContextWorkspaceInner({
                 Exur
               </p>
               <h1 className="mt-1 text-xl font-semibold tracking-tight">
-                News
+                {t("newsTitle")}
               </h1>
               <p className="mt-1 max-w-xl text-sm text-muted-foreground">
-                Scored headlines and tape, not a raw wire.
+                {t("newsSubtitle")}
               </p>
             </div>
             <div className="flex shrink-0 items-center gap-2">

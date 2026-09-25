@@ -4,6 +4,11 @@ import type { TrialInfo } from "@/lib/api/types"
 export const STORAGE_GUEST_TOKEN = "iris_guest_token"
 export const STORAGE_GUEST_USER_ID = "iris_guest_user_id"
 
+/**
+ * Guest auth tokens live in localStorage so free trials survive reloads.
+ * Treat as XSS-sensitive (same class as access JWTs). Clear on logout/account merge.
+ */
+
 export type GuestSessionResponse = {
   guest_token: string
   user_id: string

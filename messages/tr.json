@@ -35,6 +35,7 @@
   "modern": {
     "nav": {
       "features": "Neden Exur",
+      "how-it-works": "Nasıl çalışır",
       "desk": "Desk",
       "signals": "Sinyaller",
       "about": "Hakkında",
@@ -347,7 +348,9 @@
       "terms": "Hizmet Şartları",
       "privacy": "Gizlilik Politikası",
       "refund": "İade Politikası",
-      "cookies": "Çerez Ayarları"
+      "cookies": "Çerez Ayarları",
+      "companyInfo": "Şirket bilgileri",
+      "companiesHouse": "Companies House kaydı"
     },
     "context": {
       "description": "Exur yapay zekâ finans asistanınızdır. Paranızın nereye gittiğini görün, sade dilde sorun ve net bir sonraki adım alın — başka bir akış değil."

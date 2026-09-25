@@ -1,19 +1,29 @@
 import type { Metadata } from "next"
-import Image from "next/image"
-import { Link } from "@/i18n/navigation"
+import { getTranslations } from "next-intl/server"
 
-import { AppShell } from "@/components/app-shell/app-shell"
 import { TrackedContactLink } from "@/components/analytics/tracked-contact-link"
+import { MarketingPageShell } from "@/components/landing/modern/marketing-page-shell"
 import { JsonLd } from "@/components/seo/json-ld"
 import { Button } from "@/components/ui/button"
+import { Separator } from "@/components/ui/separator"
+import { Link } from "@/i18n/navigation"
+import {
+  landingCta,
+  landingGlassSurface,
+  landingHeroGlass,
+  landingInner,
+  landingTitleCard,
+  landingTitleSection,
+} from "@/lib/landing-modern-styles"
 import {
   ABOUT_DESCRIPTION,
-  ROOT_ROBOTS,
   APP_NEWS_PATH,
+  ROOT_ROBOTS,
   SITE_NAME,
   SOCIAL_X_URL,
 } from "@/lib/site"
 import { SITE_URL } from "@/lib/seo"
+import { cn } from "@/lib/utils"
 
 export const metadata: Metadata = {
   title: "About",
@@ -37,7 +47,18 @@ export const metadata: Metadata = {
   },
 }
 
-function AboutPage() {
+const SECTIONS = [
+  { id: "what", headingKey: "whatHeading", bodyKey: "whatBody" },
+  { id: "public", headingKey: "publicHeading", bodyKey: "publicBody", rich: true },
+  { id: "helps", headingKey: "helpsHeading", bodyKey: "helpsBody" },
+  { id: "private", headingKey: "privateHeading", bodyKey: "privateBody" },
+  { id: "trust", headingKey: "trustHeading", bodyKey: "trustBody" },
+] as const
+
+async function AboutPage() {
+  const t = await getTranslations("about")
+  const common = await getTranslations("common")
+  const footer = await getTranslations("modern.footer")
   const origin = SITE_URL
   const aboutPageLd = {
     "@context": "https://schema.org",
@@ -53,224 +74,121 @@ function AboutPage() {
   }
 
   return (
-    <AppShell defaultChatOpen={false}>
-      <main className="mx-auto w-full max-w-7xl px-4 py-8 md:px-6 md:py-10">
-        <JsonLd id="json-ld-about" data={aboutPageLd} />
+    <MarketingPageShell>
+      <JsonLd id="json-ld-about" data={aboutPageLd} />
 
-        <header className="relative mb-10 min-h-88 overflow-hidden rounded-xl md:min-h-104">
-          <div className="absolute inset-0" aria-hidden>
-            <Image
-              src="/home-bg-header.webp"
-              alt=""
-              fill
-              priority
-              sizes="(max-width: 768px) 100vw, 64rem"
-              className="object-cover object-center invert dark:invert-0"
-            />
-            <div className="absolute inset-0 bg-background/55 dark:bg-background/50" />
+      <article
+        className={cn(landingHeroGlass, "rounded-[2rem] sm:rounded-[2.5rem]")}
+      >
+        <div className={cn(landingInner, "py-10 sm:py-12 lg:py-14")}>
+          <header className="mx-auto max-w-3xl text-center sm:text-start">
+            <p className="text-[11px] font-medium tracking-[0.18em] text-muted-foreground uppercase">
+              {SITE_NAME}
+            </p>
+            <h1 className={cn(landingTitleSection, "mt-3")}>{t("title")}</h1>
+            <p className="mt-5 text-pretty text-base leading-relaxed text-muted-foreground sm:text-lg">
+              {t("intro")}
+            </p>
+          </header>
+
+          <Separator className="mx-auto my-10 max-w-3xl bg-foreground/8" />
+
+          <div className="mx-auto flex max-w-3xl flex-col gap-8">
+            {SECTIONS.map((section) => (
+              <section
+                key={section.id}
+                className={cn(
+                  landingGlassSurface,
+                  "rounded-[1.5rem] px-5 py-5 sm:px-6 sm:py-6"
+                )}
+                aria-labelledby={`about-${section.id}`}
+              >
+                <h2
+                  id={`about-${section.id}`}
+                  className={cn(landingTitleCard, "text-[1.125rem] sm:text-lg")}
+                >
+                  {t(section.headingKey)}
+                </h2>
+                <p className="mt-3 text-[0.9375rem] leading-relaxed text-muted-foreground sm:text-base">
+                  {"rich" in section && section.rich
+                    ? t.rich(section.bodyKey, {
+                        desk: (chunks) => (
+                          <Link
+                            href={APP_NEWS_PATH}
+                            className="font-medium text-foreground underline decoration-foreground/25 underline-offset-[3px] transition-colors hover:decoration-foreground/55"
+                          >
+                            {chunks}
+                          </Link>
+                        ),
+                      })
+                    : t(section.bodyKey)}
+                </p>
+              </section>
+            ))}
           </div>
-          <div className="relative z-10 flex min-h-88 items-end px-5 py-8 md:min-h-104  md:px-7 md:py-10">
-            <div className="w-full max-w-md md:max-w-lg">
-              <p className="mb-2 text-xs font-semibold tracking-[0.18em] text-muted-foreground uppercase">
-                {SITE_NAME}
-              </p>
-              <h1 className="text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
-                What is Exur?
-              </h1>
-              <p className="mt-4 text-base leading-relaxed text-muted-foreground">
-                Exur is a market-intel desk: public insight for the current
-                candle, model context, news bullets (distilled headlines and
-                summaries, not a raw wire), and an Exur co-pilot you can talk
-                to in plain language when you connect an account.
-              </p>
+
+          <Separator className="mx-auto my-10 max-w-3xl bg-foreground/8" />
+
+          <section
+            className="mx-auto max-w-3xl text-center sm:text-start"
+            aria-labelledby="about-hello"
+          >
+            <h2
+              id="about-hello"
+              className={cn(landingTitleCard, "text-[1.125rem] sm:text-lg")}
+            >
+              {t("helloHeading")}
+            </h2>
+            <p className="mt-3 text-[0.9375rem] leading-relaxed text-muted-foreground sm:text-base">
+              {t("helloBody")}
+            </p>
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-2.5 sm:justify-start">
+              <Button
+                className={landingCta("primary", "sm")}
+                render={
+                  <TrackedContactLink
+                    href={SOCIAL_X_URL}
+                    channel="x"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  />
+                }
+              >
+                {t("xTwitter")}
+              </Button>
+              <Button
+                className={landingCta("secondary", "sm")}
+                nativeButton={false}
+                render={<Link href={APP_NEWS_PATH} />}
+              >
+                {common("launchApp")}
+              </Button>
+              <Button
+                className={landingCta("light", "sm")}
+                nativeButton={false}
+                render={<Link href="/privacy" />}
+              >
+                {footer("privacy")}
+              </Button>
+              <Button
+                className={landingCta("light", "sm")}
+                nativeButton={false}
+                render={<Link href="/terms" />}
+              >
+                {footer("terms")}
+              </Button>
+              <Button
+                className={landingCta("light", "sm")}
+                nativeButton={false}
+                render={<Link href="/refund" />}
+              >
+                {footer("refund")}
+              </Button>
             </div>
-          </div>
-        </header>
-
-        <section className="mt-10 space-y-3" aria-labelledby="about-what">
-          <h2
-            id="about-what"
-            className="text-lg font-semibold tracking-tight text-foreground"
-          >
-            What Exur is
-          </h2>
-          <p className="text-sm leading-relaxed text-muted-foreground">
-            We&apos;re building a tool away from marketing theater: no slides,
-            no empty promises, just the product. The homepage is the desk: pulse
-            stance, model board, payoff geometry, and news bullets in one place,
-            with Exur available as a co-pilot for signed-in users.
-          </p>
-        </section>
-
-        <section className="mt-10 space-y-3" aria-labelledby="about-public">
-          <h2
-            id="about-public"
-            className="text-lg font-semibold tracking-tight text-foreground"
-          >
-            Public market intelligence
-          </h2>
-          <p className="text-sm leading-relaxed text-muted-foreground">
-            Guests can open the{" "}
-            <Link
-              href={APP_NEWS_PATH}
-              className="font-medium text-foreground underline-offset-4 hover:underline"
-            >
-              public desk
-            </Link>{" "}
-            and see market pulse, insights, model context, and news bullets
-            without signing in. Freshness labels use timestamps from the API,
-            such as when an insight was generated or when a story was published,
-            not login state. We do not treat authentication as proof of “live”
-            or delayed data.
-          </p>
-        </section>
-
-        <section className="mt-10 space-y-3" aria-labelledby="about-helps">
-          <h2
-            id="about-helps"
-            className="text-lg font-semibold tracking-tight text-foreground"
-          >
-            How Exur helps
-          </h2>
-          <p className="text-sm leading-relaxed text-muted-foreground">
-            Exur organizes market information for the candle you&apos;re looking
-            at: headline stance, how models sit relative to each other, payoff
-            shape, and news bullets: short distilled stories with source
-            context, not a raw news feed. The co-pilot is there to answer
-            questions about that desk in plain English, as support for analysis,
-            not a substitute for your own judgment.
-          </p>
-        </section>
-
-        <section className="mt-10 space-y-3" aria-labelledby="about-private">
-          <h2
-            id="about-private"
-            className="text-lg font-semibold tracking-tight text-foreground"
-          >
-            Private and member tools
-          </h2>
-          <p className="text-sm leading-relaxed text-muted-foreground">
-            Connecting with Google unlocks account features such as co-pilot chat.
-            Trade Desk and related premium guidance are treated as private /
-            member capabilities when available. Turn-by-turn desk guidance is
-            the product direction, not brokerage order execution on this site.
-            Public pages do not expose private account data for search engines.
-          </p>
-        </section>
-
-        <section className="mt-10 space-y-3" aria-labelledby="about-trust">
-          <h2
-            id="about-trust"
-            className="text-lg font-semibold tracking-tight text-foreground"
-          >
-            Transparency
-          </h2>
-          <p className="text-sm leading-relaxed text-muted-foreground">
-            Markets change. Timestamps describe when available content was
-            generated or published. Insights and co-pilot replies are tools for
-            analysis and decision-making, not guaranteed outcomes. Nothing on
-            Exur promises profit, risk-free trades, or guaranteed accuracy.
-          </p>
-        </section>
-
-        <section className="mt-10 space-y-4" aria-labelledby="about-hello">
-          <h2
-            id="about-hello"
-            className="text-lg font-semibold tracking-tight text-foreground"
-          >
-            Say hello
-          </h2>
-          <p className="text-sm leading-relaxed text-muted-foreground">
-            Still curious? Reach us on X.
-          </p>
-          <div className="flex flex-wrap items-center gap-3">
-            <Button
-              variant="secondary"
-              size="lg"
-              className="h-auto gap-2 rounded-2xl border-0 px-4 py-3 shadow-none"
-              render={
-                <TrackedContactLink
-                  href={SOCIAL_X_URL}
-                  channel="x"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                />
-              }
-            >
-              X (Twitter)
-            </Button>
-            <Button
-              variant="outline"
-              size="lg"
-              className="rounded-2xl"
-              nativeButton={false}
-              render={<Link href={APP_NEWS_PATH} />}
-            >
-              Launch App
-            </Button>
-            <Button
-              variant="outline"
-              size="lg"
-              className="rounded-2xl"
-              nativeButton={false}
-              render={<Link href="/privacy" />}
-            >
-              Privacy Policy
-            </Button>
-            <Button
-              variant="outline"
-              size="lg"
-              className="rounded-2xl"
-              nativeButton={false}
-              render={<Link href="/terms" />}
-            >
-              Terms of Service
-            </Button>
-            <Button
-              variant="outline"
-              size="lg"
-              className="rounded-2xl"
-              nativeButton={false}
-              render={<Link href="/refund" />}
-            >
-              Refund Policy
-            </Button>
-          </div>
-          <p className="text-xs text-muted-foreground">
-            <TrackedContactLink
-              href={SOCIAL_X_URL}
-              channel="x"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="underline-offset-4 hover:underline"
-            >
-              {SOCIAL_X_URL}
-            </TrackedContactLink>
-            {" · "}
-            <Link
-              href="/privacy"
-              className="underline-offset-4 hover:underline"
-            >
-              Privacy Policy
-            </Link>
-            {" · "}
-            <Link
-              href="/terms"
-              className="underline-offset-4 hover:underline"
-            >
-              Terms of Service
-            </Link>
-            {" · "}
-            <Link
-              href="/refund"
-              className="underline-offset-4 hover:underline"
-            >
-              Refund Policy
-            </Link>
-          </p>
-        </section>
-      </main>
-    </AppShell>
+          </section>
+        </div>
+      </article>
+    </MarketingPageShell>
   )
 }
 

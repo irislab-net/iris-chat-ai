@@ -4,6 +4,7 @@ import { JsonLd } from "@/components/seo/json-ld"
 import {
   LegalDocShell,
   LegalList,
+  LegalMetaChip,
   LegalNavButtons,
   LegalP,
   LegalSection,
@@ -53,7 +54,7 @@ function AiTradingSignalsPage() {
       <JsonLd id="json-ld-ai-signals-faq" data={faqPageJsonLd()} />
       <LegalDocShell
         title={AI_SIGNALS_TITLE}
-        meta={<p>Public product page · {SITE_NAME}</p>}
+        meta={<LegalMetaChip>Public product page · {SITE_NAME}</LegalMetaChip>}
         intro={
           <>
             <LegalP>

@@ -1,3 +1,7 @@
+"use client"
+
+import { useTranslations } from "next-intl"
+
 import { Card } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 
@@ -16,12 +20,14 @@ function NewsBulletinSkeleton({
   /** Chat news layout: lead + feed rows (bones only — no real card chrome). */
   sidebar?: boolean
 }) {
+  const t = useTranslations("dashboard")
+
   if (sidebar) {
     return (
       <div
         className="flex min-h-0 flex-1 flex-col gap-4"
         aria-busy="true"
-        aria-label="Loading news"
+        aria-label={t("loadingNews")}
       >
         {/* Lead — mirrors featured sidebar card spacing */}
         <div className="flex flex-col gap-2.5 px-1 py-1 sm:px-0.5">
@@ -104,6 +110,8 @@ function IntelWorkspaceSkeleton({
   mobile?: boolean
   className?: string
 }) {
+  const t = useTranslations("dashboard")
+
   return (
     <Card
       data-slot="context-workspace"
@@ -112,7 +120,7 @@ function IntelWorkspaceSkeleton({
         className
       )}
       aria-busy="true"
-      aria-label="Loading news"
+      aria-label={t("loadingNews")}
     >
       <div className="flex min-h-0 flex-1 flex-col">
         {mobile ? (

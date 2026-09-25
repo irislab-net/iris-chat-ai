@@ -10,9 +10,10 @@ import {
   Zap,
 } from "lucide-react"
 
-/** Nav destinations — labels live in `modern.nav`. */
+/** Nav destinations — labels live in `modern.nav`. Order matches page sections. */
 export const NAV_LINKS = [
   { id: "features" },
+  { id: "how-it-works" },
   { id: "desk" },
   { id: "signals" },
   { id: "about" },

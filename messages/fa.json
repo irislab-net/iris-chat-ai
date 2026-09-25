@@ -315,6 +315,7 @@
   "modern": {
     "nav": {
       "features": "چرا Exur",
+      "how-it-works": "چطور کار می‌کند",
       "desk": "میز کار",
       "signals": "سیگنال‌ها",
       "about": "درباره",
@@ -627,7 +628,9 @@
       "terms": "قوانین",
       "privacy": "حریم خصوصی",
       "refund": "بازگشت وجه",
-      "cookies": "تنظیمات کوکی"
+      "cookies": "تنظیمات کوکی",
+      "companyInfo": "اطلاعات شرکت",
+      "companiesHouse": "سوابق Companies House"
     },
     "context": {
       "description": "Exur مشاور مالی هوش مصنوعی توست. درباره خرج، پس‌انداز و سرمایه‌گذاری بپرس — جواب کوتاه و روشن بگیر."

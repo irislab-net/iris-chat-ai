@@ -12,6 +12,7 @@ import { useTranslations } from "next-intl"
 
 import { ChatAccountAvatar } from "@/components/app-shell/chat-account-avatar"
 import {
+  AccountCookieSettingsItem,
   AccountLanguageItems,
   AccountThemeItems,
 } from "@/components/app-shell/chat-account-preferences"
@@ -93,6 +94,7 @@ function ThemeSettingsMenu() {
         <AccountThemeItems />
         <DropdownMenuSeparator className={chatContextMenuSeparatorClass} />
         <AccountLanguageItems />
+        <AccountCookieSettingsItem />
       </DropdownMenuContent>
     </DropdownMenu>
   )
@@ -262,6 +264,7 @@ function ChatAccountFooter({
           <AccountThemeItems />
           <DropdownMenuSeparator className={chatContextMenuSeparatorClass} />
           <AccountLanguageItems />
+          <AccountCookieSettingsItem />
           <DropdownMenuSeparator className={chatContextMenuSeparatorClass} />
           <DropdownMenuItem
             variant="destructive"

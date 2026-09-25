@@ -49,7 +49,7 @@ function PriceTile({
     <div
       className={cn(
         "flex min-w-0 flex-col px-2.5 py-3 sm:px-3 sm:py-3.5",
-        hasReason ? "items-start text-left" : "items-center text-center",
+        hasReason ? "items-start text-start" : "items-center text-center",
         column.emphasis
           ? chatSignalCardEntryShellClass
           : chatSignalCardMetricTileClass

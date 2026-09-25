@@ -21,6 +21,17 @@ export function isGoogleOneTapConfigured() {
   return Boolean(getGoogleClientId())
 }
 
+/**
+ * Auto One Tap (FedCM) is off in local Next.js by default.
+ * GIS logs `FedCM get() NetworkError` when `https://local.exur.ai:3000`
+ * is missing from the OAuth client's Authorized JavaScript origins.
+ * Opt in after adding that origin: NEXT_PUBLIC_ENABLE_GOOGLE_ONE_TAP_DEV=1
+ */
+export function isGoogleOneTapAutoPromptAllowed() {
+  if (process.env.NODE_ENV === "production") return true
+  return process.env.NEXT_PUBLIC_ENABLE_GOOGLE_ONE_TAP_DEV === "1"
+}
+
 /** Auth cookie calls must be same-origin (via app route proxy) so Domain=.exur.ai cookies are sent. */
 export const AUTH_API_BASE = ""
 

@@ -35,6 +35,7 @@
   "modern": {
     "nav": {
       "features": "Waarom Exur",
+      "how-it-works": "Hoe het werkt",
       "desk": "Desk",
       "signals": "Signalen",
       "about": "Over",
@@ -347,7 +348,9 @@
       "terms": "Servicevoorwaarden",
       "privacy": "Privacybeleid",
       "refund": "Terugbetalingsbeleid",
-      "cookies": "Cookie-instellingen"
+      "cookies": "Cookie-instellingen",
+      "companyInfo": "Bedrijfsinformatie",
+      "companiesHouse": "Companies House-registratie"
     },
     "context": {
       "description": "Exur is je AI financiële assistent. Zie waar je geld naartoe gaat, vraag in gewone taal, en krijg een duidelijke volgende stap — geen nieuwe feed."

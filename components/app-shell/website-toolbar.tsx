@@ -161,7 +161,7 @@ function WebsiteToolbar({
     <header
       data-slot="website-toolbar"
       className={cn(
-        "app-mobile-safe-header flex min-h-[var(--mobile-toolbar-height,3rem)] shrink-0 items-center gap-1.5 bg-background px-3 sm:min-h-12 sm:gap-2 sm:px-4 sm:pt-0",
+        "app-mobile-safe-header flex min-h-(--mobile-toolbar-height,3rem) shrink-0 items-center gap-1.5 bg-background px-3 sm:min-h-12 sm:gap-2 sm:px-4 sm:pt-0",
         className
       )}
     >
@@ -210,7 +210,7 @@ function WebsiteToolbar({
                   size="sm"
                   aria-label={`Account menu for ${userAccountLabel(user)} · ${accountPlanName} plan`}
                   className={cn(
-                    "h-8 max-w-44 gap-1.5 rounded-full border-border/55 bg-muted/55 px-1 pr-2.5 shadow-none",
+                    "h-8 max-w-44 gap-1.5 rounded-full border-border/55 bg-muted/55 px-1 pe-2.5 shadow-none",
                     "hover:border-border/70 hover:bg-muted/75 hover:text-foreground",
                     "aria-expanded:border-border/70 aria-expanded:bg-muted/75 aria-expanded:text-foreground",
                     isProUser && "border-foreground/10 bg-muted/60"

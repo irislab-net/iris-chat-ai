@@ -581,7 +581,7 @@ export function AboutExperience() {
           <div
             className={cn(
               landingGlassPill,
-              "pointer-events-none absolute top-3.5 left-3.5 z-20 inline-flex items-center gap-2 px-3 py-1.5 sm:top-4 sm:left-4"
+              "pointer-events-none absolute top-3.5 inset-s-3.5 z-20 inline-flex items-center gap-2 px-3 py-1.5 sm:top-4 sm:inset-s-4"
             )}
           >
             <span
@@ -719,10 +719,10 @@ export function AboutExperience() {
                       style={{ width: "0%" }}
                     >
                       <span className="absolute inset-0 rounded-full bg-[#2563EB]" />
-                      <span className="about-narration-progress-sheen absolute inset-y-0 left-0 w-1/3 rounded-full bg-linear-to-r from-transparent via-white/70 to-transparent" />
+                      <span className="about-narration-progress-sheen absolute inset-y-0 inset-s-0 w-1/3 rounded-full bg-linear-to-r from-transparent via-white/70 to-transparent" />
                       <span
                         className={cn(
-                          "absolute top-1/2 right-0 z-10 size-3.5 -translate-y-1/2 translate-x-1/2 rounded-full",
+                          "absolute top-1/2 inset-e-0 z-10 size-3.5 -translate-y-1/2 translate-x-1/2 rounded-full",
                           "bg-white shadow-[0_1px_4px_rgba(15,23,42,0.18),0_0_0_3px_rgba(37,99,235,0.22)]",
                           "dark:shadow-[0_1px_4px_rgba(0,0,0,0.45),0_0_0_3px_rgba(37,99,235,0.35)]"
                         )}
@@ -740,8 +740,8 @@ export function AboutExperience() {
               aria-label={t("close")}
               className={cn(
                 landingGlassNavIcon,
-                "absolute top-4 right-4 z-30 text-muted-foreground hover:text-foreground",
-                expanded && "top-[max(1rem,env(safe-area-inset-top))] right-[max(1rem,env(safe-area-inset-right))]"
+                "absolute top-4 inset-e-4 z-30 text-muted-foreground hover:text-foreground",
+                expanded && "top-[max(1rem,env(safe-area-inset-top))] inset-e-[max(1rem,env(safe-area-inset-right))]"
               )}
             >
               <XIcon className="size-5" />

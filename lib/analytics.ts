@@ -3,23 +3,30 @@ import type { BillingCycle, PlanKey } from "@/lib/billing/catalog"
 import { getPlusUsdValue } from "@/lib/billing/prices"
 import { isMarketingHost } from "@/lib/hosts"
 
-export const GA_MEASUREMENT_ID =
-  process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID ?? "G-6B72W49JQE"
-
-export const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID ?? "GTM-KMGLCNZD"
-
-/** Production always loads GA; local dev only when NEXT_PUBLIC_GA_MEASUREMENT_ID is set. */
-export function isAnalyticsEnabled() {
-  if (!GA_MEASUREMENT_ID) return false
-  if (process.env.NODE_ENV === "production") return true
-  return Boolean(process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID)
+/** Requires NEXT_PUBLIC_GA_MEASUREMENT_ID (set in wrangler / .env) — no baked-in fallback. */
+export function getGaMeasurementId() {
+  return process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID?.trim() ?? ""
 }
 
-/** Production always loads GTM; local dev only when NEXT_PUBLIC_GTM_ID is set. */
+/** Requires NEXT_PUBLIC_GTM_ID (set in wrangler / .env) — no baked-in fallback. */
+export function getGtmId() {
+  return process.env.NEXT_PUBLIC_GTM_ID?.trim() ?? ""
+}
+
+/** @deprecated Prefer getGaMeasurementId() — kept for call-site compatibility. */
+export const GA_MEASUREMENT_ID = getGaMeasurementId()
+
+/** @deprecated Prefer getGtmId() — kept for call-site compatibility. */
+export const GTM_ID = getGtmId()
+
+/** GA is enabled when a measurement ID is configured (consent gates script load). */
+export function isAnalyticsEnabled() {
+  return Boolean(getGaMeasurementId())
+}
+
+/** GTM is enabled when a container ID is configured (consent gates script load). */
 export function isGtmEnabled() {
-  if (!GTM_ID) return false
-  if (process.env.NODE_ENV === "production") return true
-  return Boolean(process.env.NEXT_PUBLIC_GTM_ID)
+  return Boolean(getGtmId())
 }
 
 function normalizeAnalyticsPath(pathname: string): string {
@@ -98,10 +105,11 @@ export function trackPageView(path: string) {
 
 /** Bind GA user_id + tier for cohorting (clears on logout). */
 export function setAnalyticsUser(user: User | null) {
-  if (!GA_MEASUREMENT_ID) return
+  const measurementId = getGaMeasurementId()
+  if (!measurementId) return
 
   if (!user) {
-    gtag("config", GA_MEASUREMENT_ID, { user_id: undefined })
+    gtag("config", measurementId, { user_id: undefined })
     gtag("set", "user_properties", {
       tier: null,
       role: null,
@@ -110,7 +118,7 @@ export function setAnalyticsUser(user: User | null) {
     return
   }
 
-  gtag("config", GA_MEASUREMENT_ID, { user_id: user.id })
+  gtag("config", measurementId, { user_id: user.id })
   gtag("set", "user_properties", {
     tier: user.tier,
     role: user.role,

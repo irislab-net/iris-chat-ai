@@ -1,16 +1,17 @@
 import * as Sentry from "@sentry/nextjs"
 
-Sentry.init({
-  dsn: process.env.NEXT_PUBLIC_SENTRY_DSN ?? process.env.SENTRY_DSN,
+const dsn = process.env.NEXT_PUBLIC_SENTRY_DSN ?? process.env.SENTRY_DSN
 
-  enabled: Boolean(
-    process.env.NEXT_PUBLIC_SENTRY_DSN ?? process.env.SENTRY_DSN
-  ),
+Sentry.init({
+  dsn,
+
+  // Never send events from local `next dev`.
+  enabled: Boolean(dsn) && process.env.NODE_ENV !== "development",
 
   environment:
     process.env.SENTRY_ENVIRONMENT ??
     process.env.NEXT_PUBLIC_SENTRY_ENVIRONMENT ??
     process.env.NODE_ENV,
 
-  tracesSampleRate: process.env.NODE_ENV === "development" ? 1.0 : 0.1,
+  tracesSampleRate: 0.1,
 })

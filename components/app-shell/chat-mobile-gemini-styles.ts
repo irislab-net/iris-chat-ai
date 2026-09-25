@@ -158,10 +158,10 @@ const chatEmptyHeroPromptsClass =
 const chatSamplePromptCarouselClass =
   "w-full min-w-0 touch-pan-y lg:hidden [&_[data-slot=carousel-content]]:overflow-x-clip [&_[data-slot=carousel-content]]:px-1.5 [&_[data-slot=carousel-content]]:py-2.5 [&_[data-slot=carousel-content]]:[mask-image:linear-gradient(to_right,transparent_0%,black_10%,black_90%,transparent_100%)] [&_[data-slot=carousel-content]]:[-webkit-mask-image:linear-gradient(to_right,transparent_0%,black_10%,black_90%,transparent_100%)] rtl:[&_[data-slot=carousel-content]]:[mask-image:linear-gradient(to_left,transparent_0%,black_10%,black_90%,transparent_100%)] rtl:[&_[data-slot=carousel-content]]:[-webkit-mask-image:linear-gradient(to_left,transparent_0%,black_10%,black_90%,transparent_100%)]"
 
-const chatSamplePromptCarouselContentClass = "-ml-5 w-full items-stretch"
+const chatSamplePromptCarouselContentClass = "-ms-5 w-full items-stretch"
 
 const chatSamplePromptCarouselItemClass =
-  "flex min-w-0 basis-[88%] shrink-0 grow-0 self-stretch pl-5 sm:basis-[86%]"
+  "flex min-w-0 basis-[88%] shrink-0 grow-0 self-stretch ps-5 sm:basis-[86%]"
 
 const chatSamplePromptCarouselDotsClass = "mt-2.5"
 
@@ -227,7 +227,7 @@ const chatMobileSheetHandleClass =
   "mx-auto mb-4 h-1 w-10 shrink-0 rounded-full bg-foreground/15 dark:bg-white/20"
 
 const chatMobileSheetHeaderClass =
-  "gap-1.5 space-y-0 px-5 pb-2 pt-0 text-left"
+  "gap-1.5 space-y-0 px-5 pb-2 pt-0 text-start"
 
 const chatMobileSheetTitleClass =
   "text-[22px] font-normal tracking-tight text-foreground"
@@ -276,7 +276,7 @@ const chatMobileToolsMenuLabelClass =
   "px-2.5 pb-1 pt-1.5 text-[11px] font-medium tracking-[0.04em] text-muted-foreground"
 
 const chatMobileToolsMenuItemClass =
-  "flex w-full flex-col items-start gap-0.5 rounded-xl px-2.5 py-2.5 text-left transition-colors hover:bg-foreground/[0.05] data-[highlighted]:bg-foreground/[0.05] data-[selected=true]:bg-foreground/[0.07]"
+  "flex w-full flex-col items-start gap-0.5 rounded-xl px-2.5 py-2.5 text-start transition-colors hover:bg-foreground/[0.05] data-[highlighted]:bg-foreground/[0.05] data-[selected=true]:bg-foreground/[0.07]"
 
 const chatMobileToolsMenuItemTitleClass =
   "text-sm font-medium tracking-[-0.01em] text-foreground"

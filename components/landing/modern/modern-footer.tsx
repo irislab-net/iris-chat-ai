@@ -6,12 +6,15 @@ import { AnimatedExurLogo } from "@/components/brand/animated-exur-logo"
 import { TelegramIcon } from "@/components/brand/telegram-icon"
 import { XIcon } from "@/components/brand/x-icon"
 import { ScrollReveal } from "@/components/landing/modern/scroll-reveal"
+import { CompanyInformation } from "@/components/legal/company-information"
+import { openCookieSettings } from "@/components/privacy/cookie-consent-banner"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
-import { Link } from "@/i18n/navigation"
+import { Link, usePathname } from "@/i18n/navigation"
 import { scrollToSection } from "@/lib/landing-motion"
 import {
   getLaunchAppHref,
+  getMarketingHomePath,
   SITE_NAME,
   SOCIAL_TELEGRAM_URL,
   SOCIAL_X_URL,
@@ -39,10 +42,35 @@ type FooterColumn = {
 const linkClass =
   "w-fit text-start text-sm text-muted-foreground transition-colors hover:text-foreground"
 
-function FooterColumnLink({ link }: { link: FooterLink }) {
+function useOnLanding() {
+  const pathname = usePathname()
+  const homePath = getMarketingHomePath()
+  return pathname === "/home" || pathname === "/" || pathname === homePath
+}
+
+function goToLandingSection(id: string, onLanding: boolean) {
+  const homePath = getMarketingHomePath()
+  if (onLanding) {
+    scrollToSection(id)
+    return
+  }
+  window.location.assign(`${homePath}#${id}`)
+}
+
+function FooterColumnLink({
+  link,
+  onLanding,
+}: {
+  link: FooterLink
+  onLanding: boolean
+}) {
   if ("section" in link) {
     return (
-      <button type="button" onClick={() => scrollToSection(link.section)} className={linkClass}>
+      <button
+        type="button"
+        onClick={() => goToLandingSection(link.section, onLanding)}
+        className={linkClass}
+      >
         {link.label}
       </button>
     )
@@ -74,6 +102,8 @@ function FooterColumnLink({ link }: { link: FooterLink }) {
 export function ModernFooter() {
   const t = useTranslations("modern.footer")
   const year = new Date().getFullYear()
+  const onLanding = useOnLanding()
+  const homePath = getMarketingHomePath()
 
   const footerColumns: readonly FooterColumn[] = [
     {
@@ -104,11 +134,10 @@ export function ModernFooter() {
   ]
 
   const legalLinks = [
-    { label: t("terms"), href: "/terms" },
-    { label: t("privacy"), href: "/privacy" },
-    { label: t("refund"), href: "/refund" },
-    { label: t("cookies"), href: "/privacy" },
-  ] as const
+    { label: t("terms"), href: "/terms" as const },
+    { label: t("privacy"), href: "/privacy" as const },
+    { label: t("refund"), href: "/refund" as const },
+  ]
 
   return (
     <footer className={cn(landingFooterCard, landingCard)}>
@@ -116,16 +145,27 @@ export function ModernFooter() {
         <div className={cn(landingInner, "flex flex-col")}>
           <div className="flex flex-col gap-10 lg:flex-row lg:justify-between lg:gap-16">
             <div className="max-w-sm">
-              <Button
-                type="button"
-                variant="ghost"
-                onClick={() => scrollToSection("top")}
-                aria-label={SITE_NAME}
-                className="h-auto w-fit gap-2.5 rounded-full px-0 py-0 text-foreground hover:bg-transparent"
-              >
-                <AnimatedExurLogo scrollTrigger replayOnHover shimmer className="size-10" />
-                <span className={landingTitleFooter}>{SITE_NAME}</span>
-              </Button>
+              {onLanding ? (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={() => scrollToSection("top")}
+                  aria-label={SITE_NAME}
+                  className="h-auto w-fit gap-2.5 rounded-full px-0 py-0 text-foreground hover:bg-transparent"
+                >
+                  <AnimatedExurLogo scrollTrigger replayOnHover shimmer className="size-10" />
+                  <span className={landingTitleFooter}>{SITE_NAME}</span>
+                </Button>
+              ) : (
+                <Link
+                  href={homePath}
+                  aria-label={SITE_NAME}
+                  className="inline-flex h-auto w-fit items-center gap-2.5 rounded-full text-foreground"
+                >
+                  <AnimatedExurLogo scrollTrigger replayOnHover shimmer className="size-10" />
+                  <span className={landingTitleFooter}>{SITE_NAME}</span>
+                </Link>
+              )}
               <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
                 {t("tagline")}
               </p>
@@ -162,7 +202,7 @@ export function ModernFooter() {
                   <ul className="flex list-none flex-col gap-3">
                     {column.links.map((link) => (
                       <li key={link.label}>
-                        <FooterColumnLink link={link} />
+                        <FooterColumnLink link={link} onLanding={onLanding} />
                       </li>
                     ))}
                   </ul>
@@ -172,6 +212,13 @@ export function ModernFooter() {
           </div>
 
           <Separator className="mt-10 mb-6 bg-border" />
+
+          <CompanyInformation
+            heading={t("companyInfo")}
+            registerLabel={t("companiesHouse")}
+            variant="footer"
+            className="mb-6"
+          />
 
           <div className="flex flex-col gap-3 text-xs sm:flex-row sm:items-center sm:justify-between">
             <p className="text-muted-foreground">
@@ -188,6 +235,15 @@ export function ModernFooter() {
                   </Link>
                 </li>
               ))}
+              <li>
+                <button
+                  type="button"
+                  onClick={() => openCookieSettings()}
+                  className="text-muted-foreground underline decoration-border underline-offset-4 transition-colors hover:text-foreground hover:decoration-foreground"
+                >
+                  {t("cookies")}
+                </button>
+              </li>
             </ul>
           </div>
         </div>

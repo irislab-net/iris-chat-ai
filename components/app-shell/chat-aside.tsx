@@ -18,6 +18,7 @@ import { chatMobileScrollDownClass, chatMobileThreadBottomFadeClass, chatMobileT
 import { ChatMobileHeader } from "@/components/app-shell/chat-mobile-header"
 import { ChatGeminiNewChatIcon } from "@/components/app-shell/chat-gemini-new-chat-icon"
 import { ChatComposer } from "@/components/app-shell/chat-composer"
+import { MAIN_CONTENT_ID } from "@/components/landing/modern/skip-to-content"
 import { ChatMessageActions } from "@/components/app-shell/chat-message-actions"
 import {
   ChatAssistantTurn,
@@ -230,6 +231,8 @@ type ChatAsideProps = {
   onClose?: () => void
   displayMode?: ChatDisplayMode
   onDisplayModeChange?: (mode: ChatDisplayMode) => void
+  /** When chat is the sole primary view, expose #main-content for skip links. */
+  isPrimaryContent?: boolean
 }
 
 const CHAT_CONTENT_MAX_WIDTH = "max-w-3xl"
@@ -320,6 +323,7 @@ function ChatAside({
   onClose,
   displayMode = "docked",
   onDisplayModeChange,
+  isPrimaryContent = false,
 }: ChatAsideProps) {
   const t = useTranslations("workspace")
   const common = useTranslations("common")
@@ -1923,10 +1927,12 @@ function ChatAside({
 
   return (
     <aside
+      id={isPrimaryContent ? MAIN_CONTENT_ID : undefined}
+      tabIndex={isPrimaryContent ? -1 : undefined}
       data-slot="chat-aside"
       dir={textDir}
       className={cn(
-        "relative flex h-full min-h-0 w-full overflow-hidden",
+        "relative flex h-full min-h-0 w-full overflow-hidden outline-none",
         isMobileOverlay
           ? "flex-col bg-background text-foreground"
           : historyRailVisible || isFocusedLayout

@@ -1,4 +1,5 @@
 import type { ChatMessageResponse } from "@/lib/api/types"
+import { parseChatMessageResponse } from "@/lib/api/schemas"
 
 export type ChatSseReasoningEvent = {
   event: "reasoning"
@@ -77,7 +78,9 @@ export function parseChatSseBlock(block: string): ChatSseEvent | null {
     return { event: "error", data: { message, ...(code ? { code } : {}) } }
   }
   if (event === "done") {
-    return { event: "done", data: data as ChatMessageResponse }
+    const done = parseChatMessageResponse(data)
+    if (!done) return null
+    return { event: "done", data: done }
   }
 
   return null

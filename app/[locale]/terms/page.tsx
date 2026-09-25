@@ -3,11 +3,20 @@ import type { Metadata } from "next"
 import {
   LegalDocShell,
   LegalList,
+  LegalMetaChip,
   LegalNavButtons,
   LegalP,
   LegalSection,
+  legalLinkClass,
 } from "@/components/legal/legal-doc"
+import { CompanyInformation } from "@/components/legal/company-information"
 import { Link } from "@/i18n/navigation"
+import {
+  COMPANY_NUMBER,
+  COMPANIES_HOUSE_URL,
+  DISSOLVED_ON,
+  LEGAL_ENTITY_NAME,
+} from "@/lib/company"
 import { LEGAL_DOCS_REPO_URL } from "@/lib/legal"
 import { ROOT_ROBOTS, SITE_NAME, TERMS_DESCRIPTION } from "@/lib/site"
 
@@ -39,13 +48,13 @@ function TermsPage() {
       title="Terms of Service"
       meta={
         <>
-          <p>Effective Date: September 21, 2026</p>
-          <p>Version: 2.1.0</p>
-          <p>
+          <LegalMetaChip>Effective Date: September 21, 2026</LegalMetaChip>
+          <LegalMetaChip>Version: 2.1.0</LegalMetaChip>
+          <LegalMetaChip>
             Scope: Exur (
             <span className="font-mono text-foreground/90">exur.ai</span>
-            ), an AI-native financial intelligence platform.
-          </p>
+            )
+          </LegalMetaChip>
         </>
       }
       intro={
@@ -62,11 +71,28 @@ function TermsPage() {
             “Service”).
           </LegalP>
           <LegalP>
-            The Service is operated and maintained by the{" "}
-            <span className="font-medium text-foreground">Exur Core Team</span>{" "}
-            (pending formal corporate entity incorporation in a designated
-            jurisdiction). By accessing or using the Service, you agree to be
-            bound by these Terms.
+            Exur was developed under{" "}
+            <span className="font-medium text-foreground">
+              {LEGAL_ENTITY_NAME}
+            </span>{" "}
+            (Company No.{" "}
+            <span className="font-mono text-foreground/90">{COMPANY_NUMBER}</span>
+            ), a UK private limited company incorporated in England. Companies
+            House records show that company as dissolved on {DISSOLVED_ON}
+            following a voluntary strike-off. The Service is currently operated
+            and maintained by the{" "}
+            <span className="font-medium text-foreground">Exur Core Team</span>.
+            By accessing or using the Service, you agree to be bound by these
+            Terms. See the{" "}
+            <a
+              href={COMPANIES_HOUSE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={legalLinkClass}
+            >
+              Companies House record
+            </a>{" "}
+            for the historical company filing.
           </LegalP>
         </>
       }
@@ -229,7 +255,7 @@ function TermsPage() {
             as detailed in our{" "}
             <Link
               href="/refund"
-              className="font-medium text-foreground underline underline-offset-3 hover:text-foreground/80"
+              className={legalLinkClass}
             >
               Refund Policy
             </Link>
@@ -283,7 +309,14 @@ function TermsPage() {
         </LegalP>
       </LegalSection>
 
-      <LegalSection id="terms-contact" title="10. Contact Information">
+      <LegalSection id="terms-company" title="10. Company Information">
+        <CompanyInformation
+          registerLabel="Companies House record"
+          variant="legal"
+        />
+      </LegalSection>
+
+      <LegalSection id="terms-contact" title="11. Contact Information">
         <LegalP>
           For legal inquiries, terms clarification, or platform support, please
           contact:
@@ -293,7 +326,7 @@ function TermsPage() {
             <span className="font-medium text-foreground">Legal Team:</span>{" "}
             <a
               href="mailto:legal@exur.ai"
-              className="font-medium text-foreground underline underline-offset-3 hover:text-foreground/80"
+              className={legalLinkClass}
             >
               legal@exur.ai
             </a>
@@ -306,7 +339,7 @@ function TermsPage() {
               href={LEGAL_DOCS_REPO_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="font-medium text-foreground underline underline-offset-3 hover:text-foreground/80"
+              className={legalLinkClass}
             >
               github.com/exur-ai/exur-legal-docs
             </a>

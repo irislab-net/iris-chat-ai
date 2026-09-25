@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import { CheckIcon, CopyIcon, EyeIcon, NewspaperIcon, SquareIcon, Volume2Icon } from "lucide-react"
+import { useTranslations } from "next-intl"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -605,6 +606,7 @@ function NewsSpeakButton({
   item: NewsItem
   glass?: boolean
 }) {
+  const t = useTranslations("dashboard")
   const supported = React.useSyncExternalStore(
     () => () => {},
     () => "speechSynthesis" in window,
@@ -624,7 +626,7 @@ function NewsSpeakButton({
       type="button"
       variant="ghost"
       size="icon-sm"
-      aria-label={speaking ? "Stop reading aloud" : "Listen to article"}
+      aria-label={speaking ? t("stopReadingAloud") : t("listenToArticle")}
       aria-pressed={speaking}
       className={newsFooterActionButtonClass(glass)}
       onClick={() => toggleNewsSpeech(item)}
@@ -645,6 +647,7 @@ function NewsCopyButton({
   item: NewsItem
   glass?: boolean
 }) {
+  const t = useTranslations("dashboard")
   const [copied, setCopied] = React.useState(false)
   const copyTimerRef = React.useRef(0)
 
@@ -672,7 +675,7 @@ function NewsCopyButton({
       type="button"
       variant="ghost"
       size="icon-sm"
-      aria-label={copied ? "Copied" : "Copy article"}
+      aria-label={copied ? t("copied") : t("copyArticle")}
       className={newsFooterActionButtonClass(glass)}
       onClick={onCopy}
     >
@@ -692,6 +695,7 @@ function NewsSourceButton({
   item: NewsItem
   glass?: boolean
 }) {
+  const t = useTranslations("dashboard")
   const href = item.url?.trim()
   if (!href) return null
 
@@ -700,7 +704,7 @@ function NewsSourceButton({
       variant="ghost"
       size="icon-sm"
       nativeButton={false}
-      aria-label="Open original article"
+      aria-label={t("openOriginalArticle")}
       className={newsFooterActionButtonClass(glass)}
       render={
         <a
@@ -772,6 +776,7 @@ function NewsReadAllButton({
   news: NewsItem[]
   glass?: boolean
 }) {
+  const t = useTranslations("dashboard")
   const supported = React.useSyncExternalStore(
     () => () => {},
     () => "speechSynthesis" in window,
@@ -805,7 +810,7 @@ function NewsReadAllButton({
       ) : (
         <Volume2Icon className="size-3.5" aria-hidden />
       )}
-      {readingAll ? "Stop" : "Read all"}
+      {readingAll ? t("stop") : t("readAll")}
     </Button>
   )
 }
@@ -1221,6 +1226,8 @@ function NewsHeadlineList({
   isAuthenticated?: boolean
   authLoading?: boolean
 }) {
+  const t = useTranslations("dashboard")
+
   if (loading && news.length === 0) {
     return <NewsBulletinSkeleton sidebar={sidebar} />
   }
@@ -1250,9 +1257,9 @@ function NewsHeadlineList({
           <EmptyMedia variant="icon">
             <NewspaperIcon />
           </EmptyMedia>
-          <EmptyTitle>No headlines yet</EmptyTitle>
+          <EmptyTitle>{t("noHeadlinesYet")}</EmptyTitle>
           <EmptyDescription>
-            The tape updates with the next market cycle.
+            {t("noHeadlinesHint")}
           </EmptyDescription>
         </EmptyHeader>
       </Empty>
@@ -1282,7 +1289,7 @@ function NewsHeadlineList({
           <div>
             <div className="mb-1 flex items-center gap-2 px-1">
               <p className="text-[11px] font-medium tracking-[0.14em] text-muted-foreground uppercase">
-                Latest
+                {t("latest")}
               </p>
               <Separator className="flex-1" />
             </div>

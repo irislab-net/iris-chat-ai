@@ -652,6 +652,7 @@ function ChatComposer({
             <Textarea
               ref={textareaNodeRef}
               value={composerValue}
+              aria-label={t("composerAriaLabel")}
               onChange={(event) => {
                 const next = event.target.value
                 const start = event.target.selectionStart
@@ -750,7 +751,8 @@ function ChatComposer({
           <Textarea
             ref={textareaNodeRef}
             value={composerValue}
-          onChange={(event) => {
+            aria-label={t("composerAriaLabel")}
+            onChange={(event) => {
             const next = event.target.value
             const start = event.target.selectionStart
             syncMentionIndex(next, start)

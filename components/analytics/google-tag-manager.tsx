@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation"
 import Script from "next/script"
 
 import { useIdleReady } from "@/hooks/use-idle-ready"
-import { GTM_ID, isChatGtmEnabled } from "@/lib/analytics"
+import { GTM_ID, getGtmId, isChatGtmEnabled } from "@/lib/analytics"
 
 declare global {
   interface Window {
@@ -25,6 +25,9 @@ function GoogleTagManager() {
 
   if (!enabled || !idleReady) return null
 
+  const containerId = getGtmId() || GTM_ID
+  if (!containerId) return null
+
   return (
     <>
       <Script
@@ -32,12 +35,12 @@ function GoogleTagManager() {
         src="/scripts/google-tag-manager-boot.js"
         strategy="lazyOnload"
         onLoad={() => {
-          window.__exurBootGtm?.(GTM_ID)
+          window.__exurBootGtm?.(containerId)
         }}
       />
       <noscript>
         <iframe
-          src={`https://www.googletagmanager.com/ns.html?id=${GTM_ID}`}
+          src={`https://www.googletagmanager.com/ns.html?id=${containerId}`}
           height="0"
           width="0"
           title="Google Tag Manager"

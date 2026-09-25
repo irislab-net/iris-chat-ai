@@ -4,7 +4,11 @@ import { usePathname } from "next/navigation"
 import * as React from "react"
 import { useTheme } from "@wrksz/themes/client/use-theme"
 
-import { getGoogleClientId, isGoogleOneTapConfigured } from "@/lib/api/config"
+import {
+  getGoogleClientId,
+  isGoogleOneTapAutoPromptAllowed,
+  isGoogleOneTapConfigured,
+} from "@/lib/api/config"
 import {
   syncDocumentColorScheme,
   type BrowserChromeTheme,
@@ -38,7 +42,26 @@ function resolveGoogleOneTapColorScheme(
 }
 
 function handlePromptMoment(notification: GooglePromptMomentNotification) {
-  // FedCM no longer exposes skip reasons; only mark dismiss on explicit user close.
+  // Prefer not to re-prompt after hard FedCM/GIS failures (NetworkError, bad origin).
+  if (notification.isNotDisplayed?.()) {
+    const reason = notification.getNotDisplayedReason?.()
+    if (
+      reason === "unregistered_origin" ||
+      reason === "invalid_client" ||
+      reason === "suppressed_by_user" ||
+      reason === "opt_out_or_no_session"
+    ) {
+      markGoogleOneTapDismissed()
+    }
+    return
+  }
+  if (notification.isSkippedMoment?.()) {
+    if (notification.getSkippedReason?.() === "issuing_failed") {
+      markGoogleOneTapDismissed()
+    }
+    return
+  }
+  // FedCM often omits skip reasons; only mark dismiss on explicit user close.
   if (notification.isDismissedMoment()) {
     const reason = notification.getDismissedReason()
     if (reason === "credential_returned") return
@@ -91,6 +114,7 @@ export function GoogleOneTap({ enabled, onCredential }: GoogleOneTapProps) {
   const shouldRun =
     enabled &&
     isGoogleOneTapConfigured() &&
+    isGoogleOneTapAutoPromptAllowed() &&
     !isAuthRoute(pathname) &&
     !isGoogleOneTapDismissed()
 

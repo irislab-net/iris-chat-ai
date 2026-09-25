@@ -6,6 +6,7 @@ import { useSearchParams } from "next/navigation"
 
 import "@/app/styles/chat-gemini.css"
 
+import { SkipToContent } from "@/components/landing/modern/skip-to-content"
 import { ChatAsideSkeleton } from "@/components/app-shell/shell-skeletons"
 import { AppViewportSync } from "@/components/app-shell/app-viewport-sync"
 import { useIsDesktop } from "@/hooks/use-media-query"
@@ -242,6 +243,7 @@ function AppShellInner({
           <ChatAside
             className="rounded-none"
             onClose={() => persistChatOpen(false)}
+            isPrimaryContent
           />
         ) : (
           <>
@@ -256,6 +258,7 @@ function AppShellInner({
   return (
     <>
     <AppViewportSync />
+    <SkipToContent />
     <div
       data-slot="app-shell"
       className={cn(
@@ -268,6 +271,7 @@ function AppShellInner({
           className="min-h-0 flex-1 rounded-none"
           displayMode="focused"
           onDisplayModeChange={persistChatMode}
+          isPrimaryContent
         />
       ) : showDesktopSplit ? (
         <ResizablePanelGroup

@@ -2,6 +2,7 @@
 
 import {
   CheckIcon,
+  CookieIcon,
   LanguagesIcon,
   MonitorIcon,
   MoonIcon,
@@ -17,6 +18,7 @@ import {
   chatContextMenuSectionLabelClass,
 } from "@/components/app-shell/chat-context-menu-styles"
 import { LocaleFlag } from "@/components/i18n/locale-flag"
+import { openCookieSettings } from "@/components/privacy/cookie-consent-banner"
 import {
   DropdownMenuGroup,
   DropdownMenuItem,
@@ -143,4 +145,18 @@ function AccountLanguageItems() {
   )
 }
 
-export { AccountLanguageItems, AccountThemeItems }
+function AccountCookieSettingsItem() {
+  const t = useTranslations("consent")
+
+  return (
+    <DropdownMenuItem
+      className={chatContextMenuItemClass}
+      onClick={() => openCookieSettings()}
+    >
+      <CookieIcon className={chatContextMenuIconClass} />
+      <span className="flex-1">{t("manageTitle")}</span>
+    </DropdownMenuItem>
+  )
+}
+
+export { AccountCookieSettingsItem, AccountLanguageItems, AccountThemeItems }

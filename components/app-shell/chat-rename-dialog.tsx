@@ -117,7 +117,7 @@ function ChatRenameDialog({
           showCloseButton
         >
           <div className="flex flex-col gap-4 px-5 pt-5 pb-1">
-            <DialogHeader className="gap-1 space-y-0 text-left">
+            <DialogHeader className="gap-1 space-y-0 text-start">
               <DialogTitle className="text-lg font-semibold tracking-tight">
                 {t("renameChat")}
               </DialogTitle>

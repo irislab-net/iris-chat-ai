@@ -7,6 +7,7 @@ import Script from "next/script"
 import { useIdleReady } from "@/hooks/use-idle-ready"
 import {
   GA_MEASUREMENT_ID,
+  getGaMeasurementId,
   isAnalyticsEnabled,
   isChatGtmEnabled,
   trackPageView,
@@ -61,11 +62,14 @@ function GoogleAnalytics() {
 
   if (!wantsGa || !idleReady) return null
 
+  const measurementId = getGaMeasurementId() || GA_MEASUREMENT_ID
+  if (!measurementId) return null
+
   // Google CDN scripts rotate content, so Subresource Integrity hashes are not viable.
   return (
     <>
       <Script
-        src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+        src={`https://www.googletagmanager.com/gtag/js?id=${measurementId}`}
         strategy="lazyOnload"
       />
       <Script
@@ -73,7 +77,7 @@ function GoogleAnalytics() {
         src="/scripts/google-analytics-boot.js"
         strategy="lazyOnload"
         onLoad={() => {
-          window.__exurBootGa?.(GA_MEASUREMENT_ID)
+          window.__exurBootGa?.(measurementId)
         }}
       />
     </>

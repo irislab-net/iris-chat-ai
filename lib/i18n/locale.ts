@@ -60,7 +60,11 @@ const RTL_LOCALES = new Set<string>(["ar", "fa"])
 
 /** Sync middleware locale detection before a hard navigation. */
 export function persistLocaleChoice(locale: AppLocale) {
-  document.cookie = `${LOCALE_COOKIE_NAME}=${locale}; path=/; max-age=${LOCALE_COOKIE_MAX_AGE}; samesite=lax`
+  const secure =
+    typeof location !== "undefined" && location.protocol === "https:"
+      ? "; Secure"
+      : ""
+  document.cookie = `${LOCALE_COOKIE_NAME}=${locale}; path=/; max-age=${LOCALE_COOKIE_MAX_AGE}; SameSite=Lax${secure}`
 }
 
 export function localeDirection(locale: string): "ltr" | "rtl" {

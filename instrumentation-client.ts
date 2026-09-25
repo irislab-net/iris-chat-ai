@@ -1,18 +1,19 @@
 import * as Sentry from "@sentry/nextjs"
 
 const dsn = process.env.NEXT_PUBLIC_SENTRY_DSN
+const enabled = Boolean(dsn) && process.env.NODE_ENV !== "development"
 
 Sentry.init({
   dsn,
-  enabled: Boolean(dsn),
-  tracesSampleRate: process.env.NODE_ENV === "development" ? 1.0 : 0.1,
+  enabled,
+  tracesSampleRate: 0.1,
   // Replay is a large chunk — do not register it at init time.
   integrations: [],
   replaysSessionSampleRate: 0,
   replaysOnErrorSampleRate: 1.0,
 })
 
-if (dsn && typeof window !== "undefined") {
+if (enabled && typeof window !== "undefined") {
   // Avoid requestIdleCallback — LH quiet windows arm it early and inflate TBT.
   const events = ["pointerdown", "keydown", "touchstart"] as const
   let settled = false

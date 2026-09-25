@@ -35,6 +35,7 @@
   "modern": {
     "nav": {
       "features": "Por que Exur",
+      "how-it-works": "Como funciona",
       "desk": "Desk",
       "signals": "Sinais",
       "about": "Sobre",
@@ -347,7 +348,9 @@
       "terms": "Termos de Serviço",
       "privacy": "Política de Privacidade",
       "refund": "Política de Reembolso",
-      "cookies": "Configurações de cookies"
+      "cookies": "Configurações de cookies",
+      "companyInfo": "Informações da empresa",
+      "companiesHouse": "Registro na Companies House"
     },
     "context": {
       "description": "Exur é seu assistente financeiro com IA. Veja para onde vai seu dinheiro, pergunte em linguagem clara e receba um próximo passo claro, não outro feed."
