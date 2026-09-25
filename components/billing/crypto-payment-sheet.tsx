@@ -63,9 +63,10 @@ function PaymentQuoteSkeleton() {
   return (
     <div className="space-y-4">
       <BillingGlassPanel>
-        <div className="px-3.5 py-2.5">
-          <Skeleton className="h-2.5 w-24 rounded-full" />
-          <Skeleton className="mt-1.5 h-6 w-36 rounded-md" />
+        <div className="px-3.5 py-3">
+          <Skeleton className="h-3 w-20 rounded-full" />
+          <Skeleton className="mt-1.5 h-7 w-40 rounded-md" />
+          <Skeleton className="mt-1.5 h-3.5 w-28 rounded-full" />
         </div>
       </BillingGlassPanel>
       <BillingGlassPanel>
@@ -396,24 +397,24 @@ export function CryptoPaymentSheet({
                     <div
                       className={cn(
                         "flex items-center gap-3",
-                        isDesktop ? "px-3.5 py-2.5" : "px-3 py-2.5"
+                        isDesktop ? "px-3.5 py-3" : "px-3 py-3"
                       )}
                     >
                       <div className="min-w-0 flex-1">
-                        <p className="text-[11px] leading-none tracking-[0.12em] text-muted-foreground uppercase">
+                        <p className="text-xs font-medium text-muted-foreground">
                           {t("sendExactly")}
                         </p>
-                        <div className="mt-1.5 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
-                          <p className="font-mono text-xl font-semibold tracking-tight tabular-nums">
-                            {amountLabel}
-                          </p>
-                          <span className="text-xs text-muted-foreground">
+                        <p className="mt-1 text-[1.375rem] font-semibold leading-none tracking-tight tabular-nums text-foreground">
+                          {amountLabel}
+                        </p>
+                        <div className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted-foreground">
+                          <span>
                             {t("aboutUsd", {
                               amount: formatUsd(current!.amount_usd),
                             })}
                           </span>
                           {current!.original_amount_usd > current!.amount_usd ? (
-                            <span className="text-xs text-muted-foreground line-through">
+                            <span className="line-through">
                               {formatUsd(current!.original_amount_usd)}
                             </span>
                           ) : null}
