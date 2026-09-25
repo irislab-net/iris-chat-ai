@@ -148,6 +148,15 @@
     --sidebar-ring: oklch(0.556 0 0);
 }
 
+/* Mobile / tablet shell (< lg): news + sidebar surfaces match main app background. */
+@media (max-width: 1023px) {
+  :root,
+  .dark {
+    --sidebar: var(--background);
+    --sidebar-foreground: var(--foreground);
+  }
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
