@@ -486,6 +486,8 @@
     },
     "composerSend": "Mesaj gönder",
     "composerSendTitle": "Gönder · Enter",
+    "composerStop": "Oluşturmayı durdur",
+    "composerStopTitle": "Durdur",
     "showMore": "Daha fazla",
     "showLess": "Daha az",
     "reply": "Yanıtla",
@@ -509,6 +511,16 @@
     "signalSideLong": "LONG",
     "signalSideShort": "SHORT",
     "assistantTyping": "Asistan yazıyor",
+    "thinkingProgress": {
+      "aria": "Exur düşünüyor",
+      "statuses": {
+        "thinking": "Sorunu üzerinde düşünüyor…",
+        "analyzing": "Ayrıntıları inceliyor…",
+        "weighing": "Olası açıları tartıyor…",
+        "synthesizing": "Parçaları birleştiriyor…",
+        "concluding": "Sonuca varıyor…"
+      }
+    },
     "loadingExur": "Exur yükleniyor",
     "errors": {
       "recovery": "Yanıt alınırken bir sorun oluştu.",

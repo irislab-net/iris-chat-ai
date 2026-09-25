@@ -770,6 +770,8 @@
     },
     "composerSend": "إرسال الرسالة",
     "composerSendTitle": "إرسال · Enter",
+    "composerStop": "إيقاف التوليد",
+    "composerStopTitle": "إيقاف",
     "showMore": "عرض المزيد",
     "showLess": "عرض أقل",
     "reply": "رد",
@@ -793,6 +795,16 @@
     "signalSideLong": "شراء",
     "signalSideShort": "بيع",
     "assistantTyping": "المساعد يكتب",
+    "thinkingProgress": {
+      "aria": "Exur يفكر",
+      "statuses": {
+        "thinking": "يفكر في سؤالك…",
+        "analyzing": "يحلل التفاصيل…",
+        "weighing": "يوازن بين الزوايا الممكنة…",
+        "synthesizing": "يربط الأجزاء ببعضها…",
+        "concluding": "يصوغ الخلاصة…"
+      }
+    },
     "loadingExur": "جاري تحميل Exur",
     "errors": {
       "recovery": "حدث خطأ أثناء استلام الرد.",

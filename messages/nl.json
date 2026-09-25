@@ -486,6 +486,8 @@
     },
     "composerSend": "Bericht verzenden",
     "composerSendTitle": "Verzenden · Enter",
+    "composerStop": "Genereren stoppen",
+    "composerStopTitle": "Stoppen",
     "showMore": "Meer tonen",
     "showLess": "Minder tonen",
     "reply": "Beantwoorden",
@@ -509,6 +511,16 @@
     "signalSideLong": "LONG",
     "signalSideShort": "SHORT",
     "assistantTyping": "Assistent typt",
+    "thinkingProgress": {
+      "aria": "Exur denkt na",
+      "statuses": {
+        "thinking": "Nadenken over je vraag…",
+        "analyzing": "Details analyseren…",
+        "weighing": "Verschillende invalshoeken afwegen…",
+        "synthesizing": "De stukken verbinden…",
+        "concluding": "Een conclusie vormen…"
+      }
+    },
     "loadingExur": "Exur laden",
     "errors": {
       "recovery": "Er ging iets mis bij het ontvangen van het antwoord.",

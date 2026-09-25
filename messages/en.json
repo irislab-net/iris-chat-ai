@@ -770,6 +770,8 @@
     },
     "composerSend": "Send message",
     "composerSendTitle": "Send · Enter",
+    "composerStop": "Stop generating",
+    "composerStopTitle": "Stop",
     "showMore": "Show more",
     "showLess": "Show less",
     "reply": "Reply",
@@ -793,6 +795,16 @@
     "signalSideLong": "LONG",
     "signalSideShort": "SHORT",
     "assistantTyping": "Assistant is typing",
+    "thinkingProgress": {
+      "aria": "Exur is thinking",
+      "statuses": {
+        "thinking": "Thinking through your question…",
+        "analyzing": "Analyzing the details…",
+        "weighing": "Weighing possible angles…",
+        "synthesizing": "Connecting the pieces…",
+        "concluding": "Forming a conclusion…"
+      }
+    },
     "loadingExur": "Loading Exur",
     "errors": {
       "recovery": "Something went wrong while receiving the response.",

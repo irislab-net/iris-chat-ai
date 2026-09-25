@@ -486,6 +486,8 @@
     },
     "composerSend": "Отправить сообщение",
     "composerSendTitle": "Отправить · Enter",
+    "composerStop": "Остановить генерацию",
+    "composerStopTitle": "Стоп",
     "showMore": "Показать больше",
     "showLess": "Показать меньше",
     "reply": "Ответить",
@@ -509,6 +511,16 @@
     "signalSideLong": "LONG",
     "signalSideShort": "SHORT",
     "assistantTyping": "Ассистент печатает",
+    "thinkingProgress": {
+      "aria": "Exur думает",
+      "statuses": {
+        "thinking": "Обдумываю ваш вопрос…",
+        "analyzing": "Разбираю детали…",
+        "weighing": "Сравниваю возможные углы…",
+        "synthesizing": "Связываю части воедино…",
+        "concluding": "Формирую вывод…"
+      }
+    },
     "loadingExur": "Загрузка Exur",
     "errors": {
       "recovery": "Что-то пошло не так при получении ответа.",

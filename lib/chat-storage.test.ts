@@ -8,6 +8,7 @@ import {
   sortConversations,
   upsertConversation,
   writeChatStore,
+  resolveActiveConversation,
   type ChatStore,
   type StoredConversation,
 } from "@/lib/chat-storage"
@@ -184,5 +185,49 @@ describe("upsertConversation active + pin", () => {
       "p",
       "r",
     ])
+  })
+
+  it("resolveActiveConversation prefers activeId when still present", () => {
+    const older = {
+      ...sampleConversation("old", "Older"),
+      updatedAt: "2026-01-01T00:00:00.000Z",
+    }
+    const newer = {
+      ...sampleConversation("new", "Newer"),
+      updatedAt: "2026-03-01T00:00:00.000Z",
+    }
+    const store: ChatStore = {
+      version: 1,
+      conversations: [newer, older],
+      activeId: "old",
+    }
+    expect(resolveActiveConversation(store)?.id).toBe("old")
+  })
+
+  it("resolveActiveConversation keeps New chat blank when activeId is ephemeral", () => {
+    const chat = sampleConversation("real", "Real")
+    const store: ChatStore = {
+      version: 1,
+      conversations: [chat],
+      activeId: "blank-uuid-not-in-list",
+    }
+    expect(resolveActiveConversation(store)).toBeNull()
+  })
+
+  it("resolveActiveConversation falls back to newest when activeId is missing", () => {
+    const older = {
+      ...sampleConversation("old", "Older"),
+      updatedAt: "2026-01-01T00:00:00.000Z",
+    }
+    const newer = {
+      ...sampleConversation("new", "Newer"),
+      updatedAt: "2026-03-01T00:00:00.000Z",
+    }
+    const store: ChatStore = {
+      version: 1,
+      conversations: [older, newer],
+      activeId: null,
+    }
+    expect(resolveActiveConversation(store)?.id).toBe("new")
   })
 })

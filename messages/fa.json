@@ -770,6 +770,8 @@
     },
     "composerSend": "ارسال پیام",
     "composerSendTitle": "ارسال · Enter",
+    "composerStop": "توقف تولید",
+    "composerStopTitle": "توقف",
     "showMore": "نمایش بیشتر",
     "showLess": "نمایش کمتر",
     "reply": "پاسخ",
@@ -793,6 +795,16 @@
     "signalSideLong": "لانگ",
     "signalSideShort": "شورت",
     "assistantTyping": "دستیار در حال نوشتن است",
+    "thinkingProgress": {
+      "aria": "Exur در حال فکر کردن است",
+      "statuses": {
+        "thinking": "داره روی سوالت فکر می‌کنه…",
+        "analyzing": "داره جزئیات رو بررسی می‌کنه…",
+        "weighing": "داره زاویه‌های مختلف رو می‌سنجه…",
+        "synthesizing": "داره قطعه‌ها رو به هم وصل می‌کنه…",
+        "concluding": "داره به جمع‌بندی می‌رسه…"
+      }
+    },
     "loadingExur": "در حال بارگذاری Exur",
     "errors": {
       "recovery": "هنگام دریافت پاسخ مشکلی پیش آمد.",

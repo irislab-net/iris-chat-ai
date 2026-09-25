@@ -103,7 +103,7 @@ const chatMobileComposerTrailingClass =
   "[grid-area:trailing] flex shrink-0 items-center justify-end"
 
 const chatMobileComposerTextareaClass =
-  "chat-bidi w-full min-w-0 flex-1 field-sizing-content resize-none rounded-none border-0 bg-transparent px-2.5 text-base leading-6 break-words text-foreground shadow-none placeholder:text-muted-foreground/35 focus-visible:border-transparent focus-visible:ring-0 dark:bg-transparent dark:placeholder:text-muted-foreground/30"
+  "chat-bidi w-full min-w-0 flex-1 field-sizing-content resize-none rounded-none border-0 bg-transparent px-2.5 text-base leading-6 break-words text-foreground shadow-none placeholder:text-muted-foreground/35 focus-visible:border-transparent focus-visible:ring-0 disabled:cursor-not-allowed disabled:bg-transparent disabled:opacity-100 dark:bg-transparent dark:disabled:bg-transparent dark:placeholder:text-muted-foreground/30"
 
 const chatMobileComposerTextareaCompactClass =
   "min-h-8 max-h-8 w-full py-1 overflow-hidden leading-8 [field-sizing:fixed]"

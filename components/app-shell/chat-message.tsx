@@ -6,6 +6,7 @@ import dynamic from "next/dynamic"
 import { ExurLogo } from "@/components/brand/exur-logo"
 import { ChatMessageQuote } from "@/components/app-shell/chat-message-quote"
 import { chatUserBubbleClass } from "@/components/app-shell/chat-turn-actions"
+import { ChatThinkingProgress } from "@/components/app-shell/chat-thinking-progress"
 import { TypingDots } from "@/components/app-shell/chat-typing"
 import type { MessageQuote } from "@/lib/api/types"
 import { parseServerMessageId } from "@/lib/chat-message-id"
@@ -87,6 +88,9 @@ function ChatAssistantTurn({
   createdAt,
   replyTo,
   waiting,
+  thinking,
+  thinkingReady,
+  onThinkingComplete,
   streaming,
   children,
   actions,
@@ -100,6 +104,11 @@ function ChatAssistantTurn({
   createdAt?: string
   replyTo?: MessageQuote
   waiting?: boolean
+  /** Thinking effort — progress + rotating status instead of dots. */
+  thinking?: boolean
+  /** Model reply is ready; finish the thinking bar then reveal. */
+  thinkingReady?: boolean
+  onThinkingComplete?: () => void
   /** While typewriter/stream paints, skip markdown parse (cheap plain text). */
   streaming?: boolean
   compact?: boolean
@@ -138,7 +147,14 @@ function ChatAssistantTurn({
           data-chat-assistant-bubble=""
         >
           {waiting ? (
-            <TypingDots className="text-muted-foreground/70" />
+            thinking ? (
+              <ChatThinkingProgress
+                ready={Boolean(thinkingReady)}
+                onComplete={onThinkingComplete ?? (() => {})}
+              />
+            ) : (
+              <TypingDots className="text-muted-foreground/70" />
+            )
           ) : (
             <>
               {replyTo ? <ChatMessageQuote quote={replyTo} /> : null}
@@ -152,20 +168,15 @@ function ChatAssistantTurn({
                 )
               ) : null}
               {children}
-              {!isGemini && timestamp ? (
-                <div className="mt-1.5">{timestamp}</div>
-              ) : null}
             </>
           )}
         </div>
       ) : null}
-      {isGemini && (timestamp || toolbar) ? (
-        <div className="mt-1 flex min-h-7 items-center justify-between gap-2">
+      {timestamp || toolbar ? (
+        <div className="mt-4 flex min-h-7 items-center justify-between gap-2">
           {timestamp ?? <span aria-hidden className="shrink-0" />}
           {toolbar}
         </div>
-      ) : toolbar ? (
-        <div className="mt-1">{toolbar}</div>
       ) : null}
       {actions ? (
         <div className="mt-3 flex w-full flex-col items-start gap-2">{actions}</div>

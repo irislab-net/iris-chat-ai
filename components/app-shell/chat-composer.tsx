@@ -6,6 +6,7 @@ import {
   CheckIcon,
   ChevronDownIcon,
   PlusIcon,
+  SquareIcon,
   XIcon,
 } from "lucide-react"
 import { useLocale, useTranslations } from "next-intl"
@@ -78,6 +79,10 @@ const SHOW_COMPOSER_TOOLS_MENU = false
 
 type ChatComposerProps = {
   onSend?: (message: string) => void
+  /** Abort the in-flight reply (shown as Stop while `sending`). */
+  onStop?: () => void
+  /** True while waiting for / streaming an assistant reply. */
+  sending?: boolean
   disabled?: boolean
   className?: string
   value?: string
@@ -94,6 +99,8 @@ type ChatComposerProps = {
 
 function ChatComposer({
   onSend,
+  onStop,
+  sending = false,
   disabled,
   className,
   value: valueProp,
@@ -149,7 +156,9 @@ function ChatComposer({
   React.useEffect(() => {
     floatingExpandedRef.current = floatingPastSingleLine
   }, [floatingPastSingleLine])
-  const canSend = !disabled && composerValue.trim().length > 0
+  const canSend =
+    !disabled && !sending && composerValue.trim().length > 0
+  const showStop = sending && Boolean(onStop)
 
   const measureFloatingComposerLines = React.useCallback(
     (el: HTMLTextAreaElement, text: string, width: number) => {
@@ -363,7 +372,7 @@ function ChatComposer({
   }
 
   function send() {
-    if (disabled) return
+    if (disabled || sending) return
     const expanded = effectiveActiveTool
       ? expandComposerDraft({
           tool: effectiveActiveTool,
@@ -375,6 +384,11 @@ function ChatComposer({
     setActiveTool(null)
     if (!isControlled) setUncontrolled("")
     onValueChange?.("")
+  }
+
+  function stop() {
+    if (!sending) return
+    onStop?.()
   }
 
   function activateTool(tool: IrisMentionTool, palette?: MentionPaletteState | null) {
@@ -492,6 +506,10 @@ function ChatComposer({
       )}
       onSubmit={(event) => {
         event.preventDefault()
+        if (showStop) {
+          stop()
+          return
+        }
         send()
       }}
     >
@@ -680,21 +698,35 @@ function ChatComposer({
               )}
             />
             <div className={chatMobileComposerTrailingClass}>
-              <Button
-                type="submit"
-                size="icon-sm"
-                variant={canSend ? "default" : "ghost"}
-                aria-label={t("composerSend")}
-                title={t("composerSendTitle")}
-                disabled={!canSend}
-                className={
-                  canSend
-                    ? chatMobileComposerSendClass
-                    : chatDesktopComposerSendDisabledClass
-                }
-              >
-                <ArrowUpIcon className={cn("size-4.5", !canSend && "opacity-50")} />
-              </Button>
+              {showStop ? (
+                <Button
+                  type="button"
+                  size="icon-sm"
+                  variant="default"
+                  aria-label={t("composerStop")}
+                  title={t("composerStopTitle")}
+                  onClick={stop}
+                  className={chatMobileComposerSendClass}
+                >
+                  <SquareIcon className="size-3.5 fill-current" />
+                </Button>
+              ) : (
+                <Button
+                  type="submit"
+                  size="icon-sm"
+                  variant={canSend ? "default" : "ghost"}
+                  aria-label={t("composerSend")}
+                  title={t("composerSendTitle")}
+                  disabled={!canSend}
+                  className={
+                    canSend
+                      ? chatMobileComposerSendClass
+                      : chatDesktopComposerSendDisabledClass
+                  }
+                >
+                  <ArrowUpIcon className={cn("size-4.5", !canSend && "opacity-50")} />
+                </Button>
+              )}
             </div>
           </>
         ) : (
@@ -749,7 +781,7 @@ function ChatComposer({
               }
             }}
             dir={textDir}
-            className="chat-bidi min-h-6 min-w-32 flex-1 field-sizing-content resize-none rounded-none border-0 bg-transparent p-0 text-start text-base leading-6 shadow-none placeholder:text-muted-foreground/35 focus-visible:border-transparent focus-visible:ring-0 dark:bg-transparent dark:placeholder:text-muted-foreground/30 sm:text-sm sm:leading-[1.45]"
+            className="chat-bidi min-h-6 min-w-32 flex-1 field-sizing-content resize-none rounded-none border-0 bg-transparent p-0 text-start text-base leading-6 shadow-none placeholder:text-muted-foreground/35 focus-visible:border-transparent focus-visible:ring-0 disabled:cursor-not-allowed disabled:bg-transparent disabled:opacity-100 dark:bg-transparent dark:disabled:bg-transparent dark:placeholder:text-muted-foreground/30 sm:text-sm sm:leading-[1.45]"
           />
         </div>
         )}
@@ -849,21 +881,35 @@ function ChatComposer({
         ) : null}
         {!isFloating ? (
         <div className="[grid-area:trailing] flex items-center justify-end px-1 pb-0.5">
-          <Button
-            type="submit"
-            size="icon"
-            variant={canSend ? "default" : "ghost"}
-                aria-label={t("composerSend")}
-                title={t("composerSendTitle")}
-                disabled={!canSend}
-                className={
-                  canSend
-                    ? chatDesktopComposerSendClass
-                    : chatDesktopComposerSendDisabledClass
-                }
-          >
-            <ArrowUpIcon className={canSend ? undefined : "opacity-50"} />
-          </Button>
+          {showStop ? (
+            <Button
+              type="button"
+              size="icon"
+              variant="default"
+              aria-label={t("composerStop")}
+              title={t("composerStopTitle")}
+              onClick={stop}
+              className={chatDesktopComposerSendClass}
+            >
+              <SquareIcon className="size-3.5 fill-current" />
+            </Button>
+          ) : (
+            <Button
+              type="submit"
+              size="icon"
+              variant={canSend ? "default" : "ghost"}
+              aria-label={t("composerSend")}
+              title={t("composerSendTitle")}
+              disabled={!canSend}
+              className={
+                canSend
+                  ? chatDesktopComposerSendClass
+                  : chatDesktopComposerSendDisabledClass
+              }
+            >
+              <ArrowUpIcon className={canSend ? undefined : "opacity-50"} />
+            </Button>
+          )}
         </div>
         ) : null}
       </div>

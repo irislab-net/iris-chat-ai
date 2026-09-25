@@ -213,29 +213,33 @@ function ChatUserTurn({
                 </div>
               </div>
             ) : (
-              <div
-                dir="auto"
-                tabIndex={0}
-                className={cn(
-                  "chat-bidi min-w-0 w-full cursor-text select-text overflow-hidden wrap-anywhere outline-none",
-                  chatUserBubbleClass
-                )}
-              >
-                {replyTo ? <ChatMessageQuote quote={replyTo} /> : null}
-                <span className="block min-w-0 whitespace-pre-wrap wrap-anywhere">
-                  {displayText}
-                </span>
-                {timestamp ? <div className="mt-1.5">{timestamp}</div> : null}
+              <div className="flex w-full min-w-0 flex-col">
                 <div
+                  dir="auto"
+                  tabIndex={0}
                   className={cn(
-                    chatTurnActionsClass,
-                    chatUserTurnActionsRevealClass,
-                    "mt-2 w-full justify-between"
+                    "chat-bidi min-w-0 w-full cursor-text select-text overflow-hidden wrap-anywhere outline-none",
+                    chatUserBubbleClass
                   )}
                 >
-                  {expandToggle ?? <span aria-hidden className="shrink-0" />}
-                  {actionButtons}
+                  {replyTo ? <ChatMessageQuote quote={replyTo} /> : null}
+                  <span className="block min-w-0 whitespace-pre-wrap wrap-anywhere">
+                    {displayText}
+                  </span>
+                  <div
+                    className={cn(
+                      chatTurnActionsClass,
+                      chatUserTurnActionsRevealClass,
+                      "mt-2 w-full justify-between"
+                    )}
+                  >
+                    {expandToggle ?? <span aria-hidden className="shrink-0" />}
+                    {actionButtons}
+                  </div>
                 </div>
+                {timestamp ? (
+                  <div className="mt-1.5 px-1">{timestamp}</div>
+                ) : null}
               </div>
             )}
           </div>

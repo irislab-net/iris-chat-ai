@@ -110,6 +110,7 @@ import {
   readChatStore,
   restoreMessages,
   sanitizeMessages,
+  resolveActiveConversation,
   setActiveConversation,
   truncateHistoryBeforeMessageIndex,
   upsertConversation,
@@ -408,6 +409,28 @@ function ChatAside({
   const [pendingAssistantId, setPendingAssistantId] = React.useState<string | null>(
     null
   )
+  /** Thinking-mode wait UI — hold the reply until the progress bar finishes. */
+  const [thinkingGate, setThinkingGate] = React.useState<{
+    assistantId: string
+    ready: boolean
+  } | null>(null)
+  const thinkingDoneRef = React.useRef<(() => void) | null>(null)
+  const clearThinkingGate = React.useCallback(() => {
+    const resolve = thinkingDoneRef.current
+    thinkingDoneRef.current = null
+    setThinkingGate(null)
+    resolve?.()
+  }, [])
+  const waitForThinkingReveal = React.useCallback(() => {
+    return new Promise<void>((resolve) => {
+      thinkingDoneRef.current = resolve
+    })
+  }, [])
+  const handleThinkingComplete = React.useCallback(() => {
+    const resolve = thinkingDoneRef.current
+    thinkingDoneRef.current = null
+    resolve?.()
+  }, [])
   const bottomRef = React.useRef<HTMLDivElement>(null)
   const scrollViewportRef = React.useRef<HTMLDivElement>(null)
   const stickToBottomRef = React.useRef(true)
@@ -671,10 +694,27 @@ function ChatAside({
       setSession(nextSession)
       const store = readChatStore(chatOwnerId)
       setConversations(store.conversations)
-      const blank = blankConversation()
-      setConversationId(blank.id)
-      setMessages(blank.messages)
-      setHistory(blank.history)
+      const restored = resolveActiveConversation(store)
+      if (restored) {
+        applyStoredConversation(restored)
+        if (store.activeId !== restored.id) {
+          writeChatStore(
+            chatOwnerId,
+            setActiveConversation(store, restored.id)
+          )
+        }
+      } else {
+        // Keep the same blank id across refresh when user left a New chat open.
+        const blank = blankConversation(
+          store.activeId &&
+            !store.conversations.some((c) => c.id === store.activeId)
+            ? store.activeId
+            : undefined
+        )
+        setConversationId(blank.id)
+        setMessages(blank.messages)
+        setHistory(blank.history)
+      }
       setHistoryOpen(false)
       setHydrated(true)
     }
@@ -699,7 +739,13 @@ function ChatAside({
         } catch {
           // Sessions list is JWT-only enrichment; history sync still applies.
         }
+        if (cancelled || syncId !== historySyncRef.current) return
         setConversations(store.conversations)
+
+        const restored = resolveActiveConversation(store)
+        if (restored) {
+          void refreshConversationFromServer(restored.id)
+        }
       } catch {
         // Offline or unauthenticated copilot — local history still works.
       }
@@ -712,6 +758,7 @@ function ChatAside({
     authLoading,
     chatOwnerId,
     hydrated,
+    refreshConversationFromServer,
     session,
   ])
 
@@ -747,6 +794,7 @@ function ChatAside({
       abortRef.current = null
       setSending(false)
       setPendingAssistantId(null)
+      clearThinkingGate()
       setHistoryOpen(false)
       setDraft("")
       setReplyTarget(null)
@@ -760,7 +808,7 @@ function ChatAside({
 
     window.addEventListener(SESSION_RESET_EVENT, onSessionReset)
     return () => window.removeEventListener(SESSION_RESET_EVENT, onSessionReset)
-  }, [])
+  }, [clearThinkingGate])
 
   /** State updaters may run during render in React 19; useEffectEvent cannot. */
   function setMessagesAndPersist(
@@ -789,6 +837,7 @@ function ChatAside({
     abortRef.current = null
     setSending(false)
     setPendingAssistantId(null)
+    clearThinkingGate()
     closeHistoryPanelIfNeeded()
 
     if (hasUserMessages(messages)) {
@@ -813,6 +862,7 @@ function ChatAside({
     abortRef.current?.abort()
     abortRef.current = null
     setPendingAssistantId(null)
+    clearThinkingGate()
 
     if (hasUserMessages(messages) && id !== conversationId) {
       persistCurrent({
@@ -988,6 +1038,12 @@ function ChatAside({
 
     setSending(true)
     setPendingAssistantId(assistantId)
+    const useThinkingUi = effort === "high"
+    if (useThinkingUi) {
+      setThinkingGate({ assistantId, ready: false })
+    } else {
+      clearThinkingGate()
+    }
     window.clearTimeout(persistTimer.current)
 
     const controller = new AbortController()
@@ -995,6 +1051,7 @@ function ChatAside({
     let partialContent = ""
 
     if (shouldRunPaperTradePipeline(userMessage, historySnapshot)) {
+      clearThinkingGate()
       try {
         const { runIrisPaperTradeRequest } = await import(
           "@/lib/iris-paper-trade/run"
@@ -1104,6 +1161,7 @@ function ChatAside({
         )
       } finally {
         if (abortRef.current === controller) abortRef.current = null
+        clearThinkingGate()
         setPendingAssistantId(null)
         setSending(false)
       }
@@ -1292,6 +1350,15 @@ function ChatAside({
         finalizeSuccess(displayText, result.suggestedPrompts, turnExtras)
       }
 
+      if (useThinkingUi) {
+        setThinkingGate({ assistantId, ready: true })
+        await waitForThinkingReveal()
+        if (controller.signal.aborted) {
+          setMessages((prev) => removeEmptyAssistantTurn(prev, assistantId))
+          return
+        }
+      }
+
       // Skip typewriter when stream already painted content via onDelta,
       // when there is no prose (signal / no-trade card only), or when a signal
       // card will replace the typed block (avoids flash-then-hide of setup text).
@@ -1342,6 +1409,7 @@ function ChatAside({
         completeCoPilotTurn()
       }
     } catch (error) {
+      clearThinkingGate()
       if (isAbortError(error)) {
         setMessages((prev) => removeEmptyAssistantTurn(prev, assistantId))
         return
@@ -1389,6 +1457,7 @@ function ChatAside({
       )
     } finally {
         if (abortRef.current === controller) abortRef.current = null
+        clearThinkingGate()
         setPendingAssistantId(null)
         setSending(false)
       }
@@ -1406,6 +1475,7 @@ function ChatAside({
     abortRef.current = null
     setSending(false)
     setPendingAssistantId(null)
+    clearThinkingGate()
 
     const truncatedMessages = messages.slice(0, index)
     const truncatedHistory = truncateHistoryBeforeMessageIndex(
@@ -2306,6 +2376,15 @@ function ChatAside({
                   <ChatAssistantTurn
                     messageId={message.id}
                     waiting={isWaiting}
+                    thinking={
+                      thinkingGate?.assistantId === message.id && isWaiting
+                    }
+                    thinkingReady={
+                      thinkingGate?.assistantId === message.id
+                        ? thinkingGate.ready
+                        : false
+                    }
+                    onThinkingComplete={handleThinkingComplete}
                     streaming={isStreamingAssistant && Boolean(message.content)}
                     compact={sameRole}
                     content={showSignalCard ? undefined : message.content}
@@ -2448,7 +2527,10 @@ function ChatAside({
                 effort={effort}
                 onEffortChange={onEffortChange}
                 onSend={handleSend}
-                disabled={sending}
+                sending={sending}
+                onStop={() => {
+                  abortRef.current?.abort()
+                }}
                 layout={isMobileOverlay ? "floating" : "default"}
                 onFloatingFocusChange={
                   isMobileOverlay ? setMobileComposerFocused : undefined

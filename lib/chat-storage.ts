@@ -316,6 +316,28 @@ export function setActiveConversation(
   return { ...store, activeId: id, deletedIds: store.deletedIds ?? [] }
 }
 
+/**
+ * Conversation to open on hydrate / refresh.
+ * - Prefer `activeId` when it still exists in the store (not deleted).
+ * - If `activeId` is an ephemeral blank (not in the list), return null so UI stays on New chat.
+ * - If `activeId` is missing, fall back to the newest chat that has content.
+ */
+export function resolveActiveConversation(
+  store: ChatStore
+): StoredConversation | null {
+  if (store.activeId) {
+    const active = store.conversations.find((c) => c.id === store.activeId)
+    if (active) return active
+    return null
+  }
+
+  return (
+    sortConversations(store.conversations).find(
+      (c) => hasUserMessages(c.messages) || c.history.length > 0
+    ) ?? null
+  )
+}
+
 export function formatChatTime(iso: string, locale?: string) {
   const date = new Date(iso)
   if (Number.isNaN(date.getTime())) return ""
