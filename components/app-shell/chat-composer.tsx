@@ -715,7 +715,7 @@ function ChatComposer({
                 <Button
                   type="submit"
                   size="icon-sm"
-                  variant={canSend ? "default" : "ghost"}
+                  variant="default"
                   aria-label={t("composerSend")}
                   title={t("composerSendTitle")}
                   disabled={!canSend}
@@ -725,7 +725,7 @@ function ChatComposer({
                       : chatDesktopComposerSendDisabledClass
                   }
                 >
-                  <ArrowUpIcon className={cn("size-4.5", !canSend && "opacity-50")} />
+                  <ArrowUpIcon className="size-4.5" />
                 </Button>
               )}
             </div>
@@ -899,7 +899,7 @@ function ChatComposer({
             <Button
               type="submit"
               size="icon"
-              variant={canSend ? "default" : "ghost"}
+              variant="default"
               aria-label={t("composerSend")}
               title={t("composerSendTitle")}
               disabled={!canSend}
@@ -909,7 +909,7 @@ function ChatComposer({
                   : chatDesktopComposerSendDisabledClass
               }
             >
-              <ArrowUpIcon className={canSend ? undefined : "opacity-50"} />
+              <ArrowUpIcon />
             </Button>
           )}
         </div>
