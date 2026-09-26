@@ -12,6 +12,7 @@ import { chatContextMenuContentClass } from "@/components/app-shell/chat-context
 import {
   chatHistoryRailFooterBarClass,
   chatHistoryRailFooterWrapClass,
+  chatHistoryRailUpgradeClass,
 } from "@/components/app-shell/chat-mobile-gemini-styles"
 import { useAuth } from "@/components/auth/auth-provider"
 import { GoogleGlyph } from "@/components/auth/google-glyph"
@@ -215,8 +216,7 @@ function ChatAccountFooterSignedIn({
       {!collapsed && !isProUser ? (
         <Button
           size="sm"
-          variant="outline"
-          className="h-8 shrink-0 rounded-full px-3 text-xs font-medium"
+          className={chatHistoryRailUpgradeClass}
           nativeButton={false}
           render={<Link href={UPGRADE_PATH} />}
         >

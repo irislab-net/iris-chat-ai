@@ -21,7 +21,10 @@ import {
   chatContextMenuItemClass,
   chatContextMenuSeparatorClass,
 } from "@/components/app-shell/chat-context-menu-styles"
-import { chatMobileHeaderButtonClass } from "@/components/app-shell/chat-mobile-gemini-styles"
+import {
+  chatMobileHeaderButtonClass,
+  chatThreadUpgradeClass,
+} from "@/components/app-shell/chat-mobile-gemini-styles"
 import { ChatRenameDialog } from "@/components/app-shell/chat-rename-dialog"
 import { Button } from "@/components/ui/button"
 import {
@@ -55,12 +58,8 @@ function ChatThreadUpgradeButton({ className }: { className?: string }) {
   return (
     <Button
       type="button"
-      variant="ghost"
       size="sm"
-      className={cn(
-        "hidden h-8 gap-1.5 px-2 text-primary hover:bg-primary/10 hover:text-primary sm:inline-flex",
-        className
-      )}
+      className={cn(chatThreadUpgradeClass, className)}
       nativeButton={false}
       render={<Link href={UPGRADE_PATH} />}
     >

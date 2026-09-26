@@ -15,8 +15,11 @@ const chatMobileComposerGlassClass =
 const chatMobileComposerGlassFocusClass =
   "focus-within:bg-white focus-within:shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_100%,transparent),0_2px_4px_color-mix(in_oklch,var(--foreground)_6%,transparent),0_10px_28px_-8px_color-mix(in_oklch,var(--foreground)_14%,transparent),0_20px_48px_-14px_color-mix(in_oklch,var(--foreground)_12%,transparent)] dark:focus-within:bg-[oklch(0.32_0_0)] dark:focus-within:shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_18%,transparent),0_2px_4px_color-mix(in_oklch,black_50%,transparent),0_12px_32px_-8px_color-mix(in_oklch,black_60%,transparent),0_24px_52px_-16px_color-mix(in_oklch,black_55%,transparent)]"
 
-const chatMobilePrimaryButtonClass =
-  "border-0 bg-primary text-primary-foreground shadow-none hover:bg-primary/90"
+/** Landing CTA blue — same accent as composer send. */
+const chatLandingAccentFillClass =
+  "border-0 bg-[#2563EB] text-white shadow-[0_2px_8px_-2px_rgba(37,99,235,0.45)] transition-[transform,background-color,box-shadow] hover:bg-[#1D4ED8] hover:shadow-[0_4px_12px_-2px_rgba(37,99,235,0.5)] active:scale-[0.96]"
+
+const chatMobilePrimaryButtonClass = chatLandingAccentFillClass
 
 const chatMobileHeaderShadowClass =
   "shadow-[inset_0_1px_0_0_color-mix(in_oklch,var(--background)_55%,white),0_1px_3px_color-mix(in_oklch,var(--foreground)_4%,transparent),0_6px_18px_-8px_color-mix(in_oklch,var(--foreground)_6%,transparent)] dark:shadow-[inset_0_1px_0_0_color-mix(in_oklch,var(--foreground)_8%,transparent),0_1px_3px_color-mix(in_oklch,var(--foreground)_8%,transparent),0_6px_18px_-8px_color-mix(in_oklch,var(--foreground)_10%,transparent)]"
@@ -149,13 +152,13 @@ const chatDesktopComposerIconButtonClass = `${chatDesktopComposerControlClass} s
 
 const chatDesktopComposerEffortButtonClass = `${chatDesktopComposerControlClass} h-9 gap-1 rounded-full px-2.5 text-xs font-medium text-muted-foreground hover:text-foreground sm:h-8 [&_svg]:opacity-70`
 
-/** Send / stop — deep blue (Gemini-style accent). */
+/** Send / stop — landing CTA blue (`#2563EB`). */
 const chatDesktopComposerSendClass =
-  "size-10 rounded-full border-0 bg-blue-600 text-white shadow-[0_2px_8px_-2px_color-mix(in_oklch,oklch(0.55_0.2_255)_45%,transparent)] transition-[transform,background-color,box-shadow] hover:bg-blue-700 active:scale-[0.96] disabled:opacity-100 sm:size-9 dark:bg-blue-500 dark:hover:bg-blue-400 dark:text-white"
+  "size-10 rounded-full border-0 bg-[#2563EB] text-white shadow-[0_2px_8px_-2px_rgba(37,99,235,0.45)] transition-[transform,background-color,box-shadow] hover:bg-[#1D4ED8] hover:shadow-[0_4px_12px_-2px_rgba(37,99,235,0.5)] active:scale-[0.96] disabled:opacity-100 sm:size-9"
 
-/** Idle / disabled send — light blue pill (visible, not washed gray). */
+/** Idle / disabled send — soft landing blue tint. */
 const chatDesktopComposerSendDisabledClass =
-  "size-10 rounded-full border-0 bg-blue-100 text-blue-700 shadow-none transition-[transform,background-color] hover:bg-blue-100 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-100 sm:size-9 dark:bg-blue-950/80 dark:text-blue-300 dark:hover:bg-blue-950/80"
+  "size-10 rounded-full border-0 bg-[#2563EB]/10 text-[#1D4ED8] shadow-none transition-[transform,background-color] hover:bg-[#2563EB]/10 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-100 sm:size-9 dark:bg-[#2563EB]/18 dark:text-[#93C5FD] dark:hover:bg-[#2563EB]/18"
 
 /** Empty-state sample prompt cards — liquid glass, Apple-like inset padding. */
 const chatSamplePromptButtonClass = `flex h-full w-full min-w-0 items-start justify-start rounded-[20px] border-0 px-4.5 py-4 text-start transition-[background-color,box-shadow,transform] active:scale-[0.985] sm:rounded-[22px] sm:px-5 sm:py-4.5 lg:rounded-[16px] lg:px-3.5 lg:py-3 ${chatMobileGlassSurfaceClass} ${chatMobileHeaderShadowClass} ${chatMobileHeaderShadowHoverClass}`
@@ -209,9 +212,9 @@ const chatMobileComposerToolChipCloseClass = `${chatComposerToolChipCloseClass} 
 
 const chatDesktopComposerToolChipCloseClass = `${chatComposerToolChipCloseClass} size-3.5`
 
-/** Send / stop — deep blue (same accent as desktop). */
+/** Send / stop — landing CTA blue (same as desktop). */
 const chatMobileComposerSendClass =
-  "size-10 rounded-full border-0 bg-blue-600 text-white shadow-[0_2px_8px_-2px_color-mix(in_oklch,oklch(0.55_0.2_255)_45%,transparent)] transition-[transform,background-color,box-shadow] hover:bg-blue-700 active:scale-[0.96] disabled:opacity-100 dark:bg-blue-500 dark:hover:bg-blue-400 dark:text-white"
+  "size-10 rounded-full border-0 bg-[#2563EB] text-white shadow-[0_2px_8px_-2px_rgba(37,99,235,0.45)] transition-[transform,background-color,box-shadow] hover:bg-[#1D4ED8] hover:shadow-[0_4px_12px_-2px_rgba(37,99,235,0.5)] active:scale-[0.96] disabled:opacity-100"
 
 const chatMobileScrollDownClass =
   "absolute bottom-[calc(5.5rem+env(safe-area-inset-bottom,0px))] left-1/2 z-10 size-9 -translate-x-1/2 rounded-full border-0 bg-white/78 text-foreground backdrop-blur-2xl backdrop-saturate-[180%] supports-[backdrop-filter]:bg-white/62 shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_75%,transparent),0_2px_10px_-3px_color-mix(in_oklch,var(--foreground)_7%,transparent),0_8px_24px_-10px_color-mix(in_oklch,var(--foreground)_8%,transparent)] hover:bg-white/88 dark:bg-white/[0.08] dark:supports-[backdrop-filter]:bg-white/[0.06] dark:hover:bg-white/[0.12]"
@@ -241,7 +244,15 @@ const chatMobileDrawerNavItemClass = `h-11 w-full justify-start gap-3 rounded-xl
 const chatMobileDrawerSectionLabelClass =
   "px-3 pb-1.5 text-[12px] font-medium tracking-[0.04em] text-muted-foreground/80 uppercase"
 
-const chatMobileDrawerUpgradeClass = `h-9 shrink-0 rounded-full px-5 text-sm font-medium ${chatMobilePrimaryButtonClass}`
+const chatMobileDrawerUpgradeClass = `h-9 shrink-0 rounded-full px-5 text-sm font-medium ${chatLandingAccentFillClass}`
+
+/** Compact upgrade pill — history rail, chat header, thread toolbar. */
+const chatUpgradePillClass = `h-8 shrink-0 rounded-full px-3 text-xs font-medium ${chatLandingAccentFillClass}`
+
+const chatHistoryRailUpgradeClass = chatUpgradePillClass
+
+/** Chat chrome upgrade — desktop header / thread toolbar. */
+const chatThreadUpgradeClass = `hidden gap-1.5 sm:inline-flex ${chatUpgradePillClass}`
 
 const chatMobileDrawerFooterWrapClass = "relative z-10 shrink-0"
 
@@ -416,6 +427,9 @@ export {
   chatMobileDrawerSectionLabelClass,
   chatMobileDrawerSurfaceClass,
   chatMobileDrawerUpgradeClass,
+  chatHistoryRailUpgradeClass,
+  chatThreadUpgradeClass,
+  chatUpgradePillClass,
   chatMobileHeaderButtonClass,
   chatMobileHeaderShellClass,
   chatMobileHeaderScrimClass,

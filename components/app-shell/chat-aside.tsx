@@ -23,6 +23,8 @@ import {
   chatMobileEmptyHeroMarkClass,
   chatMobileEmptyHeroTitleClass,
   chatMobileEmptyHeroWrapClass,
+  chatThreadUpgradeClass,
+  chatUpgradePillClass,
 } from "@/components/app-shell/chat-mobile-gemini-styles"
 import { ChatMobileHeader } from "@/components/app-shell/chat-mobile-header"
 import { ChatGeminiNewChatIcon } from "@/components/app-shell/chat-gemini-new-chat-icon"
@@ -2143,9 +2145,8 @@ function ChatAside({
               isAuthenticated &&
               !isProUser ? (
               <Button
-                size="xs"
-                variant="outline"
-                className="hidden shrink-0 sm:inline-flex"
+                size="sm"
+                className={chatThreadUpgradeClass}
                 nativeButton={false}
                 render={<Link href={UPGRADE_PATH} />}
               >
@@ -2328,6 +2329,7 @@ function ChatAside({
                               <Button
                                 type="button"
                                 size="sm"
+                                className={chatUpgradePillClass}
                                 nativeButton={false}
                                 render={<Link href={UPGRADE_PATH} />}
                               >
