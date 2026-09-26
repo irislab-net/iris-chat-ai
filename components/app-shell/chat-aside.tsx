@@ -2322,7 +2322,7 @@ function ChatAside({
                               <Button
                                 type="button"
                                 size="icon-sm"
-                                variant="secondary"
+                                variant="outline"
                                 disabled={sending}
                                 aria-label={t("tryAgain")}
                                 onClick={() => void handleRetry(message.id)}
