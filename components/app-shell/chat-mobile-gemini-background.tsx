@@ -44,12 +44,15 @@ function ChatMobileGeminiBackground({
         )}
       />
       {isHero ? (
-        <div className="absolute inset-x-0 top-0 h-[28%] bg-linear-to-b from-white via-white/85 to-transparent dark:from-background dark:via-background/80 sm:h-[32%]" />
+        <div className="absolute inset-x-0 top-0 h-[28%] bg-linear-to-b from-white via-white/85 to-transparent sm:h-[32%] dark:from-background dark:via-background/80" />
       ) : (
         <div className="chat-gemini-bg-top-fade absolute inset-x-0 top-0 h-[42%]" />
       )}
       <div
-        className={cn("chat-gemini-mesh absolute inset-0", intro && "chat-gemini-mesh-intro")}
+        className={cn(
+          "chat-gemini-mesh absolute inset-0",
+          intro && "chat-gemini-mesh-intro"
+        )}
       >
         <div className="chat-gemini-orb chat-gemini-orb-a" />
         <div className="chat-gemini-orb chat-gemini-orb-b" />

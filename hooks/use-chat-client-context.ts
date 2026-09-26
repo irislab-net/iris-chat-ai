@@ -17,8 +17,9 @@ export function useChatClientContext(input: {
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const locale = useLocale()
-  const workspaceTab =
-    isAppDeskPath(pathname) ? resolveWorkspaceTab(searchParams.get("tab")) : null
+  const workspaceTab = isAppDeskPath(pathname)
+    ? resolveWorkspaceTab(searchParams.get("tab"))
+    : null
 
   return React.useMemo(
     () =>

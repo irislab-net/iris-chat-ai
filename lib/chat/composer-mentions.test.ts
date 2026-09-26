@@ -87,9 +87,7 @@ describe("composer mentions", () => {
     expect(summarizeSignalUserMessage("سیگنال BTC", "سیگنال")).toBe(
       "سیگنال · BTC"
     )
-    expect(summarizeSignalUserMessage("إشارة ETH", "إشارة")).toBe(
-      "إشارة · ETH"
-    )
+    expect(summarizeSignalUserMessage("إشارة ETH", "إشارة")).toBe("إشارة · ETH")
     expect(summarizeSignalUserMessage("What is ETH doing today?")).toBe(
       "What is ETH doing today?"
     )
@@ -102,9 +100,7 @@ describe("composer mentions", () => {
     expect(expandSummarizedSignalUserMessage("سیگنال · BTC")).toBe(
       "@signal BTC"
     )
-    expect(expandSummarizedSignalUserMessage("إشارة · ETH")).toBe(
-      "@signal ETH"
-    )
+    expect(expandSummarizedSignalUserMessage("إشارة · ETH")).toBe("@signal ETH")
   })
 
   it("filters mention options by Persian and Arabic aliases", () => {

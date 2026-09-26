@@ -49,11 +49,7 @@ type ChatThreadActionsProps = ChatThreadMenuProps & {
   showUpgrade?: boolean
 }
 
-function ChatThreadUpgradeButton({
-  className,
-}: {
-  className?: string
-}) {
+function ChatThreadUpgradeButton({ className }: { className?: string }) {
   const t = useTranslations("workspace")
 
   return (

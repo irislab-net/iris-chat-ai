@@ -23,28 +23,36 @@ import { sanitizeMessages, type ChatUiMessage } from "@/lib/chat-storage"
 
 describe("co-pilot recovery helpers", () => {
   it("treats AbortError as expected teardown, not user error", () => {
-    expect(isAbortError(Object.assign(new Error("aborted"), { name: "AbortError" }))).toBe(
-      true
-    )
+    expect(
+      isAbortError(Object.assign(new Error("aborted"), { name: "AbortError" }))
+    ).toBe(true)
     expect(isAbortError(new Error("HTTP 502"))).toBe(false)
-    expect(coPilotUserFacingError(Object.assign(new Error("x"), { name: "AbortError" }))).toBe(
-      ""
-    )
+    expect(
+      coPilotUserFacingError(
+        Object.assign(new Error("x"), { name: "AbortError" })
+      )
+    ).toBe("")
   })
 
   it("maps transport failures to safe recovery copy (no HTTP codes)", () => {
-    expect(coPilotUserFacingError(new Error("HTTP 502"))).toBe(COPILOT_RECOVERY_MESSAGE)
+    expect(coPilotUserFacingError(new Error("HTTP 502"))).toBe(
+      COPILOT_RECOVERY_MESSAGE
+    )
     expect(coPilotUserFacingError(new Error("Failed to fetch"))).toBe(
       COPILOT_RECOVERY_MESSAGE
     )
     expect(
       coPilotUserFacingError(
-        Object.assign(new Error("Chat request timed out"), { name: "TimeoutError" })
+        Object.assign(new Error("Chat request timed out"), {
+          name: "TimeoutError",
+        })
       )
     ).toBe(COPILOT_TIMEOUT_MESSAGE)
-    expect(coPilotUserFacingError(new Error("Exur returned an empty reply. Please try again."))).toBe(
-      COPILOT_RECOVERY_MESSAGE
-    )
+    expect(
+      coPilotUserFacingError(
+        new Error("Exur returned an empty reply. Please try again.")
+      )
+    ).toBe(COPILOT_RECOVERY_MESSAGE)
     expect(COPILOT_RECOVERY_MESSAGE).not.toMatch(/HTTP|502|SSE|FetchError/i)
   })
 
@@ -53,9 +61,9 @@ describe("co-pilot recovery helpers", () => {
       status: 402,
     })
     expect(coPilotUserFacingError(err)).toBe(COPILOT_CREDIT_MESSAGE)
-    expect(
-      coPilotUserFacingError(err, { isProUser: true })
-    ).toBe(COPILOT_PRO_SESSION_REFRESH_MESSAGE)
+    expect(coPilotUserFacingError(err, { isProUser: true })).toBe(
+      COPILOT_PRO_SESSION_REFRESH_MESSAGE
+    )
     expect(COPILOT_CREDIT_MESSAGE.toLowerCase()).toContain("upgrade")
     expect(COPILOT_CREDIT_MESSAGE).not.toMatch(/402|HTTP/i)
   })

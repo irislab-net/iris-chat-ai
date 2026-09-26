@@ -51,16 +51,14 @@ function TermsPage() {
           <LegalMetaChip>Version: 2.1.0</LegalMetaChip>
           <LegalMetaChip>
             Scope: Exur (
-            <span className="font-mono text-foreground/90">exur.ai</span>
-            )
+            <span className="font-mono text-foreground/90">exur.ai</span>)
           </LegalMetaChip>
         </>
       }
       intro={
         <>
           <LegalP>
-            Welcome to{" "}
-            <span className="font-medium text-foreground">Exur</span>{" "}
+            Welcome to <span className="font-medium text-foreground">Exur</span>{" "}
             (accessible via{" "}
             <span className="font-mono text-foreground/90">exur.ai</span>
             ). These Terms of Service (“Terms”) govern your access to and use of
@@ -75,9 +73,12 @@ function TermsPage() {
               {LEGAL_ENTITY_NAME}
             </span>{" "}
             (Company No.{" "}
-            <span className="font-mono text-foreground/90">{COMPANY_NUMBER}</span>
-            ), a UK private limited company incorporated in England. By accessing
-            or using the Service, you agree to be bound by these Terms. See the{" "}
+            <span className="font-mono text-foreground/90">
+              {COMPANY_NUMBER}
+            </span>
+            ), a UK private limited company incorporated in England. By
+            accessing or using the Service, you agree to be bound by these
+            Terms. See the{" "}
             <a
               href={COMPANIES_HOUSE_URL}
               target="_blank"
@@ -96,15 +97,15 @@ function TermsPage() {
         id="terms-disclaimer"
         title="1. Financial & Investment Disclaimer (No Advice)"
       >
-        <LegalP className="font-semibold uppercase text-foreground">
+        <LegalP className="font-semibold text-foreground uppercase">
           The Service does not provide financial, investment, legal, or tax
           advice.
         </LegalP>
         <LegalList>
           <li>
             All content, conversational outputs, quantitative model signals,
-            market analysis, news summaries, confidence metrics, and AI-generated
-            insights provided by Exur are strictly for{" "}
+            market analysis, news summaries, confidence metrics, and
+            AI-generated insights provided by Exur are strictly for{" "}
             <span className="font-medium text-foreground">
               informational, educational, and research purposes only
             </span>
@@ -137,9 +138,7 @@ function TermsPage() {
         <LegalList>
           <li>
             You are at least{" "}
-            <span className="font-medium text-foreground">
-              18 years of age
-            </span>{" "}
+            <span className="font-medium text-foreground">18 years of age</span>{" "}
             (or the age of legal majority in your jurisdiction).
           </li>
           <li>
@@ -233,9 +232,9 @@ function TermsPage() {
             <span className="font-medium text-foreground">
               Service Modifications:
             </span>{" "}
-            We reserve the right to modify, suspend, or discontinue any
-            feature, prediction model, API integration, or free/pro tier access
-            at any time without prior notice or financial liability.
+            We reserve the right to modify, suspend, or discontinue any feature,
+            prediction model, API integration, or free/pro tier access at any
+            time without prior notice or financial liability.
           </li>
           <li>
             <span className="font-medium text-foreground">
@@ -247,10 +246,7 @@ function TermsPage() {
               strictly non-refundable
             </span>{" "}
             as detailed in our{" "}
-            <Link
-              href="/refund"
-              className={legalLinkClass}
-            >
+            <Link href="/refund" className={legalLinkClass}>
               Refund Policy
             </Link>
             .
@@ -318,10 +314,7 @@ function TermsPage() {
         <LegalList>
           <li>
             <span className="font-medium text-foreground">Legal Team:</span>{" "}
-            <a
-              href="mailto:legal@exur.ai"
-              className={legalLinkClass}
-            >
+            <a href="mailto:legal@exur.ai" className={legalLinkClass}>
               legal@exur.ai
             </a>
           </li>

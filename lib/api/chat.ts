@@ -12,9 +12,7 @@ import type {
   TrialInfo,
   User,
 } from "@/lib/api/types"
-import {
-  buildChatClientContext as buildChatClientContextFromTools,
-} from "@/lib/chat/client-tools"
+import { buildChatClientContext as buildChatClientContextFromTools } from "@/lib/chat/client-tools"
 import { isChatCreditBalance } from "@/lib/api/credit-usage"
 import { WORKSPACE_TAB_NEWS, workspaceTabHref } from "@/lib/workspace-tab"
 import type { WorkspaceTab } from "@/lib/workspace-tab"
@@ -88,7 +86,9 @@ export function usageFromCreditBalance(
   }
 }
 
-export function usageFromTrial(trial?: TrialInfo | null): CoPilotUsage | undefined {
+export function usageFromTrial(
+  trial?: TrialInfo | null
+): CoPilotUsage | undefined {
   if (!trial) return undefined
   return {
     plan: "guest",
@@ -119,10 +119,7 @@ export function chatToolToLegacy(call: ChatToolCallResult): CoPilotToolCall {
   }
 }
 
-export function parseSuggestedActionList(
-  value: unknown,
-  limit = 4
-): string[] {
+export function parseSuggestedActionList(value: unknown, limit = 4): string[] {
   if (!Array.isArray(value)) return []
   return value
     .filter(
@@ -175,7 +172,8 @@ export function adaptChatMessageResponse(
     ...(reasoning ? { reasoning } : {}),
     conversation_id: data.session_id,
     session_id: data.session_id,
-    usage: usageFromCreditBalance(data.credit_balance) ?? usageFromTrial(data.trial),
+    usage:
+      usageFromCreditBalance(data.credit_balance) ?? usageFromTrial(data.trial),
     credit_balance: data.credit_balance,
     trial: data.trial,
     code: data.code,

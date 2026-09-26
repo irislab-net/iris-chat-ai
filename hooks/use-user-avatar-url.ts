@@ -35,8 +35,7 @@ export function useUserAvatarUrl(user: User | null | undefined) {
     }
   }, [user, userKey, directUrl])
 
-  const fallbackUrl =
-    fallbackState.key === userKey ? fallbackState.url : null
+  const fallbackUrl = fallbackState.key === userKey ? fallbackState.url : null
 
   return directUrl ?? fallbackUrl
 }

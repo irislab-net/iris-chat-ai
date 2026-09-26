@@ -61,8 +61,8 @@ function AiTradingSignalsPage() {
           <>
             <LegalP>
               Exur is an AI financial assistant. Ask about spending, savings,
-              and what’s next, in your own words. This is decision support,
-              not brokerage, and not a promise of profit. Prefer the official{" "}
+              and what’s next, in your own words. This is decision support, not
+              brokerage, and not a promise of profit. Prefer the official{" "}
               <Link href="/what-is-exur" className={legalLinkClass}>
                 What is Exur?
               </Link>{" "}
@@ -87,9 +87,9 @@ function AiTradingSignalsPage() {
 
         <LegalSection id="signals-who" title="Who it is for">
           <LegalP>
-            Anyone who wants a clear read on their money: spending, savings,
-            and tradeoffs, without another chart-heavy app. Sign in when you
-            want a co-pilot that remembers you.
+            Anyone who wants a clear read on their money: spending, savings, and
+            tradeoffs, without another chart-heavy app. Sign in when you want a
+            co-pilot that remembers you.
           </LegalP>
         </LegalSection>
 

@@ -1,5 +1,8 @@
 import type { BillingCycle } from "@/lib/billing/catalog"
-import type { PaymentCurrency, PaymentInvoice } from "@/lib/billing/invoice-types"
+import type {
+  PaymentCurrency,
+  PaymentInvoice,
+} from "@/lib/billing/invoice-types"
 import { isPaymentCurrency } from "@/lib/billing/invoice-types"
 import { billingForPlanId } from "@/lib/billing/plan-ids"
 

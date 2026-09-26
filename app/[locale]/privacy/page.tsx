@@ -18,11 +18,7 @@ import {
   LEGAL_ENTITY_NAME,
 } from "@/lib/company"
 import { LEGAL_DOCS_REPO_URL } from "@/lib/legal"
-import {
-  PRIVACY_DESCRIPTION,
-  ROOT_ROBOTS,
-  SITE_NAME,
-} from "@/lib/site"
+import { PRIVACY_DESCRIPTION, ROOT_ROBOTS, SITE_NAME } from "@/lib/site"
 
 export const metadata: Metadata = {
   title: "Privacy Policy",
@@ -56,18 +52,17 @@ function PrivacyPage() {
           <LegalMetaChip>Version: 2.1.0</LegalMetaChip>
           <LegalMetaChip>
             Scope: Exur (
-            <span className="font-mono text-foreground/90">exur.ai</span>
-            )
+            <span className="font-mono text-foreground/90">exur.ai</span>)
           </LegalMetaChip>
         </>
       }
       intro={
         <LegalP>
-          At <span className="font-medium text-foreground">Exur</span>{" "}
-          (“we”, “us”, or “our”), operating via{" "}
-          <span className="font-mono text-foreground/90">exur.ai</span>, we
-          are dedicated to safeguarding your privacy and managing your personal
-          data with institutional-grade security and transparency. This Privacy
+          At <span className="font-medium text-foreground">Exur</span> (“we”,
+          “us”, or “our”), operating via{" "}
+          <span className="font-mono text-foreground/90">exur.ai</span>, we are
+          dedicated to safeguarding your privacy and managing your personal data
+          with institutional-grade security and transparency. This Privacy
           Policy explains how we collect, process, store, and protect your data
           when you interact with the Exur platform, its Model Context Protocol
           (MCP) integrations, conversational financial interfaces, and
@@ -96,8 +91,8 @@ function PrivacyPage() {
         </LegalP>
         <LegalP>
           The Exur platform (
-          <span className="font-mono text-foreground/90">exur.ai</span>) acts
-          as the Data Controller under applicable data protection legislation,
+          <span className="font-mono text-foreground/90">exur.ai</span>) acts as
+          the Data Controller under applicable data protection legislation,
           including the European Union General Data Protection Regulation (EU
           GDPR). Official Companies House details are available at the{" "}
           <a
@@ -118,9 +113,7 @@ function PrivacyPage() {
       >
         <LegalP>
           Exur is strictly intended for users who are at least{" "}
-          <span className="font-medium text-foreground">
-            18 years of age
-          </span>{" "}
+          <span className="font-medium text-foreground">18 years of age</span>{" "}
           (or the age of legal majority in their jurisdiction). We do not
           knowingly collect or process personal data from individuals under 18.
           If we become aware that a user under the age of 18 has created an
@@ -253,9 +246,9 @@ function PrivacyPage() {
             <span className="font-medium text-foreground">
               Performance of a Contract:
             </span>{" "}
-            Providing access to the Exur conversational interface, market
-            signal engine, user history synchronization, and personalized
-            financial analytics.
+            Providing access to the Exur conversational interface, market signal
+            engine, user history synchronization, and personalized financial
+            analytics.
           </li>
           <li>
             <span className="font-medium text-foreground">
@@ -350,8 +343,8 @@ function PrivacyPage() {
             <span className="font-medium text-foreground">
               Free Tier Service:
             </span>{" "}
-            Exur offers access to its core conversational intelligence and
-            basic market signal features free of charge.
+            Exur offers access to its core conversational intelligence and basic
+            market signal features free of charge.
           </li>
           <li>
             <span className="font-medium text-foreground">
@@ -373,17 +366,11 @@ function PrivacyPage() {
             </span>
             . No full, partial, or prorated refunds will be issued once payment
             is completed. See our{" "}
-            <Link
-              href="/refund"
-              className={legalLinkClass}
-            >
+            <Link href="/refund" className={legalLinkClass}>
               Refund Policy
             </Link>{" "}
             and{" "}
-            <Link
-              href="/terms"
-              className={legalLinkClass}
-            >
+            <Link href="/terms" className={legalLinkClass}>
               Terms of Service
             </Link>
             .
@@ -465,8 +452,7 @@ function PrivacyPage() {
       <LegalSection id="privacy-disclaimer" title="10. Financial Disclaimer">
         <LegalP>
           Exur is an AI-native market intelligence and research platform. Exur
-          does{" "}
-          <span className="font-medium text-foreground">not</span> provide
+          does <span className="font-medium text-foreground">not</span> provide
           regulated financial advice, investment advisory services, or legal
           counsel. Market predictions, model outputs, and conversational
           responses are generated for informational and analytical purposes
@@ -492,10 +478,7 @@ function PrivacyPage() {
             <span className="font-medium text-foreground">
               Legal &amp; Privacy Team:
             </span>{" "}
-            <a
-              href="mailto:legal@exur.ai"
-              className={legalLinkClass}
-            >
+            <a href="mailto:legal@exur.ai" className={legalLinkClass}>
               legal@exur.ai
             </a>
           </li>

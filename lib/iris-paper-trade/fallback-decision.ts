@@ -1,8 +1,5 @@
 import { getMaxLeverage } from "@/lib/chat/trade-signal"
-import {
-  MAX_STOP_PCT,
-  MIN_STOP_PCT,
-} from "@/lib/iris-paper-trade/validate"
+import { MAX_STOP_PCT, MIN_STOP_PCT } from "@/lib/iris-paper-trade/validate"
 import type {
   MarketContextPacket,
   OpenPaperTradeToolArgs,
@@ -62,8 +59,9 @@ function pickLeverage(
 ): number {
   const models = packet.models
   const edge =
-    direction === "LONG" ? models?.long.edge ?? 0 : models?.short.edge ?? 0
-  const p = direction === "LONG" ? models?.long.p ?? 0.5 : models?.short.p ?? 0.5
+    direction === "LONG" ? (models?.long.edge ?? 0) : (models?.short.edge ?? 0)
+  const p =
+    direction === "LONG" ? (models?.long.p ?? 0.5) : (models?.short.p ?? 0.5)
   const strength = Math.max(0, edge) + Math.max(0, p - 0.5)
   const base = strength >= 0.12 ? 5 : strength >= 0.05 ? 4 : 3
   return Math.min(base, getMaxLeverage(symbol))
@@ -102,7 +100,9 @@ function buildThesis(
 }
 
 function setupName(direction: OpenPaperTradeToolArgs["direction"]): string {
-  return direction === "SHORT" ? "Model short edge fade" : "Model long continuation"
+  return direction === "SHORT"
+    ? "Model short edge fade"
+    : "Model long continuation"
 }
 
 /**

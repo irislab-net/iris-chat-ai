@@ -1,5 +1,8 @@
 import { clearStoredTokens } from "@/lib/api/auth"
-import { clearChatStore, discardLegacyGlobalChatStore } from "@/lib/chat-storage"
+import {
+  clearChatStore,
+  discardLegacyGlobalChatStore,
+} from "@/lib/chat-storage"
 
 export const SESSION_RESET_EVENT = "iris-session-reset"
 

@@ -61,7 +61,7 @@ function ChatThinkingTrace({
       <AccordionItem value="thinking" className="border-0">
         <AccordionTrigger
           className={cn(
-            "gap-2 rounded-lg border-0 px-0 py-1.5 text-muted-foreground hover:no-underline hover:text-foreground",
+            "gap-2 rounded-lg border-0 px-0 py-1.5 text-muted-foreground hover:text-foreground hover:no-underline",
             "**:data-[slot=accordion-trigger-icon]:hidden"
           )}
         >
@@ -98,7 +98,10 @@ function ChatThinkingTrace({
                   role="listitem"
                   className="inline-flex w-fit max-w-full items-center gap-1.5 rounded-full bg-muted/50 px-2.5 py-1 text-[11px] font-medium text-muted-foreground"
                 >
-                  <WrenchIcon className="size-3 shrink-0 opacity-70" aria-hidden />
+                  <WrenchIcon
+                    className="size-3 shrink-0 opacity-70"
+                    aria-hidden
+                  />
                   <span className="min-w-0 truncate">
                     {t("usingTool", { tool: formatToolName(step.name) })}
                   </span>
@@ -107,7 +110,7 @@ function ChatThinkingTrace({
                 <p
                   key={`reason-${index}`}
                   role="listitem"
-                  className="whitespace-pre-wrap text-xs leading-5 text-muted-foreground"
+                  className="text-xs leading-5 whitespace-pre-wrap text-muted-foreground"
                 >
                   {step.text}
                 </p>

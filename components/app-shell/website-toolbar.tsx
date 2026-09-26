@@ -74,10 +74,7 @@ function AccountAvatar({
         )}
       >
         {avatarUrl ? (
-          <AvatarImage
-            src={avatarUrl}
-            alt={userAccountLabel(user)}
-          />
+          <AvatarImage src={avatarUrl} alt={userAccountLabel(user)} />
         ) : null}
         <AvatarFallback className="text-[11px] font-medium">
           {userAvatarFallback(user)}
@@ -85,7 +82,7 @@ function AccountAvatar({
       </Avatar>
       {isProUser ? (
         <Badge
-          className="absolute bottom-0 left-1/2 z-10 h-3 min-w-0 -translate-x-1/2 translate-y-1/2 rounded-full border border-background px-1 text-[7px] font-bold leading-none tracking-wide bg-foreground text-background shadow-sm"
+          className="absolute bottom-0 left-1/2 z-10 h-3 min-w-0 -translate-x-1/2 translate-y-1/2 rounded-full border border-background bg-foreground px-1 text-[7px] leading-none font-bold tracking-wide text-background shadow-sm"
           aria-hidden
         >
           {planName}
@@ -145,14 +142,7 @@ function WebsiteToolbar({
   const common = useTranslations("common")
   const pathname = usePathname()
   const { resolvedTheme, setTheme } = useTheme()
-  const {
-    user,
-    loading,
-    login,
-    logout,
-    isProUser,
-    loginPending,
-  } = useAuth()
+  const { user, loading, login, logout, isProUser, loginPending } = useAuth()
   const accountSubline = user ? userAccountSubline(user) : null
   const accountPlanName = user ? displayPlanName(user.tier) : "Free"
   const accountAvatarUrl = useUserAvatarUrl(user)
@@ -255,7 +245,7 @@ function WebsiteToolbar({
                       planName={accountPlanName}
                     />
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-medium leading-tight tracking-[-0.01em]">
+                      <p className="truncate text-sm leading-tight font-medium tracking-[-0.01em]">
                         {userAccountLabel(user)}
                       </p>
                       {accountSubline ? (
@@ -273,7 +263,9 @@ function WebsiteToolbar({
               </DropdownMenuGroup>
               {!isProUser ? (
                 <>
-                  <DropdownMenuSeparator className={chatContextMenuSeparatorClass} />
+                  <DropdownMenuSeparator
+                    className={chatContextMenuSeparatorClass}
+                  />
                   <DropdownMenuItem
                     className={chatContextMenuItemClass}
                     nativeButton={false}
@@ -284,7 +276,9 @@ function WebsiteToolbar({
                   </DropdownMenuItem>
                 </>
               ) : null}
-              <DropdownMenuSeparator className={chatContextMenuSeparatorClass} />
+              <DropdownMenuSeparator
+                className={chatContextMenuSeparatorClass}
+              />
               <DropdownMenuItem
                 className={chatContextMenuItemClass}
                 onClick={() =>
@@ -292,9 +286,13 @@ function WebsiteToolbar({
                 }
               >
                 <EclipseIcon className={chatContextMenuIconClass} />
-                {resolvedTheme === "dark" ? common("lightMode") : common("darkMode")}
+                {resolvedTheme === "dark"
+                  ? common("lightMode")
+                  : common("darkMode")}
               </DropdownMenuItem>
-              <DropdownMenuSeparator className={chatContextMenuSeparatorClass} />
+              <DropdownMenuSeparator
+                className={chatContextMenuSeparatorClass}
+              />
               <DropdownMenuItem
                 variant="destructive"
                 className={chatContextMenuDeleteClass}
@@ -320,8 +318,12 @@ function WebsiteToolbar({
               <span>{t("connecting")}</span>
             ) : (
               <>
-                <span className="sm:hidden">{t("continueWithGoogleShort")}</span>
-                <span className="hidden sm:inline">{t("continueWithGoogle")}</span>
+                <span className="sm:hidden">
+                  {t("continueWithGoogleShort")}
+                </span>
+                <span className="hidden sm:inline">
+                  {t("continueWithGoogle")}
+                </span>
               </>
             )}
           </Button>

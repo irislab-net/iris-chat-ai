@@ -86,7 +86,7 @@ function PreferenceRow({
       <div className="min-w-0 flex-1 text-start">
         <p
           id={labelId}
-          className="text-[13px] font-medium leading-snug tracking-[-0.01em] text-foreground"
+          className="text-[13px] leading-snug font-medium tracking-[-0.01em] text-foreground"
         >
           {title}
         </p>
@@ -324,7 +324,7 @@ function CookieConsentBanner() {
             </h2>
             <p
               id="cookie-consent-desc"
-              className="mt-2 text-pretty text-[13px] leading-relaxed text-muted-foreground"
+              className="mt-2 text-[13px] leading-relaxed text-pretty text-muted-foreground"
             >
               {t("description")}{" "}
               <a
@@ -357,7 +357,7 @@ function CookieConsentBanner() {
                 <DialogTitle className="text-[1.25rem] font-semibold tracking-[-0.02em]">
                   {t("manageTitle")}
                 </DialogTitle>
-                <DialogDescription className="text-pretty text-[13px] leading-relaxed text-muted-foreground">
+                <DialogDescription className="text-[13px] leading-relaxed text-pretty text-muted-foreground">
                   {t("manageDescription")}
                 </DialogDescription>
               </DialogHeader>
@@ -407,7 +407,9 @@ function CookieConsentBanner() {
               </SheetHeader>
             </div>
             <SheetFooter className={chatMobileSheetFooterClass}>
-              <div className={chatMobileSheetFooterBarClass}>{bannerActions}</div>
+              <div className={chatMobileSheetFooterBarClass}>
+                {bannerActions}
+              </div>
             </SheetFooter>
           </SheetContent>
         </Sheet>
@@ -429,7 +431,9 @@ function CookieConsentBanner() {
             <div aria-hidden className={chatMobileSheetHandleClass} />
             <div className={cn(chatMobileSheetBodyClass, "gap-4 pb-2")}>
               <SheetHeader className={cn(chatMobileSheetHeaderClass, "pe-8")}>
-                <SheetTitle className={cn(chatMobileSheetTitleClass, "text-lg")}>
+                <SheetTitle
+                  className={cn(chatMobileSheetTitleClass, "text-lg")}
+                >
                   {t("manageTitle")}
                 </SheetTitle>
                 <SheetDescription
@@ -441,7 +445,9 @@ function CookieConsentBanner() {
               {manageBody}
             </div>
             <SheetFooter className={chatMobileSheetFooterClass}>
-              <div className={chatMobileSheetFooterBarClass}>{manageActions}</div>
+              <div className={chatMobileSheetFooterBarClass}>
+                {manageActions}
+              </div>
             </SheetFooter>
           </SheetContent>
         </Sheet>

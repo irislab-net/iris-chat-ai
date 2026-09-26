@@ -28,7 +28,13 @@ async function fetchPublicEnvelope<T>(path: string): Promise<T | null> {
 
 /** API may return `{ summary: null, predictions: [] }` for guests — treat as empty. */
 export function normalizeInsightHome(
-  insight: { summary: InsightHome["summary"] | null; predictions: InsightHome["predictions"] } | null | undefined
+  insight:
+    | {
+        summary: InsightHome["summary"] | null
+        predictions: InsightHome["predictions"]
+      }
+    | null
+    | undefined
 ): InsightHome | null {
   if (!insight?.summary) return null
   return {

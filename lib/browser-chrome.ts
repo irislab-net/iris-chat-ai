@@ -35,7 +35,10 @@ function syncAppleStatusBarStyle(theme: BrowserChromeTheme) {
   )
 
   if (meta) {
-    meta.setAttribute("content", theme === "dark" ? "black-translucent" : "default")
+    meta.setAttribute(
+      "content",
+      theme === "dark" ? "black-translucent" : "default"
+    )
   }
 }
 
@@ -69,4 +72,3 @@ export function syncBrowserChromeTheme(resolvedTheme: string | undefined) {
   root.style.setProperty("--browser-chrome-color", color)
   syncAppleStatusBarStyle(theme)
 }
-

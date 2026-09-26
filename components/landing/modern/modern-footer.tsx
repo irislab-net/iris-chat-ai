@@ -79,7 +79,12 @@ function FooterColumnLink({
 
   if (link.external) {
     return (
-      <a href={link.href} target="_blank" rel="noopener noreferrer" className={linkClass}>
+      <a
+        href={link.href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={linkClass}
+      >
         {link.label}
       </a>
     )
@@ -128,7 +133,11 @@ export function ModernFooter() {
     {
       heading: t("contact"),
       links: [
-        { label: CONTACT_EMAIL, href: `mailto:${CONTACT_EMAIL}`, external: true },
+        {
+          label: CONTACT_EMAIL,
+          href: `mailto:${CONTACT_EMAIL}`,
+          external: true,
+        },
         { label: t("onX"), href: SOCIAL_X_URL, external: true },
         { label: t("onTelegram"), href: SOCIAL_TELEGRAM_URL, external: true },
       ],
@@ -156,7 +165,12 @@ export function ModernFooter() {
                   aria-label={SITE_NAME}
                   className="h-auto w-fit gap-2.5 rounded-full px-0 py-0 text-foreground hover:bg-transparent"
                 >
-                  <AnimatedExurLogo scrollTrigger replayOnHover shimmer className="size-10" />
+                  <AnimatedExurLogo
+                    scrollTrigger
+                    replayOnHover
+                    shimmer
+                    className="size-10"
+                  />
                   <span className={landingTitleFooter}>{SITE_NAME}</span>
                 </Button>
               ) : (
@@ -165,7 +179,12 @@ export function ModernFooter() {
                   aria-label={SITE_NAME}
                   className="inline-flex h-auto w-fit items-center gap-2.5 rounded-full text-foreground"
                 >
-                  <AnimatedExurLogo scrollTrigger replayOnHover shimmer className="size-10" />
+                  <AnimatedExurLogo
+                    scrollTrigger
+                    replayOnHover
+                    shimmer
+                    className="size-10"
+                  />
                   <span className={landingTitleFooter}>{SITE_NAME}</span>
                 </Link>
               )}
@@ -200,8 +219,14 @@ export function ModernFooter() {
 
             <div className="grid grid-cols-2 gap-x-8 gap-y-8 sm:grid-cols-3 lg:gap-x-16">
               {footerColumns.map((column) => (
-                <nav key={column.heading} className="flex flex-col gap-3" aria-label={column.heading}>
-                  <p className="text-sm font-semibold text-foreground">{column.heading}</p>
+                <nav
+                  key={column.heading}
+                  className="flex flex-col gap-3"
+                  aria-label={column.heading}
+                >
+                  <p className="text-sm font-semibold text-foreground">
+                    {column.heading}
+                  </p>
                   <ul className="flex list-none flex-col gap-3">
                     {column.links.map((link) => (
                       <li key={link.label}>

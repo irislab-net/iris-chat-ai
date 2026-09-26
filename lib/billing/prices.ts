@@ -141,9 +141,7 @@ export function getLandingPlanPrice(
   }
   return {
     price: prices.plus.monthly.display,
-    priceWas: prices.plus.showCompareAt
-      ? prices.plus.compareAt.display
-      : null,
+    priceWas: prices.plus.showCompareAt ? prices.plus.compareAt.display : null,
   }
 }
 

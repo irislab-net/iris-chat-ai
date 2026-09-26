@@ -5,7 +5,12 @@ export function normalizeInvoiceStatus(
   status: string | undefined
 ): "pending" | "paid" | "failed" | "expired" | "unknown" {
   const key = (status ?? "").trim().toLowerCase()
-  if (key === "pending" || key === "paid" || key === "failed" || key === "expired") {
+  if (
+    key === "pending" ||
+    key === "paid" ||
+    key === "failed" ||
+    key === "expired"
+  ) {
     return key
   }
   return "unknown"

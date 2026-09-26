@@ -25,10 +25,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import {
-  CHAT_EFFORT_OPTIONS,
-  type ChatEffort,
-} from "@/lib/chat-effort"
+import { CHAT_EFFORT_OPTIONS, type ChatEffort } from "@/lib/chat-effort"
 import { cn } from "@/lib/utils"
 
 type ChatMobileThreadMenuProps = {
@@ -100,7 +97,7 @@ function ChatMobileHeader({
           className={cn(chatContextMenuContentClass, "min-w-44")}
         >
           <DropdownMenuGroup>
-            <p className="px-2.5 pb-1 pt-1.5 text-start text-[10px] font-medium tracking-wide text-muted-foreground uppercase">
+            <p className="px-2.5 pt-1.5 pb-1 text-start text-[10px] font-medium tracking-wide text-muted-foreground uppercase">
               {t("effort.label")}
             </p>
             {CHAT_EFFORT_OPTIONS.map((item) => (
@@ -132,7 +129,7 @@ function ChatMobileHeader({
       <div aria-hidden className={chatMobileHeaderScrimClass} />
       <header
         className={cn(
-          "app-mobile-safe-header relative z-[1] flex items-center justify-between gap-2 bg-transparent px-6 pb-2",
+          "app-mobile-safe-header relative z-1 flex items-center justify-between gap-2 bg-transparent px-6 pb-2",
           className
         )}
       >
@@ -149,7 +146,7 @@ function ChatMobileHeader({
             >
               <ChatGeminiMenuIcon />
               {showMenuSpotlight ? (
-                <AttentionPulseDot className="-top-0.5 inset-e-1" />
+                <AttentionPulseDot className="inset-e-1 -top-0.5" />
               ) : null}
             </Button>
           ) : null}
@@ -180,7 +177,6 @@ function ChatMobileHeader({
       </header>
     </div>
   )
-
 }
 
 export { ChatMobileHeader }

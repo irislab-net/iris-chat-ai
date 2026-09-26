@@ -1,9 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
-import {
-  AUTH_SESSION_EXPIRED_EVENT,
-  storeTokenPair,
-} from "@/lib/api/auth"
+import { AUTH_SESSION_EXPIRED_EVENT, storeTokenPair } from "@/lib/api/auth"
 import { apiFetch } from "@/lib/api/client"
 
 function memoryStorage() {

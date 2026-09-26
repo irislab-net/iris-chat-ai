@@ -70,7 +70,8 @@ export function isPaperTradeIntent(text: string): boolean {
     /trading desk request for/i.test(lower) ||
     /use all available iris evidence/i.test(lower) ||
     /درخواست\s+میز\s+معاملاتی/i.test(raw) ||
-    (/بررسی\s+کن/.test(raw) && /(اتریوم|ethereum|eth|btc|bitcoin|بیت)/i.test(raw))
+    (/بررسی\s+کن/.test(raw) &&
+      /(اتریوم|ethereum|eth|btc|bitcoin|بیت)/i.test(raw))
 
   const wantsLevels =
     /entry|sl\b|tp\b|stop\s*loss|take\s*profit|setup|ستاپ|حد\s*ضرر|حد\s*سود/i.test(
@@ -107,4 +108,3 @@ export function isPaperTradeIntent(text: string): boolean {
 export function matchesPaperTradeSamplePrompt(text: string): boolean {
   return compact(text) === compact(PAPER_TRADE_SAMPLE_PROMPT)
 }
-

@@ -60,7 +60,9 @@ function ChatThinkingProgress({
   }, [ready])
 
   React.useEffect(() => {
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    const reduced = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches
     let raf = 0
     let startRotateTimer = 0
     let rotateTimer = 0
@@ -74,9 +76,12 @@ function ChatThinkingProgress({
       window.clearTimeout(startRotateTimer)
       window.clearInterval(rotateTimer)
       setValue(100)
-      completeTimer = window.setTimeout(() => {
-        onCompleteRef.current()
-      }, reduced ? 0 : COMPLETE_HOLD_MS)
+      completeTimer = window.setTimeout(
+        () => {
+          onCompleteRef.current()
+        },
+        reduced ? 0 : COMPLETE_HOLD_MS
+      )
     }
 
     if (reduced) {

@@ -152,7 +152,11 @@ export const INDEXABLE_ROUTES = [
     path: "/",
     changeFrequency: "weekly" as const,
     priority: 1,
-    images: ["/home-bg-header.webp", EXUR_LOGO_MARK, "/opengraph-image"] as const,
+    images: [
+      "/home-bg-header.webp",
+      EXUR_LOGO_MARK,
+      "/opengraph-image",
+    ] as const,
   },
   {
     path: WHAT_IS_EXUR_PATH,
@@ -311,7 +315,9 @@ export function webApplicationJsonLd() {
   }
 }
 
-export function faqPageJsonLd(faqs: readonly { question: string; answer: string }[] = AI_SIGNALS_FAQS) {
+export function faqPageJsonLd(
+  faqs: readonly { question: string; answer: string }[] = AI_SIGNALS_FAQS
+) {
   return {
     "@context": "https://schema.org",
     "@type": "FAQPage",

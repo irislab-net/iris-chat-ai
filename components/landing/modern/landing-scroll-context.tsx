@@ -15,7 +15,11 @@ const LandingScrollContext = React.createContext<LandingScrollContextValue>({
   activeSectionId: LANDING_SCROLL_SECTIONS[0].id,
 })
 
-export function LandingScrollProvider({ children }: { children: React.ReactNode }) {
+export function LandingScrollProvider({
+  children,
+}: {
+  children: React.ReactNode
+}) {
   const [activeSectionId, setActiveSectionId] = React.useState<string>(
     LANDING_SCROLL_SECTIONS[0].id
   )

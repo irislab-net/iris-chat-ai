@@ -17,13 +17,16 @@ function ethPacket(): MarketContextPacket {
       closeFirst: 2487.4,
       closeLast: 2484.3,
       changePct: -0.124628,
-      recentCloses: [2482.1, 2483, 2484.3, 2483.6, 2488.6, 2484.9, 2484, 2484.3],
+      recentCloses: [
+        2482.1, 2483, 2484.3, 2483.6, 2488.6, 2484.9, 2484, 2484.3,
+      ],
     },
     volatility: { rangePct: 0.012398, atrPct: 0.001915 },
     insight: {
       stance: "WAIT",
       bias: "SHORT",
-      headline: "ETH short signal fires but meta confidence is too low; stand aside.",
+      headline:
+        "ETH short signal fires but meta confidence is too low; stand aside.",
       calmness: "calm",
       rewardRisk: 5.5,
       expectedMovePct: 1.29,

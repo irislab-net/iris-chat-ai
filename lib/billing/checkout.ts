@@ -33,9 +33,12 @@ export function parseCheckoutBody(body: unknown): {
   return {
     plan,
     billing,
-    userId: typeof userId === "string" && userId.trim() ? userId.trim() : undefined,
+    userId:
+      typeof userId === "string" && userId.trim() ? userId.trim() : undefined,
     email:
-      typeof email === "string" && email.includes("@") ? email.trim() : undefined,
+      typeof email === "string" && email.includes("@")
+        ? email.trim()
+        : undefined,
   }
 }
 

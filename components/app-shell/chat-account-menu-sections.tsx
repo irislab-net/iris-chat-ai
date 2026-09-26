@@ -35,20 +35,14 @@ import {
   DropdownMenuSubTrigger,
 } from "@/components/ui/dropdown-menu"
 import type { User } from "@/lib/api/types"
-import {
-  getPrivacyNoticeHref,
-  getTermsOfServiceHref,
-} from "@/lib/legal"
+import { getPrivacyNoticeHref, getTermsOfServiceHref } from "@/lib/legal"
 import {
   BILLING_PATH,
   getMarketingHomePath,
   getMarketingPageHref,
   UPGRADE_PATH,
 } from "@/lib/site"
-import {
-  userAccountLabel,
-  userAccountSubline,
-} from "@/lib/user-profile"
+import { userAccountLabel, userAccountSubline } from "@/lib/user-profile"
 import { cn } from "@/lib/utils"
 
 const CONTACT_EMAIL = "hello@exur.ai"
@@ -84,7 +78,9 @@ function AccountHelpGroup() {
   return (
     <DropdownMenuGroup>
       <DropdownMenuSub>
-        <DropdownMenuSubTrigger className={cn(chatContextMenuItemClass, "gap-3")}>
+        <DropdownMenuSubTrigger
+          className={cn(chatContextMenuItemClass, "gap-3")}
+        >
           <CircleHelpIcon className={chatContextMenuIconClass} />
           <span className="flex-1 text-start">{t("help")}</span>
         </DropdownMenuSubTrigger>

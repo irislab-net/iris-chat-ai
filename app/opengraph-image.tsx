@@ -12,86 +12,84 @@ export default async function OpenGraphImage() {
   const logoSrc = `data:image/png;base64,${logoPng.toString("base64")}`
 
   return new ImageResponse(
-    (
+    <div
+      style={{
+        width: "100%",
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
+        padding: "64px 72px",
+        background:
+          "linear-gradient(145deg, #141414 0%, #252525 55%, #1a1a1a 100%)",
+        color: "#f5f5f5",
+        fontFamily: "ui-sans-serif, system-ui, sans-serif",
+      }}
+    >
       <div
         style={{
-          width: "100%",
-          height: "100%",
           display: "flex",
-          flexDirection: "column",
-          justifyContent: "space-between",
-          padding: "64px 72px",
-          background:
-            "linear-gradient(145deg, #141414 0%, #252525 55%, #1a1a1a 100%)",
-          color: "#f5f5f5",
-          fontFamily: "ui-sans-serif, system-ui, sans-serif",
+          alignItems: "center",
+          gap: 20,
         }}
       >
+        <img
+          src={logoSrc}
+          alt=""
+          width={72}
+          height={72}
+          style={{ borderRadius: 9999 }}
+        />
         <div
           style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 20,
+            fontSize: 36,
+            fontWeight: 700,
+            letterSpacing: "-0.03em",
           }}
         >
-          <img
-            src={logoSrc}
-            alt=""
-            width={72}
-            height={72}
-            style={{ borderRadius: 9999 }}
-          />
-          <div
-            style={{
-              fontSize: 36,
-              fontWeight: 700,
-              letterSpacing: "-0.03em",
-            }}
-          >
-            Exur
-          </div>
-        </div>
-
-        <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
-          <div
-            style={{
-              fontSize: 64,
-              fontWeight: 700,
-              letterSpacing: "-0.04em",
-              lineHeight: 1.1,
-              maxWidth: 900,
-            }}
-          >
-            Your money, handled.
-          </div>
-          <div
-            style={{
-              fontSize: 28,
-              color: "#a3a3a3",
-              maxWidth: 820,
-              lineHeight: 1.35,
-            }}
-          >
-            AI financial assistant. Ask in plain language.
-          </div>
-        </div>
-
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            fontSize: 22,
-            color: "#737373",
-          }}
-        >
-          <span>exur.ai</span>
-          <span style={{ letterSpacing: "0.12em", textTransform: "uppercase" }}>
-            Ask · Decide · Act
-          </span>
+          Exur
         </div>
       </div>
-    ),
+
+      <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
+        <div
+          style={{
+            fontSize: 64,
+            fontWeight: 700,
+            letterSpacing: "-0.04em",
+            lineHeight: 1.1,
+            maxWidth: 900,
+          }}
+        >
+          Your money, handled.
+        </div>
+        <div
+          style={{
+            fontSize: 28,
+            color: "#a3a3a3",
+            maxWidth: 820,
+            lineHeight: 1.35,
+          }}
+        >
+          AI financial assistant. Ask in plain language.
+        </div>
+      </div>
+
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          fontSize: 22,
+          color: "#737373",
+        }}
+      >
+        <span>exur.ai</span>
+        <span style={{ letterSpacing: "0.12em", textTransform: "uppercase" }}>
+          Ask · Decide · Act
+        </span>
+      </div>
+    </div>,
     { ...size }
   )
 }

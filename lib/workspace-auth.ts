@@ -10,18 +10,19 @@ export type WorkspaceLoginCopy = {
   description: string
 }
 
-export const WORKSPACE_LOGIN_COPY: Record<WorkspacePageId, WorkspaceLoginCopy> = {
-  news: {
-    title: "Sign in to read News",
-    description:
-      "Connect Google to load scored headlines, tape windows, and asset sentiment.",
-  },
-  iris: {
-    title: "Sign in to use Exur",
-    description:
-      "Connect Google so the co-pilot can answer with fuller session context.",
-  },
-}
+export const WORKSPACE_LOGIN_COPY: Record<WorkspacePageId, WorkspaceLoginCopy> =
+  {
+    news: {
+      title: "Sign in to read News",
+      description:
+        "Connect Google to load scored headlines, tape windows, and asset sentiment.",
+    },
+    iris: {
+      title: "Sign in to use Exur",
+      description:
+        "Connect Google so the co-pilot can answer with fuller session context.",
+    },
+  }
 
 export function shouldShowWorkspaceLoginGate(
   page: WorkspacePageId,

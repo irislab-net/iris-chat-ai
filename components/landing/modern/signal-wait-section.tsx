@@ -111,7 +111,7 @@ function SignalResult({
     <div className="relative flex h-full min-h-0 w-full items-start justify-center overflow-visible">
       <div
         aria-hidden
-        className="pointer-events-none absolute -inset-x-4 -inset-y-2 rounded-[2rem] bg-[#2563EB]/10 blur-2xl dark:bg-[#2563EB]/18 sm:-inset-x-6 sm:-inset-y-4"
+        className="pointer-events-none absolute -inset-x-4 -inset-y-2 rounded-[2rem] bg-[#2563EB]/10 blur-2xl sm:-inset-x-6 sm:-inset-y-4 dark:bg-[#2563EB]/18"
       />
       <div
         className={cn(
@@ -121,14 +121,17 @@ function SignalResult({
       >
         <span
           aria-hidden
-          className={cn(landingGlassSheen, "rounded-[1.4rem] sm:rounded-[1.65rem]")}
+          className={cn(
+            landingGlassSheen,
+            "rounded-[1.4rem] sm:rounded-[1.65rem]"
+          )}
         />
         <div
           className={cn(
             "relative z-10",
             "[&_article_header_h3]:text-[1.2rem] sm:[&_article_header_h3]:text-[1.5rem]",
             "[&_.grid.grid-cols-3_p.tabular-nums]:text-[1.25rem] sm:[&_.grid.grid-cols-3_p.tabular-nums]:text-[1.7rem]",
-            "[&_.grid.grid-cols-3_p.tabular-nums]:font-bold [&_.grid.grid-cols-3_p.tabular-nums]:leading-none",
+            "[&_.grid.grid-cols-3_p.tabular-nums]:leading-none [&_.grid.grid-cols-3_p.tabular-nums]:font-bold",
             "[&_.grid.grid-cols-3_p.tabular-nums]:tracking-[-0.04em]",
             "[&_.grid.grid-cols-3_p.tabular-nums]:[text-shadow:0_1px_0_rgba(255,255,255,0.85),0_0_28px_rgba(37,99,235,0.28)]",
             "dark:[&_.grid.grid-cols-3_p.tabular-nums]:[text-shadow:0_1px_0_rgba(255,255,255,0.12),0_0_32px_rgba(37,99,235,0.45)]",
@@ -254,7 +257,7 @@ export function SignalWaitSection() {
             "relative isolate overflow-visible",
             landingCardRadius,
             // Fixed shell: ChatSignalCard + chat row + composer must fit without clipping.
-            "flex h-152 flex-col bg-white/40 text-foreground shadow-[0_28px_80px_rgba(15,23,42,0.07)] backdrop-blur-2xl sm:h-164 dark:bg-white/6 dark:shadow-[0_28px_80px_rgba(0,0,0,0.45)] lg:h-172"
+            "flex h-152 flex-col bg-white/40 text-foreground shadow-[0_28px_80px_rgba(15,23,42,0.07)] backdrop-blur-2xl sm:h-164 lg:h-172 dark:bg-white/6 dark:shadow-[0_28px_80px_rgba(0,0,0,0.45)]"
           )}
         >
           <HeroLiquidGlassBg tone="blue" />
@@ -331,7 +334,7 @@ export function SignalWaitSection() {
                 readOnly
                 tabIndex={-1}
                 placeholder={composerPlaceholder}
-                className="relative z-10 h-10 min-w-0 flex-1 border-0 bg-transparent px-2 text-sm text-foreground shadow-none placeholder:text-muted-foreground/90 focus-visible:ring-0 read-only:cursor-default sm:px-3 sm:text-base"
+                className="relative z-10 h-10 min-w-0 flex-1 border-0 bg-transparent px-2 text-sm text-foreground shadow-none placeholder:text-muted-foreground/90 read-only:cursor-default focus-visible:ring-0 sm:px-3 sm:text-base"
                 aria-label={composerPlaceholder}
               />
               <span

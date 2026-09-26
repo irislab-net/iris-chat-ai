@@ -25,7 +25,11 @@ const STAGGER = DURATION / 10
 
 function resetStrokeTargets(targets: SVGGeometryElement[]) {
   targets.forEach((shape) => {
-    gsap.set(shape, { opacity: 1, strokeDashoffset: 0, clearProps: "strokeDasharray" })
+    gsap.set(shape, {
+      opacity: 1,
+      strokeDashoffset: 0,
+      clearProps: "strokeDasharray",
+    })
   })
 }
 
@@ -77,9 +81,14 @@ export function AnimatedSvgIcon({
     if (prefersReducedMotion()) {
       if (kind === "logo") {
         const mark = scope.querySelector<SVGPathElement>("[data-logo-mark]")
-        if (mark) gsap.set(mark, { opacity: 1, fill: "currentColor", strokeWidth: 0 })
+        if (mark)
+          gsap.set(mark, { opacity: 1, fill: "currentColor", strokeWidth: 0 })
       } else {
-        resetStrokeTargets(Array.from(scope.querySelectorAll(STROKE_SELECTOR)) as SVGGeometryElement[])
+        resetStrokeTargets(
+          Array.from(
+            scope.querySelectorAll(STROKE_SELECTOR)
+          ) as SVGGeometryElement[]
+        )
       }
       return
     }

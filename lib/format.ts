@@ -21,7 +21,10 @@ export function normalizeEpochMs(raw: number): number | null {
  * Compact relative age from an API timestamp.
  * Returns null for invalid or far-future values (no negative / fake Live claims).
  */
-export function formatRelativeAge(raw: number, now = Date.now()): string | null {
+export function formatRelativeAge(
+  raw: number,
+  now = Date.now()
+): string | null {
   const ms = normalizeEpochMs(raw)
   if (ms == null) return null
   // Tolerate small clock skew; reject clearly-future stamps.
@@ -69,7 +72,10 @@ export function ago(ms: number, ref = Date.now()) {
 }
 
 /** Human-readable epoch for LLM context and chat display. */
-export function formatEpochForChat(raw: number, now = Date.now()): string | null {
+export function formatEpochForChat(
+  raw: number,
+  now = Date.now()
+): string | null {
   const ms = normalizeEpochMs(raw)
   if (ms == null) return null
   if (ms > now + 120_000) return null
@@ -120,7 +126,10 @@ export function msUntilNextCandleBoundary(now: number): number {
  * True when at least one candle boundary elapsed since `lastFetchAt`
  * (used after tab sleep/resume — refresh at most once, no catch-up storm).
  */
-export function shouldRefreshAfterResume(lastFetchAt: number, now: number): boolean {
+export function shouldRefreshAfterResume(
+  lastFetchAt: number,
+  now: number
+): boolean {
   return candlePeriodStart(now) > candlePeriodStart(lastFetchAt)
 }
 

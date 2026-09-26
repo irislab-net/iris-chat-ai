@@ -34,7 +34,8 @@ export function PaymentMethodPicker({
 }: PaymentMethodPickerProps) {
   const t = useTranslations("upgradePage.crypto")
   const selected =
-    PAYMENT_TOKENS.find((option) => option.id === currency) ?? PAYMENT_TOKENS[0]!
+    PAYMENT_TOKENS.find((option) => option.id === currency) ??
+    PAYMENT_TOKENS[0]!
 
   return (
     <DropdownMenu>
@@ -63,7 +64,7 @@ export function PaymentMethodPicker({
           className="relative z-10"
         />
         <span className="relative z-10 min-w-0 text-start">
-          <span className="block text-sm font-semibold leading-none tracking-tight">
+          <span className="block text-sm leading-none font-semibold tracking-tight">
             {selected.id}
           </span>
           <span className="mt-1 block text-[10px] leading-none text-muted-foreground dark:text-foreground/65">
@@ -104,7 +105,7 @@ export function PaymentMethodPicker({
                 <span className="flex min-w-0 items-center gap-2.5">
                   <PaymentMethodMark currency={option.id} size="md" />
                   <span className="min-w-0 text-start">
-                    <span className="block truncate text-sm font-semibold leading-tight">
+                    <span className="block truncate text-sm leading-tight font-semibold">
                       {option.id}
                     </span>
                     <span className="mt-0.5 block truncate text-[11px] leading-tight text-muted-foreground">

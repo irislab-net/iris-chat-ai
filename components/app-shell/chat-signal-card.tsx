@@ -63,7 +63,7 @@ function PriceTile({
       </p>
       <p
         className={cn(
-          "mt-1.5 font-semibold tabular-nums tracking-tight text-foreground",
+          "mt-1.5 font-semibold tracking-tight text-foreground tabular-nums",
           column.emphasis
             ? "text-[1.15rem] leading-none sm:text-[1.25rem]"
             : "text-[15px] leading-none sm:text-base"
@@ -116,13 +116,15 @@ function MetaItem({
 }) {
   return (
     <div className="grid grid-cols-[1.75rem_minmax(0,1fr)] items-center gap-x-2.5 gap-y-1">
-      <span className={cn(chatSignalCardIconShellClass, "col-start-1 row-span-2")}>
+      <span
+        className={cn(chatSignalCardIconShellClass, "col-start-1 row-span-2")}
+      >
         <Icon className="size-3.5 text-muted-foreground" aria-hidden />
       </span>
       <p className="col-start-2 row-start-1 text-[10px] leading-none tracking-[0.06em] text-muted-foreground uppercase">
         {label}
       </p>
-      <p className="col-start-2 row-start-2 text-[13px] font-medium tabular-nums leading-none text-foreground">
+      <p className="col-start-2 row-start-2 text-[13px] leading-none font-medium text-foreground tabular-nums">
         {value}
       </p>
     </div>
@@ -148,11 +150,13 @@ function ChatSignalCard({
   const setup = proseSkeleton ? "" : ticket.setup.trim()
   const thesis = proseSkeleton ? "" : ticket.thesis.trim()
   const timeHorizon = ticket.timeHorizon?.trim() ?? ""
-  const stopLossReason = proseSkeleton ? "" : ticket.stopLossReason?.trim() ?? ""
-  const entryReason = proseSkeleton ? "" : ticket.entryReason?.trim() ?? ""
+  const stopLossReason = proseSkeleton
+    ? ""
+    : (ticket.stopLossReason?.trim() ?? "")
+  const entryReason = proseSkeleton ? "" : (ticket.entryReason?.trim() ?? "")
   const takeProfitReason = proseSkeleton
     ? ""
-    : ticket.takeProfitReason?.trim() ?? ""
+    : (ticket.takeProfitReason?.trim() ?? "")
 
   const priceColumns: PriceColumn[] = [
     {

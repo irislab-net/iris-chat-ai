@@ -39,12 +39,12 @@ describe("billing catalog", () => {
   })
 
   it("rejects checkout bodies that are not Plus monthly/annual", () => {
-    expect(() => parseCheckoutBody({ plan: "free", billing: "monthly" })).toThrow(
-      /Plus/
-    )
-    expect(() => parseCheckoutBody({ plan: "plus", billing: "weekly" })).toThrow(
-      /monthly or annual/
-    )
+    expect(() =>
+      parseCheckoutBody({ plan: "free", billing: "monthly" })
+    ).toThrow(/Plus/)
+    expect(() =>
+      parseCheckoutBody({ plan: "plus", billing: "weekly" })
+    ).toThrow(/monthly or annual/)
     expect(parseCheckoutBody({ plan: "plus", billing: "annual" })).toEqual({
       plan: "plus",
       billing: "annual",

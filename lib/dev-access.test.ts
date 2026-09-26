@@ -10,9 +10,7 @@ import {
 describe("hostnameFromHostHeader", () => {
   it("strips a port from ipv4 and hostnames", () => {
     expect(hostnameFromHostHeader("192.168.1.20:3000")).toBe("192.168.1.20")
-    expect(hostnameFromHostHeader("local.exur.ai:3000")).toBe(
-      "local.exur.ai"
-    )
+    expect(hostnameFromHostHeader("local.exur.ai:3000")).toBe("local.exur.ai")
   })
 
   it("reads an ipv6 host", () => {
@@ -48,9 +46,11 @@ describe("devProxyAction", () => {
   })
 
   it("leaves https LAN and local.exur.ai alone", () => {
-    expect(devProxyAction({ hostname: "172.20.10.14", isHttps: true })).toEqual({
-      type: "next",
-    })
+    expect(devProxyAction({ hostname: "172.20.10.14", isHttps: true })).toEqual(
+      {
+        type: "next",
+      }
+    )
     expect(
       devProxyAction({ hostname: "local.exur.ai", isHttps: true })
     ).toEqual({ type: "next" })
@@ -82,12 +82,7 @@ describe("allowedDevOrigins", () => {
           },
         ],
       })
-    ).toEqual([
-      "local.exur.ai",
-      "localhost",
-      "*.local",
-      "172.20.10.14",
-    ])
+    ).toEqual(["local.exur.ai", "localhost", "*.local", "172.20.10.14"])
   })
 
   it("skips loopback when listing LAN addresses", () => {

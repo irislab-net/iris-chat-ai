@@ -5,11 +5,7 @@ import { Suspense } from "react"
 
 import { fetchPublicHomeSnapshot } from "@/lib/api/public-home"
 import { DashboardSkeleton } from "@/components/dashboard/intel-skeletons"
-import {
-  SITE_DESCRIPTION,
-  SITE_NAME,
-  SITE_TITLE,
-} from "@/lib/seo"
+import { SITE_DESCRIPTION, SITE_NAME, SITE_TITLE } from "@/lib/seo"
 import { isMarketingRequest } from "@/lib/request-host"
 import {
   APP_PATH,
@@ -21,8 +17,7 @@ import { resolveWorkspaceTab } from "@/lib/workspace-tab"
 import type { AppLocale } from "@/i18n/routing"
 
 const AppShell = dynamic(
-  () =>
-    import("@/components/app-shell/app-shell").then((m) => m.AppShell),
+  () => import("@/components/app-shell/app-shell").then((m) => m.AppShell),
   {
     loading: () => (
       <div className="flex h-app overflow-hidden bg-background">
@@ -33,8 +28,7 @@ const AppShell = dynamic(
 )
 
 const HomeView = dynamic(
-  () =>
-    import("@/components/dashboard/home-view").then((m) => m.HomeView),
+  () => import("@/components/dashboard/home-view").then((m) => m.HomeView),
   {
     loading: () => (
       <div className="flex h-full min-h-0 w-full flex-1 flex-col">
@@ -74,9 +68,8 @@ export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
   if (await isMarketingRequest()) {
-    const { generateLandingMetadata } = await import(
-      "@/components/landing/modern/landing-route"
-    )
+    const { generateLandingMetadata } =
+      await import("@/components/landing/modern/landing-route")
     return generateLandingMetadata({ params })
   }
   return newsMetadata
@@ -105,9 +98,8 @@ async function NewsWithSnapshot({
  */
 export default async function RootPage({ params, searchParams }: PageProps) {
   if (await isMarketingRequest()) {
-    const { MarketingLandingPage } = await import(
-      "@/components/landing/modern/landing-route"
-    )
+    const { MarketingLandingPage } =
+      await import("@/components/landing/modern/landing-route")
     return <MarketingLandingPage params={params} />
   }
 

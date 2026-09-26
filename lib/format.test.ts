@@ -70,9 +70,9 @@ describe("candle boundary timing", () => {
 
   it("shouldRefreshAfterResume is true only after a period boundary crossed", () => {
     const fetchedAt = atOffset(period, 7 * 60_000)
-    expect(shouldRefreshAfterResume(fetchedAt, atOffset(period, 10 * 60_000))).toBe(
-      false
-    )
+    expect(
+      shouldRefreshAfterResume(fetchedAt, atOffset(period, 10 * 60_000))
+    ).toBe(false)
     expect(shouldRefreshAfterResume(fetchedAt, next)).toBe(true)
     expect(shouldRefreshAfterResume(fetchedAt, next + 5 * 60_000)).toBe(true)
     // Multiple boundaries elapsed → still a single boolean (caller refreshes once)
@@ -81,7 +81,9 @@ describe("candle boundary timing", () => {
 
   it("candlePeriodStart is stable within a period", () => {
     expect(candlePeriodStart(atOffset(period, 1))).toBe(period)
-    expect(candlePeriodStart(atOffset(period, CANDLE_INTERVAL_MS - 1))).toBe(period)
+    expect(candlePeriodStart(atOffset(period, CANDLE_INTERVAL_MS - 1))).toBe(
+      period
+    )
     expect(candlePeriodStart(next)).toBe(next)
   })
 })

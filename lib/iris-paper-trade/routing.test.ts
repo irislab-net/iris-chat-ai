@@ -15,9 +15,7 @@ const setupHistory: CoPilotHistoryMessage[] = [
 
 describe("shouldRunPaperTradePipeline", () => {
   it("routes explicit legacy desk prompts on a fresh thread", () => {
-    expect(shouldRunPaperTradePipeline(ETH_SIGNAL_SAMPLE_PROMPT, [])).toBe(
-      true
-    )
+    expect(shouldRunPaperTradePipeline(ETH_SIGNAL_SAMPLE_PROMPT, [])).toBe(true)
   })
 
   it("keeps @signal commands on regular chat", () => {

@@ -17,10 +17,13 @@ describe("proxyIrisApiRequest", () => {
 
   it("forwards cookies and POST body to IRIS_API_ORIGIN", async () => {
     fetchMock.mockResolvedValue(
-      new Response(JSON.stringify({ access_token: "tok", expires_at: "2099" }), {
-        status: 200,
-        headers: { "content-type": "application/json" },
-      })
+      new Response(
+        JSON.stringify({ access_token: "tok", expires_at: "2099" }),
+        {
+          status: 200,
+          headers: { "content-type": "application/json" },
+        }
+      )
     )
 
     const res = await proxyIrisApiRequest(

@@ -129,7 +129,7 @@ function LoginConsentBrand() {
         />
       </span>
       <div className="min-w-0 text-start">
-        <p className="text-[15px] font-semibold leading-none tracking-[-0.02em] text-foreground">
+        <p className="text-[15px] leading-none font-semibold tracking-[-0.02em] text-foreground">
           Exur
         </p>
         <p className="mt-1.5 text-[12px] leading-none text-muted-foreground">
@@ -170,10 +170,7 @@ function LoginConsentActions({
       </Button>
       <Button
         type="button"
-        className={cn(
-          landingCta("secondary", "md"),
-          "h-12! min-h-12 w-full"
-        )}
+        className={cn(landingCta("secondary", "md"), "h-12! min-h-12 w-full")}
         disabled={confirming}
         onClick={onCancel}
       >
@@ -223,7 +220,7 @@ function LoginConsentBody({
         </ConsentCheck>
       </div>
 
-      <p className="text-pretty px-0.5 text-[11.5px] leading-relaxed text-muted-foreground">
+      <p className="px-0.5 text-[11.5px] leading-relaxed text-pretty text-muted-foreground">
         {t("loginConsentDisclaimer")}
       </p>
     </div>
@@ -281,7 +278,7 @@ function LoginConsentDialog({
               <DialogTitle className="text-[1.25rem] font-semibold tracking-[-0.02em]">
                 {t("continueWithGoogle")}
               </DialogTitle>
-              <DialogDescription className="text-pretty text-[13px] leading-relaxed text-muted-foreground">
+              <DialogDescription className="text-[13px] leading-relaxed text-pretty text-muted-foreground">
                 {t("loginConsentDescription")}
               </DialogDescription>
             </DialogHeader>

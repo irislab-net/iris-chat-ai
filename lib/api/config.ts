@@ -1,7 +1,4 @@
-import {
-  AUTH_PRIVACY_NOTICE_ACCEPTED,
-  AUTH_TERMS_ACCEPTED,
-} from "@/lib/legal"
+import { AUTH_PRIVACY_NOTICE_ACCEPTED, AUTH_TERMS_ACCEPTED } from "@/lib/legal"
 import {
   CHAT_APP_ORIGIN,
   isMarketingHost,

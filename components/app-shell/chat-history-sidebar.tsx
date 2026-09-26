@@ -94,10 +94,7 @@ import {
 import { CHAT_HISTORY_RAIL_COLLAPSED_WIDTH } from "@/lib/chat-history-rail-prefs"
 import { localeDirection } from "@/lib/i18n/locale"
 import { getLandingHref, UPGRADE_PATH } from "@/lib/site"
-import {
-  userAccountLabel,
-  userAccountSubline,
-} from "@/lib/user-profile"
+import { userAccountLabel, userAccountSubline } from "@/lib/user-profile"
 import { cn } from "@/lib/utils"
 
 function useSidebarDir() {
@@ -118,7 +115,7 @@ const rowMenuButtonHoverRevealClass =
 
 const historyRailGlassIconButtonClass = cn(
   chatMobileHeaderButtonClass,
-  "size-9 shrink-0 [&_svg:not([class*='size-'])]:size-4 [&_svg]:stroke-[1.75]"
+  "size-9 shrink-0 [&_svg]:stroke-[1.75] [&_svg:not([class*='size-'])]:size-4"
 )
 
 function HistoryRailSearchButton({ onOpen }: { onOpen: () => void }) {
@@ -212,7 +209,7 @@ function HistoryNewsNav({
             >
               <NewspaperIcon className="size-4.5" />
               {showSpotlight ? (
-                <AttentionPulseDot className="-top-0.5 inset-e-1" />
+                <AttentionPulseDot className="inset-e-1 -top-0.5" />
               ) : null}
             </Button>
           }
@@ -230,7 +227,9 @@ function HistoryNewsNav({
       variant="ghost"
       className={cn(
         "relative",
-        isMobileDrawer ? chatMobileDrawerNavItemClass : chatHistoryRailNavItemClass
+        isMobileDrawer
+          ? chatMobileDrawerNavItemClass
+          : chatHistoryRailNavItemClass
       )}
       onClick={(event) => {
         event.stopPropagation()
@@ -245,7 +244,7 @@ function HistoryNewsNav({
       />
       <span className="min-w-0 flex-1 truncate text-start">{t("news")}</span>
       {showSpotlight ? (
-        <AttentionPulseDot className="top-1 inset-e-2.5" />
+        <AttentionPulseDot className="inset-e-2.5 top-1" />
       ) : null}
     </Button>
   )
@@ -290,7 +289,9 @@ function HistoryHomeNav({
     <Button
       variant="ghost"
       className={
-        isMobileDrawer ? chatMobileDrawerNavItemClass : chatHistoryRailNavItemClass
+        isMobileDrawer
+          ? chatMobileDrawerNavItemClass
+          : chatHistoryRailNavItemClass
       }
       nativeButton={false}
       render={<a href={landingHref} />}
@@ -346,108 +347,108 @@ function MobileHistoryDrawerFooter({
           "flex items-center gap-2 px-4 py-2 pb-[max(0.5rem,env(safe-area-inset-bottom,0px))]"
         )}
       >
-      {user ? (
-        <div className="flex min-w-0 flex-1 items-center gap-2.5">
-          <ChatAccountAvatar
-            user={user}
-            avatarUrl={avatarUrl}
-            isProUser={isProUser}
-            planName={displayPlanName(user.tier)}
-            compact
-            avatarClassName="size-9"
-          />
-          <div className="min-w-0">
-            <p className="truncate text-[15px] font-normal leading-tight">
-              {userAccountLabel(user)}
-            </p>
-            {userAccountSubline(user) ? (
-              <p className="truncate text-[13px] text-muted-foreground">
-                {userAccountSubline(user)}
-              </p>
-            ) : null}
-          </div>
-        </div>
-      ) : (
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          className="h-10 flex-1 justify-start gap-2.5 px-1 text-[15px] font-normal"
-          disabled={loginPending}
-          onClick={() => login({ source: "chat" })}
-        >
-          <Avatar className="size-8 after:border-0">
-            <AvatarFallback className="bg-muted text-[11px]">
-              <GoogleGlyph className="size-3.5" />
-            </AvatarFallback>
-          </Avatar>
-          {loginPending ? t("connecting") : t("signIn")}
-        </Button>
-      )}
-      {user && !isProUser ? (
-        <Button
-          size="sm"
-          className={chatMobileDrawerUpgradeClass}
-          nativeButton={false}
-          render={<Link href={UPGRADE_PATH} />}
-        >
-          {t("upgrade")}
-        </Button>
-      ) : null}
-      <DropdownMenu>
-        <DropdownMenuTrigger
-          render={
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              className={cn(chatMobileHeaderButtonClass, "size-9 shrink-0")}
-              aria-label={common("settings")}
-            />
-          }
-        >
-          <Settings className="size-4.5" />
-        </DropdownMenuTrigger>
-        <DropdownMenuContent
-          align="end"
-          side="top"
-          sideOffset={8}
-          className={cn(chatContextMenuContentClass, "min-w-64")}
-        >
-          {user ? (
-            <AccountSignedInMenuSections
+        {user ? (
+          <div className="flex min-w-0 flex-1 items-center gap-2.5">
+            <ChatAccountAvatar
               user={user}
+              avatarUrl={avatarUrl}
               isProUser={isProUser}
-              planName={
-                displayPlanName(user.tier) === "Plus"
-                  ? t("planPlus")
-                  : displayPlanName(user.tier) === "Ultimate"
-                    ? t("planUltimate")
-                    : t("planFree")
-              }
-              avatarUrl={avatarUrl ?? null}
-              onLogout={logout}
-              onOpenNews={onOpenNews}
+              planName={displayPlanName(user.tier)}
+              compact
+              avatarClassName="size-9"
             />
-          ) : (
-            <>
-              {onOpenNews ? (
-                <DropdownMenuItem
-                  className={chatContextMenuItemClass}
-                  onClick={onOpenNews}
-                >
-                  <NewspaperIcon className={chatContextMenuIconClass} />
-                  {t("news")}
-                </DropdownMenuItem>
+            <div className="min-w-0">
+              <p className="truncate text-[15px] leading-tight font-normal">
+                {userAccountLabel(user)}
+              </p>
+              {userAccountSubline(user) ? (
+                <p className="truncate text-[13px] text-muted-foreground">
+                  {userAccountSubline(user)}
+                </p>
               ) : null}
-              <AccountGuestMenuSections
-                loginPending={loginPending}
-                onLogin={() => login({ source: "chat" })}
+            </div>
+          </div>
+        ) : (
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            className="h-10 flex-1 justify-start gap-2.5 px-1 text-[15px] font-normal"
+            disabled={loginPending}
+            onClick={() => login({ source: "chat" })}
+          >
+            <Avatar className="size-8 after:border-0">
+              <AvatarFallback className="bg-muted text-[11px]">
+                <GoogleGlyph className="size-3.5" />
+              </AvatarFallback>
+            </Avatar>
+            {loginPending ? t("connecting") : t("signIn")}
+          </Button>
+        )}
+        {user && !isProUser ? (
+          <Button
+            size="sm"
+            className={chatMobileDrawerUpgradeClass}
+            nativeButton={false}
+            render={<Link href={UPGRADE_PATH} />}
+          >
+            {t("upgrade")}
+          </Button>
+        ) : null}
+        <DropdownMenu>
+          <DropdownMenuTrigger
+            render={
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                className={cn(chatMobileHeaderButtonClass, "size-9 shrink-0")}
+                aria-label={common("settings")}
               />
-            </>
-          )}
-        </DropdownMenuContent>
-      </DropdownMenu>
+            }
+          >
+            <Settings className="size-4.5" />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            align="end"
+            side="top"
+            sideOffset={8}
+            className={cn(chatContextMenuContentClass, "min-w-64")}
+          >
+            {user ? (
+              <AccountSignedInMenuSections
+                user={user}
+                isProUser={isProUser}
+                planName={
+                  displayPlanName(user.tier) === "Plus"
+                    ? t("planPlus")
+                    : displayPlanName(user.tier) === "Ultimate"
+                      ? t("planUltimate")
+                      : t("planFree")
+                }
+                avatarUrl={avatarUrl ?? null}
+                onLogout={logout}
+                onOpenNews={onOpenNews}
+              />
+            ) : (
+              <>
+                {onOpenNews ? (
+                  <DropdownMenuItem
+                    className={chatContextMenuItemClass}
+                    onClick={onOpenNews}
+                  >
+                    <NewspaperIcon className={chatContextMenuIconClass} />
+                    {t("news")}
+                  </DropdownMenuItem>
+                ) : null}
+                <AccountGuestMenuSections
+                  loginPending={loginPending}
+                  onLogin={() => login({ source: "chat" })}
+                />
+              </>
+            )}
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </footer>
   )
@@ -489,7 +490,10 @@ function ChatHistorySidebar({
 
   React.useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
-      if (!(event.metaKey || event.ctrlKey) || event.key.toLowerCase() !== "k") {
+      if (
+        !(event.metaKey || event.ctrlKey) ||
+        event.key.toLowerCase() !== "k"
+      ) {
         return
       }
       const target = event.target as HTMLElement | null
@@ -535,7 +539,7 @@ function ChatHistorySidebar({
                 size={32}
                 className="size-8 shrink-0 overflow-hidden rounded-full"
               />
-              <h2 className="text-lg font-normal leading-none tracking-tight text-foreground">
+              <h2 className="text-lg leading-none font-normal tracking-tight text-foreground">
                 {t("iris")}
               </h2>
             </div>
@@ -591,7 +595,7 @@ function ChatHistorySidebar({
                   className="size-8 shrink-0 overflow-hidden rounded-full"
                 />
                 {!collapsed ? (
-                  <span className="min-w-0 truncate text-[15px] font-medium leading-none tracking-tight text-sidebar-foreground">
+                  <span className="min-w-0 truncate text-[15px] leading-none font-medium tracking-tight text-sidebar-foreground">
                     {t("iris")}
                   </span>
                 ) : null}
@@ -619,7 +623,7 @@ function ChatHistorySidebar({
             className={cn(
               "flex flex-col",
               isMobileDrawer
-                ? "gap-1.5 px-2 pb-[calc(3.25rem+env(safe-area-inset-bottom,0px))] pt-3"
+                ? "gap-1.5 px-2 pt-3 pb-[calc(3.25rem+env(safe-area-inset-bottom,0px))]"
                 : showBrandHeader
                   ? "gap-1.5 px-2 pt-3 pb-4"
                   : "gap-1.5 px-2 pt-1 pb-4"
@@ -649,7 +653,9 @@ function ChatHistorySidebar({
                     >
                       <ChatGeminiNewChatIcon className="h-4.5" />
                     </TooltipTrigger>
-                    <TooltipContent side={tooltipSide}>{t("newChat")}</TooltipContent>
+                    <TooltipContent side={tooltipSide}>
+                      {t("newChat")}
+                    </TooltipContent>
                   </Tooltip>
                 ) : (
                   <Button
@@ -687,13 +693,16 @@ function ChatHistorySidebar({
               />
             </div>
 
-            {collapsed && !isMobileDrawer ? null : conversations.length === 0 ? (
+            {collapsed && !isMobileDrawer ? null : conversations.length ===
+              0 ? (
               <Empty className="mx-1 mt-4 border-0 p-4">
                 <EmptyHeader>
                   <EmptyMedia variant="icon">
                     <MessageSquareIcon />
                   </EmptyMedia>
-                  <EmptyTitle className="text-sm">{t("noSavedChats")}</EmptyTitle>
+                  <EmptyTitle className="text-sm">
+                    {t("noSavedChats")}
+                  </EmptyTitle>
                   <EmptyDescription className="text-xs">
                     {t("emptySignedIn")}
                   </EmptyDescription>
@@ -831,8 +840,16 @@ function ConversationRowSkeleton({ compact = false }: { compact?: boolean }) {
       className={cn(
         "flex min-w-0 items-center",
         compact
-          ? cn(chatHistoryRailChatItemClass, chatHistoryRailChatItemPadClass, "h-11 px-4")
-          : cn(chatHistoryRailChatItemClass, chatHistoryRailChatItemPadClass, "h-9 gap-2.5 px-3")
+          ? cn(
+              chatHistoryRailChatItemClass,
+              chatHistoryRailChatItemPadClass,
+              "h-11 px-4"
+            )
+          : cn(
+              chatHistoryRailChatItemClass,
+              chatHistoryRailChatItemPadClass,
+              "h-9 gap-2.5 px-3"
+            )
       )}
       aria-busy="true"
       role="status"
@@ -1034,7 +1051,9 @@ function ChatHistoryRail({
         "relative flex h-full min-h-0 shrink-0 flex-col overflow-hidden rounded-e-xl bg-sidebar text-sidebar-foreground transition-[width] duration-200 ease-out",
         className
       )}
-      style={{ width: collapsed ? CHAT_HISTORY_RAIL_COLLAPSED_WIDTH : sidebarWidth }}
+      style={{
+        width: collapsed ? CHAT_HISTORY_RAIL_COLLAPSED_WIDTH : sidebarWidth,
+      }}
       aria-label={t("chatHistory")}
       data-collapsed={collapsed ? "true" : undefined}
     >

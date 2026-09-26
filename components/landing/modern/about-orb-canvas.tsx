@@ -234,14 +234,26 @@ export function AboutOrbCanvas({
         )
         if (dark) {
           body.addColorStop(0, `rgba(255, 255, 255, ${0.32 + smoothed * 0.18})`)
-          body.addColorStop(0.2, `rgba(186, 230, 253, ${0.2 + smoothed * 0.14})`)
-          body.addColorStop(0.5, `rgba(14, 165, 233, ${0.16 + smoothed * 0.12})`)
+          body.addColorStop(
+            0.2,
+            `rgba(186, 230, 253, ${0.2 + smoothed * 0.14})`
+          )
+          body.addColorStop(
+            0.5,
+            `rgba(14, 165, 233, ${0.16 + smoothed * 0.12})`
+          )
           body.addColorStop(0.8, `rgba(37, 99, 235, ${0.1 + smoothed * 0.06})`)
           body.addColorStop(1, "rgba(15, 23, 42, 0)")
         } else {
           body.addColorStop(0, `rgba(255, 255, 255, ${0.78 + smoothed * 0.1})`)
-          body.addColorStop(0.15, `rgba(224, 242, 254, ${0.5 + smoothed * 0.12})`)
-          body.addColorStop(0.4, `rgba(125, 211, 252, ${0.32 + smoothed * 0.16})`)
+          body.addColorStop(
+            0.15,
+            `rgba(224, 242, 254, ${0.5 + smoothed * 0.12})`
+          )
+          body.addColorStop(
+            0.4,
+            `rgba(125, 211, 252, ${0.32 + smoothed * 0.16})`
+          )
           body.addColorStop(0.7, `rgba(56, 189, 248, ${0.18 + smoothed * 0.1})`)
           body.addColorStop(1, "rgba(147, 197, 253, 0)")
         }
@@ -283,8 +295,7 @@ export function AboutOrbCanvas({
       for (let i = 0; i < points.length; i += pointStep) {
         const p = points[i]
         const wave =
-          swell(p, t) * (0.65 + smoothed * 0.35) +
-          micro(p, t) * smoothed * 0.55
+          swell(p, t) * (0.65 + smoothed * 0.35) + micro(p, t) * smoothed * 0.55
         const displaced = 1 + smoothed * displaceGain * wave
         const px = p.x * displaced
         const py = p.y * displaced

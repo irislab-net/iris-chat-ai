@@ -12,10 +12,7 @@ import {
   ScrollReveal,
   ScrollRevealGroup,
 } from "@/components/landing/modern/scroll-reveal"
-import {
-  SectionHeader,
-  SphereCta,
-} from "@/components/landing/modern/sphere-ui"
+import { SectionHeader, SphereCta } from "@/components/landing/modern/sphere-ui"
 import { formatSignalCommand } from "@/lib/chat/composer-mentions"
 import { formatTradePrice } from "@/lib/chat/trade-signal"
 import { buildLandingChatHref } from "@/lib/landing-chat-handoff"
@@ -35,7 +32,9 @@ import {
 } from "@/lib/landing-modern-styles"
 import { cn } from "@/lib/utils"
 
-type LivePrices = Partial<Record<(typeof SIGNALS_LIVE_MARKETS)[number]["symbol"], number | null>>
+type LivePrices = Partial<
+  Record<(typeof SIGNALS_LIVE_MARKETS)[number]["symbol"], number | null>
+>
 
 function useLiveMarketPrices() {
   const [prices, setPrices] = useState<LivePrices | null>(null)
@@ -115,7 +114,7 @@ function LiveMarketCard({
     <article
       className={cn(
         landingGlassSurface,
-        "group relative flex h-full flex-col items-center overflow-hidden rounded-[1.75rem] bg-white/42 px-5 py-8 text-center dark:bg-white/8 sm:px-6 sm:py-9"
+        "group relative flex h-full flex-col items-center overflow-hidden rounded-[1.75rem] bg-white/42 px-5 py-8 text-center sm:px-6 sm:py-9 dark:bg-white/8"
       )}
     >
       <span
@@ -152,10 +151,7 @@ function LiveMarketCard({
   )
 }
 
-function SoonMarketChip({
-  id,
-  symbol,
-}: (typeof SIGNALS_SOON_MARKETS)[number]) {
+function SoonMarketChip({ id, symbol }: (typeof SIGNALS_SOON_MARKETS)[number]) {
   const t = useTranslations("modern.signals")
   const Mark = SIGNALS_SOON_MARKS[id]
 
@@ -209,7 +205,10 @@ export function SignalsMarketsSection() {
         </ul>
       </ScrollRevealGroup>
 
-      <ScrollReveal delay={0.12} className={cn(landingContent, landingAfterHeader)}>
+      <ScrollReveal
+        delay={0.12}
+        className={cn(landingContent, landingAfterHeader)}
+      >
         <div className="text-center">
           <p className="text-sm font-medium text-muted-foreground">
             {t("soonHint")}

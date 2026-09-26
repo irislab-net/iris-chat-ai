@@ -19,8 +19,7 @@ export function getRefundPolicyHref(): string {
 }
 
 /** Canonical source repository for versioned legal drafts. */
-export const LEGAL_DOCS_REPO_URL =
-  "https://github.com/exur-ai/exur-legal-docs"
+export const LEGAL_DOCS_REPO_URL = "https://github.com/exur-ai/exur-legal-docs"
 
 export {
   COMPANY_DEVELOPMENT_ATTRIBUTION,

@@ -54,8 +54,8 @@ function ensurePurifyHooks() {
 }
 
 const aiMessageClassName = cn(
-  "ai-message chat-bidi min-w-0 wrap-anywhere overflow-x-auto text-sm leading-[1.7] sm:text-[13px]",
-  "[&_p]:mb-3 [&_p:last-child]:mb-0 [&_p]:leading-[1.65]",
+  "ai-message min-w-0 overflow-x-auto chat-bidi text-sm leading-[1.7] wrap-anywhere sm:text-[13px]",
+  "[&_p]:mb-3 [&_p]:leading-[1.65] [&_p:last-child]:mb-0",
   "[&_h1]:mt-4 [&_h1]:mb-2 [&_h1]:text-[15px] [&_h1]:font-semibold [&_h1]:tracking-tight [&_h1:first-child]:mt-0",
   "[&_h2]:mt-3.5 [&_h2]:mb-2 [&_h2]:text-sm [&_h2]:font-semibold [&_h2]:tracking-tight [&_h2:first-child]:mt-0",
   "[&_h3]:mt-3 [&_h3]:mb-1.5 [&_h3]:text-[13px] [&_h3]:font-semibold [&_h3:first-child]:mt-0",
@@ -74,8 +74,8 @@ const aiMessageClassName = cn(
   "[&_thead]:border-b [&_thead]:border-border/60 [&_thead]:bg-muted/40",
   "[&_tbody]:divide-y [&_tbody]:divide-border/50",
   "[&_tr]:align-top",
-  "[&_th]:px-2.5 [&_th]:py-2 [&_th]:text-start [&_th]:font-semibold [&_th]:whitespace-normal [&_th]:break-words [&_th]:wrap-anywhere [&_th]:text-foreground max-md:[&_th]:max-w-0 sm:[&_th]:px-3.5 sm:[&_th]:py-2.5",
-  "[&_td]:px-2.5 [&_td]:py-2 [&_td]:text-start [&_td]:align-top [&_td]:whitespace-normal [&_td]:break-words [&_td]:wrap-anywhere [&_td]:text-foreground/90 max-md:[&_td]:max-w-0 sm:[&_td]:px-3.5 sm:[&_td]:py-2.5"
+  "[&_th]:px-2.5 [&_th]:py-2 [&_th]:text-start [&_th]:font-semibold [&_th]:break-words [&_th]:wrap-anywhere [&_th]:whitespace-normal [&_th]:text-foreground max-md:[&_th]:max-w-0 sm:[&_th]:px-3.5 sm:[&_th]:py-2.5",
+  "[&_td]:px-2.5 [&_td]:py-2 [&_td]:text-start [&_td]:align-top [&_td]:break-words [&_td]:wrap-anywhere [&_td]:whitespace-normal [&_td]:text-foreground/90 max-md:[&_td]:max-w-0 sm:[&_td]:px-3.5 sm:[&_td]:py-2.5"
 )
 
 function renderAssistantHtml(content: string) {

@@ -70,9 +70,7 @@ function formatConversationTranscript(
               message.content.trim().length > 0 &&
               message.content.trim() !== "(empty)"
           )
-          .map((message) =>
-            formatTurn(message.role, message.content.trim())
-          )
+          .map((message) => formatTurn(message.role, message.content.trim()))
       : []
 
   const blocks = turns.length > 0 ? turns : historyTurns

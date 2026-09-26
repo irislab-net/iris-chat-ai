@@ -26,8 +26,8 @@ describe("public security program", () => {
     expect(SECURITY_DEFINITION.toLowerCase()).toContain("soc 2")
     expect(SECURITY_DEFINITION.toLowerCase()).toContain("iso 27001")
     expect(SECURITY_DEFINITION.toLowerCase()).toContain("bug bounty")
-    expect(SECURITY_FAQS.some((faq) => faq.answer.includes(SECURITY_EMAIL))).toBe(
-      true
-    )
+    expect(
+      SECURITY_FAQS.some((faq) => faq.answer.includes(SECURITY_EMAIL))
+    ).toBe(true)
   })
 })

@@ -7,7 +7,9 @@ describe("deepMergeMessages", () => {
     const merged = deepMergeMessages(
       {
         common: { english: "English", arabic: "Arabic", brand: "Exur" },
-        modern: { hero: { titleBefore: "Your money,", titleAfter: "handled." } },
+        modern: {
+          hero: { titleBefore: "Your money,", titleAfter: "handled." },
+        },
       },
       {
         common: { arabic: "العربية" },

@@ -4,10 +4,7 @@ import { useLayoutEffect, useRef } from "react"
 import { useTranslations } from "next-intl"
 
 import styles from "@/components/landing/modern/goals-story.module.css"
-import {
-  GOALS_STORY_POOL_SIZE,
-  initGoalsStory,
-} from "@/lib/goals-story-engine"
+import { GOALS_STORY_POOL_SIZE, initGoalsStory } from "@/lib/goals-story-engine"
 import { GOALS_STORY_COUNT } from "@/lib/landing-modern-data"
 import {
   landingGlassSheen,
@@ -39,13 +36,28 @@ export function GoalsSection() {
     const pg2 = pg2Ref.current
     const pings4 = pings4Ref.current
 
-    if (!story || !blocksRoot || !barsRoot || !pool || !pings || !pg1 || !pg2 || !pings4) {
+    if (
+      !story ||
+      !blocksRoot ||
+      !barsRoot ||
+      !pool ||
+      !pings ||
+      !pg1 ||
+      !pg2 ||
+      !pings4
+    ) {
       return
     }
 
-    const blocks = Array.from(blocksRoot.querySelectorAll<HTMLElement>("[data-story-block]"))
-    const bars = Array.from(barsRoot.querySelectorAll<HTMLElement>("[data-story-bar]"))
-    const poolEls = Array.from(pool.querySelectorAll<SVGCircleElement>("circle"))
+    const blocks = Array.from(
+      blocksRoot.querySelectorAll<HTMLElement>("[data-story-block]")
+    )
+    const bars = Array.from(
+      barsRoot.querySelectorAll<HTMLElement>("[data-story-bar]")
+    )
+    const poolEls = Array.from(
+      pool.querySelectorAll<SVGCircleElement>("circle")
+    )
 
     if (
       blocks.length !== GOALS_STORY_COUNT ||
@@ -90,11 +102,7 @@ export function GoalsSection() {
               </ol>
               <div ref={blocksRef} className={styles.blocks} aria-hidden="true">
                 {Array.from({ length: GOALS_STORY_COUNT }, (_, index) => (
-                  <div
-                    key={index}
-                    data-story-block
-                    className={styles.block}
-                  >
+                  <div key={index} data-story-block className={styles.block}>
                     <p
                       className={cn(
                         styles.heading,
@@ -129,21 +137,43 @@ export function GoalsSection() {
             </div>
 
             <figure
-              className={cn(landingGlassSurface, styles.tile, "relative bg-white/42 dark:bg-white/8")}
+              className={cn(
+                landingGlassSurface,
+                styles.tile,
+                "relative bg-white/42 dark:bg-white/8"
+              )}
             >
               <figcaption className="sr-only">{t("diagramAria")}</figcaption>
               <span aria-hidden className={styles.tileBackdrop} />
               <span
                 aria-hidden
-                className={cn(landingGlassSheen, "absolute inset-0 rounded-[32px]")}
+                className={cn(
+                  landingGlassSheen,
+                  "absolute inset-0 rounded-[32px]"
+                )}
               />
-              <svg viewBox="0 0 480 400" aria-hidden="true" className="relative z-10">
+              <svg
+                viewBox="0 0 480 400"
+                aria-hidden="true"
+                className="relative z-10"
+              >
                 <g ref={pings4Ref} opacity="0">
                   <circle className={styles.ping4} cx="240" cy="206" r="88" />
-                  <circle className={cn(styles.ping4, styles.ping4Q2)} cx="240" cy="206" r="88" />
+                  <circle
+                    className={cn(styles.ping4, styles.ping4Q2)}
+                    cx="240"
+                    cy="206"
+                    r="88"
+                  />
                 </g>
                 <g ref={pingsRef} opacity="1">
-                  <circle ref={pg1Ref} className={styles.ping} cx="184" cy="150" r="27" />
+                  <circle
+                    ref={pg1Ref}
+                    className={styles.ping}
+                    cx="184"
+                    cy="150"
+                    r="27"
+                  />
                   <circle
                     ref={pg2Ref}
                     className={cn(styles.ping, styles.pingP2)}

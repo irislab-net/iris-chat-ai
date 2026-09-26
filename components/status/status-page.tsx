@@ -40,7 +40,10 @@ function StatusAction({ action }: { action: StatusPageAction }) {
   const content = (
     <>
       {isGlass ? (
-        <span aria-hidden className={cn(landingGlassBlueSheen, "rounded-full")} />
+        <span
+          aria-hidden
+          className={cn(landingGlassBlueSheen, "rounded-full")}
+        />
       ) : null}
       <span className="relative z-10">{action.label}</span>
     </>
@@ -81,9 +84,7 @@ export function StatusPage({
   const numericCode = /^\d+$/.test(code.trim()) ? code.trim() : null
 
   return (
-    <div
-      className="landing-modern relative flex min-h-dvh flex-col bg-background font-sans text-foreground antialiased"
-    >
+    <div className="landing-modern relative flex min-h-dvh flex-col bg-background font-sans text-foreground antialiased">
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 overflow-hidden"
@@ -103,7 +104,7 @@ export function StatusPage({
           className={cn(
             landingHeroGlass,
             "relative flex min-h-88 flex-col overflow-hidden rounded-[2.5rem] sm:min-h-96",
-            "animate-in fade-in zoom-in-95 duration-500"
+            "animate-in duration-500 zoom-in-95 fade-in"
           )}
         >
           <HeroLiquidGlassBg tone="blue" />
@@ -122,12 +123,15 @@ export function StatusPage({
               <span
                 className={cn(
                   landingGlassSurface,
-                  "relative flex size-14 shrink-0 items-center justify-center rounded-full bg-white/55 p-2.5 dark:bg-white/10 sm:size-16 sm:p-3"
+                  "relative flex size-14 shrink-0 items-center justify-center rounded-full bg-white/55 p-2.5 sm:size-16 sm:p-3 dark:bg-white/10"
                 )}
                 aria-hidden
               >
                 <span
-                  className={cn(landingGlassSheen, "pointer-events-none absolute inset-0 rounded-full")}
+                  className={cn(
+                    landingGlassSheen,
+                    "pointer-events-none absolute inset-0 rounded-full"
+                  )}
                 />
                 <AnimatedExurLogo
                   replayOnHover
@@ -150,7 +154,7 @@ export function StatusPage({
                 aria-hidden
                 className={cn(
                   landingDisplay,
-                  "pointer-events-none mt-8 select-none text-[5.5rem] leading-none tracking-[-0.06em] text-foreground/8 sm:text-[7.5rem] dark:text-foreground/10"
+                  "pointer-events-none mt-8 text-[5.5rem] leading-none tracking-[-0.06em] text-foreground/8 select-none sm:text-[7.5rem] dark:text-foreground/10"
                 )}
               >
                 {numericCode}

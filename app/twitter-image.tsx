@@ -1,6 +1,1 @@
-export {
-  alt,
-  contentType,
-  size,
-  default,
-} from "./opengraph-image"
+export { alt, contentType, size, default } from "./opengraph-image"

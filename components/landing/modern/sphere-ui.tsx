@@ -40,7 +40,11 @@ export function SphereOrb({
 }: SphereOrbProps) {
   return (
     <span
-      className={cn("relative inline-flex shrink-0 items-center justify-center", ORB_SIZES[size], className)}
+      className={cn(
+        "relative inline-flex shrink-0 items-center justify-center",
+        ORB_SIZES[size],
+        className
+      )}
       aria-hidden
     >
       {!bare && glow && (
@@ -59,7 +63,12 @@ export function SphereOrb({
         </>
       )}
       {children ? (
-        <span className={cn("flex items-center justify-center", bare ? "relative" : "absolute inset-0 z-10")}>
+        <span
+          className={cn(
+            "flex items-center justify-center",
+            bare ? "relative" : "absolute inset-0 z-10"
+          )}
+        >
           {children}
         </span>
       ) : null}
@@ -110,7 +119,12 @@ export function SphereCta({
 
   const content = (
     <>
-      {isGlass && <span aria-hidden className={cn(landingGlassBlueSheen, "rounded-full")} />}
+      {isGlass && (
+        <span
+          aria-hidden
+          className={cn(landingGlassBlueSheen, "rounded-full")}
+        />
+      )}
       <span className="relative z-10">{children}</span>
     </>
   )
@@ -140,10 +154,16 @@ export function SphereCta({
 export function GoalOrbIcon({ icon: Icon }: { icon: LucideIcon }) {
   return (
     <div className="relative mb-8 inline-flex">
-      <span className="absolute -inset-3 rounded-full bg-[#CBD5E1]/30 blur-2xl" aria-hidden />
+      <span
+        className="absolute -inset-3 rounded-full bg-[#CBD5E1]/30 blur-2xl"
+        aria-hidden
+      />
       <span className="relative flex size-16 items-center justify-center">
         <SphereOrb size="lg" glow={false} />
-        <Icon className="absolute size-6 text-white drop-shadow-sm" strokeWidth={1.75} />
+        <Icon
+          className="absolute size-6 text-white drop-shadow-sm"
+          strokeWidth={1.75}
+        />
       </span>
     </div>
   )
@@ -189,5 +209,10 @@ export function SectionHeader({
 }
 
 export function SparkleAccent({ className }: { className?: string }) {
-  return <SparklesIcon className={cn("size-3.5 text-muted-foreground", className)} aria-hidden />
+  return (
+    <SparklesIcon
+      className={cn("size-3.5 text-muted-foreground", className)}
+      aria-hidden
+    />
+  )
 }

@@ -29,7 +29,9 @@ function clamp01(value: number): number {
   return value
 }
 
-export function isChatCreditBalance(value: unknown): value is ChatCreditBalance {
+export function isChatCreditBalance(
+  value: unknown
+): value is ChatCreditBalance {
   if (!value || typeof value !== "object" || Array.isArray(value)) return false
   const record = value as Record<string, unknown>
   return (
@@ -103,7 +105,9 @@ export function formatCreditUsageCompact(
   return `Daily ${formatCreditCount(usage.daily.remaining)}/${formatCreditCount(usage.daily.limit)} · Weekly ${formatCreditCount(usage.weekly.remaining)}/${formatCreditCount(usage.weekly.limit)}`
 }
 
-export function formatTrialUsageCompact(trial: TrialInfo | null | undefined): string | null {
+export function formatTrialUsageCompact(
+  trial: TrialInfo | null | undefined
+): string | null {
   if (!trial) return null
   return `Guest ${formatCreditCount(trial.messages_remaining)}/${formatCreditCount(trial.messages_limit)} left`
 }

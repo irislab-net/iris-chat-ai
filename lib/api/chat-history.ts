@@ -76,9 +76,11 @@ function normalizeHistoryItem(raw: unknown): ConversationHistoryItem | null {
   if (!raw || typeof raw !== "object" || Array.isArray(raw)) return null
   const item = raw as Record<string, unknown>
   if (typeof item.id !== "number" || !Number.isFinite(item.id)) return null
-  if (typeof item.session_id !== "string" || !item.session_id.trim()) return null
+  if (typeof item.session_id !== "string" || !item.session_id.trim())
+    return null
   if (typeof item.content !== "string") return null
-  if (typeof item.created_at !== "string" || !item.created_at.trim()) return null
+  if (typeof item.created_at !== "string" || !item.created_at.trim())
+    return null
   if (typeof item.role !== "string" || !item.role.trim()) return null
 
   const clientActions = normalizeClientActions(item.client_actions)
@@ -207,7 +209,8 @@ export function groupHistoryBySession(
 
 export function sortHistoryItemsAsc(items: ConversationHistoryItem[]) {
   return [...items].sort(
-    (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+    (a, b) =>
+      new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
   )
 }
 

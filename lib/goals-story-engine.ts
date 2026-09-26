@@ -82,7 +82,12 @@ const QUAD: Record<number, [number, number]> = {
   [H2]: [CX - QUAD_R, CY + QUAD_R],
   [H3]: [CX + QUAD_R, CY + QUAD_R],
 }
-const QUAD_O: Record<number, number> = { [H0]: 0.4, [H1]: 1, [H2]: 0.82, [H3]: 0.32 }
+const QUAD_O: Record<number, number> = {
+  [H0]: 0.4,
+  [H1]: 1,
+  [H2]: 0.82,
+  [H3]: 0.32,
+}
 
 /** 03 — the same four, overlapping so every edge runs through one point. */
 const PETAL_R = 72
@@ -120,7 +125,13 @@ function gy(i: number) {
   return GRID_Y0 + Math.floor(i / GRID_COLS) * GRID_STEP
 }
 
-function mk(x: number, y: number, r: number, o: number, f: number): CircleState {
+function mk(
+  x: number,
+  y: number,
+  r: number,
+  o: number,
+  f: number
+): CircleState {
   return { x, y, r, o, f }
 }
 
@@ -142,7 +153,9 @@ function buildStageStates(): CircleState[][] {
 
     S[0][i] = mk(x, y, GRID_R, i === SIGNAL ? 1 : 0.4, i === SIGNAL ? 1 : 0)
 
-    S[1][i] = hero ? mk(QUAD[i][0], QUAD[i][1], QUAD_R, QUAD_O[i], 0) : off(x, y)
+    S[1][i] = hero
+      ? mk(QUAD[i][0], QUAD[i][1], QUAD_R, QUAD_O[i], 0)
+      : off(x, y)
 
     S[2][i] = hero ? mk(PETAL[i][0], PETAL[i][1], PETAL_R, 1, 0) : off(x, y)
 
@@ -177,7 +190,10 @@ export function initGoalsStory(dom: GoalsStoryDom) {
   const JA: Record<number, JitterParams> = {}
 
   for (let i = 0; i < N; i++) {
-    TW[i] = i === SIGNAL ? null : { f: 0.6 + (((i * 29) % 11) / 11) * 0.9, ph: (i * 2.399) % 6.28 }
+    TW[i] =
+      i === SIGNAL
+        ? null
+        : { f: 0.6 + (((i * 29) % 11) / 11) * 0.9, ph: (i * 2.399) % 6.28 }
   }
 
   HEROES.forEach((id, k) => {
@@ -217,8 +233,14 @@ export function initGoalsStory(dom: GoalsStoryDom) {
 
       if (ja && W.w3 > 0) {
         const a = ja.a * W.w3 * amb
-        x += a * (Math.sin(t * ja.f + ja.ph) + 0.5 * Math.sin(t * ja.f * 1.9 + ja.ph * 2))
-        y += a * (Math.cos(t * ja.f * 0.9 + ja.ph) + 0.5 * Math.sin(t * ja.f * 2.1 + ja.ph))
+        x +=
+          a *
+          (Math.sin(t * ja.f + ja.ph) +
+            0.5 * Math.sin(t * ja.f * 1.9 + ja.ph * 2))
+        y +=
+          a *
+          (Math.cos(t * ja.f * 0.9 + ja.ph) +
+            0.5 * Math.sin(t * ja.f * 2.1 + ja.ph))
       }
 
       if (W.w4 > 0) {
@@ -227,7 +249,9 @@ export function initGoalsStory(dom: GoalsStoryDom) {
       }
 
       if (TW[k] && W.w1 > 0) {
-        const tw = amb ? 0.55 + 0.45 * (0.5 + 0.5 * Math.sin(t * TW[k]!.f + TW[k]!.ph)) : 0.9
+        const tw = amb
+          ? 0.55 + 0.45 * (0.5 + 0.5 * Math.sin(t * TW[k]!.f + TW[k]!.ph))
+          : 0.9
         so = s.o * (1 - W.w1 * (1 - tw))
       }
 
@@ -320,7 +344,13 @@ export function initGoalsStory(dom: GoalsStoryDom) {
         onUpdate(self) {
           const tt = self.progress * TOTAL
           const s =
-            tt < STARTS[0] + 0.6 ? 0 : tt < STARTS[1] + 0.6 ? 1 : tt < STARTS[2] + 0.6 ? 2 : 3
+            tt < STARTS[0] + 0.6
+              ? 0
+              : tt < STARTS[1] + 0.6
+                ? 1
+                : tt < STARTS[2] + 0.6
+                  ? 2
+                  : 3
           if (s !== lastStage) {
             lastStage = s
             blocks.forEach((b, ix) => {
@@ -340,8 +370,14 @@ export function initGoalsStory(dom: GoalsStoryDom) {
 
       for (let n = 0; n < N; n++) {
         const tg = S[k + 1][n]
-        const d = HEROES.includes(n) ? 0 : 0.05 + 0.3 * (((n * 37) % N) / (N - 1))
-        tl.to(st[n], { x: tg.x, y: tg.y, r: tg.r, o: tg.o, f: tg.f, duration: 0.85 }, T + d)
+        const d = HEROES.includes(n)
+          ? 0
+          : 0.05 + 0.3 * (((n * 37) % N) / (N - 1))
+        tl.to(
+          st[n],
+          { x: tg.x, y: tg.y, r: tg.r, o: tg.o, f: tg.f, duration: 0.85 },
+          T + d
+        )
       }
 
       const o1: gsap.TweenVars & Record<string, number> = { duration: 0.9 }
@@ -352,8 +388,26 @@ export function initGoalsStory(dom: GoalsStoryDom) {
       o2[`w${k + 2}`] = 1
       tl.to(W, o2, T + 0.3)
 
-      tl.to(blocks[k], { autoAlpha: 0, y: -28, duration: LANDING_MOTION.durationIn, ease: LANDING_MOTION.easeIn }, T)
-      tl.to(blocks[k + 1], { autoAlpha: 1, y: 0, duration: LANDING_MOTION.durationFast, ease: LANDING_MOTION.ease }, T + 0.65)
+      tl.to(
+        blocks[k],
+        {
+          autoAlpha: 0,
+          y: -28,
+          duration: LANDING_MOTION.durationIn,
+          ease: LANDING_MOTION.easeIn,
+        },
+        T
+      )
+      tl.to(
+        blocks[k + 1],
+        {
+          autoAlpha: 1,
+          y: 0,
+          duration: LANDING_MOTION.durationFast,
+          ease: LANDING_MOTION.ease,
+        },
+        T + 0.65
+      )
 
       tl.to(bars[k], { "--bar-fill": 0.14, duration: 0.4 }, T + 0.2)
       tl.to(bars[k + 1], { "--bar-fill": 1, duration: 0.4 }, T + 0.6)

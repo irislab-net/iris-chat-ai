@@ -16,7 +16,7 @@ export function SkipToContent({ className }: { className?: string }) {
       className={cn(
         "sr-only focus:not-sr-only focus:absolute focus:inset-4 focus:top-4 focus:z-100",
         "focus:rounded-full focus:bg-foreground focus:px-4 focus:py-2.5 focus:text-sm focus:font-medium focus:text-background",
-        "focus:outline-none focus:ring-3 focus:ring-ring/50",
+        "focus:ring-3 focus:ring-ring/50 focus:outline-none",
         className
       )}
     >

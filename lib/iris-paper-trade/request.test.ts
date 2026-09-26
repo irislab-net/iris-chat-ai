@@ -56,7 +56,9 @@ describe("requestPaperTradeDecision", () => {
     const call = mockedSend.mock.calls[0]?.[0]
     expect(call?.message).toBe(userMessage)
     expect(call?.message).not.toContain("MARKET_CONTEXT")
-    expect(call?.message).not.toContain("You are IRIS evaluating ONE user-initiated")
+    expect(call?.message).not.toContain(
+      "You are IRIS evaluating ONE user-initiated"
+    )
     expect(call?.instructions).toContain("open_paper_trade")
     expect(call?.instructions).toContain("MARKET_CONTEXT")
     expect(call?.clientContext).toMatchObject({

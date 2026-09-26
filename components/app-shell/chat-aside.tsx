@@ -4,17 +4,26 @@ import * as React from "react"
 import { useSearchParams } from "next/navigation"
 import { Link, usePathname, useRouter } from "@/i18n/navigation"
 import { useLocale, useTranslations } from "next-intl"
-import {
-  ChevronDownIcon,
-  HistoryIcon,
-  Maximize2Icon,
-} from "lucide-react"
+import { ChevronDownIcon, HistoryIcon, Maximize2Icon } from "lucide-react"
 
 import { ChatAccountFooter } from "@/components/app-shell/chat-account-footer"
 import { ChatAccountMenu } from "@/components/app-shell/chat-account-menu"
 import { ExurLogo } from "@/components/brand/exur-logo"
 import { ChatMobileGeminiBackground } from "@/components/app-shell/chat-mobile-gemini-background"
-import { chatMobileScrollDownClass, chatMobileThreadBottomFadeClass, chatMobileThreadBottomSpacerClass, chatMobileThreadClass, chatMobileThreadFirstTurnClass, chatMobileThreadScrollMaskClass, chatMobileThreadTopSpacerClass, chatMobileComposerDockClass, chatMobileEmptyHeroContentClass, chatMobileEmptyHeroMarkClass, chatMobileEmptyHeroTitleClass, chatMobileEmptyHeroWrapClass } from "@/components/app-shell/chat-mobile-gemini-styles"
+import {
+  chatMobileScrollDownClass,
+  chatMobileThreadBottomFadeClass,
+  chatMobileThreadBottomSpacerClass,
+  chatMobileThreadClass,
+  chatMobileThreadFirstTurnClass,
+  chatMobileThreadScrollMaskClass,
+  chatMobileThreadTopSpacerClass,
+  chatMobileComposerDockClass,
+  chatMobileEmptyHeroContentClass,
+  chatMobileEmptyHeroMarkClass,
+  chatMobileEmptyHeroTitleClass,
+  chatMobileEmptyHeroWrapClass,
+} from "@/components/app-shell/chat-mobile-gemini-styles"
 import { ChatMobileHeader } from "@/components/app-shell/chat-mobile-header"
 import { ChatGeminiNewChatIcon } from "@/components/app-shell/chat-gemini-new-chat-icon"
 import { ChatComposer } from "@/components/app-shell/chat-composer"
@@ -41,7 +50,10 @@ import {
   ChatThreadUpgradeButton,
 } from "@/components/app-shell/chat-thread-toolbar"
 import { ChatUserTurn } from "@/components/app-shell/chat-user-message"
-import { copyTextToClipboard, formatConversationTranscript } from "@/lib/chat/transcript"
+import {
+  copyTextToClipboard,
+  formatConversationTranscript,
+} from "@/lib/chat/transcript"
 import { ChatAsideSkeleton } from "@/components/app-shell/shell-skeletons"
 import { useTicketSlot } from "@/components/app-shell/ticket-slot"
 import { typewriterReveal } from "@/components/app-shell/chat-typing"
@@ -79,7 +91,11 @@ import { displayPlanName } from "@/lib/billing/catalog"
 import { LANDING_CHAT_QUERY_PARAM } from "@/lib/landing-chat-handoff"
 import { isAppDeskPath, UPGRADE_PATH } from "@/lib/site"
 import { resolveUserDisplayName } from "@/lib/user-profile"
-import type { CoPilotHistoryMessage, ChatCreditBalance, TrialInfo } from "@/lib/api/types"
+import type {
+  CoPilotHistoryMessage,
+  ChatCreditBalance,
+  TrialInfo,
+} from "@/lib/api/types"
 import { formatCreditUsageCompact } from "@/lib/api/credit-usage"
 import {
   trackChatMessageBlockedGuest,
@@ -332,7 +348,8 @@ function ChatAside({
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const isDesktop = useIsDesktop()
-  const shellSidebars = useShellSidebarLayout() ?? SHELL_SIDEBAR_COMPACT_FALLBACK
+  const shellSidebars =
+    useShellSidebarLayout() ?? SHELL_SIDEBAR_COMPACT_FALLBACK
   const ticketSlot = useTicketSlot()
   const [deskWaitTimedOut, setDeskWaitTimedOut] = React.useState(false)
   const waitForDesk = isAppDeskPath(pathname) && isDesktop === true
@@ -386,9 +403,9 @@ function ChatAside({
   const [conversationId, setConversationId] = React.useState(() =>
     crypto.randomUUID()
   )
-  const [conversations, setConversations] = React.useState<StoredConversation[]>(
-    []
-  )
+  const [conversations, setConversations] = React.useState<
+    StoredConversation[]
+  >([])
   const [deletingIds, setDeletingIds] = React.useState<ReadonlySet<string>>(
     () => new Set()
   )
@@ -400,20 +417,23 @@ function ChatAside({
     typeof window !== "undefined" ? readShellLayoutPrefs().newsOpen : false
   )
 
-  const setNewsOpen = React.useCallback((next: boolean | ((prev: boolean) => boolean)) => {
-    setNewsOpenState((prev) => {
-      const value = typeof next === "function" ? next(prev) : next
-      writeShellLayoutPrefs({ newsOpen: value })
-      return value
-    })
-  }, [])
+  const setNewsOpen = React.useCallback(
+    (next: boolean | ((prev: boolean) => boolean)) => {
+      setNewsOpenState((prev) => {
+        const value = typeof next === "function" ? next(prev) : next
+        writeShellLayoutPrefs({ newsOpen: value })
+        return value
+      })
+    },
+    []
+  )
   const [historyRailCollapsed, setHistoryRailCollapsed] = React.useState(false)
   const [historyOpen, setHistoryOpen] = React.useState(
     () => displayMode === "focused"
   )
-  const [pendingAssistantId, setPendingAssistantId] = React.useState<string | null>(
-    null
-  )
+  const [pendingAssistantId, setPendingAssistantId] = React.useState<
+    string | null
+  >(null)
   const bottomRef = React.useRef<HTMLDivElement>(null)
   const scrollViewportRef = React.useRef<HTMLDivElement>(null)
   const stickToBottomRef = React.useRef(true)
@@ -571,7 +591,9 @@ function ChatAside({
     void (async () => {
       for (const target of targets) {
         signalRecoveryAttemptedRef.current.add(target.messageId)
-        const current = messages.find((message) => message.id === target.messageId)
+        const current = messages.find(
+          (message) => message.id === target.messageId
+        )
         if (!current || current.paperTicket) continue
 
         const recovered = await tryRecoverProposedPaperTradeFromToolFailure({
@@ -681,10 +703,7 @@ function ChatAside({
       if (restored) {
         applyStoredConversation(restored)
         if (store.activeId !== restored.id) {
-          writeChatStore(
-            chatOwnerId,
-            setActiveConversation(store, restored.id)
-          )
+          writeChatStore(chatOwnerId, setActiveConversation(store, restored.id))
         }
       } else {
         // Keep the same blank id across refresh when user left a New chat open.
@@ -822,7 +841,12 @@ function ChatAside({
     closeHistoryPanelIfNeeded()
 
     if (hasUserMessages(messages)) {
-      persistCurrent({ id: conversationId, messages, history, ownerId: chatOwnerId })
+      persistCurrent({
+        id: conversationId,
+        messages,
+        history,
+        ownerId: chatOwnerId,
+      })
     }
 
     const blank = blankConversation()
@@ -1026,9 +1050,8 @@ function ChatAside({
 
     if (shouldRunPaperTradePipeline(userMessage, historySnapshot)) {
       try {
-        const { runIrisPaperTradeRequest } = await import(
-          "@/lib/iris-paper-trade/run"
-        )
+        const { runIrisPaperTradeRequest } =
+          await import("@/lib/iris-paper-trade/run")
         const result = await runIrisPaperTradeRequest({
           userMessage,
           conversationId: activeId,
@@ -1037,9 +1060,7 @@ function ChatAside({
           signal: controller.signal,
           onPhase: (phase) => {
             const text =
-              phase === "context"
-                ? t("fetchingContext")
-                : t("evaluatingSetup")
+              phase === "context" ? t("fetchingContext") : t("evaluatingSetup")
             setMessages((prev) =>
               prev.map((m) =>
                 m.id === assistantId
@@ -1121,10 +1142,10 @@ function ChatAside({
                     ...m,
                     content: failed.content || m.content,
                     error: true as const,
-                  errorText: coPilotUserFacingError(error, { isProUser }),
-                  action: coPilotFailureAction(error),
-                  retryUserMessage: failed.retryUserMessage,
-                  thinkingTrace: undefined,
+                    errorText: coPilotUserFacingError(error, { isProUser }),
+                    action: coPilotFailureAction(error),
+                    retryUserMessage: failed.retryUserMessage,
+                    thinkingTrace: undefined,
                   }
                 : m
             ),
@@ -1220,7 +1241,11 @@ function ChatAside({
         fullText = stripMarketContextAppendix(fullText)
       }
 
-      if (!fullText && !clientResult.paperTicket && !clientResult.noTradeReason) {
+      if (
+        !fullText &&
+        !clientResult.paperTicket &&
+        !clientResult.noTradeReason
+      ) {
         throw new Error("Exur returned an empty reply. Please try again.")
       }
 
@@ -1244,9 +1269,7 @@ function ChatAside({
       const historyAssistantText =
         turnText ||
         signalTicket?.thesis?.trim() ||
-        (signalTicket
-          ? `${signalTicket.side} ${signalTicket.symbol}`
-          : "") ||
+        (signalTicket ? `${signalTicket.side} ${signalTicket.symbol}` : "") ||
         clientResult.noTradeReason ||
         ""
 
@@ -1455,11 +1478,11 @@ function ChatAside({
         }
       )
     } finally {
-        if (abortRef.current === controller) abortRef.current = null
-        setPendingAssistantId(null)
-        setSending(false)
-      }
+      if (abortRef.current === controller) abortRef.current = null
+      setPendingAssistantId(null)
+      setSending(false)
     }
+  }
 
   function handleEditUserMessage(messageId: string) {
     if (sending) return
@@ -1564,7 +1587,9 @@ function ChatAside({
   }
 
   /** Stream login_required has no trial object — refresh from GET /credits. */
-  async function trialFromChatError(error: unknown): Promise<TrialInfo | undefined> {
+  async function trialFromChatError(
+    error: unknown
+  ): Promise<TrialInfo | undefined> {
     const attached = (error as { trial?: TrialInfo } | null)?.trial
     if (attached) {
       setGuestTrial(attached)
@@ -1794,8 +1819,7 @@ function ChatAside({
     !showMainColumnHeader &&
     !isMobileOverlay
   const threadTitleRaw =
-    activeConversation?.title?.trim() ||
-    conversationTitleFromMessages(messages)
+    activeConversation?.title?.trim() || conversationTitleFromMessages(messages)
   const threadTitle =
     !threadTitleRaw || threadTitleRaw === NEW_CHAT_TITLE
       ? t("newChat")
@@ -1881,7 +1905,8 @@ function ChatAside({
         ),
       })
     : t("mobileGreetingGuest")
-  const [mobileComposerFocused, setMobileComposerFocused] = React.useState(false)
+  const [mobileComposerFocused, setMobileComposerFocused] =
+    React.useState(false)
   const [mobileHeroIntro, setMobileHeroIntro] = React.useState(true)
   const [showMobileEmptyHero, setShowMobileEmptyHero] = React.useState(
     messages.length === 0
@@ -1897,9 +1922,8 @@ function ChatAside({
     mobileGeminiPhase,
     messages.length
   )
-  const mobileGeminiBackgroundActive = isMobileGeminiBackgroundActive(
-    mobileGeminiPhase
-  )
+  const mobileGeminiBackgroundActive =
+    isMobileGeminiBackgroundActive(mobileGeminiPhase)
 
   React.useEffect(() => {
     if (isMobileOverlay && messages.length === 0) {
@@ -1964,7 +1988,9 @@ function ChatAside({
           : historyRailVisible || isFocusedLayout
             ? "flex-row bg-background text-foreground"
             : "flex-col bg-sidebar text-sidebar-foreground",
-        displayMode === "docked" && !isMobileOverlay ? "rounded-e-2xl" : "rounded-none",
+        displayMode === "docked" && !isMobileOverlay
+          ? "rounded-e-2xl"
+          : "rounded-none",
         className
       )}
     >
@@ -1988,9 +2014,7 @@ function ChatAside({
           onTogglePin={toggleConversationPin}
           onNewChat={startNewChat}
           sidebarWidth={shellSidebars.chat.minSize}
-          footer={
-            <ChatAccountFooter collapsed={historyRailCollapsed} />
-          }
+          footer={<ChatAccountFooter collapsed={historyRailCollapsed} />}
           collapsed={historyRailCollapsed}
           onToggleCollapsed={toggleHistoryRailCollapsed}
           onOpenNews={openNewsFromChat}
@@ -2009,483 +2033,48 @@ function ChatAside({
               mobileGeminiPhase === "focused" ||
               mobileGeminiPhase === "streaming") &&
             "chat-mobile-gemini-empty",
-          isMobileOverlay && mobileGeminiPhase === "threaded" && "chat-mobile-gemini-threaded"
+          isMobileOverlay &&
+            mobileGeminiPhase === "threaded" &&
+            "chat-mobile-gemini-threaded"
         )}
         data-gemini-phase={mobileGeminiPhase ?? undefined}
       >
-      {isMobileOverlay ? (
-        <ChatMobileHeader
-          historyOpen={historyOpen}
-          showMenuSpotlight={showMenuSpotlight}
-          onOpenHistory={() => {
-            setHistoryOpen((open) => {
-              const next = !open
-              if (next) acknowledgeNewsSpotlightMenu()
-              return next
-            })
-          }}
-          effort={effort}
-          onEffortChange={onEffortChange}
-          onNewChat={startNewChat}
-          onOpenNews={openNewsFromChat}
-          sending={sending}
-          threadMenu={
-            showThread && threadHasUserMessages
-              ? {
-                  title: threadTitle,
-                  pinned: Boolean(activeConversation?.pinned),
-                  disabled: sending,
-                  onShare: shareCurrentConversation,
-                  onRename: (title) =>
-                    renameConversation(conversationId, title),
-                  onTogglePin: () => toggleConversationPin(conversationId),
-                  onDelete: deleteCurrentConversation,
-                }
-              : undefined
-          }
-        />
-      ) : null}
-      {showMobileHistoryOverlay ? (
-        <div className="absolute inset-0 z-30 flex min-h-0 flex-col bg-background">
-          <ChatHistorySidebar
-            variant="mobile-drawer"
-            conversations={conversations}
-            conversationId={conversationId}
-            sending={sending}
-            deletingIds={deletingIds}
-            onSelect={openConversation}
-            onDelete={removeConversation}
-            onRename={renameConversation}
-            onTogglePin={toggleConversationPin}
+        {isMobileOverlay ? (
+          <ChatMobileHeader
+            historyOpen={historyOpen}
+            showMenuSpotlight={showMenuSpotlight}
+            onOpenHistory={() => {
+              setHistoryOpen((open) => {
+                const next = !open
+                if (next) acknowledgeNewsSpotlightMenu()
+                return next
+              })
+            }}
+            effort={effort}
+            onEffortChange={onEffortChange}
             onNewChat={startNewChat}
-            onClose={() => setHistoryOpen(false)}
             onOpenNews={openNewsFromChat}
-            showNewsSpotlight={showNewsSpotlight}
-            showBrandHeader={false}
-            className="min-h-0 flex-1"
-          />
-        </div>
-      ) : null}
-      {showMainColumnHeader ? (
-      <header
-        className={cn(
-          "flex min-h-12 shrink-0 items-center gap-1 px-2 sm:gap-2 sm:px-3",
-          onClose && "app-mobile-safe-header"
-        )}
-      >
-        <Link
-          href="/"
-          aria-label={common("brand")}
-          className="shrink-0 rounded-md outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
-        >
-          <ExurLogo
-            decorative
-            variant="gradient"
-            size={28}
-            className="size-7 shrink-0 overflow-hidden rounded-full"
-            priority
-          />
-        </Link>
-        <div className="min-w-0 flex-1">
-          <span className="block text-sm font-medium leading-none tracking-tight">
-            {t("iris")}
-          </span>
-          <span className="mt-0.5 block truncate text-xs text-muted-foreground">
-            {isAuthenticated
-              ? formatCreditUsageCompact(creditBalance) ??
-                displayPlanName(user?.tier)
-              : guestUnavailable
-                ? t("copilotGuestUnavailable")
-                : guestTrial
-                  ? formatGuestTrialLabel(guestTrial)
-                  : t("copilotGuestTry")}
-          </span>
-        </div>
-        {!isMobileOverlay ? (
-          <ChatAccountMenu
-            variant="desktop"
-            onOpenNews={openNewsFromChat}
+            sending={sending}
+            threadMenu={
+              showThread && threadHasUserMessages
+                ? {
+                    title: threadTitle,
+                    pinned: Boolean(activeConversation?.pinned),
+                    disabled: sending,
+                    onShare: shareCurrentConversation,
+                    onRename: (title) =>
+                      renameConversation(conversationId, title),
+                    onTogglePin: () => toggleConversationPin(conversationId),
+                    onDelete: deleteCurrentConversation,
+                  }
+                : undefined
+            }
           />
         ) : null}
-        {showThreadToolbarInHeader &&
-        !isMobileOverlay &&
-        isAuthenticated &&
-        !isProUser ? (
-          <ChatThreadUpgradeButton />
-        ) : !showThreadToolbarInHeader &&
-          !isMobileOverlay &&
-          isAuthenticated &&
-          !isProUser ? (
-          <Button
-            size="xs"
-            variant="outline"
-            className="hidden shrink-0 sm:inline-flex"
-            nativeButton={false}
-            render={<Link href={UPGRADE_PATH} />}
-          >
-            {t("upgrade")}
-          </Button>
-        ) : null}
-        {showDesktopLayoutControls &&
-        !isFocusedLayout &&
-        !historyRailVisible ? (
-          <ChatHeaderIconButton
-            label={t("fullScreenChat")}
-            onClick={() => onDisplayModeChange?.("focused")}
-          >
-            <Maximize2Icon />
-          </ChatHeaderIconButton>
-        ) : null}
-        {isAuthenticated && !isFocusedLayout && !historyRailVisible ? (
-          <ChatHeaderIconButton
-            label={t("chatHistory")}
-            pressed={historyOpen}
-            onClick={() => setHistoryOpen((v) => !v)}
-          >
-            <HistoryIcon />
-          </ChatHeaderIconButton>
-        ) : null}
-        {!isFocusedLayout ? (
-          <ChatHeaderIconButton
-            label={t("newChat")}
-            onClick={startNewChat}
-            disabled={sending}
-          >
-            <ChatGeminiNewChatIcon className="h-4" />
-          </ChatHeaderIconButton>
-        ) : null}
-        {showThreadToolbarInHeader ? (
-          <ChatThreadOptionsMenu
-            title={threadTitle}
-            pinned={Boolean(activeConversation?.pinned)}
-            disabled={sending}
-            onShare={shareCurrentConversation}
-            onRename={(title) => renameConversation(conversationId, title)}
-            onTogglePin={() => toggleConversationPin(conversationId)}
-            onDelete={deleteCurrentConversation}
-          />
-        ) : null}
-      </header>
-      ) : null}
-
-      <div className="flex min-h-0 min-w-0 flex-1 overflow-hidden">
-        <div className="relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
-          {showStandaloneThreadToolbar ? (
-            <ChatThreadToolbar
-              title={threadTitle}
-              pinned={Boolean(activeConversation?.pinned)}
-              disabled={sending}
-              showUpgrade={
-                !isMobileOverlay && isAuthenticated && !isProUser
-              }
-              onShare={shareCurrentConversation}
-              onRename={(title) => renameConversation(conversationId, title)}
-              onTogglePin={() => toggleConversationPin(conversationId)}
-              onDelete={deleteCurrentConversation}
-            />
-          ) : null}
-          {showThread ? (
-            <div className="relative min-h-0 flex-1 overflow-hidden">
-            <ScrollArea
-              viewportRef={scrollViewportRef}
-              className={cn(
-                "h-full min-h-0",
-                isMobileOverlay &&
-                  messages.length > 0 &&
-                  chatMobileThreadScrollMaskClass
-              )}
-            >
-              {isMobileOverlay && messages.length > 0 ? (
-                <div aria-hidden className={chatMobileThreadTopSpacerClass} />
-              ) : null}
-              {showMobileEmptyHero ? (
-                <div
-                  className={cn(
-                    isMobileOverlay
-                      ? chatMobileEmptyHeroWrapClass
-                      : "flex min-h-full flex-col items-center justify-center px-4 py-10",
-                    "chat-empty-hero-shell",
-                    messages.length > 0 &&
-                      cn(
-                        "chat-empty-hero-shell-exiting",
-                        isMobileOverlay &&
-                          "pointer-events-none absolute inset-x-0 top-0 z-1 min-h-0 justify-start pb-0"
-                      )
-                  )}
-                >
-                  <div className={cn("mx-auto w-full", CHAT_CONTENT_MAX_WIDTH)}>
-                    <div className={chatMobileEmptyHeroContentClass}>
-                      {isMobileOverlay ? (
-                        <IrisMark
-                          variant="hero"
-                          className={chatMobileEmptyHeroMarkClass}
-                        />
-                      ) : (
-                        <IrisMark variant="hero" />
-                      )}
-                      <h2
-                        className={cn(
-                          isMobileOverlay
-                            ? chatMobileEmptyHeroTitleClass
-                            : "max-w-[20rem] text-balance text-[1.75rem] font-light leading-[1.22] tracking-[-0.028em] text-foreground"
-                        )}
-                      >
-                        {mobileGreeting}
-                      </h2>
-                      <IrisSamplePrompts
-                        disabled={sending}
-                        onEdit={(text) => {
-                          setDraft(text)
-                          focusComposer()
-                        }}
-                      />
-                    </div>
-                  </div>
-                </div>
-              ) : null}
-              {messages.length > 0 ? (
-                <div
-                  className={cn(
-                    "mx-auto flex w-full min-w-0 flex-col",
-                    isMobileOverlay ? chatMobileThreadClass : "px-4 py-4",
-                    CHAT_CONTENT_MAX_WIDTH
-                  )}
-                >
-            {messages.map((message, index) => {
-              const prev = messages[index - 1]
-              const sameRole = prev?.role === message.role
-              const isStreamingAssistant =
-                message.id === pendingAssistantId &&
-                message.role === "assistant" &&
-                !message.error
-              const isWaiting = isStreamingAssistant && !message.content
-              const errorNote =
-                message.error ? (
-                  <span
-                    className={cn(
-                      "block text-destructive",
-                      message.content ? "mt-2" : undefined
-                    )}
-                  >
-                    {localizeCoPilotErrorText(message.errorText, t)}
-                  </span>
-                ) : null
-              const actions = (
-                <>
-                  {message.action === "connect" ? (
-                    <Button
-                      type="button"
-                      className="h-11 gap-2 px-5 text-[13px]"
-                      onClick={() => login({ source: "chat" })}
-                    >
-                      <GoogleGlyph className="size-4" />
-                      {t("continueWithGoogle")}
-                    </Button>
-                  ) : null}
-                  {message.action === "retry" ? (
-                    <Button
-                      type="button"
-                      size="sm"
-                      variant="ghost"
-                      disabled={sending}
-                      className="rounded-lg bg-muted/25 hover:bg-muted/40"
-                      onClick={() => void handleRetry(message.id)}
-                    >
-                      {t("tryAgain")}
-                    </Button>
-                  ) : null}
-                  {message.errorText === COPILOT_CREDIT_MESSAGE && !isProUser ? (
-                    <Button
-                      type="button"
-                      size="sm"
-                      nativeButton={false}
-                      render={<Link href={UPGRADE_PATH} />}
-                    >
-                      {t("upgrade")}
-                    </Button>
-                  ) : null}
-                  {message.suggestedPrompts?.length ? (
-                    <IrisFollowUpPrompts
-                      prompts={message.suggestedPrompts}
-                      disabled={sending}
-                      onSelect={(text) => {
-                        setDraft(text)
-                        focusComposer()
-                      }}
-                    />
-                  ) : null}
-                </>
-              )
-              const hasAction =
-                message.action === "connect" ||
-                message.action === "retry" ||
-                (message.errorText === COPILOT_CREDIT_MESSAGE && !isProUser) ||
-                Boolean(message.suggestedPrompts?.length)
-
-              if (message.role === "user") {
-                const userReplyTarget = replyTargetFromMessage(message)
-                return (
-                  <div
-                    key={message.id}
-                    className={cn(
-                      "min-w-0",
-                      index === 0 && isMobileOverlay && chatMobileThreadFirstTurnClass,
-                      index > 0 && (sameRole ? "mt-3" : isMobileOverlay ? "mt-8" : "mt-7")
-                    )}
-                  >
-                    <ChatUserTurn
-                      messageId={message.id}
-                      conversationId={conversationId}
-                      content={message.content}
-                      createdAt={message.createdAt}
-                      replyTo={message.replyTo}
-                      disabled={sending}
-                      variant={isMobileOverlay ? "gemini" : "default"}
-                      onEdit={() => handleEditUserMessage(message.id)}
-                      onReply={
-                        userReplyTarget
-                          ? () => setReplyTarget(userReplyTarget)
-                          : undefined
-                      }
-                    />
-                  </div>
-                )
-              }
-              if (message.role === "system") {
-                return (
-                  <div
-                    key={message.id}
-                    className={cn(
-                      "min-w-0",
-                      index === 0 && isMobileOverlay && chatMobileThreadFirstTurnClass,
-                      index > 0 && (sameRole ? "mt-3" : isMobileOverlay ? "mt-8" : "mt-7")
-                    )}
-                  >
-                    <ChatSystemNote variant={isMobileOverlay ? "gemini" : "default"}>
-                      <span className="block min-w-0 whitespace-pre-wrap wrap-anywhere">
-                        {message.content}
-                      </span>
-                      {errorNote}
-                    </ChatSystemNote>
-                  </div>
-                )
-              }
-              const signalParts =
-                !isWaiting &&
-                !isStreamingAssistant &&
-                (Boolean(message.content?.trim()) ||
-                  Boolean(message.paperTicket) ||
-                  Boolean(message.noTradeReason))
-                  ? splitSignalAssistantMessage({
-                      content: message.content ?? "",
-                      paperTicket: message.paperTicket,
-                    })
-                  : null
-              const showSignalCard = Boolean(signalParts?.ticket)
-              const assistantReplyTarget = replyTargetFromMessage(message)
-              const showMessageActions =
-                !isWaiting &&
-                (Boolean(message.content?.trim()) ||
-                  Boolean(signalParts?.ticket) ||
-                  Boolean(message.paperTicket) ||
-                  Boolean(message.noTradeReason)) &&
-                message.action !== "connect"
-
-              return (
-                <div
-                  key={message.id}
-                  className={cn(
-                    "group/turn min-w-0",
-                    index === 0 && isMobileOverlay && chatMobileThreadFirstTurnClass,
-                    index > 0 && (sameRole ? "mt-3" : isMobileOverlay ? "mt-8" : "mt-7")
-                  )}
-                >
-                  <ChatAssistantTurn
-                    messageId={message.id}
-                    waiting={isWaiting}
-                    thinkingTrace={message.thinkingTrace}
-                    reasoning={message.reasoning}
-                    streaming={isStreamingAssistant && Boolean(message.content)}
-                    compact={sameRole}
-                    content={showSignalCard ? undefined : message.content}
-                    createdAt={message.createdAt}
-                    replyTo={message.replyTo}
-                    variant={isMobileOverlay ? "gemini" : "default"}
-                    actions={hasAction ? actions : undefined}
-                    toolbar={
-                      showMessageActions ? (
-                        <ChatMessageActions
-                          messageId={message.id}
-                          conversationId={conversationId}
-                          content={message.content}
-                          feedback={message.feedback}
-                          disabled={sending}
-                          variant={isMobileOverlay ? "gemini" : "default"}
-                          onFeedbackChange={(next) =>
-                            setMessageFeedback(message.id, next)
-                          }
-                          onReply={
-                            assistantReplyTarget
-                              ? () => setReplyTarget(assistantReplyTarget)
-                              : undefined
-                          }
-                        />
-                      ) : undefined
-                    }
-                  >
-                    {signalParts?.leadText ? (
-                      <AIMessageRenderer
-                        content={signalParts.leadText}
-                        className={showSignalCard ? "mb-3" : undefined}
-                      />
-                    ) : null}
-                    {showSignalCard && signalParts?.ticket ? (
-                      <ChatSignalCard ticket={signalParts.ticket} />
-                    ) : null}
-                    {message.noTradeReason ? (
-                      <ChatNoTradeCard reason={message.noTradeReason} />
-                    ) : null}
-                    {showSignalCard && signalParts?.tailText ? (
-                      <AIMessageRenderer
-                        content={signalParts.tailText}
-                        className="mt-3"
-                      />
-                    ) : null}
-                    {errorNote}
-                  </ChatAssistantTurn>
-                </div>
-              )
-            })}
-            <div
-              ref={bottomRef}
-              className={cn(isMobileOverlay && chatMobileThreadBottomSpacerClass)}
-            />
-                </div>
-              ) : null}
-            </ScrollArea>
-            {isMobileOverlay && messages.length > 0 ? (
-              <div aria-hidden className={chatMobileThreadBottomFadeClass} />
-            ) : null}
-            {showScrollDown ? (
-              <Button
-                type="button"
-                variant="outline"
-                size="icon-sm"
-                className={cn(
-                  isMobileOverlay
-                    ? chatMobileScrollDownClass
-                    : "absolute bottom-3 left-1/2 z-10 size-8 -translate-x-1/2 rounded-full border-border/70 bg-background/95 shadow-md backdrop-blur-sm hover:bg-background"
-                )}
-                aria-label={t("scrollToLatest")}
-                title={t("scrollToLatest")}
-                onClick={() => scrollToChatBottom("smooth")}
-              >
-                <ChevronDownIcon className="size-4" />
-              </Button>
-            ) : null}
-            </div>
-          ) : (
+        {showMobileHistoryOverlay ? (
+          <div className="absolute inset-0 z-30 flex min-h-0 flex-col bg-background">
             <ChatHistorySidebar
+              variant="mobile-drawer"
               conversations={conversations}
               conversationId={conversationId}
               sending={sending}
@@ -2495,76 +2084,563 @@ function ChatAside({
               onRename={renameConversation}
               onTogglePin={toggleConversationPin}
               onNewChat={startNewChat}
+              onClose={() => setHistoryOpen(false)}
+              onOpenNews={openNewsFromChat}
+              showNewsSpotlight={showNewsSpotlight}
               showBrandHeader={false}
-              className="min-h-0 flex-1 bg-sidebar text-sidebar-foreground"
+              className="min-h-0 flex-1"
             />
-          )}
-
-          {showThread ? (
-            <div
-              className={cn(
-                "mx-auto w-full",
-                isMobileOverlay
-                  ? chatMobileComposerDockClass
-                  : "shrink-0 bg-background/95 backdrop-blur-md supports-backdrop-filter:bg-background/90",
-                CHAT_CONTENT_MAX_WIDTH
-              )}
+          </div>
+        ) : null}
+        {showMainColumnHeader ? (
+          <header
+            className={cn(
+              "flex min-h-12 shrink-0 items-center gap-1 px-2 sm:gap-2 sm:px-3",
+              onClose && "app-mobile-safe-header"
+            )}
+          >
+            <Link
+              href="/"
+              aria-label={common("brand")}
+              className="shrink-0 rounded-md outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
             >
-              {guestSendError ? (
-                <div className="flex items-start justify-between gap-2 border-b border-border/50 px-3 py-2 sm:px-4">
-                  <p className="text-xs leading-snug text-muted-foreground">
-                    {guestSendError}
-                  </p>
-                  {!isAuthenticated ? (
-                    <Button
-                      type="button"
-                      size="xs"
-                      variant="outline"
-                      className="shrink-0"
-                      onClick={() => login({ source: "chat" })}
-                    >
-                      {t("signIn")}
-                    </Button>
-                  ) : null}
-                </div>
-              ) : null}
-              {replyTarget ? (
-                <div className={isMobileOverlay ? "px-3 sm:px-4" : "px-3 sm:px-4"}>
-                  <ChatReplyChip
-                    target={replyTarget}
-                    onClear={() => setReplyTarget(null)}
-                  />
-                </div>
-              ) : null}
-              <ChatComposer
-                value={draft}
-                onValueChange={(next) => {
-                  setDraft(next)
-                  if (guestSendError) setGuestSendError(null)
-                }}
-                textareaRef={composerRef}
-                effort={effort}
-                onEffortChange={onEffortChange}
-                onSend={handleSend}
-                sending={sending}
-                onStop={() => {
-                  abortRef.current?.abort()
-                }}
-                layout={isMobileOverlay ? "floating" : "default"}
-                onFloatingFocusChange={
-                  isMobileOverlay ? setMobileComposerFocused : undefined
-                }
-                className={isMobileOverlay ? undefined : "px-3 sm:px-4"}
+              <ExurLogo
+                decorative
+                variant="gradient"
+                size={28}
+                className="size-7 shrink-0 overflow-hidden rounded-full"
+                priority
               />
+            </Link>
+            <div className="min-w-0 flex-1">
+              <span className="block text-sm leading-none font-medium tracking-tight">
+                {t("iris")}
+              </span>
+              <span className="mt-0.5 block truncate text-xs text-muted-foreground">
+                {isAuthenticated
+                  ? (formatCreditUsageCompact(creditBalance) ??
+                    displayPlanName(user?.tier))
+                  : guestUnavailable
+                    ? t("copilotGuestUnavailable")
+                    : guestTrial
+                      ? formatGuestTrialLabel(guestTrial)
+                      : t("copilotGuestTry")}
+              </span>
             </div>
-          ) : null}
+            {!isMobileOverlay ? (
+              <ChatAccountMenu
+                variant="desktop"
+                onOpenNews={openNewsFromChat}
+              />
+            ) : null}
+            {showThreadToolbarInHeader &&
+            !isMobileOverlay &&
+            isAuthenticated &&
+            !isProUser ? (
+              <ChatThreadUpgradeButton />
+            ) : !showThreadToolbarInHeader &&
+              !isMobileOverlay &&
+              isAuthenticated &&
+              !isProUser ? (
+              <Button
+                size="xs"
+                variant="outline"
+                className="hidden shrink-0 sm:inline-flex"
+                nativeButton={false}
+                render={<Link href={UPGRADE_PATH} />}
+              >
+                {t("upgrade")}
+              </Button>
+            ) : null}
+            {showDesktopLayoutControls &&
+            !isFocusedLayout &&
+            !historyRailVisible ? (
+              <ChatHeaderIconButton
+                label={t("fullScreenChat")}
+                onClick={() => onDisplayModeChange?.("focused")}
+              >
+                <Maximize2Icon />
+              </ChatHeaderIconButton>
+            ) : null}
+            {isAuthenticated && !isFocusedLayout && !historyRailVisible ? (
+              <ChatHeaderIconButton
+                label={t("chatHistory")}
+                pressed={historyOpen}
+                onClick={() => setHistoryOpen((v) => !v)}
+              >
+                <HistoryIcon />
+              </ChatHeaderIconButton>
+            ) : null}
+            {!isFocusedLayout ? (
+              <ChatHeaderIconButton
+                label={t("newChat")}
+                onClick={startNewChat}
+                disabled={sending}
+              >
+                <ChatGeminiNewChatIcon className="h-4" />
+              </ChatHeaderIconButton>
+            ) : null}
+            {showThreadToolbarInHeader ? (
+              <ChatThreadOptionsMenu
+                title={threadTitle}
+                pinned={Boolean(activeConversation?.pinned)}
+                disabled={sending}
+                onShare={shareCurrentConversation}
+                onRename={(title) => renameConversation(conversationId, title)}
+                onTogglePin={() => toggleConversationPin(conversationId)}
+                onDelete={deleteCurrentConversation}
+              />
+            ) : null}
+          </header>
+        ) : null}
+
+        <div className="flex min-h-0 min-w-0 flex-1 overflow-hidden">
+          <div className="relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
+            {showStandaloneThreadToolbar ? (
+              <ChatThreadToolbar
+                title={threadTitle}
+                pinned={Boolean(activeConversation?.pinned)}
+                disabled={sending}
+                showUpgrade={!isMobileOverlay && isAuthenticated && !isProUser}
+                onShare={shareCurrentConversation}
+                onRename={(title) => renameConversation(conversationId, title)}
+                onTogglePin={() => toggleConversationPin(conversationId)}
+                onDelete={deleteCurrentConversation}
+              />
+            ) : null}
+            {showThread ? (
+              <div className="relative min-h-0 flex-1 overflow-hidden">
+                <ScrollArea
+                  viewportRef={scrollViewportRef}
+                  className={cn(
+                    "h-full min-h-0",
+                    isMobileOverlay &&
+                      messages.length > 0 &&
+                      chatMobileThreadScrollMaskClass
+                  )}
+                >
+                  {isMobileOverlay && messages.length > 0 ? (
+                    <div
+                      aria-hidden
+                      className={chatMobileThreadTopSpacerClass}
+                    />
+                  ) : null}
+                  {showMobileEmptyHero ? (
+                    <div
+                      className={cn(
+                        isMobileOverlay
+                          ? chatMobileEmptyHeroWrapClass
+                          : "flex min-h-full flex-col items-center justify-center px-4 py-10",
+                        "chat-empty-hero-shell",
+                        messages.length > 0 &&
+                          cn(
+                            "chat-empty-hero-shell-exiting",
+                            isMobileOverlay &&
+                              "pointer-events-none absolute inset-x-0 top-0 z-1 min-h-0 justify-start pb-0"
+                          )
+                      )}
+                    >
+                      <div
+                        className={cn("mx-auto w-full", CHAT_CONTENT_MAX_WIDTH)}
+                      >
+                        <div className={chatMobileEmptyHeroContentClass}>
+                          {isMobileOverlay ? (
+                            <IrisMark
+                              variant="hero"
+                              className={chatMobileEmptyHeroMarkClass}
+                            />
+                          ) : (
+                            <IrisMark variant="hero" />
+                          )}
+                          <h2
+                            className={cn(
+                              isMobileOverlay
+                                ? chatMobileEmptyHeroTitleClass
+                                : "max-w-[20rem] text-[1.75rem] leading-[1.22] font-light tracking-[-0.028em] text-balance text-foreground"
+                            )}
+                          >
+                            {mobileGreeting}
+                          </h2>
+                          <IrisSamplePrompts
+                            disabled={sending}
+                            onEdit={(text) => {
+                              setDraft(text)
+                              focusComposer()
+                            }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ) : null}
+                  {messages.length > 0 ? (
+                    <div
+                      className={cn(
+                        "mx-auto flex w-full min-w-0 flex-col",
+                        isMobileOverlay ? chatMobileThreadClass : "px-4 py-4",
+                        CHAT_CONTENT_MAX_WIDTH
+                      )}
+                    >
+                      {messages.map((message, index) => {
+                        const prev = messages[index - 1]
+                        const sameRole = prev?.role === message.role
+                        const isStreamingAssistant =
+                          message.id === pendingAssistantId &&
+                          message.role === "assistant" &&
+                          !message.error
+                        const isWaiting =
+                          isStreamingAssistant && !message.content
+                        const errorNote = message.error ? (
+                          <span
+                            className={cn(
+                              "block text-destructive",
+                              message.content ? "mt-2" : undefined
+                            )}
+                          >
+                            {localizeCoPilotErrorText(message.errorText, t)}
+                          </span>
+                        ) : null
+                        const actions = (
+                          <>
+                            {message.action === "connect" ? (
+                              <Button
+                                type="button"
+                                className="h-11 gap-2 px-5 text-[13px]"
+                                onClick={() => login({ source: "chat" })}
+                              >
+                                <GoogleGlyph className="size-4" />
+                                {t("continueWithGoogle")}
+                              </Button>
+                            ) : null}
+                            {message.action === "retry" ? (
+                              <Button
+                                type="button"
+                                size="sm"
+                                variant="ghost"
+                                disabled={sending}
+                                className="rounded-lg bg-muted/25 hover:bg-muted/40"
+                                onClick={() => void handleRetry(message.id)}
+                              >
+                                {t("tryAgain")}
+                              </Button>
+                            ) : null}
+                            {message.errorText === COPILOT_CREDIT_MESSAGE &&
+                            !isProUser ? (
+                              <Button
+                                type="button"
+                                size="sm"
+                                nativeButton={false}
+                                render={<Link href={UPGRADE_PATH} />}
+                              >
+                                {t("upgrade")}
+                              </Button>
+                            ) : null}
+                            {message.suggestedPrompts?.length ? (
+                              <IrisFollowUpPrompts
+                                prompts={message.suggestedPrompts}
+                                disabled={sending}
+                                onSelect={(text) => {
+                                  setDraft(text)
+                                  focusComposer()
+                                }}
+                              />
+                            ) : null}
+                          </>
+                        )
+                        const hasAction =
+                          message.action === "connect" ||
+                          message.action === "retry" ||
+                          (message.errorText === COPILOT_CREDIT_MESSAGE &&
+                            !isProUser) ||
+                          Boolean(message.suggestedPrompts?.length)
+
+                        if (message.role === "user") {
+                          const userReplyTarget =
+                            replyTargetFromMessage(message)
+                          return (
+                            <div
+                              key={message.id}
+                              className={cn(
+                                "min-w-0",
+                                index === 0 &&
+                                  isMobileOverlay &&
+                                  chatMobileThreadFirstTurnClass,
+                                index > 0 &&
+                                  (sameRole
+                                    ? "mt-3"
+                                    : isMobileOverlay
+                                      ? "mt-8"
+                                      : "mt-7")
+                              )}
+                            >
+                              <ChatUserTurn
+                                messageId={message.id}
+                                conversationId={conversationId}
+                                content={message.content}
+                                createdAt={message.createdAt}
+                                replyTo={message.replyTo}
+                                disabled={sending}
+                                variant={isMobileOverlay ? "gemini" : "default"}
+                                onEdit={() => handleEditUserMessage(message.id)}
+                                onReply={
+                                  userReplyTarget
+                                    ? () => setReplyTarget(userReplyTarget)
+                                    : undefined
+                                }
+                              />
+                            </div>
+                          )
+                        }
+                        if (message.role === "system") {
+                          return (
+                            <div
+                              key={message.id}
+                              className={cn(
+                                "min-w-0",
+                                index === 0 &&
+                                  isMobileOverlay &&
+                                  chatMobileThreadFirstTurnClass,
+                                index > 0 &&
+                                  (sameRole
+                                    ? "mt-3"
+                                    : isMobileOverlay
+                                      ? "mt-8"
+                                      : "mt-7")
+                              )}
+                            >
+                              <ChatSystemNote
+                                variant={isMobileOverlay ? "gemini" : "default"}
+                              >
+                                <span className="block min-w-0 wrap-anywhere whitespace-pre-wrap">
+                                  {message.content}
+                                </span>
+                                {errorNote}
+                              </ChatSystemNote>
+                            </div>
+                          )
+                        }
+                        const signalParts =
+                          !isWaiting &&
+                          !isStreamingAssistant &&
+                          (Boolean(message.content?.trim()) ||
+                            Boolean(message.paperTicket) ||
+                            Boolean(message.noTradeReason))
+                            ? splitSignalAssistantMessage({
+                                content: message.content ?? "",
+                                paperTicket: message.paperTicket,
+                              })
+                            : null
+                        const showSignalCard = Boolean(signalParts?.ticket)
+                        const assistantReplyTarget =
+                          replyTargetFromMessage(message)
+                        const showMessageActions =
+                          !isWaiting &&
+                          (Boolean(message.content?.trim()) ||
+                            Boolean(signalParts?.ticket) ||
+                            Boolean(message.paperTicket) ||
+                            Boolean(message.noTradeReason)) &&
+                          message.action !== "connect"
+
+                        return (
+                          <div
+                            key={message.id}
+                            className={cn(
+                              "group/turn min-w-0",
+                              index === 0 &&
+                                isMobileOverlay &&
+                                chatMobileThreadFirstTurnClass,
+                              index > 0 &&
+                                (sameRole
+                                  ? "mt-3"
+                                  : isMobileOverlay
+                                    ? "mt-8"
+                                    : "mt-7")
+                            )}
+                          >
+                            <ChatAssistantTurn
+                              messageId={message.id}
+                              waiting={isWaiting}
+                              thinkingTrace={message.thinkingTrace}
+                              reasoning={message.reasoning}
+                              streaming={
+                                isStreamingAssistant && Boolean(message.content)
+                              }
+                              compact={sameRole}
+                              content={
+                                showSignalCard ? undefined : message.content
+                              }
+                              createdAt={message.createdAt}
+                              replyTo={message.replyTo}
+                              variant={isMobileOverlay ? "gemini" : "default"}
+                              actions={hasAction ? actions : undefined}
+                              toolbar={
+                                showMessageActions ? (
+                                  <ChatMessageActions
+                                    messageId={message.id}
+                                    conversationId={conversationId}
+                                    content={message.content}
+                                    feedback={message.feedback}
+                                    disabled={sending}
+                                    variant={
+                                      isMobileOverlay ? "gemini" : "default"
+                                    }
+                                    onFeedbackChange={(next) =>
+                                      setMessageFeedback(message.id, next)
+                                    }
+                                    onReply={
+                                      assistantReplyTarget
+                                        ? () =>
+                                            setReplyTarget(assistantReplyTarget)
+                                        : undefined
+                                    }
+                                  />
+                                ) : undefined
+                              }
+                            >
+                              {signalParts?.leadText ? (
+                                <AIMessageRenderer
+                                  content={signalParts.leadText}
+                                  className={
+                                    showSignalCard ? "mb-3" : undefined
+                                  }
+                                />
+                              ) : null}
+                              {showSignalCard && signalParts?.ticket ? (
+                                <ChatSignalCard ticket={signalParts.ticket} />
+                              ) : null}
+                              {message.noTradeReason ? (
+                                <ChatNoTradeCard
+                                  reason={message.noTradeReason}
+                                />
+                              ) : null}
+                              {showSignalCard && signalParts?.tailText ? (
+                                <AIMessageRenderer
+                                  content={signalParts.tailText}
+                                  className="mt-3"
+                                />
+                              ) : null}
+                              {errorNote}
+                            </ChatAssistantTurn>
+                          </div>
+                        )
+                      })}
+                      <div
+                        ref={bottomRef}
+                        className={cn(
+                          isMobileOverlay && chatMobileThreadBottomSpacerClass
+                        )}
+                      />
+                    </div>
+                  ) : null}
+                </ScrollArea>
+                {isMobileOverlay && messages.length > 0 ? (
+                  <div
+                    aria-hidden
+                    className={chatMobileThreadBottomFadeClass}
+                  />
+                ) : null}
+                {showScrollDown ? (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon-sm"
+                    className={cn(
+                      isMobileOverlay
+                        ? chatMobileScrollDownClass
+                        : "absolute bottom-3 left-1/2 z-10 size-8 -translate-x-1/2 rounded-full border-border/70 bg-background/95 shadow-md backdrop-blur-sm hover:bg-background"
+                    )}
+                    aria-label={t("scrollToLatest")}
+                    title={t("scrollToLatest")}
+                    onClick={() => scrollToChatBottom("smooth")}
+                  >
+                    <ChevronDownIcon className="size-4" />
+                  </Button>
+                ) : null}
+              </div>
+            ) : (
+              <ChatHistorySidebar
+                conversations={conversations}
+                conversationId={conversationId}
+                sending={sending}
+                deletingIds={deletingIds}
+                onSelect={openConversation}
+                onDelete={removeConversation}
+                onRename={renameConversation}
+                onTogglePin={toggleConversationPin}
+                onNewChat={startNewChat}
+                showBrandHeader={false}
+                className="min-h-0 flex-1 bg-sidebar text-sidebar-foreground"
+              />
+            )}
+
+            {showThread ? (
+              <div
+                className={cn(
+                  "mx-auto w-full",
+                  isMobileOverlay
+                    ? chatMobileComposerDockClass
+                    : "shrink-0 bg-background/95 backdrop-blur-md supports-backdrop-filter:bg-background/90",
+                  CHAT_CONTENT_MAX_WIDTH
+                )}
+              >
+                {guestSendError ? (
+                  <div className="flex items-start justify-between gap-2 border-b border-border/50 px-3 py-2 sm:px-4">
+                    <p className="text-xs leading-snug text-muted-foreground">
+                      {guestSendError}
+                    </p>
+                    {!isAuthenticated ? (
+                      <Button
+                        type="button"
+                        size="xs"
+                        variant="outline"
+                        className="shrink-0"
+                        onClick={() => login({ source: "chat" })}
+                      >
+                        {t("signIn")}
+                      </Button>
+                    ) : null}
+                  </div>
+                ) : null}
+                {replyTarget ? (
+                  <div
+                    className={
+                      isMobileOverlay ? "px-3 sm:px-4" : "px-3 sm:px-4"
+                    }
+                  >
+                    <ChatReplyChip
+                      target={replyTarget}
+                      onClear={() => setReplyTarget(null)}
+                    />
+                  </div>
+                ) : null}
+                <ChatComposer
+                  value={draft}
+                  onValueChange={(next) => {
+                    setDraft(next)
+                    if (guestSendError) setGuestSendError(null)
+                  }}
+                  textareaRef={composerRef}
+                  effort={effort}
+                  onEffortChange={onEffortChange}
+                  onSend={handleSend}
+                  sending={sending}
+                  onStop={() => {
+                    abortRef.current?.abort()
+                  }}
+                  layout={isMobileOverlay ? "floating" : "default"}
+                  onFloatingFocusChange={
+                    isMobileOverlay ? setMobileComposerFocused : undefined
+                  }
+                  className={isMobileOverlay ? undefined : "px-3 sm:px-4"}
+                />
+              </div>
+            ) : null}
+          </div>
+          {!isMobileOverlay ? (
+            <ChatNewsSidePanel open={newsOpen} onOpenChange={setNewsOpen} />
+          ) : (
+            <ChatNewsMobileSheet open={newsOpen} onOpenChange={setNewsOpen} />
+          )}
         </div>
-        {!isMobileOverlay ? (
-          <ChatNewsSidePanel open={newsOpen} onOpenChange={setNewsOpen} />
-        ) : (
-          <ChatNewsMobileSheet open={newsOpen} onOpenChange={setNewsOpen} />
-        )}
-      </div>
       </div>
     </aside>
   )

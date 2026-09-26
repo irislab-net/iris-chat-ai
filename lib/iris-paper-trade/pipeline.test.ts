@@ -2,13 +2,25 @@ import { describe, expect, it } from "vitest"
 
 import type { CandleBar } from "@/lib/api/candles"
 import type { InsightHome, NewsHome } from "@/lib/api/types"
-import { assembleMarketContext, serializeMarketContextForLlm } from "@/lib/iris-paper-trade/market-context"
+import {
+  assembleMarketContext,
+  serializeMarketContextForLlm,
+} from "@/lib/iris-paper-trade/market-context"
 import { isPaperTradeIntent } from "@/lib/iris-paper-trade/intent"
 import { parsePaperDecision } from "@/lib/iris-paper-trade/parse"
 import { PAPER_TRADE_TOOLS } from "@/lib/iris-paper-trade/schema"
 import { planIrisPaperTrade } from "@/lib/iris-paper-trade/plan"
-import { IRIS_SAMPLE_PROMPTS, PAPER_TRADE_SAMPLE_PROMPT, PAPER_TRADE_SAMPLE_PROMPT_EN_LEGACY, PAPER_TRADE_SAMPLE_PROMPT_EN_PREV, PAPER_TRADE_SAMPLE_PROMPT_FA } from "@/lib/iris-paper-trade/types"
-import { calculateRiskBasedSize, PAPER_AI_RISK_FRACTION } from "@/lib/iris-paper-trade/size"
+import {
+  IRIS_SAMPLE_PROMPTS,
+  PAPER_TRADE_SAMPLE_PROMPT,
+  PAPER_TRADE_SAMPLE_PROMPT_EN_LEGACY,
+  PAPER_TRADE_SAMPLE_PROMPT_EN_PREV,
+  PAPER_TRADE_SAMPLE_PROMPT_FA,
+} from "@/lib/iris-paper-trade/types"
+import {
+  calculateRiskBasedSize,
+  PAPER_AI_RISK_FRACTION,
+} from "@/lib/iris-paper-trade/size"
 import { SIGNAL_DEMO_EQUITY } from "@/lib/chat/trade-signal"
 
 const NOW = 1_700_000_000_000

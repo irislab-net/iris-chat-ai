@@ -46,9 +46,9 @@ describe("invoice session", () => {
     expect(
       isInvoiceExpired(pending, Date.parse("2026-01-01T00:00:01.000Z"))
     ).toBe(true)
-    expect(isResumableInvoice(pending, Date.parse("2026-01-01T00:00:01.000Z"))).toBe(
-      false
-    )
+    expect(
+      isResumableInvoice(pending, Date.parse("2026-01-01T00:00:01.000Z"))
+    ).toBe(false)
   })
 
   it("finds a matching resumable invoice before creating a new one", () => {

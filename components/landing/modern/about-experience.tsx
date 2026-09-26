@@ -407,9 +407,7 @@ export function AboutExperience() {
       } else if (!reduceMotion) {
         const t = (now - syntheticStartRef.current) / 1000
         const envelope =
-          0.3 +
-          0.16 * Math.sin(t * 5.1) +
-          0.1 * Math.sin(t * 11.7 + 1.1)
+          0.3 + 0.16 * Math.sin(t * 5.1) + 0.1 * Math.sin(t * 11.7 + 1.1)
         amplitudeRef.current = Math.max(0, Math.min(1, envelope))
       }
 
@@ -506,8 +504,7 @@ export function AboutExperience() {
     }
   }, [expanded, unlockPageScroll])
 
-  const captionText =
-    cueIndex >= 0 ? t(`narration.${cueIndex}`) : ""
+  const captionText = cueIndex >= 0 ? t(`narration.${cueIndex}`) : ""
 
   return (
     <div
@@ -555,7 +552,7 @@ export function AboutExperience() {
             />
             <div
               aria-hidden
-              className="pointer-events-none absolute inset-0 opacity-[0.35] dark:opacity-25 bg-[radial-gradient(rgba(37,99,235,0.14)_1px,transparent_1px)] bg-size-[26px_26px] mask-[radial-gradient(ellipse_at_center,black_18%,transparent_68%)]"
+              className="pointer-events-none absolute inset-0 bg-[radial-gradient(rgba(37,99,235,0.14)_1px,transparent_1px)] mask-[radial-gradient(ellipse_at_center,black_18%,transparent_68%)] bg-size-[26px_26px] opacity-[0.35] dark:opacity-25"
             />
             <div
               aria-hidden
@@ -581,7 +578,7 @@ export function AboutExperience() {
           <div
             className={cn(
               landingGlassPill,
-              "pointer-events-none absolute top-3.5 inset-s-3.5 z-20 inline-flex items-center gap-2 px-3 py-1.5 sm:top-4 sm:inset-s-4"
+              "pointer-events-none absolute inset-s-3.5 top-3.5 z-20 inline-flex items-center gap-2 px-3 py-1.5 sm:inset-s-4 sm:top-4"
             )}
           >
             <span
@@ -722,7 +719,7 @@ export function AboutExperience() {
                       <span className="about-narration-progress-sheen absolute inset-y-0 inset-s-0 w-1/3 rounded-full bg-linear-to-r from-transparent via-white/70 to-transparent" />
                       <span
                         className={cn(
-                          "absolute top-1/2 inset-e-0 z-10 size-3.5 -translate-y-1/2 translate-x-1/2 rounded-full",
+                          "absolute inset-e-0 top-1/2 z-10 size-3.5 translate-x-1/2 -translate-y-1/2 rounded-full",
                           "bg-white shadow-[0_1px_4px_rgba(15,23,42,0.18),0_0_0_3px_rgba(37,99,235,0.22)]",
                           "dark:shadow-[0_1px_4px_rgba(0,0,0,0.45),0_0_0_3px_rgba(37,99,235,0.35)]"
                         )}
@@ -740,8 +737,9 @@ export function AboutExperience() {
               aria-label={t("close")}
               className={cn(
                 landingGlassNavIcon,
-                "absolute top-4 inset-e-4 z-30 text-muted-foreground hover:text-foreground",
-                expanded && "top-[max(1rem,env(safe-area-inset-top))] inset-e-[max(1rem,env(safe-area-inset-right))]"
+                "absolute inset-e-4 top-4 z-30 text-muted-foreground hover:text-foreground",
+                expanded &&
+                  "inset-e-[max(1rem,env(safe-area-inset-right))] top-[max(1rem,env(safe-area-inset-top))]"
               )}
             >
               <XIcon className="size-5" />

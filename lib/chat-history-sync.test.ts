@@ -32,7 +32,13 @@ function historyItem(
 describe("chat history sync", () => {
   it("groups server history into stored conversations", () => {
     const built = buildStoredConversationFromHistory(sessionA, [
-      historyItem(2, sessionA, "assistant", "Stand aside.", "2026-01-02T10:00:00Z"),
+      historyItem(
+        2,
+        sessionA,
+        "assistant",
+        "Stand aside.",
+        "2026-01-02T10:00:00Z"
+      ),
       historyItem(1, sessionA, "user", "Long ETH?", "2026-01-02T09:59:00Z"),
     ])
 
@@ -67,7 +73,13 @@ describe("chat history sync", () => {
 
     const merged = mergeServerHistoryIntoStore(local, [
       historyItem(1, sessionA, "user", "Long ETH?", "2026-01-02T09:59:00Z"),
-      historyItem(2, sessionA, "assistant", "Stand aside.", "2026-01-02T10:00:00Z"),
+      historyItem(
+        2,
+        sessionA,
+        "assistant",
+        "Stand aside.",
+        "2026-01-02T10:00:00Z"
+      ),
       historyItem(3, sessionB, "user", "BTC?", "2026-01-02T11:00:00Z"),
       historyItem(4, sessionB, "assistant", "Neutral.", "2026-01-02T11:01:00Z"),
     ])
@@ -111,7 +123,13 @@ describe("chat history sync", () => {
 
     const merged = mergeServerHistoryIntoStore(local, [
       historyItem(1, sessionA, "user", "Long ETH?", "2026-01-02T09:59:00Z"),
-      historyItem(2, sessionA, "assistant", "Stand aside.", "2026-01-02T10:00:00Z"),
+      historyItem(
+        2,
+        sessionA,
+        "assistant",
+        "Stand aside.",
+        "2026-01-02T10:00:00Z"
+      ),
       historyItem(3, sessionB, "user", "BTC?", "2026-01-02T11:00:00Z"),
       historyItem(4, sessionB, "assistant", "Neutral.", "2026-01-02T11:01:00Z"),
     ])
@@ -148,8 +166,20 @@ describe("chat history sync", () => {
           "Trading desk request for eth. Use ALL available Exur evidence.",
           "2026-01-02T09:59:00Z"
         ),
-        historyItem(2, sessionA, "assistant", setupContent, "2026-01-02T10:00:00Z"),
-        historyItem(3, sessionA, "user", "Why this entry?", "2026-01-02T10:01:00Z"),
+        historyItem(
+          2,
+          sessionA,
+          "assistant",
+          setupContent,
+          "2026-01-02T10:00:00Z"
+        ),
+        historyItem(
+          3,
+          sessionA,
+          "user",
+          "Why this entry?",
+          "2026-01-02T10:01:00Z"
+        ),
         historyItem(
           4,
           sessionA,
@@ -215,7 +245,13 @@ describe("chat history sync", () => {
       sessionA,
       [
         historyItem(1, sessionA, "user", "@signal BTC", "2026-01-02T09:59:00Z"),
-        historyItem(2, sessionA, "assistant", "LONG BTC", "2026-01-02T10:00:00Z"),
+        historyItem(
+          2,
+          sessionA,
+          "assistant",
+          "LONG BTC",
+          "2026-01-02T10:00:00Z"
+        ),
       ],
       {
         id: sessionA,
@@ -343,7 +379,13 @@ describe("chat history sync", () => {
       ],
       [
         historyItem(10, sessionA, "user", "Long ETH?", "2026-01-02T09:59:00Z"),
-        historyItem(11, sessionA, "assistant", "Stand aside.", "2026-01-02T10:00:00Z"),
+        historyItem(
+          11,
+          sessionA,
+          "assistant",
+          "Stand aside.",
+          "2026-01-02T10:00:00Z"
+        ),
       ]
     )
 
@@ -366,7 +408,13 @@ describe("chat history sync", () => {
           "Trading desk request for eth. Use ALL available Exur evidence.",
           "2026-01-02T09:59:00Z"
         ),
-        historyItem(11, sessionA, "assistant", "Stand aside.", "2026-01-02T10:00:00Z"),
+        historyItem(
+          11,
+          sessionA,
+          "assistant",
+          "Stand aside.",
+          "2026-01-02T10:00:00Z"
+        ),
       ]
     )
 
@@ -512,7 +560,13 @@ describe("chat history sync", () => {
       sessionA,
       [
         historyItem(1, sessionA, "user", "Long ETH?", "2026-01-02T09:59:00Z"),
-        historyItem(2, sessionA, "assistant", "Stand aside.", "2026-01-02T10:00:00Z"),
+        historyItem(
+          2,
+          sessionA,
+          "assistant",
+          "Stand aside.",
+          "2026-01-02T10:00:00Z"
+        ),
       ],
       {
         id: sessionA,
@@ -554,7 +608,13 @@ describe("chat history sync", () => {
 
     const merged = mergeServerHistoryIntoStore(local, [
       historyItem(1, sessionA, "user", "Long ETH?", "2026-01-01T00:00:00Z"),
-      historyItem(2, sessionA, "assistant", "Stand aside.", "2026-01-01T00:01:00Z"),
+      historyItem(
+        2,
+        sessionA,
+        "assistant",
+        "Stand aside.",
+        "2026-01-01T00:01:00Z"
+      ),
       historyItem(3, sessionB, "user", "BTC?", "2026-01-03T11:00:00Z"),
       historyItem(4, sessionB, "assistant", "Neutral.", "2026-01-03T11:01:00Z"),
     ])

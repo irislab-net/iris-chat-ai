@@ -123,7 +123,9 @@ function SecurityPage() {
           <LegalList>
             {SECURITY_PROGRAM.map((item) => (
               <li key={item.id}>
-                <span className="font-medium text-foreground">{item.title}.</span>{" "}
+                <span className="font-medium text-foreground">
+                  {item.title}.
+                </span>{" "}
                 {item.summary}
               </li>
             ))}
@@ -133,10 +135,7 @@ function SecurityPage() {
         <LegalSection id="security-reporting" title="Report a vulnerability">
           <LegalP>
             Researchers acting in good faith are welcome. Email{" "}
-            <a
-              href={`mailto:${SECURITY_EMAIL}`}
-              className={legalLinkClass}
-            >
+            <a href={`mailto:${SECURITY_EMAIL}`} className={legalLinkClass}>
               {SECURITY_EMAIL}
             </a>{" "}
             with a clear description, impact, and steps to reproduce. Do not

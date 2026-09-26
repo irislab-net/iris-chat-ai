@@ -5,35 +5,25 @@ export const landingDisplay =
   '[font-family:var(--font-display),var(--font-sans),"IRIS Sans",ui-sans-serif,system-ui,sans-serif]'
 
 /** Apple-like display titles — regular weight, tight tracking, soft leading. */
-export const landingTitleHero =
-  `${landingDisplay} text-[2.35rem] font-normal leading-[1.06] tracking-[-0.025em] text-foreground sm:text-5xl lg:text-[3.25rem]`
+export const landingTitleHero = `${landingDisplay} text-[2.35rem] font-normal leading-[1.06] tracking-[-0.025em] text-foreground sm:text-5xl lg:text-[3.25rem]`
 
-export const landingTitleSection =
-  `${landingDisplay} text-3xl font-normal leading-[1.08] tracking-[-0.025em] text-foreground sm:text-4xl lg:text-[2.75rem]`
+export const landingTitleSection = `${landingDisplay} text-3xl font-normal leading-[1.08] tracking-[-0.025em] text-foreground sm:text-4xl lg:text-[2.75rem]`
 
-export const landingTitleCard =
-  `${landingDisplay} text-lg font-normal leading-snug tracking-[-0.015em] text-foreground`
+export const landingTitleCard = `${landingDisplay} text-lg font-normal leading-snug tracking-[-0.015em] text-foreground`
 
-export const landingTitleCardLg =
-  `${landingDisplay} text-2xl font-normal leading-[1.12] tracking-[-0.02em] text-foreground sm:text-[1.75rem]`
+export const landingTitleCardLg = `${landingDisplay} text-2xl font-normal leading-[1.12] tracking-[-0.02em] text-foreground sm:text-[1.75rem]`
 
-export const landingTitleBrand =
-  `${landingDisplay} text-lg font-normal tracking-[-0.02em] text-foreground`
+export const landingTitleBrand = `${landingDisplay} text-lg font-normal tracking-[-0.02em] text-foreground`
 
-export const landingTitleFooter =
-  `${landingDisplay} text-2xl font-normal tracking-[-0.02em] text-foreground sm:text-3xl`
+export const landingTitleFooter = `${landingDisplay} text-2xl font-normal tracking-[-0.02em] text-foreground sm:text-3xl`
 
-export const landingTitleFooterLg =
-  `${landingDisplay} text-[1.65rem] font-normal leading-[1.12] tracking-[-0.025em] text-foreground sm:text-3xl lg:text-[2.25rem]`
+export const landingTitleFooterLg = `${landingDisplay} text-[1.65rem] font-normal leading-[1.12] tracking-[-0.025em] text-foreground sm:text-3xl lg:text-[2.25rem]`
 
-export const landingTitleQuote =
-  `${landingDisplay} text-lg font-normal leading-snug tracking-[-0.015em] text-foreground sm:text-xl`
+export const landingTitleQuote = `${landingDisplay} text-lg font-normal leading-snug tracking-[-0.015em] text-foreground sm:text-xl`
 
-export const landingTitlePlan =
-  `${landingDisplay} text-xl font-normal tracking-[-0.02em] text-foreground`
+export const landingTitlePlan = `${landingDisplay} text-xl font-normal tracking-[-0.02em] text-foreground`
 
-export const landingTitlePrice =
-  `${landingDisplay} text-5xl font-normal tracking-[-0.03em] text-foreground`
+export const landingTitlePrice = `${landingDisplay} text-5xl font-normal tracking-[-0.03em] text-foreground`
 
 export const landingSection = "scroll-mt-24"
 
@@ -95,8 +85,7 @@ export const landingHeading = landingTitleSection
 export const landingSubheading =
   "mx-auto mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg"
 
-export const landingGlass =
-  "bg-white/12 backdrop-blur-xl dark:bg-white/6"
+export const landingGlass = "bg-white/12 backdrop-blur-xl dark:bg-white/6"
 
 export const landingGlassLight =
   "bg-white/70 shadow-[0_20px_60px_rgba(15,23,42,0.06)] backdrop-blur-xl dark:bg-white/8 dark:shadow-[0_20px_60px_rgba(0,0,0,0.35)]"
@@ -111,8 +100,7 @@ export const landingGlassSurface =
   "relative isolate overflow-hidden bg-white/38 backdrop-blur-2xl shadow-[0_16px_48px_rgba(15,23,42,0.08),inset_0_1px_1px_rgba(255,255,255,0.92),inset_0_-1px_2px_rgba(255,255,255,0.28)] dark:bg-white/8 dark:shadow-[0_16px_48px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.12),inset_0_-1px_2px_rgba(255,255,255,0.04)]"
 
 /** Frosted glass pill — hero composer */
-export const landingGlassPill =
-  `${landingGlassSurface} rounded-full bg-white/44 shadow-[0_20px_56px_rgba(15,23,42,0.09),inset_0_1px_1px_rgba(255,255,255,0.96),inset_0_-1px_2px_rgba(255,255,255,0.3)] dark:bg-white/10 dark:shadow-[0_20px_56px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.14),inset_0_-1px_2px_rgba(255,255,255,0.04)]`
+export const landingGlassPill = `${landingGlassSurface} rounded-full bg-white/44 shadow-[0_20px_56px_rgba(15,23,42,0.09),inset_0_1px_1px_rgba(255,255,255,0.96),inset_0_-1px_2px_rgba(255,255,255,0.3)] dark:bg-white/10 dark:shadow-[0_20px_56px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.14),inset_0_-1px_2px_rgba(255,255,255,0.04)]`
 
 export const landingGlassSheen =
   "pointer-events-none absolute inset-0 bg-[linear-gradient(145deg,rgba(255,255,255,0.72)_0%,rgba(255,255,255,0.18)_38%,rgba(255,255,255,0.04)_62%,rgba(255,255,255,0)_100%)] dark:bg-[linear-gradient(145deg,rgba(255,255,255,0.16)_0%,rgba(255,255,255,0.05)_38%,rgba(255,255,255,0.02)_62%,transparent_100%)]"
@@ -128,24 +116,19 @@ export const landingNavLinkInactive =
   "font-medium text-muted-foreground hover:bg-white/45 hover:text-foreground dark:hover:bg-white/8"
 
 /** Nav icon button — liquid glass */
-export const landingGlassNavIcon =
-  `${landingGlassSurface} size-10 shrink-0 rounded-full bg-white/50 shadow-[0_12px_36px_rgba(15,23,42,0.08),inset_0_1px_1px_rgba(255,255,255,0.95),inset_0_-1px_2px_rgba(255,255,255,0.32)] dark:bg-white/10 dark:shadow-[0_12px_36px_rgba(0,0,0,0.35),inset_0_1px_1px_rgba(255,255,255,0.12),inset_0_-1px_2px_rgba(255,255,255,0.04)]`
+export const landingGlassNavIcon = `${landingGlassSurface} size-10 shrink-0 rounded-full bg-white/50 shadow-[0_12px_36px_rgba(15,23,42,0.08),inset_0_1px_1px_rgba(255,255,255,0.95),inset_0_-1px_2px_rgba(255,255,255,0.32)] dark:bg-white/10 dark:shadow-[0_12px_36px_rgba(0,0,0,0.35),inset_0_1px_1px_rgba(255,255,255,0.12),inset_0_-1px_2px_rgba(255,255,255,0.04)]`
 
 export const landingGlassBlueSheen =
   "pointer-events-none absolute inset-0 bg-[linear-gradient(145deg,rgba(255,255,255,0.42)_0%,rgba(255,255,255,0.14)_40%,rgba(255,255,255,0.05)_62%,transparent_100%)] dark:bg-[linear-gradient(145deg,rgba(255,255,255,0.18)_0%,rgba(255,255,255,0.06)_40%,transparent_100%)]"
 
 /** Circular liquid-glass chip — chat avatars beside hero bubbles. */
-export const landingGlassOrb =
-  `${landingGlassSurface} inline-flex size-8 items-center justify-center rounded-full bg-white/52 shadow-[0_10px_28px_rgba(15,23,42,0.08),inset_0_1px_1px_rgba(255,255,255,0.96),inset_0_-1px_2px_rgba(255,255,255,0.32)] dark:bg-white/10 dark:shadow-[0_10px_28px_rgba(0,0,0,0.35),inset_0_1px_1px_rgba(255,255,255,0.12),inset_0_-1px_2px_rgba(255,255,255,0.04)]`
+export const landingGlassOrb = `${landingGlassSurface} inline-flex size-8 items-center justify-center rounded-full bg-white/52 shadow-[0_10px_28px_rgba(15,23,42,0.08),inset_0_1px_1px_rgba(255,255,255,0.96),inset_0_-1px_2px_rgba(255,255,255,0.32)] dark:bg-white/10 dark:shadow-[0_10px_28px_rgba(0,0,0,0.35),inset_0_1px_1px_rgba(255,255,255,0.12),inset_0_-1px_2px_rgba(255,255,255,0.04)]`
 
-export const landingGlassBubbleUser =
-  `${landingGlassSurface} rounded-3xl rounded-br-md bg-white/48 dark:bg-white/10`
+export const landingGlassBubbleUser = `${landingGlassSurface} rounded-3xl rounded-br-md bg-white/48 dark:bg-white/10`
 
-export const landingGlassBubbleAi =
-  `${landingGlassSurface} rounded-3xl rounded-tl-md bg-white/52 dark:bg-white/10`
+export const landingGlassBubbleAi = `${landingGlassSurface} rounded-3xl rounded-tl-md bg-white/52 dark:bg-white/10`
 
-export const landingGlassBubbleThinking =
-  `${landingGlassSurface} rounded-3xl rounded-tl-md bg-white/46 dark:bg-white/8`
+export const landingGlassBubbleThinking = `${landingGlassSurface} rounded-3xl rounded-tl-md bg-white/46 dark:bg-white/8`
 
 export const landingHeroGlass =
   "relative flex min-h-[30rem] flex-col bg-white/40 text-foreground shadow-[0_28px_80px_rgba(15,23,42,0.07)] backdrop-blur-2xl dark:bg-white/6 dark:shadow-[0_28px_80px_rgba(0,0,0,0.45)] sm:min-h-[32rem] lg:min-h-[36rem]"

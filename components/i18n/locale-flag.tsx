@@ -1,22 +1,10 @@
 "use client"
 
 import type { ComponentType } from "react"
-import {
-  BR,
-  ES,
-  IR,
-  NL,
-  RU,
-  SA,
-  TR,
-  US,
-} from "country-flag-icons/react/1x1"
+import { BR, ES, IR, NL, RU, SA, TR, US } from "country-flag-icons/react/1x1"
 
 import type { AppLocale } from "@/i18n/routing"
-import {
-  localeFlagCode,
-  type LocaleFlagCode,
-} from "@/lib/i18n/locale"
+import { localeFlagCode, type LocaleFlagCode } from "@/lib/i18n/locale"
 import { cn } from "@/lib/utils"
 
 type FlagProps = {
@@ -71,7 +59,7 @@ export function LocaleFlag({
         xmlns={undefined}
         className={cn(
           "size-full",
-          tone === "mono" && "grayscale contrast-[1.05]"
+          tone === "mono" && "contrast-[1.05] grayscale"
         )}
       />
     </span>

@@ -28,8 +28,7 @@ import { trackChatToggle } from "@/lib/analytics"
 import type { Layout } from "react-resizable-panels"
 
 const ChatAside = dynamic(
-  () =>
-    import("@/components/app-shell/chat-aside").then((m) => m.ChatAside),
+  () => import("@/components/app-shell/chat-aside").then((m) => m.ChatAside),
   {
     ssr: false,
     loading: () => <ChatAsideSkeleton variant="responsive" />,
@@ -51,8 +50,7 @@ const ContextMain = dynamic(
 )
 
 const ResizablePanelGroup = dynamic(
-  () =>
-    import("@/components/ui/resizable").then((m) => m.ResizablePanelGroup),
+  () => import("@/components/ui/resizable").then((m) => m.ResizablePanelGroup),
   { ssr: false }
 )
 const ResizablePanel = dynamic(
@@ -103,13 +101,7 @@ function AppShellWithTab(props: AppShellProps) {
         router.replace(qs ? `${pathname}?${qs}` : pathname)
       }
     })()
-  }, [
-    isAuthenticated,
-    pathname,
-    refreshAfterUpgrade,
-    router,
-    searchParams,
-  ])
+  }, [isAuthenticated, pathname, refreshAfterUpgrade, router, searchParams])
 
   return <AppShellInner {...props} />
 }
@@ -132,9 +124,9 @@ function AppShellInner({
   const [shellMediaHydrated, setShellMediaHydrated] = React.useState<
     null | "mobile" | "desktop"
   >(null)
-  const [panelTierHydrated, setPanelTierHydrated] = React.useState<string | null>(
-    null
-  )
+  const [panelTierHydrated, setPanelTierHydrated] = React.useState<
+    string | null
+  >(null)
   const chatToggleAnalyticsReady = React.useRef(false)
 
   React.useEffect(() => {
@@ -176,20 +168,16 @@ function AppShellInner({
     }
   }
 
-  const resolvedChatOpen =
-    isDesktop === false ? chatOpen : onDesk || chatOpen
+  const resolvedChatOpen = isDesktop === false ? chatOpen : onDesk || chatOpen
   const resolvedChatMode: ChatDisplayMode =
-    onDesk && isDesktop === true && chatMode !== "docked"
-      ? "focused"
-      : chatMode
+    onDesk && isDesktop === true && chatMode !== "docked" ? "focused" : chatMode
 
   function persistChatMode(next: ChatDisplayMode) {
     setChatMode(next)
     writeShellLayoutPrefs({ chatMode: next })
   }
 
-  const desktopChatEnabled =
-    isDesktop === true && (onDesk || defaultChatOpen)
+  const desktopChatEnabled = isDesktop === true && (onDesk || defaultChatOpen)
 
   React.useEffect(() => {
     if (isDesktop !== false || !resolvedChatOpen) return
@@ -257,35 +245,32 @@ function AppShellInner({
 
   return (
     <>
-    <AppViewportSync />
-    <SkipToContent />
-    <div
-      data-slot="app-shell"
-      className={cn(
-        "flex h-app overflow-hidden bg-background",
-        className
-      )}
-    >
-      {showDesktopChatFocused ? (
-        <ChatAside
-          className="min-h-0 flex-1 rounded-none"
-          displayMode="focused"
-          onDisplayModeChange={persistChatMode}
-          isPrimaryContent
-        />
-      ) : showDesktopSplit ? (
-        <ResizablePanelGroup
-          key={shellSidebars.tier}
-          id={`shell-${shellSidebars.tier}`}
-          orientation="horizontal"
-          className="min-h-0 min-w-0 flex-1"
-          defaultLayout={panelLayout}
-          onLayoutChanged={(layout, meta) => {
-            if (!meta.isUserInteraction) return
-            setPanelLayout(layout)
-            writePanelLayoutForTier(shellSidebars.tier, layout)
-          }}
-        >
+      <AppViewportSync />
+      <SkipToContent />
+      <div
+        data-slot="app-shell"
+        className={cn("flex h-app overflow-hidden bg-background", className)}
+      >
+        {showDesktopChatFocused ? (
+          <ChatAside
+            className="min-h-0 flex-1 rounded-none"
+            displayMode="focused"
+            onDisplayModeChange={persistChatMode}
+            isPrimaryContent
+          />
+        ) : showDesktopSplit ? (
+          <ResizablePanelGroup
+            key={shellSidebars.tier}
+            id={`shell-${shellSidebars.tier}`}
+            orientation="horizontal"
+            className="min-h-0 min-w-0 flex-1"
+            defaultLayout={panelLayout}
+            onLayoutChanged={(layout, meta) => {
+              if (!meta.isUserInteraction) return
+              setPanelLayout(layout)
+              writePanelLayoutForTier(shellSidebars.tier, layout)
+            }}
+          >
             {showDesktopChatDocked ? (
               <>
                 <ResizablePanel
@@ -311,10 +296,10 @@ function AppShellInner({
               {contextColumn}
             </ResizablePanel>
           </ResizablePanelGroup>
-      ) : (
-        contextColumn
-      )}
-    </div>
+        ) : (
+          contextColumn
+        )}
+      </div>
     </>
   )
 }

@@ -1,4 +1,7 @@
-import { fetchHyperliquidCandles, hyperliquidIntervalMs } from "@/lib/api/candles"
+import {
+  fetchHyperliquidCandles,
+  hyperliquidIntervalMs,
+} from "@/lib/api/candles"
 import { fetchInsightHome, fetchNewsHome } from "@/lib/api/data"
 import { assembleMarketContext } from "@/lib/iris-paper-trade/market-context"
 import type { MarketContextPacket } from "@/lib/iris-paper-trade/types"
@@ -57,7 +60,10 @@ export async function buildMarketContextPacket(input?: {
 
   const interval = hyperliquidIntervalMs(timeframe)
   const age = now - assembled.packet.live.barTime
-  if (!(assembled.packet.live.barTime > 0) || age > interval * LIVE_STALE_BARS) {
+  if (
+    !(assembled.packet.live.barTime > 0) ||
+    age > interval * LIVE_STALE_BARS
+  ) {
     return { ok: false, error: "STALE_CONTEXT" }
   }
 

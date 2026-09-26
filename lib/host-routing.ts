@@ -77,10 +77,7 @@ export function resolveHostRouting(input: {
     }
 
     // Launch App / handoff query on marketing root → chat desk
-    if (
-      pathnameWithoutLocale === "/" &&
-      isChatDeskSearch(search)
-    ) {
+    if (pathnameWithoutLocale === "/" && isChatDeskSearch(search)) {
       return {
         type: "redirect",
         location: absoluteOn(CHAT_APP_ORIGIN, pathname, search),

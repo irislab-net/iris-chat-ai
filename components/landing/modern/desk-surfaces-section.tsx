@@ -54,7 +54,11 @@ function GlassSheen({ className }: { className?: string }) {
   return (
     <span
       aria-hidden
-      className={cn(landingGlassSheen, "pointer-events-none absolute inset-0", className)}
+      className={cn(
+        landingGlassSheen,
+        "pointer-events-none absolute inset-0",
+        className
+      )}
     />
   )
 }
@@ -97,7 +101,9 @@ function ImpactScore({
         className={cn(
           landingGlassOrb,
           "flex size-12 items-center justify-center text-foreground sm:size-13",
-          shifting ? "transition-none" : "transition-shadow duration-500 ease-out",
+          shifting
+            ? "transition-none"
+            : "transition-shadow duration-500 ease-out",
           featured &&
             "shadow-[0_14px_36px_rgba(15,23,42,0.12),inset_0_1px_1px_rgba(255,255,255,0.98)] dark:shadow-[0_14px_36px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.16)]"
         )}
@@ -106,8 +112,10 @@ function ImpactScore({
         <span
           data-desk-score={score}
           className={cn(
-            "relative z-10 font-(family-name:--font-mono-modern) tabular-nums leading-none tracking-tight",
-            shifting ? "transition-none" : "transition-[font-size,opacity] duration-500 ease-out",
+            "relative z-10 font-(family-name:--font-mono-modern) leading-none tracking-tight tabular-nums",
+            shifting
+              ? "transition-none"
+              : "transition-[font-size,opacity] duration-500 ease-out",
             featured
               ? "text-xl font-normal text-foreground sm:text-[1.35rem]"
               : "text-base font-normal text-foreground/75"
@@ -129,13 +137,7 @@ function ImpactScore({
   )
 }
 
-function ToneBadge({
-  tone,
-  label,
-}: {
-  tone: DeskNewsTone
-  label: string
-}) {
+function ToneBadge({ tone, label }: { tone: DeskNewsTone; label: string }) {
   const Icon =
     tone === "positive"
       ? TrendingUpIcon
@@ -224,7 +226,7 @@ function DeskNewsRow({
               : "transition-[font-size,color,letter-spacing,line-height] duration-500 ease-out",
             featured
               ? cn(landingTitleCard, "text-foreground sm:text-xl")
-              : "text-sm font-normal leading-snug tracking-[-0.01em] text-foreground/70 sm:text-[0.9375rem]"
+              : "text-sm leading-snug font-normal tracking-[-0.01em] text-foreground/70 sm:text-[0.9375rem]"
           )}
         >
           {headline}

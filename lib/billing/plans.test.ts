@@ -29,7 +29,9 @@ const samplePlans: PaymentPlan[] = [
 describe("payment plans catalog", () => {
   it("finds plus monthly price from backend plans", () => {
     expect(plusPriceUsdFromPlans(samplePlans, "monthly")).toBe(39.99)
-    expect(findPaymentPlan(samplePlans, "pro_monthly")?.name).toBe("Pro Monthly")
+    expect(findPaymentPlan(samplePlans, "pro_monthly")?.name).toBe(
+      "Pro Monthly"
+    )
   })
 
   it("formats usd for display", () => {

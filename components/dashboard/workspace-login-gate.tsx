@@ -14,9 +14,7 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty"
-import {
-  WORKSPACE_LOGIN_COPY,
-} from "@/lib/workspace-auth"
+import { WORKSPACE_LOGIN_COPY } from "@/lib/workspace-auth"
 import type { WorkspacePageId } from "@/lib/workspace-page-info"
 import { cn } from "@/lib/utils"
 

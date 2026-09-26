@@ -109,7 +109,10 @@ export function readPanelLayoutForTier(
   return prefs.panelLayouts[tier]
 }
 
-export function writePanelLayoutForTier(tier: ShellSidebarTier, layout: Layout) {
+export function writePanelLayoutForTier(
+  tier: ShellSidebarTier,
+  layout: Layout
+) {
   const current = readShellLayoutPrefs()
   writeShellLayoutPrefs({
     panelLayouts: {

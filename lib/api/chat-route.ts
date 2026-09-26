@@ -77,16 +77,23 @@ async function proxyChatRequest(
   })
 }
 
-async function readJsonBody(response: Response): Promise<Record<string, unknown>> {
+async function readJsonBody(
+  response: Response
+): Promise<Record<string, unknown>> {
   try {
     const body = await response.json()
-    return body && typeof body === "object" ? (body as Record<string, unknown>) : {}
+    return body && typeof body === "object"
+      ? (body as Record<string, unknown>)
+      : {}
   } catch {
     return {}
   }
 }
 
-function isGuestUnavailableResponse(status: number, body: Record<string, unknown>) {
+function isGuestUnavailableResponse(
+  status: number,
+  body: Record<string, unknown>
+) {
   return status === 503 && body.code === "guest_unavailable"
 }
 

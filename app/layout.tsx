@@ -12,9 +12,7 @@ import { Toaster } from "@/components/ui/sonner"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { ThemeProvider } from "@wrksz/themes/next"
 import { brandIconUrl } from "@/lib/brand-icons"
-import {
-  BROWSER_CHROME_COLORS,
-} from "@/lib/browser-chrome"
+import { BROWSER_CHROME_COLORS } from "@/lib/browser-chrome"
 import { localeDirection } from "@/lib/i18n/locale"
 import enMessages from "@/messages/en.json"
 import {

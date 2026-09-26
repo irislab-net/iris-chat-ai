@@ -78,7 +78,9 @@ function emptyStore(): ChatStore {
 function normalizeDeletedIds(value: unknown): string[] {
   if (!Array.isArray(value)) return []
   return value
-    .filter((id): id is string => typeof id === "string" && id.trim().length > 0)
+    .filter(
+      (id): id is string => typeof id === "string" && id.trim().length > 0
+    )
     .slice(-MAX_DELETED_IDS)
 }
 
@@ -87,7 +89,9 @@ export function isConversationDeleted(store: ChatStore, id: string): boolean {
 }
 
 function canUseStorage() {
-  return typeof window !== "undefined" && typeof window.localStorage !== "undefined"
+  return (
+    typeof window !== "undefined" && typeof window.localStorage !== "undefined"
+  )
 }
 
 /**
@@ -127,7 +131,11 @@ function parseStore(raw: string | null): ChatStore {
   if (!raw) return emptyStore()
   try {
     const parsed = JSON.parse(raw) as ChatStore
-    if (!parsed || parsed.version !== 1 || !Array.isArray(parsed.conversations)) {
+    if (
+      !parsed ||
+      parsed.version !== 1 ||
+      !Array.isArray(parsed.conversations)
+    ) {
       return emptyStore()
     }
     return {
@@ -155,7 +163,10 @@ export function writeChatStore(ownerId: ChatOwnerId, store: ChatStore) {
   if (!canUseStorage()) return
   discardLegacyGlobalChatStore()
   try {
-    window.localStorage.setItem(getChatStorageKey(ownerId), JSON.stringify(store))
+    window.localStorage.setItem(
+      getChatStorageKey(ownerId),
+      JSON.stringify(store)
+    )
   } catch {
     // quota / private mode — ignore
   }
@@ -184,7 +195,8 @@ export function sanitizeMessages(messages: ChatUiMessage[]): ChatUiMessage[] {
     // Keep recoverable failed turns (may have empty content + retry CTA).
     if (m.error && m.action === "retry") return true
     // Signal / no-trade cards can have empty output_text but still render UI.
-    if (m.role === "assistant" && (m.paperTicket || m.noTradeReason)) return true
+    if (m.role === "assistant" && (m.paperTicket || m.noTradeReason))
+      return true
     if (m.role === "assistant" && (!text || text === "(empty)")) return false
     return true
   })

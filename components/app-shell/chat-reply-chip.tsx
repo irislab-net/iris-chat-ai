@@ -37,7 +37,9 @@ function ChatReplyChip({
       <div className="min-w-0 flex-1">
         <p className="text-[10px] font-medium tracking-[0.06em] text-muted-foreground uppercase">
           {target.role === "user" ? t("replyToUser") : t("replyToAssistant")}
-          {target.createdAt ? ` · ${formatChatTime(target.createdAt, locale)}` : ""}
+          {target.createdAt
+            ? ` · ${formatChatTime(target.createdAt, locale)}`
+            : ""}
         </p>
         <p className="mt-0.5 line-clamp-2 text-xs leading-snug text-foreground/85">
           {target.excerpt}

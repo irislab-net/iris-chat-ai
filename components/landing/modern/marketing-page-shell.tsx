@@ -6,13 +6,13 @@ import type { ReactNode } from "react"
 import { LandingFooterLazy } from "@/components/landing/modern/landing-footer-lazy"
 import { LandingNav } from "@/components/landing/modern/landing-nav"
 import { LandingScrollProvider } from "@/components/landing/modern/landing-scroll-context"
-import { SkipToContent, MAIN_CONTENT_ID } from "@/components/landing/modern/skip-to-content"
+import {
+  SkipToContent,
+  MAIN_CONTENT_ID,
+} from "@/components/landing/modern/skip-to-content"
 import { plusJakarta } from "@/components/landing/modern/fonts"
 import { localeDirection } from "@/lib/i18n/locale"
-import {
-  landingPageStack,
-  landingShell,
-} from "@/lib/landing-modern-styles"
+import { landingPageStack, landingShell } from "@/lib/landing-modern-styles"
 import { cn } from "@/lib/utils"
 
 import "@/app/styles/landing-modern.css"

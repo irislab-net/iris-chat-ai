@@ -153,7 +153,10 @@ function decisionFromTool(
   if (name === OPEN_PAPER_TRADE_TOOL_NAME) {
     const parsed = asOpenArgs(args)
     if (!parsed.ok) return parsed
-    return { ok: true, decision: { action: "OPEN_PAPER_TRADE", args: parsed.args } }
+    return {
+      ok: true,
+      decision: { action: "OPEN_PAPER_TRADE", args: parsed.args },
+    }
   }
   if (name === NO_TRADE_TOOL_NAME) {
     const parsed = asNoTradeArgs(args)
@@ -205,7 +208,8 @@ export function parsePaperDecision(input: {
 
   if (calls.length === 1) {
     const call = calls[0]
-    if (!isRecord(call)) return { ok: false, error: "STRUCTURED_OUTPUT_INVALID" }
+    if (!isRecord(call))
+      return { ok: false, error: "STRUCTURED_OUTPUT_INVALID" }
     return decisionFromTool(toolName(call), toolArgs(call))
   }
 

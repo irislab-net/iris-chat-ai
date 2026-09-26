@@ -7,8 +7,7 @@ const chatContextMenuContentClass =
 const chatContextMenuItemClass =
   "min-h-10 gap-3 rounded-xl px-2.5 py-2.5 text-sm font-medium tracking-[-0.01em] text-foreground focus:bg-foreground/[0.05] focus:text-foreground data-[highlighted]:bg-foreground/[0.05] dark:focus:bg-foreground/[0.08]"
 
-const chatContextMenuIconClass =
-  "size-4 shrink-0 text-muted-foreground"
+const chatContextMenuIconClass = "size-4 shrink-0 text-muted-foreground"
 
 const chatContextMenuDeleteClass =
   "min-h-10 gap-3 rounded-xl px-2.5 py-2.5 text-sm font-medium text-destructive focus:bg-destructive/10 focus:text-destructive data-[highlighted]:bg-destructive/10 [&_svg]:text-destructive!"

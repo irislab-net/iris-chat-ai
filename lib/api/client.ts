@@ -45,10 +45,13 @@ export async function apiJson<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await apiFetch(path, init)
   const body = await res.json().catch(() => ({}))
   if (!res.ok) {
-    throw Object.assign(new Error(body.error || `request failed ${res.status}`), {
-      status: res.status,
-      body,
-    })
+    throw Object.assign(
+      new Error(body.error || `request failed ${res.status}`),
+      {
+        status: res.status,
+        body,
+      }
+    )
   }
   return body as T
 }

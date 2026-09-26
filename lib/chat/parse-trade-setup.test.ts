@@ -25,7 +25,8 @@ describe("parseTradeSetupFromText", () => {
   })
 
   it("parses markdown Direction/Entry/SL/TP format", () => {
-    const setup = parseTradeSetupFromText(`I am unable to open a paper trade directly. However, based on the provided market context, here is a potential trade setup for ETH:
+    const setup =
+      parseTradeSetupFromText(`I am unable to open a paper trade directly. However, based on the provided market context, here is a potential trade setup for ETH:
 
 **Direction:** SHORT
 **Entry Price:** 2486.8 (current live price)
@@ -48,7 +49,8 @@ describe("parseTradeSetupFromText", () => {
   })
 
   it("builds a paper ticket from markdown setup prose", () => {
-    const ticket = parsePaperTicketFromAssistantText(`I am unable to open a paper trade directly. However, based on the provided market context, here is a potential trade setup for ETH:
+    const ticket =
+      parsePaperTicketFromAssistantText(`I am unable to open a paper trade directly. However, based on the provided market context, here is a potential trade setup for ETH:
 
 **Direction:** SHORT
 **Entry Price:** 2486.8 (current live price)

@@ -131,7 +131,9 @@ export function subscribeConsent(onStoreChange: () => void) {
   }
 }
 
-export function setStoredConsent(decision: ConsentDecision): ConsentPreferences {
+export function setStoredConsent(
+  decision: ConsentDecision
+): ConsentPreferences {
   const prefs: ConsentPreferences = {
     version: CONSENT_VERSION,
     analytics: decision.analytics,

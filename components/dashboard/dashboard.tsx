@@ -2,12 +2,14 @@
 
 import * as React from "react"
 
-import {
-  DashboardSkeleton,
-} from "@/components/dashboard/intel-skeletons"
+import { DashboardSkeleton } from "@/components/dashboard/intel-skeletons"
 import { MarketContextWorkspace } from "@/components/dashboard/market-context-workspace"
 import { useAuth } from "@/components/auth/auth-provider"
-import { fetchInsightHome, fetchNewsHome, fetchNewsLatest } from "@/lib/api/data"
+import {
+  fetchInsightHome,
+  fetchNewsHome,
+  fetchNewsLatest,
+} from "@/lib/api/data"
 import {
   hasUsableInsight,
   hasUsableNews,
@@ -68,34 +70,36 @@ function Dashboard({
     }
   }, [initialInsight, initialNews])
 
-  const loadDashboard = React.useEffectEvent(async (_mode: "initial" | "refresh") => {
-    if (inFlightRef.current) return
-    inFlightRef.current = true
-    try {
-      const [insightData, newsData] = await Promise.all([
-        fetchInsightHome().catch(() => null),
-        fetchNewsHome()
-          .catch(() => null)
-          .then(async (home) => {
-            if (home?.news?.length) return home
-            const latest = await fetchNewsLatest().catch(() => [])
-            return mergeNewsHome(home, latest)
-          }),
-      ])
-      if (!mountedRef.current) return
-      lastFetchAtRef.current = Date.now()
-      if (insightData) setInsight(insightData)
-      if (newsData) setNews(newsData)
-    } catch {
-      // News empty states stay usable; do not blank the page.
-    } finally {
-      inFlightRef.current = false
-      if (mountedRef.current) {
-        setInsightReady(true)
-        setNewsReady(true)
+  const loadDashboard = React.useEffectEvent(
+    async (_mode: "initial" | "refresh") => {
+      if (inFlightRef.current) return
+      inFlightRef.current = true
+      try {
+        const [insightData, newsData] = await Promise.all([
+          fetchInsightHome().catch(() => null),
+          fetchNewsHome()
+            .catch(() => null)
+            .then(async (home) => {
+              if (home?.news?.length) return home
+              const latest = await fetchNewsLatest().catch(() => [])
+              return mergeNewsHome(home, latest)
+            }),
+        ])
+        if (!mountedRef.current) return
+        lastFetchAtRef.current = Date.now()
+        if (insightData) setInsight(insightData)
+        if (newsData) setNews(newsData)
+      } catch {
+        // News empty states stay usable; do not blank the page.
+      } finally {
+        inFlightRef.current = false
+        if (mountedRef.current) {
+          setInsightReady(true)
+          setNewsReady(true)
+        }
       }
     }
-  })
+  )
 
   React.useEffect(() => {
     const id = window.setInterval(() => setNowMs(Date.now()), 60_000)

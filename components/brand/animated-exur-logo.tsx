@@ -46,10 +46,7 @@ export function AnimatedExurLogo({
 
   return (
     <div
-      className={cn(
-        "relative isolate overflow-hidden rounded-full",
-        className
-      )}
+      className={cn("relative isolate overflow-hidden rounded-full", className)}
     >
       {icon}
       <span

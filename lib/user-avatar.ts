@@ -68,8 +68,8 @@ export function normalizeUser(raw: unknown): User {
   const source =
     raw && typeof raw === "object"
       ? ((raw as Record<string, unknown>).user ??
-          (raw as Record<string, unknown>).data ??
-          raw)
+        (raw as Record<string, unknown>).data ??
+        raw)
       : raw
 
   const user = source as User

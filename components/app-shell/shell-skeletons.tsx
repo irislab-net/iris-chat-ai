@@ -87,10 +87,7 @@ function ChatMobileHeaderSkeleton() {
           />
           <div
             aria-hidden
-            className={cn(
-              chatMobileHeaderModelClass,
-              "h-10 w-25 shrink-0"
-            )}
+            className={cn(chatMobileHeaderModelClass, "h-10 w-25 shrink-0")}
           />
         </div>
         <div className="flex shrink-0 items-center gap-2">
@@ -114,7 +111,10 @@ function ChatMobileStarterCardSkeleton() {
       <div className="flex w-full min-w-0 items-start gap-2.5 sm:gap-3">
         <MobileBone
           stagger={2}
-          className={cn(chatSamplePromptIconClass, "bg-transparent shadow-none")}
+          className={cn(
+            chatSamplePromptIconClass,
+            "bg-transparent shadow-none"
+          )}
         />
         <div className={chatSamplePromptTextClass}>
           <MobileBone stagger={2} className="h-3.5 w-24 rounded-full" />
@@ -138,7 +138,10 @@ function ChatMobileEmptyHeroSkeleton() {
         <div className={chatMobileEmptyHeroContentClass}>
           <MobileBone
             stagger={1}
-            className={cn(chatMobileEmptyHeroMarkClass, "bg-transparent shadow-none")}
+            className={cn(
+              chatMobileEmptyHeroMarkClass,
+              "bg-transparent shadow-none"
+            )}
           />
           <MobileBone
             stagger={2}
@@ -150,7 +153,12 @@ function ChatMobileEmptyHeroSkeleton() {
               className="h-2.5 w-12 self-center rounded-full opacity-80"
             />
             <ChatMobileStarterCardSkeleton />
-            <div className={cn("flex items-center justify-center gap-1.5", chatSamplePromptCarouselDotsClass)}>
+            <div
+              className={cn(
+                "flex items-center justify-center gap-1.5",
+                chatSamplePromptCarouselDotsClass
+              )}
+            >
               <MobileBone className="size-1.5 rounded-full bg-muted-foreground/25" />
               <MobileBone className="size-1.5 rounded-full bg-muted-foreground/38" />
               <MobileBone className="size-1.5 rounded-full bg-muted-foreground/25" />
@@ -167,7 +175,10 @@ function ChatMobileComposerSkeleton() {
     <form
       data-slot="chat-composer"
       aria-hidden
-      className={cn("relative mx-auto w-full max-w-3xl", chatMobileComposerShellClass)}
+      className={cn(
+        "relative mx-auto w-full max-w-3xl",
+        chatMobileComposerShellClass
+      )}
     >
       <div
         className={cn(
@@ -181,7 +192,7 @@ function ChatMobileComposerSkeleton() {
             className="size-10 shrink-0 rounded-full bg-foreground/[0.07]"
           />
         </div>
-        <div className="[grid-area:field] flex min-h-8 min-w-0 items-center px-2.5">
+        <div className="flex min-h-8 min-w-0 items-center px-2.5 [grid-area:field]">
           <MobileBone
             stagger={3}
             className="h-3 w-19 rounded-full opacity-80"
@@ -211,7 +222,7 @@ function ChatMobileAsideSkeleton({ className }: { className?: string }) {
       aria-label={t("loadingExur")}
     >
       <ChatMobileGeminiBackground visible intro />
-      <div className="relative z-10 flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-transparent text-foreground chat-mobile-gemini-empty">
+      <div className="chat-mobile-gemini-empty relative z-10 flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-transparent text-foreground">
         <ChatMobileHeaderSkeleton />
         <div className="relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
           <ChatMobileEmptyHeroSkeleton />
@@ -295,9 +306,7 @@ function ChatHeaderSkeleton({
       {showUpgrade ? (
         <Bone className="hidden h-6 w-14 shrink-0 rounded-md sm:block" />
       ) : null}
-      {showFullscreen ? (
-        <Bone className="size-8 shrink-0 rounded-md" />
-      ) : null}
+      {showFullscreen ? <Bone className="size-8 shrink-0 rounded-md" /> : null}
       {showHistory ? <Bone className="size-8 shrink-0 rounded-md" /> : null}
       {showNewChat ? <Bone className="size-8 shrink-0 rounded-md" /> : null}
       {mobile ? <Bone className="size-8 shrink-0 rounded-md" /> : null}
@@ -416,7 +425,7 @@ function ChatDesktopAsideSkeleton({
     <div
       data-slot="chat-aside"
       className={cn(
-        "relative flex h-full min-h-0 w-full flex-col overflow-hidden bg-sidebar text-sidebar-foreground rounded-r-2xl",
+        "relative flex h-full min-h-0 w-full flex-col overflow-hidden rounded-r-2xl bg-sidebar text-sidebar-foreground",
         className
       )}
       aria-busy="true"

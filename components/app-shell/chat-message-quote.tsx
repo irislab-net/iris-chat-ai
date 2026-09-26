@@ -32,7 +32,9 @@ function ChatMessageQuote({
     >
       <p className="text-[10px] font-medium tracking-[0.06em] text-muted-foreground uppercase">
         {roleLabel}
-        {quote.created_at ? ` · ${formatChatTime(quote.created_at, locale)}` : ""}
+        {quote.created_at
+          ? ` · ${formatChatTime(quote.created_at, locale)}`
+          : ""}
       </p>
       <p className="mt-1 line-clamp-2 text-xs leading-snug text-foreground/80">
         {quote.excerpt}

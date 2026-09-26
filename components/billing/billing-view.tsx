@@ -40,10 +40,7 @@ import {
   normalizeInvoiceStatus,
   paymentHistoryRows,
 } from "@/lib/billing/invoice-history"
-import {
-  InvoiceError,
-  listPaymentInvoices,
-} from "@/lib/billing/invoices"
+import { InvoiceError, listPaymentInvoices } from "@/lib/billing/invoices"
 import type { PaymentInvoice } from "@/lib/billing/invoice-types"
 import { localeDirection } from "@/lib/i18n/locale"
 import {
@@ -112,7 +109,7 @@ function InvoiceRow({
             : "statusUnknown"
 
   return (
-    <li className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-3 gap-y-1 border-b border-white/45 px-5 py-4 last:border-b-0 dark:border-white/10 sm:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_auto_auto] sm:items-center sm:px-6">
+    <li className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-3 gap-y-1 border-b border-white/45 px-5 py-4 last:border-b-0 sm:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_auto_auto] sm:items-center sm:px-6 dark:border-white/10">
       <div className="min-w-0">
         <p className="truncate text-sm font-medium text-foreground">
           {formatInvoicePlanLabel(invoice.plan_id)}
@@ -125,10 +122,10 @@ function InvoiceRow({
         {when}
       </p>
       <div className="justify-self-end text-end sm:justify-self-auto">
-        <p className="text-[13px] font-medium tabular-nums text-foreground">
+        <p className="text-[13px] font-medium text-foreground tabular-nums">
           {formatInvoiceUsd(invoice.amount_usd)}
         </p>
-        <p className="text-[11px] tabular-nums text-muted-foreground">
+        <p className="text-[11px] text-muted-foreground tabular-nums">
           {cryptoLabel}
         </p>
       </div>
@@ -302,7 +299,7 @@ function BillingView() {
           <div
             className={cn(
               landingGlassSurface,
-              "flex min-w-0 flex-1 items-center gap-3 rounded-full bg-white/44 px-3 py-2.5 dark:bg-white/10 sm:px-4"
+              "flex min-w-0 flex-1 items-center gap-3 rounded-full bg-white/44 px-3 py-2.5 sm:px-4 dark:bg-white/10"
             )}
           >
             <span
@@ -314,7 +311,7 @@ function BillingView() {
               scrollTrigger
             />
             <div className="relative z-10 min-w-0 flex-1">
-              <p className="text-sm font-medium leading-none tracking-tight">
+              <p className="text-sm leading-none font-medium tracking-tight">
                 {t("title")}
               </p>
               <p className="mt-1 truncate text-xs text-muted-foreground">
@@ -331,7 +328,10 @@ function BillingView() {
             nativeButton={false}
             render={<Link href={APP_NEWS_PATH} aria-label={t("backToDesk")} />}
           >
-            <span aria-hidden className={cn(landingGlassSheen, "rounded-full")} />
+            <span
+              aria-hidden
+              className={cn(landingGlassSheen, "rounded-full")}
+            />
             <XIcon className="relative z-10 size-4" />
           </Button>
         </header>
@@ -347,7 +347,9 @@ function BillingView() {
               <p className="text-[11px] font-medium tracking-[0.18em] text-muted-foreground uppercase">
                 {SITE_NAME}
               </p>
-              <h1 className={cn(landingTitleSection, "mt-3")}>{t("heading")}</h1>
+              <h1 className={cn(landingTitleSection, "mt-3")}>
+                {t("heading")}
+              </h1>
               <p className="mt-4 max-w-2xl text-[0.9375rem] leading-relaxed text-muted-foreground sm:text-base">
                 {t("subtitle")}
               </p>
@@ -358,12 +360,17 @@ function BillingView() {
             <div className="mx-auto flex max-w-3xl flex-col gap-10">
               <section className="space-y-4">
                 <BillingGlassPanel>
-                  <div className="flex flex-wrap items-start justify-between gap-4 border-b border-white/55 px-5 py-6 dark:border-white/10 sm:px-6">
+                  <div className="flex flex-wrap items-start justify-between gap-4 border-b border-white/55 px-5 py-6 sm:px-6 dark:border-white/10">
                     <div className="min-w-0">
                       <p className="text-[11px] font-medium tracking-[0.14em] text-muted-foreground uppercase">
                         {t("currentPlan")}
                       </p>
-                      <p className={cn(landingTitleCard, "mt-2 text-2xl sm:text-[1.75rem]")}>
+                      <p
+                        className={cn(
+                          landingTitleCard,
+                          "mt-2 text-2xl sm:text-[1.75rem]"
+                        )}
+                      >
                         {isAuthenticated ? planName : "—"}
                       </p>
                       {isProUser && proExpires ? (
@@ -408,12 +415,12 @@ function BillingView() {
                     <StatCell
                       label={t("status")}
                       value={statusValue}
-                      className="border-b border-white/45 dark:border-white/10 sm:border-e sm:border-b-0"
+                      className="border-b border-white/45 sm:border-e sm:border-b-0 dark:border-white/10"
                     />
                     <StatCell
                       label={isProUser ? t("renewsExpires") : t("trial")}
                       value={renewValue}
-                      className="border-b border-white/45 dark:border-white/10 sm:border-e sm:border-b-0"
+                      className="border-b border-white/45 sm:border-e sm:border-b-0 dark:border-white/10"
                     />
                     <StatCell
                       label={t("pendingInvoices")}

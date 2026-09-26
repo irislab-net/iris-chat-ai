@@ -1,7 +1,14 @@
 "use client"
 
 import { gsap } from "gsap"
-import { CheckIcon, MonitorIcon, MoonIcon, SunIcon, UserRoundIcon, XIcon } from "lucide-react"
+import {
+  CheckIcon,
+  MonitorIcon,
+  MoonIcon,
+  SunIcon,
+  UserRoundIcon,
+  XIcon,
+} from "lucide-react"
 import dynamic from "next/dynamic"
 import { useLocale, useTranslations } from "next-intl"
 import { useTheme } from "@wrksz/themes/client/use-theme"
@@ -104,7 +111,9 @@ function LandingThemeToggle() {
   const t = useTranslations("common")
   const { theme, setTheme } = useTheme()
   const active: ThemeChoice =
-    theme === "light" || theme === "dark" || theme === "system" ? theme : "system"
+    theme === "light" || theme === "dark" || theme === "system"
+      ? theme
+      : "system"
   const ActiveIcon =
     THEME_CHOICES.find((choice) => choice.value === active)?.icon ?? MonitorIcon
 
@@ -150,7 +159,10 @@ function LandingNavAccount() {
   if (loading) {
     return (
       <span
-        className={cn(landingGlassNavIcon, "flex size-10 shrink-0 items-center justify-center rounded-full")}
+        className={cn(
+          landingGlassNavIcon,
+          "flex size-10 shrink-0 items-center justify-center rounded-full"
+        )}
         aria-hidden
       >
         <span aria-hidden className={cn(landingGlassSheen, "rounded-full")} />
@@ -231,7 +243,7 @@ function LandingSheetAccount({ onDone }: { onDone?: () => void }) {
         className="h-auto shrink-0 rounded-full p-0.5 hover:bg-transparent"
       />
       <div className="min-w-0 flex-1">
-        <p className="truncate text-[15px] font-medium leading-tight text-foreground">
+        <p className="truncate text-[15px] leading-tight font-medium text-foreground">
           {userAccountLabel(user)}
         </p>
         <p className="truncate text-xs text-muted-foreground">
@@ -298,7 +310,7 @@ export function LandingNav() {
             variant="ghost"
             onClick={goHome}
             aria-label="Exur"
-            className="h-auto min-w-0 shrink-0 justify-self-start gap-2.5 rounded-full px-0 py-0 text-foreground hover:bg-muted"
+            className="h-auto min-w-0 shrink-0 gap-2.5 justify-self-start rounded-full px-0 py-0 text-foreground hover:bg-muted"
           >
             <span
               className="flex size-11 shrink-0 items-center justify-center rounded-full bg-card p-1 shadow-[0_6px_18px_rgba(15,23,42,0.06)] dark:shadow-[0_6px_18px_rgba(0,0,0,0.28)]"
@@ -312,7 +324,7 @@ export function LandingNav() {
           <Link
             href={homePath}
             aria-label="Exur"
-            className="inline-flex h-auto min-w-0 shrink-0 items-center justify-self-start gap-2.5 rounded-full px-0 py-0 text-foreground transition-colors hover:bg-muted"
+            className="inline-flex h-auto min-w-0 shrink-0 items-center gap-2.5 justify-self-start rounded-full px-0 py-0 text-foreground transition-colors hover:bg-muted"
           >
             <span
               className="flex size-11 shrink-0 items-center justify-center rounded-full bg-card p-1 shadow-[0_6px_18px_rgba(15,23,42,0.06)] dark:shadow-[0_6px_18px_rgba(0,0,0,0.28)]"
@@ -378,7 +390,10 @@ export function LandingNav() {
                   className={cn(landingNavIconButtonClass, "lg:hidden")}
                   aria-label={tNav("openMenu")}
                 >
-                  <span aria-hidden className={cn(landingGlassSheen, "rounded-full")} />
+                  <span
+                    aria-hidden
+                    className={cn(landingGlassSheen, "rounded-full")}
+                  />
                   <NavMenuIcon />
                 </Button>
               }
@@ -391,17 +406,14 @@ export function LandingNav() {
                 "gap-0 border-0 bg-card p-0 text-foreground shadow-[0_24px_80px_rgba(15,23,42,0.14)]",
                 "dark:shadow-[0_24px_80px_rgba(0,0,0,0.45)]",
                 "top-3 bottom-3 h-auto w-[min(calc(100vw-1.5rem),20rem)] rounded-[1.75rem]",
-                "inset-s-auto inset-e-3 left-auto right-auto",
-                "data-[side=left]:top-3 data-[side=left]:bottom-3 data-[side=left]:inset-s-auto data-[side=left]:inset-e-3 data-[side=left]:left-auto data-[side=left]:right-auto data-[side=left]:h-auto data-[side=left]:w-[min(calc(100vw-1.5rem),20rem)] data-[side=left]:sm:max-w-none",
-                "data-[side=right]:top-3 data-[side=right]:bottom-3 data-[side=right]:inset-s-auto data-[side=right]:inset-e-3 data-[side=right]:left-auto data-[side=right]:right-auto data-[side=right]:h-auto data-[side=right]:w-[min(calc(100vw-1.5rem),20rem)] data-[side=right]:sm:max-w-none"
+                "inset-s-auto inset-e-3 right-auto left-auto",
+                "data-[side=left]:inset-s-auto data-[side=left]:inset-e-3 data-[side=left]:top-3 data-[side=left]:right-auto data-[side=left]:bottom-3 data-[side=left]:left-auto data-[side=left]:h-auto data-[side=left]:w-[min(calc(100vw-1.5rem),20rem)] data-[side=left]:sm:max-w-none",
+                "data-[side=right]:inset-s-auto data-[side=right]:inset-e-3 data-[side=right]:top-3 data-[side=right]:right-auto data-[side=right]:bottom-3 data-[side=right]:left-auto data-[side=right]:h-auto data-[side=right]:w-[min(calc(100vw-1.5rem),20rem)] data-[side=right]:sm:max-w-none"
               )}
             >
               <SheetHeader className="flex-row items-center justify-between gap-3 p-5 pb-3 text-start">
                 <SheetTitle
-                  className={cn(
-                    landingTitleBrand,
-                    "flex items-center gap-2.5"
-                  )}
+                  className={cn(landingTitleBrand, "flex items-center gap-2.5")}
                 >
                   <ExurLogo
                     decorative
@@ -424,12 +436,18 @@ export function LandingNav() {
                     />
                   }
                 >
-                  <span aria-hidden className={cn(landingGlassSheen, "rounded-full")} />
+                  <span
+                    aria-hidden
+                    className={cn(landingGlassSheen, "rounded-full")}
+                  />
                   <XIcon className="relative z-10 size-4" />
                 </SheetClose>
               </SheetHeader>
 
-              <nav className="flex flex-1 flex-col gap-1 px-3 pt-2" aria-label={tNav("mobileNav")}>
+              <nav
+                className="flex flex-1 flex-col gap-1 px-3 pt-2"
+                aria-label={tNav("mobileNav")}
+              >
                 <div className="mb-2">
                   <LandingSheetAccount onDone={() => setOpen(false)} />
                 </div>
@@ -442,7 +460,11 @@ export function LandingNav() {
                           type="button"
                           variant="ghost"
                           onClick={() =>
-                            scrollAndClose(link.id, () => setOpen(false), goToSection)
+                            scrollAndClose(
+                              link.id,
+                              () => setOpen(false),
+                              goToSection
+                            )
                           }
                           aria-current={isActive ? "true" : undefined}
                           className={cn(
@@ -461,7 +483,11 @@ export function LandingNav() {
               </nav>
 
               <div className="mt-auto flex flex-col gap-3 p-5 pt-4 pb-[max(1.25rem,env(safe-area-inset-bottom))]">
-                <SphereCta href={getLaunchAppHref()} variant="glass" className="w-full">
+                <SphereCta
+                  href={getLaunchAppHref()}
+                  variant="glass"
+                  className="w-full"
+                >
                   {tNav("application")}
                 </SphereCta>
                 <ThemeModeControl />

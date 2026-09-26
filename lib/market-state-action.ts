@@ -47,21 +47,11 @@ export function classifyMarketStance(stance: string): MarketStateKind {
     return "no_setup"
   }
 
-  if (
-    key === "LONG" ||
-    key === "BULL" ||
-    key === "BUY" ||
-    key === "UP"
-  ) {
+  if (key === "LONG" || key === "BULL" || key === "BUY" || key === "UP") {
     return "long"
   }
 
-  if (
-    key === "SHORT" ||
-    key === "BEAR" ||
-    key === "SELL" ||
-    key === "DOWN"
-  ) {
+  if (key === "SHORT" || key === "BEAR" || key === "SELL" || key === "DOWN") {
     return "short"
   }
 
@@ -105,16 +95,14 @@ export function getMarketStateActionPresentation(
       return {
         kind,
         displayStatus,
-        interpretation:
-          "Desk bias is long. This is a lean, not a buy order.",
+        interpretation: "Desk bias is long. This is a lean, not a buy order.",
         nextAction: "Long bias. Watch for your long entry.",
       }
     case "short":
       return {
         kind,
         displayStatus,
-        interpretation:
-          "Desk bias is short. This is a lean, not a sell order.",
+        interpretation: "Desk bias is short. This is a lean, not a sell order.",
         nextAction: "Short bias. Watch for your short entry.",
       }
     case "unknown":

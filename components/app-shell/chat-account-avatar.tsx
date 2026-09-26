@@ -53,7 +53,7 @@ function ChatAccountAvatar({
       {showPlanBadge ? (
         <Badge
           className={cn(
-            "absolute bottom-0 left-1/2 z-10 h-3 min-w-0 -translate-x-1/2 translate-y-[42%] rounded-full border px-1 text-[7px] font-bold leading-none tracking-wide shadow-sm",
+            "absolute bottom-0 left-1/2 z-10 h-3 min-w-0 -translate-x-1/2 translate-y-[42%] rounded-full border px-1 text-[7px] leading-none font-bold tracking-wide shadow-sm",
             isProUser
               ? "border-background bg-foreground text-background"
               : "border-border/50 bg-background text-muted-foreground",

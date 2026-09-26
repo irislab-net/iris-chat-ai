@@ -14,7 +14,10 @@ function TypingDots({ className }: { className?: string }) {
   const t = useTranslations("workspace")
   return (
     <span
-      className={cn("chat-typing-dots inline-flex items-center gap-1 px-0.5", className)}
+      className={cn(
+        "chat-typing-dots inline-flex items-center gap-1 px-0.5",
+        className
+      )}
       aria-label={t("assistantTyping")}
       role="status"
     >

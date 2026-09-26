@@ -161,9 +161,7 @@ export function initSignalWaitDemo(
 
     tl.to({}, { duration: answer ? 2.1 : 2.5 })
 
-    const fadeTargets = answer
-      ? [user, reply, resultEl]
-      : [user, resultEl]
+    const fadeTargets = answer ? [user, reply, resultEl] : [user, resultEl]
     tl.to(fadeTargets, {
       autoAlpha: 0,
       duration: LANDING_MOTION.durationIn,

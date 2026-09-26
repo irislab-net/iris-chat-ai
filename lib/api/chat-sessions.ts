@@ -152,7 +152,10 @@ export function applySessionListToStore(
       id: session.session_id,
       title: session.title.trim() || existing?.title || "Chat",
       createdAt: existing?.createdAt ?? session.first_message_at,
-      updatedAt: session.last_message_at || existing?.updatedAt || session.first_message_at,
+      updatedAt:
+        session.last_message_at ||
+        existing?.updatedAt ||
+        session.first_message_at,
       messages: existing?.messages ?? [],
       history: existing?.history ?? [],
       pinned: session.pinned,
@@ -161,4 +164,3 @@ export function applySessionListToStore(
   }
   return next
 }
-

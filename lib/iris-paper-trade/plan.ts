@@ -27,9 +27,10 @@ export function planIrisPaperTrade(input: {
   if (!sized.ok) {
     return {
       status: "rejected",
-      reason: sized.error === "INSUFFICIENT_MARGIN"
-        ? "INSUFFICIENT_MARGIN"
-        : "INVALID_SIZE",
+      reason:
+        sized.error === "INSUFFICIENT_MARGIN"
+          ? "INSUFFICIENT_MARGIN"
+          : "INVALID_SIZE",
       detail: sized.error,
     }
   }

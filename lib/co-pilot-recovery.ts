@@ -114,11 +114,7 @@ export function coPilotUserFacingError(
   if (isChatLoginRequiredCode(code) || isGuestTrialExhaustedError(error)) {
     return COPILOT_TRIAL_EXHAUSTED_MESSAGE
   }
-  if (
-    status === 401 ||
-    code === "unauthorized" ||
-    code === "invalid_token"
-  ) {
+  if (status === 401 || code === "unauthorized" || code === "invalid_token") {
     return COPILOT_AUTH_MESSAGE
   }
   if (isCreditExhaustedError(error)) {
@@ -141,9 +137,15 @@ export function coPilotUserFacingError(
     if (/^HTTP\s+\d+/i.test(msg)) return COPILOT_RECOVERY_MESSAGE
     if (/failed to fetch/i.test(msg)) return COPILOT_RECOVERY_MESSAGE
     if (/network/i.test(msg)) return COPILOT_RECOVERY_MESSAGE
-    if (/streaming response has no body/i.test(msg)) return COPILOT_RECOVERY_MESSAGE
+    if (/streaming response has no body/i.test(msg))
+      return COPILOT_RECOVERY_MESSAGE
     if (isChatRetryableFailureMessage(msg)) return COPILOT_RECOVERY_MESSAGE
-    if (msg.length > 0 && msg.length < 160 && !/[<>{}]/.test(msg) && !/\bHTTP\b/i.test(msg)) {
+    if (
+      msg.length > 0 &&
+      msg.length < 160 &&
+      !/[<>{}]/.test(msg) &&
+      !/\bHTTP\b/i.test(msg)
+    ) {
       // Short opaque API `error` strings may be user-safe; still prefer recovery copy
       // unless we know the backend writes human copy. Default to recovery message.
       return COPILOT_RECOVERY_MESSAGE
@@ -242,9 +244,7 @@ export function coPilotFailureAction(error: unknown): "connect" | "retry" {
   const status = (error as { status?: number } | null)?.status
   const code = coPilotErrorCode(error)
   if (
-    (status === 401 ||
-      code === "unauthorized" ||
-      code === "invalid_token") &&
+    (status === 401 || code === "unauthorized" || code === "invalid_token") &&
     !isGuestChatSession()
   ) {
     return "connect"
@@ -253,7 +253,8 @@ export function coPilotFailureAction(error: unknown): "connect" | "retry" {
 }
 
 export function getRetryUserMessage(
-  message: { id: string; action?: string; retryUserMessage?: string } | undefined
+  message:
+    { id: string; action?: string; retryUserMessage?: string } | undefined
 ): string | null {
   if (!message || message.action !== "retry") return null
   const text = message.retryUserMessage?.trim()

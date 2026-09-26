@@ -44,9 +44,7 @@ const AboutSection = dynamic(
     ),
   {
     ssr: false,
-    loading: () => (
-      <div className="min-h-70 w-full" aria-hidden />
-    ),
+    loading: () => <div className="min-h-70 w-full" aria-hidden />,
   }
 )
 const GuestTrialSection = dynamic(

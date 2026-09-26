@@ -1,4 +1,5 @@
-export const GOOGLE_IDENTITY_SCRIPT_SRC = "https://accounts.google.com/gsi/client"
+export const GOOGLE_IDENTITY_SCRIPT_SRC =
+  "https://accounts.google.com/gsi/client"
 export const GOOGLE_ONE_TAP_DISMISSED_KEY = "iris-google-one-tap-dismissed-v2"
 const LEGACY_ONE_TAP_DISMISSED_KEY = "iris-google-one-tap-dismissed"
 

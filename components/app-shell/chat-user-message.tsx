@@ -195,16 +195,18 @@ function ChatUserTurn({
                   dir="auto"
                   tabIndex={0}
                   className={cn(
-                    "chat-bidi min-w-0 cursor-text select-text overflow-hidden wrap-anywhere",
+                    "min-w-0 cursor-text overflow-hidden chat-bidi wrap-anywhere select-text",
                     chatMobileUserBubbleInteractiveClass
                   )}
                 >
                   {replyTo ? <ChatMessageQuote quote={replyTo} /> : null}
-                  <span className="block min-w-0 whitespace-pre-wrap wrap-anywhere">
+                  <span className="block min-w-0 wrap-anywhere whitespace-pre-wrap">
                     {displayText}
                   </span>
                   {expandToggle ? (
-                    <div className="mt-1.5 flex justify-start">{expandToggle}</div>
+                    <div className="mt-1.5 flex justify-start">
+                      {expandToggle}
+                    </div>
                   ) : null}
                 </div>
                 <div className="flex min-h-7 items-center justify-between gap-2 px-1">
@@ -218,12 +220,12 @@ function ChatUserTurn({
                   dir="auto"
                   tabIndex={0}
                   className={cn(
-                    "chat-bidi min-w-0 w-full cursor-text select-text overflow-hidden wrap-anywhere outline-none",
+                    "w-full min-w-0 cursor-text overflow-hidden chat-bidi wrap-anywhere outline-none select-text",
                     chatUserBubbleClass
                   )}
                 >
                   {replyTo ? <ChatMessageQuote quote={replyTo} /> : null}
-                  <span className="block min-w-0 whitespace-pre-wrap wrap-anywhere">
+                  <span className="block min-w-0 wrap-anywhere whitespace-pre-wrap">
                     {displayText}
                   </span>
                   <div

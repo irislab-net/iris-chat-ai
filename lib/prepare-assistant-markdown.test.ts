@@ -4,8 +4,7 @@ import { prepareAssistantMarkdown } from "@/lib/prepare-assistant-markdown"
 
 describe("prepareAssistantMarkdown", () => {
   it("splits intro text from an inline header row", () => {
-    const input =
-      "در اینجا جدول است: | زمان | قیمت |\n| 12:00 | 100 |"
+    const input = "در اینجا جدول است: | زمان | قیمت |\n| 12:00 | 100 |"
 
     expect(prepareAssistantMarkdown(input)).toBe(
       `در اینجا جدول است:

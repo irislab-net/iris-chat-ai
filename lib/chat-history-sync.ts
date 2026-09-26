@@ -71,9 +71,7 @@ export function mergeAssistantPaperTickets(
   const localAssistants = localMessages.filter(
     (message) => message.role === "assistant"
   )
-  if (
-    !localAssistants.some((message) => Boolean(message.paperTicket))
-  ) {
+  if (!localAssistants.some((message) => Boolean(message.paperTicket))) {
     return serverMessages
   }
 
@@ -219,7 +217,9 @@ export function mergeServerHistoryIntoStore(
 
   for (const [sessionId, sessionItems] of grouped) {
     if (deleted.has(sessionId)) continue
-    const localConversation = local.conversations.find((c) => c.id === sessionId)
+    const localConversation = local.conversations.find(
+      (c) => c.id === sessionId
+    )
     const built = buildStoredConversationFromHistory(
       sessionId,
       sessionItems,

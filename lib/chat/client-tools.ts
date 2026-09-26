@@ -18,10 +18,7 @@ export const CHAT_FRONTEND_TOOLS = [
 export type ChatFrontendTool = (typeof CHAT_FRONTEND_TOOLS)[number]
 
 export type ChatClientActivePage =
-  | "chat"
-  | "trading_chart"
-  | "wallet_page"
-  | "admin_dashboard"
+  "chat" | "trading_chart" | "wallet_page" | "admin_dashboard"
 
 export type ChatClientActionSummary = {
   tool: string
@@ -111,7 +108,13 @@ export function parseShowTradeSignalArgs(
     args.takeProfitReason ?? args.take_profit_reason
   )
 
-  if (!symbol || !side || entry == null || stopLoss == null || takeProfit == null) {
+  if (
+    !symbol ||
+    !side ||
+    entry == null ||
+    stopLoss == null ||
+    takeProfit == null
+  ) {
     return null
   }
 
@@ -253,9 +256,7 @@ export function executeChatClientActions(
         break
       }
       case "navigate_to_page": {
-        summaries.push(
-          summarizeAction(action.tool_name, "Navigate", false)
-        )
+        summaries.push(summarizeAction(action.tool_name, "Navigate", false))
         break
       }
       case "admin_user_lookup":

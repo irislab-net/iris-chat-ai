@@ -54,7 +54,9 @@ export function plusPriceUsdFromPlans(
   return priceUsdForPlanId(plans, planIdForBilling(billing))
 }
 
-export function formatPlanPriceUsd(amount: number | null | undefined): string | null {
+export function formatPlanPriceUsd(
+  amount: number | null | undefined
+): string | null {
   if (amount === null || amount === undefined || !Number.isFinite(amount)) {
     return null
   }

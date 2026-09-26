@@ -30,10 +30,10 @@ describe("handleV1ApiRoute", () => {
   })
 
   it("routes chat requests to the chat handler", async () => {
-    await handleV1ApiRoute(new Request("https://chat.exur.ai/v1/chat/message"), [
-      "chat",
-      "message",
-    ])
+    await handleV1ApiRoute(
+      new Request("https://chat.exur.ai/v1/chat/message"),
+      ["chat", "message"]
+    )
 
     expect(handleChatApiRoute).toHaveBeenCalledWith(
       expect.any(Request),
@@ -57,10 +57,13 @@ describe("handleV1ApiRoute", () => {
   })
 
   it("routes entitlements and wallets to the trading handler", async () => {
-    await handleV1ApiRoute(new Request("https://chat.exur.ai/v1/entitlements"), [
-      "entitlements",
+    await handleV1ApiRoute(
+      new Request("https://chat.exur.ai/v1/entitlements"),
+      ["entitlements"]
+    )
+    await handleV1ApiRoute(new Request("https://chat.exur.ai/v1/wallets"), [
+      "wallets",
     ])
-    await handleV1ApiRoute(new Request("https://chat.exur.ai/v1/wallets"), ["wallets"])
 
     expect(handleTradingApiRoute).toHaveBeenCalledTimes(2)
     expect(proxyIrisApiRequest).not.toHaveBeenCalled()

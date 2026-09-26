@@ -53,7 +53,12 @@ function CompanyInformation({
           {heading}
         </h2>
       ) : null}
-      <div className={cn("space-y-1.5", isFooter && heading ? "mt-1.5" : undefined)}>
+      <div
+        className={cn(
+          "space-y-1.5",
+          isFooter && heading ? "mt-1.5" : undefined
+        )}
+      >
         <p>{COMPANY_DEVELOPMENT_ATTRIBUTION}</p>
         <p>{COMPANY_DESCRIPTION}</p>
         <p>

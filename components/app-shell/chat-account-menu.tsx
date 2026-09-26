@@ -139,9 +139,7 @@ function ChatAccountMenu({
           compact
           showPlanBadge={!isDesktop}
           planBadgeClassName={chatMobileHeaderPlanBadgeClass}
-          avatarClassName={
-            isDesktop ? "size-7" : chatMobileHeaderAvatarClass
-          }
+          avatarClassName={isDesktop ? "size-7" : chatMobileHeaderAvatarClass}
         />
       </DropdownMenuTrigger>
       <DropdownMenuContent

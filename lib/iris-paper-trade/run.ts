@@ -137,7 +137,10 @@ export async function runIrisPaperTradeRequest(input: {
   if (!built.ok) {
     return {
       status: "rejected",
-      reason: built.error === "STALE_CONTEXT" ? "STALE_CONTEXT" : "MISSING_LIVE_PRICE",
+      reason:
+        built.error === "STALE_CONTEXT"
+          ? "STALE_CONTEXT"
+          : "MISSING_LIVE_PRICE",
       detail: built.error,
       message: formatRejectedChatMessage(
         "Live market context was not available."

@@ -34,8 +34,8 @@ export function useAppViewportHeight(enabled = true) {
         root.classList.contains("display-standalone") ||
         window.matchMedia("(display-mode: standalone)").matches ||
         window.matchMedia("(display-mode: fullscreen)").matches ||
-        (window.navigator as Navigator & { standalone?: boolean }).standalone ===
-          true
+        (window.navigator as Navigator & { standalone?: boolean })
+          .standalone === true
       )
     }
 

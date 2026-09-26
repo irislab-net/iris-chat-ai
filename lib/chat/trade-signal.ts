@@ -48,7 +48,10 @@ export function isValidTakeProfit(
 }
 
 function coinKey(symbol: string): string {
-  return symbol.trim().toUpperCase().replace(/[^A-Z0-9]/g, "")
+  return symbol
+    .trim()
+    .toUpperCase()
+    .replace(/[^A-Z0-9]/g, "")
 }
 
 export function getMaxLeverage(symbol: string): number {

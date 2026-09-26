@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest"
 
-import { stampUiMessageFromRef, replyTargetFromMessage } from "@/lib/chat/message-stamp"
+import {
+  stampUiMessageFromRef,
+  replyTargetFromMessage,
+} from "@/lib/chat/message-stamp"
 import { serverMessageId } from "@/lib/chat-message-id"
 
 describe("message stamp", () => {

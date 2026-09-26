@@ -247,12 +247,17 @@ function UpgradeView() {
             }),
       }}
     >
-      <div className={cn(landingShell, "relative z-10 flex flex-1 flex-col pb-28 sm:pb-32")}>
+      <div
+        className={cn(
+          landingShell,
+          "relative z-10 flex flex-1 flex-col pb-28 sm:pb-32"
+        )}
+      >
         <header className="mt-3 flex items-center gap-3 sm:mt-5">
           <div
             className={cn(
               landingGlassSurface,
-              "flex min-w-0 flex-1 items-center gap-3 rounded-full bg-white/44 px-3 py-2.5 dark:bg-white/10 sm:px-4"
+              "flex min-w-0 flex-1 items-center gap-3 rounded-full bg-white/44 px-3 py-2.5 sm:px-4 dark:bg-white/10"
             )}
           >
             <span
@@ -264,7 +269,7 @@ function UpgradeView() {
               scrollTrigger
             />
             <div className="relative z-10 min-w-0 flex-1">
-              <p className="text-sm font-medium leading-none tracking-tight">
+              <p className="text-sm leading-none font-medium tracking-tight">
                 {t("title")}
               </p>
               <p className="mt-1 truncate text-xs text-muted-foreground">
@@ -279,7 +284,10 @@ function UpgradeView() {
             nativeButton={false}
             render={<Link href={APP_NEWS_PATH} aria-label={t("backToDesk")} />}
           >
-            <span aria-hidden className={cn(landingGlassSheen, "rounded-full")} />
+            <span
+              aria-hidden
+              className={cn(landingGlassSheen, "rounded-full")}
+            />
             <XIcon className="relative z-10 size-4" />
           </Button>
         </header>
@@ -295,7 +303,9 @@ function UpgradeView() {
               <p className="text-[11px] font-medium tracking-[0.18em] text-muted-foreground uppercase">
                 {SITE_NAME}
               </p>
-              <h1 className={cn(landingTitleSection, "mt-3")}>{t("heading")}</h1>
+              <h1 className={cn(landingTitleSection, "mt-3")}>
+                {t("heading")}
+              </h1>
               <p className="mt-4 max-w-2xl text-[0.9375rem] leading-relaxed text-muted-foreground sm:text-base">
                 {t("subtitle")}
               </p>
@@ -313,14 +323,16 @@ function UpgradeView() {
                   <BillingGlassPanel className="bg-white/50 transition-colors hover:bg-white/58 dark:bg-white/10 dark:hover:bg-white/14">
                     <div className="flex items-start justify-between gap-3 px-5 py-4 sm:px-6">
                       <div className="min-w-0">
-                        <p className="text-sm font-medium">{t("pendingTitle")}</p>
+                        <p className="text-sm font-medium">
+                          {t("pendingTitle")}
+                        </p>
                         <p className="mt-1 text-sm text-muted-foreground">
                           {t("pendingBody", { amount: pendingAmountLabel })}
                         </p>
                       </div>
                       <div className="flex shrink-0 items-center gap-1.5 text-xs text-muted-foreground">
                         <Clock3Icon className="size-3.5" />
-                        <span className="font-medium tabular-nums text-foreground">
+                        <span className="font-medium text-foreground tabular-nums">
                           {formatCountdown(pendingMsRemaining)}
                         </span>
                       </div>
@@ -338,7 +350,9 @@ function UpgradeView() {
                 )}
               >
                 {UPGRADE_PLANS.map((plan) => {
-                  const features = t.raw(`plans.${plan.key}.features`) as string[]
+                  const features = t.raw(
+                    `plans.${plan.key}.features`
+                  ) as string[]
                   return (
                     <UpgradePlanCard
                       key={plan.key}
@@ -352,7 +366,9 @@ function UpgradeView() {
                       isCurrent={isCurrentPlan(plan.key, currentPlan)}
                       currentLabel={t("currentBadge")}
                       badge={
-                        "badge" in plan && plan.badge ? t("mostChosen") : undefined
+                        "badge" in plan && plan.badge
+                          ? t("mostChosen")
+                          : undefined
                       }
                       featured={"featured" in plan ? plan.featured : undefined}
                       onSelect={() => {
@@ -377,11 +393,11 @@ function UpgradeView() {
         onPaid={handleInvoicePaid}
       />
 
-      <footer className="pointer-events-none fixed inset-x-0 bottom-0 z-40 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom,0px))] pt-4 sm:px-6">
+      <footer className="pointer-events-none fixed inset-x-0 bottom-0 z-40 px-4 pt-4 pb-[max(0.75rem,env(safe-area-inset-bottom,0px))] sm:px-6">
         <div
           className={cn(
             landingGlassSurface,
-            "pointer-events-auto mx-auto w-full max-w-5xl rounded-[1.75rem] bg-white/55 px-4 py-3.5 dark:bg-white/10 sm:px-5"
+            "pointer-events-auto mx-auto w-full max-w-5xl rounded-[1.75rem] bg-white/55 px-4 py-3.5 sm:px-5 dark:bg-white/10"
           )}
         >
           <span

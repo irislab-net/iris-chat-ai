@@ -73,7 +73,7 @@ function ChatUserBubble({
       <div
         dir="auto"
         className={cn(
-          "chat-bidi max-w-[88%] min-w-0 overflow-hidden wrap-anywhere px-3.5 py-2.5",
+          "max-w-[88%] min-w-0 overflow-hidden px-3.5 py-2.5 chat-bidi wrap-anywhere",
           chatUserBubbleClass
         )}
       >
@@ -137,13 +137,17 @@ function ChatAssistantTurn({
   return (
     <div
       id={anchorId}
-      className={cn("w-full min-w-0", isGemini ? "px-0" : "px-2 sm:px-3", className)}
+      className={cn(
+        "w-full min-w-0",
+        isGemini ? "px-0" : "px-2 sm:px-3",
+        className
+      )}
     >
       {hasBody ? (
         <div
           dir="auto"
           className={cn(
-            "min-w-0 cursor-text select-text chat-bidi [&::selection]:bg-primary/20",
+            "min-w-0 cursor-text chat-bidi select-text [&::selection]:bg-primary/20",
             isGemini
               ? chatMobileAssistantClass
               : "text-sm leading-[1.6] text-foreground/92 sm:text-[13px]"
@@ -165,7 +169,7 @@ function ChatAssistantTurn({
               {replyTo ? <ChatMessageQuote quote={replyTo} /> : null}
               {content?.trim() ? (
                 streaming ? (
-                  <div className="whitespace-pre-wrap wrap-anywhere">
+                  <div className="wrap-anywhere whitespace-pre-wrap">
                     {content}
                   </div>
                 ) : (
@@ -184,7 +188,9 @@ function ChatAssistantTurn({
         </div>
       ) : null}
       {actions ? (
-        <div className="mt-3 flex w-full flex-col items-start gap-2">{actions}</div>
+        <div className="mt-3 flex w-full flex-col items-start gap-2">
+          {actions}
+        </div>
       ) : null}
     </div>
   )
@@ -219,7 +225,7 @@ function ChatSystemNote({
   return (
     <p
       className={cn(
-        "min-w-0 overflow-hidden wrap-anywhere rounded-xl bg-muted/15 px-3 py-2 text-center text-[11px] leading-5 text-muted-foreground",
+        "min-w-0 overflow-hidden rounded-xl bg-muted/15 px-3 py-2 text-center text-[11px] leading-5 wrap-anywhere text-muted-foreground",
         className
       )}
     >

@@ -1,6 +1,11 @@
 import { apiJson } from "@/lib/api/client"
 import { normalizeInsightHome } from "@/lib/api/public-home"
-import type { ApiEnvelope, InsightHome, NewsHome, NewsItem } from "@/lib/api/types"
+import type {
+  ApiEnvelope,
+  InsightHome,
+  NewsHome,
+  NewsItem,
+} from "@/lib/api/types"
 
 export async function fetchInsightHome(): Promise<InsightHome | null> {
   const res = await apiJson<ApiEnvelope<InsightHome>>("/v1/insight/home")
@@ -9,7 +14,9 @@ export async function fetchInsightHome(): Promise<InsightHome | null> {
 }
 
 export async function fetchInsightPredictions() {
-  return apiJson<ApiEnvelope<InsightHome["predictions"]>>("/v1/insight/predictions")
+  return apiJson<ApiEnvelope<InsightHome["predictions"]>>(
+    "/v1/insight/predictions"
+  )
 }
 
 export async function fetchNewsHome() {

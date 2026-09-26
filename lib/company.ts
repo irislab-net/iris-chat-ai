@@ -31,6 +31,8 @@ export const COMPANY_SIC_CODES = [
   },
 ] as const
 
-export const COMPANY_DEVELOPMENT_ATTRIBUTION = `Exur was developed under ${LEGAL_ENTITY_NAME} (Company No. ${COMPANY_NUMBER}).` as const
+export const COMPANY_DEVELOPMENT_ATTRIBUTION =
+  `Exur was developed under ${LEGAL_ENTITY_NAME} (Company No. ${COMPANY_NUMBER}).` as const
 
-export const COMPANY_DESCRIPTION = `${LEGAL_ENTITY_NAME}, a UK private limited company incorporated in England.` as const
+export const COMPANY_DESCRIPTION =
+  `${LEGAL_ENTITY_NAME}, a UK private limited company incorporated in England.` as const

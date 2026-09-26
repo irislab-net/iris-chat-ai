@@ -29,7 +29,9 @@ export function ThemeModeControl({ className }: { className?: string }) {
   const t = useTranslations("common")
   const { theme, setTheme } = useTheme()
   const active: ThemeChoice =
-    theme === "light" || theme === "dark" || theme === "system" ? theme : "system"
+    theme === "light" || theme === "dark" || theme === "system"
+      ? theme
+      : "system"
 
   return (
     <div

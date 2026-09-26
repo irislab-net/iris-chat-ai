@@ -7,8 +7,6 @@ import { isMarketingHost } from "@/lib/hosts"
 export async function isMarketingRequest(): Promise<boolean> {
   const h = await headers()
   // Prefer middleware `x-host` (set after Host normalization) over raw Host.
-  const host = hostnameFromHostHeader(
-    h.get("x-host") ?? h.get("host") ?? ""
-  )
+  const host = hostnameFromHostHeader(h.get("x-host") ?? h.get("host") ?? "")
   return isMarketingHost(host)
 }

@@ -41,10 +41,7 @@ function GoogleAnalytics() {
 
   // Standalone gtag is marketing-only. Chat ships GA4 via GTM — never dual-load.
   const wantsGa =
-    isAnalyticsEnabled() &&
-    Boolean(hostname) &&
-    !isChatHost &&
-    !gtmCoversChat
+    isAnalyticsEnabled() && Boolean(hostname) && !isChatHost && !gtmCoversChat
 
   const idleReady = useIdleReady(wantsGa, 15_000)
 

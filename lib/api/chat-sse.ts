@@ -28,8 +28,7 @@ export type ChatSseEvent =
   | ChatSseDoneEvent
 
 export type ChatThinkingStep =
-  | { type: "reasoning"; text: string }
-  | { type: "tool"; name: string }
+  { type: "reasoning"; text: string } | { type: "tool"; name: string }
 
 /** Parse one SSE record (`event:` + `data:` + blank line). */
 export function parseChatSseBlock(block: string): ChatSseEvent | null {

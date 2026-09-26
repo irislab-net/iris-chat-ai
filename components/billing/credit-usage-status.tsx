@@ -43,7 +43,7 @@ function UsageMeter({
             </span>
           </p>
         </div>
-        <p className="text-xs tabular-nums text-muted-foreground">
+        <p className="text-xs text-muted-foreground tabular-nums">
           {t("usedCount", { count: formatCreditCount(period.used) })}
         </p>
       </div>
@@ -115,7 +115,7 @@ function CreditUsageStatusPanel({
             <UsageMeter
               title={t("dailyRemaining")}
               period={usage.daily}
-              className="border-b border-white/45 dark:border-white/10 sm:border-e sm:border-b-0"
+              className="border-b border-white/45 sm:border-e sm:border-b-0 dark:border-white/10"
             />
             <UsageMeter title={t("weeklyRemaining")} period={usage.weekly} />
           </div>
@@ -145,14 +145,18 @@ function CreditUsageStatusPanel({
       ) : loading ? (
         <BillingGlassPanel>
           <div className="px-5 py-8 sm:px-6">
-            <p className="text-sm text-muted-foreground">{t("loadingCredits")}</p>
+            <p className="text-sm text-muted-foreground">
+              {t("loadingCredits")}
+            </p>
           </div>
         </BillingGlassPanel>
       ) : (
         <BillingGlassPanel>
           <div className="flex items-start gap-3 px-5 py-4 sm:px-6">
             <GaugeIcon className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
-            <p className="text-sm text-muted-foreground">{t("signInForCredits")}</p>
+            <p className="text-sm text-muted-foreground">
+              {t("signInForCredits")}
+            </p>
           </div>
         </BillingGlassPanel>
       )}
@@ -184,9 +188,7 @@ function useCreditUsage(enabled: boolean) {
     } catch (err) {
       setBalance(null)
       setTrial(null)
-      setError(
-        err instanceof Error ? err.message : t("creditsLoadError")
-      )
+      setError(err instanceof Error ? err.message : t("creditsLoadError"))
     } finally {
       setLoading(false)
     }

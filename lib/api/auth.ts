@@ -6,10 +6,7 @@ import {
 } from "@/lib/api/config"
 import type { TokenPair, User } from "@/lib/api/types"
 import { parseTokenPair, parseUser } from "@/lib/api/schemas"
-import {
-  AUTH_PRIVACY_NOTICE_ACCEPTED,
-  AUTH_TERMS_ACCEPTED,
-} from "@/lib/legal"
+import { AUTH_PRIVACY_NOTICE_ACCEPTED, AUTH_TERMS_ACCEPTED } from "@/lib/legal"
 import { normalizeUser } from "@/lib/user-avatar"
 
 const ACCESS_KEY = "access_token"
@@ -72,7 +69,9 @@ export function getStoredExpiresAt() {
   return fromSession
 }
 
-export function storeTokenPair(pair: Pick<TokenPair, "access_token" | "expires_at">) {
+export function storeTokenPair(
+  pair: Pick<TokenPair, "access_token" | "expires_at">
+) {
   memoryAccessToken = pair.access_token
   memoryExpiresAt = pair.expires_at
   writeSession(ACCESS_KEY, pair.access_token)
@@ -90,7 +89,8 @@ export const AUTH_SUCCESS_MESSAGE = "iris-auth-success"
 export const AUTH_POPUP_CLOSED_EVENT = "iris-auth-popup-closed"
 export const AUTH_SESSION_EXPIRED_EVENT = "iris-auth-session-expired"
 export const AUTH_RETURN_TO_KEY = "iris-auth-return-to"
-export const PLAN_UPGRADE_PENDING_REFRESH_KEY = "iris-plan-upgrade-pending-refresh"
+export const PLAN_UPGRADE_PENDING_REFRESH_KEY =
+  "iris-plan-upgrade-pending-refresh"
 
 /**
  * Only allow same-origin relative paths after login (blocks open redirects via
@@ -102,7 +102,11 @@ export function safeAuthReturnPath(
 ): string {
   if (!raw) return fallback
   const trimmed = raw.trim()
-  if (!trimmed.startsWith("/") || trimmed.startsWith("//") || trimmed.includes("\\")) {
+  if (
+    !trimmed.startsWith("/") ||
+    trimmed.startsWith("//") ||
+    trimmed.includes("\\")
+  ) {
     return fallback
   }
   if (typeof window === "undefined") {

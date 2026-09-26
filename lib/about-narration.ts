@@ -7,8 +7,7 @@
  */
 
 /** Canonical CDN asset (server proxy + cue tooling). */
-export const ABOUT_NARRATION_CDN =
-  "https://files.exur.ai/ex/en/intro-voice.mp3"
+export const ABOUT_NARRATION_CDN = "https://files.exur.ai/ex/en/intro-voice.mp3"
 
 /**
  * Browser playback URL — same-origin proxy so WebAudio can analyse the track.
@@ -76,7 +75,11 @@ export const ABOUT_NARRATION_CUES: NarrationCue[] = [
     text: "I don't just predict what the market might do; I tell you what you should do.",
   },
   { start: 46.15, end: 47.81, text: "And when there's no edge?" },
-  { start: 47.81, end: 50.69, text: "I'll simply say: \u201cDo nothing.\u201d" },
+  {
+    start: 47.81,
+    end: 50.69,
+    text: "I'll simply say: \u201cDo nothing.\u201d",
+  },
   {
     start: 50.69,
     end: 55.98,
@@ -87,7 +90,11 @@ export const ABOUT_NARRATION_CUES: NarrationCue[] = [
     end: 59.33,
     text: "Experience your new financial intelligence today.",
   },
-  { start: 59.33, end: ABOUT_NARRATION_DURATION, text: "Start chatting with me now." },
+  {
+    start: 59.33,
+    end: ABOUT_NARRATION_DURATION,
+    text: "Start chatting with me now.",
+  },
 ]
 
 /** Cue index for `time`, or -1 before the first line / after the last. */

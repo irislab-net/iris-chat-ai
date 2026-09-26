@@ -63,10 +63,7 @@ export function PaymentTokenLogo({
   const [failed, setFailed] = React.useState(false)
 
   return (
-    <span
-      className={cn(discShell, TOKEN_CLASS[size], className)}
-      aria-hidden
-    >
+    <span className={cn(discShell, TOKEN_CLASS[size], className)} aria-hidden>
       {!failed ? (
         <Image
           src={PAYMENT_TOKEN_LOGOS[currency]}
@@ -138,10 +135,6 @@ export function PaymentMethodMark({
   className?: string
 }) {
   return (
-    <PaymentTokenLogo
-      currency={currency}
-      size={size}
-      className={className}
-    />
+    <PaymentTokenLogo currency={currency} size={size} className={className} />
   )
 }

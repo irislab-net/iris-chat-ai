@@ -29,7 +29,10 @@ const HL_INTERVALS = new Set([
 
 /** Map symbol → Hyperliquid coin (perp). Unsupported → null. */
 export function hyperliquidCoin(symbol: string): string | null {
-  const key = symbol.trim().toUpperCase().replace(/[^A-Z0-9]/g, "")
+  const key = symbol
+    .trim()
+    .toUpperCase()
+    .replace(/[^A-Z0-9]/g, "")
   if (key === "ETH" || key === "ETHUSD" || key === "ETHUSDT") return "ETH"
   if (key === "BTC" || key === "BTCUSD" || key === "BTCUSDT") return "BTC"
   if (key === "SOL" || key === "SOLUSD" || key === "SOLUSDT") return "SOL"

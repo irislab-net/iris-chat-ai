@@ -19,7 +19,9 @@ function round6(n: number): number {
   return Math.round(n * 1_000_000) / 1_000_000
 }
 
-function snapshotClassifier(c: Classifier | undefined): ModelClassifierSnapshot | null {
+function snapshotClassifier(
+  c: Classifier | undefined
+): ModelClassifierSnapshot | null {
   if (!c || !Number.isFinite(c.p) || !Number.isFinite(c.edge)) return null
   return {
     p: round6(c.p),
@@ -46,7 +48,7 @@ function averageTrueRangePct(bars: CandleBar[]): number {
   }
   const last = window[window.length - 1]!.c
   if (!(last > 0) || n === 0) return 0
-  return round6((sum / n) / last)
+  return round6(sum / n / last)
 }
 
 function rangePct(bars: CandleBar[]): number {
@@ -86,13 +88,7 @@ export function assembleMarketContext(input: {
   }
 
   const insight = input.insight?.summary ?? null
-  const symbol = (
-    input.symbol ||
-    insight?.symbol ||
-    "ETH"
-  )
-    .trim()
-    .toUpperCase()
+  const symbol = (input.symbol || insight?.symbol || "ETH").trim().toUpperCase()
   const timeframe = insight?.timeframe?.trim() || "15m"
 
   const trendWindow = bars.slice(-TREND_BARS)
@@ -102,9 +98,7 @@ export function assembleMarketContext(input: {
   const changePct =
     closeFirst > 0 ? round6(((closeLast - closeFirst) / closeFirst) * 100) : 0
 
-  const recentCloses = trendWindow
-    .slice(-RECENT_CLOSES)
-    .map((b) => round4(b.c))
+  const recentCloses = trendWindow.slice(-RECENT_CLOSES).map((b) => round4(b.c))
 
   const prediction = input.insight?.predictions?.[0]
   const long = snapshotClassifier(prediction?.classifiers.long)
@@ -112,15 +106,12 @@ export function assembleMarketContext(input: {
   const breakout = snapshotClassifier(prediction?.classifiers.breakout)
   const fast = snapshotClassifier(prediction?.classifiers.fast)
   const models =
-    long && short && breakout && fast
-      ? { long, short, breakout, fast }
-      : null
+    long && short && breakout && fast ? { long, short, breakout, fast } : null
 
   const items = [...(input.news?.news ?? [])]
     .filter((n) => n.title?.trim())
     .sort(
-      (a, b) =>
-        (b.metrics?.impact_score ?? 0) - (a.metrics?.impact_score ?? 0)
+      (a, b) => (b.metrics?.impact_score ?? 0) - (a.metrics?.impact_score ?? 0)
     )
     .slice(0, NEWS_ITEM_LIMIT)
     .map((n) => ({

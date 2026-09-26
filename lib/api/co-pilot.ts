@@ -11,10 +11,7 @@ import {
   chatStreamErrorFromEvent,
   normalizeChatErrorCode,
 } from "@/lib/api/chat-errors"
-import {
-  joinReasoningTexts,
-  readChatSseStream,
-} from "@/lib/api/chat-sse"
+import { joinReasoningTexts, readChatSseStream } from "@/lib/api/chat-sse"
 import type {
   ChatClientContext,
   ChatMessageResponse,
@@ -60,9 +57,7 @@ function createChatTimeoutSignal(timeoutMs: number): {
 } {
   const controller = new AbortController()
   const id = setTimeout(() => {
-    controller.abort(
-      new DOMException("Chat request timed out", "TimeoutError")
-    )
+    controller.abort(new DOMException("Chat request timed out", "TimeoutError"))
   }, timeoutMs)
   return {
     signal: controller.signal,
@@ -91,21 +86,21 @@ export async function fetchCoPilotUsage() {
   const mapped = creditsToUsageResponse(data)
   if (!res.ok) {
     const err = chatErrorPayload(data)
-    throw Object.assign(new Error(mapped.error || err.message || `usage failed ${res.status}`), {
-      status: res.status,
-      body: data,
-      code: err.code,
-      trial: err.trial ?? mapped.trial,
-    })
+    throw Object.assign(
+      new Error(mapped.error || err.message || `usage failed ${res.status}`),
+      {
+        status: res.status,
+        body: data,
+        code: err.code,
+        trial: err.trial ?? mapped.trial,
+      }
+    )
   }
   return mapped
 }
 
 export type StreamCoPilotChatHandlers = {
-  onMeta?: (meta: {
-    usage?: CoPilotUsage
-    conversation_id?: string
-  }) => void
+  onMeta?: (meta: { usage?: CoPilotUsage; conversation_id?: string }) => void
   onDelta?: (delta: string, full: string) => void
   onReasoning?: (text: string) => void
   onTool?: (tool: string) => void
@@ -135,13 +130,12 @@ export async function sendCoPilotChat(input: {
   const timeout = createChatTimeoutSignal(CHAT_REQUEST_TIMEOUT_MS)
   const signal = mergeAbortSignals(input.signal, timeout.signal)
   const isGuest = isGuestChatSession()
-  const baseContext =
-    input.clientContext ?? {
-      active_page: "chat",
-      active_symbol: "",
-      role: "user",
-      available_ui_actions: ["show_trade_signal"],
-    }
+  const baseContext = input.clientContext ?? {
+    active_page: "chat",
+    active_symbol: "",
+    role: "user",
+    available_ui_actions: ["show_trade_signal"],
+  }
   const clientContext = isGuest
     ? toGuestClientContext(baseContext)
     : baseContext
@@ -167,14 +161,21 @@ export async function sendCoPilotChat(input: {
       signal,
     })
     const raw = await res.json().catch(() => ({}))
-    const payload = unwrapChatPayload<ChatMessageResponse & { error?: string }>(raw)
+    const payload = unwrapChatPayload<ChatMessageResponse & { error?: string }>(
+      raw
+    )
     const adapted = adaptChatMessageResponse(payload)
 
     if (!res.ok) {
       const err = chatErrorPayload(raw)
       const code = err.code ?? normalizeChatErrorCode(adapted.code)
       throw Object.assign(
-        new Error(payload.error || err.message || adapted.message || `HTTP ${res.status}`),
+        new Error(
+          payload.error ||
+            err.message ||
+            adapted.message ||
+            `HTTP ${res.status}`
+        ),
         {
           status: res.status,
           body: raw,
@@ -237,13 +238,12 @@ async function streamCoPilotChatOnce(input: {
   const timeout = createChatTimeoutSignal(CHAT_STREAM_TIMEOUT_MS)
   const signal = mergeAbortSignals(input.signal, timeout.signal)
   const isGuest = isGuestChatSession()
-  const baseContext =
-    input.clientContext ?? {
-      active_page: "chat",
-      active_symbol: "",
-      role: "user",
-      available_ui_actions: ["show_trade_signal"],
-    }
+  const baseContext = input.clientContext ?? {
+    active_page: "chat",
+    active_symbol: "",
+    role: "user",
+    available_ui_actions: ["show_trade_signal"],
+  }
   const clientContext = isGuest
     ? toGuestClientContext(baseContext)
     : baseContext
@@ -269,9 +269,9 @@ async function streamCoPilotChatOnce(input: {
     const contentType = res.headers.get("content-type") || ""
     if (!res.ok || !contentType.includes("text/event-stream")) {
       const raw = await res.json().catch(() => ({}))
-      const payload = unwrapChatPayload<ChatMessageResponse & { error?: string }>(
-        raw
-      )
+      const payload = unwrapChatPayload<
+        ChatMessageResponse & { error?: string }
+      >(raw)
       const adapted = adaptChatMessageResponse(payload)
       const err = chatErrorPayload(raw)
       const code = err.code ?? normalizeChatErrorCode(adapted.code)
@@ -291,7 +291,10 @@ async function streamCoPilotChatOnce(input: {
 
       throw Object.assign(
         new Error(
-          payload.error || err.message || adapted.message || `HTTP ${res.status}`
+          payload.error ||
+            err.message ||
+            adapted.message ||
+            `HTTP ${res.status}`
         ),
         {
           status: res.status,

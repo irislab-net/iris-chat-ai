@@ -41,9 +41,7 @@ function useScrollReveal(
       const el = ref.current
       if (!el) return
 
-      const targets = group
-        ? (Array.from(el.children) as HTMLElement[])
-        : [el]
+      const targets = group ? (Array.from(el.children) as HTMLElement[]) : [el]
       if (targets.length === 0) return
 
       mm = gsap.matchMedia()
@@ -66,7 +64,9 @@ function useScrollReveal(
           // transform makes this element the containing block for
           // `position: fixed` descendants.
           onComplete: () => {
-            gsap.set(targets, { clearProps: "transform,translate,rotate,scale" })
+            gsap.set(targets, {
+              clearProps: "transform,translate,rotate,scale",
+            })
           },
           scrollTrigger: {
             trigger: el,

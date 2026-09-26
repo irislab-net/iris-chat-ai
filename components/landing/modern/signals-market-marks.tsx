@@ -85,7 +85,10 @@ function BnbMark() {
       <path d="M11 16L14.8 19.8 11 23.6 7.2 19.8 11 16z" />
       <path d="M29 16L32.8 19.8 29 23.6 25.2 19.8 29 16z" />
       <path d="M20 25L23.8 28.8 20 32.6 16.2 28.8 20 25z" />
-      <path d="M16.8 20L20 16.8 23.2 20 20 23.2 16.8 20z" strokeOpacity={RECESS} />
+      <path
+        d="M16.8 20L20 16.8 23.2 20 20 23.2 16.8 20z"
+        strokeOpacity={RECESS}
+      />
     </Mark>
   )
 }

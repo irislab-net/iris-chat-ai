@@ -74,7 +74,7 @@ export function DepositAddressCard({
         className="flex min-w-0 items-center gap-2"
         style={{ width: addressWidth }}
       >
-        <code className="min-w-0 flex-1 break-all text-start font-mono text-xs leading-relaxed tracking-wide text-foreground/90 sm:text-sm">
+        <code className="min-w-0 flex-1 text-start font-mono text-xs leading-relaxed tracking-wide break-all text-foreground/90 sm:text-sm">
           {address}
         </code>
         <Button

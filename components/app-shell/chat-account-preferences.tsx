@@ -52,7 +52,9 @@ function useThemeOptions() {
   const common = useTranslations("common")
   const { theme, setTheme } = useTheme()
   const active =
-    theme === "light" || theme === "dark" || theme === "system" ? theme : "system"
+    theme === "light" || theme === "dark" || theme === "system"
+      ? theme
+      : "system"
 
   const options = [
     { id: "system" as const, label: common("themeSystem"), Icon: MonitorIcon },

@@ -71,9 +71,9 @@ describe("chat API adapters", () => {
     expect(chatRoleFromUser({ role: "member", tier: "pro" } as never)).toBe(
       "pro"
     )
-    expect(chatRoleFromUser({ role: "member", tier: "free" } as never, true)).toBe(
-      "pro"
-    )
+    expect(
+      chatRoleFromUser({ role: "member", tier: "free" } as never, true)
+    ).toBe("pro")
     expect(chatRoleFromUser(null)).toBe("user")
   })
 

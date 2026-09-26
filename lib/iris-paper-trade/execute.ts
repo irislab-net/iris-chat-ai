@@ -1,4 +1,8 @@
-import { formatTradePrice, SIGNAL_DEMO_EQUITY, type PaperSide } from "@/lib/chat/trade-signal"
+import {
+  formatTradePrice,
+  SIGNAL_DEMO_EQUITY,
+  type PaperSide,
+} from "@/lib/chat/trade-signal"
 import {
   PAPER_AI_RISK_FRACTION,
   paperRiskAmountUsd,

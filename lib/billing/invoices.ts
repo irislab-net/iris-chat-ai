@@ -8,10 +8,7 @@ import type {
 } from "@/lib/billing/invoice-types"
 import { isPaymentCurrency } from "@/lib/billing/invoice-types"
 import { planIdForBilling } from "@/lib/billing/plan-ids"
-import {
-  fetchPaymentPlans,
-  priceUsdForPlanId,
-} from "@/lib/billing/plans"
+import { fetchPaymentPlans, priceUsdForPlanId } from "@/lib/billing/plans"
 import { findResumableInvoice } from "@/lib/billing/invoice-session"
 
 export class InvoiceError extends Error {
@@ -27,8 +24,10 @@ export class InvoiceError extends Error {
 function readApiError(body: unknown, fallback: string): string {
   if (!body || typeof body !== "object") return fallback
   const record = body as Record<string, unknown>
-  if (typeof record.error === "string" && record.error.trim()) return record.error
-  if (typeof record.message === "string" && record.message.trim()) return record.message
+  if (typeof record.error === "string" && record.error.trim())
+    return record.error
+  if (typeof record.message === "string" && record.message.trim())
+    return record.message
   return fallback
 }
 
@@ -80,7 +79,10 @@ export async function createPaymentInvoice(
         : 500
     const message =
       error && typeof error === "object" && "body" in error
-        ? readApiError((error as { body?: unknown }).body, "Could not create invoice")
+        ? readApiError(
+            (error as { body?: unknown }).body,
+            "Could not create invoice"
+          )
         : error instanceof Error
           ? error.message
           : "Could not create invoice"
@@ -99,7 +101,10 @@ export async function listPaymentInvoices(): Promise<PaymentInvoice[]> {
         : 500
     const message =
       error && typeof error === "object" && "body" in error
-        ? readApiError((error as { body?: unknown }).body, "Could not load invoices")
+        ? readApiError(
+            (error as { body?: unknown }).body,
+            "Could not load invoices"
+          )
         : error instanceof Error
           ? error.message
           : "Could not load invoices"
@@ -107,7 +112,9 @@ export async function listPaymentInvoices(): Promise<PaymentInvoice[]> {
   }
 }
 
-export async function fetchPaymentInvoice(uid: string): Promise<PaymentInvoice | null> {
+export async function fetchPaymentInvoice(
+  uid: string
+): Promise<PaymentInvoice | null> {
   const invoices = await listPaymentInvoices()
   return invoices.find((invoice) => invoice.uid === uid) ?? null
 }

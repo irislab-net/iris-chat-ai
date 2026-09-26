@@ -35,7 +35,9 @@ function resolveGoogleOneTapColorScheme(
   resolvedTheme: string | undefined
 ): BrowserChromeTheme {
   if (typeof document !== "undefined") {
-    return document.documentElement.classList.contains("dark") ? "dark" : "light"
+    return document.documentElement.classList.contains("dark")
+      ? "dark"
+      : "light"
   }
   if (resolvedTheme === "dark") return "dark"
   return "light"
@@ -143,7 +145,8 @@ export function GoogleOneTap({ enabled, onCredential }: GoogleOneTapProps) {
       .then(() => {
         // Stale load after disable / Strict Mode remount — do not prompt or cancel.
         if (generation !== loadGenerationRef.current) return
-        if (!shouldRun || promptedRef.current || isGoogleOneTapDismissed()) return
+        if (!shouldRun || promptedRef.current || isGoogleOneTapDismissed())
+          return
 
         promptedRef.current = true
         activePromptRef.current = true

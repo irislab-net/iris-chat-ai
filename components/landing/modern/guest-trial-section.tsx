@@ -26,7 +26,7 @@ export function GuestTrialSection() {
       className={cn(
         landingSection,
         landingSectionBody,
-        "bg-white/40 backdrop-blur-2xl shadow-[0_28px_80px_rgba(15,23,42,0.07)] dark:bg-white/6 dark:shadow-[0_28px_80px_rgba(0,0,0,0.45)]"
+        "bg-white/40 shadow-[0_28px_80px_rgba(15,23,42,0.07)] backdrop-blur-2xl dark:bg-white/6 dark:shadow-[0_28px_80px_rgba(0,0,0,0.45)]"
       )}
     >
       <HeroLiquidGlassBg tone="blue" />

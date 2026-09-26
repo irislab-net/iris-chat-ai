@@ -4,7 +4,10 @@ import * as React from "react"
 import { useSearchParams } from "next/navigation"
 import { useTranslations } from "next-intl"
 
-import { NewsBulletin, NewsReadAllButton } from "@/components/dashboard/news-bulletin"
+import {
+  NewsBulletin,
+  NewsReadAllButton,
+} from "@/components/dashboard/news-bulletin"
 import { IntelWorkspaceSkeleton } from "@/components/dashboard/intel-skeletons"
 import { Badge } from "@/components/ui/badge"
 import { Card } from "@/components/ui/card"
@@ -94,7 +97,7 @@ function MarketContextWorkspaceInner({
           className={cn(
             isMobileNews
               ? mobileScrollClass
-              : "min-h-0 flex-1 overflow-y-auto overscroll-contain [-webkit-overflow-scrolling:touch] px-4 py-5 sm:px-6"
+              : "min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-5 [-webkit-overflow-scrolling:touch] sm:px-6"
           )}
         >
           <NewsBulletin

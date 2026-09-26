@@ -8,18 +8,26 @@ export type NewsSpotlightState = {
 
 export const EMPTY_NEWS_SPOTLIGHT_STATE: NewsSpotlightState = {}
 
-const MENU_OPENED_NEWS_SPOTLIGHT_STATE: NewsSpotlightState = { menuOpened: true }
-const NEWS_OPENED_NEWS_SPOTLIGHT_STATE: NewsSpotlightState = { newsOpened: true }
+const MENU_OPENED_NEWS_SPOTLIGHT_STATE: NewsSpotlightState = {
+  menuOpened: true,
+}
+const NEWS_OPENED_NEWS_SPOTLIGHT_STATE: NewsSpotlightState = {
+  newsOpened: true,
+}
 const COMPLETE_NEWS_SPOTLIGHT_STATE: NewsSpotlightState = {
   menuOpened: true,
   newsOpened: true,
 }
 
 function canUseStorage() {
-  return typeof window !== "undefined" && typeof window.localStorage !== "undefined"
+  return (
+    typeof window !== "undefined" && typeof window.localStorage !== "undefined"
+  )
 }
 
-function normalizeNewsSpotlightState(raw: NewsSpotlightState): NewsSpotlightState {
+function normalizeNewsSpotlightState(
+  raw: NewsSpotlightState
+): NewsSpotlightState {
   const newsOpened = raw.newsOpened === true
   const menuOpened = raw.menuOpened === true
 

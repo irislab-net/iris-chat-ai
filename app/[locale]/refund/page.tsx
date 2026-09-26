@@ -10,11 +10,7 @@ import {
   legalLinkClass,
 } from "@/components/legal/legal-doc"
 import { LEGAL_DOCS_REPO_URL } from "@/lib/legal"
-import {
-  REFUND_DESCRIPTION,
-  ROOT_ROBOTS,
-  SITE_NAME,
-} from "@/lib/site"
+import { REFUND_DESCRIPTION, ROOT_ROBOTS, SITE_NAME } from "@/lib/site"
 
 export const metadata: Metadata = {
   title: "Refund Policy",
@@ -48,8 +44,7 @@ function RefundPage() {
           <LegalMetaChip>Version: 2.1.0</LegalMetaChip>
           <LegalMetaChip>
             Scope: Exur Subscriptions (
-            <span className="font-mono text-foreground/90">exur.ai</span>
-            )
+            <span className="font-mono text-foreground/90">exur.ai</span>)
           </LegalMetaChip>
         </>
       }
@@ -58,8 +53,8 @@ function RefundPage() {
           This Refund Policy outlines the billing terms, payment processing,
           cancellation procedures, and refund guidelines for premium tiers,
           subscription plans, and paid features offered by{" "}
-          <span className="font-medium text-foreground">Exur</span> (“we”,
-          “us”, or “our”) via{" "}
+          <span className="font-medium text-foreground">Exur</span> (“we”, “us”,
+          or “our”) via{" "}
           <span className="font-mono text-foreground/90">exur.ai</span>.
         </LegalP>
       }
@@ -87,15 +82,14 @@ function RefundPage() {
         <LegalList>
           <li>
             <span className="font-medium text-foreground">
-              All payments and purchases are strictly final and
-              non-refundable.
+              All payments and purchases are strictly final and non-refundable.
             </span>
           </li>
           <li>
             Because payment grants immediate, unrestricted access to real-time
             computational model outputs, proprietary signal engines, server
-            infrastructure allocation, and external LLM routing resources, we
-            do not issue full, partial, or prorated refunds under any
+            infrastructure allocation, and external LLM routing resources, we do
+            not issue full, partial, or prorated refunds under any
             circumstances.
           </li>
           <li>
@@ -139,9 +133,7 @@ function RefundPage() {
         <LegalList>
           <li>
             Please notify our support team within{" "}
-            <span className="font-medium text-foreground">
-              7 calendar days
-            </span>{" "}
+            <span className="font-medium text-foreground">7 calendar days</span>{" "}
             of the service interruption.
           </li>
           <li>
@@ -176,10 +168,7 @@ function RefundPage() {
             <span className="font-medium text-foreground">
               Legal &amp; Support Team:
             </span>{" "}
-            <a
-              href="mailto:legal@exur.ai"
-              className={legalLinkClass}
-            >
+            <a href="mailto:legal@exur.ai" className={legalLinkClass}>
               legal@exur.ai
             </a>
           </li>

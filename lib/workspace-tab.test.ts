@@ -22,8 +22,8 @@ describe("workspace tab routing", () => {
   it("builds canonical app hrefs", () => {
     expect(workspaceTabHref(WORKSPACE_TAB_NEWS)).toBe("/?tab=news")
     expect(appPathWithTab(WORKSPACE_TAB_NEWS)).toBe("/?tab=news")
-    expect(
-      appPathWithTab(WORKSPACE_TAB_NEWS, { checkout: "success" })
-    ).toBe("/?tab=news&checkout=success")
+    expect(appPathWithTab(WORKSPACE_TAB_NEWS, { checkout: "success" })).toBe(
+      "/?tab=news&checkout=success"
+    )
   })
 })

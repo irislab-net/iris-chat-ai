@@ -37,7 +37,6 @@ import { buildLandingChatHref } from "@/lib/landing-chat-handoff"
 import { localeDirection } from "@/lib/i18n/locale"
 import { cn } from "@/lib/utils"
 
-
 const FPS = 60
 const frames = (count: number) => count / FPS
 
@@ -86,11 +85,7 @@ function demoAxis(isRtl: boolean): DemoAxis {
 }
 
 type DemoPhase =
-  | "typing-question"
-  | "thinking"
-  | "typing-answer"
-  | "hold"
-  | "fading"
+  "typing-question" | "thinking" | "typing-answer" | "hold" | "fading"
 
 type DemoStartAt = "type" | "send"
 
@@ -119,12 +114,7 @@ function pickRandomScenarioIndex(exclude?: number) {
 }
 
 function GlassSheen({ className }: { className?: string }) {
-  return (
-    <div
-      aria-hidden
-      className={cn(landingGlassSheen, className)}
-    />
-  )
+  return <div aria-hidden className={cn(landingGlassSheen, className)} />
 }
 
 /** Dual-layer liquid-glass ring for hero chat avatars. */
@@ -166,13 +156,7 @@ function HeroGlassAvatar({
   )
 }
 
-function DemoUserAvatar({
-  src,
-  initials,
-}: {
-  src: string
-  initials: string
-}) {
+function DemoUserAvatar({ src, initials }: { src: string; initials: string }) {
   return (
     <HeroGlassAvatar>
       <Avatar size="lg" className="size-full after:hidden">
@@ -189,7 +173,12 @@ function DemoSystemAvatar() {
   return (
     <HeroGlassAvatar className="mt-0.5">
       <span className="flex size-full items-center justify-center rounded-full bg-white/25 p-0 dark:bg-white/8">
-        <ExurLogo variant="auto" size={44} className="size-9 sm:size-10" decorative />
+        <ExurLogo
+          variant="auto"
+          size={44}
+          className="size-9 sm:size-10"
+          decorative
+        />
       </span>
     </HeroGlassAvatar>
   )
@@ -744,9 +733,9 @@ export function HeroComposeDemo() {
       aria-atomic="false"
     >
       <div className={cn(landingHeroComposeGrid, "isolate overflow-visible")}>
-        <div className="flex h-full min-h-0 items-end justify-end overflow-visible px-1 pb-1 pt-1">
+        <div className="flex h-full min-h-0 items-end justify-end overflow-visible px-1 pt-1 pb-1">
           <div
-            className="pointer-events-none flex min-w-0 max-w-full items-end gap-2 sm:max-w-[90%] sm:gap-2.5"
+            className="pointer-events-none flex max-w-full min-w-0 items-end gap-2 sm:max-w-[90%] sm:gap-2.5"
             aria-hidden={!userRevealed}
           >
             <div
@@ -757,12 +746,18 @@ export function HeroComposeDemo() {
               )}
             >
               <GlassSheen />
-              <p className="relative z-10 line-clamp-2 text-start text-[0.9375rem] font-normal leading-snug text-foreground sm:text-lg sm:leading-snug">
+              <p className="relative z-10 line-clamp-2 text-start text-[0.9375rem] leading-snug font-normal text-foreground sm:text-lg sm:leading-snug">
                 {userBubbleText ?? "\u00A0"}
               </p>
             </div>
-            <span data-demo-user-avatar className="inline-flex shrink-0 opacity-0 will-change-transform">
-              <DemoUserAvatar src={demoAvatar.src} initials={demoAvatar.initials} />
+            <span
+              data-demo-user-avatar
+              className="inline-flex shrink-0 opacity-0 will-change-transform"
+            >
+              <DemoUserAvatar
+                src={demoAvatar.src}
+                initials={demoAvatar.initials}
+              />
             </span>
           </div>
         </div>
@@ -772,7 +767,10 @@ export function HeroComposeDemo() {
             className="pointer-events-none absolute inset-0 z-0 flex items-start gap-2 overflow-visible sm:gap-3"
             aria-hidden={!thinkingRevealed}
           >
-            <span data-demo-thinking-avatar className="inline-flex shrink-0 opacity-0 will-change-transform">
+            <span
+              data-demo-thinking-avatar
+              className="inline-flex shrink-0 opacity-0 will-change-transform"
+            >
               <DemoSystemAvatar />
             </span>
             <div className="min-w-0 flex-1">
@@ -784,9 +782,18 @@ export function HeroComposeDemo() {
                 )}
               >
                 <GlassSheen />
-                <span data-think-dot className="relative z-10 size-1.5 rounded-full bg-muted-foreground/80" />
-                <span data-think-dot className="relative z-10 size-1.5 rounded-full bg-muted-foreground/80" />
-                <span data-think-dot className="relative z-10 size-1.5 rounded-full bg-muted-foreground/80" />
+                <span
+                  data-think-dot
+                  className="relative z-10 size-1.5 rounded-full bg-muted-foreground/80"
+                />
+                <span
+                  data-think-dot
+                  className="relative z-10 size-1.5 rounded-full bg-muted-foreground/80"
+                />
+                <span
+                  data-think-dot
+                  className="relative z-10 size-1.5 rounded-full bg-muted-foreground/80"
+                />
               </div>
             </div>
           </div>
@@ -795,7 +802,10 @@ export function HeroComposeDemo() {
             className="pointer-events-none absolute inset-0 z-10 flex items-start gap-2 overflow-visible sm:gap-3"
             aria-hidden={!answerRevealed}
           >
-            <span data-demo-answer-avatar className="inline-flex shrink-0 opacity-0 will-change-transform">
+            <span
+              data-demo-answer-avatar
+              className="inline-flex shrink-0 opacity-0 will-change-transform"
+            >
               <DemoSystemAvatar />
             </span>
             <div className="min-w-0 flex-1">
@@ -807,10 +817,10 @@ export function HeroComposeDemo() {
                 )}
               >
                 <GlassSheen />
-                <p className="relative z-10 mb-0.5 font-mono text-[9px] font-medium uppercase tracking-[0.25em] text-muted-foreground sm:mb-1">
+                <p className="relative z-10 mb-0.5 font-mono text-[9px] font-medium tracking-[0.25em] text-muted-foreground uppercase sm:mb-1">
                   Exur
                 </p>
-                <p className="relative z-10 line-clamp-4 text-start text-[0.9375rem] font-normal leading-snug text-muted-foreground sm:text-lg sm:leading-relaxed">
+                <p className="relative z-10 line-clamp-4 text-start text-[0.9375rem] leading-snug font-normal text-muted-foreground sm:text-lg sm:leading-relaxed">
                   {answerText}
                   <span
                     data-demo-caret
@@ -829,54 +839,54 @@ export function HeroComposeDemo() {
             landingGlassPill
           )}
         >
-        <GlassSheen className="rounded-full" />
-        <Input
-          type="search"
-          enterKeyHint="send"
-          autoComplete="off"
-          dir={textDir}
-          value={composerValue}
-          onChange={(e) => {
-            if (demoActive) enterInteractiveMode()
-            setIsFocused(true)
-            setUserQuery(e.target.value)
-          }}
-          onFocus={() => {
-            setIsFocused(true)
-            if (demoActive) enterInteractiveMode()
-          }}
-          onBlur={() => setIsFocused(false)}
-          onKeyDown={(e) => {
-            if (e.key !== "Enter") return
-            e.preventDefault()
-            handleAction()
-          }}
-          placeholder={tHero("inputPlaceholder")}
-          aria-label={tHero("inputPlaceholder")}
-          readOnly={demoActive && phase !== "typing-question"}
-          className="relative z-10 h-10 min-w-0 flex-1 border-0 bg-transparent px-2 text-sm text-foreground shadow-none placeholder:text-muted-foreground/90 focus-visible:ring-0 read-only:cursor-default sm:px-3 sm:text-base"
-        />
+          <GlassSheen className="rounded-full" />
+          <Input
+            type="search"
+            enterKeyHint="send"
+            autoComplete="off"
+            dir={textDir}
+            value={composerValue}
+            onChange={(e) => {
+              if (demoActive) enterInteractiveMode()
+              setIsFocused(true)
+              setUserQuery(e.target.value)
+            }}
+            onFocus={() => {
+              setIsFocused(true)
+              if (demoActive) enterInteractiveMode()
+            }}
+            onBlur={() => setIsFocused(false)}
+            onKeyDown={(e) => {
+              if (e.key !== "Enter") return
+              e.preventDefault()
+              handleAction()
+            }}
+            placeholder={tHero("inputPlaceholder")}
+            aria-label={tHero("inputPlaceholder")}
+            readOnly={demoActive && phase !== "typing-question"}
+            className="relative z-10 h-10 min-w-0 flex-1 border-0 bg-transparent px-2 text-sm text-foreground shadow-none placeholder:text-muted-foreground/90 read-only:cursor-default focus-visible:ring-0 sm:px-3 sm:text-base"
+          />
 
-        <span data-demo-send className="relative z-10 inline-flex shrink-0">
-          <Button
-            type="button"
-            size="icon"
-            onClick={handleAction}
-            className={cn(
-              "size-10 shrink-0 rounded-full text-white shadow-[0_8px_24px_rgba(37,99,235,0.32)] transition-colors duration-300",
-              isStreaming
-                ? "bg-foreground text-background hover:bg-foreground/90"
-                : "bg-[#2563EB] hover:bg-[#1D4ED8]"
-            )}
-            aria-label={isStreaming ? "Stop" : "Ask Exur"}
-          >
-            {isStreaming ? (
-              <SquareIcon className="size-3.5 fill-current" />
-            ) : (
-              <ArrowUpIcon className="size-4" />
-            )}
-          </Button>
-        </span>
+          <span data-demo-send className="relative z-10 inline-flex shrink-0">
+            <Button
+              type="button"
+              size="icon"
+              onClick={handleAction}
+              className={cn(
+                "size-10 shrink-0 rounded-full text-white shadow-[0_8px_24px_rgba(37,99,235,0.32)] transition-colors duration-300",
+                isStreaming
+                  ? "bg-foreground text-background hover:bg-foreground/90"
+                  : "bg-[#2563EB] hover:bg-[#1D4ED8]"
+              )}
+              aria-label={isStreaming ? "Stop" : "Ask Exur"}
+            >
+              {isStreaming ? (
+                <SquareIcon className="size-3.5 fill-current" />
+              ) : (
+                <ArrowUpIcon className="size-4" />
+              )}
+            </Button>
+          </span>
         </div>
       </div>
     </div>

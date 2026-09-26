@@ -49,7 +49,12 @@ export const metadata: Metadata = {
 
 const SECTIONS = [
   { id: "what", headingKey: "whatHeading", bodyKey: "whatBody" },
-  { id: "public", headingKey: "publicHeading", bodyKey: "publicBody", rich: true },
+  {
+    id: "public",
+    headingKey: "publicHeading",
+    bodyKey: "publicBody",
+    rich: true,
+  },
   { id: "helps", headingKey: "helpsHeading", bodyKey: "helpsBody" },
   { id: "private", headingKey: "privateHeading", bodyKey: "privateBody" },
   { id: "trust", headingKey: "trustHeading", bodyKey: "trustBody" },
@@ -86,7 +91,7 @@ async function AboutPage() {
               {SITE_NAME}
             </p>
             <h1 className={cn(landingTitleSection, "mt-3")}>{t("title")}</h1>
-            <p className="mt-5 text-pretty text-base leading-relaxed text-muted-foreground sm:text-lg">
+            <p className="mt-5 text-base leading-relaxed text-pretty text-muted-foreground sm:text-lg">
               {t("intro")}
             </p>
           </header>

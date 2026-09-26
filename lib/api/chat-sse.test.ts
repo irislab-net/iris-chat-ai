@@ -59,7 +59,9 @@ describe("thinking helpers", () => {
       type: "reasoning",
       text: "One",
     })
-    expect(appendThinkingStep(steps, { type: "tool", name: "get_market_state" })).toEqual([
+    expect(
+      appendThinkingStep(steps, { type: "tool", name: "get_market_state" })
+    ).toEqual([
       { type: "reasoning", text: "One" },
       { type: "tool", name: "get_market_state" },
     ])

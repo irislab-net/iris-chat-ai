@@ -63,7 +63,9 @@ function ExurLogo({
   return (
     <span
       className={cn("relative inline-flex aspect-square shrink-0", className)}
-      {...(label ? { role: "img", "aria-label": label } : { "aria-hidden": true })}
+      {...(label
+        ? { role: "img", "aria-label": label }
+        : { "aria-hidden": true })}
     >
       {(variant === "auto" || variant === "on-dark") && (
         <LogoPicture

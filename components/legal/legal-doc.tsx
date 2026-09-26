@@ -29,7 +29,10 @@ function LegalSection({
 }) {
   return (
     <section className="scroll-mt-28 space-y-3.5" aria-labelledby={id}>
-      <h2 id={id} className={cn(landingTitleCard, "text-[1.125rem] sm:text-lg")}>
+      <h2
+        id={id}
+        className={cn(landingTitleCard, "text-[1.125rem] sm:text-lg")}
+      >
         {title}
       </h2>
       <div className="space-y-3">{children}</div>
@@ -90,10 +93,7 @@ function LegalDocShell({
   return (
     <MarketingPageShell>
       <article
-        className={cn(
-          landingHeroGlass,
-          "rounded-[2rem] sm:rounded-[2.5rem]"
-        )}
+        className={cn(landingHeroGlass, "rounded-[2rem] sm:rounded-[2.5rem]")}
       >
         <div className={cn(landingInner, "py-10 sm:py-12 lg:py-14")}>
           <header className="mx-auto max-w-3xl text-center sm:text-start">
@@ -109,7 +109,9 @@ function LegalDocShell({
 
           <Separator className="mx-auto my-10 max-w-3xl bg-foreground/8" />
 
-          <div className="mx-auto flex max-w-3xl flex-col gap-10">{children}</div>
+          <div className="mx-auto flex max-w-3xl flex-col gap-10">
+            {children}
+          </div>
 
           {footerLinks ? (
             <>

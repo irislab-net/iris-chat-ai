@@ -11,7 +11,9 @@ function normalizeApiPath(path: string): string {
 }
 
 function readIrisApiOrigin(): string {
-  return process.env.IRIS_API_ORIGIN?.replace(/\/$/, "") ?? "https://api.exur.ai"
+  return (
+    process.env.IRIS_API_ORIGIN?.replace(/\/$/, "") ?? "https://api.exur.ai"
+  )
 }
 
 function resolveUpstream(): string | "stub" {
@@ -36,10 +38,16 @@ function stubResponse(req: Request, apiPath: string): Response {
     )
   }
 
-  return Response.json({ error: "Trading API route unavailable", code: "NOT_FOUND" }, { status: 404 })
+  return Response.json(
+    { error: "Trading API route unavailable", code: "NOT_FOUND" },
+    { status: 404 }
+  )
 }
 
-async function proxyTradingRequest(req: Request, apiPath: string): Promise<Response> {
+async function proxyTradingRequest(
+  req: Request,
+  apiPath: string
+): Promise<Response> {
   const upstream = resolveUpstream()
   if (upstream === "stub") {
     return stubResponse(req, apiPath)

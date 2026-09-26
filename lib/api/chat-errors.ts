@@ -22,9 +22,7 @@ export const CHAT_RETRYABLE_FAILURE_MESSAGES = [
   "failed to reserve credit",
 ] as const
 
-export function normalizeChatErrorCode(
-  code: unknown
-): string | undefined {
+export function normalizeChatErrorCode(code: unknown): string | undefined {
   if (typeof code !== "string") return undefined
   const trimmed = code.trim()
   return trimmed.length > 0 ? trimmed : undefined
@@ -44,7 +42,9 @@ export function isChatLoginRequiredCode(code: string | undefined): boolean {
   return code === CHAT_LOGIN_REQUIRED_CODE
 }
 
-export function isChatRetryableFailureMessage(message: string | undefined): boolean {
+export function isChatRetryableFailureMessage(
+  message: string | undefined
+): boolean {
   const text = message?.trim().toLowerCase() ?? ""
   return (CHAT_RETRYABLE_FAILURE_MESSAGES as readonly string[]).includes(text)
 }

@@ -69,9 +69,7 @@ function parseSide(text: string): PaperSide | null {
 }
 
 function parseSymbol(text: string): string | null {
-  const leading = text.match(
-    /^(ETH|BTC|XAU|SOL|BNB|DOGE|AVAX|LINK|ARB|OP)\b/i
-  )
+  const leading = text.match(/^(ETH|BTC|XAU|SOL|BNB|DOGE|AVAX|LINK|ARB|OP)\b/i)
   if (leading?.[1]) return leading[1].toUpperCase()
 
   if (/\beth\b|ethereum|اتریوم/i.test(text)) return "ETH"
@@ -82,9 +80,7 @@ function parseSymbol(text: string): string | null {
 function parseLeverage(text: string): number {
   const match =
     text.match(new RegExp(String.raw`\bLeverage\s+([0-9]+)\s*x\b`, "i")) ??
-    text.match(
-      /(?:leverage|اهرم)[^0-9]*[:：]?\s*\*?\*?\s*([0-9]+)\s*x?/iu
-    )
+    text.match(/(?:leverage|اهرم)[^0-9]*[:：]?\s*\*?\*?\s*([0-9]+)\s*x?/iu)
   if (!match?.[1]) return 5
   const value = Number(match[1])
   if (!Number.isFinite(value) || value < 1) return 5
@@ -92,20 +88,24 @@ function parseLeverage(text: string): number {
 }
 
 /** Best-effort parse when the model describes a setup in prose (no structured tool). */
-export function parseTradeSetupFromText(
-  text: string
-): ParsedTradeSetup | null {
+export function parseTradeSetupFromText(text: string): ParsedTradeSetup | null {
   const raw = text.trim()
   if (!raw) return null
 
   const side = parseSide(raw)
   const symbol = parseSymbol(raw) ?? "ETH"
   const stopLoss = firstPrice(raw, [
-    new RegExp(String.raw`(?:stop\s*loss|sl|حد\s*ضرر)[^0-9]*[:：]?\s*\*?\*?\s*${PRICE_CAPTURE}`, "i"),
+    new RegExp(
+      String.raw`(?:stop\s*loss|sl|حد\s*ضرر)[^0-9]*[:：]?\s*\*?\*?\s*${PRICE_CAPTURE}`,
+      "i"
+    ),
     new RegExp(String.raw`\bSL\s+${PRICE_CAPTURE}`, "i"),
   ])
   const takeProfit = firstPrice(raw, [
-    new RegExp(String.raw`(?:take\s*profit|tp|حد\s*سود)[^0-9]*[:：]?\s*\*?\*?\s*${PRICE_CAPTURE}`, "i"),
+    new RegExp(
+      String.raw`(?:take\s*profit|tp|حد\s*سود)[^0-9]*[:：]?\s*\*?\*?\s*${PRICE_CAPTURE}`,
+      "i"
+    ),
     new RegExp(String.raw`\bTP\s+${PRICE_CAPTURE}`, "i"),
   ])
   const entryPrice = firstPrice(raw, [
@@ -240,4 +240,3 @@ export function resolvePaperTicketForAssistantMessage(input: {
   // Do not invent Signal cards from assistant prose.
   return input.paperTicket ?? null
 }
-

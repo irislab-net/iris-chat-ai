@@ -12,7 +12,9 @@ export function hostnameFromHostHeader(host: string): string {
 }
 
 export function isLoopbackHostname(hostname: string): boolean {
-  return hostname === "localhost" || hostname === "127.0.0.1" || hostname === "::1"
+  return (
+    hostname === "localhost" || hostname === "127.0.0.1" || hostname === "::1"
+  )
 }
 
 export type DevProxyAction =
@@ -69,5 +71,10 @@ export function listLanIpv4Addresses(
 export function allowedDevOrigins(
   interfaces?: NodeJS.Dict<NetworkInterfaceInfo[]>
 ): string[] {
-  return [LOCAL_IRIS_HOST, "localhost", "*.local", ...listLanIpv4Addresses(interfaces)]
+  return [
+    LOCAL_IRIS_HOST,
+    "localhost",
+    "*.local",
+    ...listLanIpv4Addresses(interfaces),
+  ]
 }

@@ -4,7 +4,10 @@ import * as React from "react"
 import { XIcon } from "lucide-react"
 import { useLocale, useTranslations } from "next-intl"
 
-import { NewsBulletin, NewsReadAllButton } from "@/components/dashboard/news-bulletin"
+import {
+  NewsBulletin,
+  NewsReadAllButton,
+} from "@/components/dashboard/news-bulletin"
 import { NewsBulletinSkeleton } from "@/components/dashboard/intel-skeletons"
 import { useAuth } from "@/components/auth/auth-provider"
 import { Button } from "@/components/ui/button"
@@ -23,10 +26,7 @@ import {
 } from "@/components/app-shell/chat-mobile-gemini-styles"
 import { fetchNewsHome, fetchNewsLatest } from "@/lib/api/data"
 import type { NewsHome } from "@/lib/api/types"
-import {
-  hasUsableNews,
-  mergeNewsHome,
-} from "@/lib/dashboard/intel-load"
+import { hasUsableNews, mergeNewsHome } from "@/lib/dashboard/intel-load"
 import { newsFeedUpdatedLabel } from "@/lib/format"
 import { localeDirection } from "@/lib/i18n/locale"
 import { cn } from "@/lib/utils"
@@ -48,13 +48,9 @@ function useChatNewsFeed(enabled: boolean) {
     void (async () => {
       try {
         const home = await fetchNewsHome().catch(() => null)
-        const merged =
-          home?.news?.length
-            ? home
-            : mergeNewsHome(
-                home,
-                await fetchNewsLatest().catch(() => [])
-              )
+        const merged = home?.news?.length
+          ? home
+          : mergeNewsHome(home, await fetchNewsLatest().catch(() => []))
         if (!cancelled) setNewsHome(merged)
       } finally {
         if (!cancelled) setReady(true)

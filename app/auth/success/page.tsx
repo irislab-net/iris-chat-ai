@@ -49,8 +49,7 @@ export default function AuthSuccessPage() {
         }
       } catch (err) {
         if (!cancelled) {
-          const message =
-            err instanceof Error ? err.message : "Session failed"
+          const message = err instanceof Error ? err.message : "Session failed"
           setError(message)
           trackLoginFail(message)
           setTimeout(() => {

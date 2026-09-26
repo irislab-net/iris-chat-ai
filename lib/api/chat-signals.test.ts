@@ -3,9 +3,7 @@ import { describe, expect, it } from "vitest"
 import { tradeSignalToPaperTicket } from "@/lib/api/chat-signals"
 import type { TradeSignalItem } from "@/lib/api/types"
 
-function baseSignal(
-  overrides: Partial<TradeSignalItem> = {}
-): TradeSignalItem {
+function baseSignal(overrides: Partial<TradeSignalItem> = {}): TradeSignalItem {
   return {
     uid: "11111111-1111-1111-1111-111111111111",
     session_id: "sess-1",

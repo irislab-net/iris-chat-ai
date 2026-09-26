@@ -24,8 +24,7 @@ export type ComposerDraft = {
 }
 
 /** Local aliases that open the signal tool chip (typed or from sample prompts). */
-const SIGNAL_TOOL_TAG_RE =
-  /^(?:@signal|سیگنال|إشارة)(?:\s+([\s\S]*))?$/iu
+const SIGNAL_TOOL_TAG_RE = /^(?:@signal|سیگنال|إشارة)(?:\s+([\s\S]*))?$/iu
 
 const SIGNAL_SUMMARY_RE = /^(?:Signal|سیگنال|إشارة) · (.+)$/u
 

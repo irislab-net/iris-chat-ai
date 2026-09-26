@@ -1,7 +1,13 @@
 "use client"
 
 import * as React from "react"
-import { CheckIcon, CopyIcon, LoaderCircleIcon, TimerIcon, XIcon } from "lucide-react"
+import {
+  CheckIcon,
+  CopyIcon,
+  LoaderCircleIcon,
+  TimerIcon,
+  XIcon,
+} from "lucide-react"
 import { useTranslations } from "next-intl"
 
 import { BillingGlassPanel } from "@/components/billing/billing-glass"
@@ -27,9 +33,15 @@ import {
   formatCryptoAmount,
   formatUsd,
 } from "@/lib/billing/crypto-format"
-import type { PaymentCurrency, PaymentInvoice } from "@/lib/billing/invoice-types"
+import type {
+  PaymentCurrency,
+  PaymentInvoice,
+} from "@/lib/billing/invoice-types"
 import { isPaymentCurrency } from "@/lib/billing/invoice-types"
-import { fetchPaymentInvoice, resolvePlusCryptoCheckout } from "@/lib/billing/invoices"
+import {
+  fetchPaymentInvoice,
+  resolvePlusCryptoCheckout,
+} from "@/lib/billing/invoices"
 import {
   isInvoiceExpired,
   invoiceMsRemaining,
@@ -79,12 +91,12 @@ function PaymentQuoteSkeleton({
         <div
           className={cn(
             "flex items-center gap-2",
-            compact ? "ps-6 pe-1 py-1" : "ps-7 pe-1.5 py-1.5"
+            compact ? "py-1 ps-6 pe-1" : "py-1.5 ps-7 pe-1.5"
           )}
         >
           <div className="min-w-0 flex-1 space-y-1.5 pe-0.5">
             <div className="flex items-center gap-2">
-              <Skeleton className="h-6 w-[7.5rem] rounded-md" />
+              <Skeleton className="h-6 w-30 rounded-md" />
               <Skeleton className="size-8 shrink-0 rounded-full" />
             </div>
             <Skeleton className="h-2.5 w-12 rounded-full" />
@@ -108,7 +120,7 @@ function PaymentQuoteSkeleton({
         <Skeleton
           className={cn(
             "shrink-0 rounded-[1.25rem]",
-            compact ? "size-[13rem]" : "size-[13.75rem]"
+            compact ? "size-52" : "size-55"
           )}
         />
         <div className="mx-auto flex w-[calc(12.5rem)] items-center gap-2">
@@ -189,7 +201,9 @@ function PaymentWatcherBanner({
           <p
             className={cn(
               "text-muted-foreground",
-              compact ? "text-[11px] leading-relaxed" : "text-xs leading-relaxed"
+              compact
+                ? "text-[11px] leading-relaxed"
+                : "text-xs leading-relaxed"
             )}
           >
             {t("footerGuide", { network: PAYMENT_NETWORK.name })}
@@ -202,7 +216,7 @@ function PaymentWatcherBanner({
           <span
             className={cn(
               landingGlassSurface,
-              "inline-flex items-center gap-1.5 rounded-full bg-white/55 px-2.5 py-1 tabular-nums text-muted-foreground dark:bg-white/10",
+              "inline-flex items-center gap-1.5 rounded-full bg-white/55 px-2.5 py-1 text-muted-foreground tabular-nums dark:bg-white/10",
               compact ? "text-[11px]" : "text-xs"
             )}
           >
@@ -243,7 +257,11 @@ function CopyAmountButton({ value }: { value: string }) {
       onClick={() => void onCopy()}
       aria-label={copied ? t("copied") : t("copyAmount")}
     >
-      {copied ? <CheckIcon className="size-3.5" /> : <CopyIcon className="size-3.5" />}
+      {copied ? (
+        <CheckIcon className="size-3.5" />
+      ) : (
+        <CopyIcon className="size-3.5" />
+      )}
     </Button>
   )
 }
@@ -264,7 +282,8 @@ export function CryptoPaymentSheet({
   const [loading, setLoading] = React.useState(false)
   const [error, setError] = React.useState<string | null>(null)
   const now = useNow(open)
-  const defaultCoupon = process.env.NEXT_PUBLIC_BILLING_COUPON_CODE?.trim() ?? ""
+  const defaultCoupon =
+    process.env.NEXT_PUBLIC_BILLING_COUPON_CODE?.trim() ?? ""
 
   const loadInvoice = React.useCallback(
     async (
@@ -391,8 +410,9 @@ export function CryptoPaymentSheet({
   const amountLabel = current
     ? formatCryptoAmount(current.amount_crypto, paymentCurrency)
     : ""
-  const isAwaitingPayment =
-    Boolean(current?.status === "pending" && payAddress && !expired)
+  const isAwaitingPayment = Boolean(
+    current?.status === "pending" && payAddress && !expired
+  )
   const paymentStatus: PaymentUiStatus | null = !hasQuote
     ? null
     : current?.status === "paid"
@@ -414,16 +434,16 @@ export function CryptoPaymentSheet({
         showCloseButton
         className={cn(
           "landing-modern flex w-full flex-col gap-0 border-0 bg-transparent p-0 shadow-none",
-          "[&_[data-slot=sheet-close]]:z-20",
+          "**:data-[slot=sheet-close]:z-20",
           isDesktop
             ? "sm:max-w-95"
-            : "data-[side=bottom]:inset-x-0 data-[side=bottom]:bottom-[var(--keyboard-inset-bottom,0px)] data-[side=bottom]:h-auto data-[side=bottom]:max-h-[min(90dvh,calc(var(--app-height,100dvh)-0.75rem))]"
+            : "data-[side=bottom]:inset-x-0 data-[side=bottom]:bottom-(--keyboard-inset-bottom,0px) data-[side=bottom]:h-auto data-[side=bottom]:max-h-[min(90dvh,calc(var(--app-height,100dvh)-0.75rem))]"
         )}
       >
         <div
           className={cn(
             landingGlassSurface,
-            "flex min-h-0 max-h-[inherit] flex-col overflow-hidden bg-white/78 dark:bg-white/10",
+            "flex max-h-[inherit] min-h-0 flex-col overflow-hidden bg-white/78 dark:bg-white/10",
             isDesktop
               ? "h-full rounded-none rounded-s-[1.75rem]"
               : "rounded-t-[1.75rem] rounded-b-none"
@@ -449,11 +469,14 @@ export function CryptoPaymentSheet({
           <SheetHeader
             className={cn(
               "relative z-10 shrink-0 border-b border-white/55 p-0 dark:border-white/10",
-              isDesktop ? "px-5 py-5 pe-14" : "px-4 pb-2.5 pe-12 pt-2"
+              isDesktop ? "px-5 py-5 pe-14" : "px-4 pe-12 pt-2 pb-2.5"
             )}
           >
             <SheetTitle
-              className={cn(landingTitleCard, isDesktop ? "text-lg" : "text-base")}
+              className={cn(
+                landingTitleCard,
+                isDesktop ? "text-lg" : "text-base"
+              )}
             >
               {t("title")}
             </SheetTitle>
@@ -513,21 +536,21 @@ export function CryptoPaymentSheet({
                     <div
                       className={cn(
                         "flex items-center gap-2",
-                        isDesktop ? "ps-7 pe-1.5 py-1.5" : "ps-6 pe-1 py-1"
+                        isDesktop ? "py-1.5 ps-7 pe-1.5" : "py-1 ps-6 pe-1"
                       )}
                     >
                       <div className="flex min-w-0 flex-1 items-center gap-2 pe-0.5">
                         <div className="min-w-0">
                           <p
                             className={cn(
-                              "font-semibold leading-none tracking-tight tabular-nums text-foreground",
+                              "leading-none font-semibold tracking-tight text-foreground tabular-nums",
                               isDesktop ? "text-[1.375rem]" : "text-[1.25rem]"
                             )}
                           >
                             {amountLabel}
                           </p>
                           <p
-                            className="mt-px text-[10px] leading-none tabular-nums text-muted-foreground dark:text-foreground/70"
+                            className="mt-px text-[10px] leading-none text-muted-foreground tabular-nums dark:text-foreground/70"
                             aria-label={t("approxUsd", {
                               amount: formatUsd(
                                 aboutUsdFromCryptoLabel(
@@ -605,7 +628,7 @@ export function CryptoPaymentSheet({
                         size="sm"
                         className={cn(
                           landingCta("glass", "sm"),
-                          "absolute top-1/2 inset-e-2 z-10 h-8 -translate-y-1/2 px-3.5 text-xs"
+                          "absolute inset-e-2 top-1/2 z-10 h-8 -translate-y-1/2 px-3.5 text-xs"
                         )}
                         disabled={!couponCode.trim()}
                         onClick={handleApplyCoupon}
@@ -632,8 +655,8 @@ export function CryptoPaymentSheet({
                 className={cn(
                   "shrink-0",
                   isDesktop
-                    ? "px-5 pb-5 pt-2"
-                    : "px-4 pb-[max(1.1rem,env(safe-area-inset-bottom,0px))] pt-2"
+                    ? "px-5 pt-2 pb-5"
+                    : "px-4 pt-2 pb-[max(1.1rem,env(safe-area-inset-bottom,0px))]"
                 )}
               >
                 <div

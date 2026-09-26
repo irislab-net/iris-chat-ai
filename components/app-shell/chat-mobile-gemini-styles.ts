@@ -24,24 +24,20 @@ const chatMobileHeaderShadowClass =
 const chatMobileHeaderShadowHoverClass =
   "hover:bg-white/88 hover:shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_80%,transparent),0_2px_8px_-3px_color-mix(in_oklch,var(--foreground)_5%,transparent),0_10px_24px_-10px_color-mix(in_oklch,var(--foreground)_7%,transparent)] dark:hover:bg-white/[0.12]"
 
-const chatMobileHeaderCircleClass =
-  `rounded-full ${chatMobileGlassSurfaceClass} text-foreground transition-[transform,background-color,box-shadow] active:scale-[0.96]`
+const chatMobileHeaderCircleClass = `rounded-full ${chatMobileGlassSurfaceClass} text-foreground transition-[transform,background-color,box-shadow] active:scale-[0.96]`
 
-const chatMobileHeaderButtonClass =
-  `size-10 shrink-0 ${chatMobileHeaderCircleClass} ${chatMobileHeaderShadowClass} ${chatMobileHeaderShadowHoverClass} [&_svg:not([class*='size-'])]:size-5.5 [&_svg]:stroke-[1.75]`
+const chatMobileHeaderButtonClass = `size-10 shrink-0 ${chatMobileHeaderCircleClass} ${chatMobileHeaderShadowClass} ${chatMobileHeaderShadowHoverClass} [&_svg:not([class*='size-'])]:size-5.5 [&_svg]:stroke-[1.75]`
 
 const chatMobileHeaderNewChatClass = chatMobileHeaderButtonClass
 
-const chatMobileHeaderAvatarButtonClass =
-  `flex size-10 shrink-0 items-center justify-center overflow-visible p-0 ${chatMobileHeaderCircleClass} ${chatMobileHeaderShadowClass} ${chatMobileHeaderShadowHoverClass}`
+const chatMobileHeaderAvatarButtonClass = `flex size-10 shrink-0 items-center justify-center overflow-visible p-0 ${chatMobileHeaderCircleClass} ${chatMobileHeaderShadowClass} ${chatMobileHeaderShadowHoverClass}`
 
 const chatMobileHeaderAvatarClass = "size-8 after:border-0 ring-0"
 
 const chatMobileHeaderPlanBadgeClass =
   "h-3.5 translate-y-[48%] px-1.5 text-[8px] font-semibold shadow-[0_1px_2px_color-mix(in_oklch,var(--foreground)_8%,transparent)]"
 
-const chatMobileHeaderModelClass =
-  `inline-flex h-10 shrink-0 items-center gap-1.5 rounded-full px-3.5 text-[15px] font-medium tracking-[-0.015em] text-foreground ${chatMobileGlassSurfaceClass} ${chatMobileHeaderShadowClass} ${chatMobileHeaderShadowHoverClass} transition-[transform,background-color,box-shadow] active:scale-[0.98] hover:bg-white/88 dark:hover:bg-white/[0.12] [&_svg:not([class*='size-'])]:size-3.5 [&_svg]:opacity-65 [&_svg]:text-foreground`
+const chatMobileHeaderModelClass = `inline-flex h-10 shrink-0 items-center gap-1.5 rounded-full px-3.5 text-[15px] font-medium tracking-[-0.015em] text-foreground ${chatMobileGlassSurfaceClass} ${chatMobileHeaderShadowClass} ${chatMobileHeaderShadowHoverClass} transition-[transform,background-color,box-shadow] active:scale-[0.98] hover:bg-white/88 dark:hover:bg-white/[0.12] [&_svg:not([class*='size-'])]:size-3.5 [&_svg]:opacity-65 [&_svg]:text-foreground`
 
 const chatMobileHeaderModelPrimaryClass = "text-foreground"
 
@@ -104,8 +100,7 @@ const chatMobileComposerDockClass =
 const chatMobileUserBubbleClass =
   "w-full rounded-[24px] border border-transparent bg-secondary px-4 py-3 text-[15px] leading-[1.55] text-secondary-foreground dark:border-border/50"
 
-const chatMobileUserBubbleInteractiveClass =
-  `${chatMobileUserBubbleClass} outline-none transition-[background-color] duration-150 hover:bg-secondary/90 focus-within:bg-secondary/90 dark:hover:bg-secondary/75 dark:focus-within:bg-secondary/75`
+const chatMobileUserBubbleInteractiveClass = `${chatMobileUserBubbleClass} outline-none transition-[background-color] duration-150 hover:bg-secondary/90 focus-within:bg-secondary/90 dark:hover:bg-secondary/75 dark:focus-within:bg-secondary/75`
 
 const chatMobileAssistantClass =
   "text-[15px] leading-[1.65] text-foreground [&_p]:mb-3 [&_p:last-child]:mb-0"
@@ -113,8 +108,7 @@ const chatMobileAssistantClass =
 const chatMobileComposerShellClass =
   "relative shrink-0 bg-transparent px-6 pt-1.5 pb-[max(1rem,env(safe-area-inset-bottom,0px))]"
 
-const chatMobileComposerPillClass =
-  `grid rounded-[26px] text-foreground transition-[box-shadow,background-color] duration-200 ease-out ${chatMobileComposerGlassClass} ${chatMobileComposerGlassFocusClass}`
+const chatMobileComposerPillClass = `grid rounded-[26px] text-foreground transition-[box-shadow,background-color] duration-200 ease-out ${chatMobileComposerGlassClass} ${chatMobileComposerGlassFocusClass}`
 
 /** Compact single-line shell — + and input on one row (Gemini simplified-input-area). */
 const chatMobileComposerPillCompactClass =
@@ -146,18 +140,14 @@ const chatDesktopComposerGlassBorderClass =
 const chatDesktopComposerShellClass =
   "relative shrink-0 bg-transparent pt-3 pb-[max(0.625rem,env(safe-area-inset-bottom))]"
 
-const chatDesktopComposerBodyClass =
-  `isolate grid grid-cols-[auto_1fr_auto] overflow-hidden rounded-[22px] px-1.5 pb-1.5 pt-0.5 text-foreground transition-[box-shadow,background-color,ring-color] duration-300 ease-out [grid-template-areas:'primary_primary_primary'_'leading_._trailing'] ${chatMobileComposerGlassClass} ${chatDesktopComposerGlassBorderClass} ${chatMobileComposerGlassFocusClass} focus-within:ring-black/[0.06] dark:focus-within:ring-white/18`
+const chatDesktopComposerBodyClass = `isolate grid grid-cols-[auto_1fr_auto] overflow-hidden rounded-[22px] px-1.5 pb-1.5 pt-0.5 text-foreground transition-[box-shadow,background-color,ring-color] duration-300 ease-out [grid-template-areas:'primary_primary_primary'_'leading_._trailing'] ${chatMobileComposerGlassClass} ${chatDesktopComposerGlassBorderClass} ${chatMobileComposerGlassFocusClass} focus-within:ring-black/[0.06] dark:focus-within:ring-white/18`
 
 /** Nested control chips — liquid glass above the composer shell. */
-const chatDesktopComposerControlClass =
-  `border-0 text-foreground transition-[transform,background-color,box-shadow,color] active:scale-[0.98] ${chatMobileGlassSurfaceClass} ${chatMobileHeaderShadowClass} ${chatMobileHeaderShadowHoverClass}`
+const chatDesktopComposerControlClass = `border-0 text-foreground transition-[transform,background-color,box-shadow,color] active:scale-[0.98] ${chatMobileGlassSurfaceClass} ${chatMobileHeaderShadowClass} ${chatMobileHeaderShadowHoverClass}`
 
-const chatDesktopComposerIconButtonClass =
-  `${chatDesktopComposerControlClass} size-9 rounded-full text-muted-foreground hover:text-foreground sm:size-8 [&_svg]:stroke-[1.75]`
+const chatDesktopComposerIconButtonClass = `${chatDesktopComposerControlClass} size-9 rounded-full text-muted-foreground hover:text-foreground sm:size-8 [&_svg]:stroke-[1.75]`
 
-const chatDesktopComposerEffortButtonClass =
-  `${chatDesktopComposerControlClass} h-9 gap-1 rounded-full px-2.5 text-xs font-medium text-muted-foreground hover:text-foreground sm:h-8 [&_svg]:opacity-70`
+const chatDesktopComposerEffortButtonClass = `${chatDesktopComposerControlClass} h-9 gap-1 rounded-full px-2.5 text-xs font-medium text-muted-foreground hover:text-foreground sm:h-8 [&_svg]:opacity-70`
 
 /** Send / stop — deep blue (Gemini-style accent). */
 const chatDesktopComposerSendClass =
@@ -168,8 +158,7 @@ const chatDesktopComposerSendDisabledClass =
   "size-10 rounded-full border-0 bg-blue-100 text-blue-700 shadow-none transition-[transform,background-color] hover:bg-blue-100 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-100 sm:size-9 dark:bg-blue-950/80 dark:text-blue-300 dark:hover:bg-blue-950/80"
 
 /** Empty-state sample prompt cards — liquid glass, Apple-like inset padding. */
-const chatSamplePromptButtonClass =
-  `flex h-full w-full min-w-0 items-start justify-start rounded-[20px] border-0 px-4.5 py-4 text-start transition-[background-color,box-shadow,transform] active:scale-[0.985] sm:rounded-[22px] sm:px-5 sm:py-4.5 lg:rounded-[16px] lg:px-3.5 lg:py-3 ${chatMobileGlassSurfaceClass} ${chatMobileHeaderShadowClass} ${chatMobileHeaderShadowHoverClass}`
+const chatSamplePromptButtonClass = `flex h-full w-full min-w-0 items-start justify-start rounded-[20px] border-0 px-4.5 py-4 text-start transition-[background-color,box-shadow,transform] active:scale-[0.985] sm:rounded-[22px] sm:px-5 sm:py-4.5 lg:rounded-[16px] lg:px-3.5 lg:py-3 ${chatMobileGlassSurfaceClass} ${chatMobileHeaderShadowClass} ${chatMobileHeaderShadowHoverClass}`
 
 const chatSamplePromptIconClass =
   "mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-[14px] bg-white/50 shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_82%,transparent),0_1px_2px_color-mix(in_oklch,var(--foreground)_4%,transparent)] backdrop-blur-md backdrop-saturate-150 text-muted-foreground dark:bg-white/[0.1] sm:size-9 sm:rounded-[15px] lg:size-7 lg:rounded-[12px]"
@@ -212,17 +201,13 @@ const chatComposerToolChipClass =
 const chatComposerToolChipCloseClass =
   "flex shrink-0 items-center justify-center rounded-full text-blue-700/60 transition-[color,background-color] hover:bg-blue-700/10 hover:text-blue-800 active:scale-95 dark:text-blue-300/70 dark:hover:bg-blue-300/10 dark:hover:text-blue-200"
 
-const chatMobileComposerToolChipClass =
-  `${chatComposerToolChipClass} h-7 gap-1.5 rounded-full px-2.5 py-0 text-[13px] tracking-[-0.01em]`
+const chatMobileComposerToolChipClass = `${chatComposerToolChipClass} h-7 gap-1.5 rounded-full px-2.5 py-0 text-[13px] tracking-[-0.01em]`
 
-const chatDesktopComposerToolChipClass =
-  `${chatComposerToolChipClass} mt-0.5 h-6 gap-1 rounded-lg px-2 py-0 text-xs`
+const chatDesktopComposerToolChipClass = `${chatComposerToolChipClass} mt-0.5 h-6 gap-1 rounded-lg px-2 py-0 text-xs`
 
-const chatMobileComposerToolChipCloseClass =
-  `${chatComposerToolChipCloseClass} size-4`
+const chatMobileComposerToolChipCloseClass = `${chatComposerToolChipCloseClass} size-4`
 
-const chatDesktopComposerToolChipCloseClass =
-  `${chatComposerToolChipCloseClass} size-3.5`
+const chatDesktopComposerToolChipCloseClass = `${chatComposerToolChipCloseClass} size-3.5`
 
 /** Send / stop — deep blue (same accent as desktop). */
 const chatMobileComposerSendClass =
@@ -237,36 +222,30 @@ const chatMobileDrawerSurfaceClass = "bg-background text-foreground"
 const chatHistoryRailGlassItemHoverClass =
   "hover:bg-foreground/[0.05] dark:hover:bg-foreground/[0.08]"
 
-const chatHistoryRailGlassItemClass =
-  `border-0 bg-transparent text-foreground shadow-none transition-[transform,background-color] active:scale-[0.985] ${chatHistoryRailGlassItemHoverClass}`
+const chatHistoryRailGlassItemClass = `border-0 bg-transparent text-foreground shadow-none transition-[transform,background-color] active:scale-[0.985] ${chatHistoryRailGlassItemHoverClass}`
 
 const chatHistoryRailGlassItemActiveClass =
   "bg-foreground/[0.08] dark:bg-foreground/[0.12]"
 
-const chatHistoryRailNavItemClass =
-  `h-9 w-full justify-start gap-2.5 rounded-xl px-3 text-sm font-normal shadow-none ${chatHistoryRailGlassItemClass}`
+const chatHistoryRailNavItemClass = `h-9 w-full justify-start gap-2.5 rounded-xl px-3 text-sm font-normal shadow-none ${chatHistoryRailGlassItemClass}`
 
 const chatHistoryRailSectionLabelClass =
   "px-3 pb-1.5 text-[11px] font-medium tracking-[0.06em] text-muted-foreground/75 uppercase"
 
-const chatHistoryRailChatItemClass =
-  `group/item relative flex min-w-0 items-center gap-1 rounded-xl ${chatHistoryRailGlassItemClass}`
+const chatHistoryRailChatItemClass = `group/item relative flex min-w-0 items-center gap-1 rounded-xl ${chatHistoryRailGlassItemClass}`
 
 const chatHistoryRailChatItemPadClass = "px-1 py-0.5"
 
-const chatMobileDrawerNavItemClass =
-  `h-11 w-full justify-start gap-3 rounded-xl px-3 text-[15px] font-normal shadow-none ${chatHistoryRailGlassItemClass}`
+const chatMobileDrawerNavItemClass = `h-11 w-full justify-start gap-3 rounded-xl px-3 text-[15px] font-normal shadow-none ${chatHistoryRailGlassItemClass}`
 
 const chatMobileDrawerSectionLabelClass =
   "px-3 pb-1.5 text-[12px] font-medium tracking-[0.04em] text-muted-foreground/80 uppercase"
 
-const chatMobileDrawerUpgradeClass =
-  `h-9 shrink-0 rounded-full px-5 text-sm font-medium ${chatMobilePrimaryButtonClass}`
+const chatMobileDrawerUpgradeClass = `h-9 shrink-0 rounded-full px-5 text-sm font-medium ${chatMobilePrimaryButtonClass}`
 
 const chatMobileDrawerFooterWrapClass = "relative z-10 shrink-0"
 
-const chatMobileDrawerFooterBarClass =
-  "relative bg-background"
+const chatMobileDrawerFooterBarClass = "relative bg-background"
 
 /** Desktop history rail account footer — bg itself softens at the top into the list. */
 const chatHistoryRailFooterWrapClass =
@@ -289,8 +268,7 @@ const chatMobileSheetContentClass =
 const chatMobileSheetHandleClass =
   "mx-auto mb-4 h-1 w-10 shrink-0 rounded-full bg-foreground/15 dark:bg-white/20"
 
-const chatMobileSheetHeaderClass =
-  "gap-1.5 space-y-0 px-5 pb-2 pt-0 text-start"
+const chatMobileSheetHeaderClass = "gap-1.5 space-y-0 px-5 pb-2 pt-0 text-start"
 
 const chatMobileSheetTitleClass =
   "text-[22px] font-normal tracking-tight text-foreground"
@@ -303,11 +281,9 @@ const chatMobileSheetBodyClass = "space-y-4 px-5 pb-2"
 const chatMobileSheetSectionLabelClass =
   "text-[13px] font-normal tracking-wide text-muted-foreground uppercase"
 
-const chatMobileSheetCardClass =
-  `rounded-2xl border-0 px-3.5 py-3 ${chatMobileGlassSurfaceClass}`
+const chatMobileSheetCardClass = `rounded-2xl border-0 px-3.5 py-3 ${chatMobileGlassSurfaceClass}`
 
-const chatMobileSheetFooterClass =
-  "mt-auto gap-0 border-0 !p-0"
+const chatMobileSheetFooterClass = "mt-auto gap-0 border-0 !p-0"
 
 /** When the keyboard is open, subtract its inset so we don't double-pad above it. */
 const chatMobileSheetFooterBarClass =
@@ -321,11 +297,9 @@ const chatMobileSheetSecondaryButtonClass = `${landingCta("secondary", "md")} h-
 const chatMobileSheetGhostButtonClass =
   "h-11 w-full rounded-full text-[15px] font-medium text-foreground hover:bg-foreground/5"
 
-const chatMobileSheetConsentCheckedClass =
-  `border-0 ${chatMobileGlassSurfaceClass}`
+const chatMobileSheetConsentCheckedClass = `border-0 ${chatMobileGlassSurfaceClass}`
 
-const chatMobileSheetConsentUncheckedClass =
-  `border-0 bg-white/45 shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_70%,transparent)] backdrop-blur-xl supports-[backdrop-filter]:bg-white/32 hover:bg-white/55 dark:bg-white/[0.06] dark:supports-[backdrop-filter]:bg-white/[0.05] dark:hover:bg-white/[0.09]`
+const chatMobileSheetConsentUncheckedClass = `border-0 bg-white/45 shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_70%,transparent)] backdrop-blur-xl supports-[backdrop-filter]:bg-white/32 hover:bg-white/55 dark:bg-white/[0.06] dark:supports-[backdrop-filter]:bg-white/[0.05] dark:hover:bg-white/[0.09]`
 
 /** Desktop centered dialogs — same liquid glass language (no `!` — twMerge). */
 const chatLoginConsentDialogClass =
@@ -337,18 +311,14 @@ const chatDesktopDialogClass = chatLoginConsentDialogClass
 const chatDesktopSearchDialogClass =
   "flex w-full max-w-[calc(100%-2rem)] flex-col gap-0 overflow-hidden rounded-[1.5rem] border-0 bg-white/78 p-0 text-foreground shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_75%,transparent),0_24px_64px_-24px_color-mix(in_oklch,var(--foreground)_22%,transparent)] ring-0 backdrop-blur-2xl backdrop-saturate-[180%] supports-[backdrop-filter]:bg-white/62 sm:max-w-xl dark:bg-white/[0.08] dark:shadow-[inset_0_1px_0_0_color-mix(in_oklch,var(--foreground)_10%,transparent),0_24px_64px_-24px_color-mix(in_oklch,black_50%,transparent)] dark:supports-[backdrop-filter]:bg-white/[0.06]"
 
-const chatDesktopDialogInputClass =
-  `h-10 w-full rounded-xl border-0 px-3 text-sm text-foreground shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_70%,transparent)] backdrop-blur-xl ${chatMobileGlassSurfaceClass} placeholder:text-muted-foreground/50 focus-visible:ring-2 focus-visible:ring-foreground/15 dark:placeholder:text-muted-foreground/40`
+const chatDesktopDialogInputClass = `h-10 w-full rounded-xl border-0 px-3 text-sm text-foreground shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_70%,transparent)] backdrop-blur-xl ${chatMobileGlassSurfaceClass} placeholder:text-muted-foreground/50 focus-visible:ring-2 focus-visible:ring-foreground/15 dark:placeholder:text-muted-foreground/40`
 
 const chatDesktopDialogFooterClass =
   "mx-0 mb-0 gap-2 rounded-none border-0 bg-transparent p-4 pt-2 sm:justify-end"
 
-const chatLoginConsentBrandMarkClass =
-  `flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-full ${chatMobileGlassSurfaceClass} ${chatMobileHeaderShadowClass}`
+const chatLoginConsentBrandMarkClass = `flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-full ${chatMobileGlassSurfaceClass} ${chatMobileHeaderShadowClass}`
 
-
-const chatMobileToolsMenuClass =
-  `z-30 min-w-[13.5rem] overflow-hidden rounded-2xl p-1.5 text-foreground ${chatMobileGlassSurfaceClass} ${chatMobileHeaderShadowClass} shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_75%,transparent),0_12px_40px_-16px_color-mix(in_oklch,var(--foreground)_18%,transparent)] dark:shadow-[inset_0_1px_0_0_color-mix(in_oklch,var(--foreground)_10%,transparent),0_12px_40px_-16px_color-mix(in_oklch,black_45%,transparent)]`
+const chatMobileToolsMenuClass = `z-30 min-w-[13.5rem] overflow-hidden rounded-2xl p-1.5 text-foreground ${chatMobileGlassSurfaceClass} ${chatMobileHeaderShadowClass} shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_75%,transparent),0_12px_40px_-16px_color-mix(in_oklch,var(--foreground)_18%,transparent)] dark:shadow-[inset_0_1px_0_0_color-mix(in_oklch,var(--foreground)_10%,transparent),0_12px_40px_-16px_color-mix(in_oklch,black_45%,transparent)]`
 
 const chatMobileToolsMenuLabelClass =
   "px-2.5 pb-1 pt-1.5 text-[11px] font-medium tracking-[0.04em] text-muted-foreground"
@@ -363,8 +333,7 @@ const chatMobileToolsMenuItemDescClass =
   "text-xs leading-snug text-muted-foreground"
 
 /** Trade signal card — liquid glass, no border. */
-const chatSignalCardClass =
-  `overflow-hidden rounded-[1.25rem] border-0 text-foreground ${chatMobileGlassSurfaceClass} shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_72%,transparent),0_14px_44px_-20px_color-mix(in_oklch,var(--foreground)_14%,transparent)] dark:shadow-[inset_0_1px_0_0_color-mix(in_oklch,var(--foreground)_12%,transparent),0_16px_48px_-22px_color-mix(in_oklch,black_48%,transparent)]`
+const chatSignalCardClass = `overflow-hidden rounded-[1.25rem] border-0 text-foreground ${chatMobileGlassSurfaceClass} shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_72%,transparent),0_14px_44px_-20px_color-mix(in_oklch,var(--foreground)_14%,transparent)] dark:shadow-[inset_0_1px_0_0_color-mix(in_oklch,var(--foreground)_12%,transparent),0_16px_48px_-22px_color-mix(in_oklch,black_48%,transparent)]`
 
 const chatSignalCardInsetClass =
   "rounded-2xl border-0 bg-white/45 shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_82%,transparent)] backdrop-blur-xl backdrop-saturate-150 supports-[backdrop-filter]:bg-white/32 dark:bg-white/[0.07] dark:shadow-[inset_0_1px_0_0_color-mix(in_oklch,var(--foreground)_10%,transparent)] dark:supports-[backdrop-filter]:bg-white/[0.05]"
@@ -402,7 +371,6 @@ const chatNewsGlassCardClass = chatSignalCardClass
 const chatNewsGlassInsetClass = chatSignalCardInsetClass
 const chatNewsGlassTileClass = chatSignalCardMetricTileClass
 const chatNewsGlassChipClass = chatSignalCardChipClass
-
 
 export {
   chatMobileAssistantClass,

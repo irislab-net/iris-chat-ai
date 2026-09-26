@@ -182,7 +182,7 @@ function ChatAccountFooterSignedIn({
           {!collapsed ? (
             <>
               <span className="min-w-0 flex-1 text-start">
-                <span className="block truncate text-[13px] font-medium leading-tight">
+                <span className="block truncate text-[13px] leading-tight font-medium">
                   {userAccountLabel(user)}
                 </span>
                 {email ? (

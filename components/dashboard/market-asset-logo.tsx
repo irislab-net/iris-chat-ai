@@ -38,10 +38,7 @@ function MarketAssetLogo({
           loading="lazy"
           referrerPolicy="no-referrer"
           onError={() => setFailed(true)}
-          className={cn(
-            "size-full rounded-full object-cover",
-            imageClassName
-          )}
+          className={cn("size-full rounded-full object-cover", imageClassName)}
         />
       ) : (
         <span className="font-mono text-[9px] font-bold text-muted-foreground">

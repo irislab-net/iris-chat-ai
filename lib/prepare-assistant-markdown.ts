@@ -106,7 +106,10 @@ function ensureSeparator(rows: string[]) {
   return [normalized[0], separator, ...normalized.slice(1)]
 }
 
-export function prepareAssistantMarkdown(input: string, now = Date.now()): string {
+export function prepareAssistantMarkdown(
+  input: string,
+  now = Date.now()
+): string {
   const text = humanizeRawEpochs(input.replace(/\r\n/g, "\n"), now)
   const withIntroSplit = text.replace(
     /^([^\n|]{8,}[:：]\s*)(\|.+)$/gm,

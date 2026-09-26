@@ -52,19 +52,30 @@ function PlanCta({
   label: string
 }) {
   const href = planHref(planKey)
-  const className = cn(landingCta(featured ? "primary" : "light"), "mt-8 w-full")
+  const className = cn(
+    landingCta(featured ? "primary" : "light"),
+    "mt-8 w-full"
+  )
   const external = /^https?:\/\//i.test(href) || href.startsWith("mailto:")
 
   if (external) {
     return (
-      <Button nativeButton={false} render={<a href={href} />} className={className}>
+      <Button
+        nativeButton={false}
+        render={<a href={href} />}
+        className={className}
+      >
         {label}
       </Button>
     )
   }
 
   return (
-    <Button nativeButton={false} render={<Link href={href} />} className={className}>
+    <Button
+      nativeButton={false}
+      render={<Link href={href} />}
+      className={className}
+    >
       {label}
     </Button>
   )
@@ -74,7 +85,10 @@ function PlanFeatures({ features }: { features: string[] }) {
   return (
     <ul className="space-y-3.5">
       {features.map((feature) => (
-        <li key={feature} className="flex items-start gap-3 text-sm leading-relaxed text-muted-foreground">
+        <li
+          key={feature}
+          className="flex items-start gap-3 text-sm leading-relaxed text-muted-foreground"
+        >
           <span
             className="mt-0.5 flex size-4 shrink-0 items-center justify-center rounded-full bg-white/70 text-muted-foreground shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] dark:bg-white/10 dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.12)]"
             aria-hidden
@@ -118,33 +132,44 @@ function PlanCard({
         landingGlassSurface,
         "relative flex h-full flex-col overflow-hidden rounded-[1.75rem]",
         featured
-          ? "bg-white/55 shadow-[0_28px_80px_rgba(37,99,235,0.1),inset_0_1px_1px_rgba(255,255,255,0.95)] ring-1 ring-[#2563EB]/10 dark:bg-white/10 dark:shadow-[0_28px_80px_rgba(37,99,235,0.16),inset_0_1px_1px_rgba(255,255,255,0.12)] lg:-my-1"
+          ? "bg-white/55 shadow-[0_28px_80px_rgba(37,99,235,0.1),inset_0_1px_1px_rgba(255,255,255,0.95)] ring-1 ring-[#2563EB]/10 lg:-my-1 dark:bg-white/10 dark:shadow-[0_28px_80px_rgba(37,99,235,0.16),inset_0_1px_1px_rgba(255,255,255,0.12)]"
           : "bg-white/42 dark:bg-white/8"
       )}
     >
       {featured && (
         <span
           aria-hidden
-          className={cn(landingGlassBlueSheen, "pointer-events-none absolute inset-0 opacity-40")}
+          className={cn(
+            landingGlassBlueSheen,
+            "pointer-events-none absolute inset-0 opacity-40"
+          )}
         />
       )}
       <span
         aria-hidden
-        className={cn(landingGlassSheen, "pointer-events-none absolute inset-0 rounded-[1.75rem]")}
+        className={cn(
+          landingGlassSheen,
+          "pointer-events-none absolute inset-0 rounded-[1.75rem]"
+        )}
       />
 
       <div className="relative z-10 flex h-full flex-col p-8 sm:p-9">
         <div className="flex items-start justify-between gap-3">
           <h3 className={landingTitlePlan}>{t(`plans.${planKey}.name`)}</h3>
           {badge ? (
-            <span className="rounded-full bg-white/75 px-2.5 py-1 font-mono text-[9px] font-medium uppercase tracking-[0.18em] text-muted-foreground shadow-[0_4px_12px_rgba(15,23,42,0.04)] dark:bg-white/10">
+            <span className="rounded-full bg-white/75 px-2.5 py-1 font-mono text-[9px] font-medium tracking-[0.18em] text-muted-foreground uppercase shadow-[0_4px_12px_rgba(15,23,42,0.04)] dark:bg-white/10">
               {badge}
             </span>
           ) : null}
         </div>
 
         <div className="mt-5">
-          <p className={cn(landingTitlePrice, "flex flex-wrap items-baseline gap-x-2.5")}>
+          <p
+            className={cn(
+              landingTitlePrice,
+              "flex flex-wrap items-baseline gap-x-2.5"
+            )}
+          >
             <span>
               {price}
               {planKey === "plus" ? (
@@ -182,10 +207,16 @@ export function PricingSection() {
         <SectionHeader title={t("title")} subtitle={t("subtitle")} />
       </ScrollReveal>
 
-      <ScrollRevealGroup className={cn(landingContentWide, "grid gap-6 lg:grid-cols-3 lg:items-stretch lg:gap-5", landingAfterHeader)}>
+      <ScrollRevealGroup
+        className={cn(
+          landingContentWide,
+          "grid gap-6 lg:grid-cols-3 lg:items-stretch lg:gap-5",
+          landingAfterHeader
+        )}
+      >
         <ul className="contents list-none">
           {PRICING_PLAN_META.map((plan) => (
-            <li key={plan.key} className="min-h-0 h-full">
+            <li key={plan.key} className="h-full min-h-0">
               <PlanCard
                 planKey={plan.key}
                 featured={plan.featured}

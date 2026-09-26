@@ -10,11 +10,7 @@ import {
   chatHistoryRailGlassItemClass,
 } from "@/components/app-shell/chat-mobile-gemini-styles"
 import { Button } from "@/components/ui/button"
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-} from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import {
   NEW_CHAT_TITLE,
@@ -158,7 +154,7 @@ function ChatHistorySearchDialogBody({
 
         <div
           ref={listRef}
-          className="min-h-0 max-h-[min(22rem,50vh)] overflow-x-hidden overflow-y-auto"
+          className="max-h-[min(22rem,50vh)] min-h-0 overflow-x-hidden overflow-y-auto"
         >
           {results.length === 0 ? (
             <p className="px-2 py-8 text-center text-sm text-muted-foreground">

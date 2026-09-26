@@ -284,12 +284,15 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, [completeLoginAttempt])
 
-  const login = React.useCallback((options?: LoginOptions) => {
-    if (loginPending) return
-    pendingCredentialRef.current = null
-    pendingLoginRef.current = options
-    setConsentOpen(true)
-  }, [loginPending])
+  const login = React.useCallback(
+    (options?: LoginOptions) => {
+      if (loginPending) return
+      pendingCredentialRef.current = null
+      pendingLoginRef.current = options
+      setConsentOpen(true)
+    },
+    [loginPending]
+  )
 
   const handleOneTapCredential = React.useCallback(
     (credential: string) => {
@@ -315,7 +318,10 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     if (credential) {
       void (async () => {
         try {
-          await exchangeGoogleOneTapCredential({ credential, legalAccepted: true })
+          await exchangeGoogleOneTapCredential({
+            credential,
+            legalAccepted: true,
+          })
           clearGoogleOneTapDismissed()
           await completeLoginAttempt()
         } catch (error) {
