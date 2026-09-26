@@ -167,17 +167,12 @@ export function SignalWaitSection() {
   const t = useTranslations("modern.signalWait")
   const textDir = localeDirection(useLocale())
   const reducedMotion = useReducedMotion()
-  const rootRef = useRef<HTMLDivElement>(null)
+  const sectionRef = useRef<HTMLElement>(null)
   const userRef = useRef<HTMLDivElement>(null)
   const replyRef = useRef<HTMLDivElement>(null)
   const tradeResultRef = useRef<HTMLDivElement>(null)
   const holdResultRef = useRef<HTMLDivElement>(null)
   const sendRef = useRef<HTMLSpanElement>(null)
-
-  const [draft, setDraft] = useState("")
-  const [userText, setUserText] = useState<string | null>(null)
-  const [replyText, setReplyText] = useState<string | null>(null)
-  const [scenario, setScenario] = useState<SignalWaitScenario>("trade")
 
   const tradeQuestion = t("tradeQuestion")
   const holdQuestion = t("hold.question")
@@ -186,6 +181,11 @@ export function SignalWaitSection() {
   const holdReason = t("hold.reason")
   const youLabel = t("you")
   const composerPlaceholder = t("composerPlaceholder")
+
+  const [draft, setDraft] = useState("")
+  const [userText, setUserText] = useState<string | null>(tradeQuestion)
+  const [replyText, setReplyText] = useState<string | null>(null)
+  const [scenario, setScenario] = useState<SignalWaitScenario>("trade")
 
   const ticket = useMemo(
     () => ({
@@ -209,18 +209,18 @@ export function SignalWaitSection() {
   useLayoutEffect(() => {
     if (reducedMotion) return
 
-    const root = rootRef.current
+    const section = sectionRef.current
     const user = userRef.current
     const reply = replyRef.current
     const tradeResult = tradeResultRef.current
     const holdResult = holdResultRef.current
     const send = sendRef.current
-    if (!root || !user || !reply || !tradeResult || !holdResult || !send) {
+    if (!section || !user || !reply || !tradeResult || !holdResult || !send) {
       return
     }
 
     return initSignalWaitDemo(
-      { root, user, reply, tradeResult, holdResult, send },
+      { observe: section, user, reply, tradeResult, holdResult, send },
       {
         onDraft: setDraft,
         onUserText: setUserText,
@@ -235,6 +235,7 @@ export function SignalWaitSection() {
 
   return (
     <section
+      ref={sectionRef}
       id="signal-wait"
       className={cn(
         landingSection,
@@ -248,7 +249,6 @@ export function SignalWaitSection() {
 
       <ScrollReveal className={cn("w-full", landingAfterHeader)}>
         <div
-          ref={rootRef}
           dir={textDir}
           className={cn(
             "relative isolate overflow-visible",
@@ -305,7 +305,7 @@ export function SignalWaitSection() {
                   </div>
                   <div
                     ref={holdResultRef}
-                    className="absolute inset-0"
+                    className="absolute inset-0 opacity-0"
                     aria-hidden={scenario !== "hold"}
                   >
                     <HoldResult label={holdLabel} reason={holdReason} />

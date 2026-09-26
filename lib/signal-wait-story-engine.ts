@@ -15,7 +15,8 @@ export type SignalWaitDemoCallbacks = {
 }
 
 export type SignalWaitDemoDom = {
-  root: HTMLElement
+  /** Element watched for viewport entry (usually the section). */
+  observe: HTMLElement
   user: HTMLElement
   reply: HTMLElement
   tradeResult: HTMLElement
@@ -27,6 +28,8 @@ const FPS = 60
 const frames = (count: number) => count / FPS
 const QUESTION_CHAR_FRAMES = 2.2
 const ANSWER_CHAR_FRAMES = 1.4
+/** Hold the default trade beat on screen, then continue the loop. */
+const ENTER_DELAY_MS = 2800
 
 function typeText(
   tl: gsap.core.Timeline,
@@ -58,6 +61,7 @@ function typeText(
 
 /**
  * Composer demo with fixed slots — opacity only (no layout shift).
+ * Default beat: user already asked “Long ETH…?” and the signal card is visible.
  */
 export function initSignalWaitDemo(
   dom: SignalWaitDemoDom,
@@ -66,7 +70,7 @@ export function initSignalWaitDemo(
 ) {
   ensureGsapScroll()
 
-  const { root, user, reply, tradeResult, holdResult, send } = dom
+  const { observe, user, reply, tradeResult, holdResult, send } = dom
   const {
     onDraft,
     onUserText,
@@ -78,19 +82,33 @@ export function initSignalWaitDemo(
 
   let timeline: gsap.core.Timeline | null = null
   let playing = false
+  let startTimer: ReturnType<typeof setTimeout> | null = null
   let scenario: SignalWaitScenario = "trade"
 
-  const resetVisuals = () => {
-    gsap.set([user, reply, tradeResult, holdResult], { autoAlpha: 0 })
+  const clearStartTimer = () => {
+    if (startTimer == null) return
+    clearTimeout(startTimer)
+    startTimer = null
+  }
+
+  /** Idle / entry state: user message + ETH signal card already on screen. */
+  const showTradeDefault = () => {
+    scenario = "trade"
+    onScenario("trade")
     onDraft("")
-    onUserText(null)
+    onUserText(questionFor("trade"))
     onReplyText(null)
+    gsap.set([reply, holdResult], { autoAlpha: 0 })
+    gsap.set([user, tradeResult], { autoAlpha: 1 })
   }
 
   const playScenario = (next: SignalWaitScenario) => {
     scenario = next
     onScenario(next)
-    resetVisuals()
+    gsap.set([user, reply, tradeResult, holdResult], { autoAlpha: 0 })
+    onDraft("")
+    onUserText(null)
+    onReplyText(null)
 
     const question = questionFor(next)
     const answer = answerFor(next)
@@ -161,45 +179,52 @@ export function initSignalWaitDemo(
     return tl
   }
 
+  /**
+   * Trade beat is already showing — continue into hold, then loop
+   * (trade typing → hold → …).
+   */
   const play = () => {
     if (playing) return
     playing = true
     timeline?.kill()
-    timeline = playScenario("trade")
+    timeline = playScenario("hold")
   }
 
-  const pause = () => {
+  const stop = () => {
+    clearStartTimer()
     playing = false
-    timeline?.pause()
+    timeline?.kill()
+    timeline = null
+    showTradeDefault()
   }
 
-  const resume = () => {
-    if (!timeline) {
+  const onEnter = () => {
+    if (playing || startTimer != null) return
+    showTradeDefault()
+    startTimer = setTimeout(() => {
+      startTimer = null
       play()
-      return
-    }
-    playing = true
-    timeline.resume()
+    }, ENTER_DELAY_MS)
   }
 
-  resetVisuals()
-  onScenario("trade")
+  showTradeDefault()
 
   const io = new IntersectionObserver(
     ([entry]) => {
-      if (entry?.isIntersecting) resume()
-      else pause()
+      if (entry?.isIntersecting) onEnter()
+      else stop()
     },
-    { threshold: 0.35 }
+    { threshold: 0.2, rootMargin: "0px 0px -8% 0px" }
   )
-  io.observe(root)
+  io.observe(observe)
 
-  if (typeof IntersectionObserver === "undefined") play()
+  if (typeof IntersectionObserver === "undefined") onEnter()
 
   return () => {
     io.disconnect()
+    clearStartTimer()
+    playing = false
     timeline?.kill()
     timeline = null
-    playing = false
   }
 }
