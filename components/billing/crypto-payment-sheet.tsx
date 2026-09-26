@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { CheckIcon, CopyIcon, LoaderCircleIcon, TimerIcon } from "lucide-react"
+import { CheckIcon, CopyIcon, LoaderCircleIcon, TimerIcon, XIcon } from "lucide-react"
 import { useTranslations } from "next-intl"
 
 import { BillingGlassPanel } from "@/components/billing/billing-glass"
@@ -10,9 +10,7 @@ import { PaymentMethodPicker } from "@/components/billing/payment-method-picker"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { Skeleton } from "@/components/ui/skeleton"
-import { Switch } from "@/components/ui/switch"
 import {
   Sheet,
   SheetContent,
@@ -76,32 +74,28 @@ function PaymentQuoteSkeleton({
       )}
       aria-busy="true"
     >
-      {/* Amount + compact token picker — mirrors live amount row */}
+      {/* Amount + token picker — mirrors live amount row */}
       <BillingGlassPanel>
         <div
           className={cn(
-            "flex items-center gap-2.5",
-            compact ? "px-3 py-2.5" : "px-3.5 py-3"
+            "flex items-center gap-2",
+            compact ? "ps-6 pe-1 py-1" : "ps-7 pe-1.5 py-1.5"
           )}
         >
-          <div className="min-w-0 flex-1 space-y-1.5">
-            <Skeleton className="h-6 w-[7.5rem] rounded-md" />
+          <div className="min-w-0 flex-1 space-y-1.5 pe-0.5">
+            <div className="flex items-center gap-2">
+              <Skeleton className="h-6 w-[7.5rem] rounded-md" />
+              <Skeleton className="size-8 shrink-0 rounded-full" />
+            </div>
             <Skeleton className="h-2.5 w-12 rounded-full" />
           </div>
           {currencyPicker}
-          <Skeleton className="size-8 shrink-0 rounded-full" />
         </div>
       </BillingGlassPanel>
 
-      {/* Promo — toggle + input, same stack as live coupon block */}
-      <div className="shrink-0 space-y-2">
-        <div className="flex items-center justify-between gap-3 px-0.5">
-          <Skeleton className="h-3.5 w-36 rounded-full" />
-          <Skeleton className="h-6 w-11 rounded-full" />
-        </div>
-        <div className="px-0.5">
-          <Skeleton className="h-10 w-full rounded-xl" />
-        </div>
+      {/* Promo — always-visible coupon field */}
+      <div className="shrink-0">
+        <Skeleton className="h-12 w-full rounded-2xl" />
       </div>
 
       {/* Deposit — same chrome + padding as DepositAddressCard area */}
@@ -113,83 +107,116 @@ function PaymentQuoteSkeleton({
       >
         <Skeleton
           className={cn(
-            "shrink-0 rounded-md",
-            compact ? "size-[12.5rem]" : "size-[13.25rem]"
+            "shrink-0 rounded-[1.25rem]",
+            compact ? "size-[13rem]" : "size-[13.75rem]"
           )}
         />
-        <div className="flex w-full min-w-0 items-center gap-2.5">
-          <Skeleton className="h-3.5 min-w-0 flex-1 rounded-full" />
+        <div className="mx-auto flex w-[calc(12.5rem)] items-center gap-2">
+          <Skeleton className="h-8 min-w-0 flex-1 rounded-lg" />
           <Skeleton className="size-8 shrink-0 rounded-full" />
         </div>
-        <Skeleton className="h-3 w-48 rounded-full" />
       </div>
     </div>
   )
 }
 
+type PaymentUiStatus = "pending" | "paid" | "failed" | "expired"
+
+const STATUS_ICON: Record<
+  PaymentUiStatus,
+  { icon: React.ReactNode; className: string }
+> = {
+  pending: {
+    icon: <LoaderCircleIcon className="size-3.5 animate-spin" />,
+    className: "text-amber-500",
+  },
+  paid: {
+    icon: <CheckIcon className="size-3.5" />,
+    className: "text-emerald-500",
+  },
+  failed: {
+    icon: <XIcon className="size-3.5" />,
+    className: "text-destructive",
+  },
+  expired: {
+    icon: <TimerIcon className="size-3.5" />,
+    className: "text-destructive",
+  },
+}
+
 function PaymentWatcherBanner({
   expiresIn,
   compact,
+  status = "pending",
 }: {
   expiresIn: string
   compact?: boolean
+  status?: PaymentUiStatus
 }) {
   const t = useTranslations("upgradePage.crypto")
+  const visual = STATUS_ICON[status]
+  const title =
+    status === "paid"
+      ? t("statusPaid")
+      : status === "failed"
+        ? t("statusFailed")
+        : status === "expired"
+          ? t("statusExpired")
+          : t("watchingTitle")
 
   return (
     <div
       role="status"
       aria-live="polite"
-      className={cn("flex flex-col", compact ? "gap-2" : "gap-2.5")}
+      className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-2"
     >
-      <div className="flex items-center gap-2">
-        <span className="relative flex size-2 shrink-0">
-          <span className="absolute inline-flex size-full animate-ping rounded-full bg-[#2563EB]/50 opacity-75" />
-          <span className="relative inline-flex size-2 rounded-full bg-[#2563EB]" />
-        </span>
-        <p
-          className={cn(
-            "font-medium text-foreground",
-            compact ? "text-xs" : "text-sm"
-          )}
-        >
-          {t("watchingTitle")}
-        </p>
+      <div className="min-w-0 space-y-1">
+        <div className="flex items-center gap-2">
+          <span className={cn("shrink-0", visual.className)} aria-hidden>
+            {visual.icon}
+          </span>
+          <p
+            className={cn(
+              "font-medium text-foreground",
+              compact ? "text-xs" : "text-sm"
+            )}
+          >
+            {title}
+          </p>
+        </div>
+
+        {status === "pending" ? (
+          <p
+            className={cn(
+              "text-muted-foreground",
+              compact ? "text-[11px] leading-relaxed" : "text-xs leading-relaxed"
+            )}
+          >
+            {t("footerGuide", { network: PAYMENT_NETWORK.name })}
+          </p>
+        ) : null}
       </div>
 
-      <p
-        className={cn(
-          "text-muted-foreground",
-          compact ? "text-[11px] leading-relaxed" : "text-xs leading-relaxed"
-        )}
-      >
-        {t("footerGuide", { network: PAYMENT_NETWORK.name })}
-      </p>
-
-      <div className="flex flex-wrap items-center gap-2 pt-0.5">
-        <span
-          className={cn(
-            "inline-flex items-center gap-1.5 rounded-full tabular-nums",
-            "bg-white/55 px-2.5 py-1 text-muted-foreground ring-1 ring-foreground/6",
-            "dark:bg-white/10 dark:ring-white/10",
-            compact ? "text-[11px]" : "text-xs"
-          )}
-        >
-          <TimerIcon className="size-3.5 shrink-0 opacity-70" />
-          <span className="font-medium text-foreground">{expiresIn}</span>
-        </span>
-        <span
-          className={cn(
-            "inline-flex items-center gap-1.5 rounded-full",
-            "bg-white/55 px-2.5 py-1 text-muted-foreground ring-1 ring-foreground/6",
-            "dark:bg-white/10 dark:ring-white/10",
-            compact ? "text-[11px]" : "text-xs"
-          )}
-        >
-          <LoaderCircleIcon className="size-3.5 shrink-0 animate-spin opacity-60" />
-          <span>{compact ? t("checkingShort") : t("checking")}</span>
-        </span>
-      </div>
+      {status === "pending" ? (
+        <div className="flex shrink-0 items-center justify-self-end">
+          <span
+            className={cn(
+              landingGlassSurface,
+              "inline-flex items-center gap-1.5 rounded-full bg-white/55 px-2.5 py-1 tabular-nums text-muted-foreground dark:bg-white/10",
+              compact ? "text-[11px]" : "text-xs"
+            )}
+          >
+            <span
+              aria-hidden
+              className={cn(landingGlassSheen, "rounded-full")}
+            />
+            <TimerIcon className="relative z-10 size-3.5 shrink-0 opacity-70" />
+            <span className="relative z-10 font-medium text-foreground">
+              {expiresIn}
+            </span>
+          </span>
+        </div>
+      ) : null}
     </div>
   )
 }
@@ -238,7 +265,6 @@ export function CryptoPaymentSheet({
   const [error, setError] = React.useState<string | null>(null)
   const now = useNow(open)
   const defaultCoupon = process.env.NEXT_PUBLIC_BILLING_COUPON_CODE?.trim() ?? ""
-  const [couponOpen, setCouponOpen] = React.useState(Boolean(defaultCoupon))
 
   const loadInvoice = React.useCallback(
     async (
@@ -258,7 +284,6 @@ export function CryptoPaymentSheet({
         setCurrency(paymentCurrencyForInvoice(resolved, nextCurrency))
         if (resolved.coupon_code?.trim()) {
           setCouponCode(resolved.coupon_code.trim())
-          setCouponOpen(true)
         }
         return resolved
       } catch (caught) {
@@ -279,7 +304,6 @@ export function CryptoPaymentSheet({
       if (!nextOpen) {
         setCurrency("USDT")
         setCouponCode(defaultCoupon)
-        setCouponOpen(Boolean(defaultCoupon))
         setInvoice(null)
         setError(null)
         setLoading(false)
@@ -369,6 +393,17 @@ export function CryptoPaymentSheet({
     : ""
   const isAwaitingPayment =
     Boolean(current?.status === "pending" && payAddress && !expired)
+  const paymentStatus: PaymentUiStatus | null = !hasQuote
+    ? null
+    : current?.status === "paid"
+      ? "paid"
+      : current?.status === "failed"
+        ? "failed"
+        : expired
+          ? "expired"
+          : isAwaitingPayment
+            ? "pending"
+            : null
   const sheetSide = isDesktop ? "right" : "bottom"
   const isMobileSheet = isDesktop === false
 
@@ -413,7 +448,7 @@ export function CryptoPaymentSheet({
 
           <SheetHeader
             className={cn(
-              "relative z-10 shrink-0 space-y-1 border-b border-white/55 p-0 dark:border-white/10",
+              "relative z-10 shrink-0 border-b border-white/55 p-0 dark:border-white/10",
               isDesktop ? "px-5 py-5 pe-14" : "px-4 pb-2.5 pe-12 pt-2"
             )}
           >
@@ -422,12 +457,7 @@ export function CryptoPaymentSheet({
             >
               {t("title")}
             </SheetTitle>
-            <SheetDescription
-              className={cn(
-                "leading-snug text-muted-foreground",
-                isDesktop ? "text-sm" : "text-xs"
-              )}
-            >
+            <SheetDescription className="sr-only">
               {t("subtitle")}
             </SheetDescription>
           </SheetHeader>
@@ -482,12 +512,12 @@ export function CryptoPaymentSheet({
                   <BillingGlassPanel>
                     <div
                       className={cn(
-                        "flex items-center gap-2.5",
-                        isDesktop ? "px-3.5 py-3" : "px-3 py-2.5"
+                        "flex items-center gap-2",
+                        isDesktop ? "ps-7 pe-1.5 py-1.5" : "ps-6 pe-1 py-1"
                       )}
                     >
-                      <div className="min-w-0 flex-1">
-                        <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                      <div className="flex min-w-0 flex-1 items-center gap-2 pe-0.5">
+                        <div className="min-w-0">
                           <p
                             className={cn(
                               "font-semibold leading-none tracking-tight tabular-nums text-foreground",
@@ -496,109 +526,93 @@ export function CryptoPaymentSheet({
                           >
                             {amountLabel}
                           </p>
-                          {current!.coupon_code ? (
-                            <Badge
-                              variant="outline"
-                              className="rounded-full border-white/50 bg-white/50 px-1.5 py-0 text-[10px] dark:border-white/15 dark:bg-white/10"
-                            >
-                              {current!.coupon_code}
-                            </Badge>
-                          ) : null}
-                        </div>
-                        <p
-                          className="mt-1 text-[10px] leading-none tabular-nums text-muted-foreground"
-                          aria-label={t("approxUsd", {
-                            amount: formatUsd(
+                          <p
+                            className="mt-px text-[10px] leading-none tabular-nums text-muted-foreground dark:text-foreground/70"
+                            aria-label={t("approxUsd", {
+                              amount: formatUsd(
+                                aboutUsdFromCryptoLabel(
+                                  amountLabel,
+                                  current!.amount_usd
+                                )
+                              ),
+                            })}
+                          >
+                            ≈{" "}
+                            {formatUsd(
                               aboutUsdFromCryptoLabel(
                                 amountLabel,
                                 current!.amount_usd
                               )
-                            ),
-                          })}
-                        >
-                          ≈{" "}
-                          {formatUsd(
-                            aboutUsdFromCryptoLabel(
-                              amountLabel,
-                              current!.amount_usd
-                            )
-                          )}
-                          {current!.original_amount_usd > current!.amount_usd ? (
-                            <span className="ms-1.5 line-through opacity-70">
-                              {formatUsd(current!.original_amount_usd)}
-                            </span>
-                          ) : null}
-                        </p>
+                            )}
+                            {current!.original_amount_usd >
+                            current!.amount_usd ? (
+                              <span className="ms-1.5 line-through opacity-70">
+                                {formatUsd(current!.original_amount_usd)}
+                              </span>
+                            ) : null}
+                          </p>
+                        </div>
+                        <CopyAmountButton value={amountLabel} />
+                        {current!.coupon_code ? (
+                          <Badge
+                            variant="outline"
+                            className="rounded-full border-white/50 bg-white/50 px-1.5 py-0 text-[10px] dark:border-white/15 dark:bg-white/10"
+                          >
+                            {current!.coupon_code}
+                          </Badge>
+                        ) : null}
                       </div>
                       <PaymentMethodPicker
                         currency={paymentCurrency}
                         disabled={loading || !checkout}
                         onCurrencyChange={handleCurrencyChange}
                       />
-                      <CopyAmountButton value={amountLabel} />
                     </div>
                   </BillingGlassPanel>
 
-                  <div className="shrink-0 space-y-2.5">
-                    <div className="flex items-center justify-between gap-3 px-0.5">
-                      <Label
-                        htmlFor="payment-coupon-toggle"
-                        id="payment-coupon-label"
-                        className="cursor-pointer text-sm font-medium text-muted-foreground"
-                      >
-                        {t("havePromo")}
-                      </Label>
-                      <Switch
-                        id="payment-coupon-toggle"
-                        checked={couponOpen}
-                        disabled={loading || !checkout}
-                        aria-labelledby="payment-coupon-label"
+                  <div className="shrink-0">
+                    <div
+                      className={cn(
+                        landingGlassSurface,
+                        "relative rounded-2xl bg-white/55 dark:bg-white/10"
+                      )}
+                    >
+                      <span
+                        aria-hidden
+                        className={cn(landingGlassSheen, "rounded-2xl")}
+                      />
+                      <Input
+                        id="payment-coupon"
+                        value={couponCode}
+                        onChange={(event) => setCouponCode(event.target.value)}
+                        placeholder={t("enterCode")}
+                        autoComplete="off"
+                        spellCheck={false}
                         className={cn(
-                          "bg-foreground/12 dark:bg-white/15",
-                          couponOpen &&
-                            "bg-[#2563EB] hover:bg-[#1D4ED8] focus-visible:ring-[#2563EB]/40 dark:bg-[#2563EB]"
+                          "relative z-10 h-12 rounded-2xl border-0 bg-transparent ps-4 pe-22 shadow-none",
+                          "placeholder:text-muted-foreground/55 focus-visible:border-0 focus-visible:ring-0",
+                          "dark:bg-transparent dark:placeholder:text-muted-foreground/70"
                         )}
-                        onCheckedChange={(checked) => {
-                          setCouponOpen(checked)
-                          if (!checked && checkout) {
-                            setCouponCode(defaultCoupon)
-                            void loadInvoice(checkout, currency, "")
+                        onKeyDown={(event) => {
+                          if (event.key === "Enter") {
+                            event.preventDefault()
+                            if (couponCode.trim()) handleApplyCoupon()
                           }
                         }}
                       />
+                      <Button
+                        type="button"
+                        size="sm"
+                        className={cn(
+                          landingCta("glass", "sm"),
+                          "absolute top-1/2 inset-e-2 z-10 h-8 -translate-y-1/2 px-3.5 text-xs"
+                        )}
+                        disabled={!couponCode.trim()}
+                        onClick={handleApplyCoupon}
+                      >
+                        {t("apply")}
+                      </Button>
                     </div>
-                    {couponOpen ? (
-                      <div className="relative px-0.5">
-                        <Input
-                          id="payment-coupon"
-                          value={couponCode}
-                          onChange={(event) => setCouponCode(event.target.value)}
-                          placeholder={t("enterCode")}
-                          autoComplete="off"
-                          spellCheck={false}
-                          disabled={loading || !checkout}
-                          className="h-10 rounded-xl border-white/50 bg-white/45 pe-20 dark:border-white/10 dark:bg-white/8"
-                          onKeyDown={(event) => {
-                            if (event.key === "Enter") {
-                              event.preventDefault()
-                              handleApplyCoupon()
-                            }
-                          }}
-                        />
-                        <Button
-                          type="button"
-                          size="sm"
-                          className={cn(
-                            landingCta("glass", "sm"),
-                            "absolute top-1/2 inset-e-2 h-7 -translate-y-1/2 px-3 text-xs"
-                          )}
-                          disabled={loading || !checkout || !couponCode.trim()}
-                          onClick={handleApplyCoupon}
-                        >
-                          {t("apply")}
-                        </Button>
-                      </div>
-                    ) : null}
                   </div>
 
                   {/* Inset to match inner padding of rounded select/amount panels */}
@@ -609,36 +623,37 @@ export function CryptoPaymentSheet({
                       compact={isMobileSheet}
                     />
                   </div>
-
-                  {current!.status === "paid" ? (
-                    <div className="shrink-0 rounded-2xl bg-emerald-500/10 px-3 py-2 text-sm text-emerald-700 dark:text-emerald-300">
-                      {t("paymentReceived")}
-                    </div>
-                  ) : null}
-
-                  {(current!.status === "failed" || expired) &&
-                  current!.status !== "paid" ? (
-                    <div className="shrink-0 rounded-2xl bg-destructive/8 px-3 py-2 text-sm text-destructive">
-                      {expired ? t("windowExpired") : t("paymentFailed")}
-                    </div>
-                  ) : null}
                 </div>
               )}
             </div>
 
-            {isAwaitingPayment ? (
+            {paymentStatus ? (
               <div
                 className={cn(
-                  "shrink-0 border-t border-white/55 dark:border-white/10",
+                  "shrink-0",
                   isDesktop
-                    ? "px-5 py-4"
-                    : "px-4 pb-[max(1.1rem,env(safe-area-inset-bottom,0px))] pt-3.5"
+                    ? "px-5 pb-5 pt-2"
+                    : "px-4 pb-[max(1.1rem,env(safe-area-inset-bottom,0px))] pt-2"
                 )}
               >
-                <PaymentWatcherBanner
-                  expiresIn={formatCountdown(msRemaining)}
-                  compact={isMobileSheet}
-                />
+                <div
+                  className={cn(
+                    landingGlassSurface,
+                    "rounded-[1.25rem] bg-white/62 px-3.5 py-3 dark:bg-white/10"
+                  )}
+                >
+                  <span
+                    aria-hidden
+                    className={cn(landingGlassSheen, "rounded-[1.25rem]")}
+                  />
+                  <div className="relative z-10">
+                    <PaymentWatcherBanner
+                      expiresIn={formatCountdown(msRemaining)}
+                      compact={isMobileSheet}
+                      status={paymentStatus}
+                    />
+                  </div>
+                </div>
               </div>
             ) : null}
           </div>

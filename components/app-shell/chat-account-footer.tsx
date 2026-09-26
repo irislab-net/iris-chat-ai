@@ -2,71 +2,31 @@
 
 import * as React from "react"
 import { Link } from "@/i18n/navigation"
-import {
-  LogOutIcon,
-  ReceiptIcon,
-  SettingsIcon,
-  SparklesIcon,
-} from "lucide-react"
+import { SettingsIcon } from "lucide-react"
 import { useTranslations } from "next-intl"
 
 import { ChatAccountAvatar } from "@/components/app-shell/chat-account-avatar"
+import { AccountSignedInMenuSections } from "@/components/app-shell/chat-account-menu-sections"
+import { AccountPreferencesGroup } from "@/components/app-shell/chat-account-preferences"
+import { chatContextMenuContentClass } from "@/components/app-shell/chat-context-menu-styles"
 import {
-  AccountCookieSettingsItem,
-  AccountLanguageItems,
-  AccountThemeItems,
-} from "@/components/app-shell/chat-account-preferences"
-import {
-  chatContextMenuContentClass,
-  chatContextMenuDeleteClass,
-  chatContextMenuHeaderClass,
-  chatContextMenuIconClass,
-  chatContextMenuItemClass,
-  chatContextMenuSeparatorClass,
-} from "@/components/app-shell/chat-context-menu-styles"
+  chatHistoryRailFooterBarClass,
+  chatHistoryRailFooterWrapClass,
+} from "@/components/app-shell/chat-mobile-gemini-styles"
 import { useAuth } from "@/components/auth/auth-provider"
 import { GoogleGlyph } from "@/components/auth/google-glyph"
 import { useUserAvatarUrl } from "@/hooks/use-user-avatar-url"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { displayPlanName } from "@/lib/billing/catalog"
-import { BILLING_PATH, UPGRADE_PATH } from "@/lib/site"
-import {
-  userAccountLabel,
-  userAccountSubline,
-} from "@/lib/user-profile"
+import { UPGRADE_PATH } from "@/lib/site"
+import { userAccountLabel } from "@/lib/user-profile"
 import { cn } from "@/lib/utils"
-
-function AccountPlanBadge({
-  planName,
-  isProUser,
-}: {
-  planName: string
-  isProUser: boolean
-}) {
-  return (
-    <Badge
-      variant={isProUser ? "default" : "secondary"}
-      className={cn(
-        "h-5 px-1.5 text-[10px] font-semibold tracking-wide",
-        isProUser && "border-0 bg-foreground text-background"
-      )}
-    >
-      {isProUser ? <SparklesIcon className="size-2.5" aria-hidden /> : null}
-      {planName}
-    </Badge>
-  )
-}
 
 function ThemeSettingsMenu() {
   const common = useTranslations("common")
@@ -91,10 +51,7 @@ function ThemeSettingsMenu() {
         align="end"
         className={cn(chatContextMenuContentClass, "min-w-64")}
       >
-        <AccountThemeItems />
-        <DropdownMenuSeparator className={chatContextMenuSeparatorClass} />
-        <AccountLanguageItems />
-        <AccountCookieSettingsItem />
+        <AccountPreferencesGroup />
       </DropdownMenuContent>
     </DropdownMenu>
   )
@@ -111,44 +68,75 @@ function ChatAccountFooter({
   const { user, isProUser, login, logout, loginPending } = useAuth()
   const avatarUrl = useUserAvatarUrl(user)
 
-  if (!user) {
-    return (
-      <div
-        className={cn(
-          "flex shrink-0 items-center gap-2 p-2",
-          collapsed && "justify-center p-1.5",
-          className
-        )}
+  const bar = !user ? (
+    <div
+      className={cn(
+        "flex items-center gap-2 p-2",
+        collapsed && "justify-center p-1.5",
+        className
+      )}
+    >
+      <Button
+        type="button"
+        variant="ghost"
+        size={collapsed ? "icon" : "default"}
+        className={
+          collapsed
+            ? "size-9 rounded-lg hover:bg-muted/40"
+            : "h-auto min-w-0 flex-1 justify-start gap-2 rounded-lg px-2 py-2 hover:bg-muted/40"
+        }
+        aria-label={loginPending ? t("connecting") : t("signIn")}
+        disabled={loginPending}
+        onClick={() => login({ source: "chat" })}
       >
-        <Button
-          type="button"
-          variant="ghost"
-          size={collapsed ? "icon" : "default"}
-          className={
-            collapsed
-              ? "size-9 rounded-lg hover:bg-muted/40"
-              : "h-auto min-w-0 flex-1 justify-start gap-2 rounded-lg px-2 py-2 hover:bg-muted/40"
-          }
-          aria-label={loginPending ? t("connecting") : t("signIn")}
-          disabled={loginPending}
-          onClick={() => login({ source: "chat" })}
-        >
-          <Avatar className="size-8 after:border-0">
-            <AvatarFallback className="bg-muted text-[11px]">
-              <GoogleGlyph className="size-3.5" />
-            </AvatarFallback>
-          </Avatar>
-          {!collapsed ? (
-            <span className="min-w-0 flex-1 truncate text-start text-[13px] font-medium">
-              {loginPending ? t("connecting") : t("signIn")}
-            </span>
-          ) : null}
-        </Button>
-        <ThemeSettingsMenu />
-      </div>
-    )
-  }
+        <Avatar className="size-8 after:border-0">
+          <AvatarFallback className="bg-muted text-[11px]">
+            <GoogleGlyph className="size-3.5" />
+          </AvatarFallback>
+        </Avatar>
+        {!collapsed ? (
+          <span className="min-w-0 flex-1 truncate text-start text-[13px] font-medium">
+            {loginPending ? t("connecting") : t("signIn")}
+          </span>
+        ) : null}
+      </Button>
+      <ThemeSettingsMenu />
+    </div>
+  ) : (
+    <ChatAccountFooterSignedIn
+      className={className}
+      collapsed={collapsed}
+      user={user}
+      isProUser={isProUser}
+      avatarUrl={avatarUrl}
+      logout={logout}
+    />
+  )
 
+  return (
+    <footer className={chatHistoryRailFooterWrapClass}>
+      <div className={chatHistoryRailFooterBarClass}>{bar}</div>
+    </footer>
+  )
+}
+
+function ChatAccountFooterSignedIn({
+  className,
+  collapsed,
+  user,
+  isProUser,
+  avatarUrl,
+  logout,
+}: {
+  className?: string
+  collapsed: boolean
+  user: NonNullable<ReturnType<typeof useAuth>["user"]>
+  isProUser: boolean
+  avatarUrl: string | null | undefined
+  logout: () => void | Promise<void>
+}) {
+  const t = useTranslations("workspace")
+  const resolvedAvatarUrl = avatarUrl ?? null
   const rawPlan = displayPlanName(user.tier)
   const planName =
     rawPlan === "Plus"
@@ -156,11 +144,12 @@ function ChatAccountFooter({
       : rawPlan === "Ultimate"
         ? t("planUltimate")
         : t("planFree")
-  const subline = userAccountSubline(user)
+  const email = user.email?.trim()
+
   return (
     <div
       className={cn(
-        "flex shrink-0 items-center gap-2 p-2",
+        "flex items-center gap-2 p-2",
         collapsed && "justify-center p-1.5",
         className
       )}
@@ -185,7 +174,7 @@ function ChatAccountFooter({
         >
           <ChatAccountAvatar
             user={user}
-            avatarUrl={avatarUrl}
+            avatarUrl={resolvedAvatarUrl}
             isProUser={isProUser}
             planName={planName}
             compact
@@ -196,9 +185,11 @@ function ChatAccountFooter({
                 <span className="block truncate text-[13px] font-medium leading-tight">
                   {userAccountLabel(user)}
                 </span>
-                <span className="block truncate text-[11px] text-muted-foreground">
-                  {planName}
-                </span>
+                {email ? (
+                  <span className="block truncate text-[11px] text-muted-foreground">
+                    {email}
+                  </span>
+                ) : null}
               </span>
               <SettingsIcon
                 className="size-4 shrink-0 text-muted-foreground"
@@ -212,68 +203,13 @@ function ChatAccountFooter({
           align="start"
           className={cn(chatContextMenuContentClass, "min-w-64")}
         >
-          <DropdownMenuGroup>
-            <DropdownMenuLabel className={chatContextMenuHeaderClass}>
-              <div className="flex items-start justify-between gap-3">
-                <div className="flex min-w-0 items-center gap-2.5">
-                  <ChatAccountAvatar
-                    user={user}
-                    avatarUrl={avatarUrl}
-                    isProUser={isProUser}
-                    planName={planName}
-                    showPlanBadge={false}
-                    avatarClassName="size-9"
-                  />
-                  <div className="flex min-w-0 flex-col gap-0.5">
-                    <span className="truncate text-sm font-medium text-foreground">
-                      {userAccountLabel(user)}
-                    </span>
-                    {subline ? (
-                      <span className="truncate text-xs text-muted-foreground">
-                        {subline}
-                      </span>
-                    ) : null}
-                  </div>
-                </div>
-                <AccountPlanBadge planName={planName} isProUser={isProUser} />
-              </div>
-            </DropdownMenuLabel>
-            {!isProUser ? (
-              <div className="px-2 pb-1">
-                <Button
-                  size="xs"
-                  className="h-7 w-full"
-                  nativeButton={false}
-                  render={<Link href={UPGRADE_PATH} />}
-                >
-                  {t("upgradeToPlus")}
-                </Button>
-              </div>
-            ) : null}
-          </DropdownMenuGroup>
-          <DropdownMenuSeparator className={chatContextMenuSeparatorClass} />
-          <DropdownMenuItem
-            className={chatContextMenuItemClass}
-            nativeButton={false}
-            render={<Link href={BILLING_PATH} />}
-          >
-            <ReceiptIcon className={chatContextMenuIconClass} />
-            {t("billing")}
-          </DropdownMenuItem>
-          <DropdownMenuSeparator className={chatContextMenuSeparatorClass} />
-          <AccountThemeItems />
-          <DropdownMenuSeparator className={chatContextMenuSeparatorClass} />
-          <AccountLanguageItems />
-          <AccountCookieSettingsItem />
-          <DropdownMenuSeparator className={chatContextMenuSeparatorClass} />
-          <DropdownMenuItem
-            variant="destructive"
-            className={chatContextMenuDeleteClass}
-            onClick={() => void logout()}
-          >
-            <LogOutIcon className="size-4.5 shrink-0" />
-            {t("logOut")}
-          </DropdownMenuItem>
+          <AccountSignedInMenuSections
+            user={user}
+            isProUser={isProUser}
+            planName={planName}
+            avatarUrl={resolvedAvatarUrl}
+            onLogout={logout}
+          />
         </DropdownMenuContent>
       </DropdownMenu>
       {!collapsed && !isProUser ? (

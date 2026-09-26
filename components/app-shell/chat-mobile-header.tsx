@@ -35,7 +35,7 @@ type ChatMobileThreadMenuProps = {
   title: string
   pinned: boolean
   disabled?: boolean
-  onShare: () => void | Promise<void>
+  onShare: () => boolean | Promise<boolean>
   onRename: (title: string) => void
   onTogglePin: () => void
   onDelete: () => void
@@ -171,7 +171,7 @@ function ChatMobileHeader({
           {threadMenu ? (
             <ChatThreadOptionsMenu
               {...threadMenu}
-              className={cn(chatMobileHeaderButtonClass, "border-0 shadow-none")}
+              className={chatMobileHeaderButtonClass}
             />
           ) : (
             <ChatAccountMenu onOpenNews={onOpenNews} variant="mobile" />

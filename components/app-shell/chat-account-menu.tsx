@@ -1,29 +1,14 @@
 "use client"
 
 import * as React from "react"
-import { Link } from "@/i18n/navigation"
-import {
-  LogOutIcon,
-  NewspaperIcon,
-  ReceiptIcon,
-  SparklesIcon,
-} from "lucide-react"
 import { useTranslations } from "next-intl"
 
 import { ChatAccountAvatar } from "@/components/app-shell/chat-account-avatar"
 import {
-  AccountCookieSettingsItem,
-  AccountLanguageItems,
-  AccountThemeItems,
-} from "@/components/app-shell/chat-account-preferences"
-import {
-  chatContextMenuContentClass,
-  chatContextMenuDeleteClass,
-  chatContextMenuHeaderClass,
-  chatContextMenuIconClass,
-  chatContextMenuItemClass,
-  chatContextMenuSeparatorClass,
-} from "@/components/app-shell/chat-context-menu-styles"
+  AccountGuestMenuSections,
+  AccountSignedInMenuSections,
+} from "@/components/app-shell/chat-account-menu-sections"
+import { chatContextMenuContentClass } from "@/components/app-shell/chat-context-menu-styles"
 import {
   chatMobileHeaderAvatarButtonClass,
   chatMobileHeaderAvatarClass,
@@ -38,18 +23,10 @@ import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { displayPlanName } from "@/lib/billing/catalog"
-import { BILLING_PATH, UPGRADE_PATH } from "@/lib/site"
-import {
-  userAccountLabel,
-  userAccountSubline,
-} from "@/lib/user-profile"
+import { userAccountLabel } from "@/lib/user-profile"
 import { cn } from "@/lib/utils"
 
 type ChatAccountMenuProps = {
@@ -126,19 +103,10 @@ function ChatAccountMenu({
           sideOffset={10}
           className={cn(chatContextMenuContentClass, "min-w-64")}
         >
-          <AccountThemeItems />
-          <DropdownMenuSeparator className={chatContextMenuSeparatorClass} />
-          <AccountLanguageItems />
-          <AccountCookieSettingsItem />
-          <DropdownMenuSeparator className={chatContextMenuSeparatorClass} />
-          <DropdownMenuItem
-            className={chatContextMenuItemClass}
-            disabled={loginPending}
-            onClick={() => login({ source: "chat" })}
-          >
-            <GoogleGlyph className="size-4 shrink-0" />
-            {loginPending ? t("connecting") : t("signIn")}
-          </DropdownMenuItem>
+          <AccountGuestMenuSections
+            loginPending={loginPending}
+            onLogin={() => login({ source: "chat" })}
+          />
         </DropdownMenuContent>
       </DropdownMenu>
     )
@@ -181,82 +149,14 @@ function ChatAccountMenu({
         sideOffset={10}
         className={cn(chatContextMenuContentClass, "min-w-64")}
       >
-        <DropdownMenuGroup>
-          <DropdownMenuLabel className={chatContextMenuHeaderClass}>
-            <div className="flex items-center gap-3">
-              <ChatAccountAvatar
-                user={user}
-                avatarUrl={avatarUrl}
-                isProUser={isProUser}
-                planName={planName}
-                showPlanBadge={false}
-                avatarClassName="size-9"
-              />
-              <div className="min-w-0">
-                <p className="truncate text-[15px] font-medium leading-tight">
-                  {userAccountLabel(user)}
-                </p>
-                {userAccountSubline(user) ? (
-                  <p className="truncate text-[13px] text-muted-foreground">
-                    {userAccountSubline(user)}
-                  </p>
-                ) : null}
-              </div>
-            </div>
-          </DropdownMenuLabel>
-        </DropdownMenuGroup>
-
-        {!isProUser ? (
-          <>
-            <DropdownMenuSeparator className={chatContextMenuSeparatorClass} />
-            <DropdownMenuItem
-              className={chatContextMenuItemClass}
-              nativeButton={false}
-              render={<Link href={UPGRADE_PATH} />}
-            >
-              <SparklesIcon className={chatContextMenuIconClass} />
-              {t("upgradeToPlus")}
-            </DropdownMenuItem>
-          </>
-        ) : null}
-
-        <DropdownMenuSeparator className={chatContextMenuSeparatorClass} />
-        <DropdownMenuGroup>
-          {onOpenNews ? (
-            <DropdownMenuItem
-              className={chatContextMenuItemClass}
-              onClick={onOpenNews}
-            >
-              <NewspaperIcon className={chatContextMenuIconClass} />
-              {t("news")}
-            </DropdownMenuItem>
-          ) : null}
-          <DropdownMenuItem
-            className={chatContextMenuItemClass}
-            nativeButton={false}
-            render={<Link href={BILLING_PATH} />}
-          >
-            <ReceiptIcon className={chatContextMenuIconClass} />
-            {t("billing")}
-          </DropdownMenuItem>
-        </DropdownMenuGroup>
-
-        <DropdownMenuSeparator className={chatContextMenuSeparatorClass} />
-        <AccountThemeItems />
-
-        <DropdownMenuSeparator className={chatContextMenuSeparatorClass} />
-        <AccountLanguageItems />
-        <AccountCookieSettingsItem />
-
-        <DropdownMenuSeparator className={chatContextMenuSeparatorClass} />
-        <DropdownMenuItem
-          variant="destructive"
-          className={chatContextMenuDeleteClass}
-          onClick={() => void logout()}
-        >
-          <LogOutIcon className="size-4.5 shrink-0" />
-          {t("logOut")}
-        </DropdownMenuItem>
+        <AccountSignedInMenuSections
+          user={user}
+          isProUser={isProUser}
+          planName={planName}
+          avatarUrl={avatarUrl ?? null}
+          onLogout={logout}
+          onOpenNews={onOpenNews}
+        />
       </DropdownMenuContent>
     </DropdownMenu>
   )

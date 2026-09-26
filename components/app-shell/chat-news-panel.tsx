@@ -104,13 +104,17 @@ function ChatNewsPanelBody({
           </h2>
         </div>
         <div className="flex shrink-0 items-center gap-1.5">
-          <NewsReadAllButton news={news} glass />
+          <NewsReadAllButton news={news} glass={mobile} />
           <span className={chatNewsFreshnessBadgeClass}>{freshnessLabel}</span>
           <Button
             type="button"
             variant="ghost"
             size="icon-sm"
-            className={cn(chatMobileHeaderButtonClass, "size-8 [&_svg]:size-4")}
+            className={cn(
+              mobile
+                ? cn(chatMobileHeaderButtonClass, "size-8 [&_svg]:size-4")
+                : "size-8 rounded-lg text-muted-foreground hover:bg-foreground/5 hover:text-foreground [&_svg]:size-4"
+            )}
             aria-label={t("closeNews")}
             onClick={onClose}
           >

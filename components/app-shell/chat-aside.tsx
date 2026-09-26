@@ -41,7 +41,7 @@ import {
   ChatThreadUpgradeButton,
 } from "@/components/app-shell/chat-thread-toolbar"
 import { ChatUserTurn } from "@/components/app-shell/chat-user-message"
-import { formatConversationTranscript } from "@/lib/chat/transcript"
+import { copyTextToClipboard, formatConversationTranscript } from "@/lib/chat/transcript"
 import { ChatAsideSkeleton } from "@/components/app-shell/shell-skeletons"
 import { useTicketSlot } from "@/components/app-shell/ticket-slot"
 import { typewriterReveal } from "@/components/app-shell/chat-typing"
@@ -1846,9 +1846,15 @@ function ChatAside({
   }, [showThread, conversationId, messages.length])
 
   async function shareCurrentConversation() {
-    const text = formatConversationTranscript(messages)
-    if (!text.trim()) return
-    await navigator.clipboard.writeText(text)
+    const title =
+      threadTitleRaw && threadTitleRaw !== NEW_CHAT_TITLE
+        ? threadTitleRaw
+        : undefined
+    const text = formatConversationTranscript(messages, {
+      title,
+      history: activeConversation?.history,
+    })
+    return copyTextToClipboard(text)
   }
 
   function deleteCurrentConversation() {
@@ -1956,7 +1962,7 @@ function ChatAside({
         isMobileOverlay
           ? "flex-col bg-background text-foreground"
           : historyRailVisible || isFocusedLayout
-            ? "flex-row bg-sidebar text-sidebar-foreground"
+            ? "flex-row bg-background text-foreground"
             : "flex-col bg-sidebar text-sidebar-foreground",
         displayMode === "docked" && !isMobileOverlay ? "rounded-e-2xl" : "rounded-none",
         className

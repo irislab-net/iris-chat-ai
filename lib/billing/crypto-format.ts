@@ -1,27 +1,27 @@
 /** USDT on EVM chains uses 6 decimals in invoice payloads. */
 export const USDT_DECIMALS = 6
 
+/** Display precision for stablecoin send amounts (always two places). */
+const CRYPTO_DISPLAY_DECIMALS = 2
+
 export function formatCryptoAmount(
   raw: string | number,
   currency = "USDT",
   decimals = USDT_DECIMALS
 ): string {
   const text = String(raw).trim()
-  if (!text) return `0 ${currency}`
+  if (!text) return `0.${"0".repeat(CRYPTO_DISPLAY_DECIMALS)} ${currency}`
 
   const integerPart = text.split(".")[0]?.replace(/\D/g, "") || "0"
   const smallest = BigInt(integerPart || "0")
+  const displayScale = BigInt(10 ** CRYPTO_DISPLAY_DECIMALS)
   const divisor = BigInt(10 ** decimals)
-  const whole = smallest / divisor
-  const fraction = smallest % divisor
+  // Round half-up into display units (e.g. cents for 2 places).
+  const displayUnits = (smallest * displayScale + divisor / BigInt(2)) / divisor
+  const whole = displayUnits / displayScale
+  const fraction = displayUnits % displayScale
 
-  const fractionText = fraction
-    .toString()
-    .padStart(decimals, "0")
-    .replace(/0+$/, "")
-
-  const formatted = fractionText ? `${whole}.${fractionText}` : whole.toString()
-  return `${formatted} ${currency}`
+  return `${whole}.${fraction.toString().padStart(CRYPTO_DISPLAY_DECIMALS, "0")} ${currency}`
 }
 
 export function formatUsd(amount: number): string {
@@ -29,7 +29,7 @@ export function formatUsd(amount: number): string {
   return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
-    minimumFractionDigits: amount % 1 === 0 ? 0 : 2,
+    minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   }).format(amount)
 }

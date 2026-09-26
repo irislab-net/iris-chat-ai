@@ -315,7 +315,7 @@ function ChatHistoryRailSkeleton({
   return (
     <aside
       className={cn(
-        "relative flex h-full min-h-0 shrink-0 flex-col overflow-hidden bg-sidebar text-sidebar-foreground",
+        "relative flex h-full min-h-0 shrink-0 flex-col overflow-hidden rounded-e-xl bg-sidebar text-sidebar-foreground",
         className
       )}
       style={{ width: sidebarWidth }}
@@ -397,8 +397,8 @@ function ChatDesktopAsideSkeleton({
       <div
         data-slot="chat-aside"
         className={cn(
-          "relative flex h-full min-h-0 w-full flex-row overflow-hidden bg-sidebar text-sidebar-foreground",
-          !focused && "rounded-r-2xl",
+          "relative flex h-full min-h-0 w-full flex-row overflow-hidden bg-background text-foreground",
+          !focused && "rounded-e-2xl",
           className
         )}
         aria-busy="true"

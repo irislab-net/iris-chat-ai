@@ -4,6 +4,9 @@ import * as React from "react"
 import { useTranslations } from "next-intl"
 
 import {
+  chatDesktopDialogClass,
+  chatDesktopDialogFooterClass,
+  chatDesktopDialogInputClass,
   chatMobileSheetBodyClass,
   chatMobileSheetContentClass,
   chatMobileSheetFooterBarClass,
@@ -114,12 +117,12 @@ function ChatRenameDialog({
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent
-          className="gap-0 overflow-hidden rounded-[1.25rem] border border-border/40 bg-background p-0 shadow-xl ring-0 sm:max-w-[24rem]"
+          className={chatDesktopDialogClass}
           showCloseButton
         >
           <div className="flex flex-col gap-4 px-5 pt-5 pb-1">
             <DialogHeader className="gap-1 space-y-0 text-start">
-              <DialogTitle className="text-lg font-semibold tracking-tight">
+              <DialogTitle className="text-[1.25rem] font-semibold tracking-[-0.02em] text-foreground">
                 {t("renameChat")}
               </DialogTitle>
             </DialogHeader>
@@ -128,11 +131,11 @@ function ChatRenameDialog({
                 value={draft}
                 onValueChange={setDraft}
                 onSubmit={handleSubmit}
-                inputClassName="h-10 rounded-xl border-border/60 bg-background"
+                inputClassName={chatDesktopDialogInputClass}
               />
             ) : null}
           </div>
-          <DialogFooter className="mx-0 mb-0 gap-2 border-t border-border/40 p-4 pt-3.5 sm:justify-end">
+          <DialogFooter className={chatDesktopDialogFooterClass}>
             <Button
               type="button"
               className={cn(landingCta("secondary", "sm"), "rounded-full")}

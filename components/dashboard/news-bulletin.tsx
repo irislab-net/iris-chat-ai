@@ -991,7 +991,7 @@ function NewsCard({
 }) {
   const summary = item.summary?.trim()
   const tone = newsTone(item)
-  const glass = mobile || sidebar
+  const glass = mobile
   const glassSurface = glass
     ? cn(
         newsGlassShellClass,
@@ -1090,16 +1090,13 @@ function NewsCard({
             (featured
               ? cn(toneSurfaceClass(tone, true), "p-4 sm:p-5")
               : cn(toneSurfaceClass(tone, false), "px-2 py-3 sm:px-3")),
-          featured && glass && "sm:p-5",
-          !featured && glass && "sm:px-3.5 sm:py-3.5",
           className
         )}
       >
         {featured ? (
           <span
             className={cn(
-              chatNewsGlassChipClass,
-              "mb-2 w-fit text-[10px] font-semibold tracking-[0.08em] text-foreground uppercase"
+              "mb-2 w-fit rounded-md bg-foreground/6 px-1.5 py-0.5 text-[10px] font-semibold tracking-[0.08em] text-foreground uppercase"
             )}
           >
             Lead
@@ -1114,7 +1111,7 @@ function NewsCard({
           <NewsSourceIcon
             url={item.url}
             size={featured ? "lead" : "header"}
-            glass
+            glass={glass}
           />
           <a
             href={item.url}
@@ -1144,7 +1141,7 @@ function NewsCard({
             {summaryDesktop}
           </p>
         ) : null}
-        <NewsCardFooter item={item} glass />
+        <NewsCardFooter item={item} glass={glass} />
       </article>
     )
   }
@@ -1248,7 +1245,7 @@ function NewsHeadlineList({
       <Empty
         className={cn(
           "min-h-48 rounded-2xl",
-          sidebar || mobile
+          mobile
             ? chatNewsGlassCardClass
             : "bg-muted/18"
         )}
@@ -1267,10 +1264,10 @@ function NewsHeadlineList({
   }
 
   const { lead, rest } = pickLeadStory(news)
-  const glass = mobile || sidebar
+  const glass = mobile
 
   return (
-    <div className={cn("flex flex-col", mobile || glass ? "gap-4" : "gap-5 pb-2")}>
+    <div className={cn("flex flex-col", mobile ? "gap-4" : "gap-5 pb-2")}>
       {mobile && !sidebar ? (
         <div className="flex justify-end px-1">
           <NewsReadAllButton news={news} glass={glass} />
@@ -1293,7 +1290,7 @@ function NewsHeadlineList({
               </p>
               <Separator className="flex-1" />
             </div>
-            <div className={cn("flex flex-col", glass ? "gap-3" : "gap-2")}>
+            <div className="flex flex-col gap-2">
               {rest.map((item) => (
                 <NewsCard key={item.id} item={item} sidebar={sidebar} />
               ))}

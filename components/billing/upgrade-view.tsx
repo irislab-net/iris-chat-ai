@@ -16,13 +16,12 @@ import { plusJakarta } from "@/components/landing/modern/fonts"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import {
-  BILLING_PRICES,
   UPGRADE_PLANS,
   displayPlanName,
   type BillingCycle,
   type PlanKey,
 } from "@/lib/billing/catalog"
-import { getLandingPlanPrice, parsePriceAmount } from "@/lib/billing/prices"
+import { usePaymentPlans } from "@/hooks/use-payment-plans"
 import {
   formatCountdown,
   formatCryptoAmount,
@@ -87,13 +86,17 @@ function UpgradeView() {
     null
   )
   const [paymentOpen, setPaymentOpen] = React.useState(false)
+  const {
+    plusMonthlyDisplay,
+    plusMonthlyUsd,
+    loading: pricesLoading,
+  } = usePaymentPlans()
 
   React.useEffect(() => {
     trackUpgradeView()
   }, [])
 
   const currentPlan = displayPlanName(user?.tier)
-  const prices = BILLING_PRICES[billing]
   const cadence = t("cadence")
   const canTrackPendingPayment = isAuthenticated && !isProUser
 
@@ -110,13 +113,16 @@ function UpgradeView() {
     paidHandledRef.current = true
 
     if (checkout?.billing) {
-      trackPurchase({ billing: checkout.billing })
+      trackPurchase({
+        billing: checkout.billing,
+        ...(plusMonthlyUsd != null ? { value: plusMonthlyUsd } : {}),
+      })
     }
     markPlanUpgradePendingRefresh()
     await refreshAfterUpgrade()
     setPaymentOpen(false)
     router.push(APP_NEWS_PATH)
-  }, [checkout, refreshAfterUpgrade, router])
+  }, [checkout, plusMonthlyUsd, refreshAfterUpgrade, router])
 
   const pendingInvoice = usePendingPaymentInvoice({
     enabled: canTrackPendingPayment,
@@ -128,7 +134,10 @@ function UpgradeView() {
     : 0
 
   function beginPlusCheckout(cycle: BillingCycle) {
-    trackCheckoutStart({ billing: cycle })
+    trackCheckoutStart({
+      billing: cycle,
+      ...(plusMonthlyUsd != null ? { value: plusMonthlyUsd } : {}),
+    })
     setCheckout({ billing: cycle })
     setPaymentOpen(true)
   }
@@ -182,6 +191,7 @@ function UpgradeView() {
         paymentCurrencyForInvoice(pendingInvoice)
       )
     : ""
+  const plusPriceLabel = plusMonthlyDisplay ?? (pricesLoading ? "…" : "—")
 
   function continueLabel(plan: PlanKey) {
     if (plan === "free") {
@@ -199,7 +209,7 @@ function UpgradeView() {
     }
     if (selected === "plus") {
       return isAuthenticated
-        ? t("hintPlusAuth", { price: prices.plus, cadence })
+        ? t("hintPlusAuth", { price: plusPriceLabel, cadence })
         : t("hintPlusGuest")
     }
     if (selected === "ultimate") {
@@ -214,16 +224,9 @@ function UpgradeView() {
       : continueLabel(selected)
 
   function planPrice(key: PlanKey) {
-    const raw = prices[key]
-    if (key === "ultimate" && parsePriceAmount(raw) === null) {
-      return t("customPrice")
-    }
-    return raw
-  }
-
-  function planPriceWas(key: PlanKey): string | null {
-    if (key !== "plus") return null
-    return getLandingPlanPrice("plus").priceWas
+    if (key === "free") return "$0"
+    if (key === "ultimate") return t("customPrice")
+    return plusPriceLabel
   }
 
   return (
@@ -343,7 +346,6 @@ function UpgradeView() {
                       name={t(`plans.${plan.key}.name`)}
                       description={t(`plans.${plan.key}.description`)}
                       price={planPrice(plan.key)}
-                      priceWas={planPriceWas(plan.key)}
                       cadence={cadence}
                       features={features}
                       selected={selected === plan.key}

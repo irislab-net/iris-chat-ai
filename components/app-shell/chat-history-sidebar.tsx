@@ -3,7 +3,6 @@
 import * as React from "react"
 import { Link } from "@/i18n/navigation"
 import {
-  LogOutIcon,
   MessageSquareIcon,
   MoreHorizontalIcon,
   NewspaperIcon,
@@ -12,9 +11,8 @@ import {
   PencilIcon,
   PinIcon,
   PinOffIcon,
-  ReceiptIcon,
+  SearchIcon,
   Settings,
-  SparklesIcon,
   Trash2Icon,
   XIcon,
   HouseIcon,
@@ -24,11 +22,11 @@ import { useLocale, useTranslations } from "next-intl"
 import { AttentionPulseDot } from "@/components/app-shell/attention-pulse-dot"
 import { ChatAccountAvatar } from "@/components/app-shell/chat-account-avatar"
 import {
-  AccountCookieSettingsItem,
-  AccountLanguageItems,
-  AccountThemeItems,
-} from "@/components/app-shell/chat-account-preferences"
+  AccountGuestMenuSections,
+  AccountSignedInMenuSections,
+} from "@/components/app-shell/chat-account-menu-sections"
 import { ChatGeminiNewChatIcon } from "@/components/app-shell/chat-gemini-new-chat-icon"
+import { ChatHistorySearchDialog } from "@/components/app-shell/chat-history-search-dialog"
 import { ExurLogo } from "@/components/brand/exur-logo"
 import { useAuth } from "@/components/auth/auth-provider"
 import { displayPlanName } from "@/lib/billing/catalog"
@@ -51,8 +49,14 @@ import {
   chatContextMenuSeparatorClass,
 } from "@/components/app-shell/chat-context-menu-styles"
 import {
+  chatHistoryRailChatItemClass,
+  chatHistoryRailChatItemPadClass,
+  chatHistoryRailGlassItemActiveClass,
+  chatHistoryRailHeaderBarClass,
+  chatHistoryRailHeaderWrapClass,
+  chatHistoryRailNavItemClass,
+  chatHistoryRailSectionLabelClass,
   chatMobileDrawerFooterBarClass,
-  chatMobileDrawerFooterFadeClass,
   chatMobileDrawerFooterWrapClass,
   chatMobileDrawerNavItemClass,
   chatMobileDrawerSectionLabelClass,
@@ -76,7 +80,6 @@ import {
   EmptyTitle,
 } from "@/components/ui/empty"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Separator } from "@/components/ui/separator"
 import { Skeleton } from "@/components/ui/skeleton"
 import {
   Tooltip,
@@ -90,7 +93,7 @@ import {
 } from "@/lib/chat-storage"
 import { CHAT_HISTORY_RAIL_COLLAPSED_WIDTH } from "@/lib/chat-history-rail-prefs"
 import { localeDirection } from "@/lib/i18n/locale"
-import { BILLING_PATH, getLandingHref, UPGRADE_PATH } from "@/lib/site"
+import { getLandingHref, UPGRADE_PATH } from "@/lib/site"
 import {
   userAccountLabel,
   userAccountSubline,
@@ -113,8 +116,35 @@ const rowMenuButtonClass =
 const rowMenuButtonHoverRevealClass =
   "opacity-100 [@media(hover:hover)]:opacity-0 [@media(hover:hover)]:group-hover/item:opacity-100 [@media(hover:hover)]:group-focus-within/item:opacity-100"
 
-const historyRailIconButtonClass =
-  "size-9 shrink-0 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground"
+const historyRailGlassIconButtonClass = cn(
+  chatMobileHeaderButtonClass,
+  "size-9 shrink-0 [&_svg:not([class*='size-'])]:size-4 [&_svg]:stroke-[1.75]"
+)
+
+function HistoryRailSearchButton({ onOpen }: { onOpen: () => void }) {
+  const t = useTranslations("workspace")
+  const { tooltipSide } = useSidebarDir()
+
+  return (
+    <Tooltip>
+      <TooltipTrigger
+        render={
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon-sm"
+            className={historyRailGlassIconButtonClass}
+            aria-label={t("searchChats")}
+            onClick={onOpen}
+          />
+        }
+      >
+        <SearchIcon className="size-4" />
+      </TooltipTrigger>
+      <TooltipContent side={tooltipSide}>{t("searchChats")}</TooltipContent>
+    </Tooltip>
+  )
+}
 
 function HistoryRailToggleButton({
   collapsed,
@@ -136,7 +166,7 @@ function HistoryRailToggleButton({
             type="button"
             variant="ghost"
             size="icon-sm"
-            className={historyRailIconButtonClass}
+            className={historyRailGlassIconButtonClass}
             aria-label={label}
             aria-expanded={!collapsed}
             onClick={onToggle}
@@ -173,7 +203,7 @@ function HistoryNewsNav({
               type="button"
               variant="ghost"
               size="icon"
-              className={cn(historyRailIconButtonClass, "relative")}
+              className={cn(historyRailGlassIconButtonClass, "relative")}
               aria-label={t("news")}
               onClick={(event) => {
                 event.stopPropagation()
@@ -199,10 +229,8 @@ function HistoryNewsNav({
       type="button"
       variant="ghost"
       className={cn(
-        "relative justify-start gap-3 text-sm font-normal shadow-none",
-        isMobileDrawer
-          ? cn("mb-1", chatMobileDrawerNavItemClass)
-          : "mb-1 h-9 w-full rounded-lg px-3 hover:bg-muted/50"
+        "relative",
+        isMobileDrawer ? chatMobileDrawerNavItemClass : chatHistoryRailNavItemClass
       )}
       onClick={(event) => {
         event.stopPropagation()
@@ -242,7 +270,7 @@ function HistoryHomeNav({
             <Button
               variant="ghost"
               size="icon"
-              className={historyRailIconButtonClass}
+              className={historyRailGlassIconButtonClass}
               aria-label={t("home")}
               nativeButton={false}
               render={<a href={landingHref} />}
@@ -261,12 +289,9 @@ function HistoryHomeNav({
   return (
     <Button
       variant="ghost"
-      className={cn(
-        "justify-start gap-3 text-sm font-normal shadow-none",
-        isMobileDrawer
-          ? cn("mb-1", chatMobileDrawerNavItemClass)
-          : "mb-2 h-9 w-full rounded-lg px-3 hover:bg-muted/50"
-      )}
+      className={
+        isMobileDrawer ? chatMobileDrawerNavItemClass : chatHistoryRailNavItemClass
+      }
       nativeButton={false}
       render={<a href={landingHref} />}
     >
@@ -315,11 +340,10 @@ function MobileHistoryDrawerFooter({
 
   return (
     <footer className={chatMobileDrawerFooterWrapClass}>
-      <div aria-hidden className={chatMobileDrawerFooterFadeClass} />
       <div
         className={cn(
           chatMobileDrawerFooterBarClass,
-          "flex items-center gap-2 px-4 pb-[max(0.5rem,env(safe-area-inset-bottom,0px))]"
+          "flex items-center gap-2 px-4 py-2 pb-[max(0.5rem,env(safe-area-inset-bottom,0px))]"
         )}
       >
       {user ? (
@@ -390,55 +414,38 @@ function MobileHistoryDrawerFooter({
           sideOffset={8}
           className={cn(chatContextMenuContentClass, "min-w-64")}
         >
-          {user && !isProUser ? (
-            <DropdownMenuItem
-              className={chatContextMenuItemClass}
-              nativeButton={false}
-              render={<Link href={UPGRADE_PATH} />}
-            >
-              <SparklesIcon className={chatContextMenuIconClass} />
-              {t("upgradeToPlus")}
-            </DropdownMenuItem>
-          ) : null}
           {user ? (
-            <DropdownMenuItem
-              className={chatContextMenuItemClass}
-              nativeButton={false}
-              render={<Link href={BILLING_PATH} />}
-            >
-              <ReceiptIcon className={chatContextMenuIconClass} />
-              {t("billing")}
-            </DropdownMenuItem>
-          ) : null}
-          {onOpenNews ? (
-            <DropdownMenuItem
-              className={chatContextMenuItemClass}
-              onClick={onOpenNews}
-            >
-              <NewspaperIcon className={chatContextMenuIconClass} />
-              {t("news")}
-            </DropdownMenuItem>
-          ) : null}
-          {(user || onOpenNews) ? (
-            <DropdownMenuSeparator className={chatContextMenuSeparatorClass} />
-          ) : null}
-          <AccountThemeItems />
-          <DropdownMenuSeparator className={chatContextMenuSeparatorClass} />
-          <AccountLanguageItems />
-          <AccountCookieSettingsItem />
-          {user ? (
+            <AccountSignedInMenuSections
+              user={user}
+              isProUser={isProUser}
+              planName={
+                displayPlanName(user.tier) === "Plus"
+                  ? t("planPlus")
+                  : displayPlanName(user.tier) === "Ultimate"
+                    ? t("planUltimate")
+                    : t("planFree")
+              }
+              avatarUrl={avatarUrl ?? null}
+              onLogout={logout}
+              onOpenNews={onOpenNews}
+            />
+          ) : (
             <>
-              <DropdownMenuSeparator className={chatContextMenuSeparatorClass} />
-              <DropdownMenuItem
-                variant="destructive"
-                className={chatContextMenuDeleteClass}
-                onClick={() => void logout()}
-              >
-                <LogOutIcon className="size-4.5 shrink-0" />
-                {t("logOut")}
-              </DropdownMenuItem>
+              {onOpenNews ? (
+                <DropdownMenuItem
+                  className={chatContextMenuItemClass}
+                  onClick={onOpenNews}
+                >
+                  <NewspaperIcon className={chatContextMenuIconClass} />
+                  {t("news")}
+                </DropdownMenuItem>
+              ) : null}
+              <AccountGuestMenuSections
+                loginPending={loginPending}
+                onLogin={() => login({ source: "chat" })}
+              />
             </>
-          ) : null}
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
       </div>
@@ -471,6 +478,7 @@ function ChatHistorySidebar({
   const isMobileDrawer = variant === "mobile-drawer"
   const [renameTarget, setRenameTarget] =
     React.useState<StoredConversation | null>(null)
+  const [searchOpen, setSearchOpen] = React.useState(false)
 
   const sorted = React.useMemo(
     () => sortConversations(conversations),
@@ -478,6 +486,26 @@ function ChatHistorySidebar({
   )
   const pinned = sorted.filter((chat) => chat.pinned)
   const recent = sorted.filter((chat) => !chat.pinned)
+
+  React.useEffect(() => {
+    function onKeyDown(event: KeyboardEvent) {
+      if (!(event.metaKey || event.ctrlKey) || event.key.toLowerCase() !== "k") {
+        return
+      }
+      const target = event.target as HTMLElement | null
+      if (
+        target?.closest(
+          "input, textarea, select, [contenteditable=true], [role='textbox']"
+        )
+      ) {
+        return
+      }
+      event.preventDefault()
+      setSearchOpen(true)
+    }
+    window.addEventListener("keydown", onKeyDown)
+    return () => window.removeEventListener("keydown", onKeyDown)
+  }, [])
 
   function openRename(chat: StoredConversation) {
     setRenameTarget(chat)
@@ -511,52 +539,78 @@ function ChatHistorySidebar({
                 {t("iris")}
               </h2>
             </div>
-            {onClose ? (
+            <div className="flex shrink-0 items-center gap-1.5">
               <Button
                 type="button"
                 variant="ghost"
                 size="icon"
                 className={chatMobileHeaderButtonClass}
-                aria-label={t("closeChatHistory")}
-                onClick={onClose}
+                aria-label={t("searchChats")}
+                onClick={() => setSearchOpen(true)}
               >
-                <XIcon className="size-4.5" />
+                <SearchIcon className="size-4.5" />
               </Button>
-            ) : null}
+              {onClose ? (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className={chatMobileHeaderButtonClass}
+                  aria-label={t("closeChatHistory")}
+                  onClick={onClose}
+                >
+                  <XIcon className="size-4.5" />
+                </Button>
+              ) : null}
+            </div>
           </header>
         ) : showBrandHeader ? (
           <header
             className={cn(
-              "flex shrink-0 items-center gap-1 pt-2.5 pb-1",
-              collapsed ? "flex-col px-1" : "px-2"
+              chatHistoryRailHeaderWrapClass,
+              collapsed ? "flex-col" : undefined
             )}
           >
             <div
               className={cn(
-                "flex min-w-0 items-center gap-2.5",
-                collapsed
-                  ? "justify-center px-0"
-                  : "flex-1 px-1"
+                chatHistoryRailHeaderBarClass,
+                "flex items-center gap-1 pt-2.5 pb-1",
+                collapsed ? "flex-col px-1" : "px-2"
               )}
             >
-              <ExurLogo
-                decorative
-                variant="gradient"
-                size={32}
-                className="size-8 shrink-0 overflow-hidden rounded-full"
-              />
-              {!collapsed ? (
-                <span className="min-w-0 truncate text-[15px] font-normal leading-none tracking-tight text-sidebar-foreground/90">
-                  {t("iris")}
-                </span>
-              ) : null}
+              <div
+                className={cn(
+                  "flex min-w-0 items-center gap-2.5",
+                  collapsed ? "justify-center px-0" : "flex-1 px-1"
+                )}
+              >
+                <ExurLogo
+                  decorative
+                  variant="gradient"
+                  size={32}
+                  className="size-8 shrink-0 overflow-hidden rounded-full"
+                />
+                {!collapsed ? (
+                  <span className="min-w-0 truncate text-[15px] font-medium leading-none tracking-tight text-sidebar-foreground">
+                    {t("iris")}
+                  </span>
+                ) : null}
+              </div>
+              <div
+                className={cn(
+                  "flex shrink-0 items-center gap-1",
+                  collapsed && "flex-col"
+                )}
+              >
+                <HistoryRailSearchButton onOpen={() => setSearchOpen(true)} />
+                {onToggleCollapsed ? (
+                  <HistoryRailToggleButton
+                    collapsed={collapsed}
+                    onToggle={onToggleCollapsed}
+                  />
+                ) : null}
+              </div>
             </div>
-            {onToggleCollapsed ? (
-              <HistoryRailToggleButton
-                collapsed={collapsed}
-                onToggle={onToggleCollapsed}
-              />
-            ) : null}
           </header>
         ) : null}
 
@@ -565,67 +619,73 @@ function ChatHistorySidebar({
             className={cn(
               "flex flex-col",
               isMobileDrawer
-                ? "px-2 pb-[calc(3.25rem+env(safe-area-inset-bottom,0px))] pt-3"
+                ? "gap-1.5 px-2 pb-[calc(3.25rem+env(safe-area-inset-bottom,0px))] pt-3"
                 : showBrandHeader
-                  ? "px-2 pb-2 pt-3"
-                  : "px-2 pb-2 pt-1"
+                  ? "gap-1.5 px-2 pt-3 pb-4"
+                  : "gap-1.5 px-2 pt-1 pb-4"
             )}
           >
-            {onNewChat ? (
-              collapsed && !isMobileDrawer ? (
-                <Tooltip>
-                  <TooltipTrigger
-                    render={
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        disabled={sending}
-                        className={cn(historyRailIconButtonClass, "mx-auto")}
-                        aria-label={t("newChat")}
-                        onClick={onNewChat}
-                      />
+            <div
+              className={cn(
+                "flex flex-col gap-1.5",
+                collapsed && !isMobileDrawer && "items-center"
+              )}
+            >
+              {onNewChat ? (
+                collapsed && !isMobileDrawer ? (
+                  <Tooltip>
+                    <TooltipTrigger
+                      render={
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          disabled={sending}
+                          className={historyRailGlassIconButtonClass}
+                          aria-label={t("newChat")}
+                          onClick={onNewChat}
+                        />
+                      }
+                    >
+                      <ChatGeminiNewChatIcon className="h-4.5" />
+                    </TooltipTrigger>
+                    <TooltipContent side={tooltipSide}>{t("newChat")}</TooltipContent>
+                  </Tooltip>
+                ) : (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    disabled={sending}
+                    className={
+                      isMobileDrawer
+                        ? chatMobileDrawerNavItemClass
+                        : chatHistoryRailNavItemClass
                     }
+                    onClick={onNewChat}
                   >
-                    <ChatGeminiNewChatIcon className="h-4.5" />
-                  </TooltipTrigger>
-                  <TooltipContent side={tooltipSide}>{t("newChat")}</TooltipContent>
-                </Tooltip>
-              ) : (
-                <Button
-                  type="button"
-                  variant="ghost"
-                  disabled={sending}
-                  className={cn(
-                    "justify-start gap-3 text-sm font-normal shadow-none",
-                    isMobileDrawer
-                      ? cn("mb-1", chatMobileDrawerNavItemClass)
-                      : "h-9 w-full rounded-lg px-3 hover:bg-muted/50"
-                  )}
-                  onClick={onNewChat}
-                >
-                  <ChatGeminiNewChatIcon
-                    className={cn(
-                      "text-foreground",
-                      isMobileDrawer ? "h-4.5" : "h-4"
-                    )}
-                  />
-                  {t("newChat")}
-                </Button>
-              )
-            ) : null}
-            {onOpenNews ? (
-              <HistoryNewsNav
-                onOpenNews={onOpenNews}
+                    <ChatGeminiNewChatIcon
+                      className={cn(
+                        "text-foreground",
+                        isMobileDrawer ? "h-4.5" : "h-4"
+                      )}
+                    />
+                    {t("newChat")}
+                  </Button>
+                )
+              ) : null}
+              {onOpenNews ? (
+                <HistoryNewsNav
+                  onOpenNews={onOpenNews}
+                  isMobileDrawer={isMobileDrawer}
+                  minimal={collapsed && !isMobileDrawer}
+                  showSpotlight={showNewsSpotlight}
+                />
+              ) : null}
+              <HistoryHomeNav
                 isMobileDrawer={isMobileDrawer}
                 minimal={collapsed && !isMobileDrawer}
-                showSpotlight={showNewsSpotlight}
               />
-            ) : null}
-            <HistoryHomeNav
-              isMobileDrawer={isMobileDrawer}
-              minimal={collapsed && !isMobileDrawer}
-            />
+            </div>
 
             {collapsed && !isMobileDrawer ? null : conversations.length === 0 ? (
               <Empty className="mx-1 mt-4 border-0 p-4">
@@ -640,7 +700,7 @@ function ChatHistorySidebar({
                 </EmptyHeader>
               </Empty>
             ) : (
-              <>
+              <div className="mt-3 flex flex-col gap-4">
                 {pinned.length > 0 ? (
                   <ConversationSection
                     label={t("pinnedChats")}
@@ -656,10 +716,6 @@ function ChatHistorySidebar({
                   />
                 ) : null}
 
-                {pinned.length > 0 && recent.length > 0 && !isMobileDrawer ? (
-                  <Separator className="mx-2 my-2" />
-                ) : null}
-
                 <ConversationSection
                   label={t("recentChats")}
                   chats={recent}
@@ -670,10 +726,9 @@ function ChatHistorySidebar({
                   onRename={openRename}
                   onTogglePin={onTogglePin}
                   onDelete={onDelete}
-                  className={pinned.length > 0 ? "pt-0" : undefined}
                   compact={isMobileDrawer}
                 />
-              </>
+              </div>
             )}
           </div>
         </ScrollArea>
@@ -684,6 +739,14 @@ function ChatHistorySidebar({
           footer
         )}
       </div>
+
+      <ChatHistorySearchDialog
+        open={searchOpen}
+        onOpenChange={setSearchOpen}
+        conversations={conversations}
+        conversationId={conversationId}
+        onSelect={onSelect}
+      />
 
       <ChatRenameDialog
         open={renameTarget != null}
@@ -728,17 +791,17 @@ function ConversationSection({
   if (chats.length === 0) return null
 
   return (
-    <section className={cn(compact ? "pt-2" : "pt-4", className)}>
+    <section className={className}>
       <p
         className={cn(
           compact
             ? chatMobileDrawerSectionLabelClass
-            : "px-3 pb-1.5 text-xs text-muted-foreground"
+            : chatHistoryRailSectionLabelClass
         )}
       >
         {label}
       </p>
-      <ul className={cn("flex flex-col", compact ? "gap-0.5 px-1" : "gap-0.5")}>
+      <ul className={cn("flex flex-col", compact ? "gap-1.5 px-1" : "gap-1.5")}>
         {chats.map((chat) => (
           <li key={chat.id}>
             {deletingIds?.has(chat.id) ? (
@@ -768,8 +831,8 @@ function ConversationRowSkeleton({ compact = false }: { compact?: boolean }) {
       className={cn(
         "flex min-w-0 items-center",
         compact
-          ? "h-11 gap-0 rounded-full px-4"
-          : "gap-2.5 rounded-lg px-3 py-2"
+          ? cn(chatHistoryRailChatItemClass, chatHistoryRailChatItemPadClass, "h-11 px-4")
+          : cn(chatHistoryRailChatItemClass, chatHistoryRailChatItemPadClass, "h-9 gap-2.5 px-3")
       )}
       aria-busy="true"
       role="status"
@@ -856,18 +919,9 @@ function ConversationRow({
   const row = (
     <div
       className={cn(
-        "group/item relative flex min-w-0 items-center transition-colors",
-        compact
-          ? cn(
-              "rounded-full px-1",
-              active
-                ? "bg-muted/75 dark:bg-muted/45"
-                : "hover:bg-muted/45 dark:hover:bg-muted/30"
-            )
-          : cn(
-              "gap-1 rounded-lg px-1 py-0.5",
-              active ? "bg-muted" : "hover:bg-muted/50"
-            )
+        chatHistoryRailChatItemClass,
+        chatHistoryRailChatItemPadClass,
+        active && chatHistoryRailGlassItemActiveClass
       )}
     >
       <Button
@@ -876,7 +930,7 @@ function ConversationRow({
         className={cn(
           "min-w-0 flex-1 justify-start text-start font-normal shadow-none hover:bg-transparent",
           compact
-            ? "h-11 gap-0 rounded-full px-4 pe-1 text-[15px]"
+            ? "h-11 gap-0 rounded-xl px-4 pe-1 text-[15px]"
             : "h-9 gap-2.5 rounded-md px-2 text-sm"
         )}
         onClick={onSelect}
@@ -977,7 +1031,7 @@ function ChatHistoryRail({
     <aside
       dir={dir}
       className={cn(
-        "relative flex h-full min-h-0 shrink-0 flex-col overflow-hidden bg-sidebar text-sidebar-foreground transition-[width] duration-200 ease-out",
+        "relative flex h-full min-h-0 shrink-0 flex-col overflow-hidden rounded-e-xl bg-sidebar text-sidebar-foreground transition-[width] duration-200 ease-out",
         className
       )}
       style={{ width: collapsed ? CHAT_HISTORY_RAIL_COLLAPSED_WIDTH : sidebarWidth }}

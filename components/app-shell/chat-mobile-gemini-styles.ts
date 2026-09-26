@@ -149,15 +149,15 @@ const chatDesktopComposerShellClass =
 const chatDesktopComposerBodyClass =
   `isolate grid grid-cols-[auto_1fr_auto] overflow-hidden rounded-[22px] px-1.5 pb-1.5 pt-0.5 text-foreground transition-[box-shadow,background-color,ring-color] duration-300 ease-out [grid-template-areas:'primary_primary_primary'_'leading_._trailing'] ${chatMobileComposerGlassClass} ${chatDesktopComposerGlassBorderClass} ${chatMobileComposerGlassFocusClass} focus-within:ring-black/[0.06] dark:focus-within:ring-white/18`
 
-/** Nested control chips — soft surface that sits above the composer shell. */
+/** Nested control chips — liquid glass above the composer shell. */
 const chatDesktopComposerControlClass =
-  "border-0 bg-black/[0.04] ring-1 ring-inset ring-black/[0.04] shadow-none transition-[background-color,box-shadow,transform,color,ring-color] hover:bg-black/[0.07] hover:ring-black/[0.06] active:scale-[0.98] dark:bg-white/[0.08] dark:ring-white/10 dark:hover:bg-white/[0.12] dark:hover:ring-white/14"
+  `border-0 text-foreground transition-[transform,background-color,box-shadow,color] active:scale-[0.98] ${chatMobileGlassSurfaceClass} ${chatMobileHeaderShadowClass} ${chatMobileHeaderShadowHoverClass}`
 
 const chatDesktopComposerIconButtonClass =
-  `${chatDesktopComposerControlClass} size-9 rounded-xl text-muted-foreground hover:text-foreground sm:size-8 [&_svg]:stroke-[1.75]`
+  `${chatDesktopComposerControlClass} size-9 rounded-full text-muted-foreground hover:text-foreground sm:size-8 [&_svg]:stroke-[1.75]`
 
 const chatDesktopComposerEffortButtonClass =
-  `${chatDesktopComposerControlClass} h-9 gap-1 rounded-xl px-2.5 text-xs font-medium text-muted-foreground hover:text-foreground sm:h-8 [&_svg]:opacity-70`
+  `${chatDesktopComposerControlClass} h-9 gap-1 rounded-full px-2.5 text-xs font-medium text-muted-foreground hover:text-foreground sm:h-8 [&_svg]:opacity-70`
 
 /** Send / stop — deep blue (Gemini-style accent). */
 const chatDesktopComposerSendClass =
@@ -233,23 +233,52 @@ const chatMobileScrollDownClass =
 
 const chatMobileDrawerSurfaceClass = "bg-background text-foreground"
 
+/** History rail / drawer — idle transparent; menu-like soft highlight on hover. */
+const chatHistoryRailGlassItemHoverClass =
+  "hover:bg-foreground/[0.05] dark:hover:bg-foreground/[0.08]"
+
+const chatHistoryRailGlassItemClass =
+  `border-0 bg-transparent text-foreground shadow-none transition-[transform,background-color] active:scale-[0.985] ${chatHistoryRailGlassItemHoverClass}`
+
+const chatHistoryRailGlassItemActiveClass =
+  "bg-foreground/[0.08] dark:bg-foreground/[0.12]"
+
+const chatHistoryRailNavItemClass =
+  `h-9 w-full justify-start gap-2.5 rounded-xl px-3 text-sm font-normal shadow-none ${chatHistoryRailGlassItemClass}`
+
+const chatHistoryRailSectionLabelClass =
+  "px-3 pb-1.5 text-[11px] font-medium tracking-[0.06em] text-muted-foreground/75 uppercase"
+
+const chatHistoryRailChatItemClass =
+  `group/item relative flex min-w-0 items-center gap-1 rounded-xl ${chatHistoryRailGlassItemClass}`
+
+const chatHistoryRailChatItemPadClass = "px-1 py-0.5"
+
 const chatMobileDrawerNavItemClass =
-  "h-11 w-full justify-start gap-4 rounded-xl px-3 text-[15px] font-normal text-foreground shadow-none hover:bg-accent"
+  `h-11 w-full justify-start gap-3 rounded-xl px-3 text-[15px] font-normal shadow-none ${chatHistoryRailGlassItemClass}`
 
 const chatMobileDrawerSectionLabelClass =
-  "px-3 pb-2 pt-5 text-[13px] font-normal text-muted-foreground first:pt-2"
+  "px-3 pb-1.5 text-[12px] font-medium tracking-[0.04em] text-muted-foreground/80 uppercase"
 
 const chatMobileDrawerUpgradeClass =
   `h-9 shrink-0 rounded-full px-5 text-sm font-medium ${chatMobilePrimaryButtonClass}`
 
 const chatMobileDrawerFooterWrapClass = "relative z-10 shrink-0"
 
-/** Short fade above drawer footer — blur only at the edge, no shadow band. */
-const chatMobileDrawerFooterFadeClass =
-  "pointer-events-none absolute inset-x-0 bottom-full h-6 bg-gradient-to-b from-transparent to-background backdrop-blur-[2px] backdrop-saturate-150 [mask-image:linear-gradient(to_bottom,transparent_0%,black_85%)] [-webkit-mask-image:linear-gradient(to_bottom,transparent_0%,black_85%)] supports-[backdrop-filter]:to-background/95"
-
 const chatMobileDrawerFooterBarClass =
-  "relative bg-background/88 py-2 backdrop-blur-xl backdrop-saturate-150 supports-[backdrop-filter]:bg-background/72"
+  "relative bg-background"
+
+/** Desktop history rail account footer — bg itself softens at the top into the list. */
+const chatHistoryRailFooterWrapClass =
+  "pointer-events-none relative z-10 -mt-8 shrink-0 pt-8 [background:linear-gradient(to_top,var(--sidebar)_0%,var(--sidebar)_calc(100%-2rem),color-mix(in_oklch,var(--sidebar)_45%,transparent)_calc(100%-0.75rem),transparent_100%)]"
+
+const chatHistoryRailFooterBarClass = "pointer-events-auto relative"
+
+/** Desktop history rail brand header — bg itself softens at the bottom into the list. */
+const chatHistoryRailHeaderWrapClass =
+  "pointer-events-none relative z-10 -mb-8 shrink-0 pb-8 [background:linear-gradient(to_bottom,var(--sidebar)_0%,var(--sidebar)_calc(100%-2rem),color-mix(in_oklch,var(--sidebar)_45%,transparent)_calc(100%-0.75rem),transparent_100%)]"
+
+const chatHistoryRailHeaderBarClass = "pointer-events-auto relative"
 
 /** Shared mobile bottom sheets — guide, privacy, checkout.
  * Cap height to the visible app viewport so sheets stay above the soft keyboard
@@ -298,9 +327,21 @@ const chatMobileSheetConsentCheckedClass =
 const chatMobileSheetConsentUncheckedClass =
   `border-0 bg-white/45 shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_70%,transparent)] backdrop-blur-xl supports-[backdrop-filter]:bg-white/32 hover:bg-white/55 dark:bg-white/[0.06] dark:supports-[backdrop-filter]:bg-white/[0.05] dark:hover:bg-white/[0.09]`
 
-/** Desktop login / consent dialog — same liquid glass language. */
+/** Desktop centered dialogs — same liquid glass language (no `!` — twMerge). */
 const chatLoginConsentDialogClass =
-  `gap-0 overflow-hidden !rounded-[1.5rem] !border-0 !bg-white/78 p-0 !text-foreground !shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_75%,transparent),0_24px_64px_-24px_color-mix(in_oklch,var(--foreground)_22%,transparent)] !ring-0 backdrop-blur-2xl backdrop-saturate-[180%] supports-[backdrop-filter]:!bg-white/62 sm:max-w-[24rem] dark:!bg-white/[0.08] dark:!shadow-[inset_0_1px_0_0_color-mix(in_oklch,var(--foreground)_10%,transparent),0_24px_64px_-24px_color-mix(in_oklch,black_50%,transparent)] dark:supports-[backdrop-filter]:!bg-white/[0.06]`
+  "gap-0 overflow-hidden rounded-[1.5rem] border-0 bg-white/78 p-0 text-foreground shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_75%,transparent),0_24px_64px_-24px_color-mix(in_oklch,var(--foreground)_22%,transparent)] ring-0 backdrop-blur-2xl backdrop-saturate-[180%] supports-[backdrop-filter]:bg-white/62 sm:max-w-[24rem] dark:bg-white/[0.08] dark:shadow-[inset_0_1px_0_0_color-mix(in_oklch,var(--foreground)_10%,transparent),0_24px_64px_-24px_color-mix(in_oklch,black_50%,transparent)] dark:supports-[backdrop-filter]:bg-white/[0.06]"
+
+const chatDesktopDialogClass = chatLoginConsentDialogClass
+
+/** Wider search / command-style dialog. */
+const chatDesktopSearchDialogClass =
+  "flex w-full max-w-[calc(100%-2rem)] flex-col gap-0 overflow-hidden rounded-[1.5rem] border-0 bg-white/78 p-0 text-foreground shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_75%,transparent),0_24px_64px_-24px_color-mix(in_oklch,var(--foreground)_22%,transparent)] ring-0 backdrop-blur-2xl backdrop-saturate-[180%] supports-[backdrop-filter]:bg-white/62 sm:max-w-xl dark:bg-white/[0.08] dark:shadow-[inset_0_1px_0_0_color-mix(in_oklch,var(--foreground)_10%,transparent),0_24px_64px_-24px_color-mix(in_oklch,black_50%,transparent)] dark:supports-[backdrop-filter]:bg-white/[0.06]"
+
+const chatDesktopDialogInputClass =
+  `h-10 w-full rounded-xl border-0 px-3 text-sm text-foreground shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_70%,transparent)] backdrop-blur-xl ${chatMobileGlassSurfaceClass} placeholder:text-muted-foreground/50 focus-visible:ring-2 focus-visible:ring-foreground/15 dark:placeholder:text-muted-foreground/40`
+
+const chatDesktopDialogFooterClass =
+  "mx-0 mb-0 gap-2 rounded-none border-0 bg-transparent p-4 pt-2 sm:justify-end"
 
 const chatLoginConsentBrandMarkClass =
   `flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-full ${chatMobileGlassSurfaceClass} ${chatMobileHeaderShadowClass}`
@@ -341,7 +382,8 @@ const chatSignalCardMetricTileClass =
   "rounded-xl border-0 bg-white/50 shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_78%,transparent),0_3px_14px_-10px_color-mix(in_oklch,var(--foreground)_9%,transparent)] backdrop-blur-md backdrop-saturate-150 supports-[backdrop-filter]:bg-white/36 dark:bg-white/[0.08] dark:shadow-[inset_0_1px_0_0_color-mix(in_oklch,var(--foreground)_10%,transparent),0_4px_16px_-12px_color-mix(in_oklch,black_32%,transparent)] dark:supports-[backdrop-filter]:bg-white/[0.06]"
 
 /** Desktop news panel — distinct sidebar surface; glass stays on cards/controls. */
-const chatNewsPanelShellClass = "border-0 bg-sidebar text-sidebar-foreground"
+const chatNewsPanelShellClass =
+  "border-0 bg-sidebar text-sidebar-foreground rounded-s-xl"
 
 /** Mobile news sheet — same solid fill as the main app / history drawer. */
 const chatNewsPanelShellMobileClass = `border-0 ${chatMobileDrawerSurfaceClass}`
@@ -350,10 +392,10 @@ const chatNewsPanelHeaderClass =
   "app-mobile-safe-header flex shrink-0 items-start justify-between gap-3 px-4 pb-3 pt-1"
 
 const chatNewsFreshnessBadgeClass =
-  `inline-flex h-8 shrink-0 items-center rounded-full px-2.5 font-mono text-[10px] font-normal tracking-tight text-muted-foreground ${chatMobileGlassSurfaceClass} ${chatMobileHeaderShadowClass}`
+  "inline-flex h-8 shrink-0 items-center rounded-lg bg-foreground/[0.05] px-2.5 font-mono text-[10px] font-normal tracking-tight text-muted-foreground dark:bg-foreground/[0.08]"
 
 const chatNewsReadAllButtonClass =
-  `inline-flex h-8 shrink-0 items-center gap-1.5 rounded-full px-2.5 text-xs font-medium tracking-[-0.01em] text-foreground ${chatMobileGlassSurfaceClass} ${chatMobileHeaderShadowClass} ${chatMobileHeaderShadowHoverClass} transition-[transform,background-color,box-shadow] active:scale-[0.98] hover:bg-white/88 dark:hover:bg-white/[0.12] [&_svg:not([class*='size-'])]:size-3.5 [&_svg]:opacity-70`
+  "inline-flex h-8 shrink-0 items-center gap-1.5 rounded-lg bg-foreground/[0.05] px-2.5 text-xs font-medium tracking-[-0.01em] text-foreground transition-colors hover:bg-foreground/[0.08] dark:bg-foreground/[0.08] dark:hover:bg-foreground/[0.12] [&_svg:not([class*='size-'])]:size-3.5 [&_svg]:opacity-70"
 
 /** News cards / tape — same liquid glass language as signal cards. */
 const chatNewsGlassCardClass = chatSignalCardClass
@@ -390,8 +432,17 @@ export {
   chatMobileEmptyHeroMarkClass,
   chatMobileEmptyHeroTitleClass,
   chatMobileEmptyHeroWrapClass,
+  chatHistoryRailChatItemClass,
+  chatHistoryRailChatItemPadClass,
+  chatHistoryRailFooterBarClass,
+  chatHistoryRailFooterWrapClass,
+  chatHistoryRailHeaderBarClass,
+  chatHistoryRailHeaderWrapClass,
+  chatHistoryRailGlassItemActiveClass,
+  chatHistoryRailGlassItemClass,
+  chatHistoryRailNavItemClass,
+  chatHistoryRailSectionLabelClass,
   chatMobileDrawerFooterBarClass,
-  chatMobileDrawerFooterFadeClass,
   chatMobileDrawerFooterWrapClass,
   chatMobileDrawerNavItemClass,
   chatMobileDrawerSectionLabelClass,
@@ -453,6 +504,10 @@ export {
   chatMobileSheetTitleClass,
   chatLoginConsentBrandMarkClass,
   chatLoginConsentDialogClass,
+  chatDesktopDialogClass,
+  chatDesktopDialogFooterClass,
+  chatDesktopDialogInputClass,
+  chatDesktopSearchDialogClass,
   chatMobileThreadClass,
   chatMobileThreadFirstTurnClass,
   chatMobileThreadTopSpacerClass,

@@ -7,8 +7,11 @@ import { useTranslations } from "next-intl"
 
 import { Button } from "@/components/ui/button"
 import type { PaymentCurrency } from "@/lib/billing/invoice-types"
-import { PAYMENT_NETWORK } from "@/lib/billing/payment-options"
-import { landingCta } from "@/lib/landing-modern-styles"
+import {
+  landingCta,
+  landingGlassSheen,
+  landingGlassSurface,
+} from "@/lib/landing-modern-styles"
 import { cn } from "@/lib/utils"
 
 type DepositAddressCardProps = {
@@ -20,7 +23,6 @@ type DepositAddressCardProps = {
 
 export function DepositAddressCard({
   address,
-  currency,
   compact = false,
 }: DepositAddressCardProps) {
   const t = useTranslations("upgradePage.crypto")
@@ -37,21 +39,42 @@ export function DepositAddressCard({
   }
 
   const qrSize = compact ? 176 : 188
+  // Match QR glass frame, then shave a bit so the address reads slightly narrower.
+  const addressWidth = qrSize + 20 + 24 - 12
 
   return (
-    <div className={cn("flex flex-col items-center", compact ? "gap-3.5" : "gap-4")}>
-      <div className="bg-white p-3 dark:bg-white">
-        <QRCode
-          value={address}
-          size={qrSize}
-          level="M"
-          bgColor="#ffffff"
-          fgColor="#0a0a0a"
+    <div
+      className={cn(
+        "flex flex-col items-center",
+        compact ? "gap-2.5" : "gap-3"
+      )}
+    >
+      <div
+        className={cn(
+          landingGlassSurface,
+          "rounded-[1.25rem] bg-white/55 p-2.5 dark:bg-white/10"
+        )}
+      >
+        <span
+          aria-hidden
+          className={cn(landingGlassSheen, "rounded-[1.25rem]")}
         />
+        <div className="relative z-10 overflow-hidden rounded-xl bg-white p-3">
+          <QRCode
+            value={address}
+            size={qrSize}
+            level="M"
+            bgColor="#ffffff"
+            fgColor="#0a0a0a"
+          />
+        </div>
       </div>
 
-      <div className="flex w-full min-w-0 items-center gap-2.5">
-        <code className="min-w-0 flex-1 truncate text-start font-mono text-xs leading-snug text-foreground/90">
+      <div
+        className="flex min-w-0 items-center gap-2"
+        style={{ width: addressWidth }}
+      >
+        <code className="min-w-0 flex-1 break-all text-start font-mono text-xs leading-relaxed tracking-wide text-foreground/90 sm:text-sm">
           {address}
         </code>
         <Button
@@ -68,13 +91,6 @@ export function DepositAddressCard({
           )}
         </Button>
       </div>
-
-      <p className="text-center text-[11px] leading-snug text-muted-foreground">
-        {t("networkOnly", {
-          currency,
-          network: PAYMENT_NETWORK.name,
-        })}
-      </p>
     </div>
   )
 }

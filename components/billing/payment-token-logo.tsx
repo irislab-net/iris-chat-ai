@@ -34,22 +34,19 @@ const NETWORK_PX: Record<NetworkSize, number> = {
 }
 
 /**
- * Official coin marks (CoinGecko CDN — same source as market tape logos).
+ * Official token marks shipped in `/public/billing`.
  * Full circular brand art, not bare glyphs on glass.
  */
 export const PAYMENT_TOKEN_LOGOS = {
-  USDT: "https://assets.coingecko.com/coins/images/325/small/Tether.png",
-  USDC: "https://assets.coingecko.com/coins/images/6319/small/usdc.png",
+  USDT: "/billing/usdt.png",
+  USDC: "/billing/usdc.png",
 } as const satisfies Record<PaymentCurrency, string>
 
 export const PAYMENT_NETWORK_LOGO =
   "https://assets.coingecko.com/coins/images/279/small/ethereum.png"
 
 const discShell =
-  "relative flex shrink-0 items-center justify-center overflow-hidden rounded-full " +
-  "bg-white " +
-  "shadow-[0_0_0_1px_color-mix(in_oklch,var(--foreground)_8%,transparent)] " +
-  "dark:bg-white dark:shadow-[0_0_0_1px_color-mix(in_oklch,var(--foreground)_12%,transparent)]"
+  "relative flex shrink-0 items-center justify-center overflow-hidden rounded-full"
 
 type PaymentTokenLogoProps = {
   currency: PaymentCurrency
@@ -67,7 +64,7 @@ export function PaymentTokenLogo({
 
   return (
     <span
-      className={cn(discShell, "p-[7%]", TOKEN_CLASS[size], className)}
+      className={cn(discShell, TOKEN_CLASS[size], className)}
       aria-hidden
     >
       {!failed ? (
@@ -77,9 +74,8 @@ export function PaymentTokenLogo({
           width={px}
           height={px}
           loading="lazy"
-          referrerPolicy="no-referrer"
           onError={() => setFailed(true)}
-          className="size-full rounded-full object-contain"
+          className="size-full rounded-full object-cover"
         />
       ) : (
         <span className="font-mono text-[9px] font-bold text-muted-foreground">
@@ -108,7 +104,7 @@ export function PaymentNetworkLogo({
         discShell,
         "p-px",
         NETWORK_CLASS[size],
-        "ring-2 ring-background dark:ring-background",
+        "ring-2 ring-white dark:ring-white",
         className
       )}
       aria-hidden
@@ -131,7 +127,7 @@ export function PaymentNetworkLogo({
   )
 }
 
-/** Token + network as an overlapping pair of real brand marks. */
+/** Token brand mark for payment pickers. */
 export function PaymentMethodMark({
   currency,
   size = "md",
@@ -141,13 +137,11 @@ export function PaymentMethodMark({
   size?: Size
   className?: string
 }) {
-  const networkSize: NetworkSize =
-    size === "lg" ? "md" : size === "md" ? "sm" : "xs"
-
   return (
-    <span className={cn("inline-flex shrink-0 items-center", className)} aria-hidden>
-      <PaymentTokenLogo currency={currency} size={size} />
-      <PaymentNetworkLogo size={networkSize} className="-ms-2" />
-    </span>
+    <PaymentTokenLogo
+      currency={currency}
+      size={size}
+      className={className}
+    />
   )
 }

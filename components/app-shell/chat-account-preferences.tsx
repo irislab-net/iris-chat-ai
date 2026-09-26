@@ -15,14 +15,12 @@ import {
   chatContextMenuContentClass,
   chatContextMenuIconClass,
   chatContextMenuItemClass,
-  chatContextMenuSectionLabelClass,
 } from "@/components/app-shell/chat-context-menu-styles"
 import { LocaleFlag } from "@/components/i18n/locale-flag"
 import { openCookieSettings } from "@/components/privacy/cookie-consent-banner"
 import {
   DropdownMenuGroup,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
@@ -50,7 +48,7 @@ function useAccountLocaleSwitch() {
   }
 }
 
-function AccountThemeItems() {
+function useThemeOptions() {
   const common = useTranslations("common")
   const { theme, setTheme } = useTheme()
   const active =
@@ -60,32 +58,51 @@ function AccountThemeItems() {
     { id: "system" as const, label: common("themeSystem"), Icon: MonitorIcon },
     { id: "light" as const, label: common("themeLight"), Icon: SunIcon },
     { id: "dark" as const, label: common("themeDark"), Icon: MoonIcon },
-  ]
+  ] as const
+
+  const current = options.find((option) => option.id === active) ?? options[0]
+
+  return { active, options, current, setTheme, common }
+}
+
+/** Theme flyout — matches Language submenu pattern. */
+function AccountThemeItems() {
+  const { active, options, current, setTheme, common } = useThemeOptions()
+  const CurrentIcon = current.Icon
 
   return (
-    <DropdownMenuGroup>
-      <DropdownMenuLabel className={chatContextMenuSectionLabelClass}>
-        {common("theme")}
-      </DropdownMenuLabel>
-      {options.map(({ id, label, Icon }) => (
-        <DropdownMenuItem
-          key={id}
-          className={chatContextMenuItemClass}
-          onClick={() => setTheme(id)}
-        >
-          <Icon className={chatContextMenuIconClass} />
-          <span className="flex-1">{label}</span>
-          {active === id ? (
-            <CheckIcon
-              className="size-4 shrink-0 text-muted-foreground"
-              aria-hidden
-            />
-          ) : (
-            <span className="size-4 shrink-0" aria-hidden />
-          )}
-        </DropdownMenuItem>
-      ))}
-    </DropdownMenuGroup>
+    <DropdownMenuSub>
+      <DropdownMenuSubTrigger className={cn(chatContextMenuItemClass, "gap-3")}>
+        <CurrentIcon className={chatContextMenuIconClass} />
+        <span className="flex-1 text-start">{common("theme")}</span>
+        <span className="max-w-20 truncate text-xs text-muted-foreground">
+          {current.label}
+        </span>
+      </DropdownMenuSubTrigger>
+      <DropdownMenuSubContent
+        className={cn(chatContextMenuContentClass, "min-w-44")}
+        sideOffset={8}
+      >
+        {options.map(({ id, label, Icon }) => (
+          <DropdownMenuItem
+            key={id}
+            className={chatContextMenuItemClass}
+            onClick={() => setTheme(id)}
+          >
+            <Icon className={chatContextMenuIconClass} />
+            <span className="flex-1">{label}</span>
+            {active === id ? (
+              <CheckIcon
+                className="size-4 shrink-0 text-muted-foreground"
+                aria-hidden
+              />
+            ) : (
+              <span className="size-4 shrink-0" aria-hidden />
+            )}
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuSubContent>
+    </DropdownMenuSub>
   )
 }
 
@@ -95,53 +112,48 @@ function AccountLanguageItems() {
   const currentLabel = common(localeLabelKey(locale))
 
   return (
-    <DropdownMenuGroup>
-      <DropdownMenuLabel className={chatContextMenuSectionLabelClass}>
-        {common("language")}
-      </DropdownMenuLabel>
-      <DropdownMenuSub>
-        <DropdownMenuSubTrigger className={cn(chatContextMenuItemClass, "gap-3")}>
-          <LanguagesIcon className={chatContextMenuIconClass} />
-          <span className="flex-1 text-start">{common("language")}</span>
-          <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
-            <LocaleFlag locale={locale} tone="color" className="size-3.5" />
-            <span className="max-w-16 truncate">{currentLabel}</span>
-          </span>
-        </DropdownMenuSubTrigger>
-        <DropdownMenuSubContent
-          className={cn(chatContextMenuContentClass, "min-w-48")}
-          sideOffset={8}
-        >
-          {routing.locales.map((code) => {
-            const active = locale === code
-            const label = common(localeLabelKey(code))
-            return (
-              <DropdownMenuItem
-                key={code}
-                className={chatContextMenuItemClass}
-                onClick={() => switchLocale(code)}
-              >
-                <LocaleFlag
-                  locale={code}
-                  title={label}
-                  tone={active ? "color" : "mono"}
-                  className="size-5"
+    <DropdownMenuSub>
+      <DropdownMenuSubTrigger className={cn(chatContextMenuItemClass, "gap-3")}>
+        <LanguagesIcon className={chatContextMenuIconClass} />
+        <span className="flex-1 text-start">{common("language")}</span>
+        <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
+          <LocaleFlag locale={locale} tone="color" className="size-3.5" />
+          <span className="max-w-16 truncate">{currentLabel}</span>
+        </span>
+      </DropdownMenuSubTrigger>
+      <DropdownMenuSubContent
+        className={cn(chatContextMenuContentClass, "min-w-48")}
+        sideOffset={8}
+      >
+        {routing.locales.map((code) => {
+          const active = locale === code
+          const label = common(localeLabelKey(code))
+          return (
+            <DropdownMenuItem
+              key={code}
+              className={chatContextMenuItemClass}
+              onClick={() => switchLocale(code)}
+            >
+              <LocaleFlag
+                locale={code}
+                title={label}
+                tone={active ? "color" : "mono"}
+                className="size-5"
+              />
+              <span className="flex-1">{label}</span>
+              {active ? (
+                <CheckIcon
+                  className="size-4 shrink-0 text-muted-foreground"
+                  aria-hidden
                 />
-                <span className="flex-1">{label}</span>
-                {active ? (
-                  <CheckIcon
-                    className="size-4 shrink-0 text-muted-foreground"
-                    aria-hidden
-                  />
-                ) : (
-                  <span className="size-4 shrink-0" aria-hidden />
-                )}
-              </DropdownMenuItem>
-            )
-          })}
-        </DropdownMenuSubContent>
-      </DropdownMenuSub>
-    </DropdownMenuGroup>
+              ) : (
+                <span className="size-4 shrink-0" aria-hidden />
+              )}
+            </DropdownMenuItem>
+          )
+        })}
+      </DropdownMenuSubContent>
+    </DropdownMenuSub>
   )
 }
 
@@ -159,4 +171,20 @@ function AccountCookieSettingsItem() {
   )
 }
 
-export { AccountCookieSettingsItem, AccountLanguageItems, AccountThemeItems }
+/** Preferences block used across account menus. */
+function AccountPreferencesGroup() {
+  return (
+    <DropdownMenuGroup>
+      <AccountThemeItems />
+      <AccountLanguageItems />
+      <AccountCookieSettingsItem />
+    </DropdownMenuGroup>
+  )
+}
+
+export {
+  AccountCookieSettingsItem,
+  AccountLanguageItems,
+  AccountPreferencesGroup,
+  AccountThemeItems,
+}

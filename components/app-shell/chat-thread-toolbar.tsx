@@ -4,11 +4,11 @@ import * as React from "react"
 import { Link } from "@/i18n/navigation"
 import {
   CheckIcon,
+  CopyIcon,
   MoreHorizontalIcon,
   PencilIcon,
   PinIcon,
   PinOffIcon,
-  ShareIcon,
   SparklesIcon,
   Trash2Icon,
 } from "lucide-react"
@@ -21,6 +21,7 @@ import {
   chatContextMenuItemClass,
   chatContextMenuSeparatorClass,
 } from "@/components/app-shell/chat-context-menu-styles"
+import { chatMobileHeaderButtonClass } from "@/components/app-shell/chat-mobile-gemini-styles"
 import { ChatRenameDialog } from "@/components/app-shell/chat-rename-dialog"
 import { Button } from "@/components/ui/button"
 import {
@@ -37,7 +38,7 @@ type ChatThreadMenuProps = {
   title: string
   pinned: boolean
   disabled?: boolean
-  onShare: () => void | Promise<void>
+  onShare: () => boolean | Promise<boolean>
   onRename: (title: string) => void
   onTogglePin: () => void
   onDelete: () => void
@@ -94,7 +95,8 @@ function ChatThreadOptionsMenu({
 
   async function handleShare() {
     if (disabled) return
-    await onShare()
+    const ok = await onShare()
+    if (!ok) return
     setShared(true)
     window.clearTimeout(shareTimerRef.current)
     shareTimerRef.current = window.setTimeout(() => setShared(false), 1_600)
@@ -111,9 +113,13 @@ function ChatThreadOptionsMenu({
           render={
             <Button
               type="button"
-              variant="outline"
+              variant="ghost"
               size="icon-sm"
-              className={cn("size-8 shrink-0", className)}
+              className={cn(
+                chatMobileHeaderButtonClass,
+                "size-8 shrink-0 [&_svg:not([class*='size-'])]:size-4",
+                className
+              )}
               aria-label={t("chatOptions")}
               disabled={disabled}
             />
@@ -134,7 +140,7 @@ function ChatThreadOptionsMenu({
             {shared ? (
               <CheckIcon className="size-4 shrink-0 text-emerald-600" />
             ) : (
-              <ShareIcon className={chatContextMenuIconClass} />
+              <CopyIcon className={chatContextMenuIconClass} />
             )}
             {shared ? t("sharedChat") : t("shareChat")}
           </DropdownMenuItem>

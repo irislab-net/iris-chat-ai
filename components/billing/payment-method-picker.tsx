@@ -26,7 +26,7 @@ type PaymentMethodPickerProps = {
   onCurrencyChange: (currency: PaymentCurrency) => void
 }
 
-/** Compact icon trigger for the amount row — opens a liquid-glass token menu. */
+/** Token chip for the amount row — liquid-glass trigger with mark + label. */
 export function PaymentMethodPicker({
   currency,
   disabled,
@@ -46,7 +46,8 @@ export function PaymentMethodPicker({
             variant="ghost"
             className={cn(
               landingGlassSurface,
-              "h-9 shrink-0 gap-1 rounded-full bg-white/55 px-2 shadow-none hover:bg-white/70 dark:bg-white/10 dark:hover:bg-white/14"
+              "h-11 shrink-0 gap-2 rounded-2xl bg-white/70 px-2.5 pe-2.5 shadow-none",
+              "hover:bg-white/85 dark:bg-white/12 dark:hover:bg-white/18"
             )}
             aria-label={t("tokenAria", {
               token: selected.id,
@@ -55,13 +56,21 @@ export function PaymentMethodPicker({
           />
         }
       >
-        <span aria-hidden className={cn(landingGlassSheen, "rounded-full")} />
+        <span aria-hidden className={cn(landingGlassSheen, "rounded-2xl")} />
         <PaymentMethodMark
           currency={selected.id}
-          size="sm"
+          size="md"
           className="relative z-10"
         />
-        <ChevronDownIcon className="relative z-10 size-3.5 shrink-0 text-muted-foreground" />
+        <span className="relative z-10 min-w-0 text-start">
+          <span className="block text-sm font-semibold leading-none tracking-tight">
+            {selected.id}
+          </span>
+          <span className="mt-1 block text-[10px] leading-none text-muted-foreground dark:text-foreground/65">
+            {PAYMENT_NETWORK.name}
+          </span>
+        </span>
+        <ChevronDownIcon className="relative z-10 size-4 shrink-0 text-muted-foreground" />
       </DropdownMenuTrigger>
 
       <DropdownMenuContent
@@ -69,23 +78,26 @@ export function PaymentMethodPicker({
         sideOffset={8}
         className={cn(
           landingGlassSurface,
-          "min-w-52 gap-0 rounded-[1.25rem] bg-white/82 p-1.5 shadow-lg ring-0 backdrop-blur-xl dark:bg-white/12"
+          "min-w-48 gap-0 rounded-[1.25rem] bg-white/82 p-1 shadow-lg ring-0 backdrop-blur-xl dark:bg-white/12"
         )}
       >
         <span
           aria-hidden
           className={cn(landingGlassSheen, "rounded-[1.25rem]")}
         />
-        <DropdownMenuGroup className="relative z-10 flex flex-col gap-1">
+        <DropdownMenuGroup className="relative z-10 flex flex-col">
           {PAYMENT_TOKENS.map((option) => {
             const active = option.id === currency
             return (
               <DropdownMenuItem
                 key={option.id}
                 className={cn(
-                  "min-h-12 justify-between gap-3 rounded-2xl px-2.5 py-2",
-                  "bg-white/35 hover:bg-white/60 dark:bg-white/6 dark:hover:bg-white/12",
-                  active && "bg-white/70 ring-1 ring-[#2563EB]/25 dark:bg-white/14"
+                  "min-h-11 justify-between gap-3 rounded-xl px-2.5 py-2",
+                  "bg-transparent hover:bg-transparent focus:bg-transparent",
+                  "dark:hover:bg-transparent dark:focus:bg-transparent",
+                  "data-highlighted:bg-transparent data-highlighted:text-foreground",
+                  "opacity-70 hover:opacity-100 focus:opacity-100",
+                  active && "opacity-100"
                 )}
                 onClick={() => onCurrencyChange(option.id)}
               >
@@ -101,8 +113,18 @@ export function PaymentMethodPicker({
                   </span>
                 </span>
                 {active ? (
-                  <CheckIcon className="size-4 shrink-0 text-[#2563EB]" />
-                ) : null}
+                  <span
+                    className="flex size-5 shrink-0 items-center justify-center rounded-full bg-[#2563EB] text-white shadow-[0_2px_8px_rgba(37,99,235,0.35)]"
+                    aria-hidden
+                  >
+                    <CheckIcon className="size-3 stroke-[2.5]" />
+                  </span>
+                ) : (
+                  <span
+                    className="size-5 shrink-0 rounded-full ring-1 ring-foreground/12 dark:ring-white/15"
+                    aria-hidden
+                  />
+                )}
               </DropdownMenuItem>
             )
           })}

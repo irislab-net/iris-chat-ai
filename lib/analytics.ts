@@ -242,12 +242,15 @@ export function trackUpgradePlanSelect(params: { plan: PlanKey }) {
   trackEvent("upgrade_plan_select", { plan: params.plan })
 }
 
-export function trackCheckoutStart(params: { billing: BillingCycle }) {
+export function trackCheckoutStart(params: {
+  billing: BillingCycle
+  value?: number
+}) {
   trackEvent("begin_checkout", {
     billing: params.billing,
     plan: "plus",
     currency: "USD",
-    value: plusUsdValue(params.billing),
+    value: params.value ?? plusUsdValue(params.billing),
   })
 }
 

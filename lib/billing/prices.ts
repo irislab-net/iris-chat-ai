@@ -1,6 +1,6 @@
 /**
- * Single source of truth for plan display prices.
- * Set via NEXT_PUBLIC_* so landing + upgrade UI stay in sync.
+ * Env helpers for analytics fallbacks + USD formatting.
+ * UI plan prices load from GET /v1/payments/plans (`lib/billing/plans.ts`).
  *
  * Values may be a bare number (`19`), a `$` amount (`$19`), or a label
  * (`Free`, `Custom`).

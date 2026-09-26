@@ -10,11 +10,11 @@ import {
 import { SectionHeader } from "@/components/landing/modern/sphere-ui"
 import { Button } from "@/components/ui/button"
 import { Link } from "@/i18n/navigation"
+import { usePaymentPlans } from "@/hooks/use-payment-plans"
 import {
   PRICING_PLAN_META,
   type PricingPlanKey,
 } from "@/lib/landing-modern-data"
-import { getLandingPlanPrice } from "@/lib/billing/prices"
 import {
   landingAfterHeader,
   landingContentWide,
@@ -100,11 +100,17 @@ function PlanCard({
   hasBadge?: boolean
 }) {
   const t = useTranslations("modern.pricing")
+  const { plusMonthlyDisplay, loading: pricesLoading } = usePaymentPlans()
   const badge = hasBadge ? t(`plans.${planKey}.badge`) : null
   const features = Array.from({ length: featureCount }, (_, i) =>
     t(`plans.${planKey}.features.${i}`)
   )
-  const { price, priceWas } = getLandingPlanPrice(planKey)
+  const price =
+    planKey === "free"
+      ? "$0"
+      : planKey === "ultimate"
+        ? t("plans.ultimate.price")
+        : (plusMonthlyDisplay ?? (pricesLoading ? "…" : "—"))
 
   return (
     <article
@@ -139,11 +145,6 @@ function PlanCard({
 
         <div className="mt-5">
           <p className={cn(landingTitlePrice, "flex flex-wrap items-baseline gap-x-2.5")}>
-            {priceWas ? (
-              <span className="text-2xl font-normal tracking-[-0.02em] text-muted-foreground/55 line-through decoration-muted-foreground/40">
-                {priceWas}
-              </span>
-            ) : null}
             <span>
               {price}
               {planKey === "plus" ? (
