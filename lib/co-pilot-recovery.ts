@@ -239,7 +239,10 @@ export function isGuestTrialExhaustedError(error: unknown): boolean {
   return isChatLoginRequiredCode(coPilotErrorCode(error))
 }
 
-export function coPilotFailureAction(error: unknown): "connect" | "retry" {
+export function coPilotFailureAction(
+  error: unknown,
+  options?: { isProUser?: boolean }
+): "connect" | "retry" | undefined {
   if (isGuestTrialExhaustedError(error)) return "connect"
   const status = (error as { status?: number } | null)?.status
   const code = coPilotErrorCode(error)
@@ -248,6 +251,10 @@ export function coPilotFailureAction(error: unknown): "connect" | "retry" {
     !isGuestChatSession()
   ) {
     return "connect"
+  }
+  // Out-of-credit paywall: Upgrade only — retrying will not help.
+  if (isCreditExhaustedError(error) && !options?.isProUser) {
+    return undefined
   }
   return "retry"
 }
