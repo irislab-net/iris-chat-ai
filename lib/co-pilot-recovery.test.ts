@@ -224,6 +224,23 @@ describe("co-pilot recovery helpers", () => {
     expect(cleaned.map((m) => m.id)).toEqual(["u1", "fail", "partial-fail"])
   })
 
+  it("sanitizeMessages keeps out-of-credit turns without a retry action", () => {
+    const messages: ChatUiMessage[] = [
+      { id: "u1", role: "user", content: "Hi" },
+      {
+        id: "credit",
+        role: "assistant",
+        content: "",
+        error: true,
+        errorText: COPILOT_CREDIT_MESSAGE,
+      },
+    ]
+    expect(sanitizeMessages(messages).map((m) => m.id)).toEqual([
+      "u1",
+      "credit",
+    ])
+  })
+
   it("sanitizeMessages keeps signal-card turns with empty output_text", () => {
     const messages: ChatUiMessage[] = [
       { id: "u1", role: "user", content: "Signal · BTC" },

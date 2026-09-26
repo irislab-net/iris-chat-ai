@@ -192,8 +192,9 @@ export function sanitizeMessages(messages: ChatUiMessage[]): ChatUiMessage[] {
     if (m.id === "welcome") return false
     if (m.role === "system" && !m.error && m.action !== "connect") return false
     const text = m.content.trim()
-    // Keep recoverable failed turns (may have empty content + retry CTA).
-    if (m.error && m.action === "retry") return true
+    // Keep recoverable failed turns (may have empty content + CTA).
+    if (m.error && (m.action === "retry" || m.action === "connect" || m.errorText))
+      return true
     // Signal / no-trade cards can have empty output_text but still render UI.
     if (m.role === "assistant" && (m.paperTicket || m.noTradeReason))
       return true
