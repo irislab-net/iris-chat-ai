@@ -363,20 +363,21 @@ export function CryptoPaymentSheet({
     <Sheet open={open} onOpenChange={handleOpenChange}>
       <SheetContent
         side={sheetSide}
-        showCloseButton={isDesktop === true}
+        showCloseButton
         className={cn(
           "landing-modern flex w-full flex-col gap-0 border-0 bg-transparent p-0 shadow-none",
+          "[&_[data-slot=sheet-close]]:z-20",
           isDesktop
             ? "sm:max-w-95"
-            : "data-[side=bottom]:inset-x-0 data-[side=bottom]:bottom-[var(--keyboard-inset-bottom,0px)] data-[side=bottom]:h-[var(--app-height,100dvh)] data-[side=bottom]:max-h-[var(--app-height,100dvh)]"
+            : "data-[side=bottom]:inset-x-0 data-[side=bottom]:bottom-[var(--keyboard-inset-bottom,0px)] data-[side=bottom]:h-auto data-[side=bottom]:max-h-[min(90dvh,calc(var(--app-height,100dvh)-0.75rem))]"
         )}
       >
         <div
           className={cn(
             landingGlassSurface,
-            "flex h-full min-h-0 flex-col overflow-hidden bg-white/78 dark:bg-white/10",
+            "flex min-h-0 max-h-[inherit] flex-col overflow-hidden bg-white/78 dark:bg-white/10",
             isDesktop
-              ? "rounded-none rounded-s-[1.75rem]"
+              ? "h-full rounded-none rounded-s-[1.75rem]"
               : "rounded-t-[1.75rem] rounded-b-none"
           )}
         >
@@ -400,7 +401,7 @@ export function CryptoPaymentSheet({
           <SheetHeader
             className={cn(
               "relative z-10 shrink-0 space-y-1 border-b border-white/55 p-0 dark:border-white/10",
-              isDesktop ? "px-5 py-5" : "px-4 pb-2.5 pt-2"
+              isDesktop ? "px-5 py-5 pe-14" : "px-4 pb-2.5 pe-12 pt-2"
             )}
           >
             <SheetTitle
@@ -424,7 +425,7 @@ export function CryptoPaymentSheet({
                 "flex min-h-0 flex-1 flex-col",
                 isDesktop
                   ? "gap-5 overflow-y-auto px-5 py-5"
-                  : "gap-4 overflow-hidden px-4 py-3.5"
+                  : "gap-4 overflow-y-auto px-4 py-3.5"
               )}
             >
               <PaymentMethodPicker
