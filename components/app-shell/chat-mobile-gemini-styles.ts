@@ -245,9 +245,11 @@ const chatMobileDrawerFooterFadeClass =
 const chatMobileDrawerFooterBarClass =
   "relative bg-background/88 py-2 backdrop-blur-xl backdrop-saturate-150 supports-[backdrop-filter]:bg-background/72"
 
-/** Shared mobile bottom sheets — guide, privacy, checkout. */
+/** Shared mobile bottom sheets — guide, privacy, checkout.
+ * Cap height to the visible app viewport so sheets stay above the soft keyboard
+ * (SheetContent already offsets with --keyboard-inset-bottom). */
 const chatMobileSheetContentClass =
-  "max-h-[min(92dvh,720px)] gap-0 overflow-y-auto rounded-t-[1.75rem] border-0 bg-white/82 pb-0 pt-2 text-foreground shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_75%,transparent),0_-16px_48px_-18px_color-mix(in_oklch,var(--foreground)_14%,transparent)] backdrop-blur-2xl backdrop-saturate-[180%] supports-[backdrop-filter]:bg-white/68 dark:bg-white/[0.1] dark:shadow-[inset_0_1px_0_0_color-mix(in_oklch,var(--foreground)_12%,transparent),0_-16px_48px_-18px_color-mix(in_oklch,black_45%,transparent)] dark:supports-[backdrop-filter]:bg-white/[0.07]"
+  "max-h-[min(92dvh,720px,calc(var(--app-height,100dvh)-0.5rem))] gap-0 overflow-y-auto rounded-t-[1.75rem] border-0 bg-white/82 pb-0 pt-2 text-foreground shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_75%,transparent),0_-16px_48px_-18px_color-mix(in_oklch,var(--foreground)_14%,transparent)] backdrop-blur-2xl backdrop-saturate-[180%] supports-[backdrop-filter]:bg-white/68 dark:bg-white/[0.1] dark:shadow-[inset_0_1px_0_0_color-mix(in_oklch,var(--foreground)_12%,transparent),0_-16px_48px_-18px_color-mix(in_oklch,black_45%,transparent)] dark:supports-[backdrop-filter]:bg-white/[0.07]"
 
 const chatMobileSheetHandleClass =
   "mx-auto mb-4 h-1 w-10 shrink-0 rounded-full bg-foreground/15 dark:bg-white/20"
@@ -272,8 +274,9 @@ const chatMobileSheetCardClass =
 const chatMobileSheetFooterClass =
   "mt-auto gap-0 border-0 !p-0"
 
+/** When the keyboard is open, subtract its inset so we don't double-pad above it. */
 const chatMobileSheetFooterBarClass =
-  "w-full border-0 bg-transparent px-5 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom,0px))]"
+  "w-full border-0 bg-transparent px-5 pt-3 pb-[max(0.75rem,calc(env(safe-area-inset-bottom,0px)-var(--keyboard-inset-bottom,0px)))]"
 
 const chatMobileSheetPrimaryButtonClass =
   "h-12 w-full rounded-full text-[15px] font-medium"
