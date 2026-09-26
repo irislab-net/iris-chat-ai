@@ -67,6 +67,7 @@
     "@types/react-dom": "^19.2.5",
     "eslint": "^9",
     "eslint-config-next": "16.3.4",
+    "firebase-tools": "^15.31.0",
     "prettier": "^3.8.3",
     "prettier-plugin-tailwindcss": "^0.8.0",
     "shadcn": "^4.19.1",
