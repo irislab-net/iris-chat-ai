@@ -38,15 +38,7 @@
 	"vars": {
 		"NEXT_PUBLIC_GA_MEASUREMENT_ID": "G-6B72W49JQE",
 		"NEXT_PUBLIC_GTM_ID": "GTM-KMGLCNZD",
-		"NEXT_PUBLIC_GOOGLE_CLIENT_ID": "50876205060-0j6l4c2b286q18e0vluvp7eadqcs15vq.apps.googleusercontent.com",
-		"NEXT_PUBLIC_FIREBASE_API_KEY": "AIzaSyDi4byocMKJ9oklAk4RdK_2CB6446NNy0w",
-		"NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN": "exur-main.firebaseapp.com",
-		"NEXT_PUBLIC_FIREBASE_PROJECT_ID": "exur-main",
-		"NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET": "exur-main.firebasestorage.app",
-		"NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID": "604582580021",
-		"NEXT_PUBLIC_FIREBASE_APP_ID": "1:604582580021:web:18e1fc01b3832baf36867c",
-		"NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID": "G-RBYHCFCEE5",
-		"NEXT_PUBLIC_FIREBASE_VAPID_KEY": "BK9TsESqOuYmjAmoEGFzpFw5FuagJyR9vzQ2X93YI-W3QWaUg9NFfUfjgdmkM4Q805OkiMR3a-BgECEALhOQRx4"
+		"NEXT_PUBLIC_GOOGLE_CLIENT_ID": "50876205060-0j6l4c2b286q18e0vluvp7eadqcs15vq.apps.googleusercontent.com"
 	},
 	// Workers Logs + Traces (dashboard Observability). Redeploy required after change.
 	"observability": {

@@ -67,7 +67,6 @@ const scriptSrc = [
   ...(isDev ? ["'unsafe-eval'"] : []),
   "https://www.googletagmanager.com",
   "https://www.google-analytics.com",
-  "https://www.gstatic.com",
   "https://www.google.com",
   "https://accounts.google.com",
   "https://apis.google.com",
@@ -84,7 +83,7 @@ const nextConfig: NextConfig = {
     position: "bottom-right",
   },
   experimental: {
-    optimizePackageImports: ["lucide-react", "motion", "firebase"],
+    optimizePackageImports: ["lucide-react", "motion"],
   },
   // Drop Lucide's XML namespace URI so HTML5 SVG doesn't emit http:// xmlns
   // (checklist scanners false-flag it as an HTTPS downgrade).
@@ -148,39 +147,8 @@ const nextConfig: NextConfig = {
         : "no-referrer-when-downgrade"
 
     return [
-      // FCM SW must not inherit the page CSP — browsers apply the SW response CSP
-      // to importScripts(), and a second global CSP header breaks registration.
       {
-        source: "/firebase-messaging-sw.js",
-        headers: [
-          { key: "X-Content-Type-Options", value: "nosniff" },
-          { key: "Service-Worker-Allowed", value: "/" },
-          {
-            key: "Cache-Control",
-            value: "no-cache, no-store, must-revalidate",
-          },
-          {
-            key: "Content-Security-Policy",
-            value: [
-              "default-src 'self'",
-              "script-src 'self'",
-              "connect-src 'self' https://firebase.googleapis.com https://firebaseinstallations.googleapis.com https://fcmregistrations.googleapis.com https://fcm.googleapis.com https://*.googleapis.com https://*.firebaseio.com wss: https:",
-            ].join("; "),
-          },
-        ],
-      },
-      {
-        source: "/firebase-sw/:path*",
-        headers: [
-          { key: "X-Content-Type-Options", value: "nosniff" },
-          {
-            key: "Cache-Control",
-            value: "public, max-age=31536000, immutable",
-          },
-        ],
-      },
-      {
-        source: "/((?!firebase-messaging-sw\\.js$).*)",
+        source: "/:path*",
         headers: [
           { key: "X-Content-Type-Options", value: "nosniff" },
           { key: "Referrer-Policy", value: referrerPolicy },
@@ -208,7 +176,7 @@ const nextConfig: NextConfig = {
               "style-src 'self' 'unsafe-inline' https://accounts.google.com",
               "img-src 'self' data: blob: https:",
               "font-src 'self' data:",
-              "connect-src 'self' https://api.exur.ai https://*.exur.ai https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com https://firebase.googleapis.com https://firebaseinstallations.googleapis.com https://fcmregistrations.googleapis.com https://fcm.googleapis.com https://*.firebaseio.com https://*.googleapis.com https://accounts.google.com https://*.sentry.io https://*.ingest.sentry.io wss: https:",
+              "connect-src 'self' https://api.exur.ai https://*.exur.ai https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com https://accounts.google.com https://*.sentry.io https://*.ingest.sentry.io wss: https:",
               "frame-src 'self' https://accounts.google.com https://www.google.com https://www.googletagmanager.com https://js.stripe.com https://buy.stripe.com",
               "worker-src 'self' blob:",
               "media-src 'self' https://files.exur.ai blob:",
@@ -225,7 +193,7 @@ const nextConfig: NextConfig = {
               "style-src 'self' 'unsafe-inline' https://accounts.google.com",
               "img-src 'self' data: blob: https://images.unsplash.com https://assets.coingecko.com https://s3-symbol-logo.tradingview.com https://*.google-analytics.com https://*.googletagmanager.com https://*.exur.ai",
               "font-src 'self' data:",
-              "connect-src 'self' https://api.exur.ai https://*.exur.ai https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com https://firebase.googleapis.com https://firebaseinstallations.googleapis.com https://fcmregistrations.googleapis.com https://fcm.googleapis.com https://*.firebaseio.com https://*.googleapis.com https://accounts.google.com https://*.sentry.io https://*.ingest.sentry.io",
+              "connect-src 'self' https://api.exur.ai https://*.exur.ai https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com https://accounts.google.com https://*.sentry.io https://*.ingest.sentry.io",
               "frame-src 'self' https://accounts.google.com https://www.google.com https://www.googletagmanager.com https://js.stripe.com https://buy.stripe.com",
               "worker-src 'self' blob:",
               "media-src 'self' https://files.exur.ai blob:",

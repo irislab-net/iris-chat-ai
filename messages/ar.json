@@ -26,14 +26,7 @@
     "comingSoon": "قريبًا",
     "live": "مباشر",
     "demo": "تجريبي",
-    "filled": "منفّذ",
-    "notifications": "الإشعارات",
-    "notificationsOn": "تشغيل",
-    "notificationsOff": "إيقاف",
-    "notificationsEnabled": "تم تفعيل إشعارات الدفع",
-    "notificationsDisabled": "تم إيقاف إشعارات الدفع",
-    "notificationsDenied": "تم رفض إذن الإشعارات",
-    "notificationsError": "تعذر تحديث إعدادات الإشعارات"
+    "filled": "منفّذ"
   },
   "nav": {
     "aria": "الصفحة الرئيسية",

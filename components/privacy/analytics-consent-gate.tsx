@@ -2,7 +2,6 @@
 
 import * as React from "react"
 
-import { FirebaseAnalytics } from "@/components/analytics/firebase-analytics"
 import { GoogleAnalytics } from "@/components/analytics/google-analytics"
 import { GoogleTagManager } from "@/components/analytics/google-tag-manager"
 import { CookieConsentBanner } from "@/components/privacy/cookie-consent-banner"
@@ -33,7 +32,6 @@ function AnalyticsConsentGate({ children }: { children: React.ReactNode }) {
         <>
           <GoogleTagManager />
           <GoogleAnalytics />
-          <FirebaseAnalytics />
         </>
       ) : null}
     </>

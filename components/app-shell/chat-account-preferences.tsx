@@ -1,8 +1,6 @@
 "use client"
 
 import {
-  BellIcon,
-  BellOffIcon,
   CheckIcon,
   CookieIcon,
   LanguagesIcon,
@@ -12,8 +10,6 @@ import {
 } from "lucide-react"
 import { useLocale, useTranslations } from "next-intl"
 import { useTheme } from "@wrksz/themes/client/use-theme"
-import * as React from "react"
-import { toast } from "sonner"
 
 import {
   chatContextMenuContentClass,
@@ -31,12 +27,6 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { getPathname, usePathname } from "@/i18n/navigation"
 import { routing, type AppLocale } from "@/i18n/routing"
-import {
-  disableFirebaseMessaging,
-  enableFirebaseMessaging,
-  isFcmPreferenceEnabled,
-  isFirebaseMessagingConfigured,
-} from "@/lib/firebase-messaging"
 import { localeLabelKey, persistLocaleChoice } from "@/lib/i18n/locale"
 import { cn } from "@/lib/utils"
 
@@ -183,65 +173,12 @@ function AccountCookieSettingsItem() {
   )
 }
 
-function AccountNotificationsItem() {
-  const common = useTranslations("common")
-  const configured = isFirebaseMessagingConfigured()
-  const [enabled, setEnabled] = React.useState(isFcmPreferenceEnabled)
-  const [busy, setBusy] = React.useState(false)
-
-  if (!configured) return null
-
-  async function toggle() {
-    if (busy) return
-    setBusy(true)
-    try {
-      if (enabled) {
-        await disableFirebaseMessaging()
-        setEnabled(false)
-        toast.success(common("notificationsDisabled"))
-        return
-      }
-      const token = await enableFirebaseMessaging()
-      setEnabled(true)
-      toast.success(common("notificationsEnabled"))
-      console.info("[fcm] token", token)
-    } catch (error) {
-      const message =
-        error instanceof Error ? error.message : common("notificationsError")
-      toast.error(message)
-      setEnabled(false)
-      console.error("[fcm]", error)
-    } finally {
-      setBusy(false)
-    }
-  }
-
-  const Icon = enabled ? BellIcon : BellOffIcon
-
-  return (
-    <DropdownMenuItem
-      className={chatContextMenuItemClass}
-      disabled={busy}
-      onClick={() => {
-        void toggle()
-      }}
-    >
-      <Icon className={chatContextMenuIconClass} />
-      <span className="flex-1">{common("notifications")}</span>
-      <span className="text-xs text-muted-foreground">
-        {enabled ? common("notificationsOn") : common("notificationsOff")}
-      </span>
-    </DropdownMenuItem>
-  )
-}
-
 /** Preferences block used across account menus. */
 function AccountPreferencesGroup() {
   return (
     <DropdownMenuGroup>
       <AccountThemeItems />
       <AccountLanguageItems />
-      <AccountNotificationsItem />
       <AccountCookieSettingsItem />
     </DropdownMenuGroup>
   )
@@ -250,7 +187,6 @@ function AccountPreferencesGroup() {
 export {
   AccountCookieSettingsItem,
   AccountLanguageItems,
-  AccountNotificationsItem,
   AccountPreferencesGroup,
   AccountThemeItems,
 }

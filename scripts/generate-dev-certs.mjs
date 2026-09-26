@@ -31,19 +31,14 @@ function findOpenssl() {
 }
 
 function listLanIpv4Addresses() {
-  try {
-    const ips = []
-    for (const addrs of Object.values(networkInterfaces())) {
-      for (const addr of addrs ?? []) {
-        const isV4 = addr.family === "IPv4" || addr.family === 4
-        if (isV4 && !addr.internal) ips.push(addr.address)
-      }
+  const ips = []
+  for (const addrs of Object.values(networkInterfaces())) {
+    for (const addr of addrs ?? []) {
+      const isV4 = addr.family === "IPv4" || addr.family === 4
+      if (isV4 && !addr.internal) ips.push(addr.address)
     }
-    return [...new Set(ips)]
-  } catch {
-    // Sandbox / restricted environments may block os.networkInterfaces().
-    return []
   }
+  return [...new Set(ips)]
 }
 
 function buildSanExtension() {

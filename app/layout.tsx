@@ -5,7 +5,6 @@ import { getLocale, getMessages } from "next-intl/server"
 
 import "./globals.css"
 import { AuthProvider } from "@/components/auth/auth-provider"
-import { FirebaseMessagingProvider } from "@/components/notifications/firebase-messaging-provider"
 import { AnalyticsConsentGate } from "@/components/privacy/analytics-consent-gate"
 import { JsonLd } from "@/components/seo/json-ld"
 import { ThemeExtras } from "@/components/theme-provider"
@@ -214,12 +213,10 @@ export default async function RootLayout({
           <TooltipProvider>
             <NextIntlClientProvider locale={locale} messages={messages}>
               <AuthProvider>
-                <FirebaseMessagingProvider>
-                  <AnalyticsConsentGate>
-                    {children}
-                    <Toaster position="top-right" />
-                  </AnalyticsConsentGate>
-                </FirebaseMessagingProvider>
+                <AnalyticsConsentGate>
+                  {children}
+                  <Toaster position="top-right" />
+                </AnalyticsConsentGate>
               </AuthProvider>
             </NextIntlClientProvider>
           </TooltipProvider>

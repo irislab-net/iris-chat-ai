@@ -26,14 +26,7 @@
     "comingSoon": "Binnenkort",
     "live": "Live",
     "demo": "Demo",
-    "filled": "Gevuld",
-    "notifications": "Meldingen",
-    "notificationsOn": "Aan",
-    "notificationsOff": "Uit",
-    "notificationsEnabled": "Pushmeldingen ingeschakeld",
-    "notificationsDisabled": "Pushmeldingen uitgeschakeld",
-    "notificationsDenied": "Meldingstoestemming geweigerd",
-    "notificationsError": "Meldingsinstellingen bijwerken mislukt"
+    "filled": "Gevuld"
   },
   "nav": {
     "aria": "Startpagina",
