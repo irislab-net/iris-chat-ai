@@ -4,7 +4,12 @@ import * as React from "react"
 import { useSearchParams } from "next/navigation"
 import { Link, usePathname, useRouter } from "@/i18n/navigation"
 import { useLocale, useTranslations } from "next-intl"
-import { ChevronDownIcon, HistoryIcon, Maximize2Icon } from "lucide-react"
+import {
+  ChevronDownIcon,
+  HistoryIcon,
+  Maximize2Icon,
+  RefreshCwIcon,
+} from "lucide-react"
 
 import { ChatAccountFooter } from "@/components/app-shell/chat-account-footer"
 import { ChatAccountMenu } from "@/components/app-shell/chat-account-menu"
@@ -1145,7 +1150,7 @@ function ChatAside({
                     content: failed.content || m.content,
                     error: true as const,
                     errorText: coPilotUserFacingError(error, { isProUser }),
-                    action: coPilotFailureAction(error),
+                    action: coPilotFailureAction(error, { isProUser }),
                     retryUserMessage: failed.retryUserMessage,
                     thinkingTrace: undefined,
                   }
@@ -1467,7 +1472,7 @@ function ChatAside({
                   content: failed.content || m.content,
                   error: true as const,
                   errorText: coPilotUserFacingError(error, { isProUser }),
-                  action: coPilotFailureAction(error),
+                  action: coPilotFailureAction(error, { isProUser }),
                   retryUserMessage: failed.retryUserMessage,
                   thinkingTrace: undefined,
                 }
@@ -2312,16 +2317,17 @@ function ChatAside({
                                 {t("continueWithGoogle")}
                               </Button>
                             ) : null}
-                            {message.action === "retry" ? (
+                            {message.action === "retry" &&
+                            message.errorText !== COPILOT_CREDIT_MESSAGE ? (
                               <Button
                                 type="button"
-                                size="sm"
-                                variant="ghost"
+                                size="icon-sm"
+                                variant="secondary"
                                 disabled={sending}
-                                className="rounded-lg bg-muted/25 hover:bg-muted/40"
+                                aria-label={t("tryAgain")}
                                 onClick={() => void handleRetry(message.id)}
                               >
-                                {t("tryAgain")}
+                                <RefreshCwIcon className="size-3.5" />
                               </Button>
                             ) : null}
                             {message.errorText === COPILOT_CREDIT_MESSAGE &&
@@ -2348,9 +2354,12 @@ function ChatAside({
                             ) : null}
                           </>
                         )
+                        const showRetry =
+                          message.action === "retry" &&
+                          message.errorText !== COPILOT_CREDIT_MESSAGE
                         const hasAction =
                           message.action === "connect" ||
-                          message.action === "retry" ||
+                          showRetry ||
                           (message.errorText === COPILOT_CREDIT_MESSAGE &&
                             !isProUser) ||
                           Boolean(message.suggestedPrompts?.length)

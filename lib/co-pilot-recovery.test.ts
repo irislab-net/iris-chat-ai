@@ -64,6 +64,8 @@ describe("co-pilot recovery helpers", () => {
     expect(coPilotUserFacingError(err, { isProUser: true })).toBe(
       COPILOT_PRO_SESSION_REFRESH_MESSAGE
     )
+    expect(coPilotFailureAction(err)).toBeUndefined()
+    expect(coPilotFailureAction(err, { isProUser: true })).toBe("retry")
     expect(COPILOT_CREDIT_MESSAGE.toLowerCase()).toContain("upgrade")
     expect(COPILOT_CREDIT_MESSAGE).not.toMatch(/402|HTTP/i)
   })
@@ -79,7 +81,8 @@ describe("co-pilot recovery helpers", () => {
       })
       expect(isCreditExhaustedError(err)).toBe(true)
       expect(coPilotUserFacingError(err)).toBe(COPILOT_CREDIT_MESSAGE)
-      expect(coPilotFailureAction(err)).toBe("retry")
+      expect(coPilotFailureAction(err)).toBeUndefined()
+      expect(coPilotFailureAction(err, { isProUser: true })).toBe("retry")
     }
   })
 
