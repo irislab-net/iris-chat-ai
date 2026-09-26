@@ -15,9 +15,11 @@ import {
  */
 describe("consent preferences (unit)", () => {
   let store: Record<string, string>
+  let cookieJar: string
 
   beforeEach(() => {
     store = {}
+    cookieJar = ""
     resetConsentCache()
     vi.stubGlobal("window", {
       dataLayer: [],
@@ -25,6 +27,30 @@ describe("consent preferences (unit)", () => {
       dispatchEvent: vi.fn(),
       addEventListener: vi.fn(),
       removeEventListener: vi.fn(),
+      location: { hostname: "localhost", protocol: "http:" },
+    })
+    vi.stubGlobal("document", {
+      get cookie() {
+        return cookieJar
+      },
+      set cookie(value: string) {
+        const [pair] = value.split(";")
+        const eq = pair.indexOf("=")
+        const name = pair.slice(0, eq)
+        const rawValue = pair.slice(eq + 1)
+        if (value.includes("Max-Age=0")) {
+          cookieJar = cookieJar
+            .split("; ")
+            .filter((part) => part && !part.startsWith(`${name}=`))
+            .join("; ")
+          return
+        }
+        const next = `${name}=${rawValue}`
+        const others = cookieJar
+          .split("; ")
+          .filter((part) => part && !part.startsWith(`${name}=`))
+        cookieJar = [...others, next].filter(Boolean).join("; ")
+      },
     })
     vi.stubGlobal("localStorage", {
       getItem: (key: string) => store[key] ?? null,

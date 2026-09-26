@@ -33,3 +33,9 @@ export {
 /** Query values sent to `/v1/auth/google/login` after the user confirms. */
 export const AUTH_TERMS_ACCEPTED = "accepted"
 export const AUTH_PRIVACY_NOTICE_ACCEPTED = "accepted"
+
+/**
+ * Client + server legal acceptance version.
+ * Bump when Terms / Privacy materially change so the login gate re-prompts.
+ */
+export const LEGAL_ACCEPTANCE_VERSION = "v1"

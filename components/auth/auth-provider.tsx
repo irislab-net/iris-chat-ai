@@ -38,6 +38,10 @@ import {
   type LoginSource,
 } from "@/lib/analytics"
 import { isMarketingHost } from "@/lib/hosts"
+import {
+  hasAcceptedCurrentLegal,
+  recordLegalAcceptance,
+} from "@/lib/legal-acceptance"
 import { APP_PATH } from "@/lib/site"
 import { resetClientSessionOnLogout } from "@/lib/session-reset"
 
@@ -284,32 +288,13 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, [completeLoginAttempt])
 
-  const login = React.useCallback(
-    (options?: LoginOptions) => {
-      if (loginPending) return
-      pendingCredentialRef.current = null
-      pendingLoginRef.current = options
-      setConsentOpen(true)
-    },
-    [loginPending]
-  )
-
-  const handleOneTapCredential = React.useCallback(
-    (credential: string) => {
-      if (loginPending || user) return
-      pendingCredentialRef.current = credential
-      pendingLoginRef.current = { source: "one_tap" }
-      setConsentOpen(true)
-    },
-    [loginPending, user]
-  )
-
   const confirmLegalAndLogin = React.useCallback(() => {
     const options = pendingLoginRef.current
     const credential = pendingCredentialRef.current
     pendingLoginRef.current = undefined
     pendingCredentialRef.current = null
     setConsentOpen(false)
+    recordLegalAcceptance()
 
     loginSourceRef.current = options?.source
     trackLoginStart(options?.source, options?.ref)
@@ -346,6 +331,33 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     })
   }, [completeLoginAttempt])
 
+  const login = React.useCallback(
+    (options?: LoginOptions) => {
+      if (loginPending) return
+      pendingCredentialRef.current = null
+      pendingLoginRef.current = options
+      if (hasAcceptedCurrentLegal()) {
+        confirmLegalAndLogin()
+        return
+      }
+      setConsentOpen(true)
+    },
+    [confirmLegalAndLogin, loginPending]
+  )
+
+  const handleOneTapCredential = React.useCallback(
+    (credential: string) => {
+      if (loginPending || user) return
+      pendingCredentialRef.current = credential
+      pendingLoginRef.current = { source: "one_tap" }
+      if (hasAcceptedCurrentLegal()) {
+        confirmLegalAndLogin()
+        return
+      }
+      setConsentOpen(true)
+    },
+    [confirmLegalAndLogin, loginPending, user]
+  )
   const onConsentOpenChange = React.useCallback(
     (open: boolean) => {
       if (loginPending) return

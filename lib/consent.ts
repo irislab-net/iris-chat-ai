@@ -1,5 +1,11 @@
 /** First-party cookie / analytics consent (Consent Mode v2). */
 
+import {
+  EXUR_CLIENT_STORAGE_MAX_AGE_SECONDS,
+  readSharedJson,
+  writeSharedJson,
+} from "@/lib/exur-client-storage"
+
 export const CONSENT_STORAGE_KEY = "exur-cookie-consent"
 export const CONSENT_VERSION = "v1"
 export const CONSENT_CHANGED_EVENT = "exur:consent-changed"
@@ -63,27 +69,28 @@ let cachedSnapshot: ConsentPreferences | null | undefined
 let cachedRaw: string | null | undefined
 
 function readRawConsent(): string | null {
-  if (typeof window === "undefined") return null
-  try {
-    return localStorage.getItem(CONSENT_STORAGE_KEY)
-  } catch {
-    return null
-  }
+  return readSharedJson(CONSENT_STORAGE_KEY)
 }
 
-function parseConsentRaw(raw: string | null): ConsentPreferences | null {
+export function parseConsentRaw(raw: string | null): ConsentPreferences | null {
   if (!raw) return null
   try {
     const parsed = JSON.parse(raw) as ConsentPreferences
     if (parsed.version !== CONSENT_VERSION) return null
     if (typeof parsed.analytics !== "boolean") return null
-    return parsed
+    return {
+      version: parsed.version,
+      analytics: parsed.analytics,
+      advertising: Boolean(parsed.advertising),
+      timestamp:
+        typeof parsed.timestamp === "number" ? parsed.timestamp : Date.now(),
+    }
   } catch {
     return null
   }
 }
 
-/** Synchronize the in-memory snapshot with localStorage (stable identity). */
+/** Synchronize the in-memory snapshot with shared storage (stable identity). */
 export function getConsentSnapshot(): ConsentPreferences | null {
   const raw = readRawConsent()
   if (raw === cachedRaw) {
@@ -140,12 +147,11 @@ export function setStoredConsent(
     advertising: decision.advertising ?? false,
     timestamp: Date.now(),
   }
-  if (typeof window !== "undefined") {
-    localStorage.setItem(CONSENT_STORAGE_KEY, JSON.stringify(prefs))
-  }
+  const raw = JSON.stringify(prefs)
+  writeSharedJson(CONSENT_STORAGE_KEY, raw, EXUR_CLIENT_STORAGE_MAX_AGE_SECONDS)
   applyConsentUpdate(prefs)
   // Cache the value we just wrote, then notify subscribers (they re-read via getSnapshot).
-  cachedRaw = JSON.stringify(prefs)
+  cachedRaw = raw
   cachedSnapshot = prefs
   if (typeof window !== "undefined") {
     window.dispatchEvent(new Event(CONSENT_CHANGED_EVENT))

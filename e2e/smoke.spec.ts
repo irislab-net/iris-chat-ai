@@ -7,6 +7,10 @@ test.describe("cookie consent", () => {
   test.beforeEach(async ({ page }) => {
     await page.addInitScript(() => {
       localStorage.removeItem("exur-cookie-consent")
+      document.cookie =
+        "exur-cookie-consent=; Path=/; Max-Age=0; SameSite=Lax"
+      document.cookie =
+        "exur-cookie-consent=; Path=/; Max-Age=0; SameSite=Lax; Domain=.exur.ai"
     })
   })
 
@@ -44,10 +48,12 @@ test.describe("cookie consent", () => {
     ).toBeVisible({ timeout: 15_000 })
     await page.getByRole("button", { name: /accept all/i }).click()
 
-    const stored = await page.evaluate(() =>
-      localStorage.getItem("exur-cookie-consent")
-    )
-    expect(stored).toContain('"analytics":true')
+    const stored = await page.evaluate(() => ({
+      local: localStorage.getItem("exur-cookie-consent"),
+      cookie: document.cookie,
+    }))
+    expect(stored.local).toContain('"analytics":true')
+    expect(stored.cookie).toContain("exur-cookie-consent=")
   })
 })
 
