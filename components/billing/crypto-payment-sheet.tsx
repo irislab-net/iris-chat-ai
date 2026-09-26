@@ -61,7 +61,13 @@ type CryptoPaymentSheetProps = {
   onPaid: () => void | Promise<void>
 }
 
-function PaymentQuoteSkeleton({ compact }: { compact?: boolean }) {
+function PaymentQuoteSkeleton({
+  compact,
+  currencyPicker,
+}: {
+  compact?: boolean
+  currencyPicker: React.ReactNode
+}) {
   return (
     <div
       className={cn(
@@ -70,20 +76,19 @@ function PaymentQuoteSkeleton({ compact }: { compact?: boolean }) {
       )}
       aria-busy="true"
     >
-      {/* Amount — mirrors BillingGlassPanel amount row */}
+      {/* Amount + compact token picker — mirrors live amount row */}
       <BillingGlassPanel>
         <div
           className={cn(
-            "flex items-center gap-3",
+            "flex items-center gap-2.5",
             compact ? "px-3 py-2.5" : "px-3.5 py-3"
           )}
         >
-          <div className="min-w-0 flex-1">
-            <div className="flex items-baseline gap-2">
-              <Skeleton className="h-6 w-[7.5rem] rounded-md" />
-              <Skeleton className="h-3.5 w-14 rounded-full" />
-            </div>
+          <div className="min-w-0 flex-1 space-y-1.5">
+            <Skeleton className="h-6 w-[7.5rem] rounded-md" />
+            <Skeleton className="h-2.5 w-12 rounded-full" />
           </div>
+          {currencyPicker}
           <Skeleton className="size-8 shrink-0 rounded-full" />
         </div>
       </BillingGlassPanel>
@@ -135,7 +140,7 @@ function PaymentWatcherBanner({
     <div
       role="status"
       aria-live="polite"
-      className={cn("flex flex-col", compact ? "gap-2.5" : "gap-3")}
+      className={cn("flex flex-col", compact ? "gap-2" : "gap-2.5")}
     >
       <div className="flex items-center gap-2">
         <span className="relative flex size-2 shrink-0">
@@ -161,17 +166,26 @@ function PaymentWatcherBanner({
         {t("footerGuide", { network: PAYMENT_NETWORK.name })}
       </p>
 
-      <div
-        className={cn(
-          "flex items-center justify-between gap-3 text-muted-foreground",
-          compact ? "text-[11px]" : "text-xs"
-        )}
-      >
-        <span className="inline-flex items-center gap-1.5 tabular-nums">
+      <div className="flex flex-wrap items-center gap-2 pt-0.5">
+        <span
+          className={cn(
+            "inline-flex items-center gap-1.5 rounded-full tabular-nums",
+            "bg-white/55 px-2.5 py-1 text-muted-foreground ring-1 ring-foreground/6",
+            "dark:bg-white/10 dark:ring-white/10",
+            compact ? "text-[11px]" : "text-xs"
+          )}
+        >
           <TimerIcon className="size-3.5 shrink-0 opacity-70" />
           <span className="font-medium text-foreground">{expiresIn}</span>
         </span>
-        <span className="inline-flex items-center gap-1.5">
+        <span
+          className={cn(
+            "inline-flex items-center gap-1.5 rounded-full",
+            "bg-white/55 px-2.5 py-1 text-muted-foreground ring-1 ring-foreground/6",
+            "dark:bg-white/10 dark:ring-white/10",
+            compact ? "text-[11px]" : "text-xs"
+          )}
+        >
           <LoaderCircleIcon className="size-3.5 shrink-0 animate-spin opacity-60" />
           <span>{compact ? t("checkingShort") : t("checking")}</span>
         </span>
@@ -427,12 +441,6 @@ export function CryptoPaymentSheet({
                   : "gap-4 overflow-y-auto px-4 py-3.5"
               )}
             >
-              <PaymentMethodPicker
-                currency={paymentCurrency}
-                disabled={loading || !checkout}
-                onCurrencyChange={handleCurrencyChange}
-              />
-
               {error ? (
                 <p
                   className="shrink-0 rounded-2xl bg-destructive/8 px-3 py-2 text-sm text-destructive"
@@ -453,7 +461,16 @@ export function CryptoPaymentSheet({
                       {t("gettingDetails")}
                     </div>
                   ) : null}
-                  <PaymentQuoteSkeleton compact={isMobileSheet} />
+                  <PaymentQuoteSkeleton
+                    compact={isMobileSheet}
+                    currencyPicker={
+                      <PaymentMethodPicker
+                        currency={paymentCurrency}
+                        disabled={loading || !checkout}
+                        onCurrencyChange={handleCurrencyChange}
+                      />
+                    }
+                  />
                 </div>
               ) : (
                 <div
@@ -465,12 +482,12 @@ export function CryptoPaymentSheet({
                   <BillingGlassPanel>
                     <div
                       className={cn(
-                        "flex items-center gap-3",
+                        "flex items-center gap-2.5",
                         isDesktop ? "px-3.5 py-3" : "px-3 py-2.5"
                       )}
                     >
                       <div className="min-w-0 flex-1">
-                        <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+                        <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
                           <p
                             className={cn(
                               "font-semibold leading-none tracking-tight tabular-nums text-foreground",
@@ -479,30 +496,6 @@ export function CryptoPaymentSheet({
                           >
                             {amountLabel}
                           </p>
-                          <span
-                            className="text-sm leading-none tabular-nums text-muted-foreground"
-                            aria-label={t("approxUsd", {
-                              amount: formatUsd(
-                                aboutUsdFromCryptoLabel(
-                                  amountLabel,
-                                  current!.amount_usd
-                                )
-                              ),
-                            })}
-                          >
-                            ≈{" "}
-                            {formatUsd(
-                              aboutUsdFromCryptoLabel(
-                                amountLabel,
-                                current!.amount_usd
-                              )
-                            )}
-                          </span>
-                          {current!.original_amount_usd > current!.amount_usd ? (
-                            <span className="text-sm leading-none text-muted-foreground line-through">
-                              {formatUsd(current!.original_amount_usd)}
-                            </span>
-                          ) : null}
                           {current!.coupon_code ? (
                             <Badge
                               variant="outline"
@@ -512,7 +505,36 @@ export function CryptoPaymentSheet({
                             </Badge>
                           ) : null}
                         </div>
+                        <p
+                          className="mt-1 text-[10px] leading-none tabular-nums text-muted-foreground"
+                          aria-label={t("approxUsd", {
+                            amount: formatUsd(
+                              aboutUsdFromCryptoLabel(
+                                amountLabel,
+                                current!.amount_usd
+                              )
+                            ),
+                          })}
+                        >
+                          ≈{" "}
+                          {formatUsd(
+                            aboutUsdFromCryptoLabel(
+                              amountLabel,
+                              current!.amount_usd
+                            )
+                          )}
+                          {current!.original_amount_usd > current!.amount_usd ? (
+                            <span className="ms-1.5 line-through opacity-70">
+                              {formatUsd(current!.original_amount_usd)}
+                            </span>
+                          ) : null}
+                        </p>
                       </div>
+                      <PaymentMethodPicker
+                        currency={paymentCurrency}
+                        disabled={loading || !checkout}
+                        onCurrencyChange={handleCurrencyChange}
+                      />
                       <CopyAmountButton value={amountLabel} />
                     </div>
                   </BillingGlassPanel>
