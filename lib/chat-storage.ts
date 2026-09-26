@@ -183,8 +183,8 @@ export function sanitizeMessages(messages: ChatUiMessage[]): ChatUiMessage[] {
     const text = m.content.trim()
     // Keep recoverable failed turns (may have empty content + retry CTA).
     if (m.error && m.action === "retry") return true
-    // Signal-card turns can have empty output_text but a paperTicket.
-    if (m.role === "assistant" && m.paperTicket) return true
+    // Signal / no-trade cards can have empty output_text but still render UI.
+    if (m.role === "assistant" && (m.paperTicket || m.noTradeReason)) return true
     if (m.role === "assistant" && (!text || text === "(empty)")) return false
     return true
   })
@@ -202,7 +202,8 @@ export function restoreMessages(
     (m) =>
       m.role === "assistant" &&
       ((m.content.trim() && m.content.trim() !== "(empty)") ||
-        Boolean(m.paperTicket))
+        Boolean(m.paperTicket) ||
+        Boolean(m.noTradeReason))
   ).length
   const histAssistants = hist.filter(
     (m) => m.role === "assistant" && m.content.trim()

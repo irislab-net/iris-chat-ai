@@ -248,6 +248,31 @@ describe("co-pilot recovery helpers", () => {
     expect(removeEmptyAssistantTurn(messages, "a1")).toEqual(messages)
   })
 
+  it("sanitizeMessages keeps no-trade card turns with empty output_text", () => {
+    const messages: ChatUiMessage[] = [
+      { id: "u1", role: "user", content: "Should I buy?" },
+      {
+        id: "a1",
+        role: "assistant",
+        content: "",
+        noTradeReason: "No clear edge on this setup.",
+      },
+    ]
+    expect(sanitizeMessages(messages).map((m) => m.id)).toEqual(["u1", "a1"])
+  })
+
+  it("removeEmptyAssistantTurn keeps blank turns that already have a noTradeReason", () => {
+    const messages = [
+      { id: "u1", content: "Should I buy?" },
+      {
+        id: "a1",
+        content: "",
+        noTradeReason: "No clear edge on this setup.",
+      },
+    ]
+    expect(removeEmptyAssistantTurn(messages, "a1")).toEqual(messages)
+  })
+
   it("flags digit-only and punctuation-only input as low signal", () => {
     expect(isLowSignalUserMessage("12312434546")).toBe(true)
     expect(isLowSignalUserMessage("!!!")).toBe(true)

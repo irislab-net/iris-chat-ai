@@ -56,6 +56,18 @@ export function getLandingHref(): string {
   return MARKETING_ORIGIN
 }
 
+/**
+ * Marketing page href for links that may render on chat.exur.ai.
+ * Relative `/privacy` (etc.) on the desk triggers Next RSC prefetch → cross-origin
+ * 308 to exur.ai → CORS console errors. Apex absolute URLs skip that.
+ * Local/preview keep relative paths (no host split).
+ */
+export function getMarketingPageHref(path: string): string {
+  const normalized = path.startsWith("/") ? path : `/${path}`
+  if (process.env.NODE_ENV === "development") return normalized
+  return `${MARKETING_ORIGIN}${normalized}`
+}
+
 /** In-app path to the marketing landing (nav/logo off-landing). */
 export function getMarketingHomePath(): string {
   return process.env.NODE_ENV === "development" ? "/home" : "/"

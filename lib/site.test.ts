@@ -5,6 +5,7 @@ import { CANDLE_INTERVAL_MS } from "@/lib/format"
 import {
   AUTH_SUCCESS_ROBOTS,
   getLandingHref,
+  getMarketingPageHref,
   getSiteOrigin,
   isAppDeskPath,
   LANDING_PATH,
@@ -64,6 +65,14 @@ describe("public SEO site policy (S1/S2)", () => {
     expect(getLandingHref()).toBe("/home")
     vi.stubEnv("NODE_ENV", "production")
     expect(getLandingHref()).toBe("https://exur.ai")
+  })
+
+  it("uses absolute apex hrefs for marketing pages from the chat desk", () => {
+    vi.stubEnv("NODE_ENV", "development")
+    expect(getMarketingPageHref("/privacy")).toBe("/privacy")
+    vi.stubEnv("NODE_ENV", "production")
+    expect(getMarketingPageHref("/privacy")).toBe("https://exur.ai/privacy")
+    expect(getMarketingPageHref("terms")).toBe("https://exur.ai/terms")
   })
 
   it("exposes verified social URL for trust / Organization sameAs", () => {

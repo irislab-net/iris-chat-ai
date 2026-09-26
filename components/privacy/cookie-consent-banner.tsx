@@ -34,8 +34,8 @@ import {
 } from "@/components/ui/sheet"
 import { Switch } from "@/components/ui/switch"
 import { useIsDesktop } from "@/hooks/use-media-query"
-import { Link } from "@/i18n/navigation"
 import { landingCta } from "@/lib/landing-modern-styles"
+import { getPrivacyNoticeHref } from "@/lib/legal"
 import {
   CONSENT_OPEN_EVENT,
   getConsentSnapshot,
@@ -327,12 +327,14 @@ function CookieConsentBanner() {
               className="mt-2 text-pretty text-[13px] leading-relaxed text-muted-foreground"
             >
               {t("description")}{" "}
-              <Link
-                href="/privacy"
+              <a
+                href={getPrivacyNoticeHref()}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="font-medium text-foreground underline decoration-foreground/25 underline-offset-[3px] transition-colors hover:decoration-foreground/55"
               >
                 {t("privacyLink")}
-              </Link>
+              </a>
             </p>
             <div className="mt-4">{bannerActions}</div>
           </div>
@@ -393,12 +395,14 @@ function CookieConsentBanner() {
                   className={cn(chatMobileSheetDescriptionClass, "text-[14px]")}
                 >
                   {t("description")}{" "}
-                  <Link
-                    href="/privacy"
+                  <a
+                    href={getPrivacyNoticeHref()}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="font-medium text-foreground underline decoration-foreground/25 underline-offset-[3px] transition-colors hover:decoration-foreground/55"
                   >
                     {t("privacyLink")}
-                  </Link>
+                  </a>
                 </SheetDescription>
               </SheetHeader>
             </div>
