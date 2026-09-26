@@ -470,10 +470,7 @@ export function CryptoPaymentSheet({
                       )}
                     >
                       <div className="min-w-0 flex-1">
-                        <p className="text-xs font-medium text-muted-foreground">
-                          {t("sendExactly")}
-                        </p>
-                        <div className="mt-1 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+                        <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
                           <p
                             className={cn(
                               "font-semibold leading-none tracking-tight tabular-nums text-foreground",
