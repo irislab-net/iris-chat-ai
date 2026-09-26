@@ -4,13 +4,13 @@ const chatMobileGlassSurfaceClass =
 
 /**
  * Composer — theme-adaptive liquid glass (white in light, elevated black in dark).
- * Opaque enough to lift off the page background; inset specular/rim only (no outer drop).
+ * Fill is opaque enough to lift off the page; edge comes from inset specular/rim only.
  */
 const chatMobileComposerGlassClass =
-  "border-0 bg-white/88 shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_98%,transparent),inset_0_0_0_0.5px_color-mix(in_oklch,white_70%,transparent),inset_0_-1px_1px_0_color-mix(in_oklch,white_35%,transparent),inset_0_2px_10px_0_color-mix(in_oklch,var(--foreground)_5%,transparent),inset_0_-3px_12px_0_color-mix(in_oklch,var(--foreground)_4%,transparent)] backdrop-blur-[40px] backdrop-saturate-[200%] supports-[backdrop-filter]:bg-white/78 dark:bg-[oklch(0.2_0_0/0.82)] dark:shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_22%,transparent),inset_0_0_0_0.5px_color-mix(in_oklch,white_14%,transparent),inset_0_-1px_1px_0_color-mix(in_oklch,white_5%,transparent),inset_0_2px_14px_0_color-mix(in_oklch,black_45%,transparent),inset_0_-3px_16px_0_color-mix(in_oklch,black_32%,transparent)] dark:supports-[backdrop-filter]:bg-[oklch(0.2_0_0/0.68)]"
+  "border-0 bg-white/92 shadow-[inset_0_1.5px_1px_0_color-mix(in_oklch,white_100%,transparent),inset_0_0_0_1px_color-mix(in_oklch,white_78%,transparent),inset_0_-2px_3px_0_color-mix(in_oklch,white_42%,transparent),inset_0_3px_14px_0_color-mix(in_oklch,var(--foreground)_6%,transparent),inset_0_-4px_16px_0_color-mix(in_oklch,var(--foreground)_5%,transparent)] backdrop-blur-[40px] backdrop-saturate-[200%] supports-[backdrop-filter]:bg-white/84 dark:bg-[oklch(0.26_0_0/0.9)] dark:shadow-[inset_0_1.5px_1px_0_color-mix(in_oklch,white_32%,transparent),inset_0_0_0_1px_color-mix(in_oklch,white_20%,transparent),inset_0_-2px_3px_0_color-mix(in_oklch,white_8%,transparent),inset_0_3px_16px_0_color-mix(in_oklch,black_48%,transparent),inset_0_-4px_18px_0_color-mix(in_oklch,black_36%,transparent)] dark:supports-[backdrop-filter]:bg-[oklch(0.26_0_0/0.78)]"
 
 const chatMobileComposerGlassFocusClass =
-  "focus-within:bg-white/94 focus-within:shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_100%,transparent),inset_0_0_0_0.5px_color-mix(in_oklch,white_78%,transparent),inset_0_-1px_1px_0_color-mix(in_oklch,white_40%,transparent),inset_0_2px_12px_0_color-mix(in_oklch,var(--foreground)_6%,transparent),inset_0_-3px_14px_0_color-mix(in_oklch,var(--foreground)_5%,transparent)] dark:focus-within:bg-[oklch(0.22_0_0/0.9)] dark:focus-within:shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_28%,transparent),inset_0_0_0_0.5px_color-mix(in_oklch,white_18%,transparent),inset_0_-1px_1px_0_color-mix(in_oklch,white_7%,transparent),inset_0_2px_14px_0_color-mix(in_oklch,black_50%,transparent),inset_0_-3px_16px_0_color-mix(in_oklch,black_36%,transparent)]"
+  "focus-within:bg-white/96 focus-within:shadow-[inset_0_1.5px_1px_0_color-mix(in_oklch,white_100%,transparent),inset_0_0_0_1px_color-mix(in_oklch,white_88%,transparent),inset_0_-2px_3px_0_color-mix(in_oklch,white_48%,transparent),inset_0_3px_16px_0_color-mix(in_oklch,var(--foreground)_7%,transparent),inset_0_-4px_18px_0_color-mix(in_oklch,var(--foreground)_6%,transparent)] dark:focus-within:bg-[oklch(0.3_0_0/0.94)] dark:focus-within:shadow-[inset_0_1.5px_1px_0_color-mix(in_oklch,white_40%,transparent),inset_0_0_0_1px_color-mix(in_oklch,white_26%,transparent),inset_0_-2px_3px_0_color-mix(in_oklch,white_10%,transparent),inset_0_3px_16px_0_color-mix(in_oklch,black_52%,transparent),inset_0_-4px_18px_0_color-mix(in_oklch,black_40%,transparent)]"
 
 const chatMobilePrimaryButtonClass =
   "border-0 bg-primary text-primary-foreground shadow-none hover:bg-primary/90"
@@ -138,17 +138,17 @@ const chatMobileComposerTextareaExpandedClass =
 
 /** Desktop/web composer — theme-adaptive liquid glass shell and nested controls. */
 const chatDesktopComposerGlassBorderClass =
-  "ring-1 ring-inset ring-white/75 dark:ring-white/14"
+  "ring-1 ring-inset ring-white/82 dark:ring-white/22"
 
 const chatDesktopComposerShellClass =
   "relative shrink-0 bg-transparent pt-3 pb-[max(0.625rem,env(safe-area-inset-bottom))]"
 
 const chatDesktopComposerBodyClass =
-  `isolate grid grid-cols-[auto_1fr_auto] overflow-hidden rounded-[22px] px-1.5 pb-1.5 pt-0.5 text-foreground transition-[box-shadow,background-color,ring-color] duration-300 ease-out [grid-template-areas:'primary_primary_primary'_'leading_._trailing'] ${chatMobileComposerGlassClass} ${chatDesktopComposerGlassBorderClass} ${chatMobileComposerGlassFocusClass} focus-within:ring-white/90 dark:focus-within:ring-white/20`
+  `isolate grid grid-cols-[auto_1fr_auto] overflow-hidden rounded-[22px] px-1.5 pb-1.5 pt-0.5 text-foreground transition-[box-shadow,background-color,ring-color] duration-300 ease-out [grid-template-areas:'primary_primary_primary'_'leading_._trailing'] ${chatMobileComposerGlassClass} ${chatDesktopComposerGlassBorderClass} ${chatMobileComposerGlassFocusClass} focus-within:ring-white/92 dark:focus-within:ring-white/30`
 
 /** Nested control chips — white glass on light, black glass on dark (pops from shell). */
 const chatDesktopComposerControlClass =
-  "border-0 bg-white/72 ring-1 ring-inset ring-white/70 shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_95%,transparent),inset_0_-1px_1px_0_color-mix(in_oklch,white_28%,transparent),inset_0_2px_6px_0_color-mix(in_oklch,var(--foreground)_4%,transparent)] backdrop-blur-xl backdrop-saturate-[190%] transition-[background-color,box-shadow,transform,color,ring-color] hover:bg-white/88 hover:ring-white/82 active:scale-[0.98] dark:bg-[oklch(0.14_0_0/0.72)] dark:ring-white/12 dark:shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_16%,transparent),inset_0_-1px_1px_0_color-mix(in_oklch,white_4%,transparent),inset_0_2px_8px_0_color-mix(in_oklch,black_40%,transparent)] dark:hover:bg-[oklch(0.16_0_0/0.82)] dark:hover:ring-white/16"
+  "border-0 bg-white/78 ring-1 ring-inset ring-white/80 shadow-[inset_0_1px_1px_0_color-mix(in_oklch,white_96%,transparent),inset_0_-1px_2px_0_color-mix(in_oklch,white_32%,transparent),inset_0_2px_8px_0_color-mix(in_oklch,var(--foreground)_5%,transparent)] backdrop-blur-xl backdrop-saturate-[190%] transition-[background-color,box-shadow,transform,color,ring-color] hover:bg-white/92 hover:ring-white/88 active:scale-[0.98] dark:bg-[oklch(0.16_0_0/0.82)] dark:ring-white/16 dark:shadow-[inset_0_1px_1px_0_color-mix(in_oklch,white_22%,transparent),inset_0_-1px_2px_0_color-mix(in_oklch,white_6%,transparent),inset_0_2px_10px_0_color-mix(in_oklch,black_45%,transparent)] dark:hover:bg-[oklch(0.18_0_0/0.9)] dark:hover:ring-white/22"
 
 const chatDesktopComposerIconButtonClass =
   `${chatDesktopComposerControlClass} size-9 rounded-xl text-muted-foreground hover:text-foreground sm:size-8 [&_svg]:stroke-[1.75]`
