@@ -992,7 +992,7 @@
       "createInvoiceError": "Could not create invoice",
       "watchingTitle": "Waiting for payment",
       "watchingBody": "We'll unlock Plus as soon as the transfer arrives.",
-      "footerGuide": "Send the exact amount on {network} only. Plus unlocks when the transfer confirms.",
+      "footerGuide": "Send the exact amount on {network} only. Plus unlocks when confirmed.",
       "timeLeft": "Time left ",
       "checking": "Checking",
       "checkingShort": "Checking…",

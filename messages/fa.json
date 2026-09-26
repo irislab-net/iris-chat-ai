@@ -976,7 +976,7 @@
       "createInvoiceError": "ساخت فاکتور ممکن نشد",
       "watchingTitle": "در انتظار پرداخت",
       "watchingBody": "به‌محض رسیدن انتقال، Plus باز می‌شود.",
-      "footerGuide": "مبلغ دقیق را فقط روی شبکهٔ {network} بفرست. با تأیید انتقال، Plus باز می‌شود.",
+      "footerGuide": "مبلغ دقیق را فقط روی {network} بفرست. با تأیید انتقال، Plus باز می‌شود.",
       "timeLeft": "زمان باقی‌مانده ",
       "checking": "در حال بررسی",
       "checkingShort": "در حال بررسی…",
