@@ -8,10 +8,10 @@ import {
   chatMobileSheetContentClass,
   chatMobileSheetFooterBarClass,
   chatMobileSheetFooterClass,
-  chatMobileSheetGhostButtonClass,
   chatMobileSheetHandleClass,
   chatMobileSheetHeaderClass,
   chatMobileSheetPrimaryButtonClass,
+  chatMobileSheetSecondaryButtonClass,
   chatMobileSheetTitleClass,
 } from "@/components/app-shell/chat-mobile-gemini-styles"
 import { Button } from "@/components/ui/button"
@@ -31,6 +31,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet"
 import { useIsDesktop } from "@/hooks/use-media-query"
+import { landingCta } from "@/lib/landing-modern-styles"
 import { cn } from "@/lib/utils"
 
 type ChatRenameDialogProps = {
@@ -134,15 +135,14 @@ function ChatRenameDialog({
           <DialogFooter className="mx-0 mb-0 gap-2 border-t border-border/40 p-4 pt-3.5 sm:justify-end">
             <Button
               type="button"
-              variant="outline"
-              className="rounded-full"
+              className={cn(landingCta("secondary", "sm"), "rounded-full")}
               onClick={() => onOpenChange(false)}
             >
               {t("cancelRename")}
             </Button>
             <Button
               type="button"
-              className="rounded-full"
+              className={cn(landingCta("primary", "sm"), "rounded-full")}
               disabled={!canSave}
               onClick={handleSubmit}
             >
@@ -182,15 +182,17 @@ function ChatRenameDialog({
             <Button
               type="button"
               disabled={!canSave}
-              className={chatMobileSheetPrimaryButtonClass}
+              className={cn(
+                chatMobileSheetPrimaryButtonClass,
+                "disabled:opacity-45"
+              )}
               onClick={handleSubmit}
             >
               {t("saveRename")}
             </Button>
             <Button
               type="button"
-              variant="ghost"
-              className={chatMobileSheetGhostButtonClass}
+              className={chatMobileSheetSecondaryButtonClass}
               onClick={() => onOpenChange(false)}
             >
               {t("cancelRename")}

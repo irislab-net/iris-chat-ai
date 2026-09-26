@@ -1,3 +1,5 @@
+import { landingCta } from "@/lib/landing-modern-styles"
+
 /** iOS-style liquid glass — edge from highlight + shadow, no border. */
 const chatMobileGlassSurfaceClass =
   "border-0 bg-white/78 shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_75%,transparent),0_1px_2px_color-mix(in_oklch,var(--foreground)_4%,transparent),0_8px_24px_-10px_color-mix(in_oklch,var(--foreground)_9%,transparent)] backdrop-blur-2xl backdrop-saturate-[180%] supports-[backdrop-filter]:bg-white/62 dark:bg-white/[0.08] dark:shadow-[inset_0_1px_0_0_color-mix(in_oklch,var(--foreground)_10%,transparent),0_8px_28px_-12px_color-mix(in_oklch,black_35%,transparent)] dark:supports-[backdrop-filter]:bg-white/[0.06]"
@@ -275,11 +277,13 @@ const chatMobileSheetFooterClass =
 const chatMobileSheetFooterBarClass =
   "w-full border-0 bg-transparent px-5 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom,0px))]"
 
-const chatMobileSheetPrimaryButtonClass =
-  "h-12 w-full rounded-full text-[15px] font-medium"
+/** Sheet CTAs use landing primary/secondary blues — never shadcn `bg-primary` (near-black). */
+const chatMobileSheetPrimaryButtonClass = `${landingCta("primary", "md")} h-12! min-h-12 w-full`
+
+const chatMobileSheetSecondaryButtonClass = `${landingCta("secondary", "md")} h-12! min-h-12 w-full`
 
 const chatMobileSheetGhostButtonClass =
-  "h-11 w-full rounded-full text-[15px] font-medium"
+  "h-11 w-full rounded-full text-[15px] font-medium text-foreground hover:bg-foreground/5"
 
 const chatMobileSheetConsentCheckedClass =
   `border-0 ${chatMobileGlassSurfaceClass}`
@@ -437,6 +441,7 @@ export {
   chatMobileSheetHandleClass,
   chatMobileSheetHeaderClass,
   chatMobileSheetPrimaryButtonClass,
+  chatMobileSheetSecondaryButtonClass,
   chatMobileSheetSectionLabelClass,
   chatMobileSheetTitleClass,
   chatLoginConsentBrandMarkClass,
