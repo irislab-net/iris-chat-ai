@@ -26,7 +26,14 @@
     "comingSoon": "Скоро",
     "live": "Онлайн",
     "demo": "Демо",
-    "filled": "Исполнено"
+    "filled": "Исполнено",
+    "notifications": "Уведомления",
+    "notificationsOn": "Вкл.",
+    "notificationsOff": "Выкл.",
+    "notificationsEnabled": "Push-уведомления включены",
+    "notificationsDisabled": "Push-уведомления выключены",
+    "notificationsDenied": "Разрешение на уведомления отклонено",
+    "notificationsError": "Не удалось обновить настройки уведомлений"
   },
   "nav": {
     "aria": "Главная",

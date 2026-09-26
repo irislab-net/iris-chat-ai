@@ -26,7 +26,14 @@
     "comingSoon": "به‌زودی",
     "live": "زنده",
     "demo": "دمو",
-    "filled": "انجام شد"
+    "filled": "انجام شد",
+    "notifications": "اعلان‌ها",
+    "notificationsOn": "روشن",
+    "notificationsOff": "خاموش",
+    "notificationsEnabled": "اعلان‌های پوش فعال شد",
+    "notificationsDisabled": "اعلان‌های پوش خاموش شد",
+    "notificationsDenied": "اجازه اعلان رد شد",
+    "notificationsError": "تنظیمات اعلان به‌روز نشد"
   },
   "nav": {
     "aria": "منوی اصلی",

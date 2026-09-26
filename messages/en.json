@@ -26,7 +26,14 @@
     "comingSoon": "Coming soon",
     "live": "Live",
     "demo": "Demo",
-    "filled": "Filled"
+    "filled": "Filled",
+    "notifications": "Notifications",
+    "notificationsOn": "On",
+    "notificationsOff": "Off",
+    "notificationsEnabled": "Push notifications enabled",
+    "notificationsDisabled": "Push notifications disabled",
+    "notificationsDenied": "Notification permission was denied",
+    "notificationsError": "Couldn’t update notification settings"
   },
   "consent": {
     "title": "We use cookies",

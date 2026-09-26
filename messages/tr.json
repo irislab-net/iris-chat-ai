@@ -26,7 +26,14 @@
     "comingSoon": "Yakında",
     "live": "Canlı",
     "demo": "Demo",
-    "filled": "Dolduruldu"
+    "filled": "Dolduruldu",
+    "notifications": "Bildirimler",
+    "notificationsOn": "Açık",
+    "notificationsOff": "Kapalı",
+    "notificationsEnabled": "Push bildirimleri açık",
+    "notificationsDisabled": "Push bildirimleri kapalı",
+    "notificationsDenied": "Bildirim izni reddedildi",
+    "notificationsError": "Bildirim ayarları güncellenemedi"
   },
   "nav": {
     "aria": "Ana sayfa",

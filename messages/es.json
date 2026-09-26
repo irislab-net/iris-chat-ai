@@ -26,7 +26,14 @@
     "comingSoon": "Próximamente",
     "live": "En vivo",
     "demo": "Demo",
-    "filled": "Completado"
+    "filled": "Completado",
+    "notifications": "Notificaciones",
+    "notificationsOn": "Activadas",
+    "notificationsOff": "Desactivadas",
+    "notificationsEnabled": "Notificaciones push activadas",
+    "notificationsDisabled": "Notificaciones push desactivadas",
+    "notificationsDenied": "Se denegó el permiso de notificaciones",
+    "notificationsError": "No se pudieron actualizar las notificaciones"
   },
   "nav": {
     "aria": "Inicio",
