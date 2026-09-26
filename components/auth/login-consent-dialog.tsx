@@ -25,7 +25,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet"
 import { useIsDesktop } from "@/hooks/use-media-query"
-import { PRIVACY_NOTICE_URL, TERMS_OF_SERVICE_URL } from "@/lib/legal"
+import { getPrivacyNoticeHref, getTermsOfServiceHref } from "@/lib/legal"
 import {
   chatLoginConsentBrandMarkClass,
   chatLoginConsentDialogClass,
@@ -206,7 +206,7 @@ function LoginConsentBody({
         >
           {t.rich("agreeTerms", {
             link: (chunks) => (
-              <LegalLink href={TERMS_OF_SERVICE_URL}>{chunks}</LegalLink>
+              <LegalLink href={getTermsOfServiceHref()}>{chunks}</LegalLink>
             ),
           })}
         </ConsentCheck>
@@ -217,7 +217,7 @@ function LoginConsentBody({
         >
           {t.rich("agreePrivacy", {
             link: (chunks) => (
-              <LegalLink href={PRIVACY_NOTICE_URL}>{chunks}</LegalLink>
+              <LegalLink href={getPrivacyNoticeHref()}>{chunks}</LegalLink>
             ),
           })}
         </ConsentCheck>
