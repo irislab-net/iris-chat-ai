@@ -368,7 +368,7 @@ export function CryptoPaymentSheet({
           "landing-modern flex w-full flex-col gap-0 border-0 bg-transparent p-0 shadow-none",
           isDesktop
             ? "sm:max-w-95"
-            : "data-[side=bottom]:inset-x-0 data-[side=bottom]:bottom-0 data-[side=bottom]:h-[100dvh] data-[side=bottom]:max-h-[100dvh]"
+            : "data-[side=bottom]:inset-x-0 data-[side=bottom]:bottom-[var(--keyboard-inset-bottom,0px)] data-[side=bottom]:h-[var(--app-height,100dvh)] data-[side=bottom]:max-h-[var(--app-height,100dvh)]"
         )}
       >
         <div
