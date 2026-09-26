@@ -27,7 +27,11 @@ import {
 import { fetchNewsHome, fetchNewsLatest } from "@/lib/api/data"
 import type { NewsHome } from "@/lib/api/types"
 import { hasUsableNews, mergeNewsHome } from "@/lib/dashboard/intel-load"
-import { newsFeedUpdatedLabel } from "@/lib/format"
+import {
+  NEWS_REFRESH_INTERVAL_MS,
+  newsFeedUpdatedLabel,
+  shouldRefreshNewsAfterResume,
+} from "@/lib/format"
 import { localeDirection } from "@/lib/i18n/locale"
 import { cn } from "@/lib/utils"
 
@@ -35,6 +39,33 @@ function useChatNewsFeed(enabled: boolean) {
   const [newsHome, setNewsHome] = React.useState<NewsHome | null>(null)
   const [ready, setReady] = React.useState(false)
   const [nowMs, setNowMs] = React.useState(() => Date.now())
+  const lastFetchAtRef = React.useRef<number | null>(null)
+  const inFlightRef = React.useRef(false)
+  const mountedRef = React.useRef(true)
+
+  const loadNews = React.useEffectEvent(async () => {
+    if (inFlightRef.current) return
+    inFlightRef.current = true
+    try {
+      const home = await fetchNewsHome().catch(() => null)
+      const merged = home?.news?.length
+        ? home
+        : mergeNewsHome(home, await fetchNewsLatest().catch(() => []))
+      if (!mountedRef.current) return
+      setNewsHome(merged)
+      lastFetchAtRef.current = Date.now()
+    } finally {
+      inFlightRef.current = false
+      if (mountedRef.current) setReady(true)
+    }
+  })
+
+  React.useEffect(() => {
+    mountedRef.current = true
+    return () => {
+      mountedRef.current = false
+    }
+  }, [])
 
   React.useEffect(() => {
     const id = window.setInterval(() => setNowMs(Date.now()), 60_000)
@@ -45,20 +76,26 @@ function useChatNewsFeed(enabled: boolean) {
     if (!enabled) return
     let cancelled = false
 
-    void (async () => {
-      try {
-        const home = await fetchNewsHome().catch(() => null)
-        const merged = home?.news?.length
-          ? home
-          : mergeNewsHome(home, await fetchNewsLatest().catch(() => []))
-        if (!cancelled) setNewsHome(merged)
-      } finally {
-        if (!cancelled) setReady(true)
-      }
-    })()
+    void loadNews()
 
+    const intervalId = window.setInterval(() => {
+      if (cancelled) return
+      void loadNews()
+    }, NEWS_REFRESH_INTERVAL_MS)
+
+    function onVisibilityChange() {
+      if (document.visibilityState !== "visible" || cancelled) return
+      const last = lastFetchAtRef.current
+      if (last == null || shouldRefreshNewsAfterResume(last, Date.now())) {
+        void loadNews()
+      }
+    }
+
+    document.addEventListener("visibilitychange", onVisibilityChange)
     return () => {
       cancelled = true
+      window.clearInterval(intervalId)
+      document.removeEventListener("visibilitychange", onVisibilityChange)
     }
   }, [enabled])
 

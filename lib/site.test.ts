@@ -1,7 +1,11 @@
 import { describe, expect, it, vi } from "vitest"
 
-import { PUBLIC_HOME_REVALIDATE_SECONDS } from "@/lib/api/public-home"
-import { CANDLE_INTERVAL_MS } from "@/lib/format"
+import {
+  PUBLIC_HOME_REVALIDATE_SECONDS,
+  PUBLIC_INSIGHT_REVALIDATE_SECONDS,
+  PUBLIC_NEWS_REVALIDATE_SECONDS,
+} from "@/lib/api/public-home"
+import { CANDLE_INTERVAL_MS, NEWS_REFRESH_INTERVAL_MS } from "@/lib/format"
 import {
   AUTH_SUCCESS_ROBOTS,
   getLandingHref,
@@ -31,9 +35,12 @@ describe("public SEO site policy (S1/S2)", () => {
     expect(getSiteOrigin()).toMatch(/^https:\/\//)
   })
 
-  it("aligns public SSR revalidate with F1 candle length, not invented 6h", () => {
-    expect(PUBLIC_HOME_REVALIDATE_SECONDS).toBe(CANDLE_INTERVAL_MS / 1000)
-    expect(PUBLIC_HOME_REVALIDATE_SECONDS).toBe(900)
+  it("keeps insight SSR cache on F1 candle length and news on a 5m cadence", () => {
+    expect(PUBLIC_INSIGHT_REVALIDATE_SECONDS).toBe(CANDLE_INTERVAL_MS / 1000)
+    expect(PUBLIC_INSIGHT_REVALIDATE_SECONDS).toBe(900)
+    expect(PUBLIC_NEWS_REVALIDATE_SECONDS).toBe(NEWS_REFRESH_INTERVAL_MS / 1000)
+    expect(PUBLIC_NEWS_REVALIDATE_SECONDS).toBe(300)
+    expect(PUBLIC_HOME_REVALIDATE_SECONDS).toBe(PUBLIC_NEWS_REVALIDATE_SECONDS)
     expect(PUBLIC_HOME_REVALIDATE_SECONDS).not.toBe(6 * 60 * 60)
   })
 

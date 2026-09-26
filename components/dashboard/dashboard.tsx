@@ -19,8 +19,10 @@ import type { InsightHome, NewsHome } from "@/lib/api/types"
 import {
   insightUpdatedLabel,
   msUntilNextCandleBoundary,
+  NEWS_REFRESH_INTERVAL_MS,
   newsFeedUpdatedLabel,
   shouldRefreshAfterResume,
+  shouldRefreshNewsAfterResume,
 } from "@/lib/format"
 import { cn } from "@/lib/utils"
 
@@ -57,49 +59,55 @@ function Dashboard({
   )
   const [nowMs, setNowMs] = React.useState(() => Date.now())
   const mountedRef = React.useRef(true)
-  const inFlightRef = React.useRef(false)
-  const lastFetchAtRef = React.useRef<number | null>(null)
+  const insightInFlightRef = React.useRef(false)
+  const newsInFlightRef = React.useRef(false)
+  const lastInsightFetchAtRef = React.useRef<number | null>(null)
+  const lastNewsFetchAtRef = React.useRef<number | null>(null)
 
   React.useEffect(() => {
     mountedRef.current = true
-    if (initialInsight || initialNews) {
-      lastFetchAtRef.current = Date.now()
-    }
+    const now = Date.now()
+    if (initialInsight) lastInsightFetchAtRef.current = now
+    if (initialNews) lastNewsFetchAtRef.current = now
     return () => {
       mountedRef.current = false
     }
   }, [initialInsight, initialNews])
 
-  const loadDashboard = React.useEffectEvent(
-    async (_mode: "initial" | "refresh") => {
-      if (inFlightRef.current) return
-      inFlightRef.current = true
-      try {
-        const [insightData, newsData] = await Promise.all([
-          fetchInsightHome().catch(() => null),
-          fetchNewsHome()
-            .catch(() => null)
-            .then(async (home) => {
-              if (home?.news?.length) return home
-              const latest = await fetchNewsLatest().catch(() => [])
-              return mergeNewsHome(home, latest)
-            }),
-        ])
-        if (!mountedRef.current) return
-        lastFetchAtRef.current = Date.now()
-        if (insightData) setInsight(insightData)
-        if (newsData) setNews(newsData)
-      } catch {
-        // News empty states stay usable; do not blank the page.
-      } finally {
-        inFlightRef.current = false
-        if (mountedRef.current) {
-          setInsightReady(true)
-          setNewsReady(true)
-        }
-      }
+  const loadInsight = React.useEffectEvent(async () => {
+    if (insightInFlightRef.current) return
+    insightInFlightRef.current = true
+    try {
+      const insightData = await fetchInsightHome().catch(() => null)
+      if (!mountedRef.current) return
+      lastInsightFetchAtRef.current = Date.now()
+      if (insightData) setInsight(insightData)
+    } catch {
+      // Keep last insight; empty states stay usable.
+    } finally {
+      insightInFlightRef.current = false
+      if (mountedRef.current) setInsightReady(true)
     }
-  )
+  })
+
+  const loadNews = React.useEffectEvent(async () => {
+    if (newsInFlightRef.current) return
+    newsInFlightRef.current = true
+    try {
+      const home = await fetchNewsHome().catch(() => null)
+      const newsData = home?.news?.length
+        ? home
+        : mergeNewsHome(home, await fetchNewsLatest().catch(() => []))
+      if (!mountedRef.current) return
+      lastNewsFetchAtRef.current = Date.now()
+      if (newsData) setNews(newsData)
+    } catch {
+      // News empty states stay usable; do not blank the page.
+    } finally {
+      newsInFlightRef.current = false
+      if (mountedRef.current) setNewsReady(true)
+    }
+  })
 
   React.useEffect(() => {
     const id = window.setInterval(() => setNowMs(Date.now()), 60_000)
@@ -109,11 +117,13 @@ function Dashboard({
   React.useEffect(() => {
     if (hasUsableInsight(initialInsight) && hasUsableNews(initialNews)) return
     const id = window.setTimeout(() => {
-      void loadDashboard("initial")
+      if (!hasUsableInsight(initialInsight)) void loadInsight()
+      if (!hasUsableNews(initialNews)) void loadNews()
     }, 0)
     return () => window.clearTimeout(id)
   }, [initialInsight, initialNews])
 
+  // Insight: refresh on 15m candle boundaries.
   React.useEffect(() => {
     let timeoutId = 0
     let cancelled = false
@@ -124,7 +134,7 @@ function Dashboard({
       timeoutId = window.setTimeout(() => {
         void (async () => {
           if (cancelled) return
-          await loadDashboard("refresh")
+          await loadInsight()
           if (cancelled) return
           scheduleNext()
         })()
@@ -134,11 +144,11 @@ function Dashboard({
     function onVisibilityChange() {
       if (document.visibilityState !== "visible" || cancelled) return
       const now = Date.now()
-      const last = lastFetchAtRef.current
+      const last = lastInsightFetchAtRef.current
       if (last != null && shouldRefreshAfterResume(last, now)) {
         window.clearTimeout(timeoutId)
         void (async () => {
-          await loadDashboard("refresh")
+          await loadInsight()
           if (cancelled) return
           scheduleNext()
         })()
@@ -152,6 +162,32 @@ function Dashboard({
     return () => {
       cancelled = true
       window.clearTimeout(timeoutId)
+      document.removeEventListener("visibilitychange", onVisibilityChange)
+    }
+  }, [])
+
+  // News: refresh every 5 minutes (and on resume if the window elapsed).
+  React.useEffect(() => {
+    let cancelled = false
+
+    const intervalId = window.setInterval(() => {
+      if (cancelled) return
+      void loadNews()
+    }, NEWS_REFRESH_INTERVAL_MS)
+
+    function onVisibilityChange() {
+      if (document.visibilityState !== "visible" || cancelled) return
+      const now = Date.now()
+      const last = lastNewsFetchAtRef.current
+      if (last == null || shouldRefreshNewsAfterResume(last, now)) {
+        void loadNews()
+      }
+    }
+
+    document.addEventListener("visibilitychange", onVisibilityChange)
+    return () => {
+      cancelled = true
+      window.clearInterval(intervalId)
       document.removeEventListener("visibilitychange", onVisibilityChange)
     }
   }, [])

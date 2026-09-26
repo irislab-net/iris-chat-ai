@@ -103,6 +103,9 @@ export function hostFromUrl(url: string) {
 /** 15-minute candle length in ms. Boundaries are epoch-aligned (same as countdown). */
 export const CANDLE_INTERVAL_MS = 15 * 60 * 1000
 
+/** Client + SSR news tape refresh cadence (5 minutes). */
+export const NEWS_REFRESH_INTERVAL_MS = 5 * 60 * 1000
+
 /** Start of the candle period that contains `now` (epoch-aligned). */
 export function candlePeriodStart(now: number): number {
   return now - (now % CANDLE_INTERVAL_MS)
@@ -131,6 +134,14 @@ export function shouldRefreshAfterResume(
   now: number
 ): boolean {
   return candlePeriodStart(now) > candlePeriodStart(lastFetchAt)
+}
+
+/** True when the news refresh window elapsed since `lastFetchAt`. */
+export function shouldRefreshNewsAfterResume(
+  lastFetchAt: number,
+  now: number
+): boolean {
+  return now - lastFetchAt >= NEWS_REFRESH_INTERVAL_MS
 }
 
 export function nextCandleCountdown(now = Date.now()) {

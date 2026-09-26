@@ -8,11 +8,13 @@ import {
   getNextCandleBoundary,
   insightUpdatedLabel,
   msUntilNextCandleBoundary,
+  NEWS_REFRESH_INTERVAL_MS,
   newsFeedUpdatedLabel,
   newsPublishedLabel,
   nextCandleCountdown,
   normalizeEpochMs,
   shouldRefreshAfterResume,
+  shouldRefreshNewsAfterResume,
 } from "@/lib/format"
 
 /** Build an epoch-aligned instant: period start + offset within the 15m candle. */
@@ -77,6 +79,17 @@ describe("candle boundary timing", () => {
     expect(shouldRefreshAfterResume(fetchedAt, next + 5 * 60_000)).toBe(true)
     // Multiple boundaries elapsed → still a single boolean (caller refreshes once)
     expect(shouldRefreshAfterResume(fetchedAt, nextNext + 60_000)).toBe(true)
+  })
+
+  it("shouldRefreshNewsAfterResume follows the 5m news window", () => {
+    const fetchedAt = atOffset(period, 1 * 60_000)
+    expect(
+      shouldRefreshNewsAfterResume(fetchedAt, fetchedAt + 4 * 60_000)
+    ).toBe(false)
+    expect(
+      shouldRefreshNewsAfterResume(fetchedAt, fetchedAt + NEWS_REFRESH_INTERVAL_MS)
+    ).toBe(true)
+    expect(NEWS_REFRESH_INTERVAL_MS).toBe(5 * 60 * 1000)
   })
 
   it("candlePeriodStart is stable within a period", () => {

@@ -56,8 +56,8 @@ const newsMetadata: Metadata = {
   },
 }
 
-/** Matches `PUBLIC_HOME_REVALIDATE_SECONDS` (literal required for the segment config). */
-export const revalidate = 900
+/** Matches `PUBLIC_HOME_REVALIDATE_SECONDS` / news cadence (literal required for the segment config). */
+export const revalidate = 300
 
 type PageProps = {
   params: Promise<{ locale: AppLocale }>
