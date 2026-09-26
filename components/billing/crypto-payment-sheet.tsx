@@ -70,7 +70,7 @@ function PaymentQuoteSkeleton({ compact }: { compact?: boolean }) {
       )}
       aria-busy="true"
     >
-      {/* Amount — mirrors BillingGlassPanel send-exactly row */}
+      {/* Amount — mirrors BillingGlassPanel amount row */}
       <BillingGlassPanel>
         <div
           className={cn(
@@ -79,8 +79,7 @@ function PaymentQuoteSkeleton({ compact }: { compact?: boolean }) {
           )}
         >
           <div className="min-w-0 flex-1">
-            <Skeleton className="h-3 w-20 rounded-full" />
-            <div className="mt-2 flex items-baseline gap-2">
+            <div className="flex items-baseline gap-2">
               <Skeleton className="h-6 w-[7.5rem] rounded-md" />
               <Skeleton className="h-3.5 w-14 rounded-full" />
             </div>
