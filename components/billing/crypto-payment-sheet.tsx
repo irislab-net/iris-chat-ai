@@ -104,7 +104,7 @@ function PaymentQuoteSkeleton({ compact }: { compact?: boolean }) {
       <div
         className={cn(
           "flex min-h-0 flex-1 flex-col items-center justify-center",
-          compact ? "gap-3.5 px-3" : "gap-4 px-3.5"
+          compact ? "gap-3.5 px-4" : "gap-4 px-4"
         )}
       >
         <Skeleton
@@ -583,12 +583,7 @@ export function CryptoPaymentSheet({
                   </div>
 
                   {/* Inset to match inner padding of rounded select/amount panels */}
-                  <div
-                    className={cn(
-                      "flex min-h-0 flex-1 flex-col justify-center",
-                      isMobileSheet ? "px-3" : "px-3.5"
-                    )}
-                  >
+                  <div className="flex min-h-0 flex-1 flex-col justify-center px-4">
                     <DepositAddressCard
                       address={payAddress}
                       currency={paymentCurrency}
