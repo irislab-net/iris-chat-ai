@@ -36,11 +36,11 @@ export function DepositAddressCard({
     }
   }
 
-  const qrSize = compact ? 128 : 152
+  const qrSize = compact ? 176 : 188
 
   return (
-    <div className={cn("flex flex-col items-center", compact ? "gap-2.5" : "gap-3")}>
-      <div className="bg-white p-2 dark:bg-white">
+    <div className={cn("flex flex-col items-center", compact ? "gap-3.5" : "gap-4")}>
+      <div className="bg-white p-3 dark:bg-white">
         <QRCode
           value={address}
           size={qrSize}
@@ -50,8 +50,8 @@ export function DepositAddressCard({
         />
       </div>
 
-      <div className="flex w-full min-w-0 items-center gap-2">
-        <code className="min-w-0 flex-1 truncate text-start font-mono text-[11px] leading-snug text-foreground/90">
+      <div className="flex w-full min-w-0 items-center gap-2.5">
+        <code className="min-w-0 flex-1 truncate text-start font-mono text-xs leading-snug text-foreground/90">
           {address}
         </code>
         <Button

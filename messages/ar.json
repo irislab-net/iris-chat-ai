@@ -976,7 +976,7 @@
       "createInvoiceError": "تعذّر إنشاء الفاتورة",
       "watchingTitle": "بانتظار الدفع",
       "watchingBody": "سنفتح Plus فور وصول التحويل.",
-      "footerGuide": "أرسل المبلغ الدقيق على شبكة {network} فقط. يُفعَّل Plus عند تأكيد التحويل.",
+      "footerGuide": "أرسل المبلغ الدقيق على {network} فقط. يُفعَّل Plus عند التأكيد.",
       "timeLeft": "الوقت المتبقي ",
       "checking": "جارٍ التحقق",
       "checkingShort": "جارٍ التحقق…",

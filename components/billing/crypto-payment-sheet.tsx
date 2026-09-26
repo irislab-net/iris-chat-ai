@@ -63,16 +63,61 @@ type CryptoPaymentSheetProps = {
 
 function PaymentQuoteSkeleton({ compact }: { compact?: boolean }) {
   return (
-    <div className={cn("flex flex-col", compact ? "gap-3" : "gap-4")}>
+    <div
+      className={cn(
+        "flex min-h-0 flex-1 flex-col",
+        compact ? "gap-4" : "gap-5"
+      )}
+      aria-busy="true"
+    >
+      {/* Amount — mirrors BillingGlassPanel send-exactly row */}
       <BillingGlassPanel>
-        <div className={cn(compact ? "px-3 py-2.5" : "px-3.5 py-3")}>
-          <Skeleton className="h-3 w-20 rounded-full" />
-          <Skeleton className="mt-1.5 h-7 w-40 rounded-md" />
+        <div
+          className={cn(
+            "flex items-center gap-3",
+            compact ? "px-3 py-2.5" : "px-3.5 py-3"
+          )}
+        >
+          <div className="min-w-0 flex-1">
+            <Skeleton className="h-3 w-20 rounded-full" />
+            <div className="mt-2 flex items-baseline gap-2">
+              <Skeleton className="h-6 w-[7.5rem] rounded-md" />
+              <Skeleton className="h-3.5 w-14 rounded-full" />
+            </div>
+          </div>
+          <Skeleton className="size-8 shrink-0 rounded-full" />
         </div>
       </BillingGlassPanel>
-      <div className="flex flex-col items-center gap-2.5">
-        <Skeleton className={cn("rounded-lg", compact ? "size-32" : "size-40")} />
-        <Skeleton className="h-8 w-full rounded-lg" />
+
+      {/* Promo — toggle + input, same stack as live coupon block */}
+      <div className="shrink-0 space-y-2">
+        <div className="flex items-center justify-between gap-3 px-0.5">
+          <Skeleton className="h-3.5 w-36 rounded-full" />
+          <Skeleton className="h-6 w-11 rounded-full" />
+        </div>
+        <div className="px-0.5">
+          <Skeleton className="h-10 w-full rounded-xl" />
+        </div>
+      </div>
+
+      {/* Deposit — same chrome + padding as DepositAddressCard area */}
+      <div
+        className={cn(
+          "flex min-h-0 flex-1 flex-col items-center justify-center",
+          compact ? "gap-3.5 px-3" : "gap-4 px-3.5"
+        )}
+      >
+        <Skeleton
+          className={cn(
+            "shrink-0 rounded-md",
+            compact ? "size-[12.5rem]" : "size-[13.25rem]"
+          )}
+        />
+        <div className="flex w-full min-w-0 items-center gap-2.5">
+          <Skeleton className="h-3.5 min-w-0 flex-1 rounded-full" />
+          <Skeleton className="size-8 shrink-0 rounded-full" />
+        </div>
+        <Skeleton className="h-3 w-48 rounded-full" />
       </div>
     </div>
   )
@@ -88,45 +133,49 @@ function PaymentWatcherBanner({
   const t = useTranslations("upgradePage.crypto")
 
   return (
-    <div role="status" aria-live="polite">
-      <div className="flex items-start gap-2.5">
-        <span className="relative mt-0.5 flex size-2 shrink-0">
+    <div
+      role="status"
+      aria-live="polite"
+      className={cn("flex flex-col", compact ? "gap-2.5" : "gap-3")}
+    >
+      <div className="flex items-center gap-2">
+        <span className="relative flex size-2 shrink-0">
           <span className="absolute inline-flex size-full animate-ping rounded-full bg-[#2563EB]/50 opacity-75" />
           <span className="relative inline-flex size-2 rounded-full bg-[#2563EB]" />
         </span>
-        <div className="min-w-0 flex-1">
-          <p className={cn("font-medium", compact ? "text-xs" : "text-sm")}>
-            {t("watchingTitle")}
-          </p>
-          <p
-            className={cn(
-              "text-muted-foreground",
-              compact ? "mt-0.5 text-[11px] leading-snug" : "mt-1 text-xs"
-            )}
-          >
-            {t("footerGuide", { network: PAYMENT_NETWORK.name })}
-          </p>
-          <div
-            className={cn(
-              "flex items-center justify-between gap-2 text-muted-foreground",
-              compact ? "mt-1.5 text-[11px]" : "mt-2 h-4 text-xs"
-            )}
-          >
-            <span className="inline-flex min-w-0 items-center gap-1">
-              <TimerIcon className="size-3 shrink-0" />
-              <span className="truncate">
-                {compact ? null : t("timeLeft")}
-                <span className="font-medium tabular-nums text-foreground">
-                  {expiresIn}
-                </span>
-              </span>
-            </span>
-            <span className="inline-flex shrink-0 items-center gap-1">
-              <LoaderCircleIcon className="size-3 shrink-0 animate-spin opacity-60" />
-              <span>{compact ? t("checkingShort") : t("checking")}</span>
-            </span>
-          </div>
-        </div>
+        <p
+          className={cn(
+            "font-medium text-foreground",
+            compact ? "text-xs" : "text-sm"
+          )}
+        >
+          {t("watchingTitle")}
+        </p>
+      </div>
+
+      <p
+        className={cn(
+          "text-muted-foreground",
+          compact ? "text-[11px] leading-relaxed" : "text-xs leading-relaxed"
+        )}
+      >
+        {t("footerGuide", { network: PAYMENT_NETWORK.name })}
+      </p>
+
+      <div
+        className={cn(
+          "flex items-center justify-between gap-3 text-muted-foreground",
+          compact ? "text-[11px]" : "text-xs"
+        )}
+      >
+        <span className="inline-flex items-center gap-1.5 tabular-nums">
+          <TimerIcon className="size-3.5 shrink-0 opacity-70" />
+          <span className="font-medium text-foreground">{expiresIn}</span>
+        </span>
+        <span className="inline-flex items-center gap-1.5">
+          <LoaderCircleIcon className="size-3.5 shrink-0 animate-spin opacity-60" />
+          <span>{compact ? t("checkingShort") : t("checking")}</span>
+        </span>
       </div>
     </div>
   )
@@ -375,7 +424,7 @@ export function CryptoPaymentSheet({
                 "flex min-h-0 flex-1 flex-col",
                 isDesktop
                   ? "gap-5 overflow-y-auto px-5 py-5"
-                  : "gap-2.5 overflow-hidden px-4 py-2.5"
+                  : "gap-4 overflow-hidden px-4 py-3.5"
               )}
             >
               <PaymentMethodPicker
@@ -394,10 +443,10 @@ export function CryptoPaymentSheet({
               ) : null}
 
               {showQuoteSkeleton ? (
-                <div className="min-h-0 flex-1 space-y-2.5">
+                <div className="flex min-h-0 flex-1 flex-col">
                   {loading ? (
                     <div
-                      className="flex items-center gap-2 text-sm text-muted-foreground"
+                      className="mb-3.5 flex shrink-0 items-center gap-2 text-sm text-muted-foreground"
                       role="status"
                     >
                       <LoaderCircleIcon className="size-4 animate-spin" />
@@ -410,7 +459,7 @@ export function CryptoPaymentSheet({
                 <div
                   className={cn(
                     "flex min-h-0 flex-1 flex-col",
-                    isDesktop ? "gap-5" : "gap-2.5"
+                    isDesktop ? "gap-5" : "gap-4"
                   )}
                 >
                   <BillingGlassPanel>
@@ -471,8 +520,8 @@ export function CryptoPaymentSheet({
                     </div>
                   </BillingGlassPanel>
 
-                  <div className="shrink-0 space-y-1.5">
-                    <div className="flex items-center justify-between gap-3">
+                  <div className="shrink-0 space-y-2.5">
+                    <div className="flex items-center justify-between gap-3 px-0.5">
                       <Label
                         htmlFor="payment-coupon-toggle"
                         id="payment-coupon-label"
@@ -500,7 +549,7 @@ export function CryptoPaymentSheet({
                       />
                     </div>
                     {couponOpen ? (
-                      <div className="relative">
+                      <div className="relative px-0.5">
                         <Input
                           id="payment-coupon"
                           value={couponCode}
@@ -522,7 +571,7 @@ export function CryptoPaymentSheet({
                           size="sm"
                           className={cn(
                             landingCta("glass", "sm"),
-                            "absolute top-1/2 inset-e-1.5 h-7 -translate-y-1/2 px-3 text-xs"
+                            "absolute top-1/2 inset-e-2 h-7 -translate-y-1/2 px-3 text-xs"
                           )}
                           disabled={loading || !checkout || !couponCode.trim()}
                           onClick={handleApplyCoupon}
@@ -533,7 +582,13 @@ export function CryptoPaymentSheet({
                     ) : null}
                   </div>
 
-                  <div className="min-h-0 flex-1">
+                  {/* Inset to match inner padding of rounded select/amount panels */}
+                  <div
+                    className={cn(
+                      "flex min-h-0 flex-1 flex-col justify-center",
+                      isMobileSheet ? "px-3" : "px-3.5"
+                    )}
+                  >
                     <DepositAddressCard
                       address={payAddress}
                       currency={paymentCurrency}
@@ -563,7 +618,7 @@ export function CryptoPaymentSheet({
                   "shrink-0 border-t border-white/55 dark:border-white/10",
                   isDesktop
                     ? "px-5 py-4"
-                    : "px-4 pb-[max(0.75rem,env(safe-area-inset-bottom,0px))] pt-2.5"
+                    : "px-4 pb-[max(1.1rem,env(safe-area-inset-bottom,0px))] pt-3.5"
                 )}
               >
                 <PaymentWatcherBanner
