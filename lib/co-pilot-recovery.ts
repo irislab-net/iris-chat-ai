@@ -111,7 +111,8 @@ export function coPilotUserFacingError(
   if (isAbortError(error)) return ""
   const status = (error as { status?: number } | null)?.status
   const code = coPilotErrorCode(error)
-  if (isChatLoginRequiredCode(code) || isGuestTrialExhaustedError(error)) {
+  // Guests: sign-in copy for login_required and mis-tagged credit/paywall codes.
+  if (isGuestTrialExhaustedError(error)) {
     return COPILOT_TRIAL_EXHAUSTED_MESSAGE
   }
   if (status === 401 || code === "unauthorized" || code === "invalid_token") {
@@ -233,10 +234,38 @@ export function prepareMessagesForRetry<
   )
 }
 
-/** Find retry payload for a failed assistant turn. */
+/**
+ * Guest free trial is used up — prompt sign-in, never Upgrade or generic retry.
+ *
+ * Stream path: HTTP 200 + event:error with code login_required (no 403).
+ * Some gateways also emit registered credit codes (402 / insufficient_credit)
+ * for guests; those must still map to sign-in, not the Plus upgrade paywall.
+ */
 export function isGuestTrialExhaustedError(error: unknown): boolean {
-  // Stream path: HTTP 200 + event:error with code login_required (no 403).
-  return isChatLoginRequiredCode(coPilotErrorCode(error))
+  if (isChatLoginRequiredCode(coPilotErrorCode(error))) return true
+  if (isGuestChatSession() && isCreditExhaustedError(error)) return true
+  if (
+    error instanceof Error &&
+    isGuestChatSession() &&
+    /guest trial exhausted/i.test(error.message)
+  ) {
+    return true
+  }
+  return false
+}
+
+/**
+ * After a guest chat failure, prefer the sign-in prompt when the server
+ * (or refreshed /credits trial) says free messages are gone — even if the
+ * SSE error was mis-tagged as agent/reserve failure.
+ */
+export function shouldShowGuestSignInPrompt(
+  error: unknown,
+  trial?: { messages_remaining?: number } | null
+): boolean {
+  if (isGuestTrialExhaustedError(error)) return true
+  if ((trial?.messages_remaining ?? 1) <= 0) return true
+  return false
 }
 
 export function coPilotFailureAction(
