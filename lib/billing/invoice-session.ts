@@ -39,6 +39,20 @@ export function isResumableInvoice(
   )
 }
 
+/**
+ * When create/resolve returns `paid` immediately (e.g. 100% coupon), the
+ * pending poll never runs — callers should still fire the paid completion
+ * path once per invoice uid.
+ */
+export function invoicePaidUidToNotify(
+  invoice: PaymentInvoice | null | undefined,
+  alreadyNotifiedUid: string | null
+): string | null {
+  if (!invoice || invoice.status !== "paid") return null
+  if (alreadyNotifiedUid === invoice.uid) return null
+  return invoice.uid
+}
+
 export function couponMatchesInvoice(
   invoice: PaymentInvoice,
   couponCode?: string

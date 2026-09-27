@@ -9,9 +9,11 @@ import {
   AUTH_SESSION_EXPIRED_EVENT,
   AUTH_SUCCESS_MESSAGE,
   bootstrapSession,
+  consumePlanUpgradePendingRefresh,
   establishSession,
   exchangeGoogleOneTapCredential,
   getStoredAccessToken,
+  hasPlanUpgradePendingRefresh,
   isPro,
   logoutRemote,
   startLoginWithGoogle,
@@ -206,7 +208,14 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     const runBootstrap = () => {
       void (async () => {
         try {
-          const session = await bootstrapSession()
+          // After crypto/coupon upgrade, mint a fresh JWT before chat can 402
+          // on stale Free-tier claims (especially 100% coupons that skip polling).
+          const session = hasPlanUpgradePendingRefresh()
+            ? await establishSession().then((next) => {
+                consumePlanUpgradePendingRefresh()
+                return next
+              })
+            : await bootstrapSession()
           if (!cancelled) {
             setUser(session.user)
             setChatRegisteredUserId(session.user?.id ?? null)

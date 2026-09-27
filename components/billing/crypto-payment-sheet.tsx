@@ -43,6 +43,7 @@ import {
   resolvePlusCryptoCheckout,
 } from "@/lib/billing/invoices"
 import {
+  invoicePaidUidToNotify,
   isInvoiceExpired,
   invoiceMsRemaining,
   paymentCurrencyForInvoice,
@@ -284,6 +285,27 @@ export function CryptoPaymentSheet({
   const now = useNow(open)
   const defaultCoupon =
     process.env.NEXT_PUBLIC_BILLING_COUPON_CODE?.trim() ?? ""
+  const paidNotifiedUidRef = React.useRef<string | null>(null)
+  const onPaidRef = React.useRef(onPaid)
+
+  React.useEffect(() => {
+    onPaidRef.current = onPaid
+  }, [onPaid])
+
+  // Crypto poll only runs while status === "pending". 100% coupons (and any
+  // create/resolve that returns paid immediately) must still refresh the JWT.
+  React.useEffect(() => {
+    if (!open) {
+      paidNotifiedUidRef.current = null
+      return
+    }
+    const uid = invoicePaidUidToNotify(invoice, paidNotifiedUidRef.current)
+    if (!uid) return
+    paidNotifiedUidRef.current = uid
+    void Promise.resolve(onPaidRef.current()).catch(() => {
+      paidNotifiedUidRef.current = null
+    })
+  }, [open, invoice])
 
   const loadInvoice = React.useCallback(
     async (
@@ -383,7 +405,8 @@ export function CryptoPaymentSheet({
             }
             return next
           })
-          if (next.status === "paid") void Promise.resolve(onPaid())
+          // Paid completion (including poll → paid) is handled by the
+          // invoice.status effect above so immediate-paid coupons share one path.
         })
         .catch(() => {
           // keep polling through transient failures
@@ -397,7 +420,7 @@ export function CryptoPaymentSheet({
       cancelled = true
       window.clearInterval(poll)
     }
-  }, [open, invoiceUid, invoice?.status, onPaid])
+  }, [open, invoiceUid, invoice?.status])
 
   const current = invoice
   const paymentCurrency: PaymentCurrency =

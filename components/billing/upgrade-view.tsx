@@ -118,10 +118,17 @@ function UpgradeView() {
         ...(plusMonthlyUsd != null ? { value: plusMonthlyUsd } : {}),
       })
     }
+    // Flag first so desk can mint a fresh JWT even if this refresh throws
+    // (common after 100% coupons that skip the pending poll).
     markPlanUpgradePendingRefresh()
-    await refreshAfterUpgrade()
-    setPaymentOpen(false)
-    router.push(APP_NEWS_PATH)
+    try {
+      await refreshAfterUpgrade()
+    } catch {
+      // ChatAside / AuthProvider consume the pending flag and retry.
+    } finally {
+      setPaymentOpen(false)
+      router.push(APP_NEWS_PATH)
+    }
   }, [checkout, plusMonthlyUsd, refreshAfterUpgrade, router])
 
   const pendingInvoice = usePendingPaymentInvoice({
