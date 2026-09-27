@@ -254,6 +254,12 @@ const chatHistoryRailUpgradeClass = chatUpgradePillClass
 /** Chat chrome upgrade — desktop header / thread toolbar. */
 const chatThreadUpgradeClass = `hidden gap-1.5 sm:inline-flex ${chatUpgradePillClass}`
 
+/**
+ * Thread “Continue with Google” after guest trial exhaustion.
+ * Landing primary blue — never shadcn `bg-primary` (near-black).
+ */
+const chatThreadConnectButtonClass = `${landingCta("primary", "sm")} gap-2`
+
 const chatMobileDrawerFooterWrapClass = "relative z-10 shrink-0"
 
 const chatMobileDrawerFooterBarClass = "relative bg-background"
@@ -428,6 +434,7 @@ export {
   chatMobileDrawerSurfaceClass,
   chatMobileDrawerUpgradeClass,
   chatHistoryRailUpgradeClass,
+  chatThreadConnectButtonClass,
   chatThreadUpgradeClass,
   chatUpgradePillClass,
   chatMobileHeaderButtonClass,

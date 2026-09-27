@@ -28,6 +28,7 @@ import {
   chatMobileEmptyHeroMarkClass,
   chatMobileEmptyHeroTitleClass,
   chatMobileEmptyHeroWrapClass,
+  chatThreadConnectButtonClass,
   chatThreadUpgradeClass,
   chatUpgradePillClass,
 } from "@/components/app-shell/chat-mobile-gemini-styles"
@@ -2314,7 +2315,7 @@ function ChatAside({
                             {message.action === "connect" ? (
                               <Button
                                 type="button"
-                                className="h-11 gap-2 px-5 text-[13px]"
+                                className={chatThreadConnectButtonClass}
                                 onClick={() => login({ source: "chat" })}
                               >
                                 <GoogleGlyph className="size-4" />
