@@ -1,14 +1,15 @@
 /** Hex tints aligned with `--background` in `app/globals.css` (light/dark). */
 export const BROWSER_CHROME_COLORS = {
-  light: "#f5f5f5",
-  dark: "#252525",
+  light: "#ffffff",
+  /** Matches `--background` light/dark in `app/globals.css` (`oklch(1 0 0)` / `oklch(0.145 0 0)`). */
+  dark: "#0a0a0a",
 } as const
 
 /**
  * Pre-hydration chrome sync lives in `/public/scripts/browser-chrome-init.js`
  * (loaded via next/script beforeInteractive). Keep colors in sync with that file.
  */
-export const BROWSER_CHROME_INIT_SCRIPT = `(function(){try{var k="theme",s=localStorage.getItem(k),m=matchMedia("(prefers-color-scheme: dark)").matches,d=s==="dark"||(s!=="light"&&m),scheme=d?"dark":"light",c=d?"${BROWSER_CHROME_COLORS.dark}":"${BROWSER_CHROME_COLORS.light}",r=document.documentElement;r.style.setProperty("color-scheme",scheme,"important");r.style.setProperty("--browser-chrome-color",c);var colorSchemeMeta=document.querySelector('meta[name="color-scheme"]');if(!colorSchemeMeta){colorSchemeMeta=document.createElement("meta");colorSchemeMeta.setAttribute("name","color-scheme");document.head.appendChild(colorSchemeMeta);}colorSchemeMeta.setAttribute("content",scheme);var metas=document.querySelectorAll('meta[name="theme-color"]');if(metas.length){for(var i=0;i<metas.length;i++)metas[i].setAttribute("content",c);}else{var meta=document.createElement("meta");meta.setAttribute("name","theme-color");meta.setAttribute("content",c);document.head.appendChild(meta);}var apple=document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]');if(!apple){apple=document.createElement("meta");apple.setAttribute("name","apple-mobile-web-app-status-bar-style");document.head.appendChild(apple);}apple.setAttribute("content",d?"black-translucent":"default");}catch(e){}})();`
+export const BROWSER_CHROME_INIT_SCRIPT = `(function(){try{var k="theme",s=localStorage.getItem(k),m=matchMedia("(prefers-color-scheme: dark)").matches,d=s==="dark"||(s!=="light"&&m),scheme=d?"dark":"light",c=d?"${BROWSER_CHROME_COLORS.dark}":"${BROWSER_CHROME_COLORS.light}",r=document.documentElement;r.style.setProperty("color-scheme",scheme,"important");r.style.setProperty("--browser-chrome-color",c);var colorSchemeMeta=document.querySelector('meta[name="color-scheme"]');if(!colorSchemeMeta){colorSchemeMeta=document.createElement("meta");colorSchemeMeta.setAttribute("name","color-scheme");document.head.appendChild(colorSchemeMeta);}colorSchemeMeta.setAttribute("content",scheme);var metas=document.querySelectorAll('meta[name="theme-color"]');for(var i=0;i<metas.length;i++)metas[i].parentNode&&metas[i].parentNode.removeChild(metas[i]);var meta=document.createElement("meta");meta.setAttribute("name","theme-color");meta.setAttribute("content",c);document.head.appendChild(meta);var apple=document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]');if(!apple){apple=document.createElement("meta");apple.setAttribute("name","apple-mobile-web-app-status-bar-style");document.head.appendChild(apple);}apple.setAttribute("content",d?"black-translucent":"default");}catch(e){}})();`
 
 export type BrowserChromeTheme = keyof typeof BROWSER_CHROME_COLORS
 
@@ -42,6 +43,24 @@ function syncAppleStatusBarStyle(theme: BrowserChromeTheme) {
   }
 }
 
+/**
+ * Collapse media-query theme-color tags into one authoritative meta so forced
+ * light/dark (and resolved system) always paint phone chrome correctly.
+ */
+function syncThemeColorMeta(color: string) {
+  if (typeof document === "undefined") return
+
+  const existing = document.querySelectorAll('meta[name="theme-color"]')
+  for (const node of existing) {
+    node.remove()
+  }
+
+  const meta = document.createElement("meta")
+  meta.setAttribute("name", "theme-color")
+  meta.setAttribute("content", color)
+  document.head.appendChild(meta)
+}
+
 /** Single active scheme for the document — required so embedded GIS iframes match site theme. */
 export function syncDocumentColorScheme(theme: BrowserChromeTheme) {
   if (typeof document === "undefined") return
@@ -58,7 +77,7 @@ export function syncDocumentColorScheme(theme: BrowserChromeTheme) {
   meta.setAttribute("content", theme)
 }
 
-/** Sync CSS chrome tokens after hydration. Theme-color metas are owned by ThemeProvider. */
+/** Sync CSS chrome tokens + theme-color after hydration / theme changes. */
 export function syncBrowserChromeTheme(resolvedTheme: string | undefined) {
   if (typeof document === "undefined") return
 
@@ -70,5 +89,6 @@ export function syncBrowserChromeTheme(resolvedTheme: string | undefined) {
 
   syncDocumentColorScheme(theme)
   root.style.setProperty("--browser-chrome-color", color)
+  syncThemeColorMeta(color)
   syncAppleStatusBarStyle(theme)
 }

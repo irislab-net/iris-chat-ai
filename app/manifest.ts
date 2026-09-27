@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next"
 
+import { BROWSER_CHROME_COLORS } from "@/lib/browser-chrome"
 import { brandIconUrl } from "@/lib/brand-icons"
 import { SITE_DESCRIPTION, SITE_NAME, SITE_SHORT_NAME } from "@/lib/seo"
 
@@ -12,8 +13,8 @@ export default function manifest(): MetadataRoute.Manifest {
     scope: "/",
     display: "standalone",
     display_override: ["standalone", "minimal-ui"],
-    background_color: "#252525",
-    theme_color: "#252525",
+    background_color: BROWSER_CHROME_COLORS.dark,
+    theme_color: BROWSER_CHROME_COLORS.dark,
     lang: "en",
     icons: [
       {

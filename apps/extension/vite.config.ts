@@ -1,0 +1,59 @@
+import { defineConfig, loadEnv } from "vite"
+import react from "@vitejs/plugin-react"
+import tailwindcss from "@tailwindcss/vite"
+import { crx } from "@crxjs/vite-plugin"
+import { resolve } from "node:path"
+import manifest from "./manifest.config"
+
+const src = resolve(__dirname, "src")
+
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, __dirname, "")
+  const googleClientId =
+    env.VITE_GOOGLE_CLIENT_ID ||
+    env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ||
+    process.env.VITE_GOOGLE_CLIENT_ID ||
+    process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ||
+    ""
+
+  return {
+    plugins: [react(), tailwindcss(), crx({ manifest })],
+    publicDir: "public",
+    resolve: {
+      alias: {
+        "@": src,
+        "next-intl": resolve(src, "shims/next-intl.tsx"),
+        "next/navigation": resolve(src, "shims/next-navigation.ts"),
+        "next/dynamic": resolve(src, "shims/next-dynamic.tsx"),
+        "next/headers": resolve(src, "shims/next-headers.ts"),
+        "next/image": resolve(src, "shims/next-image.tsx"),
+        "@wrksz/themes/client/use-theme": resolve(src, "shims/use-theme.tsx"),
+      },
+    },
+    define: {
+      "process.env.NODE_ENV": JSON.stringify(
+        process.env.NODE_ENV ?? "production"
+      ),
+      "process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID": JSON.stringify(googleClientId),
+      "import.meta.env.VITE_GOOGLE_CLIENT_ID": JSON.stringify(googleClientId),
+      "process.env.NEXT_PUBLIC_APP_URL": JSON.stringify("https://chat.exur.ai"),
+      "process.env.NEXT_PUBLIC_ENABLE_GOOGLE_ONE_TAP_DEV": JSON.stringify(""),
+    },
+    envPrefix: ["VITE_"],
+    server: {
+      port: 5173,
+      strictPort: true,
+      hmr: { port: 5173 },
+    },
+    build: {
+      outDir: "dist",
+      emptyOutDir: true,
+      rollupOptions: {
+        input: {
+          // Extra HTML page (not in manifest) — Volt-style Google login wizard
+          login: resolve(__dirname, "login.html"),
+        },
+      },
+    },
+  }
+})

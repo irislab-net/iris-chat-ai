@@ -82,7 +82,13 @@ describe("allowedDevOrigins", () => {
           },
         ],
       })
-    ).toEqual(["local.exur.ai", "localhost", "*.local", "172.20.10.14"])
+    ).toEqual([
+      "local.exur.ai",
+      "local.irislab.info",
+      "localhost",
+      "*.local",
+      "172.20.10.14",
+    ])
   })
 
   it("skips loopback when listing LAN addresses", () => {

@@ -1,0 +1,7 @@
+dist
+node_modules
+.vite
+.store-pack
+exur-chat-extension.zip
+*.local
+.DS_Store

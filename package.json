@@ -27,7 +27,11 @@
     "upload": "opennextjs-cloudflare build && opennextjs-cloudflare upload",
     "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
     "icons:pwa": "node scripts/generate-pwa-icons.mjs",
-    "narration:cues": "node scripts/narration-cues.mjs"
+    "narration:cues": "node scripts/narration-cues.mjs",
+    "extension:dev": "pnpm --filter @exur/extension dev",
+    "extension:build": "pnpm --filter @exur/extension build",
+    "extension:pack": "pnpm --filter @exur/extension store-pack",
+    "extension:typecheck": "pnpm --filter @exur/extension typecheck"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",

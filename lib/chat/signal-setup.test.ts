@@ -5,7 +5,7 @@ import {
   signalRewardRiskRatio,
   splitSignalAssistantMessage,
 } from "@/lib/chat/signal-setup"
-import type { PaperTradeTicket } from "@/lib/iris-paper-trade/types"
+import type { PaperTradeTicket } from "@/lib/chat/signal-ticket"
 
 const sampleTicket: PaperTradeTicket = {
   symbol: "ETH",
@@ -22,7 +22,7 @@ const sampleTicket: PaperTradeTicket = {
 describe("splitSignalAssistantMessage", () => {
   it("uses paperTicket and keeps thesis separate from the setup block", () => {
     const content = [
-      "Exur setup. Not a profit guarantee. No paper trade is open yet.",
+      "Exur setup. Not a profit guarantee.",
       "",
       "ETH SHORT",
       "Setup: Model short edge fade",
@@ -30,7 +30,7 @@ describe("splitSignalAssistantMessage", () => {
       "SL 2,487",
       "TP 2,441.9",
       "Leverage 5x",
-      "Size 37.8787 (risk ~$500.00 = 0.5% of demo equity)",
+      "Size 37.8787",
       "",
       sampleTicket.thesis,
     ].join("\n")
@@ -91,7 +91,7 @@ describe("splitSignalAssistantMessage", () => {
 describe("enrichPaperTicketsOnMessages", () => {
   it("does not attach paperTicket from setup prose alone", () => {
     const setupContent = [
-      "Exur setup. Not a profit guarantee. No paper trade is open yet.",
+      "Exur setup. Not a profit guarantee.",
       "",
       "ETH SHORT",
       "Setup: Model short edge fade",

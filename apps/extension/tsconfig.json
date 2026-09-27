@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+    "strict": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+    "isolatedModules": true,
+    "resolveJsonModule": true,
+    "types": ["chrome", "vite/client"],
+    "paths": {
+      "@/*": ["./src/*"],
+      "next-intl": ["./src/shims/next-intl.tsx"],
+      "next/navigation": ["./src/shims/next-navigation.ts"],
+      "next/dynamic": ["./src/shims/next-dynamic.tsx"],
+      "next/headers": ["./src/shims/next-headers.ts"],
+      "next/image": ["./src/shims/next-image.tsx"],
+      "@wrksz/themes/client/use-theme": ["./src/shims/use-theme.tsx"]
+    }
+  },
+  "include": ["src", "manifest.config.ts", "vite.config.ts"]
+}

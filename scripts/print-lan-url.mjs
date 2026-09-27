@@ -19,8 +19,9 @@ if (ips.length === 0) {
   console.log("\nAccept the certificate warning once.")
   console.log("For login cookies, add this hosts line on that device, then use local.exur.ai:")
   for (const ip of ips) {
-    console.log(`  ${ip} local.exur.ai`)
+    console.log(`  ${ip} local.exur.ai local.irislab.info`)
   }
   console.log("  https://local.exur.ai:3000")
+  console.log("  https://local.irislab.info:3000  (legacy; prefer local.exur.ai for auth)")
 }
 console.log("")

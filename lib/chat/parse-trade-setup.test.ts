@@ -26,7 +26,7 @@ describe("parseTradeSetupFromText", () => {
 
   it("parses markdown Direction/Entry/SL/TP format", () => {
     const setup =
-      parseTradeSetupFromText(`I am unable to open a paper trade directly. However, based on the provided market context, here is a potential trade setup for ETH:
+      parseTradeSetupFromText(`Based on the provided market context, here is a potential trade setup for ETH:
 
 **Direction:** SHORT
 **Entry Price:** 2486.8 (current live price)
@@ -50,7 +50,7 @@ describe("parseTradeSetupFromText", () => {
 
   it("builds a paper ticket from markdown setup prose", () => {
     const ticket =
-      parsePaperTicketFromAssistantText(`I am unable to open a paper trade directly. However, based on the provided market context, here is a potential trade setup for ETH:
+      parsePaperTicketFromAssistantText(`Based on the provided market context, here is a potential trade setup for ETH:
 
 **Direction:** SHORT
 **Entry Price:** 2486.8 (current live price)
@@ -89,7 +89,7 @@ describe("parseTradeSetupFromText", () => {
 
   it("parses compact inline ETH SHORT setup prose", () => {
     const setup = parseTradeSetupFromText(
-      "ETH SHORT Setup: Model short edge fade Entry 2,473.8 (market; fees and slippage apply if you open) SL 2,487 TP 2,441.9 Leverage 5x Size 37.8787 (risk ~$500.00 = 0.5% of demo equity)"
+      "ETH SHORT Setup: Model short edge fade Entry 2,473.8 (market; fees and slippage apply if you open) SL 2,487 TP 2,441.9 Leverage 5x Size 37.8787"
     )
 
     expect(setup).not.toBeNull()

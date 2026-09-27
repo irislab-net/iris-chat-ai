@@ -91,10 +91,6 @@ describe("chat API adapters", () => {
       role: "user",
       locale: undefined,
       timezone: "+03:30",
-      timeframe: undefined,
-      open_positions: undefined,
-      draft_order: undefined,
-      paper_account: undefined,
       available_ui_actions: ["show_trade_signal", "navigate_to_page"],
     })
   })

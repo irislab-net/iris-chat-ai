@@ -98,19 +98,19 @@
       }
     },
     "demo": {
-      "badge": "تمرین بدون ریسک",
-      "title": "با قیمت واقعی",
-      "titleMuted": "تمرین کن",
+      "badge": "سیگنال معامله",
+      "title": "ستاپ روی",
+      "titleMuted": "قیمت زنده",
       "steps": {
         "tapeTitle": "قیمت زنده",
-        "tapeBody": "سفارش روی همان قیمتی که می‌بینی ثبت می‌شود.",
+        "tapeBody": "سطوح بر اساس همان قیمتی که می‌بینی.",
         "bracketTitle": "ورود و حد ضرر",
-        "bracketBody": "سطوح پیشنهادی Exur وارد سفارش می‌شود.",
-        "trackTitle": "نتیجه را ببین",
-        "trackBody": "پوزیشن‌ها و سود و زیان همان جلسه."
+        "bracketBody": "سطوح پیشنهادی Exur روی کارت سیگنال.",
+        "trackTitle": "یکجا ببین",
+        "trackBody": "ورود، حد ضرر و هدف در یک کارت."
       },
-      "cta": "شروع تمرین رایگان",
-      "ctaHint": "کیف پول لازم نیست · برای امتحان حساب هم نه"
+      "cta": "سیگنال بگیر",
+      "ctaHint": "تحلیل است، نه توصیه"
     },
     "watch": {
       "badge": "هشدار",
@@ -287,11 +287,11 @@
       "pointWatchValue": "فاندینگ منفی بماند در حالی که اسپات بالا می‌رود.",
       "copilotAnalysis": "تحلیل است، نه توصیه",
       "ticketTitle": "سفارش",
-      "ticketSubtitle": "ETH · تمرین · زنده",
+      "ticketSubtitle": "ETH · زنده",
       "ticketSection": "حجم و حدها",
       "ticketBuy": "خرید / لانگ ETH",
       "ticketPlacing": "در حال ثبت…",
-      "ticketFilled": "دمو انجام شد",
+      "ticketFilled": "سیگنال آماده",
       "ticketPosition": "پوزیشن",
       "ticketUnrealized": "سود/زیان باز",
       "ticketEntry": "ورود",

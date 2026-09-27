@@ -157,21 +157,18 @@ import {
   writeShellLayoutPrefs,
 } from "@/lib/shell-layout-prefs"
 import { SHELL_SIDEBAR_COMPACT_FALLBACK } from "@/lib/shell-sidebar-layout"
-import { stripUnrequestedIrisSetupFromReply } from "@/lib/chat/strip-paper-setup"
+import { stripUnrequestedIrisSetupFromReply } from "@/lib/chat/strip-signal-setup"
 import { summarizeSignalUserMessage } from "@/lib/chat/composer-mentions"
 import {
   replyTargetFromMessage,
   stampUiMessageFromRef,
 } from "@/lib/chat/message-stamp"
-import { stripMarketContextAppendix } from "@/lib/iris-paper-trade/prompt"
+import { stripMarketContextAppendix } from "@/lib/chat/strip-market-context"
 import {
   isMobileGeminiBackgroundActive,
   isMobileGeminiBackgroundVisible,
   resolveMobileGeminiVisualPhase,
 } from "@/lib/chat/mobile-gemini-visual-state"
-import { shouldRunPaperTradePipeline } from "@/lib/iris-paper-trade/routing"
-import { tryRecoverProposedPaperTradeFromToolFailure } from "@/lib/iris-paper-trade/run"
-import { findToolFailureSignalRecoveryTargets } from "@/lib/iris-paper-trade/tool-failure"
 import {
   readHistoryRailCollapsed,
   writeHistoryRailCollapsed,
@@ -222,32 +219,6 @@ const IrisSamplePrompts = dynamic(
     ),
   { ssr: false }
 )
-
-function historyWithRecoveredAssistant(
-  history: CoPilotHistoryMessage[],
-  messages: ChatUiMessage[],
-  messageId: string,
-  turnText: string
-): CoPilotHistoryMessage[] {
-  const messageIndex = messages.findIndex((message) => message.id === messageId)
-  if (messageIndex === -1) return history
-
-  let assistantOrdinal = 0
-  for (let index = 0; index < messageIndex; index += 1) {
-    if (messages[index]?.role === "assistant") assistantOrdinal += 1
-  }
-
-  let seenAssistants = 0
-  return history.map((item) => {
-    if (item.role !== "assistant") return item
-    if (seenAssistants === assistantOrdinal) {
-      seenAssistants += 1
-      return { ...item, content: turnText }
-    }
-    seenAssistants += 1
-    return item
-  })
-}
 
 type ChatAsideProps = {
   className?: string
@@ -469,7 +440,6 @@ function ChatAside({
   const abortRef = React.useRef<AbortController | null>(null)
   const persistTimer = React.useRef(0)
   const historySyncRef = React.useRef(0)
-  const signalRecoveryAttemptedRef = React.useRef(new Set<string>())
   const [session, setSession] = React.useState<string>("pending")
   const [guestTrial, setGuestTrial] = React.useState<TrialInfo | null>(null)
   const [creditBalance, setCreditBalance] =
@@ -581,74 +551,6 @@ function ChatAside({
     },
     [chatOwnerId]
   )
-
-  React.useEffect(() => {
-    signalRecoveryAttemptedRef.current.clear()
-  }, [conversationId])
-
-  React.useEffect(() => {
-    if (sending) return
-
-    const targets = findToolFailureSignalRecoveryTargets(messages).filter(
-      (target) => !signalRecoveryAttemptedRef.current.has(target.messageId)
-    )
-    if (targets.length === 0) return
-
-    let cancelled = false
-
-    void (async () => {
-      for (const target of targets) {
-        signalRecoveryAttemptedRef.current.add(target.messageId)
-        const current = messages.find(
-          (message) => message.id === target.messageId
-        )
-        if (!current || current.paperTicket) continue
-
-        const recovered = await tryRecoverProposedPaperTradeFromToolFailure({
-          userMessage: target.userMessage,
-          assistantMessage: current.content,
-        })
-        if (cancelled || !recovered) continue
-
-        const turnText = recovered.message.trim()
-
-        setMessagesAndPersist(
-          (prev) =>
-            prev.map((message) =>
-              message.id === target.messageId
-                ? {
-                    ...message,
-                    content: turnText,
-                    paperTicket: recovered.ticket,
-                  }
-                : message
-            ),
-          {
-            id: conversationId,
-            history: historyWithRecoveredAssistant(
-              history,
-              messages,
-              target.messageId,
-              turnText
-            ),
-            ownerId: chatOwnerId,
-          }
-        )
-        setHistory((prev) =>
-          historyWithRecoveredAssistant(
-            prev,
-            messages,
-            target.messageId,
-            turnText
-          )
-        )
-      }
-    })()
-
-    return () => {
-      cancelled = true
-    }
-  }, [messages, sending, conversationId, history, chatOwnerId])
 
   const persistCurrent = React.useEffectEvent(
     (next: {
@@ -1056,123 +958,6 @@ function ChatAside({
     abortRef.current = controller
     let partialContent = ""
 
-    if (shouldRunPaperTradePipeline(userMessage, historySnapshot)) {
-      try {
-        const { runIrisPaperTradeRequest } =
-          await import("@/lib/iris-paper-trade/run")
-        const result = await runIrisPaperTradeRequest({
-          userMessage,
-          conversationId: activeId,
-          history: historySnapshot,
-          effort,
-          signal: controller.signal,
-          onPhase: (phase) => {
-            const text =
-              phase === "context" ? t("fetchingContext") : t("evaluatingSetup")
-            setMessages((prev) =>
-              prev.map((m) =>
-                m.id === assistantId
-                  ? { ...m, content: text, error: false, action: undefined }
-                  : m
-              )
-            )
-          },
-        })
-
-        if (controller.signal.aborted) {
-          setMessages((prev) => removeEmptyAssistantTurn(prev, assistantId))
-          return
-        }
-
-        const finalId = activeId
-        const fullText = result.message.trim()
-        const parsedTicket =
-          result.status === "proposed" ? result.ticket : undefined
-        const finalHistory: CoPilotHistoryMessage[] = [
-          ...historySnapshot,
-          { role: "user", content: displayUserMessage },
-          { role: "assistant", content: fullText },
-        ]
-        setHistory(finalHistory)
-        setPendingAssistantId(null)
-        setReplyTarget(null)
-        setMessagesAndPersist(
-          (prev) =>
-            prev.map((m) =>
-              m.id === assistantId
-                ? {
-                    ...m,
-                    content: fullText,
-                    error: false,
-                    action: undefined,
-                    paperTicket: parsedTicket ?? undefined,
-                    clientActionSummaries: undefined,
-                    retryUserMessage: undefined,
-                  }
-                : m
-            ),
-          {
-            id: finalId,
-            history: finalHistory,
-            ownerId: chatOwnerId,
-          }
-        )
-      } catch (error) {
-        if (isAbortError(error)) {
-          setMessages((prev) => removeEmptyAssistantTurn(prev, assistantId))
-          return
-        }
-
-        setPendingAssistantId(null)
-        if (!isAuthenticated) {
-          const trial = await trialFromChatError(error)
-          if (shouldShowGuestSignInPrompt(error, trial)) {
-            replaceAssistantWithGuestLoginPrompt(
-              assistantId,
-              activeId,
-              historySnapshot,
-              trial
-            )
-            return
-          }
-        }
-
-        const failed = buildFailedAssistantTurn({
-          assistantId,
-          partialContent,
-          userMessage,
-          error,
-        })
-
-        setMessagesAndPersist(
-          (prev) =>
-            prev.map((m) =>
-              m.id === assistantId
-                ? {
-                    ...m,
-                    content: failed.content || m.content,
-                    error: true as const,
-                    errorText: coPilotUserFacingError(error, { isProUser }),
-                    action: coPilotFailureAction(error, { isProUser }),
-                    retryUserMessage: failed.retryUserMessage,
-                    thinkingTrace: undefined,
-                  }
-                : m
-            ),
-          {
-            id: activeId,
-            history: historySnapshot,
-            ownerId: chatOwnerId,
-          }
-        )
-      } finally {
-        if (abortRef.current === controller) abortRef.current = null
-        setPendingAssistantId(null)
-        setSending(false)
-      }
-      return
-    }
-
     try {
       const result = await streamCoPilotChat(
         {
@@ -1259,22 +1044,8 @@ function ChatAside({
         throw new Error("Exur returned an empty reply. Please try again.")
       }
 
-      const recovered = fullText
-        ? await tryRecoverProposedPaperTradeFromToolFailure({
-            userMessage,
-            assistantMessage: fullText,
-            signal: controller.signal,
-          })
-        : null
-
-      let turnText = fullText
-      const recoveredTicket = recovered?.ticket
-
-      if (recovered) {
-        turnText = recovered.message.trim()
-      }
-
-      const signalTicket = recoveredTicket ?? clientResult.paperTicket
+      const turnText = fullText
+      const signalTicket = clientResult.paperTicket
       // History needs prose when output_text is empty but a signal card arrived.
       const historyAssistantText =
         turnText ||
@@ -1351,8 +1122,8 @@ function ChatAside({
         ChatUiMessage,
         "clientActionSummaries" | "paperTicket" | "action" | "noTradeReason"
       > => {
-        // Only attach a ticket the API returned (client_actions) or an explicit
-        // tool-failure recovery — never invent a Signal card from model prose.
+        // Only attach a ticket the API returned via client_actions —
+        // never invent a Signal card from model prose.
         const trustedTicket = ticketOverride ?? actions.paperTicket ?? null
 
         if (trustedTicket) {
@@ -1375,8 +1146,7 @@ function ChatAside({
 
       const turnExtras = buildTurnExtras(
         clientResult,
-        turnText || historyAssistantText,
-        recoveredTicket
+        turnText || historyAssistantText
       )
       // UI content = API output_text; thesis lives on paperTicket for the card.
       // Always keep a non-empty string when a signal card is present so persist
@@ -2287,7 +2057,7 @@ function ChatAside({
                     <div
                       className={cn(
                         "mx-auto flex w-full min-w-0 flex-col",
-                        isMobileOverlay ? chatMobileThreadClass : "px-4 py-4",
+                        isMobileOverlay ? chatMobileThreadClass : "px-4 py-6",
                         CHAT_CONTENT_MAX_WIDTH
                       )}
                     >

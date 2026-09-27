@@ -135,7 +135,18 @@ export const viewport: Viewport = {
   initialScale: 1,
   viewportFit: "cover",
   interactiveWidget: "resizes-content",
-  themeColor: BROWSER_CHROME_COLORS.dark,
+  // System / no-JS: OS preference picks the matching site background.
+  // Client sync then collapses these into one meta for forced light/dark.
+  themeColor: [
+    {
+      media: "(prefers-color-scheme: light)",
+      color: BROWSER_CHROME_COLORS.light,
+    },
+    {
+      media: "(prefers-color-scheme: dark)",
+      color: BROWSER_CHROME_COLORS.dark,
+    },
+  ],
 }
 
 export default async function RootLayout({
@@ -173,7 +184,7 @@ export default async function RootLayout({
               fontFamily: "system-ui, sans-serif",
               fontSize: "0.95rem",
               lineHeight: 1.5,
-              background: "#f5f5f5",
+              background: "#ffffff",
               color: "#171717",
             }}
           >

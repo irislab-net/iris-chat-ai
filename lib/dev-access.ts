@@ -1,7 +1,17 @@
 import { networkInterfaces, type NetworkInterfaceInfo } from "node:os"
 
 export const LOCAL_IRIS_HOST = "local.exur.ai"
+/** Legacy local hostname (still used by some bookmarks / DNS). */
+export const LOCAL_IRISLAB_HOST = "local.irislab.info"
 export const DEV_PORT = "3000"
+
+export function isLocalDevHostname(hostname: string): boolean {
+  return (
+    hostname === LOCAL_IRIS_HOST ||
+    hostname === LOCAL_IRISLAB_HOST ||
+    isLoopbackHostname(hostname)
+  )
+}
 
 export function hostnameFromHostHeader(host: string): string {
   if (host.startsWith("[")) {
@@ -73,6 +83,7 @@ export function allowedDevOrigins(
 ): string[] {
   return [
     LOCAL_IRIS_HOST,
+    LOCAL_IRISLAB_HOST,
     "localhost",
     "*.local",
     ...listLanIpv4Addresses(interfaces),

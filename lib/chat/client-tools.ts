@@ -5,7 +5,7 @@ import {
   toChatApiSymbol,
 } from "@/lib/api/chat"
 import type { User } from "@/lib/api/types"
-import type { PaperTradeTicket } from "@/lib/iris-paper-trade/types"
+import type { PaperTradeTicket } from "@/lib/chat/signal-ticket"
 import { APP_PATH } from "@/lib/site"
 import type { WorkspaceTab } from "@/lib/workspace-tab"
 
@@ -68,7 +68,7 @@ function optionalTrimmedString(value: unknown): string | undefined {
   return trimmed || undefined
 }
 
-/** Parse `show_trade_signal` client tool input into a paper ticket for the UI card. */
+/** Parse `show_trade_signal` client tool input into a ticket for the UI card. */
 export function parseShowTradeSignalArgs(
   args: Record<string, unknown>
 ): PaperTradeTicket | null {

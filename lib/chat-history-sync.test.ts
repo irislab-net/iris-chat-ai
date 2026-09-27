@@ -330,7 +330,7 @@ describe("chat history sync", () => {
           2,
           sessionA,
           "assistant",
-          "I am unable to execute the open_paper_trade function. It appears to be an unknown tool.",
+          "I am unable to show a trade signal right now. Please try again.",
           "2026-01-02T10:00:00Z"
         ),
       ],

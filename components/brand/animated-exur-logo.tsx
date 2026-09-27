@@ -37,6 +37,9 @@ export function AnimatedExurLogo({
         fill="none"
         aria-hidden
       >
+        {variant === "on-light" ? (
+          <rect width="69" height="69" rx="34.5" fill="white" />
+        ) : null}
         <path data-logo-mark d={EXUR_LOGO_MARK_PATH} fill="currentColor" />
       </svg>
     </AnimatedSvgIcon>

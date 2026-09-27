@@ -182,14 +182,6 @@ export type ChatClientContext = {
     stop_loss: number | null
     take_profit: number | null
   } | null
-  paper_account?: {
-    starting_balance: number
-    balance: number
-    equity: number
-    available_balance: number
-    risk_per_trade: number
-    risk_fraction: number
-  } | null
 }
 
 export type ChatToolCallResult = {

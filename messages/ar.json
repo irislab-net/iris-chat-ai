@@ -98,19 +98,19 @@
       }
     },
     "demo": {
-      "badge": "مكتب ورقي",
-      "title": "تدرّب على",
+      "badge": "إشارات التداول",
+      "title": "إعدادات على",
       "titleMuted": "أسعار مباشرة",
       "steps": {
         "tapeTitle": "سوق مباشر",
-        "tapeBody": "تنفيذ على الأسعار التي تراها.",
+        "tapeBody": "مستويات مرتبطة بالأسعار التي تراها.",
         "bracketTitle": "خطتك",
-        "bracketBody": "مستويات Exur تنتقل إلى الأمر.",
-        "trackTitle": "قيّم قراءتك",
-        "trackBody": "المراكز وربح/خسارة الجلسة."
+        "bracketBody": "مستويات Exur تظهر على بطاقة الإشارة.",
+        "trackTitle": "في مكان واحد",
+        "trackBody": "الدخول والإيقاف والهدف معًا."
       },
-      "cta": "افتح المكتب الورقي",
-      "ctaHint": "بدون محفظة · بدون حساب للتجربة"
+      "cta": "احصل على إشارة",
+      "ctaHint": "تحليل وليس نصيحة"
     },
     "watch": {
       "badge": "المراقبة",
@@ -287,11 +287,11 @@
       "pointWatchValue": "بقاء التمويل سالبًا بينما يقود السوق الفوري.",
       "copilotAnalysis": "تحليل وليس نصيحة",
       "ticketTitle": "أمر التداول",
-      "ticketSubtitle": "ETH · ورقي · مباشر",
+      "ticketSubtitle": "ETH · مباشر",
       "ticketSection": "الحجم والخطة",
       "ticketBuy": "شراء / شراء ETH",
       "ticketPlacing": "جارٍ الإرسال…",
-      "ticketFilled": "تنفيذ تجريبي",
+      "ticketFilled": "الإشارة جاهزة",
       "ticketPosition": "المركز",
       "ticketUnrealized": "غير محقق",
       "ticketEntry": "الدخول",
