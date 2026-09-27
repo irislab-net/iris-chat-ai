@@ -91,6 +91,33 @@ describe("proxyIrisApiRequest", () => {
     expect(await res.json()).toEqual({ data: [] })
   })
 
+  it("forwards client telemetry headers to IRIS_API_ORIGIN", async () => {
+    fetchMock.mockResolvedValue(new Response(null, { status: 204 }))
+
+    await proxyIrisApiRequest(
+      new Request("https://chat.exur.ai/v1/auth/google/one-tap", {
+        method: "POST",
+        headers: {
+          "cf-connecting-ip": "203.0.113.10",
+          "cf-ipcountry": "DE",
+          "cf-device-type": "desktop",
+          "user-agent": "Mozilla/5.0 IrisTest",
+          "content-type": "application/json",
+        },
+        body: "{}",
+      }),
+      "/v1/auth/google/one-tap"
+    )
+
+    const upstreamInit = fetchMock.mock.calls[0][1] as RequestInit
+    const h = upstreamInit.headers as Headers
+    expect(h.get("CF-Connecting-IP")).toBe("203.0.113.10")
+    expect(h.get("CF-IPCountry")).toBe("DE")
+    expect(h.get("CF-Device-Type")).toBe("desktop")
+    expect(h.get("User-Agent")).toBe("Mozilla/5.0 IrisTest")
+    expect(h.get("X-Forwarded-For")).toBe("203.0.113.10")
+  })
+
   it("proxies payment invoice requests to IRIS_API_ORIGIN", async () => {
     fetchMock.mockResolvedValue(
       new Response(JSON.stringify({ invoices: [] }), {

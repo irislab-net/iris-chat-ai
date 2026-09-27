@@ -13,6 +13,31 @@ function cookieHasName(cookieHeader: string | null, name: string): boolean {
   return false
 }
 
+/** Preserve end-user telemetry for mc-user-manager (ClientInfoFromRequest). */
+function forwardClientTelemetry(req: Request, headers: Headers) {
+  const clientIp = req.headers.get("cf-connecting-ip")
+  if (clientIp) {
+    headers.set("CF-Connecting-IP", clientIp)
+    headers.set("X-Forwarded-For", clientIp)
+    headers.set("X-Real-IP", clientIp)
+  }
+
+  const country = req.headers.get("cf-ipcountry")
+  if (country) {
+    headers.set("CF-IPCountry", country)
+  }
+
+  const deviceType = req.headers.get("cf-device-type")
+  if (deviceType) {
+    headers.set("CF-Device-Type", deviceType)
+  }
+
+  const userAgent = req.headers.get("user-agent")
+  if (userAgent) {
+    headers.set("User-Agent", userAgent)
+  }
+}
+
 function forwardSetCookie(upstream: Headers, downstream: Headers) {
   if (typeof upstream.getSetCookie === "function") {
     for (const cookie of upstream.getSetCookie()) {
@@ -49,6 +74,7 @@ export async function proxyIrisApiRequest(
   if (contentType) headers.set("content-type", contentType)
   const cookie = req.headers.get("cookie")
   if (cookie) headers.set("cookie", cookie)
+  forwardClientTelemetry(req, headers)
 
   const init: RequestInit = {
     method: req.method,
