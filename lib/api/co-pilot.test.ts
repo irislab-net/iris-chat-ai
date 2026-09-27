@@ -15,6 +15,7 @@ vi.mock("@/lib/api/auth", () => ({
 
 import { getStoredAccessToken } from "@/lib/api/auth"
 import {
+  createIdleChatTimeoutSignal,
   sendCoPilotChatWithSessionRetry,
   streamCoPilotChatWithSessionRetry,
 } from "@/lib/api/co-pilot"
@@ -171,5 +172,56 @@ describe("streamCoPilotChatWithSessionRetry SSE errors", () => {
       expect((error as { status?: number }).status).toBeUndefined()
       expect((error as { code?: string }).code).toBeUndefined()
     }
+  })
+})
+
+describe("createIdleChatTimeoutSignal", () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
+  it("aborts after idle silence", () => {
+    const timeout = createIdleChatTimeoutSignal(1_000, 60_000)
+    expect(timeout.signal.aborted).toBe(false)
+
+    vi.advanceTimersByTime(999)
+    expect(timeout.signal.aborted).toBe(false)
+
+    vi.advanceTimersByTime(1)
+    expect(timeout.signal.aborted).toBe(true)
+    expect(timeout.signal.reason).toMatchObject({ name: "TimeoutError" })
+    timeout.clear()
+  })
+
+  it("bump resets the idle timer so long active streams survive", () => {
+    const timeout = createIdleChatTimeoutSignal(1_000, 60_000)
+
+    vi.advanceTimersByTime(900)
+    timeout.bump()
+    vi.advanceTimersByTime(900)
+    timeout.bump()
+    vi.advanceTimersByTime(900)
+
+    expect(timeout.signal.aborted).toBe(false)
+
+    vi.advanceTimersByTime(1_000)
+    expect(timeout.signal.aborted).toBe(true)
+    timeout.clear()
+  })
+
+  it("still aborts at the hard ceiling even with bumps", () => {
+    const timeout = createIdleChatTimeoutSignal(10_000, 5_000)
+
+    timeout.bump()
+    vi.advanceTimersByTime(4_999)
+    expect(timeout.signal.aborted).toBe(false)
+
+    vi.advanceTimersByTime(1)
+    expect(timeout.signal.aborted).toBe(true)
+    timeout.clear()
   })
 })

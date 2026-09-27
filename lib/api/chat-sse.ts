@@ -88,7 +88,8 @@ export function parseChatSseBlock(block: string): ChatSseEvent | null {
 export async function readChatSseStream(
   body: ReadableStream<Uint8Array> | null,
   onEvent: (event: ChatSseEvent) => void,
-  signal?: AbortSignal
+  signal?: AbortSignal,
+  onActivity?: () => void
 ): Promise<void> {
   if (!body) throw new Error("stream closed without body")
 
@@ -110,6 +111,7 @@ export async function readChatSseStream(
       }
       const { value, done } = await reader.read()
       if (done) break
+      onActivity?.()
       buffer += decoder.decode(value, { stream: true })
       const parts = buffer.split("\n\n")
       buffer = parts.pop() || ""
