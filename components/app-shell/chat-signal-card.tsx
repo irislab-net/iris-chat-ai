@@ -85,7 +85,7 @@ function PriceTile({
           className="chat-skeleton-shimmer mt-2.5 h-3 w-[88%] rounded-sm"
         />
       ) : column.reason ? (
-        <p className="mt-2.5 w-full break-words text-[11px] leading-snug text-foreground/65">
+        <p className="mt-2.5 w-full wrap-break-word text-[11px] leading-snug text-foreground/65">
           {column.reason}
         </p>
       ) : null}

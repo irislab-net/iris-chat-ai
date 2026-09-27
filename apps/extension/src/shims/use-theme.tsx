@@ -43,31 +43,31 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setThemeState] = React.useState<ThemeMode>(() =>
     typeof window === "undefined" ? "system" : readStoredTheme()
   )
-  const [resolvedTheme, setResolvedTheme] = React.useState<"light" | "dark">(
-    () =>
-      typeof window === "undefined" ? "light" : resolveTheme(readStoredTheme())
+  const [systemDark, setSystemDark] = React.useState(
+    () => typeof window !== "undefined" && systemPrefersDark()
   )
 
-  const apply = React.useCallback((value: ThemeMode) => {
-    const resolved = resolveTheme(value)
-    setResolvedTheme(resolved)
-    applyThemeToDocument(value)
-  }, [])
+  const resolvedTheme: "light" | "dark" =
+    theme === "system" ? (systemDark ? "dark" : "light") : theme
 
-  React.useEffect(() => {
-    apply(theme)
-  }, [theme, apply])
+  React.useLayoutEffect(() => {
+    applyThemeToDocument(theme)
+  }, [theme, resolvedTheme])
 
   React.useEffect(() => {
     if (theme !== "system") return
     const media = window.matchMedia("(prefers-color-scheme: dark)")
-    const onChange = () => apply("system")
+    const onChange = () => setSystemDark(media.matches)
     media.addEventListener("change", onChange)
     return () => media.removeEventListener("change", onChange)
-  }, [theme, apply])
+  }, [theme])
 
   const setTheme = React.useCallback((value: ThemeMode) => {
     setThemeState(value)
+    if (value === "system") {
+      setSystemDark(systemPrefersDark())
+    }
+    applyThemeToDocument(value)
     try {
       localStorage.setItem(STORAGE_KEY, value)
     } catch {

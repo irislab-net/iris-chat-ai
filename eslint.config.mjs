@@ -26,6 +26,9 @@ const eslintConfig = defineConfig([
     "build/**",
     "next-env.d.ts",
     ".reference/**",
+    // Extension Vite build output (minified bundles are not source).
+    "apps/extension/dist/**",
+    "apps/extension/.store-pack/**",
   ]),
 ]);
 

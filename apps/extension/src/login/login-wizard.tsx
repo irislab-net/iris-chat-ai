@@ -196,7 +196,7 @@ function LoginWizard() {
         <div
           className={cn(
             chatLoginConsentDialogClass,
-            "w-full max-w-[26rem] shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_80%,transparent),0_28px_80px_-28px_color-mix(in_oklch,var(--foreground)_18%,transparent)]"
+            "w-full max-w-104 shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_80%,transparent),0_28px_80px_-28px_color-mix(in_oklch,var(--foreground)_18%,transparent)]"
           )}
         >
           <div className="flex flex-col gap-4 px-5 pt-5 pb-1 sm:px-6 sm:pt-6">
