@@ -1,9 +1,10 @@
-import { describe, expect, it } from "vitest"
+import { describe, expect, it, vi } from "vitest"
 
 import {
   appendThinkingStep,
   joinReasoningTexts,
   parseChatSseBlock,
+  readChatSseStream,
 } from "@/lib/api/chat-sse"
 
 describe("parseChatSseBlock", () => {
@@ -66,5 +67,38 @@ describe("thinking helpers", () => {
       { type: "tool", name: "get_market_state" },
     ])
     expect(joinReasoningTexts(["One", "Two"])).toBe("One\n\nTwo")
+  })
+})
+
+describe("readChatSseStream activity", () => {
+  it("calls onActivity when stream chunks arrive", async () => {
+    const onActivity = vi.fn()
+    const events: string[] = []
+    const stream = new ReadableStream<Uint8Array>({
+      start(controller) {
+        const enc = new TextEncoder()
+        controller.enqueue(
+          enc.encode('event: reasoning\ndata: {"text":"hi"}\n\n')
+        )
+        controller.enqueue(
+          enc.encode(
+            'event: done\ndata: {"session_id":"s1","output_text":"ok"}\n\n'
+          )
+        )
+        controller.close()
+      },
+    })
+
+    await readChatSseStream(
+      stream,
+      (event) => {
+        events.push(event.event)
+      },
+      undefined,
+      onActivity
+    )
+
+    expect(onActivity.mock.calls.length).toBeGreaterThanOrEqual(1)
+    expect(events).toEqual(["reasoning", "done"])
   })
 })

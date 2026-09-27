@@ -28,11 +28,21 @@ import {
   isGuestTrialExhaustedError,
 } from "@/lib/co-pilot-recovery"
 
-/** Abort chat POSTs that hang without a response body. */
-export const CHAT_REQUEST_TIMEOUT_MS = 90_000
+/** Abort JSON `/message` POSTs that hang without a response body. */
+export const CHAT_REQUEST_TIMEOUT_MS = 180_000
 
-/** Streaming turns can run longer than a single JSON `/message` call. */
-export const CHAT_STREAM_TIMEOUT_MS = 180_000
+/**
+ * Abort streaming turns that go silent (no SSE bytes) for this long.
+ * Multi-tool agent turns often exceed a fixed wall-clock budget while
+ * still healthy — idle timeout resets on each chunk.
+ */
+export const CHAT_STREAM_IDLE_TIMEOUT_MS = 120_000
+
+/** Hard ceiling for a single streaming turn, even with steady SSE activity. */
+export const CHAT_STREAM_HARD_TIMEOUT_MS = 600_000
+
+/** @deprecated Prefer CHAT_STREAM_IDLE_TIMEOUT_MS; kept for call-site clarity. */
+export const CHAT_STREAM_TIMEOUT_MS = CHAT_STREAM_IDLE_TIMEOUT_MS
 
 function mergeAbortSignals(
   primary: AbortSignal | undefined,
@@ -51,17 +61,62 @@ function mergeAbortSignals(
   return controller.signal
 }
 
+function timeoutError() {
+  return new DOMException("Chat request timed out", "TimeoutError")
+}
+
 function createChatTimeoutSignal(timeoutMs: number): {
   signal: AbortSignal
   clear: () => void
 } {
   const controller = new AbortController()
   const id = setTimeout(() => {
-    controller.abort(new DOMException("Chat request timed out", "TimeoutError"))
+    controller.abort(timeoutError())
   }, timeoutMs)
   return {
     signal: controller.signal,
     clear: () => clearTimeout(id),
+  }
+}
+
+/**
+ * Idle + hard timeout for long SSE turns.
+ * `bump()` resets the idle timer when the stream is still producing bytes.
+ */
+export function createIdleChatTimeoutSignal(
+  idleMs: number,
+  hardMs: number = CHAT_STREAM_HARD_TIMEOUT_MS
+): {
+  signal: AbortSignal
+  bump: () => void
+  clear: () => void
+} {
+  const controller = new AbortController()
+  let idleId: ReturnType<typeof setTimeout> | undefined
+  let hardId: ReturnType<typeof setTimeout> | undefined
+
+  const abort = () => {
+    if (controller.signal.aborted) return
+    controller.abort(timeoutError())
+  }
+
+  const armIdle = () => {
+    if (idleId !== undefined) clearTimeout(idleId)
+    idleId = setTimeout(abort, idleMs)
+  }
+
+  armIdle()
+  hardId = setTimeout(abort, hardMs)
+
+  return {
+    signal: controller.signal,
+    bump: armIdle,
+    clear: () => {
+      if (idleId !== undefined) clearTimeout(idleId)
+      if (hardId !== undefined) clearTimeout(hardId)
+      idleId = undefined
+      hardId = undefined
+    },
   }
 }
 
@@ -235,7 +290,10 @@ async function streamCoPilotChatOnce(input: {
   onReasoning?: (text: string) => void
   onTool?: (tool: string) => void
 }): Promise<CoPilotChatJsonResponse> {
-  const timeout = createChatTimeoutSignal(CHAT_STREAM_TIMEOUT_MS)
+  const timeout = createIdleChatTimeoutSignal(
+    CHAT_STREAM_IDLE_TIMEOUT_MS,
+    CHAT_STREAM_HARD_TIMEOUT_MS
+  )
   const signal = mergeAbortSignals(input.signal, timeout.signal)
   const isGuest = isGuestChatSession()
   const baseContext = input.clientContext ?? {
@@ -265,6 +323,8 @@ async function streamCoPilotChatOnce(input: {
       }),
       signal,
     })
+    // Headers / first byte landed — keep the idle budget alive for tool loops.
+    timeout.bump()
 
     const contentType = res.headers.get("content-type") || ""
     if (!res.ok || !contentType.includes("text/event-stream")) {
@@ -278,6 +338,7 @@ async function streamCoPilotChatOnce(input: {
 
       // Older gateways may not support SSE yet — fall back to JSON /message.
       if (res.status === 404 || code === "stream_unsupported") {
+        timeout.clear()
         return await sendCoPilotChat({
           message: input.message,
           conversationId: input.conversationId,
@@ -327,7 +388,8 @@ async function streamCoPilotChatOnce(input: {
           donePayload = event.data
         }
       },
-      signal
+      signal,
+      timeout.bump
     )
 
     if (!donePayload) {
