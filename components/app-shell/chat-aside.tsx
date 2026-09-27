@@ -124,7 +124,7 @@ import {
   COPILOT_PRO_SESSION_REFRESH_MESSAGE,
   coPilotUserFacingError,
   coPilotFailureAction,
-  isGuestTrialExhaustedError,
+  shouldShowGuestSignInPrompt,
   localizeCoPilotErrorText,
 } from "@/lib/co-pilot-recovery"
 import {
@@ -1123,15 +1123,17 @@ function ChatAside({
         }
 
         setPendingAssistantId(null)
-        if (!isAuthenticated && isGuestTrialExhaustedError(error)) {
+        if (!isAuthenticated) {
           const trial = await trialFromChatError(error)
-          replaceAssistantWithGuestLoginPrompt(
-            assistantId,
-            activeId,
-            historySnapshot,
-            trial
-          )
-          return
+          if (shouldShowGuestSignInPrompt(error, trial)) {
+            replaceAssistantWithGuestLoginPrompt(
+              assistantId,
+              activeId,
+              historySnapshot,
+              trial
+            )
+            return
+          }
         }
 
         const failed = buildFailedAssistantTurn({
@@ -1445,15 +1447,17 @@ function ChatAside({
       }
 
       setPendingAssistantId(null)
-      if (!isAuthenticated && isGuestTrialExhaustedError(error)) {
+      if (!isAuthenticated) {
         const trial = await trialFromChatError(error)
-        replaceAssistantWithGuestLoginPrompt(
-          assistantId,
-          activeId,
-          historySnapshot,
-          trial
-        )
-        return
+        if (shouldShowGuestSignInPrompt(error, trial)) {
+          replaceAssistantWithGuestLoginPrompt(
+            assistantId,
+            activeId,
+            historySnapshot,
+            trial
+          )
+          return
+        }
       }
 
       const failed = buildFailedAssistantTurn({

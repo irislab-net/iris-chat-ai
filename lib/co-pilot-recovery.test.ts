@@ -17,6 +17,7 @@ import {
   isLowSignalUserMessage,
   prepareMessagesForRetry,
   removeEmptyAssistantTurn,
+  shouldShowGuestSignInPrompt,
 } from "@/lib/co-pilot-recovery"
 import { setChatRegisteredUserId } from "@/lib/chat-auth-session"
 import { sanitizeMessages, type ChatUiMessage } from "@/lib/chat-storage"
@@ -57,6 +58,7 @@ describe("co-pilot recovery helpers", () => {
   })
 
   it("maps 402 credit exhaustion to upgrade copy", () => {
+    setChatRegisteredUserId("user-123")
     const err = Object.assign(new Error("insufficient credit balance"), {
       status: 402,
     })
@@ -68,9 +70,11 @@ describe("co-pilot recovery helpers", () => {
     expect(coPilotFailureAction(err, { isProUser: true })).toBe("retry")
     expect(COPILOT_CREDIT_MESSAGE.toLowerCase()).toContain("upgrade")
     expect(COPILOT_CREDIT_MESSAGE).not.toMatch(/402|HTTP/i)
+    setChatRegisteredUserId(null)
   })
 
   it("maps SSE credit codes without HTTP 402 to the paywall", () => {
+    setChatRegisteredUserId("user-123")
     for (const code of [
       "daily_limit_reached",
       "weekly_limit_reached",
@@ -84,6 +88,7 @@ describe("co-pilot recovery helpers", () => {
       expect(coPilotFailureAction(err)).toBeUndefined()
       expect(coPilotFailureAction(err, { isProUser: true })).toBe("retry")
     }
+    setChatRegisteredUserId(null)
   })
 
   it("does not treat agent or reserve failures as out-of-credit", () => {
@@ -134,6 +139,60 @@ describe("co-pilot recovery helpers", () => {
     expect(isGuestTrialExhaustedError(err)).toBe(true)
     expect(coPilotUserFacingError(err)).toBe(COPILOT_TRIAL_EXHAUSTED_MESSAGE)
     expect(coPilotFailureAction(err)).toBe("connect")
+  })
+
+  it("maps guest credit codes to sign-in, not Upgrade", () => {
+    setChatRegisteredUserId(null)
+    for (const code of [
+      "daily_limit_reached",
+      "weekly_limit_reached",
+      "insufficient_credit",
+    ] as const) {
+      const err = Object.assign(new Error("insufficient credit balance"), {
+        code,
+        status: 402,
+      })
+      expect(isGuestTrialExhaustedError(err)).toBe(true)
+      expect(coPilotUserFacingError(err)).toBe(COPILOT_TRIAL_EXHAUSTED_MESSAGE)
+      expect(coPilotFailureAction(err)).toBe("connect")
+    }
+  })
+
+  it("maps guest trial exhausted message without code to sign-in", () => {
+    setChatRegisteredUserId(null)
+    const err = new Error(
+      "Guest trial exhausted for this week. Sign in to continue."
+    )
+    expect(isGuestTrialExhaustedError(err)).toBe(true)
+    expect(coPilotUserFacingError(err)).toBe(COPILOT_TRIAL_EXHAUSTED_MESSAGE)
+    expect(coPilotFailureAction(err)).toBe("connect")
+  })
+
+  it("prompts guest sign-in when refreshed trial remaining is 0", () => {
+    setChatRegisteredUserId(null)
+    const err = Object.assign(new Error("failed to reserve credit"), {
+      code: "",
+    })
+    expect(isGuestTrialExhaustedError(err)).toBe(false)
+    expect(shouldShowGuestSignInPrompt(err, { messages_remaining: 0 })).toBe(
+      true
+    )
+    expect(shouldShowGuestSignInPrompt(err, { messages_remaining: 2 })).toBe(
+      false
+    )
+    expect(shouldShowGuestSignInPrompt(err, null)).toBe(false)
+  })
+
+  it("keeps registered credit codes on the Upgrade paywall", () => {
+    setChatRegisteredUserId("user-123")
+    const err = Object.assign(new Error("insufficient credit balance"), {
+      code: "insufficient_credit",
+      status: 402,
+    })
+    expect(isGuestTrialExhaustedError(err)).toBe(false)
+    expect(coPilotUserFacingError(err)).toBe(COPILOT_CREDIT_MESSAGE)
+    expect(coPilotFailureAction(err)).toBeUndefined()
+    setChatRegisteredUserId(null)
   })
 
   it("buildFailedAssistantTurn preserves partial content and marks retry", () => {
