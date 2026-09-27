@@ -5,6 +5,7 @@ import {
   findLatestResumableInvoice,
   findResumableInvoice,
   invoiceMatchesExpectedAmount,
+  invoicePaidUidToNotify,
   isInvoiceExpired,
   isResumableInvoice,
 } from "@/lib/billing/invoice-session"
@@ -127,5 +128,20 @@ describe("invoice session", () => {
     ]
 
     expect(findLatestResumableInvoice(invoices)?.uid).toBe("newer")
+  })
+
+  it("notifies once when an invoice is already paid (100% coupon path)", () => {
+    const paid = invoice({
+      uid: "paid-1",
+      status: "paid",
+      amount_usd: 0,
+      coupon_code: "FREE100",
+      pay_address: "",
+    })
+
+    expect(invoicePaidUidToNotify(paid, null)).toBe("paid-1")
+    expect(invoicePaidUidToNotify(paid, "paid-1")).toBeNull()
+    expect(invoicePaidUidToNotify(invoice({ uid: "p", status: "pending" }), null)).toBeNull()
+    expect(invoicePaidUidToNotify(null, null)).toBeNull()
   })
 })

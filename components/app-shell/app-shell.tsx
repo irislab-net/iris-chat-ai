@@ -80,12 +80,19 @@ function AppShellWithTab(props: AppShellProps) {
   const pathname = usePathname()
   const router = useRouter()
   const searchParams = useSearchParams()
-  const { refreshAfterUpgrade, isAuthenticated } = useAuth()
+  const {
+    refreshAfterUpgrade,
+    isAuthenticated,
+    loading: authLoading,
+  } = useAuth()
   const checkoutHandledRef = React.useRef(false)
 
   React.useEffect(() => {
     if (searchParams.get("checkout") !== "success") return
     if (checkoutHandledRef.current) return
+    // Wait until auth settles — otherwise we strip ?checkout=success while
+    // still loading and skip the token refresh that Plus chat needs.
+    if (authLoading) return
     checkoutHandledRef.current = true
 
     void (async () => {
@@ -94,6 +101,8 @@ function AppShellWithTab(props: AppShellProps) {
           markPlanUpgradePendingRefresh()
           await refreshAfterUpgrade()
         }
+      } catch {
+        // Keep pending-refresh flag for ChatAside / next bootstrap.
       } finally {
         const params = new URLSearchParams(searchParams.toString())
         params.delete("checkout")
@@ -101,7 +110,14 @@ function AppShellWithTab(props: AppShellProps) {
         router.replace(qs ? `${pathname}?${qs}` : pathname)
       }
     })()
-  }, [isAuthenticated, pathname, refreshAfterUpgrade, router, searchParams])
+  }, [
+    authLoading,
+    isAuthenticated,
+    pathname,
+    refreshAfterUpgrade,
+    router,
+    searchParams,
+  ])
 
   return <AppShellInner {...props} />
 }

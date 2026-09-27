@@ -126,6 +126,11 @@ export function markPlanUpgradePendingRefresh() {
   sessionStorage.setItem(PLAN_UPGRADE_PENDING_REFRESH_KEY, "true")
 }
 
+export function hasPlanUpgradePendingRefresh(): boolean {
+  if (typeof window === "undefined") return false
+  return sessionStorage.getItem(PLAN_UPGRADE_PENDING_REFRESH_KEY) === "true"
+}
+
 export function consumePlanUpgradePendingRefresh(): boolean {
   if (typeof window === "undefined") return false
   if (sessionStorage.getItem(PLAN_UPGRADE_PENDING_REFRESH_KEY) !== "true") {
