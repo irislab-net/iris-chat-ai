@@ -2137,8 +2137,6 @@ function ChatAside({
                           Boolean(message.suggestedPrompts?.length)
 
                         if (message.role === "user") {
-                          const userReplyTarget =
-                            replyTargetFromMessage(message)
                           return (
                             <div
                               key={message.id}
@@ -2164,11 +2162,6 @@ function ChatAside({
                                 disabled={sending}
                                 variant={isMobileOverlay ? "gemini" : "default"}
                                 onEdit={() => handleEditUserMessage(message.id)}
-                                onReply={
-                                  userReplyTarget
-                                    ? () => setReplyTarget(userReplyTarget)
-                                    : undefined
-                                }
                               />
                             </div>
                           )

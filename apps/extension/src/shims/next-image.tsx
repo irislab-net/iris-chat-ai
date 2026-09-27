@@ -31,6 +31,8 @@ export default function Image({
   ...rest
 }: NextImageProps) {
   return (
+    // Extension shim for `next/image` — must stay a plain img.
+    // eslint-disable-next-line @next/next/no-img-element -- intentional shim
     <img
       src={src}
       alt={alt}

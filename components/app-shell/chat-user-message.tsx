@@ -209,7 +209,7 @@ function ChatUserTurn({
                     </div>
                   ) : null}
                 </div>
-                <div className="flex min-h-7 items-center justify-between gap-2 px-2">
+                <div className="flex min-h-7 items-center justify-between gap-2 ps-5 pe-6">
                   {timestamp ?? <span aria-hidden className="shrink-0" />}
                   {actionButtons}
                 </div>

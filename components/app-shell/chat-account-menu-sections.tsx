@@ -59,7 +59,7 @@ function AccountPlanBadge({
       variant={isProUser ? "default" : "secondary"}
       className={cn(
         "h-5 shrink-0 px-1.5 text-[10px] font-semibold tracking-wide",
-        isProUser && "border-0 bg-foreground text-background"
+        isProUser && "border-0 bg-[#2563EB] text-white"
       )}
     >
       {isProUser ? <SparklesIcon className="size-2.5" aria-hidden /> : null}

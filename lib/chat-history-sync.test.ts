@@ -8,7 +8,11 @@ import {
   remapMessagesWithServerHistory,
 } from "@/lib/chat-history-sync"
 import { serverMessageId } from "@/lib/chat-message-id"
-import type { ChatStore, StoredConversation } from "@/lib/chat-storage"
+import {
+  resolveActiveConversation,
+  type ChatStore,
+  type StoredConversation,
+} from "@/lib/chat-storage"
 
 const sessionA = "sess-a"
 const sessionB = "sess-b"
@@ -622,5 +626,37 @@ describe("chat history sync", () => {
     expect(merged.conversations.map((c) => c.id)).toEqual([sessionA, sessionB])
     expect(merged.conversations[0]?.pinned).toBe(true)
     expect(merged.activeId).toBe(sessionA)
+  })
+
+  it("preserves ephemeral New-chat activeId so reload does not revive the previous thread", () => {
+    const blankId = "blank-new-chat-uuid"
+    const local: ChatStore = {
+      version: 1,
+      conversations: [
+        {
+          id: sessionA,
+          title: "Previous",
+          createdAt: "2026-01-01T00:00:00Z",
+          updatedAt: "2026-01-02T00:00:00Z",
+          messages: [{ id: "u1", role: "user", content: "Long ETH?" }],
+          history: [{ role: "user", content: "Long ETH?" }],
+        },
+      ],
+      activeId: blankId,
+    }
+
+    const merged = mergeServerHistoryIntoStore(local, [
+      historyItem(1, sessionA, "user", "Long ETH?", "2026-01-02T09:59:00Z"),
+      historyItem(
+        2,
+        sessionA,
+        "assistant",
+        "Stand aside.",
+        "2026-01-02T10:00:00Z"
+      ),
+    ])
+
+    expect(merged.activeId).toBe(blankId)
+    expect(resolveActiveConversation(merged)).toBeNull()
   })
 })

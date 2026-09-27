@@ -241,10 +241,10 @@ export function mergeServerHistoryIntoStore(
     ...serverConversations,
   ])
 
-  const activeId =
-    local.activeId && conversations.some((c) => c.id === local.activeId)
-      ? local.activeId
-      : null
+  // Keep ephemeral New-chat `activeId` (not yet in the list). Clearing it to
+  // null makes resolveActiveConversation fall back to the previous thread on
+  // reload / post-sync hydrate.
+  const activeId = local.activeId ?? null
 
   return { version: 1, conversations, activeId, deletedIds }
 }

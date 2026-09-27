@@ -1,5 +1,6 @@
 "use client"
 
+import * as React from "react"
 import type { ReactNode } from "react"
 import dynamic from "next/dynamic"
 
@@ -12,6 +13,7 @@ import type { ChatThinkingStep } from "@/lib/api/chat-sse"
 import type { MessageQuote } from "@/lib/api/types"
 import { parseServerMessageId } from "@/lib/chat-message-id"
 import { formatChatTime } from "@/lib/chat-storage"
+import { EXUR_LOGO_MARK_PATH, EXUR_LOGO_VIEWBOX } from "@/lib/exur-logo-path"
 import { cn } from "@/lib/utils"
 import { chatMobileAssistantClass } from "@/components/app-shell/chat-mobile-gemini-styles"
 import { useLocale } from "next-intl"
@@ -44,20 +46,86 @@ function IrisMark({
   variant?: "default" | "hero"
 }) {
   const isHero = variant === "hero"
+  const gradientId = React.useId().replace(/:/g, "")
 
+  if (!isHero) {
+    return (
+      <ExurLogo
+        decorative
+        variant="gradient"
+        size={28}
+        className={cn("size-7 overflow-hidden rounded-full", className)}
+        imageClassName={imageClassName}
+      />
+    )
+  }
+
+  // Hero: current mark path + black gradient on liquid glass (no baked white disc).
   return (
-    <ExurLogo
-      decorative
-      variant="gradient"
-      size={isHero ? 64 : 28}
-      priority={isHero}
+    <span
       className={cn(
-        "overflow-hidden",
-        isHero ? "size-16 rounded-2xl" : "size-7 rounded-full",
+        "chat-empty-hero-mark relative inline-flex size-14 shrink-0 items-center justify-center rounded-full p-0.75",
+        "border-0 bg-white/55 shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_88%,transparent),inset_0_0_0_1px_color-mix(in_oklch,var(--foreground)_8%,transparent),0_1px_2px_color-mix(in_oklch,var(--foreground)_4%,transparent),0_14px_36px_-14px_color-mix(in_oklch,var(--foreground)_14%,transparent)]",
+        "backdrop-blur-2xl backdrop-saturate-180 supports-backdrop-filter:bg-white/40",
+        "dark:bg-white/10 dark:shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_14%,transparent),inset_0_0_0_1px_color-mix(in_oklch,white_10%,transparent),0_14px_40px_-16px_color-mix(in_oklch,black_48%,transparent)] dark:supports-backdrop-filter:bg-white/[0.07]",
         className
       )}
-      imageClassName={imageClassName}
-    />
+    >
+      <span
+        aria-hidden
+        className="pointer-events-none absolute -inset-2 rounded-full bg-foreground/10 blur-xl dark:bg-white/12"
+      />
+      <span
+        aria-hidden
+        className="pointer-events-none absolute inset-0 rounded-full bg-linear-to-br from-white/90 via-white/25 to-transparent dark:from-white/20 dark:via-white/5"
+      />
+      <span
+        className={cn(
+          "relative z-10 isolate flex size-full items-center justify-center overflow-hidden rounded-full p-[6%]",
+          "bg-white/72 shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_90%,transparent),inset_0_0_0_1px_color-mix(in_oklch,var(--foreground)_6%,transparent)]",
+          "backdrop-blur-md supports-backdrop-filter:bg-white/55",
+          "dark:bg-white/12 dark:shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_12%,transparent),inset_0_0_0_1px_color-mix(in_oklch,white_8%,transparent)] dark:supports-backdrop-filter:bg-white/9"
+        )}
+      >
+        <svg
+          viewBox={EXUR_LOGO_VIEWBOX}
+          className={cn("relative z-0 size-full overflow-visible", imageClassName)}
+          fill="none"
+          aria-hidden
+        >
+          <defs>
+            <linearGradient
+              id={`exur-mark-black-${gradientId}`}
+              x1="33.15"
+              y1="7"
+              x2="33.15"
+              y2="63"
+              gradientUnits="userSpaceOnUse"
+            >
+              <stop stopColor="#000000" />
+              <stop offset="1" stopColor="#3F3F3F" />
+            </linearGradient>
+          </defs>
+          <path
+            d={EXUR_LOGO_MARK_PATH}
+            fill={`url(#exur-mark-black-${gradientId})`}
+          />
+        </svg>
+        <span
+          aria-hidden
+          className="pointer-events-none absolute inset-0 z-10 overflow-hidden rounded-[inherit]"
+        >
+          <span
+            className={cn(
+              "absolute inset-y-[-12%] left-0 w-[62%]",
+              "bg-linear-to-r from-transparent via-white/55 to-transparent",
+              "animate-exur-logo-shimmer will-change-transform",
+              "dark:via-white/35"
+            )}
+          />
+        </span>
+      </span>
+    </span>
   )
 }
 
@@ -182,7 +250,7 @@ function ChatAssistantTurn({
         </div>
       ) : null}
       {timestamp || toolbar ? (
-        <div className="mt-4 flex min-h-7 items-center justify-between gap-2 px-2">
+        <div className="mt-4 flex min-h-7 items-center justify-between gap-2 ps-5 pe-6">
           {timestamp ?? <span aria-hidden className="shrink-0" />}
           {toolbar}
         </div>

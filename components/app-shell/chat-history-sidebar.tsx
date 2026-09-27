@@ -535,9 +535,10 @@ function ChatHistorySidebar({
               <ExurLogo
                 decorative
                 variant="gradient"
+                shimmer
                 priority
-                size={32}
-                className="size-8 shrink-0 overflow-hidden rounded-full"
+                size={48}
+                className="size-12 shrink-0 overflow-hidden rounded-full"
               />
               <h2 className="text-lg leading-none font-normal tracking-tight text-foreground">
                 {t("iris")}
@@ -591,8 +592,9 @@ function ChatHistorySidebar({
                 <ExurLogo
                   decorative
                   variant="gradient"
-                  size={32}
-                  className="size-8 shrink-0 overflow-hidden rounded-full"
+                  shimmer
+                  size={48}
+                  className="size-12 shrink-0 overflow-hidden rounded-full"
                 />
                 {!collapsed ? (
                   <span className="min-w-0 truncate text-[15px] leading-none font-medium tracking-tight text-sidebar-foreground">

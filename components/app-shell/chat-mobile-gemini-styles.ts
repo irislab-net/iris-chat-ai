@@ -9,10 +9,10 @@ const chatMobileGlassSurfaceClass =
  * Edge comes from inset highlight + hairline ring (no hard border stroke).
  */
 const chatMobileComposerGlassClass =
-  "border-0 bg-white/78 shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_85%,transparent),inset_0_0_0_1px_color-mix(in_oklch,var(--foreground)_8%,transparent),0_1px_2px_color-mix(in_oklch,var(--foreground)_5%,transparent),0_-4px_14px_-4px_color-mix(in_oklch,var(--foreground)_11%,transparent),0_-8px_22px_-8px_color-mix(in_oklch,var(--foreground)_7%,transparent),0_3px_10px_-6px_color-mix(in_oklch,var(--foreground)_7%,transparent)] backdrop-blur-2xl backdrop-saturate-[180%] supports-[backdrop-filter]:bg-white/62 dark:bg-[oklch(0.28_0_0)] dark:shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_14%,transparent),inset_0_0_0_1px_color-mix(in_oklch,white_10%,transparent),0_1px_2px_color-mix(in_oklch,black_45%,transparent),0_-4px_14px_-4px_color-mix(in_oklch,black_45%,transparent),0_-8px_22px_-8px_color-mix(in_oklch,black_38%,transparent),0_3px_10px_-6px_color-mix(in_oklch,black_35%,transparent)] dark:backdrop-blur-none dark:supports-[backdrop-filter]:bg-[oklch(0.28_0_0)]"
+  "border-0 bg-white/78 shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_85%,transparent),inset_0_0_0_1px_color-mix(in_oklch,var(--foreground)_8%,transparent),0_1px_2px_color-mix(in_oklch,var(--foreground)_5%,transparent),0_-10px_36px_-8px_color-mix(in_oklch,var(--foreground)_7%,transparent),0_-22px_56px_-14px_color-mix(in_oklch,var(--foreground)_4%,transparent),0_3px_10px_-6px_color-mix(in_oklch,var(--foreground)_7%,transparent)] backdrop-blur-2xl backdrop-saturate-[180%] supports-[backdrop-filter]:bg-white/62 dark:bg-[oklch(0.28_0_0)] dark:shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_14%,transparent),inset_0_0_0_1px_color-mix(in_oklch,white_10%,transparent),0_1px_2px_color-mix(in_oklch,black_45%,transparent),0_-10px_36px_-8px_color-mix(in_oklch,black_22%,transparent),0_-22px_56px_-14px_color-mix(in_oklch,black_12%,transparent),0_3px_10px_-6px_color-mix(in_oklch,black_35%,transparent)] dark:backdrop-blur-none dark:supports-[backdrop-filter]:bg-[oklch(0.28_0_0)]"
 
 const chatMobileComposerGlassFocusClass =
-  "focus-within:bg-white/88 focus-within:shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_92%,transparent),inset_0_0_0_1px_color-mix(in_oklch,var(--foreground)_12%,transparent),0_2px_4px_color-mix(in_oklch,var(--foreground)_6%,transparent),0_-5px_16px_-4px_color-mix(in_oklch,var(--foreground)_13%,transparent),0_-10px_24px_-8px_color-mix(in_oklch,var(--foreground)_9%,transparent),0_3px_12px_-6px_color-mix(in_oklch,var(--foreground)_8%,transparent)] supports-[backdrop-filter]:focus-within:bg-white/72 dark:focus-within:bg-[oklch(0.32_0_0)] dark:focus-within:shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_18%,transparent),inset_0_0_0_1px_color-mix(in_oklch,white_14%,transparent),0_2px_4px_color-mix(in_oklch,black_50%,transparent),0_-5px_16px_-4px_color-mix(in_oklch,black_50%,transparent),0_-10px_24px_-8px_color-mix(in_oklch,black_42%,transparent),0_3px_12px_-6px_color-mix(in_oklch,black_40%,transparent)] dark:supports-[backdrop-filter]:focus-within:bg-[oklch(0.32_0_0)]"
+  "focus-within:bg-white/88 focus-within:shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_92%,transparent),inset_0_0_0_1px_color-mix(in_oklch,var(--foreground)_12%,transparent),0_2px_4px_color-mix(in_oklch,var(--foreground)_6%,transparent),0_-12px_40px_-8px_color-mix(in_oklch,var(--foreground)_8%,transparent),0_-24px_60px_-14px_color-mix(in_oklch,var(--foreground)_5%,transparent),0_3px_12px_-6px_color-mix(in_oklch,var(--foreground)_8%,transparent)] supports-[backdrop-filter]:focus-within:bg-white/72 dark:focus-within:bg-[oklch(0.32_0_0)] dark:focus-within:shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_18%,transparent),inset_0_0_0_1px_color-mix(in_oklch,white_14%,transparent),0_2px_4px_color-mix(in_oklch,black_50%,transparent),0_-12px_40px_-8px_color-mix(in_oklch,black_26%,transparent),0_-24px_60px_-14px_color-mix(in_oklch,black_14%,transparent),0_3px_12px_-6px_color-mix(in_oklch,black_40%,transparent)] dark:supports-[backdrop-filter]:focus-within:bg-[oklch(0.32_0_0)]"
 
 /** Landing CTA blue — same accent as composer send. */
 const chatLandingAccentFillClass =
@@ -45,15 +45,14 @@ const chatMobileHeaderModelPrimaryClass = "text-foreground"
 
 const chatMobileHeaderModelSecondaryClass = "text-muted-foreground"
 
-/** Empty hero — vertical padding clears absolute header + composer chrome. */
+/** Empty hero — vertical padding clears absolute header + raised composer dock. */
 const chatMobileEmptyHeroWrapClass =
-  "flex min-h-full flex-col items-center justify-center px-6 pt-[max(5.5rem,calc(var(--app-safe-top)+4.25rem))] pb-[calc(6rem+env(safe-area-inset-bottom,0px))]"
+  "flex min-h-full flex-col items-center justify-center px-6 pt-[max(5.5rem,calc(var(--app-safe-top)+4.25rem))] pb-[calc(9rem+env(safe-area-inset-bottom,0px))]"
 
 const chatMobileEmptyHeroContentClass =
   "chat-empty-hero flex flex-col items-center gap-5 text-center"
 
-const chatMobileEmptyHeroMarkClass =
-  "chat-empty-hero-mark relative size-12 shrink-0 rounded-full"
+const chatMobileEmptyHeroMarkClass = "chat-empty-hero-mark"
 
 const chatMobileEmptyHeroTitleClass =
   "chat-empty-hero-title max-w-[20rem] text-balance text-[1.75rem] font-light leading-[1.22] tracking-[-0.028em] text-foreground"
@@ -235,7 +234,7 @@ const chatHistoryRailGlassItemActiveClass =
 const chatHistoryRailNavItemClass = `h-9 w-full justify-start gap-2.5 rounded-xl px-3 text-sm font-normal shadow-none ${chatHistoryRailGlassItemClass}`
 
 const chatHistoryRailSectionLabelClass =
-  "px-3 pb-1.5 text-[11px] font-medium tracking-[0.06em] text-muted-foreground/75 uppercase"
+  "px-3 pb-1.5 text-[11px] font-light tracking-normal text-muted-foreground/75 lowercase"
 
 const chatHistoryRailChatItemClass = `group/item relative flex min-w-0 items-center gap-1 rounded-xl ${chatHistoryRailGlassItemClass}`
 
@@ -244,7 +243,7 @@ const chatHistoryRailChatItemPadClass = "px-1 py-0.5"
 const chatMobileDrawerNavItemClass = `h-11 w-full justify-start gap-3 rounded-xl px-3 text-[15px] font-normal shadow-none ${chatHistoryRailGlassItemClass}`
 
 const chatMobileDrawerSectionLabelClass =
-  "px-3 pb-1.5 text-[12px] font-medium tracking-[0.04em] text-muted-foreground/80 uppercase"
+  "px-3 pb-1.5 text-[12px] font-light tracking-normal text-muted-foreground/80 lowercase"
 
 const chatMobileDrawerUpgradeClass = `h-9 shrink-0 rounded-full px-5 text-sm font-medium ${chatLandingAccentFillClass}`
 
@@ -352,31 +351,39 @@ const chatMobileToolsMenuItemDescClass =
   "text-xs leading-snug text-muted-foreground"
 
 /**
- * Trade signal card — liquid glass shell + inset panels.
- * Edges from specular highlight + hairline glass rim (no hard stroke).
+ * Trade signal card — frosted plate, no hairline rims; depth from soft shadows only.
+ * Side accent wash is layered in the card component (long/short).
  */
-const chatSignalCardClass = `overflow-hidden rounded-[1.75rem] border-0 text-foreground ${chatMobileGlassSurfaceClass} shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_85%,transparent),inset_0_0_0_1px_color-mix(in_oklch,var(--foreground)_8%,transparent),0_1px_2px_color-mix(in_oklch,var(--foreground)_4%,transparent),0_12px_36px_-16px_color-mix(in_oklch,var(--foreground)_12%,transparent)] dark:shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_12%,transparent),inset_0_0_0_1px_color-mix(in_oklch,white_10%,transparent),0_1px_2px_color-mix(in_oklch,black_35%,transparent),0_14px_40px_-18px_color-mix(in_oklch,black_48%,transparent)]`
+const chatSignalCardClass =
+  "relative isolate overflow-hidden rounded-[1.75rem] border-0 bg-white/82 text-foreground shadow-[0_2px_8px_-4px_color-mix(in_oklch,var(--foreground)_6%,transparent),0_16px_44px_-18px_color-mix(in_oklch,var(--foreground)_14%,transparent)] backdrop-blur-2xl backdrop-saturate-[180%] supports-[backdrop-filter]:bg-white/68 dark:bg-[oklch(0.26_0_0_/0.88)] dark:shadow-[0_2px_10px_-4px_color-mix(in_oklch,black_35%,transparent),0_20px_48px_-20px_color-mix(in_oklch,black_48%,transparent)] dark:backdrop-blur-2xl dark:supports-[backdrop-filter]:bg-[oklch(0.26_0_0_/0.72)]"
+
+/** Corner bloom + top sheen — applied per side on the card shell. */
+const chatSignalCardLongWashClass =
+  "before:pointer-events-none before:absolute before:inset-0 before:-z-10 before:rounded-[inherit] before:bg-[radial-gradient(120%_80%_at_0%_0%,rgba(16,185,129,0.16),transparent_55%),radial-gradient(90%_60%_at_100%_0%,rgba(37,99,235,0.1),transparent_50%),linear-gradient(180deg,rgba(255,255,255,0.55)_0%,transparent_42%)] before:content-[''] dark:before:bg-[radial-gradient(120%_80%_at_0%_0%,rgba(52,211,153,0.18),transparent_55%),radial-gradient(90%_60%_at_100%_0%,rgba(96,165,250,0.12),transparent_50%),linear-gradient(180deg,rgba(255,255,255,0.06)_0%,transparent_40%)]"
+
+const chatSignalCardShortWashClass =
+  "before:pointer-events-none before:absolute before:inset-0 before:-z-10 before:rounded-[inherit] before:bg-[radial-gradient(120%_80%_at_0%_0%,rgba(244,63,94,0.16),transparent_55%),radial-gradient(90%_60%_at_100%_0%,rgba(37,99,235,0.08),transparent_50%),linear-gradient(180deg,rgba(255,255,255,0.55)_0%,transparent_42%)] before:content-[''] dark:before:bg-[radial-gradient(120%_80%_at_0%_0%,rgba(251,113,133,0.18),transparent_55%),radial-gradient(90%_60%_at_100%_0%,rgba(96,165,250,0.1),transparent_50%),linear-gradient(180deg,rgba(255,255,255,0.06)_0%,transparent_40%)]"
 
 const chatSignalCardInsetClass =
-  "rounded-2xl border-0 bg-white/45 p-2 shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_80%,transparent),inset_0_0_0_1px_color-mix(in_oklch,var(--foreground)_6%,transparent)] backdrop-blur-xl backdrop-saturate-150 supports-[backdrop-filter]:bg-white/32 dark:bg-white/[0.06] dark:shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_10%,transparent),inset_0_0_0_1px_color-mix(in_oklch,white_8%,transparent)] dark:supports-[backdrop-filter]:bg-white/[0.04]"
+  "rounded-2xl border-0 bg-black/[0.035] p-2 shadow-[inset_0_2px_10px_-6px_color-mix(in_oklch,var(--foreground)_8%,transparent),0_1px_0_0_color-mix(in_oklch,white_55%,transparent)] backdrop-blur-xl backdrop-saturate-150 supports-[backdrop-filter]:bg-black/[0.03] dark:bg-white/[0.05] dark:shadow-[inset_0_2px_12px_-6px_color-mix(in_oklch,black_40%,transparent),0_1px_0_0_color-mix(in_oklch,white_6%,transparent)] dark:supports-[backdrop-filter]:bg-white/[0.04]"
 
 const chatSignalCardChipClass =
-  "inline-flex items-center gap-1 rounded-full border-0 bg-white/55 px-2.5 py-1 text-[11px] font-medium tracking-[0.03em] text-muted-foreground shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_80%,transparent),inset_0_0_0_1px_color-mix(in_oklch,var(--foreground)_7%,transparent)] backdrop-blur-md supports-[backdrop-filter]:bg-white/40 dark:bg-white/[0.1] dark:shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_10%,transparent),inset_0_0_0_1px_color-mix(in_oklch,white_10%,transparent)] dark:supports-[backdrop-filter]:bg-white/[0.08]"
+  "inline-flex items-center gap-1 rounded-full border-0 bg-white/70 px-2.5 py-1 text-[11px] font-medium tracking-[0.03em] text-muted-foreground shadow-[0_1px_3px_color-mix(in_oklch,var(--foreground)_6%,transparent),0_4px_12px_-6px_color-mix(in_oklch,var(--foreground)_8%,transparent)] backdrop-blur-md supports-[backdrop-filter]:bg-white/55 dark:bg-white/[0.12] dark:shadow-[0_1px_3px_color-mix(in_oklch,black_30%,transparent),0_4px_14px_-6px_color-mix(in_oklch,black_35%,transparent)] dark:supports-[backdrop-filter]:bg-white/[0.1]"
 
 const chatSignalCardChipLongClass =
-  "inline-flex items-center gap-1 rounded-full border-0 bg-emerald-500/12 px-2.5 py-1 text-[11px] font-medium tracking-[0.03em] text-emerald-700 shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_70%,transparent),inset_0_0_0_1px_rgba(5,150,105,0.22)] backdrop-blur-md dark:bg-emerald-400/14 dark:text-emerald-300 dark:shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_10%,transparent),inset_0_0_0_1px_rgba(52,211,153,0.28)]"
+  "inline-flex items-center gap-1 rounded-full border-0 bg-emerald-500/16 px-2.5 py-1 text-[11px] font-medium tracking-[0.03em] text-emerald-700 shadow-[0_1px_3px_rgba(5,150,105,0.12),0_4px_12px_-5px_rgba(5,150,105,0.22)] backdrop-blur-md dark:bg-emerald-400/18 dark:text-emerald-300 dark:shadow-[0_1px_3px_rgba(52,211,153,0.14),0_4px_14px_-5px_rgba(52,211,153,0.24)]"
 
 const chatSignalCardChipShortClass =
-  "inline-flex items-center gap-1 rounded-full border-0 bg-rose-500/12 px-2.5 py-1 text-[11px] font-medium tracking-[0.03em] text-rose-700 shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_70%,transparent),inset_0_0_0_1px_rgba(225,29,72,0.22)] backdrop-blur-md dark:bg-rose-400/14 dark:text-rose-300 dark:shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_10%,transparent),inset_0_0_0_1px_rgba(251,113,133,0.28)]"
+  "inline-flex items-center gap-1 rounded-full border-0 bg-rose-500/16 px-2.5 py-1 text-[11px] font-medium tracking-[0.03em] text-rose-700 shadow-[0_1px_3px_rgba(225,29,72,0.12),0_4px_12px_-5px_rgba(225,29,72,0.22)] backdrop-blur-md dark:bg-rose-400/18 dark:text-rose-300 dark:shadow-[0_1px_3px_rgba(251,113,133,0.14),0_4px_14px_-5px_rgba(251,113,133,0.24)]"
 
 const chatSignalCardIconShellClass =
-  "flex size-7 shrink-0 items-center justify-center rounded-full border-0 bg-white/50 shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_75%,transparent),inset_0_0_0_1px_color-mix(in_oklch,var(--foreground)_6%,transparent)] backdrop-blur-sm supports-[backdrop-filter]:bg-white/35 dark:bg-white/[0.09] dark:shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_10%,transparent),inset_0_0_0_1px_color-mix(in_oklch,white_8%,transparent)] dark:supports-[backdrop-filter]:bg-white/[0.07]"
+  "flex size-7 shrink-0 items-center justify-center rounded-full border-0 bg-white/65 shadow-[0_1px_3px_color-mix(in_oklch,var(--foreground)_6%,transparent),0_3px_10px_-4px_color-mix(in_oklch,var(--foreground)_8%,transparent)] backdrop-blur-sm supports-[backdrop-filter]:bg-white/48 dark:bg-white/[0.12] dark:shadow-[0_1px_3px_color-mix(in_oklch,black_28%,transparent),0_3px_12px_-4px_color-mix(in_oklch,black_32%,transparent)] dark:supports-[backdrop-filter]:bg-white/[0.09]"
 
 const chatSignalCardEntryShellClass =
-  "rounded-xl border-0 bg-white/72 shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_90%,transparent),inset_0_0_0_1px_color-mix(in_oklch,var(--foreground)_10%,transparent),0_4px_16px_-12px_color-mix(in_oklch,var(--foreground)_8%,transparent)] backdrop-blur-md supports-[backdrop-filter]:bg-white/55 dark:bg-white/[0.12] dark:shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_14%,transparent),inset_0_0_0_1px_color-mix(in_oklch,white_12%,transparent),0_4px_16px_-12px_color-mix(in_oklch,black_30%,transparent)] dark:supports-[backdrop-filter]:bg-white/[0.09]"
+  "rounded-xl border-0 bg-white/88 shadow-[0_2px_8px_-4px_color-mix(in_oklch,var(--foreground)_7%,transparent),0_8px_22px_-12px_color-mix(in_oklch,var(--foreground)_12%,transparent)] backdrop-blur-md supports-[backdrop-filter]:bg-white/72 dark:bg-white/[0.14] dark:shadow-[0_2px_8px_-4px_color-mix(in_oklch,black_30%,transparent),0_8px_22px_-12px_color-mix(in_oklch,black_38%,transparent)] dark:supports-[backdrop-filter]:bg-white/[0.11]"
 
 const chatSignalCardMetricTileClass =
-  "rounded-xl border-0 bg-white/55 shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_78%,transparent),inset_0_0_0_1px_color-mix(in_oklch,var(--foreground)_7%,transparent),0_3px_14px_-10px_color-mix(in_oklch,var(--foreground)_7%,transparent)] backdrop-blur-md backdrop-saturate-150 supports-[backdrop-filter]:bg-white/40 dark:bg-white/[0.08] dark:shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_10%,transparent),inset_0_0_0_1px_color-mix(in_oklch,white_8%,transparent),0_4px_16px_-12px_color-mix(in_oklch,black_32%,transparent)] dark:supports-[backdrop-filter]:bg-white/[0.06]"
+  "rounded-xl border-0 bg-white/70 shadow-[0_1px_4px_-2px_color-mix(in_oklch,var(--foreground)_6%,transparent),0_6px_18px_-10px_color-mix(in_oklch,var(--foreground)_9%,transparent)] backdrop-blur-md backdrop-saturate-150 supports-[backdrop-filter]:bg-white/55 dark:bg-white/[0.1] dark:shadow-[0_1px_4px_-2px_color-mix(in_oklch,black_28%,transparent),0_6px_18px_-10px_color-mix(in_oklch,black_34%,transparent)] dark:supports-[backdrop-filter]:bg-white/[0.08]"
 
 /** Desktop news panel — distinct sidebar surface; glass stays on cards/controls. */
 const chatNewsPanelShellClass =
@@ -473,6 +480,8 @@ export {
   chatSignalCardChipLongClass,
   chatSignalCardChipShortClass,
   chatSignalCardClass,
+  chatSignalCardLongWashClass,
+  chatSignalCardShortWashClass,
   chatSignalCardEntryShellClass,
   chatSignalCardIconShellClass,
   chatSignalCardInsetClass,

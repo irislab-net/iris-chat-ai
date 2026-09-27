@@ -132,3 +132,33 @@
 .app-mobile-safe-header {
   padding-top: max(0.75rem, var(--app-safe-top));
 }
+
+@keyframes exur-logo-shimmer {
+  0% {
+    transform: translateX(-140%) skewX(-14deg);
+    opacity: 0;
+  }
+  18% {
+    opacity: 0.85;
+  }
+  50% {
+    opacity: 1;
+  }
+  82% {
+    opacity: 0.85;
+  }
+  100% {
+    transform: translateX(240%) skewX(-14deg);
+    opacity: 0;
+  }
+}
+
+.animate-exur-logo-shimmer {
+  animation: exur-logo-shimmer 2.8s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-exur-logo-shimmer {
+    animation: none;
+  }
+}

@@ -16,14 +16,6 @@ const publicDir = join(root, "public")
 
 mkdirSync(outDir, { recursive: true })
 
-const BLUE = "#2563EB"
-const BLUE_DARK = "#1D4ED8"
-const INK = "#0F172A"
-const MUTED = "#64748B"
-const BG = "#F1F5F9"
-const CARD = "#FFFFFF"
-const SOFT = "#E2E8F0"
-
 function crc32(buf) {
   let c = ~0
   for (let i = 0; i < buf.length; i++) {
@@ -106,21 +98,8 @@ function renderSvgToRgbPng(svg, width, height) {
   return encodeRgbPng(width, height, out)
 }
 
-function escapeXml(s) {
-  return s
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-}
-
 function logoMarkDataUri() {
   const svg = readFileSync(join(publicDir, "exur-logo-brand.svg"), "utf8")
-  return `data:image/svg+xml;base64,${Buffer.from(svg).toString("base64")}`
-}
-
-function logoLightDataUri() {
-  const svg = readFileSync(join(publicDir, "exur-logo-light.svg"), "utf8")
   return `data:image/svg+xml;base64,${Buffer.from(svg).toString("base64")}`
 }
 

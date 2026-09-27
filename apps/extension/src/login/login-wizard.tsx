@@ -172,7 +172,7 @@ function LoginWizard() {
             size={36}
             className="size-9 rounded-full shadow-[0_8px_24px_-12px_rgba(15,23,42,0.35)]"
             priority
-            variant="gradient"
+            variant="brand"
           />
           <span className="text-[1.05rem] font-semibold tracking-[-0.03em] text-foreground">
             Exur
@@ -207,7 +207,7 @@ function LoginWizard() {
                   size={28}
                   className="size-7 rounded-full"
                   priority
-                  variant="gradient"
+                  variant="brand"
                 />
               </span>
               <div className="min-w-0 text-start">

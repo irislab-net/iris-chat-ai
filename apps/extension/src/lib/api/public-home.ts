@@ -23,12 +23,12 @@ export type PublicHomeSnapshot = {
 
 async function fetchPublicEnvelope<T>(
   path: string,
-  options: { revalidate: number; tags: string[] }
+  // Kept for API parity with web; extension fetch has no Next.js cache opts.
+  _options: { revalidate: number; tags: string[] }
 ): Promise<T | null> {
   try {
     const res = await fetch(`${API_BASE}${path}`, {
       headers: { Accept: "application/json" },
-      
     })
     if (!res.ok) return null
     const body = (await res.json()) as ApiEnvelope<T>

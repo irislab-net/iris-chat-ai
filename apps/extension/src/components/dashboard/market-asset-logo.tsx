@@ -27,6 +27,8 @@ function MarketAssetLogo({
       aria-hidden
     >
       {src && !failed ? (
+        // Extension runtime — remote market logos; next/image is not available here.
+        // eslint-disable-next-line @next/next/no-img-element -- intentional plain img
         <img
           src={src}
           alt=""

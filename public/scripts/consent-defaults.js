@@ -26,7 +26,7 @@
       if (trimmed.indexOf(prefix) !== 0) continue
       try {
         return decodeURIComponent(trimmed.slice(prefix.length))
-      } catch (e) {
+      } catch {
         return trimmed.slice(prefix.length)
       }
     }
@@ -37,7 +37,7 @@
     try {
       var fromLs = localStorage.getItem(KEY)
       if (fromLs) return fromLs
-    } catch (e) {
+    } catch {
       /* private mode */
     }
     return readCookie(KEY)
@@ -57,7 +57,7 @@
       ad_user_data: advertising,
       ad_personalization: advertising,
     })
-  } catch (e) {
+  } catch {
     /* ignore corrupt storage */
   }
 })()

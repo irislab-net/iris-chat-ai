@@ -20,6 +20,8 @@ import {
   chatSignalCardChipLongClass,
   chatSignalCardChipShortClass,
   chatSignalCardClass,
+  chatSignalCardLongWashClass,
+  chatSignalCardShortWashClass,
   chatSignalCardEntryShellClass,
   chatSignalCardIconShellClass,
   chatSignalCardInsetClass,
@@ -235,7 +237,14 @@ function ChatSignalCard({
   ].filter(Boolean)
 
   return (
-    <article className={cn("mt-1.5", chatSignalCardClass, className)}>
+    <article
+      className={cn(
+        "mt-1.5",
+        chatSignalCardClass,
+        isLong ? chatSignalCardLongWashClass : chatSignalCardShortWashClass,
+        className
+      )}
+    >
       <header className="px-4 pt-4 pb-3.5">
         <div className="flex items-center justify-between gap-3">
           <div className="flex min-w-0 flex-wrap items-center gap-2">

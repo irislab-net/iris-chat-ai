@@ -71,6 +71,11 @@ function ChatMobileGeminiBackground({
         <div className="chat-gemini-dots chat-gemini-dots-layer-b absolute inset-0" />
         <div className="chat-gemini-dots chat-gemini-dots-layer-c absolute inset-0" />
       </div>
+      {isHero ? (
+        <div className="absolute inset-x-0 bottom-0 h-[36%] bg-linear-to-b from-transparent via-white/70 to-white sm:h-[40%] dark:via-background/70 dark:to-background" />
+      ) : (
+        <div className="chat-gemini-bg-bottom-fade absolute inset-x-0 bottom-0 h-[40%]" />
+      )}
     </div>
   )
 }
