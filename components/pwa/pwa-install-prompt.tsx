@@ -37,8 +37,8 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet"
 import { useIsDesktop } from "@/hooks/use-media-query"
+import { usePwaNudgeReveal } from "@/hooks/use-banner-timing"
 import { usePwaInstall } from "@/hooks/use-pwa-install"
-import { getStoredConsent } from "@/lib/consent"
 import { landingCta } from "@/lib/landing-modern-styles"
 import { cn } from "@/lib/utils"
 
@@ -345,22 +345,9 @@ function PwaInstallNudge({
 }) {
   const t = useTranslations("workspace")
   const isDesktop = useIsDesktop()
-  const [ready, setReady] = React.useState(false)
-
-  React.useEffect(() => {
-    if (forcePreview || !visible) {
-      return
-    }
-    // Wait for cookie banner to settle; avoid stacking on first paint.
-    const timer = window.setTimeout(() => {
-      if (getStoredConsent()) setReady(true)
-    }, 2800)
-    return () => {
-      window.clearTimeout(timer)
-    }
-  }, [visible, forcePreview])
-
-  const showNudgeUi = forcePreview || (visible && ready)
+  // Consent-gated + engagement dwell / first input — never cold-prompt on paint.
+  const timingReady = usePwaNudgeReveal(visible && !forcePreview)
+  const showNudgeUi = forcePreview || (visible && timingReady)
 
   if (!showNudgeUi || isDesktop === null) return null
 

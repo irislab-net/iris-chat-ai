@@ -386,7 +386,7 @@ function ChatAside({
   const [hydrated, setHydrated] = React.useState(false)
   const [messages, setMessages] = React.useState<ChatUiMessage[]>([])
   const [history, setHistory] = React.useState<CoPilotHistoryMessage[]>([])
-  const [conversationId, setConversationId] = React.useState(() =>
+  const [conversationId, setConversationId] = React.useState<string>(() =>
     crypto.randomUUID()
   )
   const [conversations, setConversations] = React.useState<
@@ -2129,7 +2129,7 @@ function ChatAside({
                           </h2>
                           <IrisSamplePrompts
                             disabled={sending}
-                            onEdit={(text) => {
+                            onEdit={(text: string) => {
                               setDraft(text)
                               focusComposer()
                             }}

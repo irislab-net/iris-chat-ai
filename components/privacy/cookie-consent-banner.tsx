@@ -33,6 +33,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet"
 import { Switch } from "@/components/ui/switch"
+import { useCookieBannerReveal } from "@/hooks/use-banner-timing"
 import { useIsDesktop } from "@/hooks/use-media-query"
 import { landingCta } from "@/lib/landing-modern-styles"
 import { getPrivacyNoticeHref } from "@/lib/legal"
@@ -251,8 +252,12 @@ function CookieConsentBanner() {
   const [manageOpen, setManageOpen] = React.useState(false)
   const [analyticsDraft, setAnalyticsDraft] = React.useState(false)
 
+  // Soft post-paint delay so first content settles before consent UI.
+  const needsConsent = isClient && prefs === null
+  const revealReady = useCookieBannerReveal(needsConsent)
+
   // Banner only while no choice yet — and never while manage is open.
-  const showBanner = isClient && prefs === null && !manageOpen
+  const showBanner = needsConsent && revealReady && !manageOpen
   const showManage = manageOpen
 
   React.useEffect(() => {

@@ -17,6 +17,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Switch } from "@/components/ui/switch"
+import { useCookieBannerReveal } from "@/hooks/use-banner-timing"
 import { landingCta } from "@/lib/landing-modern-styles"
 import { getPrivacyNoticeHref } from "@/lib/legal"
 import {
@@ -174,7 +175,9 @@ function CookieConsentBanner() {
   const [manageOpen, setManageOpen] = React.useState(false)
   const [analyticsDraft, setAnalyticsDraft] = React.useState(false)
 
-  const showBanner = isClient && prefs === null && !manageOpen
+  const needsConsent = isClient && prefs === null
+  const revealReady = useCookieBannerReveal(needsConsent)
+  const showBanner = needsConsent && revealReady && !manageOpen
 
   React.useEffect(() => {
     const openManage = () => {
