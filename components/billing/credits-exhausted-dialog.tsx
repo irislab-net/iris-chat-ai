@@ -8,6 +8,7 @@ import {
   chatDesktopDialogClass,
   chatDesktopDialogFooterClass,
   chatMobileSheetBodyClass,
+  chatMobileSheetCardClass,
   chatMobileSheetContentClass,
   chatMobileSheetDescriptionClass,
   chatMobileSheetFooterBarClass,
@@ -37,90 +38,35 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet"
 import { useIsDesktop } from "@/hooks/use-media-query"
-import type { ChatCreditBalance } from "@/lib/api/types"
-import {
-  creditUsageFromBalance,
-  formatCreditCount,
-  type CreditUsagePeriod,
-} from "@/lib/api/credit-usage"
 import { PAYMENT_TOKENS } from "@/lib/billing/payment-options"
 import { landingCta } from "@/lib/landing-modern-styles"
-import { UPGRADE_PATH } from "@/lib/site"
+import { BILLING_PATH, UPGRADE_PATH } from "@/lib/site"
 import { cn } from "@/lib/utils"
 
 type CreditsExhaustedDialogProps = {
   open: boolean
   onOpenChange: (open: boolean) => void
-  balance?: ChatCreditBalance | null
+  isProUser?: boolean
 }
 
-function CreditPeriodRow({
-  label,
-  period,
-}: {
-  label: string
-  period: CreditUsagePeriod
-}) {
-  const pct = Math.round(period.usedFraction * 100)
-  return (
-    <div className="min-w-0">
-      <div className="flex items-baseline justify-between gap-3">
-        <p className="text-[11px] font-medium tracking-[0.12em] text-muted-foreground uppercase">
-          {label}
-        </p>
-        <p className="text-sm font-medium tabular-nums tracking-tight">
-          {formatCreditCount(period.remaining)}
-          <span className="text-muted-foreground">
-            {" "}
-            / {formatCreditCount(period.limit)}
-          </span>
-        </p>
-      </div>
-      <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-foreground/8 dark:bg-white/10">
-        <div
-          className={cn(
-            "h-full rounded-full transition-[width]",
-            pct >= 90 ? "bg-destructive" : "bg-[#2563EB]"
-          )}
-          style={{ width: `${pct}%` }}
-        />
-      </div>
-    </div>
-  )
-}
-
-function CreditsExhaustedBody({
-  balance,
-}: {
-  balance?: ChatCreditBalance | null
-}) {
+function CreditsExhaustedBody() {
   const t = useTranslations("workspace.creditsExhausted")
-  const usage = balance ? creditUsageFromBalance(balance) : null
 
   return (
-    <div className="space-y-4">
-      {usage ? (
-        <div className="space-y-3.5 rounded-2xl bg-foreground/4 px-3.5 py-3.5 dark:bg-white/6">
-          <CreditPeriodRow label={t("daily")} period={usage.daily} />
-          <CreditPeriodRow label={t("weekly")} period={usage.weekly} />
-        </div>
-      ) : null}
-
-      <div className="flex items-center gap-3 rounded-2xl bg-foreground/4 px-3.5 py-3 dark:bg-white/6">
-        <div className="flex -space-x-1.5">
-          {PAYMENT_TOKENS.map((token) => (
-            <PaymentTokenLogo
-              key={token.id}
-              currency={token.id}
-              size="sm"
-              className="ring-2 ring-background"
-            />
-          ))}
-        </div>
-        <p className="min-w-0 text-[13px] leading-snug text-muted-foreground">
-          {t("payWithCrypto")}
-        </p>
+    <div className={cn(chatMobileSheetCardClass, "flex items-center gap-3")}>
+      <div className="flex -space-x-1.5">
+        {PAYMENT_TOKENS.map((token) => (
+          <PaymentTokenLogo
+            key={token.id}
+            currency={token.id}
+            size="sm"
+            className="ring-2 ring-background"
+          />
+        ))}
       </div>
+      <p className="min-w-0 text-[13px] leading-snug text-muted-foreground">
+        {t("payWithCrypto")}
+      </p>
     </div>
   )
 }
@@ -128,13 +74,18 @@ function CreditsExhaustedBody({
 function CreditsExhaustedDialog({
   open,
   onOpenChange,
-  balance = null,
+  isProUser = false,
 }: CreditsExhaustedDialogProps) {
   const t = useTranslations("workspace.creditsExhausted")
   const tw = useTranslations("workspace")
   const isDesktop = useIsDesktop()
 
   if (isDesktop === null) return null
+
+  const description = isProUser ? t("descriptionPro") : t("description")
+  const primaryHref = isProUser ? BILLING_PATH : UPGRADE_PATH
+  const primaryLabel = isProUser ? t("viewBilling") : tw("upgradeToPlus")
+  const showBody = !isProUser
 
   const actions = (
     <>
@@ -146,10 +97,10 @@ function CreditsExhaustedDialog({
             : chatMobileSheetPrimaryButtonClass
         )}
         nativeButton={false}
-        render={<Link href={UPGRADE_PATH} />}
+        render={<Link href={primaryHref} />}
         onClick={() => onOpenChange(false)}
       >
-        {tw("upgradeToPlus")}
+        {primaryLabel}
       </Button>
       <Button
         type="button"
@@ -175,10 +126,10 @@ function CreditsExhaustedDialog({
                 {t("title")}
               </DialogTitle>
               <DialogDescription className="text-[13px] leading-relaxed text-pretty text-muted-foreground">
-                {t("description")}
+                {description}
               </DialogDescription>
             </DialogHeader>
-            <CreditsExhaustedBody balance={balance} />
+            {showBody ? <CreditsExhaustedBody /> : null}
           </div>
           <DialogFooter
             className={cn(
@@ -206,12 +157,14 @@ function CreditsExhaustedDialog({
             {t("title")}
           </SheetTitle>
           <SheetDescription className={chatMobileSheetDescriptionClass}>
-            {t("description")}
+            {description}
           </SheetDescription>
         </SheetHeader>
-        <div className={cn(chatMobileSheetBodyClass, "pt-1 pb-5")}>
-          <CreditsExhaustedBody balance={balance} />
-        </div>
+        {showBody ? (
+          <div className={cn(chatMobileSheetBodyClass, "pt-1 pb-5")}>
+            <CreditsExhaustedBody />
+          </div>
+        ) : null}
         <SheetFooter className={chatMobileSheetFooterClass}>
           <div className={cn(chatMobileSheetFooterBarClass, "space-y-2 pt-4")}>
             {actions}

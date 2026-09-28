@@ -3,7 +3,6 @@ import { describe, expect, it } from "vitest"
 import {
   COPILOT_AUTH_MESSAGE,
   COPILOT_CREDIT_MESSAGE,
-  COPILOT_PRO_SESSION_REFRESH_MESSAGE,
   COPILOT_RECOVERY_MESSAGE,
   COPILOT_TIMEOUT_MESSAGE,
   COPILOT_TRIAL_EXHAUSTED_MESSAGE,
@@ -57,17 +56,17 @@ describe("co-pilot recovery helpers", () => {
     expect(COPILOT_RECOVERY_MESSAGE).not.toMatch(/HTTP|502|SSE|FetchError/i)
   })
 
-  it("maps 402 credit exhaustion to upgrade copy", () => {
+  it("maps 402 credit exhaustion to upgrade copy for Free and Plus", () => {
     setChatRegisteredUserId("user-123")
     const err = Object.assign(new Error("insufficient credit balance"), {
       status: 402,
     })
     expect(coPilotUserFacingError(err)).toBe(COPILOT_CREDIT_MESSAGE)
     expect(coPilotUserFacingError(err, { isProUser: true })).toBe(
-      COPILOT_PRO_SESSION_REFRESH_MESSAGE
+      COPILOT_CREDIT_MESSAGE
     )
     expect(coPilotFailureAction(err)).toBeUndefined()
-    expect(coPilotFailureAction(err, { isProUser: true })).toBe("retry")
+    expect(coPilotFailureAction(err, { isProUser: true })).toBeUndefined()
     expect(COPILOT_CREDIT_MESSAGE.toLowerCase()).toContain("upgrade")
     expect(COPILOT_CREDIT_MESSAGE).not.toMatch(/402|HTTP/i)
     setChatRegisteredUserId(null)
@@ -85,8 +84,11 @@ describe("co-pilot recovery helpers", () => {
       })
       expect(isCreditExhaustedError(err)).toBe(true)
       expect(coPilotUserFacingError(err)).toBe(COPILOT_CREDIT_MESSAGE)
+      expect(coPilotUserFacingError(err, { isProUser: true })).toBe(
+        COPILOT_CREDIT_MESSAGE
+      )
       expect(coPilotFailureAction(err)).toBeUndefined()
-      expect(coPilotFailureAction(err, { isProUser: true })).toBe("retry")
+      expect(coPilotFailureAction(err, { isProUser: true })).toBeUndefined()
     }
     setChatRegisteredUserId(null)
   })

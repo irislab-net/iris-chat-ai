@@ -58,12 +58,15 @@ export function formatInvoiceUsd(amount: number): string {
   }).format(amount)
 }
 
-export function formatInvoiceDate(value?: string | null): string {
+export function formatInvoiceDate(
+  value?: string | null,
+  options?: { withTime?: boolean }
+): string {
   if (!value) return "—"
   const ms = Date.parse(value)
   if (!Number.isFinite(ms)) return "—"
   return new Intl.DateTimeFormat(undefined, {
     dateStyle: "medium",
-    timeStyle: "short",
+    ...(options?.withTime ? { timeStyle: "short" as const } : {}),
   }).format(new Date(ms))
 }

@@ -105,7 +105,7 @@ export function isCreditExhaustedError(error: unknown): boolean {
 
 export function coPilotUserFacingError(
   error: unknown,
-  options?: { isProUser?: boolean }
+  _options?: { isProUser?: boolean }
 ): string {
   if (isTimeoutError(error)) return COPILOT_TIMEOUT_MESSAGE
   if (isAbortError(error)) return ""
@@ -118,18 +118,16 @@ export function coPilotUserFacingError(
   if (status === 401 || code === "unauthorized" || code === "invalid_token") {
     return COPILOT_AUTH_MESSAGE
   }
+  // Real credit/limit codes (incl. Plus daily/weekly caps). Session refresh after
+  // upgrade is handled silently in withCreditSessionRetry — never show that CTA here.
   if (isCreditExhaustedError(error)) {
-    return options?.isProUser
-      ? COPILOT_PRO_SESSION_REFRESH_MESSAGE
-      : COPILOT_CREDIT_MESSAGE
+    return COPILOT_CREDIT_MESSAGE
   }
   // Known empty-completion path uses a friendly Error already — keep if it matches product tone.
   if (error instanceof Error) {
     const msg = error.message.trim()
     if (/insufficient credit/i.test(msg) || /usage limit reached/i.test(msg)) {
-      return options?.isProUser
-        ? COPILOT_PRO_SESSION_REFRESH_MESSAGE
-        : COPILOT_CREDIT_MESSAGE
+      return COPILOT_CREDIT_MESSAGE
     }
     if (msg === "Exur returned an empty reply. Please try again.") {
       return COPILOT_RECOVERY_MESSAGE
@@ -270,7 +268,7 @@ export function shouldShowGuestSignInPrompt(
 
 export function coPilotFailureAction(
   error: unknown,
-  options?: { isProUser?: boolean }
+  _options?: { isProUser?: boolean }
 ): "connect" | "retry" | undefined {
   if (isGuestTrialExhaustedError(error)) return "connect"
   const status = (error as { status?: number } | null)?.status
@@ -281,8 +279,8 @@ export function coPilotFailureAction(
   ) {
     return "connect"
   }
-  // Out-of-credit paywall: Upgrade only — retrying will not help.
-  if (isCreditExhaustedError(error) && !options?.isProUser) {
+  // Out-of-credit / period limit: paywall only — retrying will not help (Plus included).
+  if (isCreditExhaustedError(error)) {
     return undefined
   }
   return "retry"

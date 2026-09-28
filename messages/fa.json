@@ -858,11 +858,11 @@
     },
     "creditsExhausted": {
       "title": "اعتبارت تمام شده",
-      "description": "اعتبار چت این دوره تمام شده. برای ادامه چت به Plus ارتقا بده.",
-      "daily": "روزانه",
-      "weekly": "هفتگی",
-      "payWithCrypto": "با USDT یا USDC روی اتریوم ادامه بده.",
-      "notNow": "الان نه"
+      "description": "اعتبار رایگانت تمام شده. برای ادامه باید شارژ کنی.",
+      "payWithCrypto": "پرداخت با کریپتو سریع و ساده است.",
+      "notNow": "الان نه",
+      "descriptionPro": "به سقف این دوره رسیدی. به‌صورت خودکار ریست می‌شود.",
+      "viewBilling": "مشاهده صورتحساب"
     },
     "justNow": "همین الان",
     "minutesAgo": "{count}د پیش",
@@ -927,7 +927,8 @@
     "leftOf": "/ {limit} مانده",
     "loadingCredits": "در حال بارگذاری اعتبار…",
     "signInForCredits": "برای دیدن سقف روزانه و هفتگی وارد شو.",
-    "creditsLoadError": "بارگذاری اعتبار ممکن نشد"
+    "creditsLoadError": "بارگذاری اعتبار ممکن نشد",
+    "amountFree": "رایگان"
   },
   "upgradePage": {
     "title": "ارتقا",

@@ -574,11 +574,11 @@
     },
     "creditsExhausted": {
       "title": "Je credits zijn op",
-      "description": "Je chatcredits voor deze periode zijn op. Upgrade naar Plus om door te chatten.",
-      "daily": "Dagelijks",
-      "weekly": "Wekelijks",
-      "payWithCrypto": "Ga verder met USDT of USDC op Ethereum.",
-      "notNow": "Niet nu"
+      "description": "Je gratis credits zijn op. Laad bij om door te gaan.",
+      "payWithCrypto": "Crypto-betalingen zijn snel en eenvoudig.",
+      "notNow": "Niet nu",
+      "descriptionPro": "Je hebt de limiet van deze periode bereikt. Die reset automatisch.",
+      "viewBilling": "Bekijk facturering"
     },
     "justNow": "Zojuist",
     "minutesAgo": "{count}m geleden",

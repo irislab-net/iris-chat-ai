@@ -574,11 +574,11 @@
     },
     "creditsExhausted": {
       "title": "Te has quedado sin créditos",
-      "description": "Has usado los créditos de chat de este periodo. Mejora a Plus para seguir chateando.",
-      "daily": "Diario",
-      "weekly": "Semanal",
-      "payWithCrypto": "Continúa con USDT o USDC en Ethereum.",
-      "notNow": "Ahora no"
+      "description": "Se agotaron tus créditos gratis. Recarga para seguir.",
+      "payWithCrypto": "Los pagos con cripto son rápidos y simples.",
+      "notNow": "Ahora no",
+      "descriptionPro": "Alcanzaste el límite de este periodo. Se reinicia solo.",
+      "viewBilling": "Ver facturación"
     },
     "justNow": "Justo ahora",
     "minutesAgo": "hace {count}m",

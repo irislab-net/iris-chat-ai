@@ -858,11 +858,11 @@
     },
     "creditsExhausted": {
       "title": "نفد رصيدك",
-      "description": "لقد استخدمت رصيد الدردشة لهذه الفترة. قم بالترقية إلى Plus لمواصلة الدردشة.",
-      "daily": "يومي",
-      "weekly": "أسبوعي",
-      "payWithCrypto": "تابع الدفع بـ USDT أو USDC على Ethereum.",
-      "notNow": "ليس الآن"
+      "description": "رصيدك المجاني نفد. اشحن للمتابعة.",
+      "payWithCrypto": "الدفع بالعملات المشفرة سريع وبسيط.",
+      "notNow": "ليس الآن",
+      "descriptionPro": "وصلت لحد هذه الفترة. يُعاد ضبطه تلقائيًا.",
+      "viewBilling": "عرض الفوترة"
     },
     "justNow": "الآن",
     "minutesAgo": "منذ {count}د",
@@ -927,7 +927,8 @@
     "leftOf": "/ متبقٍ {limit}",
     "loadingCredits": "جارٍ تحميل الرصيد…",
     "signInForCredits": "سجّل الدخول لرؤية الحدود اليومية والأسبوعية.",
-    "creditsLoadError": "تعذّر تحميل الرصيد"
+    "creditsLoadError": "تعذّر تحميل الرصيد",
+    "amountFree": "مجاني"
   },
   "upgradePage": {
     "title": "الترقية",

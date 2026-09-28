@@ -574,11 +574,11 @@
     },
     "creditsExhausted": {
       "title": "Krediniz bitti",
-      "description": "Bu dönemin sohbet kredileriniz bitti. Sohbete devam etmek için Plus'a yükseltin.",
-      "daily": "Günlük",
-      "weekly": "Haftalık",
-      "payWithCrypto": "Ethereum üzerinde USDT veya USDC ile devam edin.",
-      "notNow": "Şimdi değil"
+      "description": "Ücretsiz krediniz bitti. Devam etmek için yükleme yapın.",
+      "payWithCrypto": "Kripto ödemeleri hızlı ve basit.",
+      "notNow": "Şimdi değil",
+      "descriptionPro": "Bu dönemin limitine ulaştınız. Otomatik sıfırlanır.",
+      "viewBilling": "Faturalandırmayı gör"
     },
     "justNow": "Az önce",
     "minutesAgo": "{count}dk önce",

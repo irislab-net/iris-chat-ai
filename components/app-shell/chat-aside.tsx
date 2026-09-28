@@ -1331,9 +1331,9 @@ function ChatAside({
           )
           return
         }
-      } else if (isCreditExhaustedError(error) && !isProUser) {
+      } else if (isCreditExhaustedError(error)) {
         // HTTP 402 / credit codes only — not SSE agent/store failures (status 500).
-        // Paywall is modal/sheet only; never leave a red error bubble in the thread.
+        // Applies to Free and Plus (daily/weekly caps). Paywall is modal/sheet only.
         setCreditsExhaustedOpen(true)
         void fetchCoPilotUsage()
           .then((mapped) => {
@@ -2611,7 +2611,7 @@ function ChatAside({
           <CreditsExhaustedDialog
             open={creditsExhaustedOpen}
             onOpenChange={setCreditsExhaustedOpen}
-            balance={creditBalance}
+            isProUser={isProUser}
           />
         </div>
       </div>

@@ -874,11 +874,11 @@
     },
     "creditsExhausted": {
       "title": "You're out of credits",
-      "description": "You've used this period's chat credits. Upgrade to Plus to keep chatting.",
-      "daily": "Daily",
-      "weekly": "Weekly",
-      "payWithCrypto": "Continue with USDT or USDC on Ethereum.",
-      "notNow": "Not now"
+      "description": "Your free credits are out. Top up to keep chatting.",
+      "payWithCrypto": "Crypto payments are fast and simple.",
+      "notNow": "Not now",
+      "descriptionPro": "You've hit this period's limit. It resets automatically.",
+      "viewBilling": "View billing"
     },
     "justNow": "Just now",
     "minutesAgo": "{count}m ago",
@@ -943,7 +943,8 @@
     "leftOf": "/ {limit} left",
     "loadingCredits": "Loading credit usage…",
     "signInForCredits": "Sign in to see daily and weekly credit limits.",
-    "creditsLoadError": "Could not load credit usage"
+    "creditsLoadError": "Could not load credit usage",
+    "amountFree": "Free"
   },
   "upgradePage": {
     "title": "Upgrade",

@@ -210,7 +210,7 @@ const chatDesktopComposerEffortButtonClass = `${chatDesktopComposerControlClass}
  * 44×44 · arrow.up · press scale · idle = tertiary fill.
  */
 const chatMobileComposerSendClass =
-  "size-11 shrink-0 overflow-hidden rounded-full border-0 bg-[#2563EB] text-white shadow-[inset_0_1px_1px_rgba(255,255,255,0.45),inset_0_-1px_1px_rgba(29,78,216,0.22),0_1px_2px_rgba(37,99,235,0.18)] transition-[transform,background-color,box-shadow] duration-150 ease-out hover:bg-[#1D4ED8] hover:shadow-[inset_0_1px_1px_rgba(255,255,255,0.5),0_2px_4px_rgba(37,99,235,0.22)] active:scale-[0.92] disabled:opacity-100 [&_svg:not([class*='size-'])]:size-[18px] [&_svg]:stroke-[2.25]"
+  "size-11 shrink-0 overflow-hidden rounded-full border-0 bg-[#2563EB] text-white shadow-[inset_0_1px_1px_rgba(255,255,255,0.45),inset_0_-1px_1px_rgba(29,78,216,0.22),0_1px_2px_rgba(37,99,235,0.18)] transition-[transform,background-color,box-shadow,color] duration-150 ease-out hover:bg-[#1D4ED8] hover:text-white hover:shadow-[inset_0_1px_1px_rgba(255,255,255,0.5),0_2px_4px_rgba(37,99,235,0.22)] active:scale-[0.92] disabled:opacity-100 [&_svg:not([class*='size-'])]:size-[18px] [&_svg]:stroke-[2.25]"
 
 /** Idle send — tertiary system fill (Messages empty state). */
 const chatMobileComposerSendIdleClass =

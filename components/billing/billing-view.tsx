@@ -18,6 +18,7 @@ import {
   CreditUsageStatusPanel,
   useCreditUsage,
 } from "@/components/billing/credit-usage-status"
+import { PaymentTokenLogo } from "@/components/billing/payment-token-logo"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -39,7 +40,10 @@ import {
   paymentHistoryRows,
 } from "@/lib/billing/invoice-history"
 import { InvoiceError, listPaymentInvoices } from "@/lib/billing/invoices"
-import type { PaymentInvoice } from "@/lib/billing/invoice-types"
+import {
+  isPaymentCurrency,
+  type PaymentInvoice,
+} from "@/lib/billing/invoice-types"
 import { localeDirection } from "@/lib/i18n/locale"
 import {
   landingCta,
@@ -55,13 +59,22 @@ import { cn } from "@/lib/utils"
 
 import "@/app/styles/landing-modern.css"
 
-function statusBadgeVariant(
+function statusBadgeClass(
   status: ReturnType<typeof normalizeInvoiceStatus>
-): "default" | "secondary" | "outline" | "destructive" {
-  if (status === "paid") return "default"
-  if (status === "pending") return "secondary"
-  if (status === "failed") return "destructive"
-  return "outline"
+): string {
+  if (status === "paid") {
+    return "border-0 bg-[#2563EB]/12 text-[#1D4ED8] dark:bg-[#2563EB]/22 dark:text-[#93C5FD]"
+  }
+  if (status === "pending") {
+    return "border-0 bg-[rgba(118,118,128,0.12)] text-muted-foreground dark:bg-[rgba(118,118,128,0.24)]"
+  }
+  if (status === "failed") {
+    return "border-0 bg-destructive/10 text-destructive dark:bg-destructive/20"
+  }
+  if (status === "expired") {
+    return "border-0 bg-[rgba(118,118,128,0.08)] text-muted-foreground dark:bg-[rgba(118,118,128,0.18)]"
+  }
+  return "border-0 bg-muted text-muted-foreground"
 }
 
 function formatExpiry(value?: string | null): string | null {
@@ -82,16 +95,21 @@ function InvoiceRow({
 }) {
   const t = useTranslations("billingPage")
   const status = normalizeInvoiceStatus(invoice.status)
-  const cryptoLabel = formatCryptoAmount(
+  const isComplimentary = invoice.amount_usd === 0
+  const cryptoRaw =
     mode === "payment" && invoice.paid_amount_crypto
       ? invoice.paid_amount_crypto
-      : invoice.amount_crypto,
-    invoice.currency
-  )
+      : invoice.amount_crypto
+  const cryptoLabel = isComplimentary
+    ? null
+    : formatCryptoAmount(cryptoRaw, invoice.currency)
   const when =
     mode === "payment"
       ? formatInvoiceDate(invoice.paid_at ?? invoice.updated_at)
       : formatInvoiceDate(invoice.created_at)
+  const currency = isPaymentCurrency(invoice.currency)
+    ? invoice.currency
+    : null
 
   const statusKey =
     status === "paid"
@@ -105,37 +123,52 @@ function InvoiceRow({
             : "statusUnknown"
 
   return (
-    <li className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-3 gap-y-1 border-b border-white/45 px-5 py-4 last:border-b-0 sm:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_auto_auto] sm:items-center sm:px-6 dark:border-white/10">
-      <div className="min-w-0">
-        <p className="truncate text-sm font-medium text-foreground">
-          {formatInvoicePlanLabel(invoice.plan_id)}
-        </p>
-        <p className="mt-0.5 truncate font-mono text-[11px] text-muted-foreground">
-          {invoice.uid}
-        </p>
-      </div>
-      <p className="hidden truncate text-[13px] text-muted-foreground sm:block">
-        {when}
-      </p>
-      <div className="justify-self-end text-end sm:justify-self-auto">
-        <p className="text-[13px] font-medium text-foreground tabular-nums">
-          {formatInvoiceUsd(invoice.amount_usd)}
-        </p>
-        <p className="text-[11px] text-muted-foreground tabular-nums">
-          {cryptoLabel}
-        </p>
-      </div>
-      <div className="col-start-2 row-start-1 justify-self-end sm:col-auto sm:row-auto">
+    <li className="border-b border-white/45 px-5 py-4 last:border-b-0 sm:px-6 dark:border-white/10">
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0 flex-1 space-y-1">
+          <p className="truncate text-[15px] font-medium tracking-tight text-foreground">
+            {formatInvoicePlanLabel(invoice.plan_id)}
+          </p>
+          <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 text-[13px]">
+            <span className="font-medium tabular-nums text-foreground">
+              {isComplimentary
+                ? t("amountFree")
+                : formatInvoiceUsd(invoice.amount_usd)}
+            </span>
+            {cryptoLabel && currency ? (
+              <>
+                <span aria-hidden className="text-muted-foreground/50">
+                  ·
+                </span>
+                <span className="inline-flex items-center gap-1.5 text-muted-foreground tabular-nums">
+                  <PaymentTokenLogo
+                    currency={currency}
+                    size="sm"
+                    className="size-4"
+                  />
+                  {cryptoLabel}
+                </span>
+              </>
+            ) : cryptoLabel ? (
+              <>
+                <span aria-hidden className="text-muted-foreground/50">
+                  ·
+                </span>
+                <span className="text-muted-foreground tabular-nums">
+                  {cryptoLabel}
+                </span>
+              </>
+            ) : null}
+          </div>
+          <p className="text-[12px] text-muted-foreground">{when}</p>
+        </div>
         <Badge
-          variant={statusBadgeVariant(status)}
-          className="rounded-full bg-white/55 dark:bg-white/10"
+          variant="outline"
+          className={cn("mt-0.5 shrink-0 rounded-full", statusBadgeClass(status))}
         >
           {t(statusKey)}
         </Badge>
       </div>
-      <p className="col-span-2 text-xs text-muted-foreground sm:hidden">
-        {when}
-      </p>
     </li>
   )
 }
