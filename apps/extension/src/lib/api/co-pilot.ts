@@ -113,17 +113,10 @@ export type CoPilotSessionRefresh = {
   refreshAfterUpgrade?: () => Promise<void>
 }
 
-const CREDIT_SESSION_RETRY_DELAYS_MS = [0, 400, 1000] as const
-
-function waitMs(ms: number) {
-  return new Promise<void>((resolve) => {
-    setTimeout(resolve, ms)
-  })
-}
-
 /**
- * After Plus upgrade the access token can lag the DB briefly. Mint a fresh JWT
- * and retry the chat turn a few times before surfacing the session-refresh UI.
+ * After Plus upgrade the access token can lag briefly. Mint once via
+ * refreshAfterUpgrade and retry the chat turn — do not hammer /auth/refresh
+ * (rotated refresh cookies invalidate on reuse).
  */
 async function withCreditSessionRetry<T>(
   run: () => Promise<T>,
@@ -141,23 +134,8 @@ async function withCreditSessionRetry<T>(
       throw error
     }
 
-    let lastError: unknown = error
-    for (const delay of CREDIT_SESSION_RETRY_DELAYS_MS) {
-      if (delay > 0) await waitMs(delay)
-      try {
-        await session.refreshAfterUpgrade()
-        return await run()
-      } catch (retryError) {
-        if (
-          isGuestTrialExhaustedError(retryError) ||
-          !isCreditExhaustedError(retryError)
-        ) {
-          throw retryError
-        }
-        lastError = retryError
-      }
-    }
-    throw lastError
+    await session.refreshAfterUpgrade()
+    return await run()
   }
 }
 

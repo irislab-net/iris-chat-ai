@@ -136,47 +136,93 @@ function PaymentQuoteSkeleton({
 
 type PaymentUiStatus = "pending" | "paid" | "failed" | "expired"
 
-const STATUS_ICON: Record<
-  PaymentUiStatus,
-  { icon: React.ReactNode; className: string }
-> = {
-  pending: {
-    icon: <LoaderCircleIcon className="size-3.5 animate-spin" />,
-    className: "text-amber-500",
-  },
-  paid: {
-    icon: <CheckIcon className="size-3.5" />,
-    className: "text-emerald-500",
-  },
-  failed: {
-    icon: <XIcon className="size-3.5" />,
-    className: "text-destructive",
-  },
-  expired: {
-    icon: <TimerIcon className="size-3.5" />,
-    className: "text-destructive",
-  },
+function StatusGlyph({
+  status,
+}: {
+  status: "waiting" | "paid" | "failed" | "expired"
+}) {
+  if (status === "waiting") {
+    return (
+      <span
+        className="inline-flex size-6 shrink-0 items-center justify-center rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-400"
+        aria-hidden
+      >
+        <LoaderCircleIcon className="size-3.5 animate-spin" />
+      </span>
+    )
+  }
+  if (status === "paid") {
+    return (
+      <span
+        className="inline-flex size-6 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400"
+        aria-hidden
+      >
+        <CheckIcon className="size-3.5 stroke-[2.5]" />
+      </span>
+    )
+  }
+  if (status === "failed") {
+    return (
+      <span
+        className="inline-flex size-6 shrink-0 items-center justify-center rounded-full bg-destructive/12 text-destructive"
+        aria-hidden
+      >
+        <XIcon className="size-3.5" />
+      </span>
+    )
+  }
+  return (
+    <span
+      className="inline-flex size-6 shrink-0 items-center justify-center rounded-full bg-destructive/12 text-destructive"
+      aria-hidden
+    >
+      <TimerIcon className="size-3.5" />
+    </span>
+  )
 }
 
 function PaymentWatcherBanner({
   expiresIn,
   compact,
   status = "pending",
+  userWaiting = false,
+  onIvePaid,
 }: {
   expiresIn: string
   compact?: boolean
   status?: PaymentUiStatus
+  userWaiting?: boolean
+  onIvePaid?: () => void
 }) {
   const t = useTranslations("upgradePage.crypto")
-  const visual = STATUS_ICON[status]
+  const showTimer = status === "pending"
+  const isPrompt = status === "pending" && !userWaiting
+  const isWaiting = status === "pending" && userWaiting
+
+  const glyphStatus =
+    status === "pending"
+      ? isWaiting
+        ? ("waiting" as const)
+        : null
+      : status
+
   const title =
     status === "paid"
-      ? t("statusPaid")
+      ? t("receivedConfirmingTitle")
       : status === "failed"
         ? t("statusFailed")
         : status === "expired"
           ? t("statusExpired")
-          : t("watchingTitle")
+          : isWaiting
+            ? t("waitingMinutesTitle")
+            : null
+
+  const body =
+    status === "paid"
+      ? t("receivedConfirmingBody")
+      : isWaiting
+        ? t("waitingMinutesBody")
+        : null
 
   return (
     <div
@@ -184,37 +230,61 @@ function PaymentWatcherBanner({
       aria-live="polite"
       className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-2"
     >
-      <div className="min-w-0 space-y-1">
-        <div className="flex items-center gap-2">
-          <span className={cn("shrink-0", visual.className)} aria-hidden>
-            {visual.icon}
-          </span>
-          <p
-            className={cn(
-              "font-medium text-foreground",
-              compact ? "text-xs" : "text-sm"
-            )}
-          >
-            {title}
-          </p>
-        </div>
-
-        {status === "pending" ? (
-          <p
-            className={cn(
-              "text-muted-foreground",
-              compact
-                ? "text-[11px] leading-relaxed"
-                : "text-xs leading-relaxed"
-            )}
-          >
-            {t("footerGuide", { network: PAYMENT_NETWORK.name })}
-          </p>
-        ) : null}
+      <div className="min-w-0 space-y-1.5">
+        {isPrompt ? (
+          <>
+            <p
+              className={cn(
+                "text-muted-foreground",
+                compact
+                  ? "text-[11px] leading-relaxed"
+                  : "text-xs leading-relaxed"
+              )}
+            >
+              {t("footerGuide", { network: PAYMENT_NETWORK.name })}
+            </p>
+            <Button
+              type="button"
+              className={cn(
+                landingCta("glass", compact ? "sm" : "md"),
+                "w-full sm:w-auto sm:min-w-40"
+              )}
+              onClick={onIvePaid}
+            >
+              {t("ivePaid")}
+            </Button>
+          </>
+        ) : (
+          <div className="flex items-start gap-2.5">
+            {glyphStatus ? <StatusGlyph status={glyphStatus} /> : null}
+            <div className="min-w-0 space-y-1">
+              <p
+                className={cn(
+                  "font-medium text-foreground",
+                  compact ? "text-xs" : "text-sm"
+                )}
+              >
+                {title}
+              </p>
+              {body ? (
+                <p
+                  className={cn(
+                    "text-muted-foreground",
+                    compact
+                      ? "text-[11px] leading-relaxed"
+                      : "text-xs leading-relaxed"
+                  )}
+                >
+                  {body}
+                </p>
+              ) : null}
+            </div>
+          </div>
+        )}
       </div>
 
-      {status === "pending" ? (
-        <div className="flex shrink-0 items-center justify-self-end">
+      {showTimer ? (
+        <div className="flex shrink-0 items-center self-start justify-self-end">
           <span
             className={cn(
               landingGlassSurface,
@@ -283,6 +353,9 @@ export function CryptoPaymentSheet({
   const [invoice, setInvoice] = React.useState<PaymentInvoice | null>(null)
   const [loading, setLoading] = React.useState(false)
   const [error, setError] = React.useState<string | null>(null)
+  const [waitingInvoiceUid, setWaitingInvoiceUid] = React.useState<
+    string | null
+  >(null)
   const now = useNow(open)
   const defaultCoupon =
     process.env.NEXT_PUBLIC_BILLING_COUPON_CODE?.trim() ?? ""
@@ -349,6 +422,7 @@ export function CryptoPaymentSheet({
         setInvoice(null)
         setError(null)
         setLoading(false)
+        setWaitingInvoiceUid(null)
       }
       onOpenChange(nextOpen)
     },
@@ -370,6 +444,8 @@ export function CryptoPaymentSheet({
 
   const checkoutBilling = checkout?.billing ?? null
   const invoiceUid = invoice?.uid ?? null
+  const userWaiting =
+    waitingInvoiceUid != null && waitingInvoiceUid === invoiceUid
 
   React.useEffect(() => {
     if (!open || !checkout || !checkoutBilling) return
@@ -386,6 +462,27 @@ export function CryptoPaymentSheet({
     }
   }, [open, checkoutBilling, checkout, defaultCoupon, loadInvoice])
 
+  const pollInvoiceNow = React.useCallback(() => {
+    if (!invoiceUid) return
+    void fetchPaymentInvoice(invoiceUid)
+      .then((next) => {
+        if (!next) return
+        setInvoice((current) => {
+          if (
+            current?.uid === next.uid &&
+            current.status === next.status &&
+            current.updated_at === next.updated_at
+          ) {
+            return current
+          }
+          return next
+        })
+      })
+      .catch(() => {
+        // keep polling through transient failures
+      })
+  }, [invoiceUid])
+
   React.useEffect(() => {
     if (!open || !invoiceUid || invoice?.status !== "pending") return
 
@@ -393,25 +490,7 @@ export function CryptoPaymentSheet({
 
     const check = () => {
       if (cancelled) return
-      void fetchPaymentInvoice(invoiceUid)
-        .then((next) => {
-          if (cancelled || !next) return
-          setInvoice((current) => {
-            if (
-              current?.uid === next.uid &&
-              current.status === next.status &&
-              current.updated_at === next.updated_at
-            ) {
-              return current
-            }
-            return next
-          })
-          // Paid completion (including poll → paid) is handled by the
-          // invoice.status effect above so immediate-paid coupons share one path.
-        })
-        .catch(() => {
-          // keep polling through transient failures
-        })
+      pollInvoiceNow()
     }
 
     check()
@@ -421,7 +500,14 @@ export function CryptoPaymentSheet({
       cancelled = true
       window.clearInterval(poll)
     }
-  }, [open, invoiceUid, invoice?.status])
+  }, [open, invoiceUid, invoice?.status, pollInvoiceNow])
+
+  const markIvePaid = React.useCallback(() => {
+    if (!invoiceUid) return
+    setWaitingInvoiceUid(invoiceUid)
+    // Immediate backend check — don't wait for the next poll tick.
+    pollInvoiceNow()
+  }, [invoiceUid, pollInvoiceNow])
 
   const current = invoice
   const paymentCurrency: PaymentCurrency =
@@ -699,6 +785,8 @@ export function CryptoPaymentSheet({
                       expiresIn={formatCountdown(msRemaining)}
                       compact={isMobileSheet}
                       status={paymentStatus}
+                      userWaiting={userWaiting}
+                      onIvePaid={markIvePaid}
                     />
                   </div>
                 </div>

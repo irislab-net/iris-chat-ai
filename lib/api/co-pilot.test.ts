@@ -79,39 +79,6 @@ describe("sendCoPilotChatWithSessionRetry", () => {
     expect(result.message).toBe("Hello")
   })
 
-  it("retries credit exhaustion a few times before giving up", async () => {
-    vi.useFakeTimers()
-    fetchMock
-      .mockResolvedValueOnce(
-        jsonResponse(402, { error: "insufficient credit balance" })
-      )
-      .mockResolvedValueOnce(
-        jsonResponse(402, { error: "insufficient credit balance" })
-      )
-      .mockResolvedValueOnce(
-        jsonResponse(402, { error: "insufficient credit balance" })
-      )
-      .mockResolvedValueOnce(
-        jsonResponse(402, { error: "insufficient credit balance" })
-      )
-
-    const refreshAfterUpgrade = vi.fn(async () => undefined)
-
-    const pending = sendCoPilotChatWithSessionRetry(
-      {
-        message: "Hi",
-        conversationId: "s1",
-        history: [],
-      },
-      { refreshAfterUpgrade }
-    )
-    const expectation = expect(pending).rejects.toMatchObject({ status: 402 })
-    await vi.runAllTimersAsync()
-    await expectation
-    expect(refreshAfterUpgrade).toHaveBeenCalledTimes(3)
-    vi.useRealTimers()
-  })
-
   it("does not retry login_required", async () => {
     fetchMock.mockResolvedValueOnce(
       jsonResponse(403, {

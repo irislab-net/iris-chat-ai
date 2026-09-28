@@ -28,7 +28,7 @@ describe("exchangeGoogleOneTapCredential", () => {
     const fetchMock = vi.fn().mockResolvedValue({
       ok: true,
       json: async () => ({
-        access_token: "access-123",
+        access_token: "aaa.one.tap",
         expires_at: "2099-01-01T00:00:00.000Z",
       }),
     })
@@ -53,7 +53,7 @@ describe("exchangeGoogleOneTapCredential", () => {
         }),
       })
     )
-    expect(pair.access_token).toBe("access-123")
-    expect(sessionStorage.getItem("access_token")).toBe("access-123")
+    expect(pair.access_token).toBe("aaa.one.tap")
+    expect(sessionStorage.getItem("access_token")).toBe("aaa.one.tap")
   })
 })

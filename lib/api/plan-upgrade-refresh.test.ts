@@ -25,10 +25,15 @@ import {
   consumePlanUpgradePendingRefresh,
   establishSessionAfterPlanUpgrade,
   hasPlanUpgradePendingRefresh,
+  isLikelyJwt,
   markPlanUpgradePendingRefresh,
   PLAN_UPGRADE_PENDING_REFRESH_KEY,
   storeTokenPair,
 } from "@/lib/api/auth"
+
+const JWT_FREE = "aaa.free.sig"
+const JWT_PRO = "aaa.pro.sig"
+const JWT_ONE = "aaa.one.sig"
 
 describe("plan upgrade pending refresh flag", () => {
   beforeEach(() => {
@@ -70,6 +75,12 @@ describe("plan upgrade pending refresh flag", () => {
     expect(hasPlanUpgradePendingRefresh()).toBe(false)
     expect(consumePlanUpgradePendingRefresh()).toBe(false)
   })
+
+  it("accepts three-segment JWTs only", () => {
+    expect(isLikelyJwt("aaa.bbb.ccc")).toBe(true)
+    expect(isLikelyJwt("not-a-jwt")).toBe(false)
+    expect(isLikelyJwt("a.b")).toBe(false)
+  })
 })
 
 describe("establishSessionAfterPlanUpgrade", () => {
@@ -98,7 +109,7 @@ describe("establishSessionAfterPlanUpgrade", () => {
     vi.stubGlobal("fetch", fetchMock)
     fetchMock.mockReset()
     storeTokenPair({
-      access_token: "stale-free",
+      access_token: JWT_FREE,
       expires_at: new Date(Date.now() + 60_000).toISOString(),
     })
   })
@@ -139,7 +150,7 @@ describe("establishSessionAfterPlanUpgrade", () => {
 
   it("mints once when no pending upgrade flag", async () => {
     fetchMock
-      .mockResolvedValueOnce(tokenResponse("access-1"))
+      .mockResolvedValueOnce(tokenResponse(JWT_ONE))
       .mockResolvedValueOnce(meResponse("free"))
 
     const session = await establishSessionAfterPlanUpgrade()
@@ -147,30 +158,44 @@ describe("establishSessionAfterPlanUpgrade", () => {
     expect(fetchMock).toHaveBeenCalledTimes(2)
   })
 
-  it("keeps minting until /me reports Plus, then clears the flag", async () => {
+  it("polls /me then remints once when Plus appears", async () => {
     markPlanUpgradePendingRefresh()
     fetchMock
-      .mockResolvedValueOnce(tokenResponse("access-free"))
+      // initial mint
+      .mockResolvedValueOnce(tokenResponse(JWT_FREE))
       .mockResolvedValueOnce(meResponse("free"))
-      .mockResolvedValueOnce(tokenResponse("access-pro"))
+      // poll /me → still free
+      .mockResolvedValueOnce(meResponse("free"))
+      // poll /me → plus
+      .mockResolvedValueOnce(meResponse("pro"))
+      // final remint
+      .mockResolvedValueOnce(tokenResponse(JWT_PRO))
       .mockResolvedValueOnce(meResponse("pro"))
 
     const pending = establishSessionAfterPlanUpgrade()
     await Promise.resolve()
-    await vi.advanceTimersByTimeAsync(350)
+    await vi.advanceTimersByTimeAsync(400)
+    await Promise.resolve()
+    await vi.advanceTimersByTimeAsync(900)
     const session = await pending
 
     expect(session.user.tier).toBe("pro")
-    expect(session.access_token).toBe("access-pro")
+    expect(session.access_token).toBe(JWT_PRO)
     expect(hasPlanUpgradePendingRefresh()).toBe(false)
-    expect(fetchMock).toHaveBeenCalledTimes(4)
+    // 2 refresh + 4 /me (initial me, poll free, poll pro, remint me)
+    expect(fetchMock).toHaveBeenCalledTimes(6)
+    const refreshCalls = fetchMock.mock.calls.filter(
+      (call) => call[0] === "/v1/auth/refresh"
+    )
+    expect(refreshCalls).toHaveLength(2)
   })
 
-  it("leaves the pending flag when Plus never appears", async () => {
+  it("leaves the pending flag when Plus never appears without extra refreshes", async () => {
     markPlanUpgradePendingRefresh()
-    fetchMock.mockReset()
-    for (let i = 0; i < 5; i++) {
-      fetchMock.mockResolvedValueOnce(tokenResponse(`access-${i}`))
+    fetchMock
+      .mockResolvedValueOnce(tokenResponse(JWT_FREE))
+      .mockResolvedValueOnce(meResponse("free"))
+    for (let i = 0; i < 4; i++) {
       fetchMock.mockResolvedValueOnce(meResponse("free"))
     }
 
@@ -181,5 +206,9 @@ describe("establishSessionAfterPlanUpgrade", () => {
 
     expect(session.user.tier).toBe("free")
     expect(hasPlanUpgradePendingRefresh()).toBe(true)
+    const refreshCalls = fetchMock.mock.calls.filter(
+      (call) => call[0] === "/v1/auth/refresh"
+    )
+    expect(refreshCalls).toHaveLength(1)
   })
 })

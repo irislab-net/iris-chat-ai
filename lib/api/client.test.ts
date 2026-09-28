@@ -60,7 +60,7 @@ describe("apiFetch auth recovery", () => {
       },
     })
     storeTokenPair({
-      access_token: "stale-token",
+      access_token: "aaa.stale.sig",
       expires_at: "2099-01-01T00:00:00.000Z",
     })
   })
@@ -76,7 +76,7 @@ describe("apiFetch auth recovery", () => {
       .mockResolvedValueOnce(jsonResponse(401, {}))
       .mockResolvedValueOnce(
         jsonResponse(200, {
-          access_token: "fresh-token",
+          access_token: "aaa.fresh.sig",
           expires_at: "2099-01-01T00:00:00.000Z",
         })
       )
@@ -86,7 +86,7 @@ describe("apiFetch auth recovery", () => {
 
     expect(res.status).toBe(200)
     expect(fetchMock).toHaveBeenCalledTimes(3)
-    expect(sessionStorage.getItem("access_token")).toBe("fresh-token")
+    expect(sessionStorage.getItem("access_token")).toBe("aaa.fresh.sig")
   })
 
   it("clears tokens and notifies when refresh fails after 401", async () => {

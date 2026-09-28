@@ -25,6 +25,14 @@ let memoryExpiresAt: string | null = null
 
 /** Coalesce concurrent refresh calls — reuse detection kills the whole session. */
 let refreshInFlight: Promise<TokenPair> | null = null
+/** Coalesce plan-upgrade session minting — avoids burning rotated refresh tokens. */
+let planUpgradeInFlight: Promise<{
+  user: User
+  access_token: string
+  expires_at: string
+  token_type?: string
+  refresh_token?: string
+}> | null = null
 
 function getSessionStorage(): Storage | null {
   try {
@@ -56,10 +64,14 @@ function removeSession(key: string) {
 }
 
 export function getStoredAccessToken() {
-  if (memoryAccessToken) return memoryAccessToken
-  const fromSession = readSession(ACCESS_KEY)
-  if (fromSession) memoryAccessToken = fromSession
-  return fromSession
+  const token = memoryAccessToken ?? readSession(ACCESS_KEY)
+  if (!token) return null
+  if (!isLikelyJwt(token)) {
+    clearStoredTokens()
+    return null
+  }
+  memoryAccessToken = token
+  return token
 }
 
 export function getStoredExpiresAt() {
@@ -69,9 +81,21 @@ export function getStoredExpiresAt() {
   return fromSession
 }
 
+/** Access JWTs are three base64url segments (`header.payload.signature`). */
+export function isLikelyJwt(token: string): boolean {
+  const parts = token.split(".")
+  return parts.length === 3 && parts.every((part) => part.length > 0)
+}
+
 export function storeTokenPair(
   pair: Pick<TokenPair, "access_token" | "expires_at" | "refresh_token">
 ) {
+  if (!isLikelyJwt(pair.access_token)) {
+    clearStoredTokens()
+    throw Object.assign(new Error("invalid access token shape"), {
+      status: 401,
+    })
+  }
   memoryAccessToken = pair.access_token
   memoryExpiresAt = pair.expires_at
   writeSession(ACCESS_KEY, pair.access_token)
@@ -353,8 +377,8 @@ export function isPro(user: User | null, now = Date.now()) {
   return false
 }
 
-/** Backoff while auth catches up after Plus is granted (esp. 100% coupons). */
-const PLAN_UPGRADE_SESSION_DELAYS_MS = [0, 350, 800, 1400, 2200] as const
+/** Backoff while billing/auth apply Plus (esp. 100% coupons). */
+const PLAN_UPGRADE_ME_POLL_DELAYS_MS = [400, 900, 1600, 2400] as const
 
 function waitMs(ms: number) {
   return new Promise<void>((resolve) => {
@@ -362,11 +386,17 @@ function waitMs(ms: number) {
   })
 }
 
+function isRefreshFailure(error: unknown): boolean {
+  const status = (error as { status?: number } | null)?.status
+  return status === 400 || status === 401
+}
+
 /**
  * Mint a fresh access token after Plus upgrade.
- * When the pending-upgrade flag is set, keep minting until `/me` reports Plus
- * (or attempts are exhausted) so chat does not 402 on a Free-tier JWT while
- * the UI already shows Plus from a later profile read.
+ *
+ * Refresh tokens rotate — do **not** hammer `/v1/auth/refresh`. Mint once,
+ * poll `/me` until Plus appears, then mint once more so JWT claims match.
+ * Concurrent callers share one in-flight promise.
  */
 export async function establishSessionAfterPlanUpgrade() {
   const expectPro = hasPlanUpgradePendingRefresh()
@@ -374,30 +404,52 @@ export async function establishSessionAfterPlanUpgrade() {
     return establishSession()
   }
 
-  let lastSession: Awaited<ReturnType<typeof establishSession>> | null = null
-  let lastError: unknown
+  if (planUpgradeInFlight) return planUpgradeInFlight
 
-  for (
-    let attempt = 0;
-    attempt < PLAN_UPGRADE_SESSION_DELAYS_MS.length;
-    attempt++
-  ) {
-    const delay = PLAN_UPGRADE_SESSION_DELAYS_MS[attempt] ?? 0
-    if (delay > 0) await waitMs(delay)
-    try {
-      const session = await establishSession()
-      lastSession = session
-      if (isPro(session.user)) {
-        consumePlanUpgradePendingRefresh()
-        return session
-      }
-    } catch (error) {
-      lastError = error
+  planUpgradeInFlight = (async () => {
+    let session = await establishSession()
+    if (isPro(session.user)) {
+      consumePlanUpgradePendingRefresh()
+      return session
     }
-  }
 
-  if (lastSession) return lastSession
-  throw lastError instanceof Error
-    ? lastError
-    : new Error("plan upgrade session refresh failed")
+    for (const delay of PLAN_UPGRADE_ME_POLL_DELAYS_MS) {
+      await waitMs(delay)
+      try {
+        const user = await getMe(session.access_token)
+        if (!isPro(user)) {
+          session = { ...session, user }
+          continue
+        }
+        session = await establishSession()
+        if (isPro(session.user)) {
+          consumePlanUpgradePendingRefresh()
+        }
+        return session
+      } catch (error) {
+        if (!isRefreshFailure(error)) throw error
+        try {
+          session = await establishSession()
+          if (isPro(session.user)) {
+            consumePlanUpgradePendingRefresh()
+            return session
+          }
+        } catch (refreshError) {
+          if (isRefreshFailure(refreshError)) {
+            clearStoredTokens()
+            throw refreshError
+          }
+          throw refreshError
+        }
+      }
+    }
+
+    return session
+  })()
+
+  try {
+    return await planUpgradeInFlight
+  } finally {
+    planUpgradeInFlight = null
+  }
 }
