@@ -371,3 +371,52 @@ export function isPro(user: User | null, now = Date.now()) {
   }
   return false
 }
+
+/** Backoff while auth catches up after Plus is granted (esp. 100% coupons). */
+const PLAN_UPGRADE_SESSION_DELAYS_MS = [0, 350, 800, 1400, 2200] as const
+
+function waitMs(ms: number) {
+  return new Promise<void>((resolve) => {
+    setTimeout(resolve, ms)
+  })
+}
+
+/**
+ * Mint a fresh access token after Plus upgrade.
+ * When the pending-upgrade flag is set, keep minting until `/me` reports Plus
+ * (or attempts are exhausted) so chat does not 402 on a Free-tier JWT while
+ * the UI already shows Plus from a later profile read.
+ */
+export async function establishSessionAfterPlanUpgrade() {
+  const expectPro = hasPlanUpgradePendingRefresh()
+  if (!expectPro) {
+    return establishSession()
+  }
+
+  let lastSession: Awaited<ReturnType<typeof establishSession>> | null = null
+  let lastError: unknown
+
+  for (
+    let attempt = 0;
+    attempt < PLAN_UPGRADE_SESSION_DELAYS_MS.length;
+    attempt++
+  ) {
+    const delay = PLAN_UPGRADE_SESSION_DELAYS_MS[attempt] ?? 0
+    if (delay > 0) await waitMs(delay)
+    try {
+      const session = await establishSession()
+      lastSession = session
+      if (isPro(session.user)) {
+        consumePlanUpgradePendingRefresh()
+        return session
+      }
+    } catch (error) {
+      lastError = error
+    }
+  }
+
+  if (lastSession) return lastSession
+  throw lastError instanceof Error
+    ? lastError
+    : new Error("plan upgrade session refresh failed")
+}

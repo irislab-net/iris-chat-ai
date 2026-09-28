@@ -22,10 +22,11 @@ const MARK_PATH =
 
 /**
  * Opaque white tile + black gradient mark (same stops as empty-hero IrisMark).
- * @param {{ size: number, markPadRatio?: number }} opts
+ * @param {{ size: number, markPadRatio?: number, markScale?: number }} opts
  */
-function buildIconSvg({ size, markPadRatio = 0.18 }) {
-  const innerSize = size * (1 - markPadRatio * 2)
+function buildIconSvg({ size, markPadRatio = 0.18, markScale = 1 }) {
+  const fitted = size * (1 - markPadRatio * 2)
+  const innerSize = fitted * markScale
   const offset = (size - innerSize) / 2
   const scale = innerSize / MARK_VIEWBOX
   const gradientId = `exur-mark-black-${size}`
@@ -103,52 +104,95 @@ function encodeIco(frames) {
   return buf
 }
 
-/** Home-screen / any — mark inset so squircle mask does not clip strokes. */
-const HOME_MARK_PAD = 0.16
-/** Maskable safe zone ≈ center 80%. */
-const MASK_MARK_PAD = 0.2
+/** Home-screen / any — fill the plate; markScale cancels empty viewBox margin. */
+const HOME_MARK_PAD = 0
+const HOME_MARK_SCALE = 1.14
+/** Maskable safe zone ≈ center 80%; mild boost so adaptive icons still read large. */
+const MASK_MARK_PAD = 0.08
+const MASK_MARK_SCALE = 1.08
 /** Favicons — slightly tighter for legibility at 16–48px. */
-const FAVICON_MARK_PAD = 0.12
+const FAVICON_MARK_PAD = 0.04
+const FAVICON_MARK_SCALE = 1.1
 
 writePng(
-  buildIconSvg({ size: 512, markPadRatio: HOME_MARK_PAD }),
+  buildIconSvg({
+    size: 512,
+    markPadRatio: HOME_MARK_PAD,
+    markScale: HOME_MARK_SCALE,
+  }),
   join(root, "public/icon-512.png")
 )
 writePng(
-  buildIconSvg({ size: 192, markPadRatio: HOME_MARK_PAD }),
+  buildIconSvg({
+    size: 192,
+    markPadRatio: HOME_MARK_PAD,
+    markScale: HOME_MARK_SCALE,
+  }),
   join(root, "public/icon-192.png")
 )
 writePng(
-  buildIconSvg({ size: 180, markPadRatio: HOME_MARK_PAD }),
+  buildIconSvg({
+    size: 180,
+    markPadRatio: HOME_MARK_PAD,
+    markScale: HOME_MARK_SCALE,
+  }),
   join(root, "public/apple-touch-icon.png")
 )
 writePng(
-  buildIconSvg({ size: 512, markPadRatio: MASK_MARK_PAD }),
+  buildIconSvg({
+    size: 512,
+    markPadRatio: MASK_MARK_PAD,
+    markScale: MASK_MARK_SCALE,
+  }),
   join(root, "public/icon-512-maskable.png")
 )
 
 const favicon32 = writePng(
-  buildIconSvg({ size: 32, markPadRatio: FAVICON_MARK_PAD }),
+  buildIconSvg({
+    size: 32,
+    markPadRatio: FAVICON_MARK_PAD,
+    markScale: FAVICON_MARK_SCALE,
+  }),
   join(root, "public/favicon-32.png")
 )
 const favicon48 = writePng(
-  buildIconSvg({ size: 48, markPadRatio: FAVICON_MARK_PAD }),
+  buildIconSvg({
+    size: 48,
+    markPadRatio: FAVICON_MARK_PAD,
+    markScale: FAVICON_MARK_SCALE,
+  }),
   join(root, "public/favicon-48.png")
 )
 const favicon16 = renderPng(
-  buildIconSvg({ size: 16, markPadRatio: FAVICON_MARK_PAD })
+  buildIconSvg({
+    size: 16,
+    markPadRatio: FAVICON_MARK_PAD,
+    markScale: FAVICON_MARK_SCALE,
+  })
 )
 
 writePng(
-  buildIconSvg({ size: 512, markPadRatio: HOME_MARK_PAD }),
+  buildIconSvg({
+    size: 512,
+    markPadRatio: HOME_MARK_PAD,
+    markScale: HOME_MARK_SCALE,
+  }),
   join(root, "app/icon.png")
 )
 writePng(
-  buildIconSvg({ size: 180, markPadRatio: HOME_MARK_PAD }),
+  buildIconSvg({
+    size: 180,
+    markPadRatio: HOME_MARK_PAD,
+    markScale: HOME_MARK_SCALE,
+  }),
   join(root, "app/apple-icon.png")
 )
 writePng(
-  buildIconSvg({ size: 512, markPadRatio: HOME_MARK_PAD }),
+  buildIconSvg({
+    size: 512,
+    markPadRatio: HOME_MARK_PAD,
+    markScale: HOME_MARK_SCALE,
+  }),
   join(root, "public/organization-logo.png")
 )
 

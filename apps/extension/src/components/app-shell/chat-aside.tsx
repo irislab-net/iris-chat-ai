@@ -92,7 +92,7 @@ import {
 import { appendThinkingStep } from "@/lib/api/chat-sse"
 import { fetchCoPilotUsage, streamCoPilotChat } from "@/lib/api/co-pilot"
 import {
-  consumePlanUpgradePendingRefresh,
+  hasPlanUpgradePendingRefresh,
   getStoredAccessToken,
 } from "@/lib/api/auth"
 import {
@@ -371,7 +371,7 @@ function ChatAside({
 
   React.useEffect(() => {
     if (authLoading || !isAuthenticated) return
-    if (!consumePlanUpgradePendingRefresh()) return
+    if (!hasPlanUpgradePendingRefresh()) return
     void refreshAfterUpgrade()
   }, [authLoading, isAuthenticated, refreshAfterUpgrade])
   const showDeskSkeleton =

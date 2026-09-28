@@ -168,6 +168,54 @@ export type CoPilotSessionRefresh = {
   refreshAfterUpgrade?: () => Promise<void>
 }
 
+const CREDIT_SESSION_RETRY_DELAYS_MS = [0, 400, 1000] as const
+
+function waitMs(ms: number) {
+  return new Promise<void>((resolve) => {
+    setTimeout(resolve, ms)
+  })
+}
+
+/**
+ * After Plus upgrade the access token can lag the DB briefly. Mint a fresh JWT
+ * and retry the chat turn a few times before surfacing the session-refresh UI.
+ */
+async function withCreditSessionRetry<T>(
+  run: () => Promise<T>,
+  session?: CoPilotSessionRefresh
+): Promise<T> {
+  try {
+    return await run()
+  } catch (error) {
+    if (isGuestTrialExhaustedError(error)) throw error
+    if (
+      !isCreditExhaustedError(error) ||
+      isGuestChatSession() ||
+      !session?.refreshAfterUpgrade
+    ) {
+      throw error
+    }
+
+    let lastError: unknown = error
+    for (const delay of CREDIT_SESSION_RETRY_DELAYS_MS) {
+      if (delay > 0) await waitMs(delay)
+      try {
+        await session.refreshAfterUpgrade()
+        return await run()
+      } catch (retryError) {
+        if (
+          isGuestTrialExhaustedError(retryError) ||
+          !isCreditExhaustedError(retryError)
+        ) {
+          throw retryError
+        }
+        lastError = retryError
+      }
+    }
+    throw lastError
+  }
+}
+
 export async function sendCoPilotChat(input: {
   message: string
   conversationId: string
@@ -251,18 +299,10 @@ export async function sendCoPilotChatWithSessionRetry(
   session?: CoPilotSessionRefresh
 ): Promise<CoPilotChatJsonResponse> {
   try {
-    return await sendCoPilotChat(input)
+    return await withCreditSessionRetry(() => sendCoPilotChat(input), session)
   } catch (error) {
     if (isGuestTrialExhaustedError(error)) throw error
-
-    if (
-      isCreditExhaustedError(error) &&
-      !isGuestChatSession() &&
-      session?.refreshAfterUpgrade
-    ) {
-      await session.refreshAfterUpgrade()
-      return await sendCoPilotChat(input)
-    }
+    if (isCreditExhaustedError(error)) throw error
 
     const status = (error as { status?: number } | null)?.status
     if (status !== 401) throw error
@@ -415,18 +455,13 @@ export async function streamCoPilotChatWithSessionRetry(
   session?: CoPilotSessionRefresh
 ): Promise<CoPilotChatJsonResponse> {
   try {
-    return await streamCoPilotChatOnce(input)
+    return await withCreditSessionRetry(
+      () => streamCoPilotChatOnce(input),
+      session
+    )
   } catch (error) {
     if (isGuestTrialExhaustedError(error)) throw error
-
-    if (
-      isCreditExhaustedError(error) &&
-      !isGuestChatSession() &&
-      session?.refreshAfterUpgrade
-    ) {
-      await session.refreshAfterUpgrade()
-      return await streamCoPilotChatOnce(input)
-    }
+    if (isCreditExhaustedError(error)) throw error
 
     const status = (error as { status?: number } | null)?.status
     if (status !== 401) throw error

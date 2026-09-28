@@ -9,8 +9,8 @@ import {
   AUTH_SESSION_EXPIRED_EVENT,
   AUTH_SUCCESS_MESSAGE,
   bootstrapSession,
-  consumePlanUpgradePendingRefresh,
   establishSession,
+  establishSessionAfterPlanUpgrade,
   exchangeGoogleOneTapCredential,
   finishAuthPwaPending,
   getStoredAccessToken,
@@ -182,7 +182,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [applySession])
 
   const refreshAfterUpgrade = React.useCallback(async () => {
-    applySession(await establishSession())
+    applySession(await establishSessionAfterPlanUpgrade())
   }, [applySession])
 
   /** After popup closes / success ping — retry cookie race, then clear connecting. */
@@ -270,11 +270,11 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
             (isStandaloneDisplay() && hasAuthPwaPending())
 
           const session = preferEstablish
-            ? await establishSession()
+            ? await (hasPlanUpgradePendingRefresh()
+                ? establishSessionAfterPlanUpgrade()
+                : establishSession()
+              )
                 .then((next) => {
-                  if (hasPlanUpgradePendingRefresh()) {
-                    consumePlanUpgradePendingRefresh()
-                  }
                   finishAuthPwaPending()
                   return { user: next.user }
                 })

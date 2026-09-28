@@ -13,8 +13,7 @@ import {
   AUTH_SESSION_EXPIRED_EVENT,
   bootstrapSession,
   clearStoredTokens,
-  consumePlanUpgradePendingRefresh,
-  establishSession,
+  establishSessionAfterPlanUpgrade,
   getStoredAccessToken,
   hasPlanUpgradePendingRefresh,
   isPro,
@@ -86,7 +85,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const refreshAfterUpgrade = React.useCallback(async () => {
     try {
-      const session = await establishSession()
+      const session = await establishSessionAfterPlanUpgrade()
       setUser(session.user)
     } catch {
       await refresh()
@@ -98,12 +97,11 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
       try {
         if (hasPlanUpgradePendingRefresh()) {
           try {
-            const session = await establishSession()
-            consumePlanUpgradePendingRefresh()
+            const session = await establishSessionAfterPlanUpgrade()
             setUser(session.user)
             return
           } catch {
-            consumePlanUpgradePendingRefresh()
+            // Keep pending flag so chat can retry minting a Plus JWT.
           }
         }
         if (await isLoggedIn()) await refresh()
