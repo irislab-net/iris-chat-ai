@@ -142,7 +142,7 @@ function ExurMarkLiquidShell({
     >
       <span
         aria-hidden
-        className="pointer-events-none absolute inset-0 z-0 rounded-full bg-linear-to-br from-white/95 via-white/30 to-transparent dark:from-white/12 dark:via-white/[0.03] dark:to-transparent"
+        className="pointer-events-none absolute inset-0 z-0 rounded-full bg-linear-to-br from-white/95 via-white/30 to-transparent dark:from-white/12 dark:via-white/3 dark:to-transparent"
       />
       {children}
       {shimmer ? (
