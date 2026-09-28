@@ -572,6 +572,14 @@
       "auth": "Log in met Google voor antwoorden van Exur. Je kunt eerst prompts verkennen.",
       "trialExhausted": "Je gratis berichten van deze week zijn op. Log in om door te gaan."
     },
+    "creditsExhausted": {
+      "title": "Je credits zijn op",
+      "description": "Je chatcredits voor deze periode zijn op. Upgrade naar Plus om door te chatten.",
+      "daily": "Dagelijks",
+      "weekly": "Wekelijks",
+      "payWithCrypto": "Ga verder met USDT of USDC op Ethereum.",
+      "notNow": "Niet nu"
+    },
     "justNow": "Zojuist",
     "minutesAgo": "{count}m geleden",
     "hoursAgo": "{count}u geleden",

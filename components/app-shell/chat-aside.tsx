@@ -33,7 +33,6 @@ import {
   chatSamplePromptButtonClass,
   chatThreadConnectButtonClass,
   chatThreadUpgradeClass,
-  chatUpgradePillClass,
 } from "@/components/app-shell/chat-mobile-gemini-styles"
 import { ChatMobileHeader } from "@/components/app-shell/chat-mobile-header"
 import { ChatMobileSlidePanel } from "@/components/app-shell/chat-mobile-slide-panel"
@@ -74,6 +73,7 @@ import { useTicketSlot } from "@/components/app-shell/ticket-slot"
 import { typewriterReveal } from "@/components/app-shell/chat-typing"
 import { useAuth } from "@/components/auth/auth-provider"
 import { GoogleGlyph } from "@/components/auth/google-glyph"
+import { CreditsExhaustedDialog } from "@/components/billing/credits-exhausted-dialog"
 import dynamic from "next/dynamic"
 import { useIsDesktop } from "@/hooks/use-media-query"
 import { useNewsSpotlight } from "@/hooks/use-news-spotlight"
@@ -131,6 +131,7 @@ import {
   COPILOT_PRO_SESSION_REFRESH_MESSAGE,
   coPilotUserFacingError,
   coPilotFailureAction,
+  isCreditExhaustedError,
   shouldShowGuestSignInPrompt,
   localizeCoPilotErrorText,
 } from "@/lib/co-pilot-recovery"
@@ -460,6 +461,7 @@ function ChatAside({
   const [guestTrial, setGuestTrial] = React.useState<TrialInfo | null>(null)
   const [creditBalance, setCreditBalance] =
     React.useState<ChatCreditBalance | null>(null)
+  const [creditsExhaustedOpen, setCreditsExhaustedOpen] = React.useState(false)
   const [guestUnavailable, setGuestUnavailable] = React.useState(false)
   const [guestSendError, setGuestSendError] = React.useState<string | null>(
     null
@@ -1329,6 +1331,40 @@ function ChatAside({
           )
           return
         }
+      } else if (isCreditExhaustedError(error) && !isProUser) {
+        // HTTP 402 / credit codes only — not SSE agent/store failures (status 500).
+        // Paywall is modal/sheet only; never leave a red error bubble in the thread.
+        setCreditsExhaustedOpen(true)
+        void fetchCoPilotUsage()
+          .then((mapped) => {
+            setCreditBalance(mapped.credit_balance ?? null)
+          })
+          .catch(() => undefined)
+        const partial = partialContent.trim()
+        setMessagesAndPersist(
+          (prev) =>
+            partial
+              ? prev.map((m) =>
+                  m.id === assistantId
+                    ? {
+                        ...m,
+                        content: partial,
+                        error: false,
+                        errorText: undefined,
+                        action: undefined,
+                        retryUserMessage: undefined,
+                        thinkingTrace: undefined,
+                      }
+                    : m
+                )
+              : removeEmptyAssistantTurn(prev, assistantId),
+          {
+            id: activeId,
+            history: historySnapshot,
+            ownerId: chatOwnerId,
+          }
+        )
+        return
       }
 
       const failed = buildFailedAssistantTurn({
@@ -2236,7 +2272,10 @@ function ChatAside({
                           !message.error
                         const isWaiting =
                           isStreamingAssistant && !message.content
-                        const errorNote = message.error ? (
+                        const isCreditPaywall =
+                          message.errorText === COPILOT_CREDIT_MESSAGE
+                        const errorNote =
+                          message.error && !isCreditPaywall ? (
                           <span
                             className={cn(
                               "block text-destructive",
@@ -2258,8 +2297,7 @@ function ChatAside({
                                 {t("continueWithGoogle")}
                               </Button>
                             ) : null}
-                            {message.action === "retry" &&
-                            message.errorText !== COPILOT_CREDIT_MESSAGE ? (
+                            {message.action === "retry" && !isCreditPaywall ? (
                               <Button
                                 type="button"
                                 size="icon-sm"
@@ -2269,18 +2307,6 @@ function ChatAside({
                                 onClick={() => void handleRetry(message.id)}
                               >
                                 <RefreshCwIcon className="size-3.5" />
-                              </Button>
-                            ) : null}
-                            {message.errorText === COPILOT_CREDIT_MESSAGE &&
-                            !isProUser ? (
-                              <Button
-                                type="button"
-                                size="sm"
-                                className={chatUpgradePillClass}
-                                nativeButton={false}
-                                render={<Link href={UPGRADE_PATH} />}
-                              >
-                                {t("upgrade")}
                               </Button>
                             ) : null}
                             {message.suggestedPrompts?.length ? (
@@ -2296,13 +2322,10 @@ function ChatAside({
                           </>
                         )
                         const showRetry =
-                          message.action === "retry" &&
-                          message.errorText !== COPILOT_CREDIT_MESSAGE
+                          message.action === "retry" && !isCreditPaywall
                         const hasAction =
                           message.action === "connect" ||
                           showRetry ||
-                          (message.errorText === COPILOT_CREDIT_MESSAGE &&
-                            !isProUser) ||
                           Boolean(message.suggestedPrompts?.length)
 
                         if (message.role === "user") {
@@ -2585,6 +2608,11 @@ function ChatAside({
           ) : (
             <ChatNewsMobileSheet open={newsOpen} onOpenChange={setNewsOpen} />
           )}
+          <CreditsExhaustedDialog
+            open={creditsExhaustedOpen}
+            onOpenChange={setCreditsExhaustedOpen}
+            balance={creditBalance}
+          />
         </div>
       </div>
     </aside>

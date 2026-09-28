@@ -283,7 +283,7 @@ describe("co-pilot recovery helpers", () => {
     expect(cleaned.map((m) => m.id)).toEqual(["u1", "fail", "partial-fail"])
   })
 
-  it("sanitizeMessages keeps out-of-credit turns without a retry action", () => {
+  it("sanitizeMessages drops empty out-of-credit bubbles (paywall is modal/sheet)", () => {
     const messages: ChatUiMessage[] = [
       { id: "u1", role: "user", content: "Hi" },
       {
@@ -293,11 +293,22 @@ describe("co-pilot recovery helpers", () => {
         error: true,
         errorText: COPILOT_CREDIT_MESSAGE,
       },
+      {
+        id: "partial-credit",
+        role: "assistant",
+        content: "Partial reply",
+        error: true,
+        errorText: COPILOT_CREDIT_MESSAGE,
+      },
     ]
-    expect(sanitizeMessages(messages).map((m) => m.id)).toEqual([
-      "u1",
-      "credit",
-    ])
+    const cleaned = sanitizeMessages(messages)
+    expect(cleaned.map((m) => m.id)).toEqual(["u1", "partial-credit"])
+    expect(cleaned[1]).toMatchObject({
+      id: "partial-credit",
+      content: "Partial reply",
+      error: false,
+      errorText: undefined,
+    })
   })
 
   it("sanitizeMessages keeps signal-card turns with empty output_text", () => {

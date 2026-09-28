@@ -228,14 +228,14 @@ function PaymentWatcherBanner({
     <div
       role="status"
       aria-live="polite"
-      className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-2"
+      className="flex flex-col gap-3"
     >
-      <div className="min-w-0 space-y-1.5">
-        {isPrompt ? (
-          <>
+      <div className="flex items-center gap-3">
+        <div className="min-w-0 flex-1">
+          {isPrompt ? (
             <p
               className={cn(
-                "text-muted-foreground",
+                "text-pretty text-muted-foreground",
                 compact
                   ? "text-[11px] leading-relaxed"
                   : "text-xs leading-relaxed"
@@ -243,52 +243,40 @@ function PaymentWatcherBanner({
             >
               {t("footerGuide", { network: PAYMENT_NETWORK.name })}
             </p>
-            <Button
-              type="button"
-              className={cn(
-                landingCta("glass", compact ? "sm" : "md"),
-                "w-full sm:w-auto sm:min-w-40"
-              )}
-              onClick={onIvePaid}
-            >
-              {t("ivePaid")}
-            </Button>
-          </>
-        ) : (
-          <div className="flex items-start gap-2.5">
-            {glyphStatus ? <StatusGlyph status={glyphStatus} /> : null}
-            <div className="min-w-0 space-y-1">
-              <p
-                className={cn(
-                  "font-medium text-foreground",
-                  compact ? "text-xs" : "text-sm"
-                )}
-              >
-                {title}
-              </p>
-              {body ? (
+          ) : (
+            <div className="flex items-start gap-2.5">
+              {glyphStatus ? <StatusGlyph status={glyphStatus} /> : null}
+              <div className="min-w-0 space-y-1">
                 <p
                   className={cn(
-                    "text-muted-foreground",
-                    compact
-                      ? "text-[11px] leading-relaxed"
-                      : "text-xs leading-relaxed"
+                    "font-medium text-foreground",
+                    compact ? "text-xs" : "text-sm"
                   )}
                 >
-                  {body}
+                  {title}
                 </p>
-              ) : null}
+                {body ? (
+                  <p
+                    className={cn(
+                      "text-muted-foreground",
+                      compact
+                        ? "text-[11px] leading-relaxed"
+                        : "text-xs leading-relaxed"
+                    )}
+                  >
+                    {body}
+                  </p>
+                ) : null}
+              </div>
             </div>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
 
-      {showTimer ? (
-        <div className="flex shrink-0 items-center self-start justify-self-end">
+        {showTimer ? (
           <span
             className={cn(
               landingGlassSurface,
-              "inline-flex items-center gap-1.5 rounded-full bg-white/55 px-2.5 py-1 text-muted-foreground tabular-nums dark:bg-white/10",
+              "inline-flex shrink-0 items-center gap-1.5 rounded-full bg-white/55 px-2.5 py-1 text-muted-foreground tabular-nums dark:bg-white/10",
               compact ? "text-[11px]" : "text-xs"
             )}
           >
@@ -301,7 +289,20 @@ function PaymentWatcherBanner({
               {expiresIn}
             </span>
           </span>
-        </div>
+        ) : null}
+      </div>
+
+      {isPrompt ? (
+        <Button
+          type="button"
+          className={cn(
+            landingCta("glass", compact ? "sm" : "md"),
+            "w-full"
+          )}
+          onClick={onIvePaid}
+        >
+          {t("ivePaid")}
+        </Button>
       ) : null}
     </div>
   )

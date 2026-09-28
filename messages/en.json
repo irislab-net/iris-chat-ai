@@ -872,6 +872,14 @@
       "auth": "Sign in with Google to get answers from Exur. You can explore prompts and typing first.",
       "trialExhausted": "Your free messages this week are used up. Sign in to continue."
     },
+    "creditsExhausted": {
+      "title": "You're out of credits",
+      "description": "You've used this period's chat credits. Upgrade to Plus to keep chatting.",
+      "daily": "Daily",
+      "weekly": "Weekly",
+      "payWithCrypto": "Continue with USDT or USDC on Ethereum.",
+      "notNow": "Not now"
+    },
     "justNow": "Just now",
     "minutesAgo": "{count}m ago",
     "hoursAgo": "{count}h ago",

@@ -856,6 +856,14 @@
       "auth": "سجّل الدخول عبر Google للحصول على إجابات من Exur. يمكنك استكشاف الاقتراحات أولًا.",
       "trialExhausted": "انتهت رسائلك المجانية لهذا الأسبوع. سجّل الدخول للمتابعة."
     },
+    "creditsExhausted": {
+      "title": "نفد رصيدك",
+      "description": "لقد استخدمت رصيد الدردشة لهذه الفترة. قم بالترقية إلى Plus لمواصلة الدردشة.",
+      "daily": "يومي",
+      "weekly": "أسبوعي",
+      "payWithCrypto": "تابع الدفع بـ USDT أو USDC على Ethereum.",
+      "notNow": "ليس الآن"
+    },
     "justNow": "الآن",
     "minutesAgo": "منذ {count}د",
     "hoursAgo": "منذ {count}س",

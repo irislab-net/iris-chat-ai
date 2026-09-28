@@ -572,6 +572,14 @@
       "auth": "Inicia sesión con Google para obtener respuestas de Exur. Puedes explorar prompts primero.",
       "trialExhausted": "Se acabaron tus mensajes gratis de esta semana. Inicia sesión para continuar."
     },
+    "creditsExhausted": {
+      "title": "Te has quedado sin créditos",
+      "description": "Has usado los créditos de chat de este periodo. Mejora a Plus para seguir chateando.",
+      "daily": "Diario",
+      "weekly": "Semanal",
+      "payWithCrypto": "Continúa con USDT o USDC en Ethereum.",
+      "notNow": "Ahora no"
+    },
     "justNow": "Justo ahora",
     "minutesAgo": "hace {count}m",
     "hoursAgo": "hace {count}h",

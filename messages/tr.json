@@ -572,6 +572,14 @@
       "auth": "Exur'dan yanıt almak için Google ile giriş yapın. Önce istemleri inceleyebilirsiniz.",
       "trialExhausted": "Bu haftaki ücretsiz mesajlarınız bitti. Devam etmek için giriş yapın."
     },
+    "creditsExhausted": {
+      "title": "Krediniz bitti",
+      "description": "Bu dönemin sohbet kredileriniz bitti. Sohbete devam etmek için Plus'a yükseltin.",
+      "daily": "Günlük",
+      "weekly": "Haftalık",
+      "payWithCrypto": "Ethereum üzerinde USDT veya USDC ile devam edin.",
+      "notNow": "Şimdi değil"
+    },
     "justNow": "Az önce",
     "minutesAgo": "{count}dk önce",
     "hoursAgo": "{count}sa önce",

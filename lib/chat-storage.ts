@@ -2,6 +2,7 @@ import type { CoPilotHistoryMessage, MessageQuote } from "@/lib/api/types"
 import type { ChatThinkingStep } from "@/lib/api/chat-sse"
 import type { PaperTradeTicket } from "@/lib/chat/signal-ticket"
 import type { ChatClientActionSummary } from "@/lib/chat/client-tools"
+import { COPILOT_CREDIT_MESSAGE } from "@/lib/co-pilot-recovery"
 
 export type ChatUiMessage = {
   id: string
@@ -188,18 +189,34 @@ export function hasUserMessages(messages: ChatUiMessage[]) {
 
 /** Drop incomplete / noise rows before writing to localStorage. */
 export function sanitizeMessages(messages: ChatUiMessage[]): ChatUiMessage[] {
-  return messages.filter((m) => {
-    if (m.id === "welcome") return false
-    if (m.role === "system" && !m.error && m.action !== "connect") return false
+  return messages.flatMap((m) => {
+    if (m.id === "welcome") return []
+    if (m.role === "system" && !m.error && m.action !== "connect") return []
+
+    // Credit paywall is modal/sheet only — never persist as a red error bubble.
+    if (m.errorText === COPILOT_CREDIT_MESSAGE) {
+      const text = m.content.trim()
+      if (!text || text === "(empty)") return []
+      return [
+        {
+          ...m,
+          error: false,
+          errorText: undefined,
+          action: undefined,
+          retryUserMessage: undefined,
+        },
+      ]
+    }
+
     const text = m.content.trim()
     // Keep recoverable failed turns (may have empty content + CTA).
     if (m.error && (m.action === "retry" || m.action === "connect" || m.errorText))
-      return true
+      return [m]
     // Signal / no-trade cards can have empty output_text but still render UI.
     if (m.role === "assistant" && (m.paperTicket || m.noTradeReason))
-      return true
-    if (m.role === "assistant" && (!text || text === "(empty)")) return false
-    return true
+      return [m]
+    if (m.role === "assistant" && (!text || text === "(empty)")) return []
+    return [m]
   })
 }
 
