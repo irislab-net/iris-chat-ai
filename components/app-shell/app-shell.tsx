@@ -205,9 +205,6 @@ function AppShellInner({
   }, [isDesktop, resolvedChatOpen])
 
   const toolbarProps = {
-    onWorkspaceTabNavigate: () => {
-      if (resolvedChatMode === "focused") persistChatMode("docked")
-    },
     onCloseToChat:
       isDesktop === false ? () => persistChatOpen(true) : undefined,
   }

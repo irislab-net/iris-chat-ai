@@ -102,11 +102,9 @@ function NewsBulletinSkeleton({
 }
 
 function IntelWorkspaceSkeleton({
-  panel: _panel = "news",
   mobile = false,
   className,
 }: {
-  panel?: "news" | "analysis"
   mobile?: boolean
   className?: string
 }) {
@@ -162,7 +160,7 @@ function IntelWorkspaceSkeleton({
 function DashboardSkeleton() {
   return (
     <div className="flex min-h-0 w-full flex-1 flex-col">
-      <IntelWorkspaceSkeleton panel="news" />
+      <IntelWorkspaceSkeleton />
     </div>
   )
 }

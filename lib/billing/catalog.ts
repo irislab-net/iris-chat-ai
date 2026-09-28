@@ -10,10 +10,10 @@ export const UPGRADE_PLANS = [
     name: "Free",
     eyebrow: "Get started",
     description:
-      "Read the desk with a capped co-pilot — enough to try the flow, not to run it all day.",
+      "Read the news desk with a capped co-pilot — enough to try the flow, not to run it all day.",
     features: [
-      "Live public market pulse",
-      "News, signal board, and stance view",
+      "Live market news",
+      "Chat co-pilot with trade signal cards",
       "Daily co-pilot send limit",
       "Weekly usage cap",
     ],
@@ -23,12 +23,12 @@ export const UPGRADE_PLANS = [
     name: "Plus",
     eyebrow: "For active traders",
     description:
-      "The full IRIS workflow with chart, signal, and co-pilot in one desk.",
+      "News, chat co-pilot, and trade signals in one desk.",
     features: [
       "Higher daily send allowance",
       "Raised weekly usage cap",
-      "IRIS co-pilot trade planning",
-      "Chart-first workflow with signal context",
+      "Exur co-pilot trade planning",
+      "Trade signal cards in chat",
     ],
     featured: true,
     badge: "Most chosen",

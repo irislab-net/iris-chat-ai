@@ -1,8 +1,4 @@
-import type { InsightHome, NewsHome, NewsItem } from "@/lib/api/types"
-
-export function hasUsableInsight(insight: InsightHome | null | undefined) {
-  return Boolean(insight?.summary && insight.predictions[0])
-}
+import type { NewsHome, NewsItem } from "@/lib/api/types"
 
 export function hasUsableNews(news: NewsHome | null | undefined) {
   return Boolean(news?.news?.length)

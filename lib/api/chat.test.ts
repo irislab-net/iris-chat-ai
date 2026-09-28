@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from "vitest"
+import { describe, expect, it } from "vitest"
 
 import {
   adaptChatMessageResponse,
@@ -6,7 +6,6 @@ import {
   chatRoleFromUser,
   creditsToUsageResponse,
   executeChatClientActions,
-  pathForChatPage,
   parseSuggestedPrompts,
   toChatApiEffort,
   toChatApiSymbol,
@@ -81,8 +80,6 @@ describe("chat API adapters", () => {
     expect(
       buildChatClientContext({
         user: { role: "user", tier: "free" } as never,
-        pathname: "/",
-        workspaceTab: "news",
         timezone: "+03:30",
       })
     ).toEqual({
@@ -91,7 +88,7 @@ describe("chat API adapters", () => {
       role: "user",
       locale: undefined,
       timezone: "+03:30",
-      available_ui_actions: ["show_trade_signal", "navigate_to_page"],
+      available_ui_actions: ["show_trade_signal"],
     })
   })
 
@@ -122,13 +119,6 @@ describe("chat API adapters", () => {
             '{"symbol":"BTC","direction":"SHORT","setup":"Fade","entry":81558,"stopLoss":81756.7,"takeProfit":80505.9,"leverage":5,"thesis":"Short edge"}',
         },
       ],
-      client_actions: [
-        {
-          tool_name: "navigate_to_page",
-          execution_target: "client",
-          input: '{"page":"trading_chart"}',
-        },
-      ],
       credit_balance: {
         remaining_daily: 800,
         remaining_weekly: 4000,
@@ -149,7 +139,6 @@ describe("chat API adapters", () => {
     })
     expect(adapted.client_actions?.map((a) => a.tool_name)).toEqual([
       "show_trade_signal",
-      "navigate_to_page",
     ])
     expect(adapted.tool_calls?.[0]?.function?.name).toBe("show_trade_signal")
   })
@@ -185,7 +174,7 @@ describe("chat API adapters", () => {
     expect(adapted.client_actions?.[0]?.tool_name).toBe("show_trade_signal")
   })
 
-  it("maps credits payload and navigates trading_chart actions", () => {
+  it("maps credits payload", () => {
     const mapped = creditsToUsageResponse({
       balance: {
         remaining_daily: 10,
@@ -198,16 +187,15 @@ describe("chat API adapters", () => {
     })
     expect(mapped.usage?.remaining).toBe(10)
     expect(mapped.credit_balance?.weekly_limit).toBe(200)
-    expect(pathForChatPage("trading_chart")).toBe("/?tab=news")
-    executeChatClientActions(
-      [
+    expect(
+      executeChatClientActions([
         {
-          tool_name: "navigate_to_page",
+          tool_name: "show_trade_signal",
           execution_target: "client",
-          input: '{"page":"trading_chart"}',
+          input:
+            '{"symbol":"ETH","direction":"LONG","entry":100,"stopLoss":90,"takeProfit":120}',
         },
-      ],
-      { navigate: vi.fn() }
-    )
+      ]).paperTicket?.symbol
+    ).toBe("ETH")
   })
 })

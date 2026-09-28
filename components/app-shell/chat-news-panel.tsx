@@ -9,7 +9,6 @@ import {
   NewsReadAllButton,
 } from "@/components/dashboard/news-bulletin"
 import { NewsBulletinSkeleton } from "@/components/dashboard/intel-skeletons"
-import { useAuth } from "@/components/auth/auth-provider"
 import { Button } from "@/components/ui/button"
 import {
   Sheet,
@@ -125,7 +124,6 @@ function ChatNewsPanelBody({
   mobile = false,
 }: ChatNewsPanelBodyProps) {
   const t = useTranslations("workspace")
-  const { isAuthenticated, loading: authLoading } = useAuth()
   const { analytics, news, freshnessLabel, loading } = useChatNewsFeed(true)
 
   return (
@@ -170,8 +168,6 @@ function ChatNewsPanelBody({
               sidebar
               active
               mobile={mobile}
-              isAuthenticated={isAuthenticated}
-              authLoading={authLoading}
               className="select-text"
             />
           )}

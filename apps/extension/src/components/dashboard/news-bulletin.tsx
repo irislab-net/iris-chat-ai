@@ -24,8 +24,6 @@ import {
 } from "@/components/ui/empty"
 import { Separator } from "@/components/ui/separator"
 import { NewsBulletinSkeleton } from "@/components/dashboard/intel-skeletons"
-import { WorkspaceLoginGate } from "@/components/dashboard/workspace-login-gate"
-import { shouldShowWorkspaceLoginGate } from "@/lib/workspace-auth"
 import { MarketAssetLogo } from "@/components/dashboard/market-asset-logo"
 import {
   chatNewsGlassCardClass,
@@ -1217,32 +1215,17 @@ function NewsHeadlineList({
   loading = false,
   mobile = false,
   sidebar = false,
-  isAuthenticated = true,
-  authLoading = false,
 }: {
   news: NewsItem[]
   analytics: NewsAnalytics | null
   loading?: boolean
   mobile?: boolean
   sidebar?: boolean
-  isAuthenticated?: boolean
-  authLoading?: boolean
 }) {
   const t = useTranslations("dashboard")
 
   if (loading && news.length === 0) {
     return <NewsBulletinSkeleton sidebar={sidebar} />
-  }
-
-  if (
-    shouldShowWorkspaceLoginGate("news", {
-      isAuthenticated,
-      authLoading,
-      dataReady: !loading,
-      hasData: news.length > 0,
-    })
-  ) {
-    return <WorkspaceLoginGate page="news" />
   }
 
   if (news.length === 0) {
@@ -1313,8 +1296,6 @@ function NewsBulletin({
   active = true,
   mobile = false,
   sidebar = false,
-  isAuthenticated = true,
-  authLoading = false,
 }: {
   analytics: NewsAnalytics | null
   news: NewsItem[]
@@ -1322,15 +1303,13 @@ function NewsBulletin({
   className?: string
   /** Factual payload age — never auth-inferred Live/6h. */
   freshnessLabel: string
-  /** When true, omit outer Card / duplicate News title (tab workspace). */
+  /** When true, omit outer Card / duplicate News title. */
   embedded?: boolean
   /** Chat news sidebar — full scroll + text selection. */
   sidebar?: boolean
-  /** False when the News tab is hidden — stop read-aloud. */
+  /** False when the News panel is hidden — stop read-aloud. */
   active?: boolean
   mobile?: boolean
-  isAuthenticated?: boolean
-  authLoading?: boolean
 }) {
   const primaryNews = news.slice(0, PRIMARY_NEWS_LIMIT)
 
@@ -1352,8 +1331,6 @@ function NewsBulletin({
         loading={loading}
         mobile={mobile}
         sidebar={sidebar}
-        isAuthenticated={isAuthenticated}
-        authLoading={authLoading}
       />
     </div>
   )

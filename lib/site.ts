@@ -73,8 +73,8 @@ export function getMarketingHomePath(): string {
   return process.env.NODE_ENV === "development" ? "/home" : "/"
 }
 
-/** Launch App lands on the news tab (canonical in-app entry). */
-export const APP_NEWS_PATH = `${APP_PATH}?tab=news`
+/** Canonical in-app desk entry (news workspace at `/`). */
+export const APP_NEWS_PATH = APP_PATH
 
 /**
  * Cross-host Launch App href.

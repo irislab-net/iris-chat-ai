@@ -73,10 +73,7 @@ import { useShellSidebarLayout } from "@/hooks/use-shell-sidebar-layout"
 import { useChatClientContext } from "@/hooks/use-chat-client-context"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import {
-  createChatClientActionHandlers,
-  executeChatClientActions,
-} from "@/lib/api/chat"
+import { executeChatClientActions } from "@/lib/api/chat"
 import { submitChatMessageFeedback } from "@/lib/api/chat-feedback"
 import {
   deleteChatSession,
@@ -366,13 +363,6 @@ function ChatAside({
     !ticketSlot?.occupied &&
     !deskWaitTimedOut
   const chatClientContext = useChatClientContext({ user, isProUser })
-  const chatClientActions = React.useMemo(
-    () =>
-      createChatClientActionHandlers({
-        navigate: (href) => router.push(href),
-      }),
-    [router]
-  )
   /** Stable backend user id when signed in; null for guest (isolated bucket). */
   const chatOwnerId = isAuthenticated && user?.id ? user.id : null
   const [hydrated, setHydrated] = React.useState(false)
@@ -1024,10 +1014,7 @@ function ChatAside({
       }
 
       // Prefer client_actions (e.g. show_trade_signal) over inventing a local ticket.
-      const clientResult = executeChatClientActions(
-        result.clientActions,
-        chatClientActions
-      )
+      const clientResult = executeChatClientActions(result.clientActions)
 
       let fullText = (result.message || "").trim()
       if (fullText) {

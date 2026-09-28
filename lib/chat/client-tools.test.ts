@@ -23,14 +23,12 @@ describe("chat client tools", () => {
   it("advertises show_trade_signal for pro users", () => {
     expect(resolveAvailableUiActions({ role: "pro" })).toEqual([
       "show_trade_signal",
-      "navigate_to_page",
     ])
   })
 
   it("adds admin_user_lookup for admins", () => {
     expect(resolveAvailableUiActions({ role: "admin" })).toEqual([
       "show_trade_signal",
-      "navigate_to_page",
       "admin_user_lookup",
     ])
   })

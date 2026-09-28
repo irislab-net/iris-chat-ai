@@ -4,8 +4,7 @@ import {
   resolvePlusPriceId,
   type BillingCycle,
 } from "@/lib/billing/catalog"
-import { UPGRADE_PATH } from "@/lib/site"
-import { appPathWithTab, WORKSPACE_TAB_NEWS } from "@/lib/workspace-tab"
+import { APP_PATH, UPGRADE_PATH } from "@/lib/site"
 
 export type CheckoutRequestBody = {
   plan: string
@@ -79,7 +78,7 @@ export async function createPlusCheckoutSession(input: {
     mode: "subscription",
     "line_items[0][price]": priceId,
     "line_items[0][quantity]": "1",
-    success_url: `${origin}${appPathWithTab(WORKSPACE_TAB_NEWS, { checkout: "success" })}`,
+    success_url: `${origin}${APP_PATH}?checkout=success`,
     cancel_url: `${origin}${UPGRADE_PATH}`,
     allow_promotion_codes: "true",
   })

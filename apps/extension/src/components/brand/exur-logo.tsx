@@ -90,7 +90,7 @@ function ExurMarkSvg({
       {gradient ? (
         <defs>
           <linearGradient
-            id={`exur-mark-${gradientId}`}
+            id={`exur-mark-black-${gradientId}`}
             x1="33.15"
             y1="7"
             x2="33.15"
@@ -100,19 +100,42 @@ function ExurMarkSvg({
             <stop stopColor="#000000" />
             <stop offset="1" stopColor="#3F3F3F" />
           </linearGradient>
+          <linearGradient
+            id={`exur-mark-white-${gradientId}`}
+            x1="33.15"
+            y1="7"
+            x2="33.15"
+            y2="63"
+            gradientUnits="userSpaceOnUse"
+          >
+            <stop stopColor="#FFFFFF" />
+            <stop offset="1" stopColor="#D4D4D4" />
+          </linearGradient>
         </defs>
       ) : null}
-      <path
-        d={EXUR_LOGO_MARK_PATH}
-        fill={gradient ? `url(#exur-mark-${gradientId})` : fill}
-      />
+      {gradient ? (
+        <>
+          <path
+            className="dark:hidden"
+            d={EXUR_LOGO_MARK_PATH}
+            fill={`url(#exur-mark-black-${gradientId})`}
+          />
+          <path
+            className="hidden dark:block"
+            d={EXUR_LOGO_MARK_PATH}
+            fill={`url(#exur-mark-white-${gradientId})`}
+          />
+        </>
+      ) : (
+        <path d={EXUR_LOGO_MARK_PATH} fill={fill} />
+      )}
     </svg>
   )
 }
 
-/** Compact liquid-glass disc — replaces the baked white circle from brand/gradient SVGs. */
+/** Compact liquid-glass disc — light plate / dark charcoal plate. */
 const exurMarkLiquidShellClass =
-  "relative inline-flex aspect-square shrink-0 items-center justify-center overflow-hidden rounded-full border-0 bg-white/80 p-[6%] shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_92%,transparent),inset_0_0_0_1px_color-mix(in_oklch,var(--foreground)_7%,transparent),0_1px_2px_color-mix(in_oklch,var(--foreground)_4%,transparent),0_8px_20px_-10px_color-mix(in_oklch,var(--foreground)_10%,transparent)] backdrop-blur-md backdrop-saturate-150 supports-backdrop-filter:bg-white/62 dark:bg-white/12 dark:shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_14%,transparent),inset_0_0_0_1px_color-mix(in_oklch,white_10%,transparent),0_1px_2px_color-mix(in_oklch,black_30%,transparent),0_8px_22px_-10px_color-mix(in_oklch,black_40%,transparent)] dark:supports-backdrop-filter:bg-white/9"
+  "relative inline-flex aspect-square shrink-0 items-center justify-center overflow-hidden rounded-full border-0 bg-white/80 p-[6%] shadow-[0_2px_8px_-4px_color-mix(in_oklch,var(--foreground)_6%,transparent),0_8px_20px_-10px_color-mix(in_oklch,var(--foreground)_10%,transparent)] backdrop-blur-md backdrop-saturate-150 supports-backdrop-filter:bg-white/62 dark:bg-[oklch(0.2_0_0_/0.9)] dark:shadow-[0_2px_10px_-4px_color-mix(in_oklch,black_40%,transparent),0_8px_22px_-10px_color-mix(in_oklch,black_48%,transparent)] dark:supports-backdrop-filter:bg-[oklch(0.18_0_0_/0.78)]"
 
 function ExurMarkLiquidShell({
   className,
@@ -134,7 +157,7 @@ function ExurMarkLiquidShell({
     >
       <span
         aria-hidden
-        className="pointer-events-none absolute inset-0 z-0 rounded-full bg-linear-to-br from-white/95 via-white/30 to-transparent dark:from-white/22 dark:via-white/6"
+        className="pointer-events-none absolute inset-0 z-0 rounded-full bg-linear-to-br from-white/95 via-white/30 to-transparent dark:from-white/12 dark:via-white/[0.03] dark:to-transparent"
       />
       {children}
       {shimmer ? (
@@ -147,7 +170,7 @@ function ExurMarkLiquidShell({
               "absolute inset-y-[-12%] left-0 w-[62%]",
               "bg-linear-to-r from-transparent via-white/55 to-transparent",
               "animate-exur-logo-shimmer will-change-transform",
-              "dark:via-white/35"
+              "dark:via-white/70"
             )}
           />
         </span>

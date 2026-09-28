@@ -13,7 +13,6 @@ import {
   PRODUCTION_ORIGIN,
   ROOT_ROBOTS,
 } from "@/lib/site"
-import { resolveWorkspaceTab } from "@/lib/workspace-tab"
 import type { AppLocale } from "@/i18n/routing"
 
 const AppShell = dynamic(
@@ -61,7 +60,6 @@ export const revalidate = 300
 
 type PageProps = {
   params: Promise<{ locale: AppLocale }>
-  searchParams: Promise<{ tab?: string | string[] }>
 }
 
 export async function generateMetadata({
@@ -75,19 +73,9 @@ export async function generateMetadata({
   return newsMetadata
 }
 
-async function NewsWithSnapshot({
-  initialTab,
-}: {
-  initialTab: ReturnType<typeof resolveWorkspaceTab>
-}) {
+async function NewsWithSnapshot() {
   const snapshot = await fetchPublicHomeSnapshot()
-  return (
-    <HomeView
-      initialInsight={snapshot.insight}
-      initialNews={snapshot.news}
-      initialTab={initialTab}
-    />
-  )
+  return <HomeView initialNews={snapshot.news} />
 }
 
 /**
@@ -96,16 +84,13 @@ async function NewsWithSnapshot({
  * if the rewrite is skipped (e.g. preview hosts still hit this page).
  * Landing is dynamically imported so gsap/landing never enter the chat graph.
  */
-export default async function RootPage({ params, searchParams }: PageProps) {
+export default async function RootPage({ params }: PageProps) {
   if (await isMarketingRequest()) {
     const { MarketingLandingPage } =
       await import("@/components/landing/modern/landing-route")
     return <MarketingLandingPage params={params} />
   }
 
-  const query = await searchParams
-  const tabValue = Array.isArray(query.tab) ? query.tab[0] : query.tab
-  const initialTab = resolveWorkspaceTab(tabValue)
   const landingHref = getLandingHref()
 
   return (
@@ -149,7 +134,7 @@ export default async function RootPage({ params, searchParams }: PageProps) {
             </div>
           }
         >
-          <NewsWithSnapshot initialTab={initialTab} />
+          <NewsWithSnapshot />
         </Suspense>
       </AppShell>
     </>

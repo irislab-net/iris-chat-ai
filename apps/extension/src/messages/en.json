@@ -949,22 +949,22 @@
     "plans": {
       "free": {
         "name": "Free",
-        "description": "Read the desk with a capped co-pilot — enough to try the flow, not to run it all day.",
+        "description": "Read the news desk with a capped co-pilot — enough to try the flow, not to run it all day.",
         "features": [
-          "Live public market pulse",
-          "News, signal board, and stance view",
+          "Live market news",
+          "Chat co-pilot with trade signal cards",
           "Daily co-pilot send limit",
           "Weekly usage cap"
         ]
       },
       "plus": {
         "name": "Plus",
-        "description": "The full IRIS workflow with chart, signal, and co-pilot in one desk.",
+        "description": "News, chat co-pilot, and trade signals in one desk.",
         "features": [
           "Higher daily send allowance",
           "Raised weekly usage cap",
-          "IRIS co-pilot trade planning",
-          "Chart-first workflow with signal context"
+          "Exur co-pilot trade planning",
+          "Trade signal cards in chat"
         ]
       },
       "ultimate": {
@@ -1029,7 +1029,7 @@
     "publicHeading": "Public market intelligence",
     "publicBody": "Guests can open the <desk>public desk</desk> and see market pulse, insights, model context, and news bullets without signing in. Freshness labels use timestamps from the API, such as when an insight was generated or when a story was published, not login state. We do not treat authentication as proof of “live” or delayed data.",
     "helpsHeading": "How Exur helps",
-    "helpsBody": "Exur organizes market information for the candle you're looking at: headline stance, how models sit relative to each other, payoff shape, and news bullets: short distilled stories with source context, not a raw news feed. The co-pilot is there to answer questions about that desk in plain English, as support for analysis, not a substitute for your own judgment.",
+    "helpsBody": "Exur brings scored market headlines and a chat co-pilot into one desk. News bullets are short distilled stories with source context, not a raw feed. Ask in plain English about what moved and why — support for your analysis, not a substitute for your own judgment.",
     "privateHeading": "Private and member tools",
     "privateBody": "Connecting with Google unlocks account features such as co-pilot chat. Trade Desk and related premium guidance are treated as private / member capabilities when available. Turn-by-turn desk guidance is the product direction, not brokerage order execution on this site. Public pages do not expose private account data for search engines.",
     "trustHeading": "Transparency",

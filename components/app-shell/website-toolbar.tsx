@@ -114,7 +114,6 @@ function AccountPlanBadge({
 }
 
 type WebsiteToolbarProps = {
-  onWorkspaceTabNavigate?: () => void
   /** Mobile news view — close and return to full-screen chat. */
   onCloseToChat?: () => void
   className?: string
@@ -134,7 +133,6 @@ function WorkspaceNavLabel() {
 }
 
 function WebsiteToolbar({
-  onWorkspaceTabNavigate: _onWorkspaceTabNavigate,
   onCloseToChat,
   className,
 }: WebsiteToolbarProps) {

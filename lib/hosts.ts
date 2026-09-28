@@ -92,7 +92,7 @@ export function isMarketingOnlyPath(pathnameWithoutLocale: string): boolean {
 }
 
 /**
- * Desk entry query on `/` — used by Launch App (`tab`) and landing chat handoff (`q`).
+ * Desk entry query on `/` — landing chat handoff (`q`), plus legacy `tab` bookmarks.
  * On the marketing host these must bounce to chat.exur.ai.
  */
 export function isChatDeskSearch(search: string): boolean {

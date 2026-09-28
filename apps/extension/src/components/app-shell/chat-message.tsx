@@ -67,24 +67,24 @@ function IrisMark({
         "chat-empty-hero-mark relative inline-flex size-14 shrink-0 items-center justify-center rounded-full p-0.75",
         "border-0 bg-white/55 shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_88%,transparent),inset_0_0_0_1px_color-mix(in_oklch,var(--foreground)_8%,transparent),0_1px_2px_color-mix(in_oklch,var(--foreground)_4%,transparent),0_14px_36px_-14px_color-mix(in_oklch,var(--foreground)_14%,transparent)]",
         "backdrop-blur-2xl backdrop-saturate-180 supports-backdrop-filter:bg-white/40",
-        "dark:bg-white/10 dark:shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_14%,transparent),inset_0_0_0_1px_color-mix(in_oklch,white_10%,transparent),0_14px_40px_-16px_color-mix(in_oklch,black_48%,transparent)] dark:supports-backdrop-filter:bg-white/[0.07]",
+        "dark:bg-[oklch(0.22_0_0_/0.88)] dark:shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_10%,transparent),0_14px_40px_-16px_color-mix(in_oklch,black_55%,transparent)] dark:supports-backdrop-filter:bg-[oklch(0.2_0_0_/0.72)]",
         className
       )}
     >
       <span
         aria-hidden
-        className="pointer-events-none absolute -inset-2 rounded-full bg-foreground/10 blur-xl dark:bg-white/12"
+        className="pointer-events-none absolute -inset-2 rounded-full bg-foreground/10 blur-xl dark:bg-black/40"
       />
       <span
         aria-hidden
-        className="pointer-events-none absolute inset-0 rounded-full bg-linear-to-br from-white/90 via-white/25 to-transparent dark:from-white/20 dark:via-white/5"
+        className="pointer-events-none absolute inset-0 rounded-full bg-linear-to-br from-white/90 via-white/25 to-transparent dark:from-white/12 dark:via-white/[0.03] dark:to-transparent"
       />
       <span
         className={cn(
           "relative z-10 isolate flex size-full items-center justify-center overflow-hidden rounded-full p-[6%]",
           "bg-white/72 shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_90%,transparent),inset_0_0_0_1px_color-mix(in_oklch,var(--foreground)_6%,transparent)]",
           "backdrop-blur-md supports-backdrop-filter:bg-white/55",
-          "dark:bg-white/12 dark:shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_12%,transparent),inset_0_0_0_1px_color-mix(in_oklch,white_8%,transparent)] dark:supports-backdrop-filter:bg-white/9"
+          "dark:bg-[oklch(0.18_0_0_/0.92)] dark:shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_8%,transparent),0_6px_18px_-10px_color-mix(in_oklch,black_50%,transparent)] dark:supports-backdrop-filter:bg-[oklch(0.16_0_0_/0.78)]"
         )}
       >
         <svg
@@ -105,10 +105,27 @@ function IrisMark({
               <stop stopColor="#000000" />
               <stop offset="1" stopColor="#3F3F3F" />
             </linearGradient>
+            <linearGradient
+              id={`exur-mark-white-${gradientId}`}
+              x1="33.15"
+              y1="7"
+              x2="33.15"
+              y2="63"
+              gradientUnits="userSpaceOnUse"
+            >
+              <stop stopColor="#FFFFFF" />
+              <stop offset="1" stopColor="#D4D4D4" />
+            </linearGradient>
           </defs>
           <path
+            className="dark:hidden"
             d={EXUR_LOGO_MARK_PATH}
             fill={`url(#exur-mark-black-${gradientId})`}
+          />
+          <path
+            className="hidden dark:block"
+            d={EXUR_LOGO_MARK_PATH}
+            fill={`url(#exur-mark-white-${gradientId})`}
           />
         </svg>
         <span
@@ -120,7 +137,7 @@ function IrisMark({
               "absolute inset-y-[-12%] left-0 w-[62%]",
               "bg-linear-to-r from-transparent via-white/55 to-transparent",
               "animate-exur-logo-shimmer will-change-transform",
-              "dark:via-white/35"
+              "dark:via-white/70"
             )}
           />
         </span>

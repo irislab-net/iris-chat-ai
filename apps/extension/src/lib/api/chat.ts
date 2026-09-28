@@ -14,22 +14,16 @@ import type {
 } from "@/lib/api/types"
 import { buildChatClientContext as buildChatClientContextFromTools } from "@/lib/chat/client-tools"
 import { isChatCreditBalance } from "@/lib/api/credit-usage"
-import { WORKSPACE_TAB_NEWS, workspaceTabHref } from "@/lib/workspace-tab"
-import type { WorkspaceTab } from "@/lib/workspace-tab"
 
-/** Absolute chat API base for the extension (no Next `/v1` proxy). */
-export const CHAT_API_BASE = "https://api.exur.ai/v1/chat"
+/** Same-origin chat proxy base — browser calls go through app/v1/[...path]/route.ts. */
+export const CHAT_API_BASE = "/v1/chat"
 
 export function chatApiPath(subpath: string): string {
   const path = subpath.startsWith("/") ? subpath : `/${subpath}`
   return `${CHAT_API_BASE}${path}`
 }
 
-export {
-  createChatClientActionHandlers,
-  executeChatClientActions,
-  type ChatClientActionHandlers,
-} from "@/lib/chat/client-tools"
+export { executeChatClientActions } from "@/lib/chat/client-tools"
 
 export function toChatApiEffort(effort?: CoPilotEffort): ChatApiEffort {
   if (effort === "instant" || effort === undefined) return "normal"
@@ -63,9 +57,6 @@ export function toChatApiSymbol(symbol?: string) {
 export function buildChatClientContext(input: {
   user?: User | null
   isProUser?: boolean
-  symbol?: string
-  pathname?: string
-  workspaceTab?: WorkspaceTab | null
   locale?: string
   timezone?: string
 }): ChatClientContext {
@@ -199,12 +190,6 @@ export function parseToolActionInput(
   } catch {
     return {}
   }
-}
-
-export function pathForChatPage(page: unknown): string | null {
-  if (page === "trading_chart") return workspaceTabHref(WORKSPACE_TAB_NEWS)
-  if (page === "wallet_page") return workspaceTabHref(WORKSPACE_TAB_NEWS)
-  return null
 }
 
 export function creditsToUsageResponse(body: unknown): CoPilotUsageResponse {

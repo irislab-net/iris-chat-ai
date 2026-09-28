@@ -6,19 +6,15 @@ import {
 } from "@/lib/api/chat"
 import type { User } from "@/lib/api/types"
 import type { PaperTradeTicket } from "@/lib/chat/signal-ticket"
-import { APP_PATH } from "@/lib/site"
-import type { WorkspaceTab } from "@/lib/workspace-tab"
 
 export const CHAT_FRONTEND_TOOLS = [
   "show_trade_signal",
-  "navigate_to_page",
   "admin_user_lookup",
 ] as const
 
 export type ChatFrontendTool = (typeof CHAT_FRONTEND_TOOLS)[number]
 
-export type ChatClientActivePage =
-  "chat" | "trading_chart" | "wallet_page" | "admin_dashboard"
+export type ChatClientActivePage = "chat"
 
 export type ChatClientActionSummary = {
   tool: string
@@ -26,22 +22,10 @@ export type ChatClientActionSummary = {
   applied: boolean
 }
 
-export type ChatClientActionHandlers = {
-  navigate?: (href: string) => void
-}
-
-export function resolveChatActivePage(_input?: {
-  pathname?: string
-  workspaceTab?: WorkspaceTab | null
-}): ChatClientActivePage {
-  return "chat"
-}
-
 export function resolveAvailableUiActions(input: {
   role: string
-  onDesk?: boolean
 }): ChatFrontendTool[] {
-  const actions: ChatFrontendTool[] = ["show_trade_signal", "navigate_to_page"]
+  const actions: ChatFrontendTool[] = ["show_trade_signal"]
   if (input.role === "admin") {
     actions.push("admin_user_lookup")
   }
@@ -68,7 +52,7 @@ function optionalTrimmedString(value: unknown): string | undefined {
   return trimmed || undefined
 }
 
-/** Parse `show_trade_signal` client tool input into a paper ticket for the UI card. */
+/** Parse `show_trade_signal` client tool input into a ticket for the UI card. */
 export function parseShowTradeSignalArgs(
   args: Record<string, unknown>
 ): PaperTradeTicket | null {
@@ -164,9 +148,6 @@ export function resolveClientTimezone(
 export function buildChatClientContext(input: {
   user?: User | null
   isProUser?: boolean
-  symbol?: string
-  pathname?: string
-  workspaceTab?: WorkspaceTab | null
   locale?: string
   timezone?: string
 }): {
@@ -181,10 +162,7 @@ export function buildChatClientContext(input: {
   const timezone = input.timezone?.trim() || resolveClientTimezone()
 
   return {
-    active_page: resolveChatActivePage({
-      pathname: input.pathname ?? APP_PATH,
-      workspaceTab: input.workspaceTab,
-    }),
+    active_page: "chat",
     active_symbol: "",
     role,
     locale: input.locale,
@@ -211,8 +189,7 @@ function parseNoTradeReason(args: Record<string, unknown>): string | undefined {
 }
 
 export function executeChatClientActions(
-  actions: ChatToolCallResult[] | undefined,
-  _handlers: ChatClientActionHandlers = {}
+  actions: ChatToolCallResult[] | undefined
 ): {
   summaries: ChatClientActionSummary[]
   paperTicket?: PaperTradeTicket
@@ -255,10 +232,6 @@ export function executeChatClientActions(
         summaries.push(summarizeAction(action.tool_name, "No trade", true))
         break
       }
-      case "navigate_to_page": {
-        summaries.push(summarizeAction(action.tool_name, "Navigate", false))
-        break
-      }
       case "admin_user_lookup":
         break
       default:
@@ -267,12 +240,4 @@ export function executeChatClientActions(
   }
 
   return { summaries, paperTicket, noTradeReason }
-}
-
-export function createChatClientActionHandlers(input: {
-  navigate: (href: string) => void
-}): ChatClientActionHandlers {
-  return {
-    navigate: input.navigate,
-  }
 }
