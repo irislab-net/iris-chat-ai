@@ -193,11 +193,9 @@ function LoginConsentBody({
   onPrivacyChange: (checked: boolean) => void
 }) {
   const t = useTranslations("workspace")
-  const [showPwaHint, setShowPwaHint] = React.useState(false)
-
-  React.useEffect(() => {
-    setShowPwaHint(isStandaloneDisplay())
-  }, [])
+  const [showPwaHint] = React.useState(() =>
+    typeof window !== "undefined" ? isStandaloneDisplay() : false
+  )
 
   return (
     <div className="flex flex-col gap-3">

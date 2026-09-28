@@ -5,13 +5,13 @@ import { Link } from "@/i18n/navigation"
 import {
   BookOpenIcon,
   CircleHelpIcon,
-  DownloadIcon,
   FileTextIcon,
   LogOutIcon,
   MailIcon,
   NewspaperIcon,
   ReceiptIcon,
   ShieldIcon,
+  SmartphoneIcon,
   SparklesIcon,
 } from "lucide-react"
 import { useTranslations } from "next-intl"
@@ -83,7 +83,7 @@ function AccountInstallMenuItem() {
         void promptInstall()
       }}
     >
-      <DownloadIcon className={chatContextMenuIconClass} />
+      <SmartphoneIcon className={chatContextMenuIconClass} />
       {needsManualInstall ? t("addToHomeScreen") : t("installApp")}
     </DropdownMenuItem>
   )

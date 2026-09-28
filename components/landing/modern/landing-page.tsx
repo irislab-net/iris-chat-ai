@@ -7,7 +7,6 @@ import { LandingFooterLazy } from "@/components/landing/modern/landing-footer-la
 import { LandingNav } from "@/components/landing/modern/landing-nav"
 import { LandingScrollProvider } from "@/components/landing/modern/landing-scroll-context"
 import { SkipToContent } from "@/components/landing/modern/skip-to-content"
-import { plusJakarta } from "@/components/landing/modern/fonts"
 import { localeDirection } from "@/lib/i18n/locale"
 import {
   landingHeroCard,
@@ -33,37 +32,13 @@ export async function ModernLandingPage() {
   const locale = await getLocale()
   const t = await getTranslations("modern.hero")
   const dir = localeDirection(locale)
-  const isRtl = dir === "rtl"
-
-  // LTR: one critical face (Plus Jakarta for display + body).
-  // RTL: IRIS Sans (Vazirmatn) for both — skip Jakarta download entirely.
-  const displayFont = isRtl
-    ? '"IRIS Sans"'
-    : (plusJakarta.style.fontFamily.split(",")[0]?.trim() ??
-      '"Plus Jakarta Sans"')
-
-  const fontVariables = isRtl ? undefined : plusJakarta.variable
 
   return (
     <LandingScrollProvider>
       <div
         id="top"
         dir={dir}
-        className={cn(
-          fontVariables,
-          "landing-modern min-h-dvh bg-background text-foreground antialiased selection:bg-foreground/10 selection:text-foreground",
-          isRtl ? "font-sans" : null
-        )}
-        style={{
-          ["--font-display" as string]: displayFont,
-          // LTR: body uses the same face as the hero so Inter is never requested.
-          ...(isRtl
-            ? {}
-            : {
-                ["--font-sans" as string]: displayFont,
-                fontFamily: `var(--font-display), ${displayFont}, ui-sans-serif, system-ui, sans-serif`,
-              }),
-        }}
+        className="landing-modern min-h-dvh bg-background font-sans text-foreground antialiased selection:bg-foreground/10 selection:text-foreground"
       >
         <SkipToContent />
         <div

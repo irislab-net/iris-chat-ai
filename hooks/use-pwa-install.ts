@@ -124,11 +124,14 @@ function usePwaInstall(): PwaInstallState {
   )
 
   const [relatedInstalled, setRelatedInstalled] = React.useState(false)
-  const [hydrated, setHydrated] = React.useState(false)
+  const hydrated = React.useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false
+  )
 
   React.useEffect(() => {
     ensureDeferredCapture()
-    setHydrated(true)
     if (isInstallNudgeOnCooldown()) setNudgeDismissedValue(true)
 
     let cancelled = false

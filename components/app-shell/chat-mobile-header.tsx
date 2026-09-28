@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import { CheckIcon, ChevronDownIcon } from "lucide-react"
+import { AnimatePresence, motion, useReducedMotion } from "motion/react"
 import { useTranslations } from "next-intl"
 
 import { AttentionPulseDot } from "@/components/app-shell/attention-pulse-dot"
@@ -27,6 +28,20 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { CHAT_EFFORT_OPTIONS, type ChatEffort } from "@/lib/chat-effort"
 import { cn } from "@/lib/utils"
+
+const HEADER_TRAILING_SPRING = {
+  type: "spring" as const,
+  stiffness: 520,
+  damping: 34,
+  mass: 0.72,
+}
+
+const HEADER_MORPH_SPRING = {
+  type: "spring" as const,
+  stiffness: 460,
+  damping: 30,
+  mass: 0.68,
+}
 
 type ChatMobileThreadMenuProps = {
   title: string
@@ -66,6 +81,10 @@ function ChatMobileHeader({
   className,
 }: ChatMobileHeaderProps) {
   const t = useTranslations("workspace")
+  const reduceMotion = useReducedMotion()
+  const showThreadChrome = Boolean(threadMenu)
+  const trailingSpring = reduceMotion ? { duration: 0 } : HEADER_TRAILING_SPRING
+  const morphSpring = reduceMotion ? { duration: 0 } : HEADER_MORPH_SPRING
   const effortValue = effort ?? "instant"
   const effortLabel = t(`effort.${effortValue}`)
 
@@ -153,27 +172,114 @@ function ChatMobileHeader({
           {effortControl}
         </div>
 
-        <div className="flex shrink-0 items-center justify-end gap-2">
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            className={chatMobileHeaderButtonClass}
-            aria-label={t("newChat")}
-            disabled={sending}
-            onClick={onNewChat}
-          >
-            <ChatGeminiNewChatIcon strokeWidth={1.5} />
-          </Button>
-          {threadMenu ? (
-            <ChatThreadOptionsMenu
-              {...threadMenu}
-              className={chatMobileHeaderButtonClass}
-            />
-          ) : (
-            <ChatAccountMenu onOpenNews={onOpenNews} variant="mobile" />
-          )}
-        </div>
+        <motion.div
+          layout
+          className="flex shrink-0 items-center justify-end"
+          transition={trailingSpring}
+        >
+          <AnimatePresence initial={false}>
+            {showThreadChrome ? (
+              <motion.div
+                key="new-chat"
+                layout
+                initial={{ opacity: 0, scale: 0.55, width: 0, x: 10 }}
+                animate={{
+                  opacity: 1,
+                  scale: 1,
+                  width: 40,
+                  x: 0,
+                  marginInlineEnd: 8,
+                }}
+                exit={{
+                  opacity: 0,
+                  scale: 0.55,
+                  width: 0,
+                  x: 14,
+                  marginInlineEnd: 0,
+                }}
+                transition={trailingSpring}
+                className="overflow-hidden will-change-transform"
+                style={{ transformOrigin: "inline-end center" }}
+              >
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className={chatMobileHeaderButtonClass}
+                  aria-label={t("newChat")}
+                  disabled={sending}
+                  onClick={onNewChat}
+                >
+                  <ChatGeminiNewChatIcon strokeWidth={1.5} />
+                </Button>
+              </motion.div>
+            ) : null}
+          </AnimatePresence>
+
+          <div className="relative size-10 shrink-0">
+            <AnimatePresence initial={false}>
+              {showThreadChrome && threadMenu ? (
+                <motion.div
+                  key="thread-options"
+                  className="absolute inset-0 flex items-center justify-center will-change-transform"
+                  initial={{
+                    opacity: 0,
+                    scale: 0.68,
+                    rotate: -18,
+                    filter: "blur(8px)",
+                  }}
+                  animate={{
+                    opacity: 1,
+                    scale: 1,
+                    rotate: 0,
+                    filter: "blur(0px)",
+                  }}
+                  exit={{
+                    opacity: 0,
+                    scale: 0.72,
+                    rotate: 16,
+                    filter: "blur(8px)",
+                  }}
+                  transition={morphSpring}
+                >
+                  <ChatThreadOptionsMenu
+                    {...threadMenu}
+                    className={chatMobileHeaderButtonClass}
+                  />
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="account-menu"
+                  className="absolute inset-0 flex items-center justify-center will-change-transform"
+                  initial={{
+                    opacity: 0,
+                    scale: 0.68,
+                    rotate: 18,
+                    filter: "blur(8px)",
+                  }}
+                  animate={{
+                    opacity: 1,
+                    scale: 1,
+                    rotate: 0,
+                    filter: "blur(0px)",
+                  }}
+                  exit={{
+                    opacity: 0,
+                    scale: 0.72,
+                    rotate: -16,
+                    filter: "blur(8px)",
+                  }}
+                  transition={morphSpring}
+                >
+                  <ChatAccountMenu
+                    onOpenNews={onOpenNews}
+                    variant="mobile"
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        </motion.div>
       </header>
     </div>
   )

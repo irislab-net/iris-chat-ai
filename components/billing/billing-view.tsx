@@ -18,7 +18,6 @@ import {
   CreditUsageStatusPanel,
   useCreditUsage,
 } from "@/components/billing/credit-usage-status"
-import { plusJakarta } from "@/components/landing/modern/fonts"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -200,7 +199,6 @@ function BillingView() {
   const t = useTranslations("billingPage")
   const locale = useLocale()
   const dir = localeDirection(locale)
-  const isRtl = dir === "rtl"
   const { user, isAuthenticated, isProUser, login, loginPending } = useAuth()
   const [invoices, setInvoices] = React.useState<PaymentInvoice[] | null>(null)
   const [error, setError] = React.useState<string | null>(null)
@@ -210,12 +208,6 @@ function BillingView() {
   const planName = displayPlanName(user?.tier)
   const proExpires = formatExpiry(user?.pro_expires_at)
   const trialEnds = formatExpiry(user?.trial_ends_at)
-
-  const displayFont = isRtl
-    ? '"IRIS Sans"'
-    : (plusJakarta.style.fontFamily.split(",")[0]?.trim() ??
-      '"Plus Jakarta Sans"')
-  const fontVariables = isRtl ? undefined : plusJakarta.variable
 
   const loadInvoices = React.useCallback(async () => {
     if (!isAuthenticated) {
@@ -276,20 +268,7 @@ function BillingView() {
   return (
     <div
       dir={dir}
-      className={cn(
-        fontVariables,
-        "landing-modern min-h-dvh bg-background text-foreground antialiased selection:bg-foreground/10 selection:text-foreground",
-        isRtl ? "font-sans" : null
-      )}
-      style={{
-        ["--font-display" as string]: displayFont,
-        ...(isRtl
-          ? {}
-          : {
-              ["--font-sans" as string]: displayFont,
-              fontFamily: `var(--font-display), ${displayFont}, ui-sans-serif, system-ui, sans-serif`,
-            }),
-      }}
+      className="landing-modern min-h-dvh bg-background font-sans text-foreground antialiased selection:bg-foreground/10 selection:text-foreground"
     >
       <div className={cn(landingShell, "relative z-10 pb-8 sm:pb-10")}>
         <header className="mt-3 flex items-center gap-3 sm:mt-5">

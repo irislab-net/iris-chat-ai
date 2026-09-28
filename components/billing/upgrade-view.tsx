@@ -12,7 +12,6 @@ import { BillingGlassPanel } from "@/components/billing/billing-glass"
 import type { CryptoCheckoutRequest } from "@/components/billing/crypto-payment-sheet"
 import { CryptoPaymentSheet } from "@/components/billing/crypto-payment-sheet"
 import { UpgradePlanCard } from "@/components/billing/upgrade-plan-card"
-import { plusJakarta } from "@/components/landing/modern/fonts"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import {
@@ -69,7 +68,6 @@ function UpgradeView() {
   const t = useTranslations("upgradePage")
   const locale = useLocale()
   const dir = localeDirection(locale)
-  const isRtl = dir === "rtl"
   const router = useRouter()
   const {
     user,
@@ -101,12 +99,6 @@ function UpgradeView() {
   const canTrackPendingPayment = isAuthenticated && !isProUser
 
   const paidHandledRef = React.useRef(false)
-
-  const displayFont = isRtl
-    ? '"IRIS Sans"'
-    : (plusJakarta.style.fontFamily.split(",")[0]?.trim() ??
-      '"Plus Jakarta Sans"')
-  const fontVariables = isRtl ? undefined : plusJakarta.variable
 
   const handleInvoicePaid = React.useCallback(async () => {
     if (paidHandledRef.current) return
@@ -239,20 +231,7 @@ function UpgradeView() {
   return (
     <div
       dir={dir}
-      className={cn(
-        fontVariables,
-        "landing-modern flex min-h-dvh flex-col bg-background text-foreground antialiased selection:bg-foreground/10 selection:text-foreground",
-        isRtl ? "font-sans" : null
-      )}
-      style={{
-        ["--font-display" as string]: displayFont,
-        ...(isRtl
-          ? {}
-          : {
-              ["--font-sans" as string]: displayFont,
-              fontFamily: `var(--font-display), ${displayFont}, ui-sans-serif, system-ui, sans-serif`,
-            }),
-      }}
+      className="landing-modern flex min-h-dvh flex-col bg-background font-sans text-foreground antialiased selection:bg-foreground/10 selection:text-foreground"
     >
       <div
         className={cn(

@@ -239,6 +239,20 @@ export function isGuestTrialExhaustedError(error: unknown): boolean {
   return isChatLoginRequiredCode(coPilotErrorCode(error))
 }
 
+/**
+ * After a guest chat failure, prefer the sign-in prompt when the server
+ * (or refreshed /credits trial) says free messages are gone — even if the
+ * SSE error was mis-tagged as agent/reserve failure.
+ */
+export function shouldShowGuestSignInPrompt(
+  error: unknown,
+  trial?: { messages_remaining?: number } | null
+): boolean {
+  if (isGuestTrialExhaustedError(error)) return true
+  if ((trial?.messages_remaining ?? 1) <= 0) return true
+  return false
+}
+
 export function coPilotFailureAction(
   error: unknown,
   options?: { isProUser?: boolean }

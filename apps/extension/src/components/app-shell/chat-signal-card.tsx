@@ -1,7 +1,6 @@
 "use client"
 
 import {
-  ActivityIcon,
   ClockIcon,
   CrosshairIcon,
   FlagIcon,
@@ -16,7 +15,6 @@ import {
 import { useTranslations } from "next-intl"
 
 import {
-  chatSignalCardChipClass,
   chatSignalCardChipLongClass,
   chatSignalCardChipShortClass,
   chatSignalCardClass,
@@ -260,8 +258,7 @@ function ChatSignalCard({
               {isLong ? t("signalSideLong") : t("signalSideShort")}
             </span>
           </div>
-          <span className={cn(chatSignalCardChipClass, "shrink-0 uppercase")}>
-            <ActivityIcon className="size-3 shrink-0 opacity-80" aria-hidden />
+          <span className="shrink-0 text-[11px] font-medium tracking-[0.03em] text-muted-foreground uppercase">
             {t("signalCardTitle")}
           </span>
         </div>
@@ -278,9 +275,7 @@ function ChatSignalCard({
       </header>
 
       <div className="space-y-4 px-4 py-4">
-        <div className={chatSignalCardInsetClass}>
-          <PriceBand columns={priceColumns} reasonSkeleton={proseSkeleton} />
-        </div>
+        <PriceBand columns={priceColumns} reasonSkeleton={proseSkeleton} />
 
         {metaItems.length > 0 ? (
           <div className={cn(chatSignalCardInsetClass, "rounded-xl px-3.5 py-3")}>

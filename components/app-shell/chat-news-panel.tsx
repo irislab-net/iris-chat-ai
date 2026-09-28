@@ -4,18 +4,13 @@ import * as React from "react"
 import { XIcon } from "lucide-react"
 import { useLocale, useTranslations } from "next-intl"
 
+import { ChatMobileSlidePanel } from "@/components/app-shell/chat-mobile-slide-panel"
 import {
   NewsBulletin,
   NewsReadAllButton,
 } from "@/components/dashboard/news-bulletin"
 import { NewsBulletinSkeleton } from "@/components/dashboard/intel-skeletons"
 import { Button } from "@/components/ui/button"
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet"
 import {
   chatMobileHeaderButtonClass,
   chatNewsFreshnessBadgeClass,
@@ -209,34 +204,24 @@ type ChatNewsMobileSheetProps = {
 
 function ChatNewsMobileSheet({ open, onOpenChange }: ChatNewsMobileSheetProps) {
   const t = useTranslations("workspace")
-  const isRtl = localeDirection(useLocale()) === "rtl"
-  const sheetSide = isRtl ? "left" : "right"
+  const dir = localeDirection(useLocale())
 
   return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent
-        side={sheetSide}
-        dir={isRtl ? "rtl" : "ltr"}
-        showCloseButton={false}
-        data-slot="sheet-content"
-        className={cn(
-          "gap-0 border-0 p-0 shadow-none",
-          isRtl
-            ? "data-[side=left]:w-full data-[side=left]:max-w-none data-[side=left]:border-0"
-            : "data-[side=right]:w-full data-[side=right]:max-w-none data-[side=right]:border-0",
-          chatNewsPanelShellMobileClass
-        )}
-      >
-        <SheetHeader className="sr-only">
-          <SheetTitle>{t("news")}</SheetTitle>
-        </SheetHeader>
+    <ChatMobileSlidePanel
+      open={open}
+      onOpenChange={onOpenChange}
+      side="end"
+      label={t("news")}
+      panelClassName={cn(chatNewsPanelShellMobileClass, "bg-background")}
+    >
+      <div dir={dir} className="flex h-full min-h-0 flex-col">
         <ChatNewsPanelBody
           mobile
           onClose={() => onOpenChange(false)}
           className="h-full"
         />
-      </SheetContent>
-    </Sheet>
+      </div>
+    </ChatMobileSlidePanel>
   )
 }
 

@@ -35,6 +35,7 @@ import {
   chatUpgradePillClass,
 } from "@/components/app-shell/chat-mobile-gemini-styles"
 import { ChatMobileHeader } from "@/components/app-shell/chat-mobile-header"
+import { ChatMobileSlidePanel } from "@/components/app-shell/chat-mobile-slide-panel"
 import { ChatGeminiNewChatIcon } from "@/components/app-shell/chat-gemini-new-chat-icon"
 import { ChatComposer } from "@/components/app-shell/chat-composer"
 import { MAIN_CONTENT_ID } from "@/components/landing/modern/skip-to-content"
@@ -174,6 +175,7 @@ import {
 } from "@/lib/chat-history-rail-prefs"
 import { cn } from "@/lib/utils"
 import { localeDirection } from "@/lib/i18n/locale"
+import { useChatThreadTransition } from "@/hooks/use-chat-thread-transition"
 
 const ChatNewsSidePanel = dynamic(
   () =>
@@ -265,13 +267,13 @@ function ChatHeaderIconButton({
   )
 }
 
-function blankConversation(id = crypto.randomUUID()): {
+function blankConversation(id?: string): {
   id: string
   messages: ChatUiMessage[]
   history: CoPilotHistoryMessage[]
 } {
   return {
-    id,
+    id: id ?? crypto.randomUUID(),
     messages: [],
     history: [],
   }
@@ -380,7 +382,7 @@ function ChatAside({
   const [hydrated, setHydrated] = React.useState(false)
   const [messages, setMessages] = React.useState<ChatUiMessage[]>([])
   const [history, setHistory] = React.useState<CoPilotHistoryMessage[]>([])
-  const [conversationId, setConversationId] = React.useState(() =>
+  const [conversationId, setConversationId] = React.useState<string>(() =>
     crypto.randomUUID()
   )
   const [conversations, setConversations] = React.useState<
@@ -1615,6 +1617,11 @@ function ChatAside({
 
   const isFocusedLayout = displayMode === "focused" && !onClose
   const isMobileOverlay = Boolean(onClose)
+  const threadTransitionRef = useChatThreadTransition(
+    conversationId,
+    isMobileOverlay,
+    textDir
+  )
   const {
     showMenuSpotlight,
     showNewsSpotlight,
@@ -1627,7 +1634,6 @@ function ChatAside({
   const showMainHeader = showFocusedMainHeader || !isFocusedLayout
   const showMainColumnHeader =
     showMainHeader && !historyRailVisible && !isMobileOverlay
-  const showMobileHistoryOverlay = isMobileOverlay && historyOpen
   const showHistoryPanel =
     !historyRailVisible &&
     !isMobileOverlay &&
@@ -1899,8 +1905,14 @@ function ChatAside({
             }
           />
         ) : null}
-        {showMobileHistoryOverlay ? (
-          <div className="absolute inset-0 z-30 flex min-h-0 flex-col bg-background">
+        {isMobileOverlay ? (
+          <ChatMobileSlidePanel
+            open={historyOpen}
+            onOpenChange={setHistoryOpen}
+            side="start"
+            label={t("chatHistory")}
+            panelClassName="bg-background"
+          >
             <ChatHistorySidebar
               variant="mobile-drawer"
               conversations={conversations}
@@ -1918,7 +1930,7 @@ function ChatAside({
               showBrandHeader={false}
               className="min-h-0 flex-1"
             />
-          </div>
+          </ChatMobileSlidePanel>
         ) : null}
         {showMainColumnHeader ? (
           <header
@@ -2036,7 +2048,10 @@ function ChatAside({
               />
             ) : null}
             {showThread ? (
-              <div className="relative min-h-0 flex-1 overflow-hidden">
+              <div
+                ref={threadTransitionRef}
+                className="relative min-h-0 flex-1 overflow-hidden will-change-transform"
+              >
                 <ScrollArea
                   viewportRef={scrollViewportRef}
                   className={cn(
@@ -2090,7 +2105,7 @@ function ChatAside({
                           </h2>
                           <IrisSamplePrompts
                             disabled={sending}
-                            onEdit={(text) => {
+                            onEdit={(text: string) => {
                               setDraft(text)
                               focusComposer()
                             }}

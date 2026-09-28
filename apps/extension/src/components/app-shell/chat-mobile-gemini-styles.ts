@@ -113,7 +113,7 @@ const chatMobileAssistantClass =
 const chatMobileComposerShellClass =
   "relative shrink-0 bg-transparent px-6 pt-1.5 pb-[max(0.375rem,env(safe-area-inset-bottom,0px))]"
 
-const chatMobileComposerPillClass = `grid rounded-[26px] text-foreground transition-[box-shadow,background-color] duration-200 ease-out ${chatMobileComposerGlassClass} ${chatMobileComposerGlassFocusClass}`
+const chatMobileComposerPillClass = `grid rounded-[32px] text-foreground transition-[box-shadow,background-color] duration-200 ease-out ${chatMobileComposerGlassClass} ${chatMobileComposerGlassFocusClass}`
 
 /** Compact single-line shell — + and input on one row (Gemini simplified-input-area). */
 const chatMobileComposerPillCompactClass =
@@ -161,8 +161,9 @@ const chatDesktopComposerSendClass =
 const chatDesktopComposerSendDisabledClass =
   "size-10 rounded-full border-0 bg-[#2563EB]/12 text-[#1D4ED8] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.55),0_1px_2px_rgba(37,99,235,0.08)] backdrop-blur-md backdrop-saturate-[160%] transition-[transform,background-color,box-shadow] hover:bg-[#2563EB]/12 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-100 sm:size-9 dark:bg-[#2563EB]/22 dark:text-[#93C5FD] dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.12),0_1px_2px_rgba(37,99,235,0.16)] dark:hover:bg-[#2563EB]/22"
 
-/** Empty-state sample prompt cards — liquid glass, Apple-like inset padding. */
-const chatSamplePromptButtonClass = `flex h-full w-full min-w-0 items-start justify-start rounded-[20px] border-0 px-4.5 py-4 text-start transition-[background-color,box-shadow,transform] active:scale-[0.985] sm:rounded-[22px] sm:px-5 sm:py-4.5 lg:rounded-[16px] lg:px-3.5 lg:py-3 ${chatMobileGlassSurfaceClass} ${chatMobileHeaderShadowClass} ${chatMobileHeaderShadowHoverClass}`
+/** Empty-state / follow-up prompt cards — pure white + soft hairline border. */
+const chatSamplePromptButtonClass =
+  "relative flex h-full w-full min-w-0 items-start justify-start rounded-[20px] border border-foreground/[0.06] bg-white px-4.5 py-4 text-start shadow-none transition-[background-color,border-color,transform] hover:border-foreground/[0.1] hover:bg-white active:scale-[0.985] sm:rounded-[22px] sm:px-5 sm:py-4.5 lg:rounded-[16px] lg:px-3.5 lg:py-3 dark:border-white/[0.1] dark:bg-white/[0.08] dark:shadow-none dark:hover:border-white/[0.16] dark:hover:bg-white/[0.1]"
 
 const chatSamplePromptIconClass =
   "mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-[14px] bg-white/50 shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_82%,transparent),0_1px_2px_color-mix(in_oklch,var(--foreground)_4%,transparent)] backdrop-blur-md backdrop-saturate-150 text-muted-foreground dark:bg-white/[0.1] sm:size-9 sm:rounded-[15px] lg:size-7 lg:rounded-[12px]"
@@ -355,7 +356,7 @@ const chatMobileToolsMenuItemDescClass =
  * Side accent wash is layered in the card component (long/short).
  */
 const chatSignalCardClass =
-  "relative isolate overflow-hidden rounded-[1.75rem] border-0 bg-white/82 text-foreground shadow-[0_2px_8px_-4px_color-mix(in_oklch,var(--foreground)_6%,transparent),0_16px_44px_-18px_color-mix(in_oklch,var(--foreground)_14%,transparent)] backdrop-blur-2xl backdrop-saturate-[180%] supports-[backdrop-filter]:bg-white/68 dark:bg-[oklch(0.26_0_0_/0.88)] dark:shadow-[0_2px_10px_-4px_color-mix(in_oklch,black_35%,transparent),0_20px_48px_-20px_color-mix(in_oklch,black_48%,transparent)] dark:backdrop-blur-2xl dark:supports-[backdrop-filter]:bg-[oklch(0.26_0_0_/0.72)]"
+  "relative isolate overflow-hidden rounded-[1.75rem] border-0 bg-white/82 text-foreground shadow-none backdrop-blur-2xl backdrop-saturate-[180%] supports-[backdrop-filter]:bg-white/68 dark:bg-[oklch(0.26_0_0_/0.88)] dark:shadow-none dark:backdrop-blur-2xl dark:supports-[backdrop-filter]:bg-[oklch(0.26_0_0_/0.72)]"
 
 /** Corner bloom + top sheen — applied per side on the card shell. */
 const chatSignalCardLongWashClass =
@@ -380,10 +381,10 @@ const chatSignalCardIconShellClass =
   "flex size-7 shrink-0 items-center justify-center rounded-full border-0 bg-white/65 shadow-[0_1px_3px_color-mix(in_oklch,var(--foreground)_6%,transparent),0_3px_10px_-4px_color-mix(in_oklch,var(--foreground)_8%,transparent)] backdrop-blur-sm supports-[backdrop-filter]:bg-white/48 dark:bg-white/[0.12] dark:shadow-[0_1px_3px_color-mix(in_oklch,black_28%,transparent),0_3px_12px_-4px_color-mix(in_oklch,black_32%,transparent)] dark:supports-[backdrop-filter]:bg-white/[0.09]"
 
 const chatSignalCardEntryShellClass =
-  "rounded-xl border-0 bg-white/88 shadow-[0_2px_8px_-4px_color-mix(in_oklch,var(--foreground)_7%,transparent),0_8px_22px_-12px_color-mix(in_oklch,var(--foreground)_12%,transparent)] backdrop-blur-md supports-[backdrop-filter]:bg-white/72 dark:bg-white/[0.14] dark:shadow-[0_2px_8px_-4px_color-mix(in_oklch,black_30%,transparent),0_8px_22px_-12px_color-mix(in_oklch,black_38%,transparent)] dark:supports-[backdrop-filter]:bg-white/[0.11]"
+  "rounded-lg border-0 bg-white/88 shadow-[0_2px_8px_-4px_color-mix(in_oklch,var(--foreground)_7%,transparent),0_8px_22px_-12px_color-mix(in_oklch,var(--foreground)_12%,transparent)] backdrop-blur-md supports-[backdrop-filter]:bg-white/72 dark:bg-white/[0.14] dark:shadow-[0_2px_8px_-4px_color-mix(in_oklch,black_30%,transparent),0_8px_22px_-12px_color-mix(in_oklch,black_38%,transparent)] dark:supports-[backdrop-filter]:bg-white/[0.11]"
 
 const chatSignalCardMetricTileClass =
-  "rounded-xl border-0 bg-foreground/[0.035] shadow-[0_1px_4px_-2px_color-mix(in_oklch,var(--foreground)_6%,transparent),0_6px_18px_-10px_color-mix(in_oklch,var(--foreground)_9%,transparent)] backdrop-blur-md backdrop-saturate-150 supports-[backdrop-filter]:bg-foreground/[0.028] dark:bg-white/[0.06] dark:shadow-[0_1px_4px_-2px_color-mix(in_oklch,black_28%,transparent),0_6px_18px_-10px_color-mix(in_oklch,black_34%,transparent)] dark:supports-[backdrop-filter]:bg-white/[0.045]"
+  "rounded-lg border-0 bg-foreground/[0.035] shadow-[0_1px_4px_-2px_color-mix(in_oklch,var(--foreground)_6%,transparent),0_6px_18px_-10px_color-mix(in_oklch,var(--foreground)_9%,transparent)] backdrop-blur-md backdrop-saturate-150 supports-[backdrop-filter]:bg-foreground/[0.028] dark:bg-white/[0.06] dark:shadow-[0_1px_4px_-2px_color-mix(in_oklch,black_28%,transparent),0_6px_18px_-10px_color-mix(in_oklch,black_34%,transparent)] dark:supports-[backdrop-filter]:bg-white/[0.045]"
 
 /** Desktop news panel — distinct sidebar surface; glass stays on cards/controls. */
 const chatNewsPanelShellClass =

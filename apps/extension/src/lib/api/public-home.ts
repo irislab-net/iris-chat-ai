@@ -18,12 +18,11 @@ export type PublicHomeSnapshot = {
 
 async function fetchPublicEnvelope<T>(
   path: string,
-  options: { revalidate: number; tags: string[] }
+  _options: { revalidate: number; tags: string[] }
 ): Promise<T | null> {
   try {
     const res = await fetch(`${API_BASE}${path}`, {
       headers: { Accept: "application/json" },
-      next: { revalidate: options.revalidate, tags: options.tags },
     })
     if (!res.ok) return null
     const body = (await res.json()) as ApiEnvelope<T>

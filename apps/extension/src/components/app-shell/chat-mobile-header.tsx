@@ -25,6 +25,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import {
+  loadChatGsap,
+  prefersChatReducedMotion,
+} from "@/lib/chat-motion"
 import { CHAT_EFFORT_OPTIONS, type ChatEffort } from "@/lib/chat-effort"
 import { cn } from "@/lib/utils"
 
@@ -66,8 +70,157 @@ function ChatMobileHeader({
   className,
 }: ChatMobileHeaderProps) {
   const t = useTranslations("workspace")
+  const showThreadChrome = Boolean(threadMenu)
   const effortValue = effort ?? "instant"
   const effortLabel = t(`effort.${effortValue}`)
+
+  const newChatRef = React.useRef<HTMLDivElement>(null)
+  const optionsRef = React.useRef<HTMLDivElement>(null)
+  const accountRef = React.useRef<HTMLDivElement>(null)
+  const prevChromeRef = React.useRef<boolean | null>(null)
+  const tweenRef = React.useRef<{ kill: () => void } | null>(null)
+
+  React.useEffect(() => {
+    const newChat = newChatRef.current
+    const options = optionsRef.current
+    const account = accountRef.current
+    if (!newChat || !options || !account) return
+
+    const reduced = prefersChatReducedMotion()
+    const prev = prevChromeRef.current
+    prevChromeRef.current = showThreadChrome
+
+    const applyInstant = () => {
+      newChat.style.width = showThreadChrome ? "40px" : "0px"
+      newChat.style.marginInlineEnd = showThreadChrome ? "8px" : "0px"
+      newChat.style.opacity = showThreadChrome ? "1" : "0"
+      newChat.style.transform = "none"
+      newChat.style.pointerEvents = showThreadChrome ? "auto" : "none"
+      options.style.opacity = showThreadChrome ? "1" : "0"
+      options.style.transform = "none"
+      options.style.filter = "none"
+      options.style.pointerEvents = showThreadChrome ? "auto" : "none"
+      account.style.opacity = showThreadChrome ? "0" : "1"
+      account.style.transform = "none"
+      account.style.filter = "none"
+      account.style.pointerEvents = showThreadChrome ? "none" : "auto"
+    }
+
+    if (prev === null || prev === showThreadChrome || reduced) {
+      applyInstant()
+      return
+    }
+
+    let cancelled = false
+    void loadChatGsap().then((gsap) => {
+      if (cancelled) return
+      tweenRef.current?.kill()
+
+      const tl = gsap.timeline({
+        defaults: { ease: "power3.out", overwrite: "auto" },
+      })
+      tweenRef.current = tl
+
+      if (showThreadChrome) {
+        tl.fromTo(
+          newChat,
+          { width: 0, marginInlineEnd: 0, opacity: 0, scale: 0.55, x: 10 },
+          {
+            width: 40,
+            marginInlineEnd: 8,
+            opacity: 1,
+            scale: 1,
+            x: 0,
+            duration: 0.42,
+            pointerEvents: "auto",
+          },
+          0
+        )
+        tl.fromTo(
+          account,
+          { opacity: 1, scale: 1, rotate: 0, filter: "blur(0px)" },
+          {
+            opacity: 0,
+            scale: 0.72,
+            rotate: -16,
+            filter: "blur(8px)",
+            duration: 0.34,
+            pointerEvents: "none",
+          },
+          0
+        )
+        tl.fromTo(
+          options,
+          {
+            opacity: 0,
+            scale: 0.68,
+            rotate: -18,
+            filter: "blur(8px)",
+          },
+          {
+            opacity: 1,
+            scale: 1,
+            rotate: 0,
+            filter: "blur(0px)",
+            duration: 0.4,
+            pointerEvents: "auto",
+          },
+          0.06
+        )
+      } else {
+        tl.to(
+          newChat,
+          {
+            width: 0,
+            marginInlineEnd: 0,
+            opacity: 0,
+            scale: 0.55,
+            x: 14,
+            duration: 0.36,
+            pointerEvents: "none",
+          },
+          0
+        )
+        tl.fromTo(
+          options,
+          { opacity: 1, scale: 1, rotate: 0, filter: "blur(0px)" },
+          {
+            opacity: 0,
+            scale: 0.72,
+            rotate: 16,
+            filter: "blur(8px)",
+            duration: 0.34,
+            pointerEvents: "none",
+          },
+          0
+        )
+        tl.fromTo(
+          account,
+          {
+            opacity: 0,
+            scale: 0.68,
+            rotate: 18,
+            filter: "blur(8px)",
+          },
+          {
+            opacity: 1,
+            scale: 1,
+            rotate: 0,
+            filter: "blur(0px)",
+            duration: 0.4,
+            pointerEvents: "auto",
+          },
+          0.06
+        )
+      }
+    })
+
+    return () => {
+      cancelled = true
+      tweenRef.current?.kill()
+      tweenRef.current = null
+    }
+  }, [showThreadChrome])
 
   const effortTriggerClass = cn(
     chatMobileHeaderModelClass,
@@ -153,26 +306,52 @@ function ChatMobileHeader({
           {effortControl}
         </div>
 
-        <div className="flex shrink-0 items-center justify-end gap-2">
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            className={chatMobileHeaderButtonClass}
-            aria-label={t("newChat")}
-            disabled={sending}
-            onClick={onNewChat}
+        <div className="flex shrink-0 items-center justify-end">
+          <div
+            ref={newChatRef}
+            className="overflow-hidden will-change-transform"
+            style={{
+              width: showThreadChrome ? 40 : 0,
+              marginInlineEnd: showThreadChrome ? 8 : 0,
+              transformOrigin: "inline-end center",
+            }}
+            aria-hidden={!showThreadChrome}
           >
-            <ChatGeminiNewChatIcon strokeWidth={1.5} />
-          </Button>
-          {threadMenu ? (
-            <ChatThreadOptionsMenu
-              {...threadMenu}
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
               className={chatMobileHeaderButtonClass}
-            />
-          ) : (
-            <ChatAccountMenu onOpenNews={onOpenNews} variant="mobile" />
-          )}
+              aria-label={t("newChat")}
+              disabled={sending || !showThreadChrome}
+              tabIndex={showThreadChrome ? 0 : -1}
+              onClick={onNewChat}
+            >
+              <ChatGeminiNewChatIcon strokeWidth={1.5} />
+            </Button>
+          </div>
+
+          <div className="relative size-10 shrink-0">
+            <div
+              ref={optionsRef}
+              className="absolute inset-0 flex items-center justify-center will-change-transform"
+              aria-hidden={!showThreadChrome}
+            >
+              {threadMenu ? (
+                <ChatThreadOptionsMenu
+                  {...threadMenu}
+                  className={chatMobileHeaderButtonClass}
+                />
+              ) : null}
+            </div>
+            <div
+              ref={accountRef}
+              className="absolute inset-0 flex items-center justify-center will-change-transform"
+              aria-hidden={showThreadChrome}
+            >
+              <ChatAccountMenu onOpenNews={onOpenNews} variant="mobile" />
+            </div>
+          </div>
         </div>
       </header>
     </div>
