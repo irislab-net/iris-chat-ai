@@ -709,7 +709,7 @@ function ChatComposer({
                 <Button
                   type="button"
                   size="icon-sm"
-                  variant="default"
+                  variant="ghost"
                   aria-label={t("composerStop")}
                   title={t("composerStopTitle")}
                   onClick={stop}
@@ -721,7 +721,7 @@ function ChatComposer({
                 <Button
                   type="submit"
                   size="icon-sm"
-                  variant="default"
+                  variant="ghost"
                   aria-label={t("composerSend")}
                   title={t("composerSendTitle")}
                   disabled={!canSend}
@@ -907,7 +907,7 @@ function ChatComposer({
               <Button
                 type="button"
                 size="icon"
-                variant="default"
+                variant="ghost"
                 aria-label={t("composerStop")}
                 title={t("composerStopTitle")}
                 onClick={stop}
@@ -919,7 +919,7 @@ function ChatComposer({
               <Button
                 type="submit"
                 size="icon"
-                variant="default"
+                variant="ghost"
                 aria-label={t("composerSend")}
                 title={t("composerSendTitle")}
                 disabled={!canSend}

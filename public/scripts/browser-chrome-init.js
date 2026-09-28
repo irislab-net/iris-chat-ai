@@ -40,6 +40,16 @@
       apple.setAttribute("name", "apple-mobile-web-app-status-bar-style")
       document.head.appendChild(apple)
     }
-    apple.setAttribute("content", isDark ? "black-translucent" : "default")
+    apple.setAttribute("content", "black-translucent")
+
+    // Home Screen web apps: mark early so CSS can fill 100lvh before React hydrates.
+    var standalone =
+      (window.navigator && window.navigator.standalone === true) ||
+      (window.matchMedia &&
+        (window.matchMedia("(display-mode: standalone)").matches ||
+          window.matchMedia("(display-mode: fullscreen)").matches))
+    if (standalone) {
+      root.classList.add("display-standalone")
+    }
   } catch (_e) {}
 })()

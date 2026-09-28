@@ -2403,7 +2403,7 @@ function ChatAside({
                   "mx-auto w-full",
                   isMobileOverlay
                     ? chatMobileComposerDockClass
-                    : "shrink-0 bg-background/95 backdrop-blur-md supports-backdrop-filter:bg-background/90",
+                    : "shrink-0 bg-transparent",
                   CHAT_CONTENT_MAX_WIDTH
                 )}
               >

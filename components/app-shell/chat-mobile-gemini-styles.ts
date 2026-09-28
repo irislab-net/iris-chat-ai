@@ -153,13 +153,13 @@ const chatDesktopComposerIconButtonClass = `${chatDesktopComposerControlClass} s
 
 const chatDesktopComposerEffortButtonClass = `${chatDesktopComposerControlClass} h-9 gap-1 rounded-full px-2.5 text-xs font-medium text-muted-foreground hover:text-foreground sm:h-8 [&_svg]:opacity-70`
 
-/** Send / stop — landing CTA blue (`#2563EB`). */
+/** Send / stop — brand-blue liquid glass (`#2563EB`, same family as landing CTA glass). */
 const chatDesktopComposerSendClass =
-  "size-10 rounded-full border-0 bg-[#2563EB] text-white shadow-[0_2px_8px_-2px_rgba(37,99,235,0.45)] transition-[transform,background-color,box-shadow] hover:bg-[#1D4ED8] hover:shadow-[0_4px_12px_-2px_rgba(37,99,235,0.5)] active:scale-[0.96] disabled:opacity-100 sm:size-9"
+  "size-10 rounded-full border-0 bg-[#2563EB]/90 text-white shadow-[0_8px_28px_-6px_rgba(37,99,235,0.42),inset_0_1px_1px_rgba(255,255,255,0.42),inset_0_-1px_2px_rgba(29,78,216,0.3)] backdrop-blur-2xl backdrop-saturate-[180%] transition-[transform,background-color,box-shadow] hover:bg-[#2563EB]/96 hover:shadow-[0_10px_32px_-6px_rgba(37,99,235,0.5),inset_0_1px_1px_rgba(255,255,255,0.48),inset_0_-1px_2px_rgba(29,78,216,0.34)] active:scale-[0.96] disabled:opacity-100 sm:size-9"
 
-/** Idle / disabled send — soft landing blue tint. */
+/** Idle / disabled send — soft brand-blue glass tint. */
 const chatDesktopComposerSendDisabledClass =
-  "size-10 rounded-full border-0 bg-[#2563EB]/10 text-[#1D4ED8] shadow-none transition-[transform,background-color] hover:bg-[#2563EB]/10 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-100 sm:size-9 dark:bg-[#2563EB]/18 dark:text-[#93C5FD] dark:hover:bg-[#2563EB]/18"
+  "size-10 rounded-full border-0 bg-[#2563EB]/12 text-[#1D4ED8] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.55),0_1px_2px_rgba(37,99,235,0.08)] backdrop-blur-md backdrop-saturate-[160%] transition-[transform,background-color,box-shadow] hover:bg-[#2563EB]/12 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-100 sm:size-9 dark:bg-[#2563EB]/22 dark:text-[#93C5FD] dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.12),0_1px_2px_rgba(37,99,235,0.16)] dark:hover:bg-[#2563EB]/22"
 
 /** Empty-state sample prompt cards — liquid glass, Apple-like inset padding. */
 const chatSamplePromptButtonClass = `flex h-full w-full min-w-0 items-start justify-start rounded-[20px] border-0 px-4.5 py-4 text-start transition-[background-color,box-shadow,transform] active:scale-[0.985] sm:rounded-[22px] sm:px-5 sm:py-4.5 lg:rounded-[16px] lg:px-3.5 lg:py-3 ${chatMobileGlassSurfaceClass} ${chatMobileHeaderShadowClass} ${chatMobileHeaderShadowHoverClass}`
@@ -213,9 +213,9 @@ const chatMobileComposerToolChipCloseClass = `${chatComposerToolChipCloseClass} 
 
 const chatDesktopComposerToolChipCloseClass = `${chatComposerToolChipCloseClass} size-3.5`
 
-/** Send / stop — landing CTA blue (same as desktop). */
+/** Send / stop — brand-blue liquid glass (`#2563EB`). */
 const chatMobileComposerSendClass =
-  "size-10 rounded-full border-0 bg-[#2563EB] text-white shadow-[0_2px_8px_-2px_rgba(37,99,235,0.45)] transition-[transform,background-color,box-shadow] hover:bg-[#1D4ED8] hover:shadow-[0_4px_12px_-2px_rgba(37,99,235,0.5)] active:scale-[0.96] disabled:opacity-100"
+  "size-10 shrink-0 rounded-full border-0 bg-[#2563EB]/90 text-white shadow-[0_8px_28px_-6px_rgba(37,99,235,0.42),inset_0_1px_1px_rgba(255,255,255,0.42),inset_0_-1px_2px_rgba(29,78,216,0.3)] backdrop-blur-2xl backdrop-saturate-[180%] transition-[transform,background-color,box-shadow] hover:bg-[#2563EB]/96 hover:shadow-[0_10px_32px_-6px_rgba(37,99,235,0.5),inset_0_1px_1px_rgba(255,255,255,0.48),inset_0_-1px_2px_rgba(29,78,216,0.34)] active:scale-[0.96] disabled:opacity-100"
 
 const chatMobileScrollDownClass =
   "absolute bottom-[calc(4.875rem+env(safe-area-inset-bottom,0px))] left-1/2 z-10 size-9 -translate-x-1/2 rounded-full border-0 bg-white/78 text-foreground backdrop-blur-2xl backdrop-saturate-[180%] supports-[backdrop-filter]:bg-white/62 shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_75%,transparent),0_2px_10px_-3px_color-mix(in_oklch,var(--foreground)_7%,transparent),0_8px_24px_-10px_color-mix(in_oklch,var(--foreground)_8%,transparent)] hover:bg-white/88 dark:bg-white/[0.08] dark:supports-[backdrop-filter]:bg-white/[0.06] dark:hover:bg-white/[0.12]"

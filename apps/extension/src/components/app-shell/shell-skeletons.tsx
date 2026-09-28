@@ -323,6 +323,7 @@ function ChatHistoryRailSkeleton({
 }) {
   return (
     <aside
+      data-slot="chat-history-rail"
       className={cn(
         "relative flex h-full min-h-0 shrink-0 flex-col overflow-hidden rounded-r-xl bg-sidebar text-sidebar-foreground",
         className

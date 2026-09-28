@@ -50,15 +50,7 @@ export function useAppViewportHeight(enabled = true) {
       cancelAnimationFrame(syncFrame)
       syncFrame = requestAnimationFrame(() => {
         const standalone = isStandaloneDisplay()
-
-        // Installed PWA: trust 100dvh/inset CSS — JS height sync causes bottom gaps.
-        if (standalone) {
-          clearViewportVars()
-          if (window.scrollY !== 0 || window.scrollX !== 0) {
-            window.scrollTo(0, 0)
-          }
-          return
-        }
+        root.classList.toggle("display-standalone", standalone)
 
         const viewport = window.visualViewport
         const layoutHeight = window.innerHeight
@@ -72,6 +64,28 @@ export function useAppViewportHeight(enabled = true) {
         const editableFocused = isEditableTarget(document.activeElement)
         const keyboardOpen =
           editableFocused || keyboardInset > KEYBOARD_INSET_THRESHOLD_PX
+
+        // Installed PWA: keep CSS 100lvh when idle (inline heights letterbox on
+        // iOS). Only shrink to visualViewport while the soft keyboard is up so
+        // the composer stays above it — never pin body with position:fixed.
+        if (standalone) {
+          root.style.removeProperty("--app-offset-top")
+          root.style.removeProperty("--keyboard-inset-bottom")
+
+          if (keyboardOpen) {
+            // Prefer visualViewport even when layoutHeight also shrinks (inset≈0).
+            root.style.setProperty("--app-height", `${visualHeight}px`)
+            root.dataset.keyboardOpen = "true"
+          } else {
+            root.style.removeProperty("--app-height")
+            delete root.dataset.keyboardOpen
+          }
+
+          if (window.scrollY !== 0 || window.scrollX !== 0) {
+            window.scrollTo(0, 0)
+          }
+          return
+        }
 
         // Safari keeps visualViewport.height stale after the keyboard closes.
         const height = keyboardOpen ? visualHeight : layoutHeight
@@ -117,6 +131,10 @@ export function useAppViewportHeight(enabled = true) {
 
     function onEditableFocusChange(event: FocusEvent) {
       if (!isEditableTarget(event.target)) return
+      // Without a fixed body, iOS standalone shifts the visual viewport on focus.
+      if (isStandaloneDisplay()) {
+        window.scrollTo(0, 0)
+      }
       if (event.type === "focusout") {
         syncViewport()
       }
