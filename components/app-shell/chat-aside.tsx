@@ -116,8 +116,10 @@ import {
 import {
   ensureGuestSession,
   formatGuestTrialLabel,
+  getStoredGuestUserId,
   GuestChatError,
 } from "@/lib/guest-chat"
+import { isValidWebSessionId, newWebSessionId } from "@/lib/web-session-id"
 import {
   buildFailedAssistantTurn,
   getRetryUserMessage,
@@ -271,16 +273,22 @@ function ChatHeaderIconButton({
   )
 }
 
-function blankConversation(id?: string): {
+function blankConversation(id: string): {
   id: string
   messages: ChatUiMessage[]
   history: CoPilotHistoryMessage[]
 } {
   return {
-    id: id ?? crypto.randomUUID(),
+    id,
     messages: [],
     history: [],
   }
+}
+
+/** Empty-thread ids may be reused only when they already match the web format. */
+function reusableBlankSessionId(activeId: string | null | undefined): string {
+  if (!activeId || !/^[0-9a-f]{40}$/.test(activeId)) return ""
+  return activeId
 }
 
 function IrisFollowUpPrompts({
@@ -386,9 +394,9 @@ function ChatAside({
   const [hydrated, setHydrated] = React.useState(false)
   const [messages, setMessages] = React.useState<ChatUiMessage[]>([])
   const [history, setHistory] = React.useState<CoPilotHistoryMessage[]>([])
-  const [conversationId, setConversationId] = React.useState<string>(() =>
-    crypto.randomUUID()
-  )
+  const [conversationId, setConversationId] = React.useState("")
+  const conversationIdRef = React.useRef(conversationId)
+  conversationIdRef.current = conversationId
   const [conversations, setConversations] = React.useState<
     StoredConversation[]
   >([])
@@ -456,11 +464,13 @@ function ChatAside({
   const [guestSendError, setGuestSendError] = React.useState<string | null>(
     null
   )
+  const [guestOwnerId, setGuestOwnerId] = React.useState<string | null>(null)
 
   React.useEffect(() => {
     if (authLoading || isAuthenticated) {
       setGuestTrial(null)
       setGuestUnavailable(false)
+      if (isAuthenticated) setGuestOwnerId(null)
       return
     }
 
@@ -469,6 +479,7 @@ function ChatAside({
       .then((session) => {
         if (!cancelled) {
           setGuestTrial(session.trial)
+          setGuestOwnerId(session.user_id)
           setGuestUnavailable(false)
           setGuestSendError(null)
         }
@@ -624,13 +635,14 @@ function ChatAside({
           writeChatStore(chatOwnerId, setActiveConversation(store, restored.id))
         }
       } else {
-        // Keep the same blank id across refresh when user left a New chat open.
-        const blank = blankConversation(
+        // Keep a blank id across refresh only when it already matches the web format.
+        // Prefix check is async, so a 40-char candidate is confirmed in an effect.
+        const storedBlankId =
           store.activeId &&
-            !store.conversations.some((c) => c.id === store.activeId)
+          !store.conversations.some((c) => c.id === store.activeId)
             ? store.activeId
-            : undefined
-        )
+            : ""
+        const blank = blankConversation(reusableBlankSessionId(storedBlankId))
         setConversationId(blank.id)
         setMessages(blank.messages)
         setHistory(blank.history)
@@ -755,6 +767,30 @@ function ChatAside({
   }, [])
 
   React.useEffect(() => {
+    if (!hydrated || authLoading) return
+    if (hasUserMessages(messages)) return
+    const ownerId = chatOwnerId ?? guestOwnerId
+    if (!ownerId) return
+    const storageOwnerId = chatOwnerId
+    let cancelled = false
+    const seen = conversationIdRef.current
+    void (async () => {
+      if (seen && (await isValidWebSessionId(ownerId, seen))) return
+      const next = await newWebSessionId(ownerId)
+      if (cancelled || conversationIdRef.current !== seen) return
+      conversationIdRef.current = next
+      setConversationId(next)
+      writeChatStore(
+        storageOwnerId,
+        setActiveConversation(readChatStore(storageOwnerId), next)
+      )
+    })()
+    return () => {
+      cancelled = true
+    }
+  }, [authLoading, chatOwnerId, guestOwnerId, hydrated, messages, session])
+
+  React.useEffect(() => {
     function onSessionReset() {
       window.clearTimeout(persistTimer.current)
       abortRef.current?.abort()
@@ -767,7 +803,10 @@ function ChatAside({
       setConversations([])
       setMessages([])
       setHistory([])
-      setConversationId(crypto.randomUUID())
+      // Logout drops the signed-in owner. Keep a placeholder until the guest
+      // user id is known, then the mint effect binds a new session id.
+      conversationIdRef.current = ""
+      setConversationId("")
       setSession("guest")
       setHydrated(true)
     }
@@ -798,7 +837,7 @@ function ChatAside({
     setHistoryOpen(false)
   }
 
-  function startNewChat() {
+  async function startNewChat() {
     abortRef.current?.abort()
     abortRef.current = null
     setSending(false)
@@ -814,7 +853,10 @@ function ChatAside({
       })
     }
 
-    const blank = blankConversation()
+    const ownerId = chatOwnerId ?? getStoredGuestUserId()
+    const id = ownerId ? await newWebSessionId(ownerId) : ""
+    const blank = blankConversation(id)
+    conversationIdRef.current = blank.id
     setConversationId(blank.id)
     setMessages(blank.messages)
     setHistory(blank.history)
@@ -822,6 +864,7 @@ function ChatAside({
     setReplyTarget(null)
     setEffort(DEFAULT_CHAT_EFFORT)
     writeChatEffort(DEFAULT_CHAT_EFFORT)
+    if (!blank.id) return
     const store = setActiveConversation(readChatStore(chatOwnerId), blank.id)
     writeChatStore(chatOwnerId, store)
   }
@@ -862,14 +905,19 @@ function ChatAside({
     void refreshConversationFromServer(target.id)
   }
 
-  function startBlankConversation(store: ReturnType<typeof readChatStore>) {
-    const blank = blankConversation()
+  async function startBlankConversation() {
+    const ownerId = chatOwnerId ?? getStoredGuestUserId()
+    const id = ownerId ? await newWebSessionId(ownerId) : ""
+    const blank = blankConversation(id)
+    conversationIdRef.current = blank.id
     setConversationId(blank.id)
     setMessages(blank.messages)
     setHistory(blank.history)
     setReplyTarget(null)
-    const next = setActiveConversation(store, blank.id)
+    if (!blank.id) return readChatStore(chatOwnerId)
+    const next = setActiveConversation(readChatStore(chatOwnerId), blank.id)
     writeChatStore(chatOwnerId, next)
+    setConversations(next.conversations)
     return next
   }
 
@@ -894,13 +942,13 @@ function ChatAside({
       const store = deleteConversation(readChatStore(chatOwnerId), id)
       writeChatStore(chatOwnerId, store)
       setConversations(store.conversations)
-      if (wasActive) startBlankConversation(store)
+      if (wasActive) void startBlankConversation()
       return
     }
 
     markConversationDeleting(id)
     if (wasActive) {
-      startBlankConversation(readChatStore(chatOwnerId))
+      void startBlankConversation()
     }
 
     void deleteChatSession(id)
@@ -1438,6 +1486,22 @@ function ChatAside({
     }
   }
 
+  async function ensureSendableConversationId(
+    ownerId: string
+  ): Promise<string> {
+    const current = conversationIdRef.current
+    if (current && (await isValidWebSessionId(ownerId, current))) return current
+    const next = await newWebSessionId(ownerId)
+    conversationIdRef.current = next
+    setConversationId(next)
+    const store = readChatStore(chatOwnerId)
+    const isStoredThread = store.conversations.some((c) => c.id === current)
+    if (!isStoredThread) {
+      writeChatStore(chatOwnerId, setActiveConversation(store, next))
+    }
+    return next
+  }
+
   async function handleSend(content: string) {
     if (sending) return
 
@@ -1454,9 +1518,12 @@ function ChatAside({
       return
     }
 
+    let sendOwnerId: string | null = chatOwnerId
     if (!isAuthenticated) {
       try {
         const session = await ensureGuestSession()
+        sendOwnerId = session.user_id
+        setGuestOwnerId(session.user_id)
         setGuestTrial(session.trial)
         setGuestUnavailable(false)
         setGuestSendError(null)
@@ -1497,10 +1564,15 @@ function ChatAside({
         login({ source: "chat" })
         return
       }
+      if (!chatOwnerId) return
+      sendOwnerId = chatOwnerId
     }
 
+    if (!sendOwnerId) return
+    const activeId = await ensureSendableConversationId(sendOwnerId)
+
     trackChatMessageSent({
-      conversation_id: conversationId,
+      conversation_id: activeId,
       message_length: userMessage.length,
     })
 
@@ -1519,7 +1591,7 @@ function ChatAside({
           { id: crypto.randomUUID(), role: "user", content: userMessage },
           { id: assistantId, role: "assistant", content: reply },
         ],
-        { id: conversationId, history: nextHistory, ownerId: chatOwnerId }
+        { id: activeId, history: nextHistory, ownerId: chatOwnerId }
       )
       return
     }
@@ -1528,7 +1600,6 @@ function ChatAside({
     const optimisticUserId = crypto.randomUUID()
     const replyToId = replyTarget?.id
     const historySnapshot = history
-    const activeId = conversationId
 
     const displayUserMessage = summarizeSignalUserMessage(
       userMessage,
@@ -1573,9 +1644,17 @@ function ChatAside({
   async function handleRetry(assistantId: string) {
     if (sending || authLoading) return
 
+    let sendOwnerId: string | null = chatOwnerId
     if (!isAuthenticated) {
       if (guestUnavailable) return
       if (guestTrialExhausted) return
+      try {
+        const session = await ensureGuestSession()
+        sendOwnerId = session.user_id
+        setGuestOwnerId(session.user_id)
+      } catch {
+        return
+      }
     } else if (!getStoredAccessToken()) {
       login({ source: "chat" })
       return
@@ -1593,10 +1672,12 @@ function ChatAside({
       await refreshAfterUpgrade()
     }
 
+    if (!sendOwnerId) return
+    const activeId = await ensureSendableConversationId(sendOwnerId)
+
     // History for retry = API history before this failed turn (do not include partial).
     // Current `history` state was not advanced on failure — safe to reuse.
     const historySnapshot = history
-    const activeId = conversationId
     const assistantIndex = messages.findIndex((m) => m.id === assistantId)
     const priorUser =
       assistantIndex > 0 ? messages[assistantIndex - 1] : undefined

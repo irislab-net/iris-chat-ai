@@ -31,8 +31,15 @@ const LoginConsentDialog = dynamic(
 )
 import { clearGoogleOneTapDismissed } from "@/lib/google-one-tap"
 import { setChatRegisteredUserId } from "@/lib/chat-auth-session"
-import { readChatStore } from "@/lib/chat-storage"
-import { mergeGuestAccount } from "@/lib/guest-chat"
+import {
+  readChatStore,
+  setActiveConversation,
+  upsertConversation,
+  writeChatStore,
+  type ChatStore,
+} from "@/lib/chat-storage"
+import { getStoredGuestUserId, mergeGuestAccount } from "@/lib/guest-chat"
+import { isValidWebSessionId, reboundWebSessionId } from "@/lib/web-session-id"
 import type { User } from "@/lib/api/types"
 import {
   setAnalyticsUser,
@@ -78,6 +85,37 @@ async function wait(ms: number) {
   await new Promise((resolve) => window.setTimeout(resolve, ms))
 }
 
+/** Copy guest threads that the backend can rewrite onto the registered user store. */
+async function adoptGuestConversations(
+  guestUserId: string,
+  registeredUserId: string,
+  guestStore: ChatStore
+) {
+  let next = readChatStore(registeredUserId)
+  let changed = false
+  for (const conversation of guestStore.conversations) {
+    if (!(await isValidWebSessionId(guestUserId, conversation.id))) continue
+    const id = await reboundWebSessionId(registeredUserId, conversation.id)
+    if (!id) continue
+    next = upsertConversation(next, { ...conversation, id })
+    changed = true
+  }
+  if (
+    guestStore.activeId &&
+    (await isValidWebSessionId(guestUserId, guestStore.activeId))
+  ) {
+    const activeId = await reboundWebSessionId(
+      registeredUserId,
+      guestStore.activeId
+    )
+    if (activeId) {
+      next = setActiveConversation(next, activeId)
+      changed = true
+    }
+  }
+  if (changed) writeChatStore(registeredUserId, next)
+}
+
 function isMarketingDocument(): boolean {
   if (typeof window === "undefined") return false
   return isMarketingHost(window.location.hostname)
@@ -114,8 +152,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     typeof window !== "undefined" &&
     window.location.pathname.startsWith("/auth/success")
   const isOAuthPopupCallback =
-    isAuthSuccessRoute &&
-    Boolean(window.opener && !window.opener.closed)
+    isAuthSuccessRoute && Boolean(window.opener && !window.opener.closed)
 
   const [user, setUser] = React.useState<User | null>(null)
   // /auth/success owns session establish — don't spin global loading/skeleton.
@@ -169,14 +206,23 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
             loginSourceRef.current = undefined
             const token = getStoredAccessToken()
             if (token) {
-              const guestSessions = readChatStore(null).conversations.map(
+              const guestUserId = getStoredGuestUserId()
+              const guestStore = readChatStore(null)
+              const guestSessions = guestStore.conversations.map(
                 (conversation) => conversation.id
               )
               try {
-                await mergeGuestAccount(
+                const merged = await mergeGuestAccount(
                   token,
                   guestSessions.length > 0 ? guestSessions : undefined
                 )
+                if (merged && guestUserId) {
+                  await adoptGuestConversations(
+                    guestUserId,
+                    session.user.id,
+                    guestStore
+                  )
+                }
               } catch {
                 // Merge is best-effort; guest storage remains for retry.
               }
