@@ -1,11 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
 import {
+  clearInstallDismissed,
   isInstallNudgeOnCooldown,
   isIosLikeDevice,
+  isPwaInstallHost,
   markInstallDismissed,
   PWA_INSTALL_DISMISS_KEY,
-  clearInstallDismissed,
 } from "@/lib/pwa-install"
 
 describe("pwa-install helpers", () => {
@@ -38,6 +39,13 @@ describe("pwa-install helpers", () => {
 
   it("detects iOS-like devices", () => {
     expect(isIosLikeDevice()).toBe(true)
+  })
+
+  it("limits install UI to the chat desk host", () => {
+    expect(isPwaInstallHost("chat.exur.ai")).toBe(true)
+    expect(isPwaInstallHost("exur.ai")).toBe(false)
+    expect(isPwaInstallHost("www.exur.ai")).toBe(false)
+    expect(isPwaInstallHost("localhost")).toBe(false)
   })
 
   it("tracks install nudge cooldown", () => {

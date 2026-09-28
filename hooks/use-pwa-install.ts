@@ -8,6 +8,7 @@ import {
   getInstalledRelatedWebApps,
   isIosLikeDevice,
   isInstallNudgeOnCooldown,
+  isPwaInstallHost,
   isRunningAsInstalledPwa,
   markInstallDismissed,
 } from "@/lib/pwa-install"
@@ -106,6 +107,14 @@ function ensureDeferredCapture() {
 
 ensureDeferredCapture()
 
+function useHostname() {
+  return React.useSyncExternalStore(
+    () => () => {},
+    () => window.location.hostname,
+    () => ""
+  )
+}
+
 function usePwaInstall(): PwaInstallState {
   const promptEvent = React.useSyncExternalStore(
     subscribeDeferred,
@@ -122,6 +131,7 @@ function usePwaInstall(): PwaInstallState {
     getNudgeDismissedSnapshot,
     () => false
   )
+  const hostname = useHostname()
 
   const [relatedInstalled, setRelatedInstalled] = React.useState(false)
   const hydrated = React.useSyncExternalStore(
@@ -151,13 +161,17 @@ function usePwaInstall(): PwaInstallState {
     return () => mq.removeEventListener?.("change", onChange)
   }, [])
 
+  const onChatDesk = Boolean(hostname) && isPwaInstallHost(hostname)
   const runningInstalled = hydrated && isRunningAsInstalledPwa()
   const isInstalled = runningInstalled || relatedInstalled
   const ios = hydrated && isIosLikeDevice()
   const canPrompt = Boolean(promptEvent) && !isInstalled
   const needsManualInstall = ios && !isInstalled
   const isEligible =
-    hydrated && !isInstalled && (canPrompt || needsManualInstall)
+    hydrated &&
+    onChatDesk &&
+    !isInstalled &&
+    (canPrompt || needsManualInstall)
 
   const showNudge =
     isEligible && !dismissed && !guideOpen && !isStandaloneDisplay()

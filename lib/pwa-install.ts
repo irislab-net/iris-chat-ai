@@ -1,8 +1,14 @@
 import { isStandaloneDisplay } from "@/lib/display-mode"
+import { isProductionChatHost } from "@/lib/hosts"
 
 export const PWA_INSTALL_DISMISS_KEY = "iris-pwa-install-dismissed"
 /** Soft nudge cooldown after dismiss (7 days). */
 export const PWA_INSTALL_DISMISS_MS = 7 * 24 * 60 * 60 * 1000
+
+/** Install nudge / menu only on the chat desk host (`chat.exur.ai`). */
+export function isPwaInstallHost(hostname: string): boolean {
+  return isProductionChatHost(hostname)
+}
 
 export type BeforeInstallPromptEventLike = Event & {
   readonly platforms: ReadonlyArray<string>
