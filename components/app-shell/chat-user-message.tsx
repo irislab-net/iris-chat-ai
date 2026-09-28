@@ -148,11 +148,7 @@ function ChatUserTurn({
         disabled={disabled || !trimmed}
         onClick={() => void copyMessage()}
       >
-        {copied ? (
-          <CheckIcon className="text-emerald-400 dark:text-emerald-600" />
-        ) : (
-          <CopyIcon />
-        )}
+        {copied ? <CheckIcon /> : <CopyIcon />}
       </Button>
       {onEdit ? (
         <Button
@@ -209,7 +205,7 @@ function ChatUserTurn({
                     </div>
                   ) : null}
                 </div>
-                <div className="flex min-h-7 items-center justify-between gap-2 ps-5 pe-6">
+                <div className="flex min-h-7 items-center justify-between gap-2 ps-5 pe-2">
                   {timestamp ?? <span aria-hidden className="shrink-0" />}
                   {actionButtons}
                 </div>
@@ -240,7 +236,7 @@ function ChatUserTurn({
                   </div>
                 </div>
                 {timestamp ? (
-                  <div className="mt-1.5 px-1">{timestamp}</div>
+                  <div className="mt-1.5 ps-6 pe-1">{timestamp}</div>
                 ) : null}
               </div>
             )}

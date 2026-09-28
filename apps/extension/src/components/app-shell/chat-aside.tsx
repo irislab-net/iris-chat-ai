@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation"
 import { Link, usePathname, useRouter } from "@/i18n/navigation"
 import { useLocale, useTranslations } from "next-intl"
 import {
+  ArrowUpRightIcon,
   ChevronDownIcon,
   HistoryIcon,
   Maximize2Icon,
@@ -28,6 +29,8 @@ import {
   chatMobileEmptyHeroMarkClass,
   chatMobileEmptyHeroTitleClass,
   chatMobileEmptyHeroWrapClass,
+  chatSamplePromptButtonClass,
+  chatThreadConnectButtonClass,
   chatThreadUpgradeClass,
   chatUpgradePillClass,
 } from "@/components/app-shell/chat-mobile-gemini-styles"
@@ -121,7 +124,7 @@ import {
   COPILOT_PRO_SESSION_REFRESH_MESSAGE,
   coPilotUserFacingError,
   coPilotFailureAction,
-  isGuestTrialExhaustedError,
+  shouldShowGuestSignInPrompt,
   localizeCoPilotErrorText,
 } from "@/lib/co-pilot-recovery"
 import {
@@ -262,7 +265,7 @@ function ChatHeaderIconButton({
   )
 }
 
-function blankConversation(id: string = crypto.randomUUID()): {
+function blankConversation(id = crypto.randomUUID()): {
   id: string
   messages: ChatUiMessage[]
   history: CoPilotHistoryMessage[]
@@ -286,22 +289,31 @@ function IrisFollowUpPrompts({
   const t = useTranslations("workspace")
   if (prompts.length === 0) return null
   return (
-    <div className="flex flex-col gap-1.5">
-      <p className="text-[10px] font-medium tracking-wide text-muted-foreground uppercase">
+    <div className="flex w-full flex-col gap-2.5">
+      <p className="px-0.5 text-[11px] font-medium tracking-[0.14em] text-muted-foreground uppercase">
         {t("continueWith")}
       </p>
-      <div className="flex flex-wrap gap-1.5">
+      <div className="flex w-full flex-col gap-2">
         {prompts.map((prompt) => (
           <Button
             key={prompt}
             type="button"
             variant="ghost"
-            size="xs"
             disabled={disabled}
-            className="h-auto max-w-full items-start justify-start rounded-xl bg-muted/20 px-2.5 py-1.5 text-start text-[11px] leading-5 font-normal whitespace-normal hover:bg-muted/35"
+            dir="auto"
+            className={cn(
+              chatSamplePromptButtonClass,
+              "h-auto gap-3 px-4 py-3.5 text-[13px] leading-snug font-medium whitespace-normal text-foreground disabled:opacity-50 lg:rounded-[18px] lg:px-4 lg:py-3.5"
+            )}
             onClick={() => onSelect(prompt)}
           >
-            {prompt}
+            <span className="min-w-0 flex-1 text-start text-pretty">
+              {prompt}
+            </span>
+            <ArrowUpRightIcon
+              aria-hidden
+              className="mt-0.5 size-4 shrink-0 text-muted-foreground/65 transition-[color,transform] group-hover/button:translate-x-0.5 group-hover/button:-translate-y-0.5 group-hover/button:text-foreground"
+            />
           </Button>
         ))}
       </div>
@@ -368,7 +380,7 @@ function ChatAside({
   const [hydrated, setHydrated] = React.useState(false)
   const [messages, setMessages] = React.useState<ChatUiMessage[]>([])
   const [history, setHistory] = React.useState<CoPilotHistoryMessage[]>([])
-  const [conversationId, setConversationId] = React.useState<string>(() =>
+  const [conversationId, setConversationId] = React.useState(() =>
     crypto.randomUUID()
   )
   const [conversations, setConversations] = React.useState<
@@ -405,6 +417,7 @@ function ChatAside({
   const bottomRef = React.useRef<HTMLDivElement>(null)
   const scrollViewportRef = React.useRef<HTMLDivElement>(null)
   const stickToBottomRef = React.useRef(true)
+  const scrollFollowRafRef = React.useRef<number | null>(null)
   const [showScrollDown, setShowScrollDown] = React.useState(false)
   const composerRef = React.useRef<HTMLTextAreaElement>(null)
   const focusComposer = React.useCallback(() => {
@@ -665,6 +678,10 @@ function ChatAside({
 
   const scrollToChatBottom = React.useCallback(
     (behavior: ScrollBehavior = "smooth") => {
+      if (scrollFollowRafRef.current != null) {
+        window.cancelAnimationFrame(scrollFollowRafRef.current)
+        scrollFollowRafRef.current = null
+      }
       const viewport = scrollViewportRef.current
       if (viewport) {
         viewport.scrollTo({ top: viewport.scrollHeight, behavior })
@@ -675,12 +692,55 @@ function ChatAside({
     []
   )
 
-  React.useEffect(() => {
+  /** Soft exponential follow while typewriter grows — no per-chunk snap. */
+  const followChatBottom = React.useCallback(() => {
     if (!stickToBottomRef.current) return
-    const viewport = scrollViewportRef.current
-    if (!viewport) return
-    viewport.scrollTo({ top: viewport.scrollHeight, behavior: "auto" })
-  }, [messages, historyOpen, pendingAssistantId])
+    if (scrollFollowRafRef.current != null) return
+
+    const reducedMotion =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+
+    const step = () => {
+      scrollFollowRafRef.current = null
+      if (!stickToBottomRef.current) return
+      const viewport = scrollViewportRef.current
+      if (!viewport) return
+
+      const target = viewport.scrollHeight - viewport.clientHeight
+      const current = viewport.scrollTop
+      const gap = target - current
+
+      if (gap <= 0.5) {
+        if (gap > 0) viewport.scrollTop = target
+        return
+      }
+
+      // Large jumps (new turn) snap; typing growth tracks tightly.
+      if (reducedMotion || gap > 180) {
+        viewport.scrollTop = target
+        return
+      }
+
+      viewport.scrollTop = current + Math.max(1.5, gap * 0.55)
+      scrollFollowRafRef.current = window.requestAnimationFrame(step)
+    }
+
+    scrollFollowRafRef.current = window.requestAnimationFrame(step)
+  }, [])
+
+  React.useEffect(() => {
+    followChatBottom()
+  }, [messages, historyOpen, pendingAssistantId, followChatBottom])
+
+  React.useEffect(() => {
+    return () => {
+      if (scrollFollowRafRef.current != null) {
+        window.cancelAnimationFrame(scrollFollowRafRef.current)
+        scrollFollowRafRef.current = null
+      }
+    }
+  }, [])
 
   React.useEffect(() => {
     return () => {
@@ -1204,15 +1264,17 @@ function ChatAside({
       }
 
       setPendingAssistantId(null)
-      if (!isAuthenticated && isGuestTrialExhaustedError(error)) {
+      if (!isAuthenticated) {
         const trial = await trialFromChatError(error)
-        replaceAssistantWithGuestLoginPrompt(
-          assistantId,
-          activeId,
-          historySnapshot,
-          trial
-        )
-        return
+        if (shouldShowGuestSignInPrompt(error, trial)) {
+          replaceAssistantWithGuestLoginPrompt(
+            assistantId,
+            activeId,
+            historySnapshot,
+            trial
+          )
+          return
+        }
       }
 
       const failed = buildFailedAssistantTurn({
@@ -1793,7 +1855,7 @@ function ChatAside({
           "relative z-10 flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden",
           isMobileOverlay
             ? "bg-transparent text-foreground"
-            : "bg-background text-foreground",
+            : "bg-[oklch(0.975_0_0)] text-foreground dark:bg-background",
           isMobileOverlay &&
             (mobileGeminiPhase === "empty" ||
               mobileGeminiPhase === "focused" ||
@@ -2028,7 +2090,7 @@ function ChatAside({
                           </h2>
                           <IrisSamplePrompts
                             disabled={sending}
-                            onEdit={(text: string) => {
+                            onEdit={(text) => {
                               setDraft(text)
                               focusComposer()
                             }}
@@ -2069,7 +2131,7 @@ function ChatAside({
                             {message.action === "connect" ? (
                               <Button
                                 type="button"
-                                className="h-11 gap-2 px-5 text-[13px]"
+                                className={chatThreadConnectButtonClass}
                                 onClick={() => login({ source: "chat" })}
                               >
                                 <GoogleGlyph className="size-4" />

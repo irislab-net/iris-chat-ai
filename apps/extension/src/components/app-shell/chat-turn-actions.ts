@@ -10,7 +10,7 @@ const chatUserTurnActionsRevealClass =
 
 /** User bubble — flat soft fill + large radius (no glass). */
 const chatUserBubbleClass =
-  "rounded-[28px] border-0 bg-[#F5F5F5] px-6 py-5 text-sm leading-[1.55] text-foreground shadow-none outline-none transition-colors duration-150 hover:bg-[#F0F0F0] focus-within:bg-[#F0F0F0] sm:text-[13px] [&::selection]:bg-foreground/10 dark:bg-secondary dark:text-foreground dark:hover:bg-secondary/90 dark:focus-within:bg-secondary/90 dark:[&::selection]:bg-foreground/15"
+  "rounded-[28px] border-0 bg-white px-6 py-5 text-sm leading-[1.55] text-foreground shadow-none outline-none transition-colors duration-150 hover:bg-[#FAFAFA] focus-within:bg-[#FAFAFA] sm:text-[13px] [&::selection]:bg-foreground/10 dark:bg-secondary dark:text-foreground dark:hover:bg-secondary/90 dark:focus-within:bg-secondary/90 dark:[&::selection]:bg-foreground/15"
 
 const chatUserBubbleInlineActionClass =
   "size-7 text-muted-foreground hover:bg-foreground/5 hover:text-foreground dark:text-muted-foreground dark:hover:bg-foreground/5 dark:hover:text-foreground"

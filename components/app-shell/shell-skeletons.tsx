@@ -324,7 +324,7 @@ function ChatHistoryRailSkeleton({
   return (
     <aside
       className={cn(
-        "relative flex h-full min-h-0 shrink-0 flex-col overflow-hidden rounded-e-xl bg-sidebar text-sidebar-foreground",
+        "relative flex h-full min-h-0 shrink-0 flex-col overflow-hidden rounded-r-xl bg-sidebar text-sidebar-foreground",
         className
       )}
       style={{ width: sidebarWidth }}

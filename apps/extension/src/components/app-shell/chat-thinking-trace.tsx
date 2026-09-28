@@ -1,7 +1,12 @@
 "use client"
 
 import * as React from "react"
-import { ChevronRightIcon, LoaderCircleIcon, WrenchIcon } from "lucide-react"
+import {
+  ChevronRightIcon,
+  LoaderCircleIcon,
+  SparklesIcon,
+  WrenchIcon,
+} from "lucide-react"
 import { useTranslations } from "next-intl"
 
 import {
@@ -13,8 +18,18 @@ import {
 import type { ChatThinkingStep } from "@/lib/api/chat-sse"
 import { cn } from "@/lib/utils"
 
+/** `get_market_state` → `Market state` */
 function formatToolName(name: string) {
-  return name.replace(/_/g, " ")
+  const spaced = name.replace(/[_-]+/g, " ").trim()
+  const stripped = spaced.replace(
+    /^(get|fetch|list|load|query|read|search|use)\s+/i,
+    ""
+  )
+  const label = stripped || spaced
+  return label
+    .split(/\s+/)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(" ")
 }
 
 function stepsFromReasoning(reasoning?: string): ChatThinkingStep[] {
@@ -61,33 +76,37 @@ function ChatThinkingTrace({
       <AccordionItem value="thinking" className="border-0">
         <AccordionTrigger
           className={cn(
-            "gap-2 rounded-lg border-0 px-0 py-1.5 text-muted-foreground hover:text-foreground hover:no-underline",
+            "group/thinking gap-2 rounded-lg border-0 px-2 py-1.5 text-muted-foreground hover:text-foreground hover:no-underline",
             "**:data-[slot=accordion-trigger-icon]:hidden"
           )}
         >
-          <span className="flex min-w-0 items-center gap-1.5 text-xs font-medium tracking-tight">
+          <span className="flex min-w-0 flex-1 items-center gap-2 text-[13px] font-medium tracking-tight">
             {live ? (
               <LoaderCircleIcon
-                className="size-3.5 shrink-0 animate-spin opacity-70"
+                className="size-3.5 shrink-0 animate-spin text-[#2563EB] dark:text-[#93C5FD]"
                 aria-hidden
               />
             ) : (
-              <ChevronRightIcon
-                className="size-3.5 shrink-0 opacity-70 transition-transform group-aria-expanded/accordion-trigger:rotate-90"
+              <SparklesIcon
+                className="size-3.5 shrink-0 opacity-70"
                 aria-hidden
               />
             )}
-            <span className="min-w-0 truncate">{summary}</span>
+            <span className="min-w-0 flex-1 truncate text-start">{summary}</span>
+            <ChevronRightIcon
+              className="size-3.5 shrink-0 opacity-45 transition-transform group-aria-expanded/accordion-trigger:rotate-90"
+              aria-hidden
+            />
           </span>
         </AccordionTrigger>
-        <AccordionContent className="pb-0">
+        <AccordionContent className="px-2 pb-0">
           <div
-            className="flex flex-col gap-2.5 border-s border-border/60 ps-3"
+            className="mt-1.5 flex flex-col gap-2.5 border-s border-border/50 ps-3"
             role="list"
             aria-label={t("aria")}
           >
             {resolvedSteps.length === 0 && live ? (
-              <p className="text-xs leading-5 text-muted-foreground">
+              <p className="text-[13px] leading-5 text-muted-foreground">
                 {t("waiting")}
               </p>
             ) : null}
@@ -96,21 +115,21 @@ function ChatThinkingTrace({
                 <div
                   key={`tool-${index}-${step.name}`}
                   role="listitem"
-                  className="inline-flex w-fit max-w-full items-center gap-1.5 rounded-full bg-muted/50 px-2.5 py-1 text-[11px] font-medium text-muted-foreground"
+                  className="inline-flex w-fit max-w-full items-center gap-2 rounded-full bg-foreground/5 px-2.5 py-1.5 text-xs font-medium text-foreground/80 dark:bg-white/8"
                 >
                   <WrenchIcon
-                    className="size-3 shrink-0 opacity-70"
+                    className="size-3.5 shrink-0 text-muted-foreground"
                     aria-hidden
                   />
                   <span className="min-w-0 truncate">
-                    {t("usingTool", { tool: formatToolName(step.name) })}
+                    {formatToolName(step.name)}
                   </span>
                 </div>
               ) : (
                 <p
                   key={`reason-${index}`}
                   role="listitem"
-                  className="text-xs leading-5 whitespace-pre-wrap text-muted-foreground"
+                  className="text-[13px] leading-relaxed whitespace-pre-wrap text-muted-foreground"
                 >
                   {step.text}
                 </p>

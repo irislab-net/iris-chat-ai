@@ -354,8 +354,8 @@
 .chat-gemini-bg-top-fade {
   background: linear-gradient(
     to bottom,
-    var(--background) 0%,
-    color-mix(in oklab, var(--background) 88%, transparent) 52%,
+    oklch(0.975 0 0) 0%,
+    color-mix(in oklab, oklch(0.975 0 0) 88%, transparent) 52%,
     transparent 100%
   );
   pointer-events: none;
@@ -370,13 +370,13 @@
   );
 }
 
-/* Soft white wash under the color orbs — empties into the composer dock. */
+/* Soft wash under the color orbs — empties into the composer dock. */
 .chat-gemini-bg-bottom-fade {
   background: linear-gradient(
     to bottom,
     transparent 0%,
-    rgba(255, 255, 255, 0.45) 42%,
-    #ffffff 100%
+    color-mix(in oklab, oklch(0.975 0 0) 55%, transparent) 42%,
+    oklch(0.975 0 0) 100%
   );
   pointer-events: none;
 }

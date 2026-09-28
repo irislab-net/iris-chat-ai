@@ -197,7 +197,7 @@ function ChatNewsSidePanel({ open, onOpenChange }: ChatNewsSidePanelProps) {
       )}
       aria-label={t("news")}
     >
-      <ChatNewsPanelBody onClose={() => onOpenChange(false)} />
+      <ChatNewsPanelBody mobile onClose={() => onOpenChange(false)} />
     </aside>
   )
 }

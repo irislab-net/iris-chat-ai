@@ -5,10 +5,10 @@ import { useTranslations } from "next-intl"
 
 import { cn } from "@/lib/utils"
 
-/** Cap how often typewriter paints — avoids React 19 nested-update false positives
- *  when each frame re-renders expensive chat chrome (markdown, scroll effects). */
-const TYPEWRITER_MIN_EMIT_MS = 40
-const TYPEWRITER_MIN_CHAR_STEP = 12
+/** ~60fps paints — plain text while streaming stays cheap. */
+const TYPEWRITER_MIN_EMIT_MS = 16
+/** Cap per frame: fast catch-up without dumping a whole paragraph. */
+const TYPEWRITER_MAX_CHARS_PER_FRAME = 14
 
 function TypingDots({ className }: { className?: string }) {
   const t = useTranslations("workspace")
@@ -26,6 +26,11 @@ function TypingDots({ className }: { className?: string }) {
       <span />
     </span>
   )
+}
+
+/** Near-linear with a tiny ease — quick and even, no opening burst. */
+function easeType(t: number) {
+  return t * (2 - t) * 0.15 + t * 0.85
 }
 
 async function typewriterReveal(
@@ -47,8 +52,8 @@ async function typewriterReveal(
     return
   }
 
-  // Keep long answers readable without waiting forever
-  const targetMs = Math.min(4200, Math.max(900, text.length * 10))
+  // Fast: ~5.5ms/char, short floor, hard ceiling for long answers.
+  const targetMs = Math.min(1800, Math.max(280, text.length * 5.5))
   const start = performance.now()
   let lastCount = 0
   let lastEmitAt = 0
@@ -60,26 +65,44 @@ async function typewriterReveal(
         resolve()
         return
       }
-      const t = Math.min(1, (now - start) / targetMs)
-      const eased = 1 - (1 - t) * (1 - t)
-      const count = Math.max(1, Math.floor(eased * text.length))
-      const due =
-        t >= 1 ||
-        count - lastCount >= TYPEWRITER_MIN_CHAR_STEP ||
-        now - lastEmitAt >= TYPEWRITER_MIN_EMIT_MS
 
-      if (due && count !== lastCount) {
+      const elapsed = now - start
+      const t = Math.min(1, elapsed / targetMs)
+      const idealCount =
+        t >= 1
+          ? text.length
+          : Math.max(1, Math.floor(easeType(t) * text.length))
+
+      const remaining = Math.max(0, text.length - lastCount)
+      const remainingMs = Math.max(
+        TYPEWRITER_MIN_EMIT_MS,
+        t >= 1
+          ? TYPEWRITER_MIN_EMIT_MS * Math.max(1, remaining)
+          : targetMs - elapsed
+      )
+      const framesLeft = Math.max(1, remainingMs / TYPEWRITER_MIN_EMIT_MS)
+      const adaptiveStep = Math.min(
+        TYPEWRITER_MAX_CHARS_PER_FRAME,
+        Math.max(1, Math.ceil(remaining / framesLeft))
+      )
+
+      const count = Math.min(
+        text.length,
+        Math.max(lastCount, Math.min(idealCount, lastCount + adaptiveStep))
+      )
+
+      if (
+        count > lastCount &&
+        (lastEmitAt === 0 || now - lastEmitAt >= TYPEWRITER_MIN_EMIT_MS)
+      ) {
         lastCount = count
         lastEmitAt = now
         onUpdate(text.slice(0, count))
       }
 
-      if (t < 1) {
+      if (lastCount < text.length) {
         window.requestAnimationFrame(tick)
       } else {
-        if (lastCount !== text.length) {
-          onUpdate(text)
-        }
         resolve()
       }
     }

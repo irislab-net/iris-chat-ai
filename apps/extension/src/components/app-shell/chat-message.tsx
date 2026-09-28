@@ -192,7 +192,7 @@ function ChatAssistantTurn({
   /** Live / persisted SSE thinking steps (reasoning + MCP tools). */
   thinkingTrace?: ChatThinkingStep[]
   reasoning?: string
-  /** While typewriter/stream paints, skip markdown parse (cheap plain text). */
+  /** Live typewriter/stream — markdown still renders; updates may defer slightly. */
   streaming?: boolean
   compact?: boolean
   children?: ReactNode
@@ -203,6 +203,8 @@ function ChatAssistantTurn({
 }) {
   const locale = useLocale()
   const isGemini = variant === "gemini"
+  const deferredContent = React.useDeferredValue(content)
+  const renderContent = streaming ? deferredContent : content
   const serverId = messageId ? parseServerMessageId(messageId) : null
   const anchorId = serverId != null ? `msg-${serverId}` : undefined
   const hasThinking =
@@ -252,14 +254,8 @@ function ChatAssistantTurn({
           {waiting && hasThinking ? null : (
             <>
               {replyTo ? <ChatMessageQuote quote={replyTo} /> : null}
-              {content?.trim() ? (
-                streaming ? (
-                  <div className="wrap-anywhere whitespace-pre-wrap">
-                    {content}
-                  </div>
-                ) : (
-                  <AIMessageRenderer content={content} />
-                )
+              {renderContent?.trim() ? (
+                <AIMessageRenderer content={renderContent} />
               ) : null}
               {children}
             </>
@@ -267,7 +263,7 @@ function ChatAssistantTurn({
         </div>
       ) : null}
       {timestamp || toolbar ? (
-        <div className="mt-4 flex min-h-7 items-center justify-between gap-2 ps-5 pe-6">
+        <div className="mt-4 flex min-h-7 items-center justify-between gap-2 ps-5 pe-2">
           {timestamp ?? <span aria-hidden className="shrink-0" />}
           {toolbar}
         </div>

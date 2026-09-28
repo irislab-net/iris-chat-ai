@@ -115,9 +115,7 @@ function ChatMessageActions({
         onClick={() => void onCopy()}
       >
         {copied ? (
-          <CheckIcon
-            className={cn("text-emerald-600", isGemini && "size-4.5")}
-          />
+          <CheckIcon className={isGemini ? "size-4.5" : undefined} />
         ) : (
           <CopyIcon className={isGemini ? "size-4.5" : undefined} />
         )}

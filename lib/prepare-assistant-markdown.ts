@@ -106,11 +106,130 @@ function ensureSeparator(rows: string[]) {
   return [normalized[0], separator, ...normalized.slice(1)]
 }
 
+const CODE_LANG_KEEP = new Set([
+  "js",
+  "javascript",
+  "ts",
+  "typescript",
+  "tsx",
+  "jsx",
+  "python",
+  "py",
+  "json",
+  "html",
+  "css",
+  "sql",
+  "bash",
+  "sh",
+  "shell",
+  "zsh",
+  "yaml",
+  "yml",
+  "toml",
+  "rust",
+  "go",
+  "java",
+  "c",
+  "cpp",
+  "csharp",
+  "ruby",
+  "php",
+  "swift",
+  "kotlin",
+  "r",
+  "scala",
+  "diff",
+  "xml",
+  "graphql",
+])
+
+function looksLikeCode(body: string) {
+  return /\b(function|const |let |var |import |export |class |def |return |=>|<\/?[a-zA-Z]|{\s*$|;\s*$)/m.test(
+    body
+  )
+}
+
+/** Market level boards / RTL prose the model wrongly fenced as code. */
+function looksLikeProseBoard(body: string) {
+  if (!body.trim() || looksLikeCode(body)) return false
+  const lines = body
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean)
+  const bracketLines = lines.filter((line) => /^\[[^\]]+\]/.test(line)).length
+  const dashSep = lines.filter(
+    (line) => /^-{4,}/.test(line) || /^-{3,}.+-{3,}$/.test(line)
+  ).length
+  if (bracketLines >= 2) return true
+  if (bracketLines >= 1 && dashSep >= 1) return true
+  return /[\u0600-\u06FF]/.test(body) && bracketLines + dashSep >= 1
+}
+
+function formatBoardLine(trimmed: string) {
+  const bracket = trimmed.match(/^\[([^\]]+)\]\s*(.+)$/)
+  if (bracket) {
+    const label = bracket[1].trim()
+    const rest = bracket[2].trim()
+    const withNote = rest.match(/^(.*?)\s*\(([^)]+)\)\s*$/)
+    if (withNote) {
+      return `**${label}** — ${withNote[1].trim()} · _${withNote[2].trim()}_`
+    }
+    return `**${label}** — ${rest}`
+  }
+
+  const kv = trimmed.match(/^([^:\n]{2,48}):\s*(.+)$/)
+  if (kv) return `**${kv[1].trim()}:** ${kv[2].trim()}`
+
+  return trimmed
+}
+
+function formatBoardBody(body: string) {
+  const out: string[] = []
+  for (const line of body.replace(/\r\n/g, "\n").split("\n")) {
+    const trimmed = line.trim()
+    if (!trimmed) {
+      out.push("")
+      continue
+    }
+
+    const midSep = trimmed.match(/^-{3,}\s*(.+?)\s*-{3,}$/)
+    if (midSep) {
+      out.push("", "---", "", formatBoardLine(midSep[1]), "", "---", "")
+      continue
+    }
+
+    if (/^-{4,}$/.test(trimmed)) {
+      out.push("", "---", "")
+      continue
+    }
+
+    out.push(formatBoardLine(trimmed), "")
+  }
+
+  return out.join("\n").replace(/\n{3,}/g, "\n\n").trim()
+}
+
+/** Unwrap ``` fences that are market boards / prose, not real code. */
+function unwrapProseFences(text: string) {
+  return text.replace(
+    /```([a-zA-Z0-9_-]*)[ \t]*\n([\s\S]*?)```/g,
+    (match, lang: string, body: string) => {
+      const language = (lang || "").toLowerCase()
+      if (language && CODE_LANG_KEEP.has(language)) return match
+      if (!looksLikeProseBoard(body)) return match
+      return `\n\n${formatBoardBody(body)}\n\n`
+    }
+  )
+}
+
 export function prepareAssistantMarkdown(
   input: string,
   now = Date.now()
 ): string {
-  const text = humanizeRawEpochs(input.replace(/\r\n/g, "\n"), now)
+  const text = humanizeRawEpochs(
+    unwrapProseFences(input.replace(/\r\n/g, "\n")),
+    now
+  )
   const withIntroSplit = text.replace(
     /^([^\n|]{8,}[:：]\s*)(\|.+)$/gm,
     (_, intro: string, row: string) => `${intro.trimEnd()}\n\n${wrapRow(row)}`
