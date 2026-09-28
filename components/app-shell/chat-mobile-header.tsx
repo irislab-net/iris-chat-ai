@@ -216,7 +216,7 @@ function ChatMobileHeader({
             ) : null}
           </AnimatePresence>
 
-          <div className="relative size-10 shrink-0">
+          <div className="relative size-12 shrink-0">
             <AnimatePresence initial={false}>
               {showThreadChrome && threadMenu ? (
                 <motion.div

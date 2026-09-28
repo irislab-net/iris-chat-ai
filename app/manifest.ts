@@ -17,8 +17,9 @@ export default function manifest(): MetadataRoute.Manifest {
     id: "/",
     display: "standalone",
     display_override: ["standalone", "minimal-ui"],
-    background_color: BROWSER_CHROME_COLORS.dark,
-    theme_color: BROWSER_CHROME_COLORS.dark,
+    // Splash matches install icon plate (brand blue) — no white flash around the mark.
+    background_color: "#2563EB",
+    theme_color: BROWSER_CHROME_COLORS.light,
     lang: "en",
     prefer_related_applications: false,
     related_applications: [

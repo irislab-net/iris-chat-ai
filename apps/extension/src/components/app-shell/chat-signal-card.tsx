@@ -15,6 +15,7 @@ import {
 import { useTranslations } from "next-intl"
 
 import {
+  chatSignalCardChipClass,
   chatSignalCardChipLongClass,
   chatSignalCardChipShortClass,
   chatSignalCardClass,
@@ -144,13 +145,17 @@ function ChatSignalCard({
   className,
   /** Landing demo: swap setup / reasons / thesis for shimmer bars. */
   proseSkeleton = false,
+  /** Landing demo: monochrome glass — no long/short wash or metric accents. */
+  tone = "accent",
 }: {
   ticket: PaperTradeTicket
   className?: string
   proseSkeleton?: boolean
+  tone?: "accent" | "neutral"
 }) {
   const t = useTranslations("workspace")
   const isLong = ticket.side === "LONG"
+  const isNeutral = tone === "neutral"
   const SideIcon = isLong ? TrendingUpIcon : TrendingDownIcon
   const rewardRisk = signalRewardRiskRatio(ticket)
   const hasLeverage = ticket.leverage > 0
@@ -172,9 +177,13 @@ function ChatSignalCard({
       label: t("signalCardStopLoss"),
       value: formatTradePrice(ticket.stopLoss),
       reason: stopLossReason || undefined,
-      iconClass: "text-rose-600 dark:text-rose-400",
-      iconShellClass:
-        "bg-rose-500/18 supports-[backdrop-filter]:bg-rose-500/16 dark:bg-rose-400/22 dark:supports-[backdrop-filter]:bg-rose-400/18",
+      ...(isNeutral
+        ? {}
+        : {
+            iconClass: "text-rose-600 dark:text-rose-400",
+            iconShellClass:
+              "bg-rose-500/18 supports-[backdrop-filter]:bg-rose-500/16 dark:bg-rose-400/22 dark:supports-[backdrop-filter]:bg-rose-400/18",
+          }),
     },
     {
       icon: CrosshairIcon,
@@ -182,18 +191,26 @@ function ChatSignalCard({
       value: formatTradePrice(ticket.markPrice),
       reason: entryReason || undefined,
       emphasis: true,
-      iconClass: "text-sky-600 dark:text-sky-400",
-      iconShellClass:
-        "bg-sky-500/18 supports-[backdrop-filter]:bg-sky-500/16 dark:bg-sky-400/22 dark:supports-[backdrop-filter]:bg-sky-400/18",
+      ...(isNeutral
+        ? {}
+        : {
+            iconClass: "text-sky-600 dark:text-sky-400",
+            iconShellClass:
+              "bg-sky-500/18 supports-[backdrop-filter]:bg-sky-500/16 dark:bg-sky-400/22 dark:supports-[backdrop-filter]:bg-sky-400/18",
+          }),
     },
     {
       icon: FlagIcon,
       label: t("signalCardTakeProfit"),
       value: formatTradePrice(ticket.takeProfit),
       reason: takeProfitReason || undefined,
-      iconClass: "text-emerald-600 dark:text-emerald-400",
-      iconShellClass:
-        "bg-emerald-500/18 supports-[backdrop-filter]:bg-emerald-500/16 dark:bg-emerald-400/22 dark:supports-[backdrop-filter]:bg-emerald-400/18",
+      ...(isNeutral
+        ? {}
+        : {
+            iconClass: "text-emerald-600 dark:text-emerald-400",
+            iconShellClass:
+              "bg-emerald-500/18 supports-[backdrop-filter]:bg-emerald-500/16 dark:bg-emerald-400/22 dark:supports-[backdrop-filter]:bg-emerald-400/18",
+          }),
     },
   ]
 
@@ -239,7 +256,8 @@ function ChatSignalCard({
       className={cn(
         "mt-1.5",
         chatSignalCardClass,
-        isLong ? chatSignalCardLongWashClass : chatSignalCardShortWashClass,
+        !isNeutral &&
+          (isLong ? chatSignalCardLongWashClass : chatSignalCardShortWashClass),
         className
       )}
     >
@@ -251,7 +269,11 @@ function ChatSignalCard({
             </h3>
             <span
               className={
-                isLong ? chatSignalCardChipLongClass : chatSignalCardChipShortClass
+                isNeutral
+                  ? chatSignalCardChipClass
+                  : isLong
+                    ? chatSignalCardChipLongClass
+                    : chatSignalCardChipShortClass
               }
             >
               <SideIcon className="size-3 shrink-0" aria-hidden />

@@ -331,7 +331,7 @@ function ChatMobileHeader({
             </Button>
           </div>
 
-          <div className="relative size-10 shrink-0">
+          <div className="relative size-12 shrink-0">
             <div
               ref={optionsRef}
               className="absolute inset-0 flex items-center justify-center will-change-transform"

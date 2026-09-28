@@ -163,7 +163,7 @@ function LoginWizard() {
 
   return (
     <div className="relative flex min-h-dvh flex-col overflow-x-hidden bg-[#FAFBFC] text-foreground">
-      <ChatMobileGeminiBackground variant="hero" visible active />
+      <ChatMobileGeminiBackground variant="hero" visible active tone="blue" />
 
       <header className="relative z-10 flex items-center justify-between px-5 pt-[max(1.25rem,env(safe-area-inset-top))] pb-2 sm:px-8">
         <div className="flex items-center gap-2.5">

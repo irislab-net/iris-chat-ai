@@ -1834,6 +1834,7 @@ function ChatAside({
           active={mobileGeminiBackgroundActive}
           loading={sending && messages.length === 0}
           intro={mobileHeroIntro && messages.length === 0}
+          tone="blue"
         />
       ) : null}
       {historyRailVisible ? (
@@ -2211,10 +2212,10 @@ function ChatAside({
                                   chatMobileThreadFirstTurnClass,
                                 index > 0 &&
                                   (sameRole
-                                    ? "mt-3"
+                                    ? "mt-5"
                                     : isMobileOverlay
-                                      ? "mt-8"
-                                      : "mt-7")
+                                      ? "mt-11"
+                                      : "mt-10")
                               )}
                             >
                               <ChatUserTurn
@@ -2241,10 +2242,10 @@ function ChatAside({
                                   chatMobileThreadFirstTurnClass,
                                 index > 0 &&
                                   (sameRole
-                                    ? "mt-3"
+                                    ? "mt-5"
                                     : isMobileOverlay
-                                      ? "mt-8"
-                                      : "mt-7")
+                                      ? "mt-11"
+                                      : "mt-10")
                               )}
                             >
                               <ChatSystemNote
@@ -2290,10 +2291,10 @@ function ChatAside({
                                 chatMobileThreadFirstTurnClass,
                               index > 0 &&
                                 (sameRole
-                                  ? "mt-3"
+                                  ? "mt-5"
                                   : isMobileOverlay
-                                    ? "mt-8"
-                                    : "mt-7")
+                                    ? "mt-11"
+                                    : "mt-10")
                             )}
                           >
                             <ChatAssistantTurn

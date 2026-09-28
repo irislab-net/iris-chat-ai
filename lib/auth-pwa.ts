@@ -112,19 +112,36 @@ function writeProcessed(map: ProcessedMap) {
 }
 
 /** Returns true if this callback id was already handled (skip re-exchange). */
-export function claimAuthSuccessProcessed(id: string): boolean {
+export function wasAuthSuccessProcessed(id: string): boolean {
   if (typeof window === "undefined" || !id) return false
   const now = Date.now()
   const map = readProcessed()
   for (const [key, at] of Object.entries(map)) {
     if (now - at > PROCESSED_TTL_MS) delete map[key]
   }
-  if (map[id]) {
-    writeProcessed(map)
-    return true
+  writeProcessed(map)
+  return Boolean(map[id])
+}
+
+/** Mark callback id handled — call only after session is established (or handed off). */
+export function markAuthSuccessProcessed(id: string) {
+  if (typeof window === "undefined" || !id) return
+  const now = Date.now()
+  const map = readProcessed()
+  for (const [key, at] of Object.entries(map)) {
+    if (now - at > PROCESSED_TTL_MS) delete map[key]
   }
   map[id] = now
   writeProcessed(map)
+}
+
+/**
+ * Atomically claim a callback id. Prefer mark-after-success on /auth/success;
+ * kept for callers that need claim-before-work semantics.
+ */
+export function claimAuthSuccessProcessed(id: string): boolean {
+  if (wasAuthSuccessProcessed(id)) return true
+  markAuthSuccessProcessed(id)
   return false
 }
 

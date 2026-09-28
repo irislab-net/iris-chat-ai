@@ -32,9 +32,9 @@ const chatMobileHeaderButtonClass = `size-10 shrink-0 ${chatMobileHeaderCircleCl
 
 const chatMobileHeaderNewChatClass = chatMobileHeaderButtonClass
 
-const chatMobileHeaderAvatarButtonClass = `flex size-10 shrink-0 items-center justify-center overflow-visible p-0 ${chatMobileHeaderCircleClass} ${chatMobileHeaderShadowClass} ${chatMobileHeaderShadowHoverClass}`
+const chatMobileHeaderAvatarButtonClass = `flex size-12 shrink-0 items-center justify-center overflow-visible p-0 ${chatMobileHeaderCircleClass} ${chatMobileHeaderShadowClass} ${chatMobileHeaderShadowHoverClass}`
 
-const chatMobileHeaderAvatarClass = "size-8 after:border-0 ring-0"
+const chatMobileHeaderAvatarClass = "size-10 after:border-0 ring-0"
 
 const chatMobileHeaderPlanBadgeClass =
   "h-3.5 translate-y-[48%] px-1.5 text-[8px] font-semibold shadow-[0_1px_2px_color-mix(in_oklch,var(--foreground)_8%,transparent)]"
@@ -161,9 +161,9 @@ const chatDesktopComposerSendClass =
 const chatDesktopComposerSendDisabledClass =
   "size-10 rounded-full border-0 bg-[#2563EB]/12 text-[#1D4ED8] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.55),0_1px_2px_rgba(37,99,235,0.08)] backdrop-blur-md backdrop-saturate-[160%] transition-[transform,background-color,box-shadow] hover:bg-[#2563EB]/12 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-100 sm:size-9 dark:bg-[#2563EB]/22 dark:text-[#93C5FD] dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.12),0_1px_2px_rgba(37,99,235,0.16)] dark:hover:bg-[#2563EB]/22"
 
-/** Empty-state / follow-up prompt cards — pure white + soft hairline border. */
+/** Empty-state / follow-up prompt cards — pure white, no border. */
 const chatSamplePromptButtonClass =
-  "relative flex h-full w-full min-w-0 items-start justify-start rounded-[20px] border border-foreground/[0.06] bg-white px-4.5 py-4 text-start shadow-none transition-[background-color,border-color,transform] hover:border-foreground/[0.1] hover:bg-white active:scale-[0.985] sm:rounded-[22px] sm:px-5 sm:py-4.5 lg:rounded-[16px] lg:px-3.5 lg:py-3 dark:border-white/[0.1] dark:bg-white/[0.08] dark:shadow-none dark:hover:border-white/[0.16] dark:hover:bg-white/[0.1]"
+  "relative flex h-full w-full min-w-0 items-start justify-start rounded-[26px] border-0 bg-white px-4.5 py-4 text-start shadow-none transition-[background-color,transform] hover:bg-white active:scale-[0.985] sm:rounded-[28px] sm:px-5 sm:py-4.5 lg:rounded-[22px] lg:px-3.5 lg:py-3 dark:bg-white/[0.08] dark:shadow-none dark:hover:bg-white/[0.1]"
 
 const chatSamplePromptIconClass =
   "mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-[14px] bg-white/50 shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_82%,transparent),0_1px_2px_color-mix(in_oklch,var(--foreground)_4%,transparent)] backdrop-blur-md backdrop-saturate-150 text-muted-foreground dark:bg-white/[0.1] sm:size-9 sm:rounded-[15px] lg:size-7 lg:rounded-[12px]"
@@ -381,10 +381,10 @@ const chatSignalCardIconShellClass =
   "flex size-7 shrink-0 items-center justify-center rounded-full border-0 bg-white/65 shadow-[0_1px_3px_color-mix(in_oklch,var(--foreground)_6%,transparent),0_3px_10px_-4px_color-mix(in_oklch,var(--foreground)_8%,transparent)] backdrop-blur-sm supports-[backdrop-filter]:bg-white/48 dark:bg-white/[0.12] dark:shadow-[0_1px_3px_color-mix(in_oklch,black_28%,transparent),0_3px_12px_-4px_color-mix(in_oklch,black_32%,transparent)] dark:supports-[backdrop-filter]:bg-white/[0.09]"
 
 const chatSignalCardEntryShellClass =
-  "rounded-lg border-0 bg-white/88 shadow-[0_2px_8px_-4px_color-mix(in_oklch,var(--foreground)_7%,transparent),0_8px_22px_-12px_color-mix(in_oklch,var(--foreground)_12%,transparent)] backdrop-blur-md supports-[backdrop-filter]:bg-white/72 dark:bg-white/[0.14] dark:shadow-[0_2px_8px_-4px_color-mix(in_oklch,black_30%,transparent),0_8px_22px_-12px_color-mix(in_oklch,black_38%,transparent)] dark:supports-[backdrop-filter]:bg-white/[0.11]"
+  "rounded-lg border-0 bg-white/88 shadow-none backdrop-blur-md supports-[backdrop-filter]:bg-white/72 dark:bg-white/[0.14] dark:shadow-none dark:supports-[backdrop-filter]:bg-white/[0.11]"
 
 const chatSignalCardMetricTileClass =
-  "rounded-lg border-0 bg-foreground/[0.035] shadow-[0_1px_4px_-2px_color-mix(in_oklch,var(--foreground)_6%,transparent),0_6px_18px_-10px_color-mix(in_oklch,var(--foreground)_9%,transparent)] backdrop-blur-md backdrop-saturate-150 supports-[backdrop-filter]:bg-foreground/[0.028] dark:bg-white/[0.06] dark:shadow-[0_1px_4px_-2px_color-mix(in_oklch,black_28%,transparent),0_6px_18px_-10px_color-mix(in_oklch,black_34%,transparent)] dark:supports-[backdrop-filter]:bg-white/[0.045]"
+  "rounded-lg border-0 bg-foreground/[0.035] shadow-none backdrop-blur-md backdrop-saturate-150 supports-[backdrop-filter]:bg-foreground/[0.028] dark:bg-white/[0.06] dark:shadow-none dark:supports-[backdrop-filter]:bg-white/[0.045]"
 
 /** Desktop news panel — distinct sidebar surface; glass stays on cards/controls. */
 const chatNewsPanelShellClass =

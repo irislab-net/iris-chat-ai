@@ -80,7 +80,6 @@ import {
   EmptyTitle,
 } from "@/components/ui/empty"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Skeleton } from "@/components/ui/skeleton"
 import {
   Tooltip,
   TooltipContent,
@@ -840,27 +839,12 @@ function ConversationRowSkeleton({ compact = false }: { compact?: boolean }) {
   return (
     <div
       className={cn(
-        "flex min-w-0 items-center",
-        compact
-          ? cn(
-              chatHistoryRailChatItemClass,
-              chatHistoryRailChatItemPadClass,
-              "h-11 px-4"
-            )
-          : cn(
-              chatHistoryRailChatItemClass,
-              chatHistoryRailChatItemPadClass,
-              "h-9 gap-2.5 px-3"
-            )
+        "chat-skeleton-shimmer w-full rounded-xl",
+        compact ? "h-11" : "h-9"
       )}
       aria-busy="true"
       role="status"
-    >
-      {!compact ? (
-        <Skeleton className="size-4 shrink-0 rounded-sm bg-foreground/7" />
-      ) : null}
-      <Skeleton className="h-3 min-w-0 flex-1 rounded-sm bg-foreground/7" />
-    </div>
+    />
   )
 }
 

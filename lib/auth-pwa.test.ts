@@ -94,4 +94,13 @@ describe("display-mode + auth-pwa", () => {
     expect(claimAuthSuccessProcessed("abc")).toBe(false)
     expect(claimAuthSuccessProcessed("abc")).toBe(true)
   })
+
+  it("marks auth success only after explicit write", async () => {
+    const { wasAuthSuccessProcessed, markAuthSuccessProcessed } = await import(
+      "@/lib/auth-pwa"
+    )
+    expect(wasAuthSuccessProcessed("xyz")).toBe(false)
+    markAuthSuccessProcessed("xyz")
+    expect(wasAuthSuccessProcessed("xyz")).toBe(true)
+  })
 })

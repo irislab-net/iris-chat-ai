@@ -110,13 +110,9 @@ function SignalResult({
   return (
     <div className="relative flex h-full min-h-0 w-full items-start justify-center overflow-visible">
       <div
-        aria-hidden
-        className="pointer-events-none absolute -inset-x-4 -inset-y-2 rounded-[2rem] bg-[#2563EB]/10 blur-2xl sm:-inset-x-6 sm:-inset-y-4 dark:bg-[#2563EB]/18"
-      />
-      <div
         className={cn(
           landingGlassSurface,
-          "relative w-full origin-top overflow-visible rounded-[1.5rem] bg-white/55 p-1 shadow-[0_24px_56px_-28px_rgba(37,99,235,0.26),inset_0_1px_1px_rgba(255,255,255,0.95)] sm:rounded-[1.75rem] sm:p-1.5 dark:bg-white/10 dark:shadow-[0_28px_64px_-24px_rgba(0,0,0,0.55),inset_0_1px_1px_rgba(255,255,255,0.12)]"
+          "relative w-full origin-top overflow-visible rounded-[1.5rem] bg-white/55 p-1 shadow-[0_20px_48px_-28px_rgba(15,23,42,0.12),inset_0_1px_1px_rgba(255,255,255,0.95)] sm:rounded-[1.75rem] sm:p-1.5 dark:bg-white/10 dark:shadow-[0_24px_56px_-24px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.12)]"
         )}
       >
         <span
@@ -133,15 +129,13 @@ function SignalResult({
             "[&_.grid.grid-cols-3_p.tabular-nums]:text-[1.25rem] sm:[&_.grid.grid-cols-3_p.tabular-nums]:text-[1.7rem]",
             "[&_.grid.grid-cols-3_p.tabular-nums]:leading-none [&_.grid.grid-cols-3_p.tabular-nums]:font-bold",
             "[&_.grid.grid-cols-3_p.tabular-nums]:tracking-[-0.04em]",
-            "[&_.grid.grid-cols-3_p.tabular-nums]:[text-shadow:0_1px_0_rgba(255,255,255,0.85),0_0_28px_rgba(37,99,235,0.28)]",
-            "dark:[&_.grid.grid-cols-3_p.tabular-nums]:[text-shadow:0_1px_0_rgba(255,255,255,0.12),0_0_32px_rgba(37,99,235,0.45)]",
             "[&_.grid.grid-cols-3>div]:px-2 [&_.grid.grid-cols-3>div]:py-3 sm:[&_.grid.grid-cols-3>div]:px-3 sm:[&_.grid.grid-cols-3>div]:py-4",
             "[&_.grid.grid-cols-3]:gap-2 sm:[&_.grid.grid-cols-3]:gap-3",
             "[&_.grid.grid-cols-2_p.tabular-nums]:text-sm [&_.grid.grid-cols-2_p.tabular-nums]:font-semibold sm:[&_.grid.grid-cols-2_p.tabular-nums]:text-base",
             "[&_article]:rounded-[1.25rem] [&_article]:bg-white/70 [&_article]:shadow-none sm:[&_article]:rounded-[1.35rem] dark:[&_article]:bg-white/8"
           )}
         >
-          <ChatSignalCard ticket={ticket} className="mt-0" />
+          <ChatSignalCard ticket={ticket} className="mt-0" tone="neutral" />
         </div>
       </div>
     </div>

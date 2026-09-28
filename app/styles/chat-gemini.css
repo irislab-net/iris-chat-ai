@@ -268,10 +268,151 @@
 @keyframes gemini-orb-glass-breathe {
   0%,
   100% {
-    opacity: 0.72;
+    opacity: 0.58;
+  }
+  40% {
+    opacity: 0.88;
+  }
+  70% {
+    opacity: 0.7;
+  }
+}
+
+/* Living liquid — water wobble with soft skew (blue / glass tone). */
+@keyframes gemini-liquid-wobble-a {
+  0% {
+    transform: translate(0, 0) scale(1, 1) skewX(0deg) skewY(0deg);
+  }
+  25% {
+    transform: translate(7%, -6%) scale(1.1, 0.92) skewX(4deg) skewY(-2deg);
   }
   50% {
-    opacity: 0.92;
+    transform: translate(-5%, 5%) scale(0.92, 1.12) skewX(-3deg) skewY(3deg);
+  }
+  75% {
+    transform: translate(6%, 4%) scale(1.08, 0.94) skewX(2deg) skewY(-2deg);
+  }
+  100% {
+    transform: translate(-4%, -5%) scale(0.96, 1.06) skewX(-2deg) skewY(2deg);
+  }
+}
+
+@keyframes gemini-liquid-wobble-b {
+  0% {
+    transform: translate(0, 0) scale(1, 1) skewX(0deg) skewY(0deg);
+  }
+  25% {
+    transform: translate(-8%, 5%) scale(0.94, 1.1) skewX(-3deg) skewY(3deg);
+  }
+  50% {
+    transform: translate(6%, -7%) scale(1.12, 0.9) skewX(3deg) skewY(-2deg);
+  }
+  75% {
+    transform: translate(-6%, -4%) scale(0.96, 1.08) skewX(-2deg) skewY(2deg);
+  }
+  100% {
+    transform: translate(5%, 5%) scale(1.04, 0.96) skewX(2deg) skewY(-1deg);
+  }
+}
+
+@keyframes gemini-liquid-wobble-c {
+  0% {
+    transform: translate(0, 0) scale(0.96, 1) skewX(0deg) skewY(0deg);
+  }
+  30% {
+    transform: translate(6%, 8%) scale(1.12, 0.9) skewX(3deg) skewY(2deg);
+  }
+  55% {
+    transform: translate(-8%, -4%) scale(0.9, 1.14) skewX(-4deg) skewY(-2deg);
+  }
+  80% {
+    transform: translate(4%, -6%) scale(1.06, 0.94) skewX(2deg) skewY(2deg);
+  }
+  100% {
+    transform: translate(-3%, 5%) scale(0.98, 1.04) skewX(-1deg) skewY(-1deg);
+  }
+}
+
+@keyframes gemini-liquid-wobble-d {
+  0% {
+    transform: translate(0, 0) scale(1, 1) skewX(0deg) skewY(0deg);
+  }
+  35% {
+    transform: translate(-6%, -8%) scale(1.14, 0.88) skewX(-3deg) skewY(3deg);
+  }
+  65% {
+    transform: translate(8%, 5%) scale(0.88, 1.14) skewX(4deg) skewY(-2deg);
+  }
+  100% {
+    transform: translate(-5%, 4%) scale(1.04, 0.96) skewX(-2deg) skewY(1deg);
+  }
+}
+
+@keyframes gemini-liquid-wobble-e {
+  0% {
+    transform: translate(0, 0) scale(1.02, 0.98) skewX(0deg) skewY(0deg);
+  }
+  40% {
+    transform: translate(8%, 4%) scale(0.9, 1.1) skewX(3deg) skewY(2deg);
+  }
+  70% {
+    transform: translate(-4%, -7%) scale(1.12, 0.9) skewX(-3deg) skewY(-2deg);
+  }
+  100% {
+    transform: translate(5%, 6%) scale(0.96, 1.04) skewX(2deg) skewY(1deg);
+  }
+}
+
+@keyframes gemini-liquid-wobble-f {
+  0% {
+    transform: translate(0, 0) scale(0.94, 1.02) skewX(0deg) skewY(0deg);
+  }
+  28% {
+    transform: translate(-7%, -5%) scale(1.1, 0.92) skewX(-3deg) skewY(2deg);
+  }
+  58% {
+    transform: translate(6%, 7%) scale(0.9, 1.1) skewX(3deg) skewY(-2deg);
+  }
+  100% {
+    transform: translate(-4%, 2%) scale(1.04, 0.96) skewX(-1deg) skewY(1deg);
+  }
+}
+
+@keyframes gemini-liquid-breathe {
+  0%,
+  100% {
+    opacity: 0.42;
+  }
+  35% {
+    opacity: 0.78;
+  }
+  65% {
+    opacity: 0.55;
+  }
+}
+
+@keyframes gemini-liquid-mesh-sway {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(1.5%, -1.5%, 0) scale(1.025);
+  }
+}
+
+@keyframes gemini-glass-sheen-slide {
+  0%,
+  100% {
+    transform: translateX(-18%) skewX(-12deg);
+    opacity: 0.15;
+  }
+  45% {
+    opacity: 0.45;
+  }
+  50% {
+    transform: translateX(18%) skewX(-12deg);
+    opacity: 0.35;
   }
 }
 
@@ -307,13 +448,27 @@
   --gemini-glass-cycle-duration: 15s;
 }
 
-/* Doubled class beats `.dark .chat-gemini-bg` on specificity. */
+/*
+ * Brand blue — static palette (Start Free `#2563EB`).
+ * Orbs keep drifting for cloud/smoke motion; hue does not cycle.
+ * Doubled class beats `.dark .chat-gemini-bg` on specificity.
+ */
 .chat-gemini-bg.chat-gemini-bg-blue {
-  animation-name: gemini-glass-color-cycle-blue;
+  animation: none;
+  --gemini-glass-a: #2563eb;
+  --gemini-glass-b: #3b82f6;
+  --gemini-glass-c: #60a5fa;
+  --gemini-glass-d: #1d4ed8;
+  --gemini-dots-tone: #2563eb;
 }
 
 .dark .chat-gemini-bg.chat-gemini-bg-blue {
-  animation-name: gemini-glass-color-cycle-blue-dark;
+  animation: none;
+  --gemini-glass-a: #2563eb;
+  --gemini-glass-b: #1d4ed8;
+  --gemini-glass-c: #3b82f6;
+  --gemini-glass-d: #1e40af;
+  --gemini-dots-tone: #3b82f6;
 }
 
 /* Gemini mesh layout — proportions from reference artboard 507×764, anchored to bottom. */
@@ -326,6 +481,213 @@
   contain: paint;
   filter: blur(29px) saturate(1.22);
   filter: blur(calc(100cqw * 29 / 507)) saturate(1.22);
+}
+
+/*
+ * Liquid glass field — watery wobble + frosted sheen (blue tone).
+ * Extra orbs (e/f) live under this tone only.
+ */
+.chat-gemini-bg-blue .chat-gemini-mesh {
+  height: 64%;
+  bottom: -8%;
+  left: -4%;
+  right: -4%;
+  width: auto;
+  filter: blur(42px) saturate(1.12) contrast(1.04);
+  filter: blur(calc(100cqw * 40 / 507)) saturate(1.12) contrast(1.04);
+  animation: gemini-liquid-mesh-sway 14s ease-in-out infinite;
+  will-change: transform;
+}
+
+.chat-gemini-bg-blue .chat-gemini-bg-top-fade {
+  height: 36% !important;
+  opacity: 0.9;
+}
+
+.chat-gemini-bg-blue .chat-gemini-bg-bottom-fade {
+  height: 34% !important;
+}
+
+.chat-gemini-bg-blue .chat-gemini-orb {
+  border-radius: 48% 52% 50% 50% / 52% 48% 52% 48%;
+  background: radial-gradient(
+    ellipse 70% 65% at 42% 38%,
+    color-mix(in oklab, var(--gemini-glass-tone, var(--gemini-glass-a)) 72%, white)
+      0%,
+    color-mix(in oklab, var(--gemini-glass-tone, var(--gemini-glass-a)) 42%, transparent)
+      38%,
+    color-mix(in oklab, var(--gemini-glass-tone, var(--gemini-glass-a)) 14%, transparent)
+      68%,
+    transparent 100%
+  );
+}
+
+.dark .chat-gemini-bg-blue .chat-gemini-orb {
+  background: radial-gradient(
+    ellipse 70% 65% at 42% 38%,
+    color-mix(in oklab, var(--gemini-glass-tone, var(--gemini-glass-a)) 58%, white)
+      0%,
+    color-mix(in oklab, var(--gemini-glass-tone, var(--gemini-glass-a)) 36%, transparent)
+      38%,
+    color-mix(in oklab, var(--gemini-glass-tone, var(--gemini-glass-a)) 12%, transparent)
+      68%,
+    transparent 100%
+  );
+}
+
+.chat-gemini-bg-blue .chat-gemini-orb-a {
+  width: 72%;
+  height: 82%;
+  bottom: -10%;
+  left: -24%;
+  animation:
+    gemini-liquid-wobble-a 11s ease-in-out infinite alternate,
+    gemini-liquid-breathe 8s ease-in-out infinite;
+}
+
+.chat-gemini-bg-blue .chat-gemini-orb-b {
+  width: 60%;
+  height: 70%;
+  bottom: -10%;
+  left: 52%;
+  animation:
+    gemini-liquid-wobble-b 9s ease-in-out infinite alternate,
+    gemini-liquid-breathe 10s ease-in-out infinite;
+  animation-delay: -3s, -2s;
+}
+
+.chat-gemini-bg-blue .chat-gemini-orb-c {
+  width: 50%;
+  height: 58%;
+  bottom: 24%;
+  left: 22%;
+  animation:
+    gemini-liquid-wobble-c 13s ease-in-out infinite alternate,
+    gemini-liquid-breathe 7s ease-in-out infinite;
+  animation-delay: -5s, -4s;
+}
+
+.chat-gemini-bg-blue .chat-gemini-orb-d {
+  width: 42%;
+  height: 48%;
+  bottom: 22%;
+  left: 34%;
+  animation:
+    gemini-liquid-wobble-d 8s ease-in-out infinite alternate,
+    gemini-liquid-breathe 6.5s ease-in-out infinite;
+  animation-delay: -1.5s, -1s;
+}
+
+.chat-gemini-bg-blue .chat-gemini-orb-e {
+  width: 48%;
+  height: 52%;
+  bottom: -2%;
+  left: 18%;
+  --gemini-glass-tone: var(--gemini-glass-b);
+  animation:
+    gemini-liquid-wobble-e 10s ease-in-out infinite alternate,
+    gemini-liquid-breathe 9s ease-in-out infinite;
+  animation-delay: -6s, -3.5s;
+}
+
+.chat-gemini-bg-blue .chat-gemini-orb-f {
+  width: 38%;
+  height: 42%;
+  bottom: 28%;
+  left: 44%;
+  --gemini-glass-tone: var(--gemini-glass-c);
+  animation:
+    gemini-liquid-wobble-f 9.5s ease-in-out infinite alternate,
+    gemini-liquid-breathe 7.5s ease-in-out infinite;
+  animation-delay: -2.5s, -5s;
+}
+
+/* Keep staggered liquid tempos — don't flatten to active's shared duration. */
+.chat-gemini-bg-blue.chat-gemini-bg-active .chat-gemini-orb-a {
+  animation-duration: 11s, 8s;
+}
+
+.chat-gemini-bg-blue.chat-gemini-bg-active .chat-gemini-orb-b {
+  animation-duration: 9s, 10s;
+}
+
+.chat-gemini-bg-blue.chat-gemini-bg-active .chat-gemini-orb-c {
+  animation-duration: 13s, 7s;
+}
+
+.chat-gemini-bg-blue.chat-gemini-bg-active .chat-gemini-orb-d {
+  animation-duration: 8s, 6.5s;
+}
+
+.chat-gemini-bg-blue.chat-gemini-bg-active .chat-gemini-orb-e {
+  animation-duration: 10s, 9s;
+}
+
+.chat-gemini-bg-blue.chat-gemini-bg-active .chat-gemini-orb-f {
+  animation-duration: 9.5s, 7.5s;
+}
+
+.chat-gemini-bg-blue.chat-gemini-bg-loading .chat-gemini-orb {
+  animation-duration: 5s, 4s !important;
+}
+
+/* Frosted glass plate + moving specular sheen over the liquid field. */
+.chat-gemini-glass-plate {
+  background: linear-gradient(
+    to top,
+    color-mix(in oklab, white 22%, transparent) 0%,
+    color-mix(in oklab, white 8%, transparent) 42%,
+    transparent 78%
+  );
+  backdrop-filter: blur(1.5px) saturate(1.15);
+  -webkit-backdrop-filter: blur(1.5px) saturate(1.15);
+  pointer-events: none;
+}
+
+.dark .chat-gemini-glass-plate {
+  background: linear-gradient(
+    to top,
+    color-mix(in oklab, black 28%, transparent) 0%,
+    color-mix(in oklab, black 10%, transparent) 42%,
+    transparent 78%
+  );
+}
+
+.chat-gemini-glass-sheen {
+  background: linear-gradient(
+    118deg,
+    transparent 28%,
+    color-mix(in oklab, white 55%, transparent) 48%,
+    transparent 64%
+  );
+  mix-blend-mode: soft-light;
+  animation: gemini-glass-sheen-slide 9s ease-in-out infinite;
+  will-change: transform, opacity;
+  pointer-events: none;
+}
+
+.dark .chat-gemini-glass-sheen {
+  background: linear-gradient(
+    118deg,
+    transparent 28%,
+    color-mix(in oklab, white 28%, transparent) 48%,
+    transparent 64%
+  );
+}
+
+.chat-gemini-glass-rim {
+  background: linear-gradient(
+    to right,
+    transparent,
+    color-mix(in oklab, white 70%, transparent),
+    transparent
+  );
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.dark .chat-gemini-glass-rim {
+  opacity: 0.28;
 }
 
 /*
@@ -349,6 +711,17 @@
   bottom: -8%;
   margin-inline: auto;
   filter: blur(min(32px, calc(100cqw * 29 / 507))) saturate(1.22);
+}
+
+.chat-gemini-bg-hero.chat-gemini-bg-blue .chat-gemini-mesh {
+  left: -4%;
+  right: -4%;
+  width: auto;
+  height: 74%;
+  bottom: -10%;
+  margin-inline: 0;
+  filter: blur(min(42px, calc(100cqw * 38 / 507))) saturate(1.12) contrast(1.04);
+  animation: gemini-liquid-mesh-sway 14s ease-in-out infinite;
 }
 
 .chat-gemini-bg-top-fade {
@@ -529,6 +902,23 @@ html.display-standalone[data-keyboard-open="true"]
     transparent 0%,
     black 28%,
     black 58%,
+    transparent 100%
+  );
+}
+
+.chat-gemini-bg-blue .chat-gemini-pattern {
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    black 24%,
+    black 62%,
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    black 24%,
+    black 62%,
     transparent 100%
   );
 }
@@ -748,6 +1138,8 @@ html.display-standalone[data-keyboard-open="true"]
   .chat-gemini-mesh-intro,
   .chat-gemini-orb,
   .chat-gemini-dots,
+  .chat-gemini-bg-blue .chat-gemini-mesh,
+  .chat-gemini-glass-sheen,
   .chat-empty-hero-mark,
   .chat-empty-hero-title,
   .chat-empty-hero-shell,

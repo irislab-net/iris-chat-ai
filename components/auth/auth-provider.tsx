@@ -110,13 +110,18 @@ function whenIdle(task: () => void) {
 }
 
 function AuthProvider({ children }: { children: React.ReactNode }) {
-  const isOAuthPopupCallback =
+  const isAuthSuccessRoute =
     typeof window !== "undefined" &&
-    Boolean(window.opener && !window.opener.closed) &&
     window.location.pathname.startsWith("/auth/success")
+  const isOAuthPopupCallback =
+    isAuthSuccessRoute &&
+    Boolean(window.opener && !window.opener.closed)
 
   const [user, setUser] = React.useState<User | null>(null)
-  const [loading, setLoading] = React.useState(!isOAuthPopupCallback)
+  // /auth/success owns session establish — don't spin global loading/skeleton.
+  const [loading, setLoading] = React.useState(
+    !isAuthSuccessRoute && !isOAuthPopupCallback
+  )
   const [loginPending, setLoginPending] = React.useState(false)
   const [consentOpen, setConsentOpen] = React.useState(false)
   const loginAttemptInFlight = React.useRef<Promise<void> | null>(null)
@@ -202,9 +207,9 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [user?.id])
 
   React.useEffect(() => {
-    // OAuth popup: cookie is set by the API; opener will refresh once.
-    // Bootstrapping here races the opener and triggers refresh-token reuse detection.
-    if (isOAuthPopupCallback) return
+    // /auth/success owns cookie→session exchange. Bootstrapping here races it
+    // and can trip refresh-token reuse detection (stuck Connecting screen).
+    if (isAuthSuccessRoute || isOAuthPopupCallback) return
 
     let cancelled = false
 
@@ -268,12 +273,13 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => {
       cancelled = true
     }
-  }, [isOAuthPopupCallback])
+  }, [isAuthSuccessRoute, isOAuthPopupCallback])
 
   // iOS PWA: Google OAuth often completes in Safari. When the user returns to
   // the Home Screen app, re-read the shared refresh cookie.
   React.useEffect(() => {
-    if (isOAuthPopupCallback || isMarketingDocument()) return
+    if (isAuthSuccessRoute || isOAuthPopupCallback || isMarketingDocument())
+      return
     if (!isStandaloneDisplay()) return
 
     let cancelled = false
@@ -324,7 +330,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
       window.removeEventListener("pageshow", onPageShow)
       document.removeEventListener("visibilitychange", onVisibility)
     }
-  }, [isOAuthPopupCallback, user?.id])
+  }, [isAuthSuccessRoute, isOAuthPopupCallback, user?.id])
 
   React.useEffect(() => {
     function onSessionExpired() {
@@ -471,6 +477,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     !user &&
     !loginPending &&
     !consentOpen &&
+    !isAuthSuccessRoute &&
     !isOAuthPopupCallback &&
     // FedCM / One Tap is unreliable in installed PWAs (esp. iOS Safari).
     !isStandaloneDisplay() &&
