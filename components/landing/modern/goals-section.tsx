@@ -149,7 +149,7 @@ export function GoalsSection() {
                 aria-hidden
                 className={cn(
                   landingGlassSheen,
-                  "absolute inset-0 rounded-[32px]"
+                  "absolute inset-0 rounded-8"
                 )}
               />
               <svg

@@ -90,7 +90,7 @@ function PreferenceRow({
         >
           {title}
         </p>
-        <p className="mt-1 text-[12px] leading-relaxed text-muted-foreground">
+        <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
           {hint}
         </p>
       </div>

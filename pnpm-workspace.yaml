@@ -36,4 +36,4 @@ overrides:
   recast: "0.23.21"
 
 patchedDependencies:
-  lucide-react@1.47.0: patches/lucide-react@1.47.0.patch
+  lucide-react@1.48.0: patches/lucide-react@1.48.0.patch

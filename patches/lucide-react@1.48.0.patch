@@ -1,5 +1,5 @@
 diff --git a/dist/cjs/lucide-react.js b/dist/cjs/lucide-react.js
-index 4024c6578dc0f96a1d298cf8685579994932a982..0f201ec07f9485346d70fef9de261e6e35127580 100644
+index d822356052f5d7478413fdc67fb8a989a3ba2258..32bbac8ae1e7b925ace6a7dbdc47ab3243ff4f89 100644
 --- a/dist/cjs/lucide-react.js
 +++ b/dist/cjs/lucide-react.js
 @@ -10,7 +10,8 @@
@@ -13,7 +13,7 @@ index 4024c6578dc0f96a1d298cf8685579994932a982..0f201ec07f9485346d70fef9de261e6e
    height: 24,
    viewBox: "0 0 24 24",
 diff --git a/dist/esm/shared/src/build/defaultAttributes.mjs b/dist/esm/shared/src/build/defaultAttributes.mjs
-index 440515682ab46d3965e9faa8e290643af9f5b62f..9b887839004dd34cc4502f29072cab17dd68fa04 100644
+index 8723db68626b57498e1ec7480917873c34541723..ac6a4107854da3eaad7163df012ffd4958bb4316 100644
 --- a/dist/esm/shared/src/build/defaultAttributes.mjs
 +++ b/dist/esm/shared/src/build/defaultAttributes.mjs
 @@ -6,7 +6,8 @@

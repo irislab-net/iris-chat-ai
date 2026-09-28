@@ -54,7 +54,7 @@ function ChatNoTradeCard({
             <h3 className="text-lg font-semibold tracking-[-0.03em] text-foreground">
               {t("noTradeTitle")}
             </h3>
-            <p className="mt-0.5 text-[12px] leading-snug text-muted-foreground">
+            <p className="mt-0.5 text-xs leading-snug text-muted-foreground">
               {t("noTradeSubtitle")}
             </p>
           </div>

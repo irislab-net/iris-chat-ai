@@ -87,7 +87,7 @@ const chatMobileEmptyHeroContentClass =
 const chatMobileEmptyHeroMarkClass = "chat-empty-hero-mark"
 
 const chatMobileEmptyHeroTitleClass =
-  "chat-empty-hero-title max-w-[20rem] text-balance text-[28px] font-light leading-[34px] tracking-[0.01em] text-foreground"
+  "chat-empty-hero-title max-w-[20rem] text-balance text-[28px] font-light leading-8.5 tracking-[0.01em] text-foreground"
 
 const chatMobileThreadClass = "px-6 pt-6 pb-6"
 
@@ -142,13 +142,13 @@ const chatMobileComposerDockClass =
 
 /** User bubble — Messages continuous ~22pt + Body 17/22. */
 const chatMobileUserBubbleClass =
-  "chat-continuous w-full rounded-[22px] border-0 bg-[#F9F9F9] px-5 py-3.5 text-[17px] font-normal leading-[22px] tracking-[-0.024em] text-foreground shadow-none dark:bg-secondary dark:text-secondary-foreground"
+  "chat-continuous w-full rounded-[22px] border-0 bg-[#F9F9F9] px-5 py-3.5 text-[17px] font-normal leading-5.5 tracking-[-0.024em] text-foreground shadow-none dark:bg-secondary dark:text-secondary-foreground"
 
 const chatMobileUserBubbleInteractiveClass = `${chatMobileUserBubbleClass} outline-none transition-colors duration-150 hover:bg-[#F5F5F5] focus-within:bg-[#F5F5F5] dark:hover:bg-secondary/90 dark:focus-within:bg-secondary/90`
 
 /** Assistant prose shell — matches iOS Body; AIMessageRenderer owns detailed type. */
 const chatMobileAssistantClass =
-  "text-[17px] font-normal leading-[22px] tracking-[-0.024em] text-foreground [&_p]:mb-3 [&_p:last-child]:mb-0"
+  "text-[17px] font-normal leading-5.5 tracking-[-0.024em] text-foreground [&_p]:mb-3 [&_p:last-child]:mb-0"
 
 const chatMobileComposerShellClass =
   "relative shrink-0 bg-transparent px-6 pt-1.5 pb-[max(0.375rem,env(safe-area-inset-bottom,0px))]"
@@ -174,7 +174,7 @@ const chatMobileComposerTrailingClass =
   "[grid-area:trailing] flex h-11 shrink-0 items-center justify-end"
 
 const chatMobileComposerTextareaClass =
-  "chat-bidi w-full min-w-0 flex-1 field-sizing-content resize-none rounded-none border-0 bg-transparent px-2.5 text-[17px] font-normal leading-[22px] tracking-[-0.024em] break-words text-foreground shadow-none placeholder:text-muted-foreground/45 focus-visible:border-transparent focus-visible:ring-0 disabled:cursor-not-allowed disabled:bg-transparent disabled:opacity-100 dark:bg-transparent dark:disabled:bg-transparent dark:placeholder:text-muted-foreground/40"
+  "chat-bidi w-full min-w-0 flex-1 field-sizing-content resize-none rounded-none border-0 bg-transparent px-2.5 text-[17px] font-normal leading-5.5 tracking-[-0.024em] break-words text-foreground shadow-none placeholder:text-muted-foreground/45 focus-visible:border-transparent focus-visible:ring-0 disabled:cursor-not-allowed disabled:bg-transparent disabled:opacity-100 dark:bg-transparent dark:disabled:bg-transparent dark:placeholder:text-muted-foreground/40"
 
 const chatMobileComposerTextareaCompactClass =
   "h-11 min-h-11 max-h-11 w-full self-center py-0 overflow-hidden leading-11 [field-sizing:fixed]"
@@ -220,16 +220,16 @@ const chatSamplePromptButtonClass =
 
 /** Nested icon well — concentric ≈ 28 − 16 padding → 12pt. */
 const chatSamplePromptIconClass =
-  "chat-continuous mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-[12px] bg-white/50 shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_82%,transparent),0_1px_2px_color-mix(in_oklch,var(--foreground)_4%,transparent)] backdrop-blur-md backdrop-saturate-150 text-muted-foreground dark:bg-white/[0.1] sm:size-9 lg:size-7 lg:rounded-[10px]"
+  "chat-continuous mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-3 bg-white/50 shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_82%,transparent),0_1px_2px_color-mix(in_oklch,var(--foreground)_4%,transparent)] backdrop-blur-md backdrop-saturate-150 text-muted-foreground dark:bg-white/[0.1] sm:size-9 lg:size-7 lg:rounded-2.5"
 
 const chatSamplePromptTextClass =
   "flex min-w-0 flex-1 flex-col items-start gap-0.5 text-start lg:gap-0.5"
 
 const chatSamplePromptTitleClass =
-  "w-full text-[16px] font-medium leading-[21px] tracking-[-0.02em] text-foreground sm:text-[16px] lg:text-[15px] lg:leading-[20px]"
+  "w-full text-base font-medium leading-5.25 tracking-[-0.02em] text-foreground sm:text-base lg:text-[15px] lg:leading-5"
 
 const chatSamplePromptDescriptionClass =
-  "w-full line-clamp-2 text-pretty text-[13px] font-light leading-[18px] tracking-[-0.006em] break-words text-muted-foreground sm:text-[13px] sm:leading-[18px] lg:text-[13px] lg:leading-[18px]"
+  "w-full line-clamp-2 text-pretty text-[13px] font-light leading-4.5 tracking-[-0.006em] break-words text-muted-foreground sm:text-[13px] sm:leading-4.5 lg:text-[13px] lg:leading-4.5"
 
 const chatEmptyHeroPromptsClass =
   "chat-empty-hero-prompts mt-1 flex w-full min-w-0 self-stretch flex-col items-center gap-2"
@@ -265,9 +265,9 @@ const chatComposerToolChipClass =
 const chatComposerToolChipCloseClass =
   "flex shrink-0 items-center justify-center rounded-full text-[#1D4ED8]/55 transition-[color,background-color,transform] duration-150 hover:bg-[#2563EB]/12 hover:text-[#1D4ED8] active:scale-95 dark:text-[#93C5FD]/70 dark:hover:bg-[#2563EB]/28 dark:hover:text-[#93C5FD]"
 
-const chatMobileComposerToolChipClass = `${chatComposerToolChipClass} h-7 gap-1.5 rounded-full px-2.5 py-0 text-[13px] leading-[18px] tracking-[-0.006em]`
+const chatMobileComposerToolChipClass = `${chatComposerToolChipClass} h-7 gap-1.5 rounded-full px-2.5 py-0 text-[13px] leading-4.5 tracking-[-0.006em]`
 
-const chatDesktopComposerToolChipClass = `${chatComposerToolChipClass} mt-0.5 h-7 gap-1.5 rounded-full px-2.5 py-0 text-[13px] leading-[18px] tracking-[-0.006em]`
+const chatDesktopComposerToolChipClass = `${chatComposerToolChipClass} mt-0.5 h-7 gap-1.5 rounded-full px-2.5 py-0 text-[13px] leading-4.5 tracking-[-0.006em]`
 
 const chatMobileComposerToolChipCloseClass = `${chatComposerToolChipCloseClass} size-4`
 
@@ -285,19 +285,19 @@ const chatHistoryRailGlassItemClass = `border-0 bg-transparent text-foreground s
 
 const chatHistoryRailGlassItemActiveClass = chatActiveFillClass
 
-const chatHistoryRailNavItemClass = `chat-continuous h-9 w-full justify-start gap-2.5 rounded-[16px] px-3 text-sm font-normal shadow-none ${chatHistoryRailGlassItemClass}`
+const chatHistoryRailNavItemClass = `chat-continuous h-9 w-full justify-start gap-2.5 rounded-4 px-3 text-sm font-normal shadow-none ${chatHistoryRailGlassItemClass}`
 
 const chatHistoryRailSectionLabelClass =
   "px-3 pb-1.5 text-[11px] font-light tracking-normal text-muted-foreground/75 lowercase"
 
-const chatHistoryRailChatItemClass = `chat-continuous group/item relative flex min-w-0 items-center gap-1 rounded-[16px] ${chatHistoryRailGlassItemClass}`
+const chatHistoryRailChatItemClass = `chat-continuous group/item relative flex min-w-0 items-center gap-1 rounded-4 ${chatHistoryRailGlassItemClass}`
 
 const chatHistoryRailChatItemPadClass = "px-1 py-0.5"
 
-const chatMobileDrawerNavItemClass = `chat-continuous h-11 w-full justify-start gap-3 rounded-[16px] px-3 text-[15px] font-normal shadow-none ${chatHistoryRailGlassItemClass}`
+const chatMobileDrawerNavItemClass = `chat-continuous h-11 w-full justify-start gap-3 rounded-4 px-3 text-[15px] font-normal shadow-none ${chatHistoryRailGlassItemClass}`
 
 const chatMobileDrawerSectionLabelClass =
-  "px-3 pb-1.5 text-[12px] font-light tracking-normal text-muted-foreground/80 lowercase"
+  "px-3 pb-1.5 text-xs font-light tracking-normal text-muted-foreground/80 lowercase"
 
 const chatMobileDrawerUpgradeClass = `h-11 shrink-0 rounded-full px-5 text-[15px] font-medium ${chatLandingAccentFillClass}`
 
@@ -354,7 +354,7 @@ const chatMobileSheetSectionLabelClass =
   "text-[13px] font-normal tracking-wide text-muted-foreground uppercase"
 
 /** Sheet inner cards — concentric ≈ 34 − 14 padding → 20pt. */
-const chatMobileSheetCardClass = `chat-continuous rounded-[20px] border-0 px-3.5 py-3 ${chatMobileGlassSurfaceClass}`
+const chatMobileSheetCardClass = `chat-continuous rounded-5 border-0 px-3.5 py-3 ${chatMobileGlassSurfaceClass}`
 
 const chatMobileSheetFooterClass = "mt-auto gap-0 border-0 !p-0"
 
@@ -384,7 +384,7 @@ const chatDesktopDialogClass = chatLoginConsentDialogClass
 const chatDesktopSearchDialogClass =
   "chat-continuous flex w-full max-w-[calc(100%-2rem)] flex-col gap-0 overflow-hidden rounded-[34px] border-0 bg-white/78 p-0 text-foreground shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_75%,transparent),0_24px_64px_-24px_color-mix(in_oklch,var(--foreground)_22%,transparent)] ring-0 backdrop-blur-2xl backdrop-saturate-[180%] supports-[backdrop-filter]:bg-white/62 sm:max-w-xl dark:bg-white/[0.08] dark:shadow-[inset_0_1px_0_0_color-mix(in_oklch,var(--foreground)_10%,transparent),0_24px_64px_-24px_color-mix(in_oklch,black_50%,transparent)] dark:supports-[backdrop-filter]:bg-white/[0.06]"
 
-const chatDesktopDialogInputClass = `chat-continuous h-10 w-full rounded-[12px] border-0 px-3 text-sm text-foreground shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_70%,transparent)] backdrop-blur-xl ${chatMobileGlassSurfaceClass} placeholder:text-muted-foreground/50 focus-visible:ring-2 focus-visible:ring-foreground/15 dark:placeholder:text-muted-foreground/40`
+const chatDesktopDialogInputClass = `chat-continuous h-10 w-full rounded-3 border-0 px-3 text-sm text-foreground shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_70%,transparent)] backdrop-blur-xl ${chatMobileGlassSurfaceClass} placeholder:text-muted-foreground/50 focus-visible:ring-2 focus-visible:ring-foreground/15 dark:placeholder:text-muted-foreground/40`
 
 const chatDesktopDialogFooterClass =
   "mx-0 mb-0 gap-2 rounded-none border-0 bg-transparent p-4 pt-2 sm:justify-end"
@@ -409,17 +409,17 @@ const chatMobileToolsMenuClass = [
 
 /** Section label — Caption 2, sentence case (iOS 26). */
 const chatMobileToolsMenuLabelClass =
-  "px-3 pb-1 pt-1.5 text-[11px] font-medium leading-[13px] tracking-[0.006em] text-muted-foreground"
+  "px-3 pb-1 pt-1.5 text-[11px] font-medium leading-3.25 tracking-[0.006em] text-muted-foreground"
 
 /** Nested menu row — concentric ≈ 34 − 10 padding → 20–22pt continuous. */
 const chatMobileToolsMenuItemClass =
   "chat-continuous flex w-full flex-col items-start gap-0.5 rounded-[22px] px-3 py-2.5 text-start transition-colors duration-150 hover:bg-[rgba(118,118,128,0.12)] data-highlighted:bg-[rgba(118,118,128,0.12)] data-[selected=true]:bg-[rgba(120,120,128,0.16)] dark:hover:bg-[rgba(118,118,128,0.24)] dark:data-highlighted:bg-[rgba(118,118,128,0.24)] dark:data-[selected=true]:bg-[rgba(120,120,128,0.32)]"
 
 const chatMobileToolsMenuItemTitleClass =
-  "text-[15px] font-medium leading-[20px] tracking-[-0.016em] text-foreground"
+  "text-[15px] font-medium leading-5 tracking-[-0.016em] text-foreground"
 
 const chatMobileToolsMenuItemDescClass =
-  "text-[13px] font-normal leading-[18px] tracking-[-0.006em] text-muted-foreground"
+  "text-[13px] font-normal leading-4.5 tracking-[-0.006em] text-muted-foreground"
 
 /**
  * Trade signal card — frosted plate, no hairline rims; depth from soft shadows only.
@@ -436,7 +436,7 @@ const chatSignalCardShortWashClass =
   "before:pointer-events-none before:absolute before:inset-0 before:-z-10 before:rounded-[inherit] before:bg-[radial-gradient(120%_80%_at_0%_0%,rgba(244,63,94,0.16),transparent_55%),radial-gradient(90%_60%_at_100%_0%,rgba(37,99,235,0.08),transparent_50%),linear-gradient(180deg,rgba(255,255,255,0.55)_0%,transparent_42%)] before:content-[''] dark:before:bg-[radial-gradient(120%_80%_at_0%_0%,rgba(251,113,133,0.18),transparent_55%),radial-gradient(90%_60%_at_100%_0%,rgba(96,165,250,0.1),transparent_50%),linear-gradient(180deg,rgba(255,255,255,0.06)_0%,transparent_40%)]"
 
 const chatSignalCardInsetClass =
-  "chat-continuous rounded-[16px] border-0 bg-black/[0.02] p-2 shadow-[inset_0_2px_10px_-6px_color-mix(in_oklch,var(--foreground)_5%,transparent),0_1px_0_0_color-mix(in_oklch,white_45%,transparent)] backdrop-blur-xl backdrop-saturate-150 supports-[backdrop-filter]:bg-black/[0.015] dark:bg-white/[0.03] dark:shadow-[inset_0_2px_12px_-6px_color-mix(in_oklch,black_28%,transparent),0_1px_0_0_color-mix(in_oklch,white_4%,transparent)] dark:supports-[backdrop-filter]:bg-white/[0.025]"
+  "chat-continuous rounded-4 border-0 bg-black/[0.02] p-2 shadow-[inset_0_2px_10px_-6px_color-mix(in_oklch,var(--foreground)_5%,transparent),0_1px_0_0_color-mix(in_oklch,white_45%,transparent)] backdrop-blur-xl backdrop-saturate-150 supports-[backdrop-filter]:bg-black/[0.015] dark:bg-white/[0.03] dark:shadow-[inset_0_2px_12px_-6px_color-mix(in_oklch,black_28%,transparent),0_1px_0_0_color-mix(in_oklch,white_4%,transparent)] dark:supports-[backdrop-filter]:bg-white/[0.025]"
 
 const chatSignalCardChipClass =
   "inline-flex items-center gap-1 rounded-full border-0 bg-white/70 px-2.5 py-1 text-[11px] font-medium tracking-[0.03em] text-muted-foreground shadow-[0_1px_3px_color-mix(in_oklch,var(--foreground)_6%,transparent),0_4px_12px_-6px_color-mix(in_oklch,var(--foreground)_8%,transparent)] backdrop-blur-md supports-[backdrop-filter]:bg-white/55 dark:bg-white/[0.12] dark:shadow-[0_1px_3px_color-mix(in_oklch,black_30%,transparent),0_4px_14px_-6px_color-mix(in_oklch,black_35%,transparent)] dark:supports-[backdrop-filter]:bg-white/[0.1]"
@@ -476,7 +476,7 @@ const chatNewsGlassCardClass =
   "chat-continuous relative isolate overflow-hidden rounded-[28px] border-0 bg-[oklch(0.97_0_0_/0.72)] text-foreground shadow-none backdrop-blur-2xl backdrop-saturate-[180%] supports-[backdrop-filter]:bg-[oklch(0.97_0_0_/0.55)] dark:bg-[oklch(0.26_0_0_/0.72)] dark:shadow-none dark:backdrop-blur-2xl dark:supports-[backdrop-filter]:bg-[oklch(0.26_0_0_/0.55)]"
 const chatNewsGlassInsetClass = chatSignalCardInsetClass
 const chatNewsGlassTileClass =
-  "chat-continuous rounded-[16px] border-0 bg-foreground/[0.035] shadow-none backdrop-blur-md backdrop-saturate-150 supports-[backdrop-filter]:bg-foreground/[0.028] dark:bg-white/[0.06] dark:shadow-none dark:supports-[backdrop-filter]:bg-white/[0.045]"
+  "chat-continuous rounded-4 border-0 bg-foreground/[0.035] shadow-none backdrop-blur-md backdrop-saturate-150 supports-[backdrop-filter]:bg-foreground/[0.028] dark:bg-white/[0.06] dark:shadow-none dark:supports-[backdrop-filter]:bg-white/[0.045]"
 const chatNewsGlassChipClass =
   "inline-flex items-center gap-1 rounded-full border-0 bg-white/70 px-2.5 py-1 text-[11px] font-medium tracking-[0.03em] text-muted-foreground shadow-none backdrop-blur-md supports-[backdrop-filter]:bg-white/55 dark:bg-white/[0.12] dark:shadow-none dark:supports-[backdrop-filter]:bg-white/[0.1]"
 

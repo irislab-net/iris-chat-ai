@@ -840,7 +840,7 @@ function ConversationRowSkeleton({ compact = false }: { compact?: boolean }) {
   return (
     <div
       className={cn(
-        "chat-skeleton-shimmer w-full rounded-[16px]",
+        "chat-skeleton-shimmer w-full rounded-4",
         compact ? "h-11" : "h-9"
       )}
       aria-busy="true"
@@ -934,8 +934,8 @@ function ConversationRow({
         className={cn(
           "min-w-0 flex-1 justify-start text-start font-normal shadow-none hover:bg-transparent",
           compact
-            ? "h-11 gap-0 rounded-[16px] px-4 pe-1 text-[15px]"
-            : "h-9 gap-2.5 rounded-[16px] px-2 text-sm"
+            ? "h-11 gap-0 rounded-4 px-4 pe-1 text-[15px]"
+            : "h-9 gap-2.5 rounded-4 px-2 text-sm"
         )}
         onClick={onSelect}
       >

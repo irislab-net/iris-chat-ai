@@ -132,7 +132,7 @@ function ChatMobileComposerSkeleton() {
         chatMobileComposerShellClass
       )}
     >
-      <Bone stagger={3} className="h-16 w-full rounded-[32px]" />
+      <Bone stagger={3} className="h-16 w-full rounded-8" />
     </form>
   )
 }

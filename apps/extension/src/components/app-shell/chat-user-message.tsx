@@ -168,7 +168,7 @@ function ChatUserTurn({
   )
 
   const timestamp = createdAt ? (
-    <p className="min-w-0 truncate text-[11px] leading-[13px] tracking-[0.006em] text-muted-foreground/80">
+    <p className="min-w-0 truncate text-[11px] leading-3.25 tracking-[0.006em] text-muted-foreground/80">
       {formatChatTime(createdAt, locale)}
     </p>
   ) : null

@@ -182,13 +182,13 @@ function LoginWizard() {
 
       <main className="relative z-10 flex flex-1 flex-col items-center justify-center px-4 pb-28 pt-4 sm:px-6 sm:pb-32">
         <div className="mb-8 max-w-md text-center sm:mb-10">
-          <p className="text-[12px] font-medium tracking-[0.08em] text-muted-foreground uppercase">
+          <p className="text-xs font-medium tracking-[0.08em] text-muted-foreground uppercase">
             {t("secureSignInWithGoogle")}
           </p>
           <h1 className="mt-2 text-[1.85rem] leading-[1.1] font-semibold tracking-[-0.03em] text-foreground sm:text-[2.15rem]">
             {t("continueWithGoogle")}
           </h1>
-          <p className="mt-3 text-[14px] leading-relaxed text-pretty text-muted-foreground">
+          <p className="mt-3 text-sm leading-relaxed text-pretty text-muted-foreground">
             {t("loginConsentDescription")}
           </p>
         </div>
@@ -214,7 +214,7 @@ function LoginWizard() {
                 <p className="text-[15px] leading-none font-semibold tracking-[-0.02em] text-foreground">
                   Exur
                 </p>
-                <p className="mt-1.5 text-[12px] leading-none text-muted-foreground">
+                <p className="mt-1.5 text-xs leading-none text-muted-foreground">
                   {t("secureSignInWithGoogle")}
                 </p>
               </div>

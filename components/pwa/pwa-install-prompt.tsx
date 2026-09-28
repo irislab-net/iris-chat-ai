@@ -242,7 +242,7 @@ function IosInstallSteps() {
             >
               <Icon className={iosStepIconClass} />
             </IosStepIconBadge>
-            <p className="min-w-0 flex-1 text-[14px] leading-snug font-light tracking-[-0.015em] text-foreground">
+            <p className="min-w-0 flex-1 text-sm leading-snug font-light tracking-[-0.015em] text-foreground">
               {step.label}
             </p>
           </li>
@@ -409,7 +409,7 @@ function PwaInstallNudge({
           <Button
             type="button"
             variant="ghost"
-            className="h-10 w-full rounded-full text-[14px] text-muted-foreground"
+            className="h-10 w-full rounded-full text-sm text-muted-foreground"
             onClick={onDismiss}
           >
             {t("installNotNow")}

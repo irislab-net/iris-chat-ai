@@ -11,7 +11,7 @@ const chatUserTurnActionsRevealClass =
 
 /** User bubble — Messages continuous 22pt; denser desktop keeps same radius. */
 const chatUserBubbleClass =
-  "chat-continuous rounded-[22px] border-0 bg-white px-5 py-3.5 text-[17px] font-normal leading-[22px] tracking-[-0.024em] text-foreground shadow-none outline-none transition-colors duration-150 hover:bg-[#FAFAFA] focus-within:bg-[#FAFAFA] sm:px-6 sm:py-4 sm:text-[15px] sm:leading-[20px] sm:tracking-[-0.016em] [&::selection]:bg-foreground/10 dark:bg-secondary dark:text-foreground dark:hover:bg-secondary/90 dark:focus-within:bg-secondary/90 dark:[&::selection]:bg-foreground/15"
+  "chat-continuous rounded-[22px] border-0 bg-white px-5 py-3.5 text-[17px] font-normal leading-5.5 tracking-[-0.024em] text-foreground shadow-none outline-none transition-colors duration-150 hover:bg-[#FAFAFA] focus-within:bg-[#FAFAFA] sm:px-6 sm:py-4 sm:text-[15px] sm:leading-5 sm:tracking-[-0.016em] [&::selection]:bg-foreground/10 dark:bg-secondary dark:text-foreground dark:hover:bg-secondary/90 dark:focus-within:bg-secondary/90 dark:[&::selection]:bg-foreground/15"
 
 const chatUserBubbleInlineActionClass =
   "size-7 text-muted-foreground transition-colors duration-150 hover:bg-[rgba(118,118,128,0.12)] hover:text-foreground dark:text-muted-foreground dark:hover:bg-[rgba(118,118,128,0.24)] dark:hover:text-foreground"
