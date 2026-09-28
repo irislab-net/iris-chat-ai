@@ -296,7 +296,7 @@ function IrisFollowUpPrompts({
   if (prompts.length === 0) return null
   return (
     <div className="flex w-full flex-col gap-2.5">
-      <p className="px-0.5 text-[11px] font-medium tracking-[0.14em] text-muted-foreground uppercase">
+      <p className="px-0.5 text-xs font-medium tracking-[0.08em] text-muted-foreground uppercase">
         {t("continueWith")}
       </p>
       <div className="flex w-full flex-col gap-2">
@@ -309,7 +309,7 @@ function IrisFollowUpPrompts({
             dir="auto"
             className={cn(
               chatSamplePromptButtonClass,
-              "h-auto gap-3 px-4 py-3.5 text-[13px] leading-snug font-medium whitespace-normal text-foreground disabled:opacity-50"
+              "h-auto gap-3 px-4 py-2.5 text-[14px] leading-[1.3] font-medium tracking-[-0.01em] whitespace-normal text-foreground disabled:opacity-50 sm:px-4 sm:py-2.5"
             )}
             onClick={() => onSelect(prompt)}
           >
@@ -318,7 +318,7 @@ function IrisFollowUpPrompts({
             </span>
             <ArrowUpRightIcon
               aria-hidden
-              className="mt-0.5 size-4 shrink-0 text-muted-foreground/65 transition-[color,transform] group-hover/button:translate-x-0.5 group-hover/button:-translate-y-0.5 group-hover/button:text-foreground"
+              className="mt-0.5 size-3.5 shrink-0 text-muted-foreground/65 transition-[color,transform] group-hover/button:translate-x-0.5 group-hover/button:-translate-y-0.5 group-hover/button:text-foreground"
             />
           </Button>
         ))}

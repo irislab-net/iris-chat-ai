@@ -2,7 +2,7 @@
  * Apple system fills (UIColor) — overlay on existing backgrounds.
  * Light: fill 20% · secondary 16% · tertiary 12% · quaternary 8%
  * Dark:  fill 36% · secondary 32% · tertiary 24% · quaternary 18%
- * Hover content → tertiary · Pressed → quaternary · Selected → fill
+ * Hover content → tertiary · Pressed → quaternary · Selected → soft secondary
  * Glass chrome hover → brighter frost + stronger specular (iOS 26 .interactive)
  */
 const chatHoverFillClass =
@@ -10,7 +10,7 @@ const chatHoverFillClass =
 const chatPressFillClass =
   "active:bg-[rgba(116,116,128,0.08)] dark:active:bg-[rgba(116,116,128,0.18)]"
 const chatActiveFillClass =
-  "bg-[rgba(120,120,128,0.20)] dark:bg-[rgba(120,120,128,0.36)]"
+  "bg-[rgba(120,120,128,0.14)] dark:bg-[rgba(120,120,128,0.28)]"
 
 /** iOS 26 liquid glass — translucent frost + hairline rim + specular depth (Apple Tahoe). */
 const chatMobileGlassSurfaceClass =
@@ -143,13 +143,13 @@ const chatMobileComposerDockClass =
 
 /** User bubble. */
 const chatMobileUserBubbleClass =
-  "w-full rounded-3xl border-0 bg-[#F9F9F9] px-5 py-3.5 text-[17px] font-normal leading-5.5 tracking-[-0.024em] text-foreground shadow-none dark:bg-secondary dark:text-secondary-foreground"
+  "w-full rounded-3xl border-0 bg-[#F9F9F9] px-5 py-3.5 text-[16px] font-normal leading-[1.45] tracking-normal text-foreground shadow-none dark:bg-secondary dark:text-secondary-foreground"
 
 const chatMobileUserBubbleInteractiveClass = `${chatMobileUserBubbleClass} outline-none transition-colors duration-150 hover:bg-[#F5F5F5] focus-within:bg-[#F5F5F5] dark:hover:bg-secondary/90 dark:focus-within:bg-secondary/90`
 
-/** Assistant prose shell — matches iOS Body; AIMessageRenderer owns detailed type. */
+/** Assistant prose shell — Gemini Answer Body; AIMessageRenderer owns detailed type. */
 const chatMobileAssistantClass =
-  "text-[17px] font-normal leading-5.5 tracking-[-0.024em] text-foreground [&_p]:mb-3 [&_p:last-child]:mb-0"
+  "text-[16px] font-normal leading-[1.55] tracking-normal text-foreground [&_p]:mb-3 [&_p:last-child]:mb-0"
 
 const chatMobileComposerShellClass =
   "relative shrink-0 bg-transparent px-6 pt-1.5 pb-[max(0.375rem,env(safe-area-inset-bottom,0px))]"
@@ -172,7 +172,7 @@ const chatMobileComposerTrailingClass =
   "[grid-area:trailing] flex h-11 shrink-0 items-center justify-end"
 
 const chatMobileComposerTextareaClass =
-  "chat-bidi w-full min-w-0 flex-1 field-sizing-content resize-none rounded-none border-0 bg-transparent px-2.5 text-[17px] font-normal leading-5.5 tracking-[-0.024em] break-words text-foreground shadow-none placeholder:text-muted-foreground/45 focus-visible:border-transparent focus-visible:ring-0 disabled:cursor-not-allowed disabled:bg-transparent disabled:opacity-100 dark:bg-transparent dark:disabled:bg-transparent dark:placeholder:text-muted-foreground/40"
+  "chat-bidi w-full min-w-0 flex-1 field-sizing-content resize-none rounded-none border-0 bg-transparent px-2.5 text-[16px] font-normal leading-[1.4] tracking-normal break-words text-foreground shadow-none placeholder:text-muted-foreground/45 focus-visible:border-transparent focus-visible:ring-0 disabled:cursor-not-allowed disabled:bg-transparent disabled:opacity-100 dark:bg-transparent dark:disabled:bg-transparent dark:placeholder:text-muted-foreground/40"
 
 const chatMobileComposerTextareaCompactClass =
   "h-11 min-h-11 max-h-11 w-full self-center py-0 overflow-hidden leading-11 [field-sizing:fixed]"
@@ -195,7 +195,7 @@ const chatDesktopComposerBodyClass = `isolate grid grid-cols-[auto_1fr_auto] ove
 
 /** Desktop textarea — grows with content up to ~12rem, then scrolls. */
 const chatDesktopComposerTextareaClass =
-  "field-sizing-content max-h-48 min-h-6 min-w-32 flex-1 resize-none overflow-y-auto rounded-none border-0 bg-transparent p-0 chat-bidi text-start text-[17px] font-normal leading-5.5 tracking-[-0.024em] shadow-none placeholder:text-muted-foreground/35 focus-visible:border-transparent focus-visible:ring-0 disabled:cursor-not-allowed disabled:bg-transparent disabled:opacity-100 sm:text-[15px] sm:leading-5 sm:tracking-[-0.016em] dark:bg-transparent dark:placeholder:text-muted-foreground/30 dark:disabled:bg-transparent"
+  "field-sizing-content max-h-48 min-h-6 min-w-32 flex-1 resize-none overflow-y-auto rounded-none border-0 bg-transparent p-0 chat-bidi text-start text-[16px] font-normal leading-[1.4] tracking-normal shadow-none placeholder:text-muted-foreground/35 focus-visible:border-transparent focus-visible:ring-0 disabled:cursor-not-allowed disabled:bg-transparent disabled:opacity-100 sm:text-[15px] sm:leading-[1.4] sm:tracking-[-0.01em] dark:bg-transparent dark:placeholder:text-muted-foreground/30 dark:disabled:bg-transparent"
 
 /** Nested control chips — liquid glass above the composer shell. */
 const chatDesktopComposerControlClass = `border-0 text-foreground transition-[transform,background-color,box-shadow,color] active:scale-[0.98] ${chatMobileGlassSurfaceClass} ${chatMobileHeaderShadowClass} ${chatMobileHeaderShadowHoverClass}`
@@ -223,7 +223,7 @@ const chatDesktopComposerSendDisabledClass = chatMobileComposerSendIdleClass
 
 /** Empty-state / follow-up prompt cards. */
 const chatSamplePromptButtonClass =
-  "relative flex h-full w-full min-w-0 items-start justify-start rounded-3xl border-0 bg-white px-4.5 py-4 text-start shadow-none transition-[background-color,transform] duration-150 ease-out hover:bg-[rgba(118,118,128,0.06)] active:scale-[0.985] active:bg-[rgba(116,116,128,0.08)] sm:px-5 sm:py-4.5 dark:bg-white/[0.08] dark:shadow-none dark:hover:bg-white/[0.12] dark:active:bg-white/[0.14]"
+  "relative flex h-full w-full min-w-0 items-start justify-start rounded-3xl border-0 bg-[rgba(118,118,128,0.06)] px-4.5 py-4 text-start shadow-none transition-[background-color,transform] duration-150 ease-out hover:bg-[rgba(118,118,128,0.10)] active:scale-[0.985] active:bg-[rgba(116,116,128,0.12)] sm:px-5 sm:py-4.5 dark:bg-white/[0.12] dark:shadow-none dark:hover:bg-white/[0.16] dark:active:bg-white/[0.18]"
 
 /** Nested icon well. */
 const chatSamplePromptIconClass =
@@ -299,7 +299,7 @@ const chatHistoryRailSectionLabelClass =
 
 const chatHistoryRailChatItemClass = `group/item relative flex min-w-0 items-center gap-1 rounded-2xl ${chatHistoryRailGlassItemClass}`
 
-const chatHistoryRailChatItemPadClass = "px-1 py-0.5"
+const chatHistoryRailChatItemPadClass = "ps-1 pe-2 py-0.5"
 
 const chatMobileDrawerNavItemClass = `h-11 w-full justify-start gap-3 rounded-2xl px-3 text-[15px] font-normal shadow-none ${chatHistoryRailGlassItemClass}`
 

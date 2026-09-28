@@ -190,23 +190,21 @@ function ChatMobileHeader({
             {showThreadChrome ? (
               <motion.div
                 key="new-chat"
-                initial={{ opacity: 0, scale: 0.55, width: 0, x: 10 }}
+                initial={{ opacity: 0, scale: 0.55, x: 10 }}
                 animate={{
                   opacity: 1,
                   scale: 1,
-                  width: 44,
                   x: 0,
                   marginInlineEnd: 8,
                 }}
                 exit={{
                   opacity: 0,
                   scale: 0.55,
-                  width: 0,
                   x: 14,
                   marginInlineEnd: 0,
                 }}
                 transition={trailingSpring}
-                className="overflow-hidden will-change-transform"
+                className="will-change-transform"
                 style={{ transformOrigin: "inline-end center" }}
               >
                 <Button

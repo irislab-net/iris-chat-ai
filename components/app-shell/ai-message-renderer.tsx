@@ -54,24 +54,24 @@ function ensurePurifyHooks() {
 }
 
 const aiMessageClassName = cn(
-  // iOS Body 17/22 (Large); denser Callout 15/20 from sm up
-  "ai-message min-w-0 overflow-x-auto chat-bidi text-[17px] font-normal leading-5.5 tracking-[-0.024em] wrap-anywhere sm:text-[15px] sm:leading-5 sm:tracking-[-0.016em]",
-  "[&_p]:mb-3 [&_p]:leading-5.5 sm:[&_p]:leading-5 [&_p:last-child]:mb-0",
-  "[&_h1]:mt-4 [&_h1]:mb-2 [&_h1]:text-xl [&_h1]:font-semibold [&_h1]:leading-6.25 [&_h1]:tracking-[-0.022em] [&_h1:first-child]:mt-0 sm:[&_h1]:text-[17px] sm:[&_h1]:leading-5.5",
-  "[&_h2]:mt-3.5 [&_h2]:mb-2 [&_h2]:text-[17px] [&_h2]:font-semibold [&_h2]:leading-5.5 [&_h2]:tracking-[-0.024em] [&_h2:first-child]:mt-0 sm:[&_h2]:text-[15px] sm:[&_h2]:leading-5",
-  "[&_h3]:mt-3 [&_h3]:mb-1.5 [&_h3]:text-[15px] [&_h3]:font-semibold [&_h3]:leading-5 [&_h3:first-child]:mt-0 sm:[&_h3]:text-sm sm:[&_h3]:leading-4.75",
+  // Gemini Answer Body 16/1.55; desktop denser Callout-ish 15/1.5
+  "ai-message min-w-0 overflow-x-auto chat-bidi text-[16px] font-normal leading-[1.55] tracking-normal wrap-anywhere sm:text-[15px] sm:leading-[1.5] sm:tracking-[-0.01em]",
+  "[&_p]:mb-3 [&_p]:leading-[1.55] sm:[&_p]:leading-[1.5] [&_p:last-child]:mb-0",
+  "[&_h1]:mt-4 [&_h1]:mb-2 [&_h1]:text-[22px] [&_h1]:font-semibold [&_h1]:leading-[1.25] [&_h1]:tracking-[-0.02em] [&_h1:first-child]:mt-0 sm:[&_h1]:text-[17px] sm:[&_h1]:leading-5.5",
+  "[&_h2]:mt-3.5 [&_h2]:mb-2 [&_h2]:text-[20px] [&_h2]:font-semibold [&_h2]:leading-[1.3] [&_h2]:tracking-[-0.01em] [&_h2:first-child]:mt-0 sm:[&_h2]:text-[16px] sm:[&_h2]:leading-[1.35]",
+  "[&_h3]:mt-3 [&_h3]:mb-1.5 [&_h3]:text-[17px] [&_h3]:font-semibold [&_h3]:leading-[1.35] [&_h3:first-child]:mt-0 sm:[&_h3]:text-[15px] sm:[&_h3]:leading-5",
   "[&_ul]:my-2.5 [&_ul]:list-disc [&_ul]:space-y-1.5 [&_ul]:ps-5 [&_ul:last-child]:mb-0",
   "[&_ol]:my-2.5 [&_ol]:list-decimal [&_ol]:space-y-1.5 [&_ol]:ps-5 [&_ol:last-child]:mb-0",
-  "[&_li]:leading-5.5 sm:[&_li]:leading-5",
+  "[&_li]:leading-[1.5]",
   "[&_blockquote]:my-3 [&_blockquote]:border-s-2 [&_blockquote]:border-border/70 [&_blockquote]:ps-3 [&_blockquote]:text-muted-foreground",
   "[&_hr]:my-4 [&_hr]:border-border/60",
   "[&_a]:font-medium [&_a]:text-foreground [&_a]:underline [&_a]:decoration-foreground/30 [&_a]:underline-offset-2 hover:[&_a]:decoration-foreground/60",
   "[&_strong]:font-semibold [&_strong]:text-foreground",
   "[&_em]:italic",
   "[&_code]:rounded-md [&_code]:bg-foreground/6 [&_code]:px-1 [&_code]:py-0.5 [&_code]:font-mono [&_code]:text-[0.92em]",
-  "[&_pre]:my-3 [&_pre]:overflow-x-auto [&_pre]:rounded-2xl [&_pre]:border [&_pre]:border-border/50 [&_pre]:bg-foreground/4 [&_pre]:p-3.5 [&_pre]:font-mono [&_pre]:text-[13px] [&_pre]:leading-4.5 [&_pre]:whitespace-pre-wrap [&_pre:last-child]:mb-0",
+  "[&_pre]:my-3 [&_pre]:overflow-x-auto [&_pre]:rounded-2xl [&_pre]:border [&_pre]:border-border/50 [&_pre]:bg-foreground/4 [&_pre]:p-3.5 [&_pre]:font-mono [&_pre]:text-[14px] [&_pre]:leading-[1.5] [&_pre]:whitespace-pre-wrap [&_pre:last-child]:mb-0",
   "[&_pre_code]:block [&_pre_code]:bg-transparent [&_pre_code]:p-0 [&_pre_code]:font-inherit [&_pre_code]:text-inherit [&_pre_code]:leading-inherit",
-  "[&_table]:my-4 [&_table]:w-full [&_table]:min-w-0 [&_table]:border-collapse [&_table]:text-[13px] [&_table]:leading-4.5 max-md:[&_table]:table-fixed sm:[&_table]:min-w-[32rem]",
+  "[&_table]:my-4 [&_table]:w-full [&_table]:min-w-0 [&_table]:border-collapse [&_table]:text-[14px] [&_table]:leading-[1.5] max-md:[&_table]:table-fixed sm:[&_table]:min-w-[32rem]",
   "[&_thead]:border-b [&_thead]:border-border/60 [&_thead]:bg-muted/40",
   "[&_tbody]:divide-y [&_tbody]:divide-border/50",
   "[&_tr]:align-top",
