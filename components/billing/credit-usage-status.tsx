@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { GaugeIcon } from "lucide-react"
+import { GaugeIcon, RefreshCwIcon } from "lucide-react"
 import { useTranslations } from "next-intl"
 
 import { Button } from "@/components/ui/button"
@@ -14,7 +14,11 @@ import {
   formatCreditResetAt,
   type CreditUsagePeriod,
 } from "@/lib/api/credit-usage"
-import { landingCta, landingTitleCard } from "@/lib/landing-modern-styles"
+import {
+  landingGlassNavIcon,
+  landingGlassSheen,
+  landingTitleCard,
+} from "@/lib/landing-modern-styles"
 import { cn } from "@/lib/utils"
 
 function UsageMeter({
@@ -83,22 +87,30 @@ function CreditUsageStatusPanel({
 
   return (
     <section className={cn("space-y-4", className)}>
-      <div className="flex flex-wrap items-end justify-between gap-3">
+      <div className="flex flex-wrap items-end justify-between gap-3 px-5 sm:px-6">
         <div>
           <h2 className={landingTitleCard}>{t("creditsTitle")}</h2>
-          <p className="mt-1.5 text-sm text-muted-foreground">
-            {t("creditsSubtitle")}
-          </p>
         </div>
         {onRefresh ? (
           <Button
             type="button"
-            size="sm"
-            className={landingCta("secondary", "sm")}
+            size="icon"
+            variant="ghost"
+            className={cn(landingGlassNavIcon, "text-foreground")}
             disabled={loading}
+            aria-label={loading ? t("refreshing") : t("refresh")}
             onClick={onRefresh}
           >
-            {loading ? t("refreshing") : t("refresh")}
+            <span
+              aria-hidden
+              className={cn(landingGlassSheen, "rounded-full")}
+            />
+            <RefreshCwIcon
+              className={cn(
+                "relative z-10 size-4",
+                loading && "animate-spin"
+              )}
+            />
           </Button>
         ) : null}
       </div>

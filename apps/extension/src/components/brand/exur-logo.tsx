@@ -5,26 +5,11 @@ import * as React from "react"
 import { EXUR_LOGO_MARK_PATH, EXUR_LOGO_VIEWBOX } from "@/lib/exur-logo-path"
 import { cn } from "@/lib/utils"
 
-/** Resolve `/public` assets for chrome-extension:// pages. */
-function extensionAsset(path: string) {
-  const relative = path.startsWith("/") ? path.slice(1) : path
-  try {
-    if (typeof chrome !== "undefined" && chrome.runtime?.getURL) {
-      return chrome.runtime.getURL(relative)
-    }
-  } catch {
-    /* ignore */
-  }
-  return path.startsWith("/") ? path : `/${path}`
-}
-
-export const EXUR_LOGO_LIGHT_SRC = extensionAsset("/exur-logo-light.svg")
-export const EXUR_LOGO_DARK_SRC = extensionAsset("/exur-logo-dark.svg")
-export const EXUR_LOGO_BRAND_SRC = extensionAsset("/exur-logo-brand.svg")
-export const EXUR_LOGO_MARK_WHITE_SRC = extensionAsset(
-  "/exur-logo-mark-white.svg"
-)
-export const EXUR_LOGO_GRADIENT_SRC = extensionAsset("/exur-logo-gradient.svg")
+export const EXUR_LOGO_LIGHT_SRC = "/exur-logo-light.svg"
+export const EXUR_LOGO_DARK_SRC = "/exur-logo-dark.svg"
+export const EXUR_LOGO_BRAND_SRC = "/exur-logo-brand.svg"
+export const EXUR_LOGO_MARK_WHITE_SRC = "/exur-logo-mark-white.svg"
+export const EXUR_LOGO_GRADIENT_SRC = "/exur-logo-gradient.svg"
 
 type ExurLogoProps = {
   className?: string
@@ -37,8 +22,8 @@ type ExurLogoProps = {
   decorative?: boolean
   /** Sweep highlight across the liquid-glass mark (brand / gradient). */
   shimmer?: boolean
-  /** `on-hero` = white mark on transparent; `on-light` = black mark; `brand` / `gradient` = mark on liquid-glass disc. */
-  variant?: "auto" | "on-hero" | "on-light" | "on-dark" | "brand" | "gradient"
+  /** `on-hero` = white mark on transparent; `on-light` = black mark; `mark` = theme foreground (black↔white); `brand` / `gradient` = mark on liquid-glass disc. */
+  variant?: "auto" | "on-hero" | "on-light" | "on-dark" | "brand" | "gradient" | "mark"
 }
 
 function LogoPicture({
@@ -157,7 +142,7 @@ function ExurMarkLiquidShell({
     >
       <span
         aria-hidden
-        className="pointer-events-none absolute inset-0 z-0 rounded-full bg-linear-to-br from-white/95 via-white/30 to-transparent dark:from-white/12 dark:via-white/[0.03] dark:to-transparent"
+        className="pointer-events-none absolute inset-0 z-0 rounded-full bg-linear-to-br from-white/95 via-white/30 to-transparent dark:from-white/12 dark:via-white/3 dark:to-transparent"
       />
       {children}
       {shimmer ? (
@@ -206,6 +191,22 @@ function ExurLogo({
       <ExurMarkLiquidShell className={className} label={label} shimmer={shimmer}>
         <ExurMarkSvg gradient className={imageClassName} />
       </ExurMarkLiquidShell>
+    )
+  }
+
+  if (variant === "mark") {
+    return (
+      <span
+        className={cn(
+          "relative inline-flex aspect-square shrink-0 text-foreground",
+          className
+        )}
+        {...(label
+          ? { role: "img", "aria-label": label }
+          : { "aria-hidden": true })}
+      >
+        <ExurMarkSvg fill="currentColor" className={imageClassName} />
+      </span>
     )
   }
 

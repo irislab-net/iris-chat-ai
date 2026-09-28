@@ -12,7 +12,7 @@ import {
 import { useLocale, useTranslations } from "next-intl"
 
 import { useAuth } from "@/components/auth/auth-provider"
-import { AnimatedExurLogo } from "@/components/brand/animated-exur-logo"
+import { ExurLogo } from "@/components/brand/exur-logo"
 import { BillingGlassPanel } from "@/components/billing/billing-glass"
 import {
   CreditUsageStatusPanel,
@@ -28,7 +28,6 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty"
-import { Separator } from "@/components/ui/separator"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { displayPlanName } from "@/lib/billing/catalog"
 import { formatCryptoAmount } from "@/lib/billing/crypto-format"
@@ -48,8 +47,6 @@ import {
   landingGlassNavIcon,
   landingGlassSheen,
   landingGlassSurface,
-  landingHeroGlass,
-  landingInner,
   landingShell,
   landingTitleCard,
   landingTitleSection,
@@ -306,9 +303,11 @@ function BillingView() {
               aria-hidden
               className={cn(landingGlassSheen, "rounded-full")}
             />
-            <AnimatedExurLogo
+            <ExurLogo
+              decorative
+              variant="mark"
+              size={36}
               className="relative z-10 size-9 shrink-0"
-              scrollTrigger
             />
             <div className="relative z-10 min-w-0 flex-1">
               <p className="text-sm leading-none font-medium tracking-tight">
@@ -336,13 +335,7 @@ function BillingView() {
           </Button>
         </header>
 
-        <article
-          className={cn(
-            landingHeroGlass,
-            "mt-6 min-h-0 rounded-[2rem] sm:rounded-[2.5rem]"
-          )}
-        >
-          <div className={cn(landingInner, "py-10 sm:py-12 lg:py-14")}>
+        <div className="mt-6 py-6 sm:py-8">
             <header className="mx-auto max-w-3xl text-center sm:text-start">
               <p className="text-[11px] font-medium tracking-[0.18em] text-muted-foreground uppercase">
                 {SITE_NAME}
@@ -355,9 +348,7 @@ function BillingView() {
               </p>
             </header>
 
-            <Separator className="mx-auto my-10 max-w-3xl bg-foreground/8" />
-
-            <div className="mx-auto flex max-w-3xl flex-col gap-10">
+            <div className="mx-auto mt-10 flex max-w-3xl flex-col gap-10">
               <section className="space-y-4">
                 <BillingGlassPanel>
                   <div className="flex flex-wrap items-start justify-between gap-4 border-b border-white/55 px-5 py-6 sm:px-6 dark:border-white/10">
@@ -403,8 +394,8 @@ function BillingView() {
                       </Button>
                     ) : (
                       <Badge
-                        variant="outline"
-                        className="rounded-full border-white/50 bg-white/50 dark:border-white/15 dark:bg-white/10"
+                        variant="default"
+                        className="rounded-full border-transparent bg-[#2563EB] text-white"
                       >
                         {t("active")}
                       </Badge>
@@ -457,24 +448,29 @@ function BillingView() {
               />
 
               <section className="space-y-4">
-                <div className="flex flex-wrap items-end justify-between gap-3">
+                <div className="flex flex-wrap items-end justify-between gap-3 px-5 sm:px-6">
                   <div>
                     <h2 className={landingTitleCard}>{t("history")}</h2>
-                    <p className="mt-1.5 text-sm text-muted-foreground">
-                      {t("historySubtitle")}
-                    </p>
                   </div>
                   <Button
                     type="button"
-                    size="sm"
-                    className={landingCta("secondary", "sm")}
+                    size="icon"
+                    variant="ghost"
+                    className={cn(landingGlassNavIcon, "text-foreground")}
                     disabled={!isAuthenticated || loading}
+                    aria-label={loading ? t("refreshing") : t("refresh")}
                     onClick={() => void loadInvoices()}
                   >
-                    <RefreshCwIcon
-                      className={cn("size-3.5", loading && "animate-spin")}
+                    <span
+                      aria-hidden
+                      className={cn(landingGlassSheen, "rounded-full")}
                     />
-                    {t("refresh")}
+                    <RefreshCwIcon
+                      className={cn(
+                        "relative z-10 size-4",
+                        loading && "animate-spin"
+                      )}
+                    />
                   </Button>
                 </div>
 
@@ -557,8 +553,7 @@ function BillingView() {
                 })}
               </p>
             </div>
-          </div>
-        </article>
+        </div>
       </div>
     </div>
   )

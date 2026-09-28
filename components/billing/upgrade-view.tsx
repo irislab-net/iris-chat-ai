@@ -7,7 +7,7 @@ import { useLocale, useTranslations } from "next-intl"
 
 import { useAuth } from "@/components/auth/auth-provider"
 import { markPlanUpgradePendingRefresh } from "@/lib/api/auth"
-import { AnimatedExurLogo } from "@/components/brand/animated-exur-logo"
+import { ExurLogo } from "@/components/brand/exur-logo"
 import { BillingGlassPanel } from "@/components/billing/billing-glass"
 import type { CryptoCheckoutRequest } from "@/components/billing/crypto-payment-sheet"
 import { CryptoPaymentSheet } from "@/components/billing/crypto-payment-sheet"
@@ -271,9 +271,11 @@ function UpgradeView() {
               aria-hidden
               className={cn(landingGlassSheen, "rounded-full")}
             />
-            <AnimatedExurLogo
+            <ExurLogo
+              decorative
+              variant="mark"
+              size={36}
               className="relative z-10 size-9 shrink-0"
-              scrollTrigger
             />
             <div className="relative z-10 min-w-0 flex-1">
               <p className="text-sm leading-none font-medium tracking-tight">

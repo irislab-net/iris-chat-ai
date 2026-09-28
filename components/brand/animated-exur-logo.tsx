@@ -21,7 +21,7 @@ export function AnimatedExurLogo({
   shimmer = false,
   variant = "on-light",
 }: AnimatedExurLogoProps) {
-  const colorClass = variant === "on-hero" ? "text-white" : "text-foreground"
+  const colorClass = variant === "on-hero" ? "text-white" : "text-neutral-950"
 
   const icon = (
     <AnimatedSvgIcon

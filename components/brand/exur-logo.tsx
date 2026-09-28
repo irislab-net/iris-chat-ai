@@ -22,8 +22,8 @@ type ExurLogoProps = {
   decorative?: boolean
   /** Sweep highlight across the liquid-glass mark (brand / gradient). */
   shimmer?: boolean
-  /** `on-hero` = white mark on transparent; `on-light` = black mark; `brand` / `gradient` = mark on liquid-glass disc. */
-  variant?: "auto" | "on-hero" | "on-light" | "on-dark" | "brand" | "gradient"
+  /** `on-hero` = white mark on transparent; `on-light` = black mark; `mark` = theme foreground (black↔white); `brand` / `gradient` = mark on liquid-glass disc. */
+  variant?: "auto" | "on-hero" | "on-light" | "on-dark" | "brand" | "gradient" | "mark"
 }
 
 function LogoPicture({
@@ -191,6 +191,22 @@ function ExurLogo({
       <ExurMarkLiquidShell className={className} label={label} shimmer={shimmer}>
         <ExurMarkSvg gradient className={imageClassName} />
       </ExurMarkLiquidShell>
+    )
+  }
+
+  if (variant === "mark") {
+    return (
+      <span
+        className={cn(
+          "relative inline-flex aspect-square shrink-0 text-foreground",
+          className
+        )}
+        {...(label
+          ? { role: "img", "aria-label": label }
+          : { "aria-hidden": true })}
+      >
+        <ExurMarkSvg fill="currentColor" className={imageClassName} />
+      </span>
     )
   }
 
