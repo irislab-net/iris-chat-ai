@@ -824,10 +824,12 @@ function NewsReadAllButton({
   news,
   glass = false,
   iconOnly = false,
+  className,
 }: {
   news: NewsItem[]
   glass?: boolean
   iconOnly?: boolean
+  className?: string
 }) {
   const t = useTranslations("dashboard")
   const supported = React.useSyncExternalStore(
@@ -858,7 +860,8 @@ function NewsReadAllButton({
           ? chatMobileHeaderButtonClass
           : glass
             ? chatNewsReadAllButtonClass
-            : "h-7 shrink-0 gap-1.5 px-2 text-xs font-medium text-muted-foreground hover:text-foreground"
+            : "h-7 shrink-0 gap-1.5 px-2 text-xs font-medium text-muted-foreground hover:text-foreground",
+        className
       )}
       onClick={() => toggleReadAllNews(items)}
     >
@@ -1340,7 +1343,7 @@ function NewsHeadlineList({
       <Empty
         className={cn(
           "min-h-48 rounded-2xl",
-          mobile ? chatNewsGlassCardClass : "bg-muted/18"
+          mobile || sidebar ? chatNewsGlassCardClass : "bg-muted/18"
         )}
       >
         <EmptyHeader>
@@ -1355,24 +1358,34 @@ function NewsHeadlineList({
   }
 
   const { lead, rest } = pickLeadStory(news)
-  const glass = mobile
+  const glass = mobile || sidebar
 
   return (
-    <div className={cn("flex flex-col", mobile ? "gap-10" : "gap-5 pb-2")}>
+    <div className={cn("flex flex-col", glass ? "gap-10" : "gap-5 pb-2")}>
       {mobile && !sidebar ? (
         <div className="flex justify-end px-1">
           <NewsReadAllButton news={news} glass={glass} />
         </div>
       ) : null}
-      <NewsTape analytics={analytics} mobile={mobile} glass={glass} />
-      <NewsCard item={lead} featured mobile={mobile} sidebar={sidebar} />
+      <NewsTape analytics={analytics} mobile={mobile || sidebar} glass={glass} />
+      <NewsCard
+        item={lead}
+        featured
+        mobile={mobile || sidebar}
+        sidebar={sidebar}
+      />
       {rest.length > 0 ? (
-        mobile ? (
+        glass ? (
           <section>
             <NewsSectionHeading>{t("latest")}</NewsSectionHeading>
             <div className="flex flex-col gap-6">
               {rest.map((item) => (
-                <NewsCard key={item.id} item={item} mobile sidebar={sidebar} />
+                <NewsCard
+                  key={item.id}
+                  item={item}
+                  mobile={mobile || sidebar}
+                  sidebar={sidebar}
+                />
               ))}
             </div>
           </section>

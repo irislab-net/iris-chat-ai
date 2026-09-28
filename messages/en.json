@@ -803,6 +803,7 @@
     "unpinChat": "Unpin chat",
     "shareChat": "Copy content",
     "sharedChat": "Copied",
+    "downloadChat": "Download Markdown",
     "deleteChat": "Delete",
     "chatOptions": "Chat options",
     "cancelRename": "Cancel",

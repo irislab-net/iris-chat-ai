@@ -120,7 +120,7 @@ function ExurMarkSvg({
 
 /** Compact liquid-glass disc — light plate / dark charcoal plate. */
 const exurMarkLiquidShellClass =
-  "relative inline-flex aspect-square shrink-0 items-center justify-center overflow-hidden rounded-full border-0 bg-white/80 p-[6%] shadow-[0_2px_8px_-4px_color-mix(in_oklch,var(--foreground)_6%,transparent),0_8px_20px_-10px_color-mix(in_oklch,var(--foreground)_10%,transparent)] backdrop-blur-md backdrop-saturate-150 supports-backdrop-filter:bg-white/62 dark:bg-[oklch(0.2_0_0_/0.9)] dark:shadow-[0_2px_10px_-4px_color-mix(in_oklch,black_40%,transparent),0_8px_22px_-10px_color-mix(in_oklch,black_48%,transparent)] dark:supports-backdrop-filter:bg-[oklch(0.18_0_0_/0.78)]"
+  "relative inline-flex aspect-square shrink-0 items-center justify-center overflow-hidden rounded-full border-0 bg-white/80 p-[2%] shadow-[0_2px_8px_-4px_color-mix(in_oklch,var(--foreground)_6%,transparent),0_8px_20px_-10px_color-mix(in_oklch,var(--foreground)_10%,transparent)] backdrop-blur-md backdrop-saturate-150 supports-backdrop-filter:bg-white/62 dark:bg-[oklch(0.2_0_0_/0.9)] dark:shadow-[0_2px_10px_-4px_color-mix(in_oklch,black_40%,transparent),0_8px_22px_-10px_color-mix(in_oklch,black_48%,transparent)] dark:supports-backdrop-filter:bg-[oklch(0.18_0_0_/0.78)]"
 
 function ExurMarkLiquidShell({
   className,

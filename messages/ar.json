@@ -787,6 +787,7 @@
     "unpinChat": "إلغاء التثبيت",
     "shareChat": "نسخ المحتوى",
     "sharedChat": "تم النسخ",
+    "downloadChat": "تنزيل Markdown",
     "deleteChat": "حذف",
     "chatOptions": "خيارات المحادثة",
     "cancelRename": "إلغاء",

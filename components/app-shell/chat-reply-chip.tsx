@@ -29,19 +29,20 @@ function ChatReplyChip({
   return (
     <div
       className={cn(
-        "mb-2 flex items-start gap-2 rounded-xl bg-foreground/4 px-3 py-2",
+        "mb-2 flex items-start gap-2 rounded-2xl border-s-2 border-s-foreground/18 bg-[rgba(118,118,128,0.08)] px-3.5 py-2.5",
+        "dark:border-s-white/22 dark:bg-white/[0.06]",
         className
       )}
     >
       <ReplyIcon className="mt-0.5 size-3.5 shrink-0 text-muted-foreground" />
       <div className="min-w-0 flex-1">
-        <p className="text-[10px] font-medium tracking-[0.06em] text-muted-foreground uppercase">
+        <p className="text-[11px] font-medium leading-3.25 tracking-[0.006em] text-muted-foreground">
           {target.role === "user" ? t("replyToUser") : t("replyToAssistant")}
           {target.createdAt
             ? ` · ${formatChatTime(target.createdAt, locale)}`
             : ""}
         </p>
-        <p className="mt-0.5 line-clamp-2 text-xs leading-snug text-foreground/85">
+        <p className="mt-1 line-clamp-2 text-[13px] leading-4.5 tracking-[-0.006em] text-foreground/85">
           {target.excerpt}
         </p>
       </div>
@@ -49,7 +50,7 @@ function ChatReplyChip({
         type="button"
         variant="ghost"
         size="icon-sm"
-        className="size-7 shrink-0 rounded-full text-muted-foreground"
+        className="size-7 shrink-0 rounded-full text-muted-foreground hover:bg-[rgba(118,118,128,0.12)] dark:hover:bg-[rgba(118,118,128,0.24)]"
         aria-label={t("cancelReply")}
         onClick={onClear}
       >

@@ -48,6 +48,7 @@ type ChatMobileThreadMenuProps = {
   pinned: boolean
   disabled?: boolean
   onShare: () => boolean | Promise<boolean>
+  onDownload: () => boolean | Promise<boolean>
   onRename: (title: string) => void
   onTogglePin: () => void
   onDelete: () => void

@@ -20,9 +20,9 @@ export type ShellSidebarLayout = {
 const COMPACT_LAYOUT: ShellSidebarLayout = {
   tier: "compact",
   chat: {
-    defaultSize: "15rem",
-    minSize: "15rem",
-    maxSize: "22rem",
+    defaultSize: "16.5rem",
+    minSize: "16.5rem",
+    maxSize: "23.5rem",
   },
   ticket: {
     defaultSize: "14rem",
@@ -36,17 +36,17 @@ const COMPACT_LAYOUT: ShellSidebarLayout = {
 const COMPACT_LAYOUT_WINDOWS: ShellSidebarLayout = {
   ...COMPACT_LAYOUT,
   chat: {
-    defaultSize: "16.5rem",
-    minSize: "16.5rem",
-    maxSize: "23.5rem",
+    defaultSize: "18rem",
+    minSize: "18rem",
+    maxSize: "25rem",
   },
 }
 
 const COMFORTABLE_LAYOUT: ShellSidebarLayout = {
   tier: "comfortable",
   chat: {
-    defaultSize: "18rem",
-    minSize: "15rem",
+    defaultSize: "19.5rem",
+    minSize: "16.5rem",
     maxSize: "28rem",
   },
   ticket: {
@@ -60,8 +60,8 @@ const COMFORTABLE_LAYOUT: ShellSidebarLayout = {
 const COMFORTABLE_LAYOUT_WINDOWS: ShellSidebarLayout = {
   ...COMFORTABLE_LAYOUT,
   chat: {
-    defaultSize: "19.5rem",
-    minSize: "16.5rem",
+    defaultSize: "21rem",
+    minSize: "18rem",
     maxSize: "29.5rem",
   },
 }

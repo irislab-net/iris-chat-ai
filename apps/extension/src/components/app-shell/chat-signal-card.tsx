@@ -300,7 +300,7 @@ function ChatSignalCard({
         <PriceBand columns={priceColumns} reasonSkeleton={proseSkeleton} />
 
         {metaItems.length > 0 ? (
-          <div className={cn(chatSignalCardInsetClass, "rounded-xl px-3.5 py-3")}>
+          <div className={cn(chatSignalCardInsetClass, "rounded-2xl px-3.5 py-3")}>
             <div className="grid grid-cols-2 gap-x-4 gap-y-3 sm:grid-cols-3">
               {metaItems}
             </div>
@@ -308,7 +308,7 @@ function ChatSignalCard({
         ) : null}
 
         {proseSkeleton ? (
-          <div className={cn(chatSignalCardInsetClass, "rounded-xl px-3.5 py-3")}>
+          <div className={cn(chatSignalCardInsetClass, "rounded-2xl px-3.5 py-3")}>
             <p className="text-[10px] font-medium tracking-[0.08em] text-muted-foreground uppercase">
               {t("signalCardThesisHeading")}
             </p>
@@ -318,7 +318,7 @@ function ChatSignalCard({
             </div>
           </div>
         ) : thesis ? (
-          <div className={cn(chatSignalCardInsetClass, "rounded-xl px-3.5 py-3")}>
+          <div className={cn(chatSignalCardInsetClass, "rounded-2xl px-3.5 py-3")}>
             <p className="text-[10px] font-medium tracking-[0.08em] text-muted-foreground uppercase">
               {t("signalCardThesisHeading")}
             </p>

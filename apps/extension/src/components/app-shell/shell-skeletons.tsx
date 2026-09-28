@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl"
 
 import { ChatMobileGeminiBackground } from "@/components/app-shell/chat-mobile-gemini-background"
 import {
+  chatDesktopCanvasClass,
   chatDesktopComposerShellClass,
   chatEmptyHeroPromptsClass,
   chatMobileComposerDockClass,
@@ -47,7 +48,7 @@ function ChatComposerSkeleton({ className }: { className?: string }) {
         className
       )}
     >
-      <Bone stagger={3} className="h-20 w-full rounded-[22px]" />
+      <Bone stagger={3} className="h-20 w-full rounded-3xl" />
     </div>
   )
 }
@@ -63,7 +64,7 @@ function ChatMobileHeaderSkeleton() {
         </div>
         <div className="flex shrink-0 items-center gap-2">
           <Bone stagger={1} className="size-10 shrink-0 rounded-full" />
-          <Bone stagger={1} className="size-12 shrink-0 rounded-full" />
+          <Bone stagger={1} className="size-10 shrink-0 rounded-full" />
         </div>
       </header>
     </div>
@@ -79,7 +80,7 @@ function ChatStarterCardSkeleton({
   return (
     <Bone
       stagger={stagger}
-      className="h-23.5 w-full rounded-[26px] sm:h-24 sm:rounded-[28px] lg:h-19 lg:rounded-[22px]"
+      className="h-23.5 w-full rounded-3xl sm:h-24 lg:h-19"
     />
   )
 }
@@ -304,7 +305,12 @@ function ChatDesktopAsideSkeleton({
   const showMainColumnHeader = showHeader && !showHistoryRail
 
   const mainColumn = (
-    <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-background text-foreground">
+    <div
+      className={cn(
+        "flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden",
+        chatDesktopCanvasClass
+      )}
+    >
       {showMainColumnHeader ? (
         <ChatHeaderSkeleton
           guestSubtitle={guest}
@@ -326,7 +332,8 @@ function ChatDesktopAsideSkeleton({
       <div
         data-slot="chat-aside"
         className={cn(
-          "relative flex h-full min-h-0 w-full flex-row overflow-hidden bg-background text-foreground",
+          "relative flex h-full min-h-0 w-full flex-row overflow-hidden",
+          chatDesktopCanvasClass,
           !focused && "rounded-e-2xl",
           className
         )}

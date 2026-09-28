@@ -1,12 +1,12 @@
-/** iOS liquid-glass floating menus — account, history, and message actions.
+/** Soft glass floating menus — account, history, and message actions.
  * Pass after DropdownMenu defaults so glass/radius/padding win via twMerge.
  * Avoid `!` important utilities — they fight opaque `bg-popover` instead of replacing it.
  *
- * Radius: sheet-tier 34pt shell; nested rows concentric ≈ 34 − 12 → 22pt (same as tools menu).
+ * Radius: shell rounded-[28px]; nested rows rounded-2xl.
  */
 const chatContextMenuContentClass = [
-  "chat-continuous z-50 w-auto min-w-[13.5rem] max-w-[min(100vw-1.5rem,18rem)]",
-  "flex flex-col gap-1 overflow-hidden rounded-[34px] border-0 p-2.5",
+  "z-50 w-auto min-w-[13.5rem] max-w-[min(100vw-1.5rem,18rem)]",
+  "flex flex-col gap-1 overflow-hidden rounded-[28px] border-0 p-2.5",
   "bg-white/55 text-foreground shadow-none ring-0",
   "shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_90%,transparent),inset_0_0_0_1px_color-mix(in_oklch,var(--foreground)_7%,transparent),0_18px_52px_-18px_color-mix(in_oklch,var(--foreground)_20%,transparent)]",
   "backdrop-blur-2xl backdrop-saturate-[180%]",
@@ -20,7 +20,7 @@ const chatContextMenuContentClass = [
 ].join(" ")
 
 const chatContextMenuItemClass = [
-  "chat-continuous min-h-12 gap-3 rounded-[22px] px-3.5 py-3",
+  "min-h-12 gap-3 rounded-2xl px-3.5 py-3",
   "text-[15px] font-medium tracking-[-0.016em] text-foreground",
   "transition-colors duration-150",
   "focus:bg-[rgba(118,118,128,0.12)] focus:text-foreground",
@@ -31,7 +31,7 @@ const chatContextMenuItemClass = [
 const chatContextMenuIconClass = "size-4.5 shrink-0 text-muted-foreground"
 
 const chatContextMenuDeleteClass = [
-  "chat-continuous min-h-12 gap-3 rounded-[22px] px-3.5 py-3",
+  "min-h-12 gap-3 rounded-2xl px-3.5 py-3",
   "text-[15px] font-medium text-destructive",
   "transition-colors duration-150",
   "focus:bg-[rgba(255,59,48,0.12)] focus:text-destructive",

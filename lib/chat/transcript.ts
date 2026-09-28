@@ -40,15 +40,21 @@ function formatTurn(role: "user" | "assistant", body: string): string {
   return `${speaker}:\n${body}`
 }
 
+function formatMarkdownTurn(role: "user" | "assistant", body: string): string {
+  const speaker = role === "user" ? "You" : "Exur"
+  return `### ${speaker}\n\n${body}`
+}
+
 type FormatConversationTranscriptOptions = {
   title?: string
   history?: CoPilotHistoryMessage[]
 }
 
-function formatConversationTranscript(
+function collectConversationTurns(
   messages: ChatUiMessage[],
-  options: FormatConversationTranscriptOptions = {}
-): string {
+  options: FormatConversationTranscriptOptions,
+  formatTurnFn: (role: "user" | "assistant", body: string) => string
+): string[] {
   const turns = messages
     .filter(
       (message): message is ChatUiMessage & { role: "user" | "assistant" } =>
@@ -57,28 +63,82 @@ function formatConversationTranscript(
     .map((message) => {
       const body = formatMessageBody(message)
       if (!body) return null
-      return formatTurn(message.role, body)
+      return formatTurnFn(message.role, body)
     })
     .filter((turn): turn is string => Boolean(turn))
 
-  const historyTurns =
-    turns.length === 0 && options.history?.length
-      ? options.history
-          .filter(
-            (message) =>
-              (message.role === "user" || message.role === "assistant") &&
-              message.content.trim().length > 0 &&
-              message.content.trim() !== "(empty)"
-          )
-          .map((message) => formatTurn(message.role, message.content.trim()))
-      : []
+  if (turns.length > 0) return turns
 
-  const blocks = turns.length > 0 ? turns : historyTurns
+  if (!options.history?.length) return []
+
+  return options.history
+    .filter(
+      (message) =>
+        (message.role === "user" || message.role === "assistant") &&
+        message.content.trim().length > 0 &&
+        message.content.trim() !== "(empty)"
+    )
+    .map((message) => formatTurnFn(message.role, message.content.trim()))
+}
+
+function formatConversationTranscript(
+  messages: ChatUiMessage[],
+  options: FormatConversationTranscriptOptions = {}
+): string {
+  const blocks = collectConversationTurns(messages, options, formatTurn)
   if (blocks.length === 0) return ""
 
   const title = options.title?.trim()
   if (title) return `${title}\n\n${blocks.join("\n\n")}`
   return blocks.join("\n\n")
+}
+
+function formatConversationMarkdown(
+  messages: ChatUiMessage[],
+  options: FormatConversationTranscriptOptions = {}
+): string {
+  const blocks = collectConversationTurns(messages, options, formatMarkdownTurn)
+  if (blocks.length === 0) return ""
+
+  const title = options.title?.trim()
+  if (title) return `# ${title}\n\n${blocks.join("\n\n")}\n`
+  return `${blocks.join("\n\n")}\n`
+}
+
+function conversationMarkdownFilename(title?: string): string {
+  const raw = title?.trim() ?? ""
+  const slug = raw
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^\p{L}\p{N}]+/gu, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 80)
+  return `${slug || "chat"}.md`
+}
+
+function downloadTextFile(
+  filename: string,
+  text: string,
+  mimeType = "text/markdown;charset=utf-8"
+): boolean {
+  const value = text.trim()
+  if (!value || typeof document === "undefined") return false
+
+  try {
+    const blob = new Blob([`${value}\n`], { type: mimeType })
+    const url = URL.createObjectURL(blob)
+    const anchor = document.createElement("a")
+    anchor.href = url
+    anchor.download = filename
+    anchor.rel = "noopener"
+    document.body.appendChild(anchor)
+    anchor.click()
+    document.body.removeChild(anchor)
+    window.setTimeout(() => URL.revokeObjectURL(url), 1_000)
+    return true
+  } catch {
+    return false
+  }
 }
 
 async function copyTextToClipboard(text: string): Promise<boolean> {
@@ -113,7 +173,10 @@ async function copyTextToClipboard(text: string): Promise<boolean> {
 }
 
 export {
+  conversationMarkdownFilename,
   copyTextToClipboard,
+  downloadTextFile,
+  formatConversationMarkdown,
   formatConversationTranscript,
   formatPaperTicketBlock,
 }

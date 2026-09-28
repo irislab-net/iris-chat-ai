@@ -17,6 +17,7 @@ import { ChatAccountMenu } from "@/components/app-shell/chat-account-menu"
 import { ExurLogo } from "@/components/brand/exur-logo"
 import { ChatMobileGeminiBackground } from "@/components/app-shell/chat-mobile-gemini-background"
 import {
+  chatDesktopCanvasClass,
   chatMobileScrollDownClass,
   chatMobileThreadBottomFadeClass,
   chatMobileThreadBottomSpacerClass,
@@ -62,7 +63,10 @@ import {
 } from "@/components/app-shell/chat-thread-toolbar"
 import { ChatUserTurn } from "@/components/app-shell/chat-user-message"
 import {
+  conversationMarkdownFilename,
   copyTextToClipboard,
+  downloadTextFile,
+  formatConversationMarkdown,
   formatConversationTranscript,
 } from "@/lib/chat/transcript"
 import { ChatAsideSkeleton } from "@/components/app-shell/shell-skeletons"
@@ -305,7 +309,7 @@ function IrisFollowUpPrompts({
             dir="auto"
             className={cn(
               chatSamplePromptButtonClass,
-              "h-auto gap-3 px-4 py-3.5 text-[13px] leading-snug font-medium whitespace-normal text-foreground disabled:opacity-50 lg:rounded-[18px] lg:px-4 lg:py-3.5"
+              "h-auto gap-3 px-4 py-3.5 text-[13px] leading-snug font-medium whitespace-normal text-foreground disabled:opacity-50"
             )}
             onClick={() => onSelect(prompt)}
           >
@@ -382,7 +386,7 @@ function ChatAside({
   const [hydrated, setHydrated] = React.useState(false)
   const [messages, setMessages] = React.useState<ChatUiMessage[]>([])
   const [history, setHistory] = React.useState<CoPilotHistoryMessage[]>([])
-  const [conversationId, setConversationId] = React.useState<string>(() =>
+  const [conversationId, setConversationId] = React.useState(() =>
     crypto.randomUUID()
   )
   const [conversations, setConversations] = React.useState<
@@ -1715,6 +1719,21 @@ function ChatAside({
     return copyTextToClipboard(text)
   }
 
+  function downloadCurrentConversation() {
+    const title =
+      threadTitleRaw && threadTitleRaw !== NEW_CHAT_TITLE
+        ? threadTitleRaw
+        : undefined
+    const markdown = formatConversationMarkdown(messages, {
+      title,
+      history: activeConversation?.history,
+    })
+    return downloadTextFile(
+      conversationMarkdownFilename(title ?? threadTitle),
+      markdown
+    )
+  }
+
   function deleteCurrentConversation() {
     removeConversation(conversationId)
   }
@@ -1820,7 +1839,7 @@ function ChatAside({
         isMobileOverlay
           ? "flex-col bg-background text-foreground"
           : historyRailVisible || isFocusedLayout
-            ? "flex-row bg-background text-foreground"
+            ? cn("flex-row text-foreground", chatDesktopCanvasClass)
             : "flex-col bg-sidebar text-sidebar-foreground",
         displayMode === "docked" && !isMobileOverlay
           ? "rounded-e-2xl"
@@ -1862,7 +1881,7 @@ function ChatAside({
           "relative z-10 flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden",
           isMobileOverlay
             ? "bg-transparent text-foreground"
-            : "bg-background text-foreground",
+            : chatDesktopCanvasClass,
           isMobileOverlay &&
             (mobileGeminiPhase === "empty" ||
               mobileGeminiPhase === "focused" ||
@@ -1897,6 +1916,7 @@ function ChatAside({
                     pinned: Boolean(activeConversation?.pinned),
                     disabled: sending,
                     onShare: shareCurrentConversation,
+                    onDownload: downloadCurrentConversation,
                     onRename: (title) =>
                       renameConversation(conversationId, title),
                     onTogglePin: () => toggleConversationPin(conversationId),
@@ -2026,6 +2046,7 @@ function ChatAside({
                 pinned={Boolean(activeConversation?.pinned)}
                 disabled={sending}
                 onShare={shareCurrentConversation}
+                onDownload={downloadCurrentConversation}
                 onRename={(title) => renameConversation(conversationId, title)}
                 onTogglePin={() => toggleConversationPin(conversationId)}
                 onDelete={deleteCurrentConversation}
@@ -2042,7 +2063,9 @@ function ChatAside({
                 pinned={Boolean(activeConversation?.pinned)}
                 disabled={sending}
                 showUpgrade={!isMobileOverlay && isAuthenticated && !isProUser}
+                onNewChat={startNewChat}
                 onShare={shareCurrentConversation}
+                onDownload={downloadCurrentConversation}
                 onRename={(title) => renameConversation(conversationId, title)}
                 onTogglePin={() => toggleConversationPin(conversationId)}
                 onDelete={deleteCurrentConversation}
@@ -2106,7 +2129,7 @@ function ChatAside({
                           </h2>
                           <IrisSamplePrompts
                             disabled={sending}
-                            onEdit={(text: string) => {
+                            onEdit={(text) => {
                               setDraft(text)
                               focusComposer()
                             }}
@@ -2419,7 +2442,7 @@ function ChatAside({
                   "mx-auto w-full",
                   isMobileOverlay
                     ? chatMobileComposerDockClass
-                    : "shrink-0 bg-background/95 backdrop-blur-md supports-backdrop-filter:bg-background/90",
+                    : "shrink-0 bg-transparent",
                   CHAT_CONTENT_MAX_WIDTH
                 )}
               >

@@ -13,7 +13,7 @@ describe("shellSidebarLayoutForWidth", () => {
     expect(layout.chat.defaultSize).toBe(layout.chat.minSize)
     expect(layout.ticket.defaultSize).toBe(layout.ticket.minSize)
     expect(layout.contextMinSize).toBe("45%")
-    expect(layout.chat.defaultSize).toBe("15rem")
+    expect(layout.chat.defaultSize).toBe("16.5rem")
     expect(layout.ticket.defaultSize).toBe("14rem")
   })
 
@@ -23,8 +23,8 @@ describe("shellSidebarLayoutForWidth", () => {
     })
 
     expect(layout.tier).toBe("compact")
-    expect(layout.chat.defaultSize).toBe("16.5rem")
-    expect(layout.chat.minSize).toBe("16.5rem")
+    expect(layout.chat.defaultSize).toBe("18rem")
+    expect(layout.chat.minSize).toBe("18rem")
   })
 
   it("uses wider defaults on large desktops", () => {
@@ -33,7 +33,7 @@ describe("shellSidebarLayoutForWidth", () => {
     )
 
     expect(layout.tier).toBe("comfortable")
-    expect(layout.chat.defaultSize).toBe("18rem")
+    expect(layout.chat.defaultSize).toBe("19.5rem")
     expect(layout.ticket.defaultSize).toBe("16rem")
   })
 })

@@ -62,6 +62,7 @@ import {
   chatDesktopComposerSendClass,
   chatDesktopComposerSendDisabledClass,
   chatDesktopComposerShellClass,
+  chatDesktopComposerTextareaClass,
   chatDesktopComposerToolChipClass,
   chatDesktopComposerToolChipCloseClass,
   chatMobileComposerToolChipClass,
@@ -164,7 +165,7 @@ function ChatComposer({
           )}
           onClick={() => insertMentionToken(option)}
         >
-          <span className="flex size-9 shrink-0 items-center justify-center rounded-3.5 bg-foreground/5 text-foreground dark:bg-white/8">
+          <span className="flex size-9 shrink-0 items-center justify-center rounded-2xl bg-foreground/5 text-foreground dark:bg-white/8">
             <TrendingUpIcon className="size-4" aria-hidden />
           </span>
           <span className="flex min-w-0 flex-1 flex-col gap-0.5 text-start">
@@ -186,7 +187,7 @@ function ChatComposer({
           "flex-row items-center gap-3 py-2.5 opacity-55"
         )}
       >
-        <span className="flex size-9 shrink-0 items-center justify-center rounded-3.5 bg-foreground/4 text-muted-foreground dark:bg-white/6">
+        <span className="flex size-9 shrink-0 items-center justify-center rounded-2xl bg-foreground/4 text-muted-foreground dark:bg-white/6">
           <BarChart3Icon className="size-4" aria-hidden />
         </span>
         <span className="flex min-w-0 flex-1 flex-col gap-0.5 text-start">
@@ -816,12 +817,12 @@ function ChatComposer({
                 }
               }}
               dir={textDir}
-              className="field-sizing-content min-h-6 min-w-32 flex-1 resize-none rounded-none border-0 bg-transparent p-0 chat-bidi text-start text-[17px] font-normal leading-5.5 tracking-[-0.024em] shadow-none placeholder:text-muted-foreground/35 focus-visible:border-transparent focus-visible:ring-0 disabled:cursor-not-allowed disabled:bg-transparent disabled:opacity-100 sm:text-[15px] sm:leading-5 sm:tracking-[-0.016em] dark:bg-transparent dark:placeholder:text-muted-foreground/30 dark:disabled:bg-transparent"
+              className={chatDesktopComposerTextareaClass}
             />
           </div>
         )}
         {!isFloating ? (
-          <div className="flex items-center gap-0.5 px-0.5 pb-0.5 [grid-area:leading]">
+          <div className="flex items-center gap-1.5 px-0.5 pb-0.5 [grid-area:leading]">
             {SHOW_COMPOSER_TOOLS_MENU ? (
               <DropdownMenu modal={isMobile ? false : undefined}>
                 <DropdownMenuTrigger

@@ -5,6 +5,7 @@ import { Link } from "@/i18n/navigation"
 import {
   CheckIcon,
   CopyIcon,
+  DownloadIcon,
   MoreHorizontalIcon,
   PencilIcon,
   PinIcon,
@@ -14,6 +15,7 @@ import {
 } from "lucide-react"
 import { useTranslations } from "next-intl"
 
+import { ChatGeminiNewChatIcon } from "@/components/app-shell/chat-gemini-new-chat-icon"
 import {
   chatContextMenuContentClass,
   chatContextMenuDeleteClass,
@@ -42,6 +44,7 @@ type ChatThreadMenuProps = {
   pinned: boolean
   disabled?: boolean
   onShare: () => boolean | Promise<boolean>
+  onDownload: () => boolean | Promise<boolean>
   onRename: (title: string) => void
   onTogglePin: () => void
   onDelete: () => void
@@ -50,7 +53,13 @@ type ChatThreadMenuProps = {
 
 type ChatThreadActionsProps = ChatThreadMenuProps & {
   showUpgrade?: boolean
+  onNewChat?: () => void
 }
+
+const chatThreadHeaderIconButtonClass = cn(
+  chatMobileHeaderButtonClass,
+  "size-8 shrink-0 [&_svg:not([class*='size-'])]:size-4"
+)
 
 function ChatThreadUpgradeButton({ className }: { className?: string }) {
   const t = useTranslations("workspace")
@@ -74,6 +83,7 @@ function ChatThreadOptionsMenu({
   pinned,
   disabled,
   onShare,
+  onDownload,
   onRename,
   onTogglePin,
   onDelete,
@@ -97,6 +107,11 @@ function ChatThreadOptionsMenu({
     shareTimerRef.current = window.setTimeout(() => setShared(false), 1_600)
   }
 
+  async function handleDownload() {
+    if (disabled) return
+    await onDownload()
+  }
+
   function openRename() {
     setRenameOpen(true)
   }
@@ -110,11 +125,7 @@ function ChatThreadOptionsMenu({
               type="button"
               variant="ghost"
               size="icon-sm"
-              className={cn(
-                chatMobileHeaderButtonClass,
-                "size-8 shrink-0 [&_svg:not([class*='size-'])]:size-4",
-                className
-              )}
+              className={cn(chatThreadHeaderIconButtonClass, className)}
               aria-label={t("chatOptions")}
               disabled={disabled}
             />
@@ -138,6 +149,14 @@ function ChatThreadOptionsMenu({
               <CopyIcon className={chatContextMenuIconClass} />
             )}
             {shared ? t("sharedChat") : t("shareChat")}
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            className={chatContextMenuItemClass}
+            disabled={disabled}
+            onClick={() => void handleDownload()}
+          >
+            <DownloadIcon className={chatContextMenuIconClass} />
+            {t("downloadChat")}
           </DropdownMenuItem>
           <DropdownMenuItem
             className={chatContextMenuItemClass}
@@ -179,14 +198,47 @@ function ChatThreadOptionsMenu({
   )
 }
 
+function ChatThreadNewChatButton({
+  disabled,
+  onNewChat,
+  className,
+}: {
+  disabled?: boolean
+  onNewChat: () => void
+  className?: string
+}) {
+  const t = useTranslations("workspace")
+
+  return (
+    <Button
+      type="button"
+      variant="ghost"
+      size="icon-sm"
+      className={cn(chatThreadHeaderIconButtonClass, className)}
+      aria-label={t("newChat")}
+      disabled={disabled}
+      onClick={onNewChat}
+    >
+      <ChatGeminiNewChatIcon className="h-4" />
+    </Button>
+  )
+}
+
 function ChatThreadActions({
   showUpgrade,
+  onNewChat,
   className,
   ...menuProps
 }: ChatThreadActionsProps) {
   return (
     <div className={cn("flex shrink-0 items-center gap-1.5", className)}>
       {showUpgrade ? <ChatThreadUpgradeButton /> : null}
+      {onNewChat ? (
+        <ChatThreadNewChatButton
+          disabled={menuProps.disabled}
+          onNewChat={onNewChat}
+        />
+      ) : null}
       <ChatThreadOptionsMenu {...menuProps} />
     </div>
   )
@@ -209,6 +261,7 @@ function ChatThreadToolbar(props: ChatThreadToolbarProps) {
 
 export {
   ChatThreadActions,
+  ChatThreadNewChatButton,
   ChatThreadOptionsMenu,
   ChatThreadToolbar,
   ChatThreadUpgradeButton,

@@ -13,12 +13,17 @@ import {
 import { NewsBulletinSkeleton } from "@/components/dashboard/intel-skeletons"
 import { Button } from "@/components/ui/button"
 import {
+  chatDesktopSidebarIconButtonClass,
   chatMobileHeaderButtonClass,
   chatMobileHeaderScrimClass,
   chatMobileHeaderShellClass,
   chatMobileThreadTopSpacerClass,
   chatNewsFreshnessBadgeClass,
+  chatNewsFreshnessBadgeDesktopClass,
   chatNewsPanelHeaderClass,
+  chatNewsPanelHeaderDesktopClass,
+  chatNewsPanelHeaderDesktopScrimClass,
+  chatNewsPanelHeaderDesktopWrapClass,
   chatNewsPanelShellClass,
   chatNewsPanelShellMobileClass,
 } from "@/components/app-shell/chat-mobile-gemini-styles"
@@ -132,44 +137,94 @@ function ChatNewsPanelBody({
   const { analytics, news, freshnessLabel, freshnessAge, loading } =
     useChatNewsFeed(true)
 
+  const headerIconButtonClass = mobile
+    ? chatMobileHeaderButtonClass
+    : chatDesktopSidebarIconButtonClass
+  const headerRowClass = mobile ? "h-11" : "h-9"
+
+  const headerInner = (
+    <>
+      <div
+        className={cn(
+          "flex min-w-0 items-center justify-start gap-2",
+          headerRowClass
+        )}
+      >
+        <ExurLogo
+          decorative
+          variant="gradient"
+          shimmer
+          priority
+          size={mobile ? 44 : 36}
+          className={cn(
+            "shrink-0 overflow-hidden rounded-full",
+            mobile ? "size-11" : "size-9"
+          )}
+        />
+        <h2 className="truncate text-[17px] font-normal leading-none tracking-tight text-foreground">
+          {t("news")}
+        </h2>
+      </div>
+      <div
+        className={cn(
+          "flex shrink-0 items-center justify-end gap-2",
+          headerRowClass
+        )}
+      >
+        <span
+          className={
+            mobile
+              ? chatNewsFreshnessBadgeClass
+              : chatNewsFreshnessBadgeDesktopClass
+          }
+        >
+          {freshnessAge}
+        </span>
+        <NewsReadAllButton
+          news={news}
+          glass
+          iconOnly
+          className={headerIconButtonClass}
+        />
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          className={cn(headerIconButtonClass, "relative self-center")}
+          aria-label={t("closeNews")}
+          onClick={onClose}
+        >
+          <XIcon />
+        </Button>
+      </div>
+    </>
+  )
+
   return (
     <div className={cn("relative flex h-full min-h-0 flex-col", className)}>
-      <div className={chatMobileHeaderShellClass}>
-        <div aria-hidden className={chatMobileHeaderScrimClass} />
-        <header className={cn(chatNewsPanelHeaderClass, headerClassName)}>
-          <div className="flex h-11 min-w-0 items-center justify-start gap-2">
-            <ExurLogo
-              decorative
-              variant="gradient"
-              shimmer
-              priority
-              size={44}
-              className="size-11 shrink-0 overflow-hidden rounded-full"
-            />
-            <h2 className="truncate text-[17px] font-normal leading-none tracking-tight text-foreground">
-              {t("news")}
-            </h2>
-          </div>
-          <div className="flex h-11 shrink-0 items-center justify-end gap-2">
-            <span className={chatNewsFreshnessBadgeClass}>{freshnessAge}</span>
-            <NewsReadAllButton news={news} glass iconOnly />
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              className={cn(chatMobileHeaderButtonClass, "relative self-center")}
-              aria-label={t("closeNews")}
-              onClick={onClose}
-            >
-              <XIcon />
-            </Button>
-          </div>
-        </header>
-      </div>
+      {mobile ? (
+        <div className={chatMobileHeaderShellClass}>
+          <div aria-hidden className={chatMobileHeaderScrimClass} />
+          <header className={cn(chatNewsPanelHeaderClass, headerClassName)}>
+            {headerInner}
+          </header>
+        </div>
+      ) : (
+        <div className={chatNewsPanelHeaderDesktopWrapClass}>
+          <div aria-hidden className={chatNewsPanelHeaderDesktopScrimClass} />
+          <header
+            className={cn(chatNewsPanelHeaderDesktopClass, headerClassName)}
+          >
+            {headerInner}
+          </header>
+        </div>
+      )}
 
       <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain select-text [-webkit-overflow-scrolling:touch]">
-        <div aria-hidden className={chatMobileThreadTopSpacerClass} />
-        <div className="px-4 pt-6 pb-10">
+        {mobile ? (
+          <div aria-hidden className={chatMobileThreadTopSpacerClass} />
+        ) : null}
+        <div className={cn("px-4 pb-10", mobile ? "pt-6" : "pt-1")}>
           {loading ? (
             <NewsBulletinSkeleton sidebar />
           ) : (
@@ -211,7 +266,7 @@ function ChatNewsSidePanel({ open, onOpenChange }: ChatNewsSidePanelProps) {
       )}
       aria-label={t("news")}
     >
-      <ChatNewsPanelBody mobile onClose={() => onOpenChange(false)} />
+      <ChatNewsPanelBody onClose={() => onOpenChange(false)} />
     </aside>
   )
 }

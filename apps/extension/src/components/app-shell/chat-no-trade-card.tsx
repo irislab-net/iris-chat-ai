@@ -69,7 +69,7 @@ function ChatNoTradeCard({
         <div
           className={cn(
             chatSignalCardInsetClass,
-            "rounded-xl px-3.5 py-3 shadow-none dark:shadow-none"
+            "rounded-2xl px-3.5 py-3 shadow-none dark:shadow-none"
           )}
         >
           <p className="text-[10px] font-medium tracking-[0.08em] text-muted-foreground uppercase">

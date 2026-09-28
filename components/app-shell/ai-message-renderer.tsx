@@ -69,7 +69,7 @@ const aiMessageClassName = cn(
   "[&_strong]:font-semibold [&_strong]:text-foreground",
   "[&_em]:italic",
   "[&_code]:rounded-md [&_code]:bg-foreground/6 [&_code]:px-1 [&_code]:py-0.5 [&_code]:font-mono [&_code]:text-[0.92em]",
-  "[&_pre]:my-3 [&_pre]:overflow-x-auto [&_pre]:rounded-4 [&_pre]:border [&_pre]:border-border/50 [&_pre]:bg-foreground/4 [&_pre]:p-3.5 [&_pre]:font-mono [&_pre]:text-[13px] [&_pre]:leading-4.5 [&_pre]:whitespace-pre-wrap [&_pre:last-child]:mb-0",
+  "[&_pre]:my-3 [&_pre]:overflow-x-auto [&_pre]:rounded-2xl [&_pre]:border [&_pre]:border-border/50 [&_pre]:bg-foreground/4 [&_pre]:p-3.5 [&_pre]:font-mono [&_pre]:text-[13px] [&_pre]:leading-4.5 [&_pre]:whitespace-pre-wrap [&_pre:last-child]:mb-0",
   "[&_pre_code]:block [&_pre_code]:bg-transparent [&_pre_code]:p-0 [&_pre_code]:font-inherit [&_pre_code]:text-inherit [&_pre_code]:leading-inherit",
   "[&_table]:my-4 [&_table]:w-full [&_table]:min-w-0 [&_table]:border-collapse [&_table]:text-[13px] [&_table]:leading-4.5 max-md:[&_table]:table-fixed sm:[&_table]:min-w-[32rem]",
   "[&_thead]:border-b [&_thead]:border-border/60 [&_thead]:bg-muted/40",

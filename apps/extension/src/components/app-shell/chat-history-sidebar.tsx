@@ -49,6 +49,7 @@ import {
   chatContextMenuSeparatorClass,
 } from "@/components/app-shell/chat-context-menu-styles"
 import {
+  chatDesktopSidebarIconButtonClass,
   chatHistoryRailChatItemClass,
   chatHistoryRailChatItemPadClass,
   chatHistoryRailGlassItemActiveClass,
@@ -112,10 +113,7 @@ const rowMenuButtonClass =
 const rowMenuButtonHoverRevealClass =
   "opacity-100 [@media(hover:hover)]:opacity-0 [@media(hover:hover)]:group-hover/item:opacity-100 [@media(hover:hover)]:group-focus-within/item:opacity-100"
 
-const historyRailGlassIconButtonClass = cn(
-  chatMobileHeaderButtonClass,
-  "size-9 shrink-0 [&_svg]:stroke-[1.75] [&_svg:not([class*='size-'])]:size-4"
-)
+const historyRailGlassIconButtonClass = chatDesktopSidebarIconButtonClass
 
 function HistoryRailSearchButton({ onOpen }: { onOpen: () => void }) {
   const t = useTranslations("workspace")
@@ -537,8 +535,8 @@ function ChatHistorySidebar({
                 variant="gradient"
                 shimmer
                 priority
-                size={48}
-                className="size-12 shrink-0 overflow-hidden rounded-full"
+                size={40}
+                className="size-10 shrink-0 overflow-hidden rounded-full"
               />
               <h2 className="text-lg leading-none font-normal tracking-tight text-foreground">
                 {t("iris")}
@@ -579,8 +577,8 @@ function ChatHistorySidebar({
             <div
               className={cn(
                 chatHistoryRailHeaderBarClass,
-                "flex items-center gap-1 pt-2.5 pb-1",
-                collapsed ? "flex-col px-1" : "px-2"
+                "flex items-center pt-2.5 pb-1",
+                collapsed ? "flex-col gap-4 px-1" : "gap-1 px-2"
               )}
             >
               <div
@@ -593,8 +591,8 @@ function ChatHistorySidebar({
                   decorative
                   variant="gradient"
                   shimmer
-                  size={48}
-                  className="size-12 shrink-0 overflow-hidden rounded-full"
+                  size={40}
+                  className="size-10 shrink-0 overflow-hidden rounded-full"
                 />
                 {!collapsed ? (
                   <span className="min-w-0 truncate text-[15px] leading-none font-medium tracking-tight text-sidebar-foreground">
@@ -604,8 +602,8 @@ function ChatHistorySidebar({
               </div>
               <div
                 className={cn(
-                  "flex shrink-0 items-center gap-1",
-                  collapsed && "flex-col"
+                  "flex shrink-0 items-center",
+                  collapsed ? "flex-col gap-3" : "gap-1"
                 )}
               >
                 <HistoryRailSearchButton onOpen={() => setSearchOpen(true)} />
@@ -633,8 +631,8 @@ function ChatHistorySidebar({
           >
             <div
               className={cn(
-                "flex flex-col gap-1.5",
-                collapsed && !isMobileDrawer && "items-center"
+                "flex flex-col",
+                collapsed && !isMobileDrawer ? "gap-4 items-center" : "gap-1.5"
               )}
             >
               {onNewChat ? (
@@ -840,7 +838,7 @@ function ConversationRowSkeleton({ compact = false }: { compact?: boolean }) {
   return (
     <div
       className={cn(
-        "chat-skeleton-shimmer w-full rounded-4",
+        "chat-skeleton-shimmer w-full rounded-2xl",
         compact ? "h-11" : "h-9"
       )}
       aria-busy="true"
@@ -934,8 +932,8 @@ function ConversationRow({
         className={cn(
           "min-w-0 flex-1 justify-start text-start font-normal shadow-none hover:bg-transparent",
           compact
-            ? "h-11 gap-0 rounded-4 px-4 pe-1 text-[15px]"
-            : "h-9 gap-2.5 rounded-4 px-2 text-sm"
+            ? "h-11 gap-0 rounded-2xl px-4 pe-1 text-[15px]"
+            : "h-9 gap-2.5 rounded-2xl px-2 text-sm"
         )}
         onClick={onSelect}
       >
