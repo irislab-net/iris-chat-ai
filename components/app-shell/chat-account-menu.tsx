@@ -101,6 +101,7 @@ function ChatAccountMenu({
         <DropdownMenuContent
           align="end"
           sideOffset={10}
+          showBackdrop={isDesktop ? false : "mobile"}
           className={cn(chatContextMenuContentClass, "min-w-64")}
         >
           <AccountGuestMenuSections
@@ -145,6 +146,7 @@ function ChatAccountMenu({
       <DropdownMenuContent
         align="end"
         sideOffset={10}
+        showBackdrop={isDesktop ? false : "mobile"}
         className={cn(chatContextMenuContentClass, "min-w-64")}
       >
         <AccountSignedInMenuSections

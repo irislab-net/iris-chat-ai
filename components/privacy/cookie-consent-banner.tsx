@@ -269,14 +269,14 @@ function CookieConsentBanner() {
     setManageOpen(false)
   }, [])
 
-  const openManage = React.useCallback(() => {
-    setAnalyticsDraft(false)
-    setManageOpen(true)
-  }, [])
-
   const closeManage = React.useCallback(() => {
     setManageOpen(false)
     // If prefs is still null, showBanner becomes true again automatically.
+  }, [])
+
+  const openManage = React.useCallback(() => {
+    setAnalyticsDraft(false)
+    setManageOpen(true)
   }, [])
 
   if (!isClient || isDesktop === null) return null
@@ -353,8 +353,8 @@ function CookieConsentBanner() {
             showCloseButton
           >
             <div className="flex flex-col gap-4 px-5 pt-5 pb-1">
-              <DialogHeader className="gap-1.5 space-y-0 pe-8 text-start">
-                <DialogTitle className="text-[1.25rem] font-semibold tracking-[-0.02em]">
+              <DialogHeader className="gap-3 space-y-0 pe-8 text-start">
+                <DialogTitle className="font-heading text-[1.35rem] font-normal tracking-tight text-foreground">
                   {t("manageTitle")}
                 </DialogTitle>
                 <DialogDescription className="text-[13px] leading-relaxed text-pretty text-muted-foreground">
@@ -363,7 +363,7 @@ function CookieConsentBanner() {
               </DialogHeader>
               {manageBody}
             </div>
-            <div className="flex w-full flex-col gap-2.5 p-4 pt-3">
+            <div className="flex w-full flex-col gap-2.5 p-4 pt-5">
               {manageActions}
             </div>
           </DialogContent>
@@ -381,19 +381,16 @@ function CookieConsentBanner() {
           <SheetContent
             side="bottom"
             showCloseButton={false}
+            overlayClassName="z-60"
             className={cn(chatMobileSheetContentClass, "z-60 gap-0 border-0")}
           >
             <div aria-hidden className={chatMobileSheetHandleClass} />
-            <div className={cn(chatMobileSheetBodyClass, "gap-5 pb-1")}>
-              <SheetHeader className={cn(chatMobileSheetHeaderClass, "px-0")}>
-                <SheetTitle
-                  className={cn(chatMobileSheetTitleClass, "text-[1.35rem]")}
-                >
+            <div className={cn(chatMobileSheetBodyClass, "gap-4 pb-5")}>
+              <SheetHeader className={cn(chatMobileSheetHeaderClass, "gap-3 px-0")}>
+                <SheetTitle className={chatMobileSheetTitleClass}>
                   {t("title")}
                 </SheetTitle>
-                <SheetDescription
-                  className={cn(chatMobileSheetDescriptionClass, "text-[14px]")}
-                >
+                <SheetDescription className={chatMobileSheetDescriptionClass}>
                   {t("description")}{" "}
                   <a
                     href={getPrivacyNoticeHref()}
@@ -407,7 +404,7 @@ function CookieConsentBanner() {
               </SheetHeader>
             </div>
             <SheetFooter className={chatMobileSheetFooterClass}>
-              <div className={chatMobileSheetFooterBarClass}>
+              <div className={cn(chatMobileSheetFooterBarClass, "pt-4")}>
                 {bannerActions}
               </div>
             </SheetFooter>
@@ -426,26 +423,23 @@ function CookieConsentBanner() {
           <SheetContent
             side="bottom"
             showCloseButton
+            overlayClassName="z-70"
             className={cn(chatMobileSheetContentClass, "z-70 gap-0 border-0")}
           >
             <div aria-hidden className={chatMobileSheetHandleClass} />
-            <div className={cn(chatMobileSheetBodyClass, "gap-4 pb-2")}>
-              <SheetHeader className={cn(chatMobileSheetHeaderClass, "pe-8")}>
-                <SheetTitle
-                  className={cn(chatMobileSheetTitleClass, "text-lg")}
-                >
+            <div className={cn(chatMobileSheetBodyClass, "gap-4 pb-5")}>
+              <SheetHeader className={cn(chatMobileSheetHeaderClass, "gap-3 pe-8")}>
+                <SheetTitle className={chatMobileSheetTitleClass}>
                   {t("manageTitle")}
                 </SheetTitle>
-                <SheetDescription
-                  className={cn(chatMobileSheetDescriptionClass, "text-[13px]")}
-                >
+                <SheetDescription className={chatMobileSheetDescriptionClass}>
                   {t("manageDescription")}
                 </SheetDescription>
               </SheetHeader>
               {manageBody}
             </div>
             <SheetFooter className={chatMobileSheetFooterClass}>
-              <div className={chatMobileSheetFooterBarClass}>
+              <div className={cn(chatMobileSheetFooterBarClass, "pt-4")}>
                 {manageActions}
               </div>
             </SheetFooter>

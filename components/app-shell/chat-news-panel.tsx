@@ -4,6 +4,7 @@ import * as React from "react"
 import { XIcon } from "lucide-react"
 import { useLocale, useTranslations } from "next-intl"
 
+import { ExurLogo } from "@/components/brand/exur-logo"
 import { ChatMobileSlidePanel } from "@/components/app-shell/chat-mobile-slide-panel"
 import {
   NewsBulletin,
@@ -13,6 +14,9 @@ import { NewsBulletinSkeleton } from "@/components/dashboard/intel-skeletons"
 import { Button } from "@/components/ui/button"
 import {
   chatMobileHeaderButtonClass,
+  chatMobileHeaderScrimClass,
+  chatMobileHeaderShellClass,
+  chatMobileThreadTopSpacerClass,
   chatNewsFreshnessBadgeClass,
   chatNewsPanelHeaderClass,
   chatNewsPanelShellClass,
@@ -23,6 +27,7 @@ import type { NewsHome } from "@/lib/api/types"
 import { hasUsableNews, mergeNewsHome } from "@/lib/dashboard/intel-load"
 import {
   NEWS_REFRESH_INTERVAL_MS,
+  formatRelativeAge,
   newsFeedUpdatedLabel,
   shouldRefreshNewsAfterResume,
 } from "@/lib/format"
@@ -95,12 +100,17 @@ function useChatNewsFeed(enabled: boolean) {
 
   const analytics = newsHome?.analytics?.[0] ?? null
   const freshnessLabel = newsFeedUpdatedLabel(analytics?.generated_at, nowMs)
+  const freshnessAge =
+    analytics?.generated_at != null
+      ? (formatRelativeAge(analytics.generated_at, nowMs) ?? "—")
+      : "—"
   const loading = enabled && !ready && !hasUsableNews(newsHome)
 
   return {
     analytics,
     news: newsHome?.news ?? [],
     freshnessLabel,
+    freshnessAge,
     loading,
   }
 }
@@ -119,38 +129,47 @@ function ChatNewsPanelBody({
   mobile = false,
 }: ChatNewsPanelBodyProps) {
   const t = useTranslations("workspace")
-  const { analytics, news, freshnessLabel, loading } = useChatNewsFeed(true)
+  const { analytics, news, freshnessLabel, freshnessAge, loading } =
+    useChatNewsFeed(true)
 
   return (
-    <div className={cn("flex h-full min-h-0 flex-col", className)}>
-      <header className={cn(chatNewsPanelHeaderClass, headerClassName)}>
-        <div className="min-w-0">
-          <h2 className="text-[1.25rem] font-semibold tracking-[-0.02em] text-foreground">
-            {t("news")}
-          </h2>
-        </div>
-        <div className="flex shrink-0 items-center gap-1.5">
-          <NewsReadAllButton news={news} glass={mobile} />
-          <span className={chatNewsFreshnessBadgeClass}>{freshnessLabel}</span>
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon-sm"
-            className={cn(
-              mobile
-                ? cn(chatMobileHeaderButtonClass, "size-8 [&_svg]:size-4")
-                : "size-8 rounded-lg text-muted-foreground hover:bg-foreground/5 hover:text-foreground [&_svg]:size-4"
-            )}
-            aria-label={t("closeNews")}
-            onClick={onClose}
-          >
-            <XIcon />
-          </Button>
-        </div>
-      </header>
+    <div className={cn("relative flex h-full min-h-0 flex-col", className)}>
+      <div className={chatMobileHeaderShellClass}>
+        <div aria-hidden className={chatMobileHeaderScrimClass} />
+        <header className={cn(chatNewsPanelHeaderClass, headerClassName)}>
+          <div className="flex h-11 min-w-0 items-center justify-start gap-2">
+            <ExurLogo
+              decorative
+              variant="gradient"
+              shimmer
+              priority
+              size={44}
+              className="size-11 shrink-0 overflow-hidden rounded-full"
+            />
+            <h2 className="truncate text-[17px] font-normal leading-none tracking-tight text-foreground">
+              {t("news")}
+            </h2>
+          </div>
+          <div className="flex h-11 shrink-0 items-center justify-end gap-2">
+            <span className={chatNewsFreshnessBadgeClass}>{freshnessAge}</span>
+            <NewsReadAllButton news={news} glass iconOnly />
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className={cn(chatMobileHeaderButtonClass, "relative self-center")}
+              aria-label={t("closeNews")}
+              onClick={onClose}
+            >
+              <XIcon />
+            </Button>
+          </div>
+        </header>
+      </div>
 
       <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain select-text [-webkit-overflow-scrolling:touch]">
-        <div className="px-4 py-4">
+        <div aria-hidden className={chatMobileThreadTopSpacerClass} />
+        <div className="px-4 pt-6 pb-10">
           {loading ? (
             <NewsBulletinSkeleton sidebar />
           ) : (

@@ -27,7 +27,6 @@ import {
 import { useIsDesktop } from "@/hooks/use-media-query"
 import { getPrivacyNoticeHref, getTermsOfServiceHref } from "@/lib/legal"
 import {
-  chatLoginConsentBrandMarkClass,
   chatLoginConsentDialogClass,
   chatMobileSheetBodyClass,
   chatMobileSheetConsentCheckedClass,
@@ -89,7 +88,7 @@ function ConsentCheck({
     <label
       htmlFor={id}
       className={cn(
-        "flex min-h-12 cursor-pointer items-center gap-3 rounded-2xl px-3.5 py-3 text-start transition-[background-color,box-shadow]",
+        "flex min-h-12 cursor-pointer items-center gap-3 rounded-2xl py-3 ps-5 pe-3.5 text-start transition-[background-color,box-shadow]",
         checked
           ? chatMobileSheetConsentCheckedClass
           : chatMobileSheetConsentUncheckedClass
@@ -116,28 +115,16 @@ function ConsentCheck({
   )
 }
 
-function LoginConsentBrand() {
-  const t = useTranslations("workspace")
-
+function LoginConsentLogo({ className }: { className?: string }) {
   return (
-    <div className="flex items-center gap-3 pe-8">
-      <span className={chatLoginConsentBrandMarkClass}>
-        <ExurLogo
-          decorative
-          size={28}
-          className="size-7 rounded-full"
-          priority
-        />
-      </span>
-      <div className="min-w-0 text-start">
-        <p className="text-[15px] leading-none font-semibold tracking-[-0.02em] text-foreground">
-          Exur
-        </p>
-        <p className="mt-1.5 text-[12px] leading-none text-muted-foreground">
-          {t("secureSignInWithGoogle")}
-        </p>
-      </div>
-    </div>
+    <ExurLogo
+      decorative
+      variant="mark"
+      className={cn(
+        "size-10 shrink-0 overflow-hidden rounded-full bg-white text-black",
+        className
+      )}
+    />
   )
 }
 
@@ -224,11 +211,11 @@ function LoginConsentBody({
         </ConsentCheck>
       </div>
 
-      <p className="px-0.5 text-[11.5px] leading-relaxed text-pretty text-muted-foreground">
+      <p className="px-4 text-[11.5px] leading-relaxed text-pretty text-muted-foreground">
         {t("loginConsentDisclaimer")}
       </p>
       {showPwaHint ? (
-        <p className="px-0.5 text-[11.5px] leading-relaxed text-pretty text-muted-foreground">
+        <p className="px-4 text-[11.5px] leading-relaxed text-pretty text-muted-foreground">
           {t("loginConsentPwaHint")}
         </p>
       ) : null}
@@ -282,11 +269,13 @@ function LoginConsentDialog({
           showCloseButton={!confirming}
         >
           <div className="flex flex-col gap-4 px-5 pt-5 pb-1">
-            <LoginConsentBrand />
-            <DialogHeader className="gap-1.5 space-y-0 text-start">
-              <DialogTitle className="text-[1.25rem] font-semibold tracking-[-0.02em]">
-                {t("continueWithGoogle")}
-              </DialogTitle>
+            <DialogHeader className="gap-3 space-y-0 text-start">
+              <div className="flex items-center gap-3 pe-8">
+                <LoginConsentLogo />
+                <DialogTitle className="font-heading text-[1.35rem] font-normal tracking-tight text-foreground">
+                  {t("continueWithGoogle")}
+                </DialogTitle>
+              </div>
               <DialogDescription className="text-[13px] leading-relaxed text-pretty text-muted-foreground">
                 {t("loginConsentDescription")}
               </DialogDescription>
@@ -298,7 +287,7 @@ function LoginConsentDialog({
               onPrivacyChange={setPrivacyAccepted}
             />
           </div>
-          <DialogFooter className="mx-0 mb-0 flex-col gap-2 rounded-none border-0 bg-transparent p-4 pt-2 sm:flex-col sm:justify-stretch">
+          <DialogFooter className="mx-0 mb-0 flex-col gap-2 rounded-none border-0 bg-transparent p-4 pt-5 sm:flex-col sm:justify-stretch">
             {actions}
           </DialogFooter>
         </DialogContent>
@@ -314,15 +303,15 @@ function LoginConsentDialog({
         className={cn(chatMobileSheetContentClass, "gap-0 border-0")}
       >
         <div aria-hidden className={chatMobileSheetHandleClass} />
-        <div className={cn(chatMobileSheetBodyClass, "gap-4 pb-2")}>
-          <LoginConsentBrand />
-          <SheetHeader className={chatMobileSheetHeaderClass}>
-            <SheetTitle className={cn(chatMobileSheetTitleClass, "text-lg")}>
-              {t("continueWithGoogle")}
-            </SheetTitle>
-            <SheetDescription
-              className={cn(chatMobileSheetDescriptionClass, "text-[13px]")}
-            >
+        <div className={cn(chatMobileSheetBodyClass, "gap-4 pb-5")}>
+          <SheetHeader className={cn(chatMobileSheetHeaderClass, "gap-3")}>
+            <div className="flex items-center gap-3 pe-8">
+              <LoginConsentLogo />
+              <SheetTitle className={chatMobileSheetTitleClass}>
+                {t("continueWithGoogle")}
+              </SheetTitle>
+            </div>
+            <SheetDescription className={chatMobileSheetDescriptionClass}>
               {t("loginConsentDescription")}
             </SheetDescription>
           </SheetHeader>
@@ -334,7 +323,7 @@ function LoginConsentDialog({
           />
         </div>
         <SheetFooter className={chatMobileSheetFooterClass}>
-          <div className={chatMobileSheetFooterBarClass}>{actions}</div>
+          <div className={cn(chatMobileSheetFooterBarClass, "pt-4")}>{actions}</div>
         </SheetFooter>
       </SheetContent>
     </Sheet>

@@ -1862,7 +1862,7 @@ function ChatAside({
           "relative z-10 flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden",
           isMobileOverlay
             ? "bg-transparent text-foreground"
-            : "bg-[oklch(0.975_0_0)] text-foreground dark:bg-background",
+            : "bg-background text-foreground",
           isMobileOverlay &&
             (mobileGeminiPhase === "empty" ||
               mobileGeminiPhase === "focused" ||
@@ -2099,7 +2099,7 @@ function ChatAside({
                             className={cn(
                               isMobileOverlay
                                 ? chatMobileEmptyHeroTitleClass
-                                : "max-w-[20rem] text-[1.75rem] leading-[1.22] font-light tracking-[-0.028em] text-balance text-foreground"
+                                : "max-w-[20rem] text-[28px] leading-[34px] font-light tracking-[0.01em] text-balance text-foreground"
                             )}
                           >
                             {mobileGreeting}

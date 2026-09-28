@@ -118,8 +118,8 @@ function ChatRenameDialog({
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent className={chatDesktopDialogClass} showCloseButton>
           <div className="flex flex-col gap-4 px-5 pt-5 pb-1">
-            <DialogHeader className="gap-1 space-y-0 text-start">
-              <DialogTitle className="text-[1.25rem] font-semibold tracking-[-0.02em] text-foreground">
+            <DialogHeader className="gap-3 space-y-0 text-start">
+              <DialogTitle className="font-heading text-[1.35rem] font-normal tracking-tight text-foreground">
                 {t("renameChat")}
               </DialogTitle>
             </DialogHeader>
@@ -162,12 +162,12 @@ function ChatRenameDialog({
         className={chatMobileSheetContentClass}
       >
         <div aria-hidden className={chatMobileSheetHandleClass} />
-        <SheetHeader className={chatMobileSheetHeaderClass}>
+        <SheetHeader className={cn(chatMobileSheetHeaderClass, "gap-3")}>
           <SheetTitle className={chatMobileSheetTitleClass}>
             {t("renameChat")}
           </SheetTitle>
         </SheetHeader>
-        <div className={cn(chatMobileSheetBodyClass, "pt-1")}>
+        <div className={cn(chatMobileSheetBodyClass, "pt-1 pb-5")}>
           {open ? (
             <RenameFields
               value={draft}
@@ -178,7 +178,7 @@ function ChatRenameDialog({
           ) : null}
         </div>
         <SheetFooter className={chatMobileSheetFooterClass}>
-          <div className={cn(chatMobileSheetFooterBarClass, "space-y-2")}>
+          <div className={cn(chatMobileSheetFooterBarClass, "space-y-2 pt-4")}>
             <Button
               type="button"
               disabled={!canSave}

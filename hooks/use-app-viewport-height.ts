@@ -70,14 +70,20 @@ export function useAppViewportHeight(enabled = true) {
         // the composer stays above it — never pin body with position:fixed.
         if (standalone) {
           root.style.removeProperty("--app-offset-top")
-          root.style.removeProperty("--keyboard-inset-bottom")
 
           if (keyboardOpen) {
             // Prefer visualViewport even when layoutHeight also shrinks (inset≈0).
             root.style.setProperty("--app-height", `${visualHeight}px`)
+            // Keep bottom sheets (rename, consent, …) above the soft keyboard.
+            // When layout also shrinks, inset is ~0 and bottom:0 is already correct.
+            root.style.setProperty(
+              "--keyboard-inset-bottom",
+              `${keyboardInset}px`
+            )
             root.dataset.keyboardOpen = "true"
           } else {
             root.style.removeProperty("--app-height")
+            root.style.removeProperty("--keyboard-inset-bottom")
             delete root.dataset.keyboardOpen
           }
 

@@ -90,57 +90,66 @@ function ChatMobileHeader({
 
   const effortTriggerClass = cn(
     chatMobileHeaderModelClass,
-    "min-w-[6.25rem] justify-between hover:bg-white/88 aria-expanded:bg-white/90 dark:hover:bg-white/[0.12] dark:aria-expanded:bg-white/[0.14]"
+    "min-w-[6.25rem] justify-between leading-none hover:border-white/55 hover:bg-white/[0.32] aria-expanded:border-white/55 aria-expanded:bg-white/[0.36] dark:hover:border-white/28 dark:hover:bg-white/[0.18] dark:aria-expanded:border-white/28 dark:aria-expanded:bg-white/[0.20]"
   )
 
   const effortControl =
     onEffortChange && !hideEffort ? (
-      <DropdownMenu modal={false}>
-        <DropdownMenuTrigger
-          render={
-            <Button
-              type="button"
-              variant="ghost"
-              aria-label={t("effort.aria", { mode: effortLabel })}
-              aria-haspopup="menu"
-              className={effortTriggerClass}
+      <div className="flex h-11 shrink-0 items-center self-center">
+        <DropdownMenu modal={false}>
+          <DropdownMenuTrigger
+            render={
+              <Button
+                type="button"
+                variant="ghost"
+                aria-label={t("effort.aria", { mode: effortLabel })}
+                aria-haspopup="menu"
+                className={effortTriggerClass}
+              />
+            }
+          >
+            <span className="truncate leading-none">{effortLabel}</span>
+            <ChevronDownIcon
+              className="size-3.5 shrink-0 self-center opacity-70"
+              aria-hidden
             />
-          }
-        >
-          <span className="truncate">{effortLabel}</span>
-          <ChevronDownIcon className="shrink-0 opacity-70" aria-hidden />
-        </DropdownMenuTrigger>
-        <DropdownMenuContent
-          align="start"
-          sideOffset={8}
-          className={cn(chatContextMenuContentClass, "min-w-44")}
-        >
-          <DropdownMenuGroup>
-            <p className="px-2.5 pt-1.5 pb-1 text-start text-[10px] font-medium tracking-wide text-muted-foreground uppercase">
-              {t("effort.label")}
-            </p>
-            {CHAT_EFFORT_OPTIONS.map((item) => (
-              <DropdownMenuItem
-                key={item.value}
-                className="items-start py-2"
-                onClick={() => onEffortChange(item.value)}
-              >
-                <span className="flex min-w-0 flex-1 flex-col gap-0.5 text-start">
-                  <span className="text-[13px] font-medium">
-                    {t(`effort.${item.value}`)}
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            align="start"
+            sideOffset={8}
+            className={cn(chatContextMenuContentClass, "min-w-44 p-3.5")}
+          >
+            <DropdownMenuGroup>
+              {CHAT_EFFORT_OPTIONS.map((item) => (
+                <DropdownMenuItem
+                  key={item.value}
+                  className="items-center gap-2.5 rounded-2xl px-3.5 py-2.5"
+                  onClick={() => onEffortChange(item.value)}
+                >
+                  <span className="flex min-w-0 flex-1 flex-col gap-0.5 text-start">
+                    <span className="text-[13px] font-medium">
+                      {t(`effort.${item.value}`)}
+                    </span>
+                    <span className="text-[11px] text-muted-foreground">
+                      {t(`effort.${item.value}Hint`)}
+                    </span>
                   </span>
-                  <span className="text-[11px] text-muted-foreground">
-                    {t(`effort.${item.value}Hint`)}
-                  </span>
-                </span>
-                {effortValue === item.value ? (
-                  <CheckIcon className="mt-0.5 size-3.5" />
-                ) : null}
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuGroup>
-        </DropdownMenuContent>
-      </DropdownMenu>
+                  {effortValue === item.value ? (
+                    <span
+                      className="flex size-5 shrink-0 items-center justify-center rounded-full bg-[#2563EB] text-white shadow-[0_1px_4px_rgba(37,99,235,0.4)]"
+                      aria-hidden
+                    >
+                      <CheckIcon className="size-3 stroke-[2.75]" />
+                    </span>
+                  ) : (
+                    <span className="size-5 shrink-0" aria-hidden />
+                  )}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
     ) : null
 
   return (
@@ -148,17 +157,17 @@ function ChatMobileHeader({
       <div aria-hidden className={chatMobileHeaderScrimClass} />
       <header
         className={cn(
-          "app-mobile-safe-header relative z-1 flex items-center justify-between gap-2 bg-transparent px-6 pb-2",
+          "app-mobile-safe-header relative z-1 flex items-center justify-between gap-2 bg-transparent px-4 pb-2",
           className
         )}
       >
-        <div className="flex min-w-0 items-center justify-start gap-3">
+        <div className="flex h-11 min-w-0 items-center justify-start gap-2">
           {onOpenHistory ? (
             <Button
               type="button"
               variant="ghost"
               size="icon"
-              className={cn(chatMobileHeaderButtonClass, "relative")}
+              className={cn(chatMobileHeaderButtonClass, "relative self-center")}
               aria-label={t("chatHistory")}
               aria-pressed={historyOpen}
               onClick={onOpenHistory}
@@ -184,7 +193,7 @@ function ChatMobileHeader({
                 animate={{
                   opacity: 1,
                   scale: 1,
-                  width: 40,
+                  width: 44,
                   x: 0,
                   marginInlineEnd: 8,
                 }}

@@ -24,6 +24,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet"
+import { chatMobileSheetTitleClass } from "@/components/app-shell/chat-mobile-gemini-styles"
 import { useNow } from "@/hooks/use-now"
 import { useIsDesktop } from "@/hooks/use-media-query"
 import type { BillingCycle } from "@/lib/billing/catalog"
@@ -492,13 +493,14 @@ export function CryptoPaymentSheet({
           <SheetHeader
             className={cn(
               "relative z-10 shrink-0 border-b border-white/55 p-0 dark:border-white/10",
-              isDesktop ? "px-5 py-5 pe-14" : "px-4 pe-12 pt-2 pb-2.5"
+              isDesktop ? "px-5 py-5 pe-14" : "gap-3 px-5 pe-12 pt-2 pb-3"
             )}
           >
             <SheetTitle
               className={cn(
-                landingTitleCard,
-                isDesktop ? "text-lg" : "text-base"
+                isDesktop
+                  ? cn(landingTitleCard, "text-lg")
+                  : chatMobileSheetTitleClass
               )}
             >
               {t("title")}

@@ -1,12 +1,6 @@
 "use client"
 
 import * as React from "react"
-import {
-  ArrowUpFromLineIcon,
-  CheckIcon,
-  SmartphoneIcon,
-  SquarePlusIcon,
-} from "lucide-react"
 import { useTranslations } from "next-intl"
 
 import {
@@ -23,7 +17,6 @@ import {
   chatMobileSheetHeaderClass,
   chatMobileSheetPrimaryButtonClass,
   chatMobileSheetTitleClass,
-  chatSignalCardIconShellClass,
 } from "@/components/app-shell/chat-mobile-gemini-styles"
 import { ExurLogo } from "@/components/brand/exur-logo"
 import { Button } from "@/components/ui/button"
@@ -52,32 +45,158 @@ import { cn } from "@/lib/utils"
 const nudgeSurfaceClass =
   "relative isolate overflow-hidden border-0 bg-white/82 shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_75%,transparent),0_16px_48px_-18px_color-mix(in_oklch,var(--foreground)_16%,transparent)] backdrop-blur-2xl backdrop-saturate-[180%] supports-[backdrop-filter]:bg-white/68 before:pointer-events-none before:absolute before:inset-0 before:-z-10 before:rounded-[inherit] before:bg-[radial-gradient(120%_80%_at_0%_0%,rgba(37,99,235,0.12),transparent_55%),radial-gradient(90%_60%_at_100%_0%,rgba(37,99,235,0.06),transparent_50%),linear-gradient(180deg,rgba(255,255,255,0.5)_0%,transparent_42%)] before:content-[''] dark:bg-white/[0.1] dark:shadow-[inset_0_1px_0_0_color-mix(in_oklch,var(--foreground)_12%,transparent),0_16px_48px_-18px_color-mix(in_oklch,black_45%,transparent)] dark:supports-[backdrop-filter]:bg-white/[0.07] dark:before:bg-[radial-gradient(120%_80%_at_0%_0%,rgba(96,165,250,0.14),transparent_55%),radial-gradient(90%_60%_at_100%_0%,rgba(37,99,235,0.08),transparent_50%),linear-gradient(180deg,rgba(255,255,255,0.06)_0%,transparent_40%)]"
 
-const stepIconShellClass = cn(
-  chatSignalCardIconShellClass,
-  "size-9 bg-[#2563EB]/12 text-[#2563EB] shadow-none supports-backdrop-filter:bg-[#2563EB]/10 dark:bg-[#2563EB]/22 dark:text-[#93C5FD] dark:shadow-none dark:supports-backdrop-filter:bg-[#2563EB]/18"
-)
-
-function InstallBrandMark({ subtitle }: { subtitle: string }) {
+/** iOS SF Symbol–like: square.and.arrow.up (Share). */
+function IosShareIcon({ className }: { className?: string }) {
   return (
-    <div className="flex items-center gap-3 pe-2">
-      <span className={chatLoginConsentBrandMarkClass}>
-        <ExurLogo
-          decorative
-          variant="brand"
-          shimmer
-          className="size-7"
-          imageClassName="size-[72%]"
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      className={className}
+      aria-hidden
+    >
+      <path
+        d="M12 3.25v10.5"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+      />
+      <path
+        d="M8.4 6.6 12 3.1l3.6 3.5"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M5.25 11.5v6.25A2.5 2.5 0 0 0 7.75 20.25h8.5a2.5 2.5 0 0 0 2.5-2.5V11.5"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  )
+}
+
+/** iOS SF Symbol–like: plus.square (Add to Home Screen). */
+function IosAddHomeIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      className={className}
+      aria-hidden
+    >
+      <rect
+        x="4.25"
+        y="4.25"
+        width="15.5"
+        height="15.5"
+        rx="3.25"
+        stroke="currentColor"
+        strokeWidth="1.8"
+      />
+      <path
+        d="M12 8.25v7.5M8.25 12h7.5"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+      />
+    </svg>
+  )
+}
+
+/** iOS SF Symbol–like: checkmark.circle. */
+function IosCheckCircleIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      className={className}
+      aria-hidden
+    >
+      <circle
+        cx="12"
+        cy="12"
+        r="8.1"
+        stroke="currentColor"
+        strokeWidth="1.8"
+      />
+      <path
+        d="m8.6 12.15 2.35 2.35 4.45-4.7"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  )
+}
+
+const iosStepIconClass = "size-5 shrink-0 text-foreground"
+
+/** Mark on white plate — install sheets header. */
+function InstallHeaderLogo({ className }: { className?: string }) {
+  return (
+    <ExurLogo
+      decorative
+      variant="mark"
+      className={cn(
+        "size-10 shrink-0 overflow-hidden rounded-full bg-white text-black",
+        className
+      )}
+    />
+  )
+}
+
+function IosStepIconBadge({
+  animation,
+  delayMs = 0,
+  children,
+}: {
+  animation: "share" | "add" | "check"
+  delayMs?: number
+  children: React.ReactNode
+}) {
+  const motionClass =
+    animation === "share"
+      ? "animate-ios-step-icon-share"
+      : animation === "add"
+        ? "animate-ios-step-icon-add"
+        : "animate-ios-step-icon-check"
+
+  return (
+    <span
+      className={cn(
+        chatLoginConsentBrandMarkClass,
+        "relative isolate size-10 shrink-0"
+      )}
+    >
+      <span
+        aria-hidden
+        className="pointer-events-none absolute inset-0 z-0 rounded-full bg-linear-to-br from-white/95 via-white/30 to-transparent dark:from-white/12 dark:via-white/3 dark:to-transparent"
+      />
+      <span
+        className={cn("relative z-10 inline-flex", motionClass)}
+        style={{ animationDelay: `${delayMs}ms` }}
+      >
+        {children}
+      </span>
+      <span
+        aria-hidden
+        className="pointer-events-none absolute inset-0 z-20 overflow-hidden rounded-[inherit]"
+      >
+        <span
+          className={cn(
+            "absolute inset-y-[-12%] left-0 w-[62%]",
+            "bg-linear-to-r from-transparent via-white/55 to-transparent",
+            "animate-exur-logo-shimmer will-change-transform",
+            "dark:via-white/70"
+          )}
+          style={{ animationDelay: `${delayMs + 200}ms` }}
         />
       </span>
-      <div className="min-w-0 text-start">
-        <p className="text-[15px] leading-none font-semibold tracking-[-0.02em] text-foreground">
-          Exur
-        </p>
-        <p className="mt-1.5 text-[12px] leading-none text-muted-foreground">
-          {subtitle}
-        </p>
-      </div>
-    </div>
+    </span>
   )
 }
 
@@ -86,42 +205,46 @@ function IosInstallSteps() {
 
   const steps = [
     {
-      icon: ArrowUpFromLineIcon,
+      icon: IosShareIcon,
+      animation: "share" as const,
+      delayMs: 0,
       label: t("installIosStepShare"),
     },
     {
-      icon: SquarePlusIcon,
+      icon: IosAddHomeIcon,
+      animation: "add" as const,
+      delayMs: 280,
       label: t("installIosStepAdd"),
     },
     {
-      icon: CheckIcon,
+      icon: IosCheckCircleIcon,
+      animation: "check" as const,
+      delayMs: 560,
       label: t("installIosStepConfirm"),
     },
   ] as const
 
   return (
-    <ol className="flex flex-col gap-2.5 text-start">
-      {steps.map((step, index) => {
+    <ol className="flex flex-col gap-2 text-start">
+      {steps.map((step) => {
         const Icon = step.icon
         return (
           <li
             key={step.label}
             className={cn(
               chatMobileSheetCardClass,
-              "relative flex items-start gap-3 shadow-none dark:shadow-none"
+              "flex items-center gap-3 shadow-none dark:shadow-none"
             )}
           >
-            <span className={stepIconShellClass}>
-              <Icon className="size-4" strokeWidth={1.75} aria-hidden />
-            </span>
-            <div className="min-w-0 flex-1 pt-0.5">
-              <p className="text-[11px] font-medium tracking-[0.08em] text-[#2563EB]/80 uppercase dark:text-[#93C5FD]/80">
-                {index + 1}
-              </p>
-              <p className="mt-0.5 text-[13px] leading-snug font-medium tracking-[-0.01em] text-foreground">
-                {step.label}
-              </p>
-            </div>
+            <IosStepIconBadge
+              animation={step.animation}
+              delayMs={step.delayMs}
+            >
+              <Icon className={iosStepIconClass} />
+            </IosStepIconBadge>
+            <p className="min-w-0 flex-1 text-[14px] leading-snug font-light tracking-[-0.015em] text-foreground">
+              {step.label}
+            </p>
           </li>
         )
       })}
@@ -146,10 +269,12 @@ function PwaInstallManualGuide({
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent className={chatLoginConsentDialogClass}>
           <DialogHeader className="gap-3 px-5 pt-5 pb-2 text-start">
-            <InstallBrandMark subtitle={t("addToHomeScreen")} />
-            <DialogTitle className="text-[1.05rem] tracking-[-0.02em]">
-              {t("installIosTitle")}
-            </DialogTitle>
+            <div className="flex items-center gap-3 pe-2">
+              <InstallHeaderLogo />
+              <DialogTitle className="font-heading text-[1.35rem] font-normal tracking-tight text-foreground">
+                {t("installIosTitle")}
+              </DialogTitle>
+            </div>
             <DialogDescription className="text-[13px] leading-relaxed text-muted-foreground">
               {t("installIosDescription")}
             </DialogDescription>
@@ -176,10 +301,12 @@ function PwaInstallManualGuide({
       <SheetContent side="bottom" className={chatMobileSheetContentClass}>
         <div className={chatMobileSheetHandleClass} />
         <SheetHeader className={cn(chatMobileSheetHeaderClass, "gap-3")}>
-          <InstallBrandMark subtitle={t("addToHomeScreen")} />
-          <SheetTitle className={chatMobileSheetTitleClass}>
-            {t("installIosTitle")}
-          </SheetTitle>
+          <div className="flex items-center gap-3 pe-2">
+            <InstallHeaderLogo />
+            <SheetTitle className={chatMobileSheetTitleClass}>
+              {t("installIosTitle")}
+            </SheetTitle>
+          </div>
           <SheetDescription className={chatMobileSheetDescriptionClass}>
             {t("installIosDescription")}
           </SheetDescription>
@@ -208,19 +335,20 @@ function PwaInstallNudge({
   needsManualInstall,
   onInstall,
   onDismiss,
+  forcePreview = false,
 }: {
   visible: boolean
   needsManualInstall: boolean
   onInstall: () => void
   onDismiss: () => void
+  forcePreview?: boolean
 }) {
   const t = useTranslations("workspace")
   const isDesktop = useIsDesktop()
   const [ready, setReady] = React.useState(false)
 
   React.useEffect(() => {
-    if (!visible) {
-      setReady(false)
+    if (forcePreview || !visible) {
       return
     }
     // Wait for cookie banner to settle; avoid stacking on first paint.
@@ -230,9 +358,11 @@ function PwaInstallNudge({
     return () => {
       window.clearTimeout(timer)
     }
-  }, [visible])
+  }, [visible, forcePreview])
 
-  if (!visible || !ready || isDesktop === null) return null
+  const showNudgeUi = forcePreview || (visible && ready)
+
+  if (!showNudgeUi || isDesktop === null) return null
 
   const title = needsManualInstall ? t("addToHomeScreen") : t("installApp")
   const description = needsManualInstall
@@ -240,9 +370,6 @@ function PwaInstallNudge({
     : t("installNudgeDescription")
   const actionLabel = needsManualInstall
     ? t("installShowHow")
-    : t("installApp")
-  const brandSubtitle = needsManualInstall
-    ? t("addToHomeScreen")
     : t("installApp")
 
   if (isDesktop) {
@@ -256,26 +383,27 @@ function PwaInstallNudge({
           "fixed inset-e-4 bottom-4 z-55 w-[min(100%-2rem,22rem)] rounded-[1.5rem] p-5"
         )}
       >
-        <InstallBrandMark subtitle={brandSubtitle} />
-        <p
-          id="pwa-install-title"
-          className="mt-4 text-[15px] font-semibold tracking-[-0.02em] text-foreground"
-        >
-          {title}
-        </p>
+        <div className="flex items-center gap-3">
+          <InstallHeaderLogo />
+          <p
+            id="pwa-install-title"
+            className="font-heading text-[1.25rem] font-normal tracking-tight text-foreground"
+          >
+            {title}
+          </p>
+        </div>
         <p
           id="pwa-install-desc"
-          className="mt-1.5 text-[13px] leading-relaxed text-muted-foreground"
+          className="mt-3 text-[13px] leading-relaxed text-muted-foreground"
         >
           {description}
         </p>
         <div className="mt-4 flex flex-col gap-2">
           <Button
             type="button"
-            className={cn(landingCta("primary", "md"), "h-11 w-full gap-2")}
+            className={cn(landingCta("primary", "md"), "h-11 w-full")}
             onClick={onInstall}
           >
-            <SmartphoneIcon className="size-4 opacity-90" aria-hidden />
             {actionLabel}
           </Button>
           <Button
@@ -293,16 +421,18 @@ function PwaInstallNudge({
 
   return (
     <Sheet
-      open={ready}
+      open={showNudgeUi}
       onOpenChange={(open) => {
-        if (!open) onDismiss()
+        if (!open && !forcePreview) onDismiss()
       }}
     >
       <SheetContent side="bottom" className={chatMobileSheetContentClass}>
         <div className={chatMobileSheetHandleClass} />
         <SheetHeader className={cn(chatMobileSheetHeaderClass, "gap-3")}>
-          <InstallBrandMark subtitle={brandSubtitle} />
-          <SheetTitle className={chatMobileSheetTitleClass}>{title}</SheetTitle>
+          <div className="flex items-center gap-3 pe-2">
+            <InstallHeaderLogo />
+            <SheetTitle className={chatMobileSheetTitleClass}>{title}</SheetTitle>
+          </div>
           <SheetDescription className={chatMobileSheetDescriptionClass}>
             {description}
           </SheetDescription>
@@ -313,10 +443,9 @@ function PwaInstallNudge({
           >
             <Button
               type="button"
-              className={cn(chatMobileSheetPrimaryButtonClass, "gap-2")}
+              className={cn(chatMobileSheetPrimaryButtonClass)}
               onClick={onInstall}
             >
-              <SmartphoneIcon className="size-4 opacity-90" aria-hidden />
               {actionLabel}
             </Button>
             <Button

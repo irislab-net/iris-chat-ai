@@ -3,10 +3,12 @@
 import * as React from "react"
 import {
   ArrowUpIcon,
+  BarChart3Icon,
   CheckIcon,
   ChevronDownIcon,
   PlusIcon,
   SquareIcon,
+  TrendingUpIcon,
   XIcon,
 } from "lucide-react"
 import { useLocale, useTranslations } from "next-intl"
@@ -18,7 +20,6 @@ import {
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Textarea } from "@/components/ui/textarea"
@@ -51,6 +52,7 @@ import {
   chatMobileComposerPillCompactClass,
   chatMobileComposerPillExpandedClass,
   chatMobileComposerSendClass,
+  chatMobileComposerSendIdleClass,
   chatMobileComposerTextareaClass,
   chatMobileComposerTextareaCompactClass,
   chatMobileComposerTextareaExpandedClass,
@@ -74,8 +76,8 @@ import {
 import { useIsDesktop } from "@/hooks/use-media-query"
 import { cn } from "@/lib/utils"
 
-/** Hidden for now — re-enable to show the composer "+" tools menu. */
-const SHOW_COMPOSER_TOOLS_MENU = false
+/** Composer "+" tools menu (signal). */
+const SHOW_COMPOSER_TOOLS_MENU = true
 
 type ChatComposerProps = {
   onSend?: (message: string) => void
@@ -150,6 +152,56 @@ function ChatComposer({
     effectiveActiveTool === "signal"
       ? signalToolLabel
       : (activeToolOption?.label ?? effectiveActiveTool)
+
+  const toolsMenuItems = (
+    <DropdownMenuGroup>
+      {IRIS_MENTION_OPTIONS.map((option) => (
+        <DropdownMenuItem
+          key={option.id}
+          className={cn(
+            chatMobileToolsMenuItemClass,
+            "flex-row items-center gap-3 py-2.5"
+          )}
+          onClick={() => insertMentionToken(option)}
+        >
+          <span className="flex size-9 shrink-0 items-center justify-center rounded-[14px] bg-foreground/5 text-foreground dark:bg-white/8">
+            <TrendingUpIcon className="size-4" aria-hidden />
+          </span>
+          <span className="flex min-w-0 flex-1 flex-col gap-0.5 text-start">
+            <span className={chatMobileToolsMenuItemTitleClass}>
+              {mentionOptionLabel(option)}
+            </span>
+            <span
+              className={cn(chatMobileToolsMenuItemDescClass, "line-clamp-2")}
+            >
+              {t("composerToolSignalDesc")}
+            </span>
+          </span>
+        </DropdownMenuItem>
+      ))}
+      <DropdownMenuItem
+        disabled
+        className={cn(
+          chatMobileToolsMenuItemClass,
+          "flex-row items-center gap-3 py-2.5 opacity-55"
+        )}
+      >
+        <span className="flex size-9 shrink-0 items-center justify-center rounded-[14px] bg-foreground/4 text-muted-foreground dark:bg-white/6">
+          <BarChart3Icon className="size-4" aria-hidden />
+        </span>
+        <span className="flex min-w-0 flex-1 flex-col gap-0.5 text-start">
+          <span className={chatMobileToolsMenuItemTitleClass}>
+            {t("composerToolAnalyticsLabel")}
+          </span>
+          <span
+            className={cn(chatMobileToolsMenuItemDescClass, "line-clamp-2")}
+          >
+            {t("composerToolAnalyticsDesc")}
+          </span>
+        </span>
+      </DropdownMenuItem>
+    </DropdownMenuGroup>
+  )
   const [floatingPastSingleLine, setFloatingPastSingleLine] =
     React.useState(false)
   const floatingExpandedRef = React.useRef(false)
@@ -604,37 +656,12 @@ function ChatComposer({
                   <DropdownMenuContent
                     align="start"
                     side="top"
-                    className={cn(
-                      chatMobileToolsMenuClass,
-                      "min-w-54 border-0 bg-white/78! p-1.5 shadow-none ring-0 dark:bg-white/8!"
-                    )}
+                    sideOffset={18}
+                    showBackdrop
+                    backdropClassName="bg-black/8 supports-backdrop-filter:bg-black/[0.04] supports-backdrop-filter:backdrop-blur-xs dark:bg-black/30 dark:supports-backdrop-filter:bg-black/20"
+                    className={cn(chatMobileToolsMenuClass, "z-60")}
                   >
-                    <DropdownMenuGroup>
-                      <DropdownMenuLabel
-                        className={chatMobileToolsMenuLabelClass}
-                      >
-                        {t("composerToolsMenu")}
-                      </DropdownMenuLabel>
-                      {IRIS_MENTION_OPTIONS.map((option) => (
-                        <DropdownMenuItem
-                          key={option.id}
-                          className={cn(chatMobileToolsMenuItemClass, "py-2.5")}
-                          onClick={() => insertMentionToken(option)}
-                        >
-                          <span className={chatMobileToolsMenuItemTitleClass}>
-                            {mentionOptionLabel(option)}
-                          </span>
-                          <span
-                            className={cn(
-                              chatMobileToolsMenuItemDescClass,
-                              "line-clamp-2"
-                            )}
-                          >
-                            {t("composerToolSignalDesc")}
-                          </span>
-                        </DropdownMenuItem>
-                      ))}
-                    </DropdownMenuGroup>
+                    {toolsMenuItems}
                   </DropdownMenuContent>
                 </DropdownMenu>
               ) : null}
@@ -728,7 +755,7 @@ function ChatComposer({
                   className={
                     canSend
                       ? chatMobileComposerSendClass
-                      : chatDesktopComposerSendDisabledClass
+                      : chatMobileComposerSendIdleClass
                   }
                 >
                   <ArrowUpIcon className="size-4.5" />
@@ -789,7 +816,7 @@ function ChatComposer({
                 }
               }}
               dir={textDir}
-              className="field-sizing-content min-h-6 min-w-32 flex-1 resize-none rounded-none border-0 bg-transparent p-0 chat-bidi text-start text-base leading-6 shadow-none placeholder:text-muted-foreground/35 focus-visible:border-transparent focus-visible:ring-0 disabled:cursor-not-allowed disabled:bg-transparent disabled:opacity-100 sm:text-sm sm:leading-[1.45] dark:bg-transparent dark:placeholder:text-muted-foreground/30 dark:disabled:bg-transparent"
+              className="field-sizing-content min-h-6 min-w-32 flex-1 resize-none rounded-none border-0 bg-transparent p-0 chat-bidi text-start text-[17px] font-normal leading-[22px] tracking-[-0.024em] shadow-none placeholder:text-muted-foreground/35 focus-visible:border-transparent focus-visible:ring-0 disabled:cursor-not-allowed disabled:bg-transparent disabled:opacity-100 sm:text-[15px] sm:leading-[20px] sm:tracking-[-0.016em] dark:bg-transparent dark:placeholder:text-muted-foreground/30 dark:disabled:bg-transparent"
             />
           </div>
         )}
@@ -815,37 +842,15 @@ function ChatComposer({
                 <DropdownMenuContent
                   align="start"
                   side="top"
+                  sideOffset={18}
+                  showBackdrop
+                  backdropClassName="bg-black/8 supports-backdrop-filter:bg-black/[0.04] supports-backdrop-filter:backdrop-blur-xs dark:bg-black/30 dark:supports-backdrop-filter:bg-black/20"
                   className={cn(
-                    chatMobileToolsMenuClass,
-                    "min-w-54 border-0 bg-white/78! p-1.5 shadow-none ring-0 dark:bg-white/8!"
-                  )}
+                      chatMobileToolsMenuClass,
+                      "z-60"
+                    )}
                 >
-                  <DropdownMenuGroup>
-                    <DropdownMenuLabel
-                      className={chatMobileToolsMenuLabelClass}
-                    >
-                      {t("composerToolsMenu")}
-                    </DropdownMenuLabel>
-                    {IRIS_MENTION_OPTIONS.map((option) => (
-                      <DropdownMenuItem
-                        key={option.id}
-                        className={cn(chatMobileToolsMenuItemClass, "py-2.5")}
-                        onClick={() => insertMentionToken(option)}
-                      >
-                        <span className={chatMobileToolsMenuItemTitleClass}>
-                          {mentionOptionLabel(option)}
-                        </span>
-                        <span
-                          className={cn(
-                            chatMobileToolsMenuItemDescClass,
-                            "line-clamp-2"
-                          )}
-                        >
-                          {t("composerToolSignalDesc")}
-                        </span>
-                      </DropdownMenuItem>
-                    ))}
-                  </DropdownMenuGroup>
+                  {toolsMenuItems}
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : null}
@@ -869,17 +874,14 @@ function ChatComposer({
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
                   align="start"
-                  className="min-w-48"
+                  className="min-w-48 p-2.5"
                   side={isMobile ? "bottom" : "top"}
                 >
                   <DropdownMenuGroup>
-                    <p className="px-2 pt-1.5 pb-1 text-start text-[10px] font-medium tracking-wide text-muted-foreground uppercase">
-                      {t("effort.label")}
-                    </p>
                     {CHAT_EFFORT_OPTIONS.map((item) => (
                       <DropdownMenuItem
                         key={item.value}
-                        className="items-start py-2"
+                        className="items-center gap-2.5 rounded-2xl px-3.5 py-2.5"
                         onClick={() => onEffortChange?.(item.value)}
                       >
                         <span className="flex min-w-0 flex-1 flex-col gap-0.5 text-start">
@@ -891,8 +893,15 @@ function ChatComposer({
                           </span>
                         </span>
                         {effort === item.value ? (
-                          <CheckIcon className="mt-0.5 size-3.5" />
-                        ) : null}
+                          <span
+                            className="flex size-5 shrink-0 items-center justify-center rounded-full bg-[#2563EB] text-white shadow-[0_1px_4px_rgba(37,99,235,0.4)]"
+                            aria-hidden
+                          >
+                            <CheckIcon className="size-3 stroke-[2.75]" />
+                          </span>
+                        ) : (
+                          <span className="size-5 shrink-0" aria-hidden />
+                        )}
                       </DropdownMenuItem>
                     ))}
                   </DropdownMenuGroup>
@@ -936,7 +945,7 @@ function ChatComposer({
         ) : null}
       </div>
       {!isFloating ? (
-        <p className="mt-2 text-center text-[10px] leading-4 text-muted-foreground/70">
+        <p className="mt-2 text-center text-[11px] leading-[13px] tracking-[0.006em] text-muted-foreground/70">
           {t("composerHint")}
         </p>
       ) : null}

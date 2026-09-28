@@ -24,16 +24,20 @@ export function PwaSplash() {
   const [done, setDone] = React.useState(false)
 
   React.useEffect(() => {
-    if (!isStandaloneDisplay()) {
+    const finish = () => {
       document.documentElement.classList.add("pwa-splash-done")
-      setDone(true)
+      // Defer so we don’t sync React state in the same turn as the effect body.
+      queueMicrotask(() => setDone(true))
+    }
+
+    if (!isStandaloneDisplay()) {
+      finish()
       return
     }
 
     try {
       if (sessionStorage.getItem(BOOT_KEY) === "1") {
-        document.documentElement.classList.add("pwa-splash-done")
-        setDone(true)
+        finish()
         return
       }
     } catch {

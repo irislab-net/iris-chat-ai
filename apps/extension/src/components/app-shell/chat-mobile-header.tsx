@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import { CheckIcon, ChevronDownIcon } from "lucide-react"
+import { AnimatePresence, motion, useReducedMotion } from "motion/react"
 import { useTranslations } from "next-intl"
 
 import { AttentionPulseDot } from "@/components/app-shell/attention-pulse-dot"
@@ -25,12 +26,22 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import {
-  loadChatGsap,
-  prefersChatReducedMotion,
-} from "@/lib/chat-motion"
 import { CHAT_EFFORT_OPTIONS, type ChatEffort } from "@/lib/chat-effort"
 import { cn } from "@/lib/utils"
+
+const HEADER_TRAILING_SPRING = {
+  type: "spring" as const,
+  stiffness: 520,
+  damping: 34,
+  mass: 0.72,
+}
+
+const HEADER_MORPH_SPRING = {
+  type: "spring" as const,
+  stiffness: 460,
+  damping: 30,
+  mass: 0.68,
+}
 
 type ChatMobileThreadMenuProps = {
   title: string
@@ -70,211 +81,75 @@ function ChatMobileHeader({
   className,
 }: ChatMobileHeaderProps) {
   const t = useTranslations("workspace")
+  const reduceMotion = useReducedMotion()
   const showThreadChrome = Boolean(threadMenu)
+  const trailingSpring = reduceMotion ? { duration: 0 } : HEADER_TRAILING_SPRING
+  const morphSpring = reduceMotion ? { duration: 0 } : HEADER_MORPH_SPRING
   const effortValue = effort ?? "instant"
   const effortLabel = t(`effort.${effortValue}`)
 
-  const newChatRef = React.useRef<HTMLDivElement>(null)
-  const optionsRef = React.useRef<HTMLDivElement>(null)
-  const accountRef = React.useRef<HTMLDivElement>(null)
-  const prevChromeRef = React.useRef<boolean | null>(null)
-  const tweenRef = React.useRef<{ kill: () => void } | null>(null)
-
-  React.useEffect(() => {
-    const newChat = newChatRef.current
-    const options = optionsRef.current
-    const account = accountRef.current
-    if (!newChat || !options || !account) return
-
-    const reduced = prefersChatReducedMotion()
-    const prev = prevChromeRef.current
-    prevChromeRef.current = showThreadChrome
-
-    const applyInstant = () => {
-      newChat.style.width = showThreadChrome ? "40px" : "0px"
-      newChat.style.marginInlineEnd = showThreadChrome ? "8px" : "0px"
-      newChat.style.opacity = showThreadChrome ? "1" : "0"
-      newChat.style.transform = "none"
-      newChat.style.pointerEvents = showThreadChrome ? "auto" : "none"
-      options.style.opacity = showThreadChrome ? "1" : "0"
-      options.style.transform = "none"
-      options.style.filter = "none"
-      options.style.pointerEvents = showThreadChrome ? "auto" : "none"
-      account.style.opacity = showThreadChrome ? "0" : "1"
-      account.style.transform = "none"
-      account.style.filter = "none"
-      account.style.pointerEvents = showThreadChrome ? "none" : "auto"
-    }
-
-    if (prev === null || prev === showThreadChrome || reduced) {
-      applyInstant()
-      return
-    }
-
-    let cancelled = false
-    void loadChatGsap().then((gsap) => {
-      if (cancelled) return
-      tweenRef.current?.kill()
-
-      const tl = gsap.timeline({
-        defaults: { ease: "power3.out", overwrite: "auto" },
-      })
-      tweenRef.current = tl
-
-      if (showThreadChrome) {
-        tl.fromTo(
-          newChat,
-          { width: 0, marginInlineEnd: 0, opacity: 0, scale: 0.55, x: 10 },
-          {
-            width: 40,
-            marginInlineEnd: 8,
-            opacity: 1,
-            scale: 1,
-            x: 0,
-            duration: 0.42,
-            pointerEvents: "auto",
-          },
-          0
-        )
-        tl.fromTo(
-          account,
-          { opacity: 1, scale: 1, rotate: 0, filter: "blur(0px)" },
-          {
-            opacity: 0,
-            scale: 0.72,
-            rotate: -16,
-            filter: "blur(8px)",
-            duration: 0.34,
-            pointerEvents: "none",
-          },
-          0
-        )
-        tl.fromTo(
-          options,
-          {
-            opacity: 0,
-            scale: 0.68,
-            rotate: -18,
-            filter: "blur(8px)",
-          },
-          {
-            opacity: 1,
-            scale: 1,
-            rotate: 0,
-            filter: "blur(0px)",
-            duration: 0.4,
-            pointerEvents: "auto",
-          },
-          0.06
-        )
-      } else {
-        tl.to(
-          newChat,
-          {
-            width: 0,
-            marginInlineEnd: 0,
-            opacity: 0,
-            scale: 0.55,
-            x: 14,
-            duration: 0.36,
-            pointerEvents: "none",
-          },
-          0
-        )
-        tl.fromTo(
-          options,
-          { opacity: 1, scale: 1, rotate: 0, filter: "blur(0px)" },
-          {
-            opacity: 0,
-            scale: 0.72,
-            rotate: 16,
-            filter: "blur(8px)",
-            duration: 0.34,
-            pointerEvents: "none",
-          },
-          0
-        )
-        tl.fromTo(
-          account,
-          {
-            opacity: 0,
-            scale: 0.68,
-            rotate: 18,
-            filter: "blur(8px)",
-          },
-          {
-            opacity: 1,
-            scale: 1,
-            rotate: 0,
-            filter: "blur(0px)",
-            duration: 0.4,
-            pointerEvents: "auto",
-          },
-          0.06
-        )
-      }
-    })
-
-    return () => {
-      cancelled = true
-      tweenRef.current?.kill()
-      tweenRef.current = null
-    }
-  }, [showThreadChrome])
-
   const effortTriggerClass = cn(
     chatMobileHeaderModelClass,
-    "min-w-[6.25rem] justify-between hover:bg-white/88 aria-expanded:bg-white/90 dark:hover:bg-white/[0.12] dark:aria-expanded:bg-white/[0.14]"
+    "min-w-[6.25rem] justify-between leading-none hover:border-white/55 hover:bg-white/[0.32] aria-expanded:border-white/55 aria-expanded:bg-white/[0.36] dark:hover:border-white/28 dark:hover:bg-white/[0.18] dark:aria-expanded:border-white/28 dark:aria-expanded:bg-white/[0.20]"
   )
 
   const effortControl =
     onEffortChange && !hideEffort ? (
-      <DropdownMenu modal={false}>
-        <DropdownMenuTrigger
-          render={
-            <Button
-              type="button"
-              variant="ghost"
-              aria-label={t("effort.aria", { mode: effortLabel })}
-              aria-haspopup="menu"
-              className={effortTriggerClass}
+      <div className="flex h-11 shrink-0 items-center self-center">
+        <DropdownMenu modal={false}>
+          <DropdownMenuTrigger
+            render={
+              <Button
+                type="button"
+                variant="ghost"
+                aria-label={t("effort.aria", { mode: effortLabel })}
+                aria-haspopup="menu"
+                className={effortTriggerClass}
+              />
+            }
+          >
+            <span className="truncate leading-none">{effortLabel}</span>
+            <ChevronDownIcon
+              className="size-3.5 shrink-0 self-center opacity-70"
+              aria-hidden
             />
-          }
-        >
-          <span className="truncate">{effortLabel}</span>
-          <ChevronDownIcon className="shrink-0 opacity-70" aria-hidden />
-        </DropdownMenuTrigger>
-        <DropdownMenuContent
-          align="start"
-          sideOffset={8}
-          className={cn(chatContextMenuContentClass, "min-w-44")}
-        >
-          <DropdownMenuGroup>
-            <p className="px-2.5 pt-1.5 pb-1 text-start text-[10px] font-medium tracking-wide text-muted-foreground uppercase">
-              {t("effort.label")}
-            </p>
-            {CHAT_EFFORT_OPTIONS.map((item) => (
-              <DropdownMenuItem
-                key={item.value}
-                className="items-start py-2"
-                onClick={() => onEffortChange(item.value)}
-              >
-                <span className="flex min-w-0 flex-1 flex-col gap-0.5 text-start">
-                  <span className="text-[13px] font-medium">
-                    {t(`effort.${item.value}`)}
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            align="start"
+            sideOffset={8}
+            className={cn(chatContextMenuContentClass, "min-w-44 p-3.5")}
+          >
+            <DropdownMenuGroup>
+              {CHAT_EFFORT_OPTIONS.map((item) => (
+                <DropdownMenuItem
+                  key={item.value}
+                  className="items-center gap-2.5 rounded-2xl px-3.5 py-2.5"
+                  onClick={() => onEffortChange(item.value)}
+                >
+                  <span className="flex min-w-0 flex-1 flex-col gap-0.5 text-start">
+                    <span className="text-[13px] font-medium">
+                      {t(`effort.${item.value}`)}
+                    </span>
+                    <span className="text-[11px] text-muted-foreground">
+                      {t(`effort.${item.value}Hint`)}
+                    </span>
                   </span>
-                  <span className="text-[11px] text-muted-foreground">
-                    {t(`effort.${item.value}Hint`)}
-                  </span>
-                </span>
-                {effortValue === item.value ? (
-                  <CheckIcon className="mt-0.5 size-3.5" />
-                ) : null}
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuGroup>
-        </DropdownMenuContent>
-      </DropdownMenu>
+                  {effortValue === item.value ? (
+                    <span
+                      className="flex size-5 shrink-0 items-center justify-center rounded-full bg-[#2563EB] text-white shadow-[0_1px_4px_rgba(37,99,235,0.4)]"
+                      aria-hidden
+                    >
+                      <CheckIcon className="size-3 stroke-[2.75]" />
+                    </span>
+                  ) : (
+                    <span className="size-5 shrink-0" aria-hidden />
+                  )}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
     ) : null
 
   return (
@@ -282,17 +157,17 @@ function ChatMobileHeader({
       <div aria-hidden className={chatMobileHeaderScrimClass} />
       <header
         className={cn(
-          "app-mobile-safe-header relative z-1 flex items-center justify-between gap-2 bg-transparent px-6 pb-2",
+          "app-mobile-safe-header relative z-1 flex items-center justify-between gap-2 bg-transparent px-4 pb-2",
           className
         )}
       >
-        <div className="flex min-w-0 items-center justify-start gap-3">
+        <div className="flex h-11 min-w-0 items-center justify-start gap-2">
           {onOpenHistory ? (
             <Button
               type="button"
               variant="ghost"
               size="icon"
-              className={cn(chatMobileHeaderButtonClass, "relative")}
+              className={cn(chatMobileHeaderButtonClass, "relative self-center")}
               aria-label={t("chatHistory")}
               aria-pressed={historyOpen}
               onClick={onOpenHistory}
@@ -306,53 +181,106 @@ function ChatMobileHeader({
           {effortControl}
         </div>
 
-        <div className="flex shrink-0 items-center justify-end">
-          <div
-            ref={newChatRef}
-            className="overflow-hidden will-change-transform"
-            style={{
-              width: showThreadChrome ? 40 : 0,
-              marginInlineEnd: showThreadChrome ? 8 : 0,
-              transformOrigin: "inline-end center",
-            }}
-            aria-hidden={!showThreadChrome}
-          >
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              className={chatMobileHeaderButtonClass}
-              aria-label={t("newChat")}
-              disabled={sending || !showThreadChrome}
-              tabIndex={showThreadChrome ? 0 : -1}
-              onClick={onNewChat}
-            >
-              <ChatGeminiNewChatIcon strokeWidth={1.5} />
-            </Button>
-          </div>
+        <motion.div
+          className="flex shrink-0 items-center justify-end"
+          transition={trailingSpring}
+        >
+          <AnimatePresence initial={false} mode="popLayout">
+            {showThreadChrome ? (
+              <motion.div
+                key="new-chat"
+                initial={{ opacity: 0, scale: 0.55, width: 0, x: 10 }}
+                animate={{
+                  opacity: 1,
+                  scale: 1,
+                  width: 44,
+                  x: 0,
+                  marginInlineEnd: 8,
+                }}
+                exit={{
+                  opacity: 0,
+                  scale: 0.55,
+                  width: 0,
+                  x: 14,
+                  marginInlineEnd: 0,
+                }}
+                transition={trailingSpring}
+                className="overflow-hidden will-change-transform"
+                style={{ transformOrigin: "inline-end center" }}
+              >
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className={chatMobileHeaderButtonClass}
+                  aria-label={t("newChat")}
+                  disabled={sending}
+                  onClick={onNewChat}
+                >
+                  <ChatGeminiNewChatIcon strokeWidth={1.5} />
+                </Button>
+              </motion.div>
+            ) : null}
+          </AnimatePresence>
 
           <div className="relative size-12 shrink-0">
-            <div
-              ref={optionsRef}
-              className="absolute inset-0 flex items-center justify-center will-change-transform"
-              aria-hidden={!showThreadChrome}
-            >
-              {threadMenu ? (
-                <ChatThreadOptionsMenu
-                  {...threadMenu}
-                  className={chatMobileHeaderButtonClass}
-                />
-              ) : null}
-            </div>
-            <div
-              ref={accountRef}
-              className="absolute inset-0 flex items-center justify-center will-change-transform"
-              aria-hidden={showThreadChrome}
-            >
-              <ChatAccountMenu onOpenNews={onOpenNews} variant="mobile" />
-            </div>
+            <AnimatePresence initial={false} mode="wait">
+              {showThreadChrome && threadMenu ? (
+                <motion.div
+                  key="thread-options"
+                  className="absolute inset-0 flex items-center justify-center will-change-transform"
+                  initial={{
+                    opacity: 0,
+                    scale: 0.68,
+                    rotate: -18,
+                  }}
+                  animate={{
+                    opacity: 1,
+                    scale: 1,
+                    rotate: 0,
+                  }}
+                  exit={{
+                    opacity: 0,
+                    scale: 0.72,
+                    rotate: 16,
+                  }}
+                  transition={morphSpring}
+                >
+                  <ChatThreadOptionsMenu
+                    {...threadMenu}
+                    className={chatMobileHeaderButtonClass}
+                  />
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="account-menu"
+                  className="absolute inset-0 flex items-center justify-center will-change-transform"
+                  initial={{
+                    opacity: 0,
+                    scale: 0.68,
+                    rotate: 18,
+                  }}
+                  animate={{
+                    opacity: 1,
+                    scale: 1,
+                    rotate: 0,
+                  }}
+                  exit={{
+                    opacity: 0,
+                    scale: 0.72,
+                    rotate: -16,
+                  }}
+                  transition={morphSpring}
+                >
+                  <ChatAccountMenu
+                    onOpenNews={onOpenNews}
+                    variant="mobile"
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
-        </div>
+        </motion.div>
       </header>
     </div>
   )

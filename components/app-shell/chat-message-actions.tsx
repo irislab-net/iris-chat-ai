@@ -85,7 +85,7 @@ function ChatMessageActions({
   const buttonClass = cn(
     chatTurnActionButtonClass,
     isGemini &&
-      "size-8 rounded-full text-[#444746] hover:bg-black/[0.04] dark:text-muted-foreground dark:hover:bg-white/[0.06]"
+      "size-8 rounded-full text-[#444746] hover:bg-[rgba(118,118,128,0.12)] dark:text-muted-foreground dark:hover:bg-[rgba(118,118,128,0.24)]"
   )
 
   return (

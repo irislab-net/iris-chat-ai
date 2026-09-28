@@ -5,6 +5,7 @@ import {
   CheckIcon,
   CopyIcon,
   EyeIcon,
+  FlameIcon,
   NewspaperIcon,
   SquareIcon,
   Volume2Icon,
@@ -26,6 +27,7 @@ import { Separator } from "@/components/ui/separator"
 import { NewsBulletinSkeleton } from "@/components/dashboard/intel-skeletons"
 import { MarketAssetLogo } from "@/components/dashboard/market-asset-logo"
 import {
+  chatMobileHeaderButtonClass,
   chatNewsGlassCardClass,
   chatNewsGlassChipClass,
   chatNewsGlassTileClass,
@@ -369,16 +371,39 @@ function pickLeadStory(news: NewsItem[]) {
   }
 }
 
-function newsBrief(analytics: NewsAnalytics | null) {
+type NewsBriefKind = "eth" | "macro" | "btc" | "dxy" | "xau"
+
+const NEWS_BRIEF_ORDER: NewsBriefKind[] = ["eth", "macro", "btc", "dxy", "xau"]
+
+function newsBriefMeta(analytics: NewsAnalytics | null): {
+  kind: NewsBriefKind
+  text: string
+} | null {
   const summaries = analytics?.ai_summaries
   if (!summaries) return null
-  const text =
-    summaries.eth?.trim() ||
-    summaries.macro?.trim() ||
-    summaries.btc?.trim() ||
-    summaries.dxy?.trim() ||
-    summaries.xau?.trim()
-  return text || null
+  for (const kind of NEWS_BRIEF_ORDER) {
+    const text = summaries[kind]?.trim()
+    if (text) return { kind, text }
+  }
+  return null
+}
+
+/** Hot flame mark for the AI brief card. */
+function NewsBriefIcon() {
+  return (
+    <span
+      className={cn(
+        chatSignalCardIconShellClass,
+        "news-brief-flame-shell size-11 shrink-0"
+      )}
+      aria-hidden
+    >
+      <FlameIcon
+        className="news-brief-flame size-5 fill-orange-500/35 text-orange-500 dark:fill-orange-400/30 dark:text-orange-400"
+        strokeWidth={1.75}
+      />
+    </span>
+  )
 }
 
 /** Online favicon lookup from article host — not bundled or downloaded to disk. */
@@ -798,9 +823,11 @@ function NewsCardFooter({
 function NewsReadAllButton({
   news,
   glass = false,
+  iconOnly = false,
 }: {
   news: NewsItem[]
   glass?: boolean
+  iconOnly?: boolean
 }) {
   const t = useTranslations("dashboard")
   const supported = React.useSyncExternalStore(
@@ -815,6 +842,7 @@ function NewsReadAllButton({
   )
   const readingAll = speech.readingAll
   const items = news.slice(0, PRIMARY_NEWS_LIMIT)
+  const label = readingAll ? t("stop") : t("readAll")
 
   if (!supported || items.length === 0) return null
 
@@ -822,21 +850,30 @@ function NewsReadAllButton({
     <Button
       type="button"
       variant="ghost"
-      size="sm"
+      size={iconOnly ? "icon" : "sm"}
       aria-pressed={readingAll}
+      aria-label={label}
       className={cn(
-        glass
-          ? chatNewsReadAllButtonClass
-          : "h-7 shrink-0 gap-1.5 px-2 text-xs font-medium text-muted-foreground hover:text-foreground"
+        iconOnly
+          ? chatMobileHeaderButtonClass
+          : glass
+            ? chatNewsReadAllButtonClass
+            : "h-7 shrink-0 gap-1.5 px-2 text-xs font-medium text-muted-foreground hover:text-foreground"
       )}
       onClick={() => toggleReadAllNews(items)}
     >
       {readingAll ? (
-        <SquareIcon className="size-3 fill-current" aria-hidden />
+        <SquareIcon
+          className={iconOnly ? undefined : "size-3 fill-current"}
+          aria-hidden
+        />
       ) : (
-        <Volume2Icon className="size-3.5" aria-hidden />
+        <Volume2Icon
+          className={iconOnly ? undefined : "size-3.5"}
+          aria-hidden
+        />
       )}
-      {readingAll ? t("stop") : t("readAll")}
+      {iconOnly ? null : label}
     </Button>
   )
 }
@@ -870,7 +907,8 @@ function NewsTape({
   glass?: boolean
 }) {
   const t = useTranslations("dashboard")
-  const brief = newsBrief(analytics)
+  const brief = newsBriefMeta(analytics)
+  const briefTitle = brief ? t(`briefTitles.${brief.kind}`) : null
   const hour = analytics?.timeframes?.["1h"] ?? analytics?.timeframes?.["15m"]
   const windows = tapeWindows(analytics)
   const assets = tapeAssets(analytics)
@@ -907,24 +945,38 @@ function NewsTape({
             ) : null}
           </div>
         ) : null}
-        {brief ? (
+        {brief && briefTitle ? (
           glass ? (
             <article
               className={cn(chatNewsGlassCardClass, newsNeutralWashClass)}
             >
-              <div className="px-4 py-4">
+              <div className="flex flex-col gap-3 px-4 py-4">
+                <div className="flex items-center gap-3">
+                  <NewsBriefIcon />
+                  <h3 className="min-w-0 truncate text-[15px] font-medium tracking-tight text-foreground">
+                    {briefTitle}
+                  </h3>
+                </div>
                 <p
                   dir="auto"
                   className="text-[13px] leading-relaxed text-foreground/85"
                 >
-                  {brief}
+                  {brief.text}
                 </p>
               </div>
             </article>
           ) : (
-            <p className="text-sm leading-relaxed text-foreground/90">
-              {brief}
-            </p>
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center gap-2.5">
+                <NewsBriefIcon />
+                <h3 className="text-[15px] font-medium tracking-tight text-foreground">
+                  {briefTitle}
+                </h3>
+              </div>
+              <p className="text-sm leading-relaxed text-foreground/90">
+                {brief.text}
+              </p>
+            </div>
           )
         ) : null}
       </div>
@@ -959,10 +1011,18 @@ function NewsTape({
           <NewsAssetTape assets={assets} />
         </div>
       ) : null}
-      {brief ? (
-        <p className="mt-3 text-sm leading-relaxed text-foreground/90">
-          {brief}
-        </p>
+      {brief && briefTitle ? (
+        <div className="mt-3 flex flex-col gap-2">
+          <div className="flex items-center gap-2.5">
+            <NewsBriefIcon />
+            <h3 className="text-sm font-medium tracking-tight text-foreground">
+              {briefTitle}
+            </h3>
+          </div>
+          <p className="text-sm leading-relaxed text-foreground/90">
+            {brief.text}
+          </p>
+        </div>
       ) : null}
     </div>
   )

@@ -75,10 +75,8 @@ export function useChatThreadTransition(
       tweenRef.current?.kill()
       tweenRef.current = null
       // Clear transform leftovers so React can unmount the node cleanly.
-      if (ref.current) {
-        ref.current.style.opacity = ""
-        ref.current.style.transform = ""
-      }
+      el.style.opacity = ""
+      el.style.transform = ""
     }
   }, [conversationId, enabled, dir])
 

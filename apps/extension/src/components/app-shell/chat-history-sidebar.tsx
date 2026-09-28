@@ -106,7 +106,7 @@ function useSidebarDir() {
 }
 
 const rowMenuButtonClass =
-  "size-8 shrink-0 rounded-full text-muted-foreground hover:bg-muted/60 hover:text-foreground"
+  "size-8 shrink-0 rounded-full text-muted-foreground transition-colors duration-150 hover:bg-[rgba(118,118,128,0.12)] hover:text-foreground dark:hover:bg-[rgba(118,118,128,0.24)]"
 
 /** Desktop rail — hide until row hover/focus. Touch has no hover, so compact skips this. */
 const rowMenuButtonHoverRevealClass =
@@ -401,7 +401,7 @@ function MobileHistoryDrawerFooter({
                 type="button"
                 variant="ghost"
                 size="icon"
-                className={cn(chatMobileHeaderButtonClass, "size-10 shrink-0")}
+                className={cn(chatMobileHeaderButtonClass, "shrink-0")}
                 aria-label={common("settings")}
               />
             }
@@ -412,6 +412,7 @@ function MobileHistoryDrawerFooter({
             align="end"
             side="top"
             sideOffset={8}
+            showBackdrop="mobile"
             className={cn(chatContextMenuContentClass, "min-w-64")}
           >
             {user ? (
@@ -839,7 +840,7 @@ function ConversationRowSkeleton({ compact = false }: { compact?: boolean }) {
   return (
     <div
       className={cn(
-        "chat-skeleton-shimmer w-full rounded-xl",
+        "chat-skeleton-shimmer w-full rounded-[16px]",
         compact ? "h-11" : "h-9"
       )}
       aria-busy="true"
@@ -933,8 +934,8 @@ function ConversationRow({
         className={cn(
           "min-w-0 flex-1 justify-start text-start font-normal shadow-none hover:bg-transparent",
           compact
-            ? "h-11 gap-0 rounded-xl px-4 pe-1 text-[15px]"
-            : "h-9 gap-2.5 rounded-md px-2 text-sm"
+            ? "h-11 gap-0 rounded-[16px] px-4 pe-1 text-[15px]"
+            : "h-9 gap-2.5 rounded-[16px] px-2 text-sm"
         )}
         onClick={onSelect}
       >

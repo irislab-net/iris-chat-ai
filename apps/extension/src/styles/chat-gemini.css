@@ -416,6 +416,71 @@
   }
 }
 
+/*
+ * iOS 26 liquid glass specular — diagonal highlight like light through wet glass.
+ * Used by header controls / chips (`chat-ios26-liquid-glass`).
+ */
+.chat-ios26-liquid-glass::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(
+    155deg,
+    rgba(255, 255, 255, 0.62) 0%,
+    rgba(255, 255, 255, 0.18) 26%,
+    rgba(255, 255, 255, 0.04) 42%,
+    transparent 58%
+  );
+  opacity: 0.9;
+}
+
+.chat-ios26-liquid-glass > * {
+  position: relative;
+  z-index: 1;
+}
+
+.dark .chat-ios26-liquid-glass::before {
+  background: linear-gradient(
+    155deg,
+    rgba(255, 255, 255, 0.28) 0%,
+    rgba(255, 255, 255, 0.08) 30%,
+    transparent 55%
+  );
+  opacity: 0.85;
+}
+
+/*
+ * iOS continuous / squircle corners (UICornerCurve.continuous).
+ * Pair with explicit border-radius tokens from the chat scale.
+ * Chromium 139+; other engines fall back to circular arcs.
+ */
+@supports (corner-shape: squircle) {
+  .chat-continuous {
+    corner-shape: squircle;
+  }
+}
+
+/*
+ * Apple system fills — shared for content hovers (list, toolbar, menu).
+ * Matches UIColor.system*Fill light/dark opacities.
+ */
+:root {
+  --chat-fill: rgba(120, 120, 128, 0.2);
+  --chat-fill-secondary: rgba(120, 120, 128, 0.16);
+  --chat-fill-tertiary: rgba(118, 118, 128, 0.12);
+  --chat-fill-quaternary: rgba(116, 116, 128, 0.08);
+}
+
+.dark {
+  --chat-fill: rgba(120, 120, 128, 0.36);
+  --chat-fill-secondary: rgba(120, 120, 128, 0.32);
+  --chat-fill-tertiary: rgba(118, 118, 128, 0.24);
+  --chat-fill-quaternary: rgba(116, 116, 128, 0.18);
+}
+
 .chat-gemini-bg {
   opacity: 0;
   visibility: hidden;
@@ -727,20 +792,11 @@
 .chat-gemini-bg-top-fade {
   background: linear-gradient(
     to bottom,
-    oklch(0.975 0 0) 0%,
-    color-mix(in oklab, oklch(0.975 0 0) 88%, transparent) 52%,
-    transparent 100%
-  );
-  pointer-events: none;
-}
-
-.dark .chat-gemini-bg-top-fade {
-  background: linear-gradient(
-    to bottom,
     var(--background) 0%,
     color-mix(in oklab, var(--background) 88%, transparent) 52%,
     transparent 100%
   );
+  pointer-events: none;
 }
 
 /* Soft wash under the color orbs — empties into the composer dock. */
@@ -748,19 +804,10 @@
   background: linear-gradient(
     to bottom,
     transparent 0%,
-    color-mix(in oklab, oklch(0.975 0 0) 55%, transparent) 42%,
-    oklch(0.975 0 0) 100%
-  );
-  pointer-events: none;
-}
-
-.dark .chat-gemini-bg-bottom-fade {
-  background: linear-gradient(
-    to bottom,
-    transparent 0%,
     color-mix(in oklab, var(--background) 55%, transparent) 42%,
     var(--background) 100%
   );
+  pointer-events: none;
 }
 
 .chat-gemini-mesh-intro {
@@ -784,9 +831,9 @@
   animation: none !important;
 }
 
-/* New-chat dock sits higher; threaded drops back to the safe-area edge. */
+/* New-chat dock sits slightly higher; threaded hugs the safe-area edge. */
 .chat-mobile-gemini-empty [data-slot="chat-composer"] {
-  padding-bottom: max(2.75rem, calc(1.75rem + env(safe-area-inset-bottom, 0px)));
+  padding-bottom: max(1rem, calc(0.35rem + env(safe-area-inset-bottom, 0px)));
   transition: padding 0.35s ease;
 }
 
@@ -1133,6 +1180,54 @@ html.display-standalone[data-keyboard-open="true"]
   animation-delay: 360ms;
 }
 
+@keyframes news-brief-flame-flicker {
+  0%,
+  100% {
+    transform: translateY(0) scaleY(1) scaleX(1) rotate(-1.2deg);
+    filter: drop-shadow(0 0 3px rgba(249, 115, 22, 0.45));
+  }
+  20% {
+    transform: translateY(-0.5px) scaleY(1.1) scaleX(0.92) rotate(1.8deg);
+    filter: drop-shadow(0 0 8px rgba(251, 146, 60, 0.85));
+  }
+  40% {
+    transform: translateY(0.5px) scaleY(0.94) scaleX(1.06) rotate(-0.8deg);
+    filter: drop-shadow(0 0 5px rgba(239, 68, 68, 0.55));
+  }
+  60% {
+    transform: translateY(-1px) scaleY(1.12) scaleX(0.95) rotate(1.2deg);
+    filter: drop-shadow(0 0 10px rgba(249, 115, 22, 0.9));
+  }
+  80% {
+    transform: translateY(0) scaleY(0.98) scaleX(1.03) rotate(-1.5deg);
+    filter: drop-shadow(0 0 6px rgba(251, 146, 60, 0.65));
+  }
+}
+
+@keyframes news-brief-flame-glow {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 0 rgba(249, 115, 22, 0),
+      inset 0 0 0 0 rgba(251, 146, 60, 0);
+  }
+  50% {
+    box-shadow:
+      0 0 14px -2px rgba(249, 115, 22, 0.45),
+      inset 0 0 10px -4px rgba(251, 146, 60, 0.28);
+  }
+}
+
+.news-brief-flame {
+  transform-origin: center bottom;
+  animation: news-brief-flame-flicker 0.9s ease-in-out infinite;
+  will-change: transform, filter;
+}
+
+.news-brief-flame-shell {
+  animation: news-brief-flame-glow 1.8s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .chat-gemini-bg,
   .chat-gemini-mesh-intro,
@@ -1143,7 +1238,9 @@ html.display-standalone[data-keyboard-open="true"]
   .chat-empty-hero-mark,
   .chat-empty-hero-title,
   .chat-empty-hero-shell,
-  .chat-skeleton-shimmer::after {
+  .chat-skeleton-shimmer::after,
+  .news-brief-flame,
+  .news-brief-flame-shell {
     animation: none !important;
     transition: none !important;
   }

@@ -216,7 +216,7 @@ function ChatAssistantTurn({
     Boolean(children) ||
     Boolean(replyTo)
   const timestamp = createdAt ? (
-    <p className="min-w-0 truncate text-[10px] leading-none text-muted-foreground/80">
+    <p className="min-w-0 truncate text-[11px] leading-[13px] tracking-[0.006em] text-muted-foreground/80">
       {formatChatTime(createdAt, locale)}
     </p>
   ) : null
@@ -237,7 +237,7 @@ function ChatAssistantTurn({
             "min-w-0 cursor-text chat-bidi select-text [&::selection]:bg-primary/20",
             isGemini
               ? chatMobileAssistantClass
-              : "text-sm leading-[1.6] text-foreground/92 sm:text-[13px]"
+              : "text-[15px] font-normal leading-[20px] tracking-[-0.016em] text-foreground/92"
           )}
           data-chat-assistant-bubble=""
         >
@@ -306,7 +306,7 @@ function ChatSystemNote({
   return (
     <p
       className={cn(
-        "min-w-0 overflow-hidden rounded-xl bg-muted/15 px-3 py-2 text-center text-[11px] leading-5 wrap-anywhere text-muted-foreground",
+        "min-w-0 overflow-hidden rounded-[12px] bg-muted/15 px-3 py-2 text-center text-[11px] leading-5 wrap-anywhere text-muted-foreground",
         className
       )}
     >

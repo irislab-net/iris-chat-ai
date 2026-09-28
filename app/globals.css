@@ -432,7 +432,7 @@ html.display-standalone[data-app-shell="true"][data-keyboard-open="true"]
 }
 
 html.display-standalone[data-app-shell="true"] .chat-mobile-gemini-empty [data-slot="chat-composer"] {
-  padding-bottom: max(2.75rem, calc(1.75rem + env(safe-area-inset-bottom, 0px)));
+  padding-bottom: max(1rem, calc(0.35rem + env(safe-area-inset-bottom, 0px)));
 }
 
 html.display-standalone[data-app-shell="true"][data-keyboard-open="true"]
@@ -856,8 +856,57 @@ html.display-standalone[data-app-shell="true"] [data-slot="sheet-content"] .app-
   animation: exur-logo-shimmer 2.8s ease-in-out infinite;
 }
 
+@keyframes ios-step-icon-share {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-2.5px);
+  }
+}
+
+@keyframes ios-step-icon-add {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+@keyframes ios-step-icon-check {
+  0%,
+  70%,
+  100% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.12);
+  }
+  55% {
+    transform: scale(0.96);
+  }
+}
+
+.animate-ios-step-icon-share {
+  animation: ios-step-icon-share 1.8s ease-in-out infinite;
+}
+
+.animate-ios-step-icon-add {
+  animation: ios-step-icon-add 1.8s ease-in-out infinite;
+}
+
+.animate-ios-step-icon-check {
+  animation: ios-step-icon-check 2.2s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .animate-exur-logo-shimmer {
+  .animate-exur-logo-shimmer,
+  .animate-ios-step-icon-share,
+  .animate-ios-step-icon-add,
+  .animate-ios-step-icon-check {
     animation: none;
   }
 }

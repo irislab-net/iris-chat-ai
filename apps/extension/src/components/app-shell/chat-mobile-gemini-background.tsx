@@ -45,7 +45,7 @@ function ChatMobileGeminiBackground({
           "absolute inset-0",
           isHero
             ? "bg-linear-to-b from-white via-[#FAFBFC] to-[#F1F5F9] dark:from-background dark:via-background dark:to-card"
-            : "bg-[oklch(0.975_0_0)] dark:bg-background"
+            : "bg-background"
         )}
       />
       {isHero ? (
