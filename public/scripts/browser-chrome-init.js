@@ -52,6 +52,14 @@
           window.matchMedia("(display-mode: fullscreen)").matches))
     if (standalone) {
       root.classList.add("display-standalone")
+      // Skip in-app splash on warm session navigations / reloads in-session.
+      try {
+        if (sessionStorage.getItem("exur-pwa-splash-seen") === "1") {
+          root.classList.add("pwa-splash-done")
+        }
+      } catch (_storage) {}
+    } else {
+      root.classList.add("pwa-splash-done")
     }
   } catch (_e) {}
 })()

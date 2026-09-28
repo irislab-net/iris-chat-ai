@@ -1,0 +1,179 @@
+/* PWA / standalone splash — mirrors chat-empty-hero mark + name. */
+
+.pwa-splash {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 2147483000;
+  align-items: center;
+  justify-content: center;
+  padding:
+    max(1.5rem, env(safe-area-inset-top, 0px))
+    max(1.5rem, env(safe-area-inset-right, 0px))
+    max(1.5rem, env(safe-area-inset-bottom, 0px))
+    max(1.5rem, env(safe-area-inset-left, 0px));
+  background-color: var(--browser-chrome-color, var(--background, #ffffff));
+  color: var(--foreground, #171717);
+  -webkit-user-select: none;
+  user-select: none;
+  pointer-events: auto;
+  opacity: 1;
+  transition:
+    opacity 0.48s cubic-bezier(0.22, 1, 0.36, 1),
+    visibility 0.48s linear;
+}
+
+html.display-standalone:not(.pwa-splash-done) .pwa-splash {
+  display: flex;
+}
+
+.pwa-splash.pwa-splash--exit {
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.pwa-splash-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  text-align: center;
+}
+
+.pwa-splash-mark {
+  width: 4rem;
+  height: 4rem;
+}
+
+@keyframes pwa-splash-mark-in {
+  0% {
+    opacity: 0;
+    transform: translateY(10px) scale(0.88);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes pwa-splash-mark-breathe {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-2px);
+  }
+}
+
+.pwa-splash .chat-empty-hero-mark {
+  isolation: isolate;
+  animation:
+    pwa-splash-mark-in 0.7s cubic-bezier(0.22, 1, 0.36, 1) both,
+    pwa-splash-mark-breathe 5.5s ease-in-out 0.7s infinite;
+}
+
+.pwa-splash-title {
+  margin: 0;
+  font-size: 1.625rem;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  animation: pwa-splash-title-in 0.75s cubic-bezier(0.22, 1, 0.36, 1) 0.12s both;
+}
+
+.pwa-splash-name {
+  background-image: linear-gradient(
+    120deg,
+    var(--foreground, #171717) 0%,
+    color-mix(in oklab, var(--foreground, #171717) 72%, #0284c7) 100%
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.dark .pwa-splash-name {
+  background-image: linear-gradient(
+    120deg,
+    var(--foreground, #fafafa) 0%,
+    color-mix(in oklab, var(--foreground, #fafafa) 70%, #7dd3fc) 100%
+  );
+}
+
+.pwa-splash-dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  margin-top: 0.15rem;
+  min-height: 0.5rem;
+  animation: pwa-splash-title-in 0.75s cubic-bezier(0.22, 1, 0.36, 1) 0.28s both;
+}
+
+.pwa-splash-dot {
+  width: 0.35rem;
+  height: 0.35rem;
+  border-radius: 9999px;
+  background: color-mix(in oklch, var(--foreground, #171717) 42%, transparent);
+  animation: pwa-splash-dot 1.15s ease-in-out infinite;
+}
+
+.dark .pwa-splash-dot {
+  background: color-mix(in oklch, var(--foreground, #fafafa) 48%, transparent);
+}
+
+.pwa-splash-dot:nth-child(1) {
+  animation-delay: 0ms;
+}
+
+.pwa-splash-dot:nth-child(2) {
+  animation-delay: 160ms;
+}
+
+.pwa-splash-dot:nth-child(3) {
+  animation-delay: 320ms;
+}
+
+@keyframes pwa-splash-title-in {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+    filter: blur(4px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes pwa-splash-dot {
+  0%,
+  80%,
+  100% {
+    opacity: 0.28;
+    transform: translateY(0) scale(0.82);
+  }
+  40% {
+    opacity: 1;
+    transform: translateY(-3px) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pwa-splash,
+  .pwa-splash-title,
+  .pwa-splash-dots,
+  .pwa-splash-dot,
+  .pwa-splash .chat-empty-hero-mark {
+    animation: none !important;
+    transition: none !important;
+    filter: none !important;
+  }
+
+  .pwa-splash.pwa-splash--exit {
+    opacity: 0;
+  }
+}

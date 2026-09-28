@@ -372,13 +372,13 @@ function MobileHistoryDrawerFooter({
             type="button"
             variant="ghost"
             size="sm"
-            className="h-10 flex-1 justify-start gap-2.5 px-1 text-[15px] font-normal"
+            className="h-11 flex-1 justify-start gap-2.5 px-1 text-[15px] font-normal"
             disabled={loginPending}
             onClick={() => login({ source: "chat" })}
           >
-            <Avatar className="size-8 after:border-0">
+            <Avatar className="size-9 after:border-0">
               <AvatarFallback className="bg-muted text-[11px]">
-                <GoogleGlyph className="size-3.5" />
+                <GoogleGlyph className="size-4" />
               </AvatarFallback>
             </Avatar>
             {loginPending ? t("connecting") : t("signIn")}
@@ -401,12 +401,12 @@ function MobileHistoryDrawerFooter({
                 type="button"
                 variant="ghost"
                 size="icon"
-                className={cn(chatMobileHeaderButtonClass, "size-9 shrink-0")}
+                className={cn(chatMobileHeaderButtonClass, "size-10 shrink-0")}
                 aria-label={common("settings")}
               />
             }
           >
-            <Settings className="size-4.5" />
+            <Settings className="size-5" />
           </DropdownMenuTrigger>
           <DropdownMenuContent
             align="end"
@@ -623,8 +623,8 @@ function ChatHistorySidebar({
           <div
             className={cn(
               "flex flex-col",
-              isMobileDrawer
-                ? "gap-1.5 px-2 pt-3 pb-[calc(3.25rem+env(safe-area-inset-bottom,0px))]"
+                isMobileDrawer
+                ? "gap-1.5 px-3.5 pt-3 pb-[calc(3.25rem+env(safe-area-inset-bottom,0px))]"
                 : showBrandHeader
                   ? "gap-1.5 px-2 pt-3 pb-4"
                   : "gap-1.5 px-2 pt-1 pb-4"

@@ -6,6 +6,7 @@ import { getLocale, getMessages } from "next-intl/server"
 import "./globals.css"
 import { AuthProvider } from "@/components/auth/auth-provider"
 import { AnalyticsConsentGate } from "@/components/privacy/analytics-consent-gate"
+import { PwaSplash } from "@/components/pwa/pwa-splash"
 import { JsonLd } from "@/components/seo/json-ld"
 import { ThemeExtras } from "@/components/theme-provider"
 import { Toaster } from "@/components/ui/sonner"
@@ -225,6 +226,7 @@ export default async function RootLayout({
             <NextIntlClientProvider locale={locale} messages={messages}>
               <AuthProvider>
                 <AnalyticsConsentGate>
+                  <PwaSplash />
                   {children}
                   <Toaster position="top-right" />
                 </AnalyticsConsentGate>

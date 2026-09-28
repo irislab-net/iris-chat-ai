@@ -17,8 +17,9 @@ export default function manifest(): MetadataRoute.Manifest {
     id: "/",
     display: "standalone",
     display_override: ["standalone", "minimal-ui"],
-    // Splash matches install icon plate (brand blue) — no white flash around the mark.
-    background_color: "#2563EB",
+    // OS splash plate matches empty-hero / chrome light surface; in-app splash
+    // (PwaSplash) then handles light/dark glass mark + name + dots.
+    background_color: BROWSER_CHROME_COLORS.light,
     theme_color: BROWSER_CHROME_COLORS.light,
     lang: "en",
     prefer_related_applications: false,

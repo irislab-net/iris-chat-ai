@@ -40,12 +40,12 @@ function ThemeSettingsMenu() {
             type="button"
             variant="ghost"
             size="icon"
-            className="size-9 shrink-0 rounded-lg hover:bg-muted/40"
+            className="size-10 shrink-0 rounded-lg hover:bg-muted/40"
             aria-label={common("settings")}
           />
         }
       >
-        <SettingsIcon className="size-4 text-muted-foreground" />
+        <SettingsIcon className="size-5 text-muted-foreground" />
       </DropdownMenuTrigger>
       <DropdownMenuContent
         side="top"
@@ -83,20 +83,20 @@ function ChatAccountFooter({
         size={collapsed ? "icon" : "default"}
         className={
           collapsed
-            ? "size-9 rounded-lg hover:bg-muted/40"
-            : "h-auto min-w-0 flex-1 justify-start gap-2 rounded-lg px-2 py-2 hover:bg-muted/40"
+            ? "size-10 rounded-lg hover:bg-muted/40"
+            : "h-auto min-w-0 flex-1 justify-start gap-2.5 rounded-lg px-2 py-2.5 hover:bg-muted/40"
         }
         aria-label={loginPending ? t("connecting") : t("signIn")}
         disabled={loginPending}
         onClick={() => login({ source: "chat" })}
       >
-        <Avatar className="size-8 after:border-0">
+        <Avatar className="size-9 after:border-0">
           <AvatarFallback className="bg-muted text-[11px]">
-            <GoogleGlyph className="size-3.5" />
+            <GoogleGlyph className="size-4" />
           </AvatarFallback>
         </Avatar>
         {!collapsed ? (
-          <span className="min-w-0 flex-1 truncate text-start text-[13px] font-medium">
+          <span className="min-w-0 flex-1 truncate text-start text-[15px] font-medium">
             {loginPending ? t("connecting") : t("signIn")}
           </span>
         ) : null}
