@@ -41,6 +41,7 @@ import {
   chatMobileSheetTitleClass,
 } from "@/components/app-shell/chat-mobile-gemini-styles"
 import { landingCta } from "@/lib/landing-modern-styles"
+import { isStandaloneDisplay } from "@/lib/display-mode"
 import { cn } from "@/lib/utils"
 
 type LoginConsentDialogProps = {
@@ -192,6 +193,11 @@ function LoginConsentBody({
   onPrivacyChange: (checked: boolean) => void
 }) {
   const t = useTranslations("workspace")
+  const [showPwaHint, setShowPwaHint] = React.useState(false)
+
+  React.useEffect(() => {
+    setShowPwaHint(isStandaloneDisplay())
+  }, [])
 
   return (
     <div className="flex flex-col gap-3">
@@ -223,6 +229,11 @@ function LoginConsentBody({
       <p className="px-0.5 text-[11.5px] leading-relaxed text-pretty text-muted-foreground">
         {t("loginConsentDisclaimer")}
       </p>
+      {showPwaHint ? (
+        <p className="px-0.5 text-[11.5px] leading-relaxed text-pretty text-muted-foreground">
+          {t("loginConsentPwaHint")}
+        </p>
+      ) : null}
     </div>
   )
 }

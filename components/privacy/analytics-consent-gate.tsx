@@ -5,6 +5,7 @@ import * as React from "react"
 import { GoogleAnalytics } from "@/components/analytics/google-analytics"
 import { GoogleTagManager } from "@/components/analytics/google-tag-manager"
 import { CookieConsentBanner } from "@/components/privacy/cookie-consent-banner"
+import { PwaInstallPrompt } from "@/components/pwa/pwa-install-prompt"
 import {
   getConsentSnapshot,
   getServerConsentSnapshot,
@@ -28,6 +29,7 @@ function AnalyticsConsentGate({ children }: { children: React.ReactNode }) {
     <>
       {children}
       <CookieConsentBanner />
+      <PwaInstallPrompt />
       {analyticsAllowed ? (
         <>
           <GoogleTagManager />

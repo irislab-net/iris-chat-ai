@@ -12,12 +12,15 @@ import {
   consumePlanUpgradePendingRefresh,
   establishSession,
   exchangeGoogleOneTapCredential,
+  finishAuthPwaPending,
   getStoredAccessToken,
   hasPlanUpgradePendingRefresh,
   isPro,
   logoutRemote,
   startLoginWithGoogle,
 } from "@/lib/api/auth"
+import { hasAuthPwaPending } from "@/lib/auth-pwa"
+import { isStandaloneDisplay } from "@/lib/display-mode"
 
 const LoginConsentDialog = dynamic(
   () =>
@@ -210,16 +213,29 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         try {
           // After crypto/coupon upgrade, mint a fresh JWT before chat can 402
           // on stale Free-tier claims (especially 100% coupons that skip polling).
-          const session = hasPlanUpgradePendingRefresh()
-            ? await establishSession().then((next) => {
-                consumePlanUpgradePendingRefresh()
-                return next
-              })
+          // PWA pending: prefer cookie establish after Safari Google hand-off.
+          const preferEstablish =
+            hasPlanUpgradePendingRefresh() ||
+            (isStandaloneDisplay() && hasAuthPwaPending())
+
+          const session = preferEstablish
+            ? await establishSession()
+                .then((next) => {
+                  if (hasPlanUpgradePendingRefresh()) {
+                    consumePlanUpgradePendingRefresh()
+                  }
+                  finishAuthPwaPending()
+                  return { user: next.user }
+                })
+                .catch(() => bootstrapSession())
             : await bootstrapSession()
           if (!cancelled) {
             setUser(session.user)
             setChatRegisteredUserId(session.user?.id ?? null)
-            if (session.user) setAnalyticsUser(session.user)
+            if (session.user) {
+              setAnalyticsUser(session.user)
+              finishAuthPwaPending()
+            }
           }
         } catch {
           if (!cancelled) {
@@ -253,6 +269,62 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
       cancelled = true
     }
   }, [isOAuthPopupCallback])
+
+  // iOS PWA: Google OAuth often completes in Safari. When the user returns to
+  // the Home Screen app, re-read the shared refresh cookie.
+  React.useEffect(() => {
+    if (isOAuthPopupCallback || isMarketingDocument()) return
+    if (!isStandaloneDisplay()) return
+
+    let cancelled = false
+    let resumeTimer = 0
+    const userIdRef = { current: user?.id ?? null }
+    userIdRef.current = user?.id ?? null
+
+    const resumeSession = () => {
+      window.clearTimeout(resumeTimer)
+      resumeTimer = window.setTimeout(() => {
+        if (cancelled) return
+        const pending = hasAuthPwaPending()
+        if (!pending && userIdRef.current) return
+        void (async () => {
+          try {
+            const session = await establishSession().catch(() =>
+              bootstrapSession()
+            )
+            if (cancelled || !session.user) return
+            finishAuthPwaPending()
+            setUser(session.user)
+            setChatRegisteredUserId(session.user.id)
+            setAnalyticsUser(session.user)
+            setLoginPending(false)
+          } catch {
+            // keep existing guest/signed-out UI
+          }
+        })()
+      }, 250)
+    }
+
+    function onPageShow(event: PageTransitionEvent) {
+      if (hasAuthPwaPending() || (event.persisted && !userIdRef.current)) {
+        resumeSession()
+      }
+    }
+    function onVisibility() {
+      if (document.visibilityState === "visible" && hasAuthPwaPending()) {
+        resumeSession()
+      }
+    }
+
+    window.addEventListener("pageshow", onPageShow)
+    document.addEventListener("visibilitychange", onVisibility)
+    return () => {
+      cancelled = true
+      window.clearTimeout(resumeTimer)
+      window.removeEventListener("pageshow", onPageShow)
+      document.removeEventListener("visibilitychange", onVisibility)
+    }
+  }, [isOAuthPopupCallback, user?.id])
 
   React.useEffect(() => {
     function onSessionExpired() {
@@ -400,6 +472,8 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     !loginPending &&
     !consentOpen &&
     !isOAuthPopupCallback &&
+    // FedCM / One Tap is unreliable in installed PWAs (esp. iOS Safari).
+    !isStandaloneDisplay() &&
     // One Tap competes with LCP on the marketing apex — keep it on chat only.
     !isMarketingDocument()
 

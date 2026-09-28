@@ -6,6 +6,12 @@ import {
 } from "@/lib/api/config"
 import type { TokenPair, User } from "@/lib/api/types"
 import { parseTokenPair, parseUser } from "@/lib/api/schemas"
+import {
+  clearAuthPwaPending,
+  markAuthPwaPending,
+  persistAuthReturnTo,
+} from "@/lib/auth-pwa"
+import { isStandaloneDisplay } from "@/lib/display-mode"
 import { AUTH_PRIVACY_NOTICE_ACCEPTED, AUTH_TERMS_ACCEPTED } from "@/lib/legal"
 import { normalizeUser } from "@/lib/user-avatar"
 
@@ -203,7 +209,7 @@ export function startLoginWithGoogle(options?: {
   returnTo?: string
 }) {
   if (typeof window !== "undefined" && options?.returnTo) {
-    sessionStorage.setItem(AUTH_RETURN_TO_KEY, options.returnTo)
+    persistAuthReturnTo(options.returnTo)
   }
 
   const app = options?.app ?? (isChatAppHost() ? "chat" : undefined)
@@ -214,8 +220,13 @@ export function startLoginWithGoogle(options?: {
     app,
   })
 
-  // app=chat: API redirects back to chat after Google — full navigation, not popup.
-  if (app) {
+  const standalone =
+    typeof window !== "undefined" ? isStandaloneDisplay() : false
+
+  // Installed PWA / chat app: always full-page redirect. iOS standalone cannot
+  // return OAuth via window.open + postMessage (opens Safari, loses opener).
+  if (app || standalone) {
+    markAuthPwaPending()
     window.location.assign(url)
     return
   }
@@ -234,6 +245,10 @@ export function startLoginWithGoogle(options?: {
     window.clearInterval(timer)
     window.dispatchEvent(new Event(AUTH_POPUP_CLOSED_EVENT))
   }, 400)
+}
+
+export function finishAuthPwaPending() {
+  clearAuthPwaPending()
 }
 
 export async function refreshAccessToken(): Promise<TokenPair> {

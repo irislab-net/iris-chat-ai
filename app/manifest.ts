@@ -2,20 +2,31 @@ import type { MetadataRoute } from "next"
 
 import { BROWSER_CHROME_COLORS } from "@/lib/browser-chrome"
 import { brandIconUrl } from "@/lib/brand-icons"
+import { CHAT_APP_ORIGIN } from "@/lib/hosts"
 import { SITE_DESCRIPTION, SITE_NAME, SITE_SHORT_NAME } from "@/lib/seo"
 
 export default function manifest(): MetadataRoute.Manifest {
+  const manifestUrl = `${CHAT_APP_ORIGIN}/manifest.webmanifest`
+
   return {
     name: SITE_NAME,
     short_name: SITE_SHORT_NAME,
     description: SITE_DESCRIPTION,
     start_url: "/",
     scope: "/",
+    id: "/",
     display: "standalone",
     display_override: ["standalone", "minimal-ui"],
     background_color: BROWSER_CHROME_COLORS.dark,
     theme_color: BROWSER_CHROME_COLORS.dark,
     lang: "en",
+    prefer_related_applications: false,
+    related_applications: [
+      {
+        platform: "webapp",
+        url: manifestUrl,
+      },
+    ],
     icons: [
       {
         src: brandIconUrl("/favicon-48.png"),

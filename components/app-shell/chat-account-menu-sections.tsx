@@ -5,6 +5,7 @@ import { Link } from "@/i18n/navigation"
 import {
   BookOpenIcon,
   CircleHelpIcon,
+  DownloadIcon,
   FileTextIcon,
   LogOutIcon,
   MailIcon,
@@ -34,6 +35,7 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
 } from "@/components/ui/dropdown-menu"
+import { usePwaInstall } from "@/hooks/use-pwa-install"
 import type { User } from "@/lib/api/types"
 import { getPrivacyNoticeHref, getTermsOfServiceHref } from "@/lib/legal"
 import {
@@ -65,6 +67,25 @@ function AccountPlanBadge({
       {isProUser ? <SparklesIcon className="size-2.5" aria-hidden /> : null}
       {planName}
     </Badge>
+  )
+}
+
+function AccountInstallMenuItem() {
+  const t = useTranslations("workspace")
+  const { isEligible, needsManualInstall, promptInstall } = usePwaInstall()
+
+  if (!isEligible) return null
+
+  return (
+    <DropdownMenuItem
+      className={chatContextMenuItemClass}
+      onClick={() => {
+        void promptInstall()
+      }}
+    >
+      <DownloadIcon className={chatContextMenuIconClass} />
+      {needsManualInstall ? t("addToHomeScreen") : t("installApp")}
+    </DropdownMenuItem>
   )
 }
 
@@ -233,6 +254,7 @@ function AccountSignedInMenuSections({
       </DropdownMenuGroup>
 
       <AccountPreferencesGroup />
+      <AccountInstallMenuItem />
       <AccountHelpGroup />
 
       <DropdownMenuItem
@@ -259,6 +281,7 @@ function AccountGuestMenuSections({
   return (
     <>
       <AccountPreferencesGroup />
+      <AccountInstallMenuItem />
       <AccountHelpGroup />
       <DropdownMenuItem
         className={chatContextMenuItemClass}

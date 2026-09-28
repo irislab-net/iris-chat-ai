@@ -5,11 +5,18 @@ import { useRouter } from "next/navigation"
 
 import { useAuth } from "@/components/auth/auth-provider"
 import {
-  AUTH_RETURN_TO_KEY,
   AUTH_SUCCESS_MESSAGE,
   establishSession,
   safeAuthReturnPath,
 } from "@/lib/api/auth"
+import {
+  authSuccessDedupeId,
+  claimAuthSuccessProcessed,
+  clearAuthPwaPending,
+  consumeAuthReturnTo,
+  hasAuthPwaPending,
+} from "@/lib/auth-pwa"
+import { isStandaloneDisplay } from "@/lib/display-mode"
 import { trackLoginFail, trackLoginSuccess } from "@/lib/analytics"
 import { APP_NEWS_PATH } from "@/lib/site"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -18,56 +25,81 @@ export default function AuthSuccessPage() {
   const router = useRouter()
   const { refresh } = useAuth()
   const [error, setError] = React.useState<string | null>(null)
+  const [safariHandOff, setSafariHandOff] = React.useState(false)
 
   React.useEffect(() => {
     let cancelled = false
     ;(async () => {
-      try {
-        // Popup flow: refresh cookie is already set by the API callback.
-        // Opener refreshes once — do not touch tokens here.
-        if (window.opener && !window.opener.closed) {
+      const dedupeId = authSuccessDedupeId()
+      const alreadyDone = claimAuthSuccessProcessed(dedupeId)
+      const standalone = isStandaloneDisplay()
+      const hasOpener = Boolean(window.opener && !window.opener.closed)
+
+      // Popup flow (browser tabs only): refresh cookie is already set by the API.
+      // Never use opener in standalone — iOS leaves the PWA for Safari.
+      if (hasOpener && !standalone) {
+        if (!alreadyDone) {
           window.opener.postMessage(
             { type: AUTH_SUCCESS_MESSAGE },
             window.location.origin
           )
-          window.close()
+        }
+        window.close()
+        return
+      }
+
+      if (alreadyDone) {
+        clearAuthPwaPending()
+        const returnTo = safeAuthReturnPath(
+          consumeAuthReturnTo(APP_NEWS_PATH),
+          APP_NEWS_PATH
+        )
+        router.replace(returnTo)
+        return
+      }
+
+      try {
+        // Full-page redirect (incl. PWA→Safari hand-off): establish from cookie.
+        const pwaPending = hasAuthPwaPending()
+        const session = await establishSession()
+        if (cancelled) return
+        clearAuthPwaPending()
+        trackLoginSuccess(session.user)
+        await refresh()
+        if (cancelled) return
+
+        // OAuth often finishes in Safari after leaving the Home Screen app.
+        // Ask the user to reopen the icon when we are not already standalone.
+        if (!standalone && pwaPending) {
+          setSafariHandOff(true)
           return
         }
 
-        // Full-page redirect: establish from HttpOnly refresh cookie only.
-        const session = await establishSession()
-        if (cancelled) return
-        trackLoginSuccess(session.user)
-        await refresh()
-        if (!cancelled) {
-          const returnTo = safeAuthReturnPath(
-            sessionStorage.getItem(AUTH_RETURN_TO_KEY),
-            APP_NEWS_PATH
-          )
-          sessionStorage.removeItem(AUTH_RETURN_TO_KEY)
-          router.replace(returnTo)
-        }
+        const returnTo = safeAuthReturnPath(
+          consumeAuthReturnTo(APP_NEWS_PATH),
+          APP_NEWS_PATH
+        )
+        router.replace(returnTo)
       } catch (err) {
         if (!cancelled) {
           const message = err instanceof Error ? err.message : "Session failed"
           setError(message)
           trackLoginFail(message)
-          setTimeout(() => {
-            if (window.opener && !window.opener.closed) {
+          window.setTimeout(() => {
+            if (hasOpener && !standalone && !window.opener?.closed) {
               window.opener.postMessage(
                 { type: AUTH_SUCCESS_MESSAGE, error: true },
                 window.location.origin
               )
               window.close()
-            } else {
-              router.replace(
-                safeAuthReturnPath(
-                  sessionStorage.getItem(AUTH_RETURN_TO_KEY),
-                  APP_NEWS_PATH
-                )
-              )
-              sessionStorage.removeItem(AUTH_RETURN_TO_KEY)
+              return
             }
+            router.replace(
+              safeAuthReturnPath(
+                consumeAuthReturnTo(APP_NEWS_PATH),
+                APP_NEWS_PATH
+              )
+            )
           }, 2000)
         }
       }
@@ -83,11 +115,19 @@ export default function AuthSuccessPage() {
       <p className="text-sm text-muted-foreground">
         {error
           ? `Could not connect with Google: ${error}`
-          : "Connecting with Google…"}
+          : safariHandOff
+            ? "Signed in. Open Exur from your Home Screen to continue."
+            : "Connecting with Google…"}
       </p>
       {error ? (
         <p className="max-w-md text-center text-sm text-muted-foreground">
           Close this window and try Continue with Google again from the app.
+        </p>
+      ) : null}
+      {safariHandOff ? (
+        <p className="max-w-md text-center text-sm text-muted-foreground">
+          Google sign-in finishes in Safari on iPhone. Your Home Screen app
+          will pick up the session when you open it again.
         </p>
       ) : null}
     </div>
