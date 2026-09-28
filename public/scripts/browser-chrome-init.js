@@ -21,16 +21,18 @@
     }
     colorSchemeMeta.setAttribute("content", scheme)
 
-    // Drop media-query theme-color tags so forced themes (and resolved system)
-    // always control phone status / home-indicator chrome.
+    // Update SSR theme-color tags in place (keep media attrs React owns).
     var metas = document.querySelectorAll('meta[name="theme-color"]')
-    for (var i = 0; i < metas.length; i++) {
-      if (metas[i].parentNode) metas[i].parentNode.removeChild(metas[i])
+    if (metas.length === 0) {
+      var meta = document.createElement("meta")
+      meta.setAttribute("name", "theme-color")
+      meta.setAttribute("content", color)
+      document.head.appendChild(meta)
+    } else {
+      for (var i = 0; i < metas.length; i++) {
+        metas[i].setAttribute("content", color)
+      }
     }
-    var meta = document.createElement("meta")
-    meta.setAttribute("name", "theme-color")
-    meta.setAttribute("content", color)
-    document.head.appendChild(meta)
 
     var apple = document.querySelector(
       'meta[name="apple-mobile-web-app-status-bar-style"]'

@@ -219,15 +219,16 @@ function PwaInstallNudge({
   const [ready, setReady] = React.useState(false)
 
   React.useEffect(() => {
-    if (!visible) return
+    if (!visible) {
+      setReady(false)
+      return
+    }
     // Wait for cookie banner to settle; avoid stacking on first paint.
     const timer = window.setTimeout(() => {
       if (getStoredConsent()) setReady(true)
     }, 2800)
     return () => {
       window.clearTimeout(timer)
-      // Defer so we don't sync-set during effect cleanup/render cascade.
-      window.requestAnimationFrame(() => setReady(false))
     }
   }, [visible])
 

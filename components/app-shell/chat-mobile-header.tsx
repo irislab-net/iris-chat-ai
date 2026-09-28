@@ -173,15 +173,13 @@ function ChatMobileHeader({
         </div>
 
         <motion.div
-          layout
           className="flex shrink-0 items-center justify-end"
           transition={trailingSpring}
         >
-          <AnimatePresence initial={false}>
+          <AnimatePresence initial={false} mode="popLayout">
             {showThreadChrome ? (
               <motion.div
                 key="new-chat"
-                layout
                 initial={{ opacity: 0, scale: 0.55, width: 0, x: 10 }}
                 animate={{
                   opacity: 1,
@@ -217,7 +215,7 @@ function ChatMobileHeader({
           </AnimatePresence>
 
           <div className="relative size-12 shrink-0">
-            <AnimatePresence initial={false}>
+            <AnimatePresence initial={false} mode="wait">
               {showThreadChrome && threadMenu ? (
                 <motion.div
                   key="thread-options"
@@ -226,19 +224,16 @@ function ChatMobileHeader({
                     opacity: 0,
                     scale: 0.68,
                     rotate: -18,
-                    filter: "blur(8px)",
                   }}
                   animate={{
                     opacity: 1,
                     scale: 1,
                     rotate: 0,
-                    filter: "blur(0px)",
                   }}
                   exit={{
                     opacity: 0,
                     scale: 0.72,
                     rotate: 16,
-                    filter: "blur(8px)",
                   }}
                   transition={morphSpring}
                 >
@@ -255,19 +250,16 @@ function ChatMobileHeader({
                     opacity: 0,
                     scale: 0.68,
                     rotate: 18,
-                    filter: "blur(8px)",
                   }}
                   animate={{
                     opacity: 1,
                     scale: 1,
                     rotate: 0,
-                    filter: "blur(0px)",
                   }}
                   exit={{
                     opacity: 0,
                     scale: 0.72,
                     rotate: -16,
-                    filter: "blur(8px)",
                   }}
                   transition={morphSpring}
                 >

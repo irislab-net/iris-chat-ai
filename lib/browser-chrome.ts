@@ -8,8 +8,10 @@ export const BROWSER_CHROME_COLORS = {
 /**
  * Pre-hydration chrome sync lives in `/public/scripts/browser-chrome-init.js`
  * (loaded via next/script beforeInteractive). Keep colors in sync with that file.
+ *
+ * Never remove React/Next-owned theme-color nodes — update content in place.
  */
-export const BROWSER_CHROME_INIT_SCRIPT = `(function(){try{var k="theme",s=localStorage.getItem(k),m=matchMedia("(prefers-color-scheme: dark)").matches,d=s==="dark"||(s!=="light"&&m),scheme=d?"dark":"light",c=d?"${BROWSER_CHROME_COLORS.dark}":"${BROWSER_CHROME_COLORS.light}",r=document.documentElement;r.style.setProperty("color-scheme",scheme,"important");r.style.setProperty("--browser-chrome-color",c);var colorSchemeMeta=document.querySelector('meta[name="color-scheme"]');if(!colorSchemeMeta){colorSchemeMeta=document.createElement("meta");colorSchemeMeta.setAttribute("name","color-scheme");document.head.appendChild(colorSchemeMeta);}colorSchemeMeta.setAttribute("content",scheme);var metas=document.querySelectorAll('meta[name="theme-color"]');for(var i=0;i<metas.length;i++)metas[i].parentNode&&metas[i].parentNode.removeChild(metas[i]);var meta=document.createElement("meta");meta.setAttribute("name","theme-color");meta.setAttribute("content",c);document.head.appendChild(meta);var apple=document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]');if(!apple){apple=document.createElement("meta");apple.setAttribute("name","apple-mobile-web-app-status-bar-style");document.head.appendChild(apple);}apple.setAttribute("content","black-translucent");var standalone=(window.navigator&&window.navigator.standalone===true)||(window.matchMedia&&(window.matchMedia("(display-mode: standalone)").matches||window.matchMedia("(display-mode: fullscreen)").matches));if(standalone)r.classList.add("display-standalone");}catch(e){}})();`
+export const BROWSER_CHROME_INIT_SCRIPT = `(function(){try{var k="theme",s=localStorage.getItem(k),m=matchMedia("(prefers-color-scheme: dark)").matches,d=s==="dark"||(s!=="light"&&m),scheme=d?"dark":"light",c=d?"${BROWSER_CHROME_COLORS.dark}":"${BROWSER_CHROME_COLORS.light}",r=document.documentElement;r.style.setProperty("color-scheme",scheme,"important");r.style.setProperty("--browser-chrome-color",c);var colorSchemeMeta=document.querySelector('meta[name="color-scheme"]');if(!colorSchemeMeta){colorSchemeMeta=document.createElement("meta");colorSchemeMeta.setAttribute("name","color-scheme");document.head.appendChild(colorSchemeMeta);}colorSchemeMeta.setAttribute("content",scheme);var metas=document.querySelectorAll('meta[name="theme-color"]');if(!metas.length){var meta=document.createElement("meta");meta.setAttribute("name","theme-color");meta.setAttribute("content",c);document.head.appendChild(meta);}else{for(var i=0;i<metas.length;i++)metas[i].setAttribute("content",c);}var apple=document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]');if(!apple){apple=document.createElement("meta");apple.setAttribute("name","apple-mobile-web-app-status-bar-style");document.head.appendChild(apple);}apple.setAttribute("content","black-translucent");var standalone=(window.navigator&&window.navigator.standalone===true)||(window.matchMedia&&(window.matchMedia("(display-mode: standalone)").matches||window.matchMedia("(display-mode: fullscreen)").matches));if(standalone)r.classList.add("display-standalone");}catch(e){}})();`
 
 export type BrowserChromeTheme = keyof typeof BROWSER_CHROME_COLORS
 
@@ -43,21 +45,24 @@ function syncAppleStatusBarStyle(_theme: BrowserChromeTheme) {
 }
 
 /**
- * Collapse media-query theme-color tags into one authoritative meta so forced
- * light/dark (and resolved system) always paint phone chrome correctly.
+ * Force resolved theme onto existing theme-color tags in place.
+ * Keep media attributes intact so React/Next keep owning the nodes.
  */
 function syncThemeColorMeta(color: string) {
   if (typeof document === "undefined") return
 
   const existing = document.querySelectorAll('meta[name="theme-color"]')
-  for (const node of existing) {
-    node.remove()
+  if (existing.length === 0) {
+    const meta = document.createElement("meta")
+    meta.setAttribute("name", "theme-color")
+    meta.setAttribute("content", color)
+    document.head.appendChild(meta)
+    return
   }
 
-  const meta = document.createElement("meta")
-  meta.setAttribute("name", "theme-color")
-  meta.setAttribute("content", color)
-  document.head.appendChild(meta)
+  for (const node of existing) {
+    node.setAttribute("content", color)
+  }
 }
 
 /** Single active scheme for the document — required so embedded GIS iframes match site theme. */
