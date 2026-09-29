@@ -53,9 +53,21 @@ function ChatMobileSlidePanel({
   const dir = localeDirection(useLocale())
   const off = slideOffscreenXPercent(side, dir)
 
-  const [mounted, setMounted] = React.useState(false)
+  const [mounted, setMounted] = React.useState(open)
   /** True after GSAP has parked the panel offscreen (avoids open flash). */
   const [parked, setParked] = React.useState(false)
+  const [openSnapshot, setOpenSnapshot] = React.useState(open)
+
+  // Keep mounted while open; stay mounted through the close tween.
+  // Adjust during render (React-recommended) instead of setState-in-effect.
+  if (open !== openSnapshot) {
+    setOpenSnapshot(open)
+    if (open) {
+      setMounted(true)
+      setParked(false)
+    }
+  }
+
   const panelRef = React.useRef<HTMLDivElement>(null)
   const scrimRef = React.useRef<HTMLDivElement>(null)
   const tlRef = React.useRef<{ kill: () => void } | null>(null)
@@ -68,14 +80,8 @@ function ChatMobileSlidePanel({
   const dragPointerIdRef = React.useRef<number | null>(null)
   const dragWidthRef = React.useRef(0)
 
-  openRef.current = open
-
-  // Keep mounted while open, or during close tween.
   React.useEffect(() => {
-    if (open) {
-      setParked(false)
-      setMounted(true)
-    }
+    openRef.current = open
   }, [open])
 
   React.useLayoutEffect(() => {
@@ -114,6 +120,7 @@ function ChatMobileSlidePanel({
         onComplete: () => {
           if (!cancelled && !openRef.current) {
             setMounted(false)
+            setParked(false)
           }
         },
       })
@@ -125,23 +132,6 @@ function ChatMobileSlidePanel({
       tlRef.current = null
     }
   }, [mounted, open, off, backdrop])
-
-  // Only clear GSAP inline props when the drawer fully unmounts.
-  React.useEffect(() => {
-    if (mounted) return
-    const gsap = gsapRef.current
-    const panel = panelRef.current
-    if (gsap && panel) {
-      gsap.set(panel, {
-        clearProps: "transform,translate,x,y,xPercent,yPercent,scale,opacity",
-      })
-    }
-    if (gsap && scrimRef.current) {
-      gsap.set(scrimRef.current, {
-        clearProps: "transform,opacity,display",
-      })
-    }
-  }, [mounted])
 
   React.useEffect(() => {
     if (!mounted || !open) return
