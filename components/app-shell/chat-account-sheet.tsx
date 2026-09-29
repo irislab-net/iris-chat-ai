@@ -9,11 +9,7 @@ import {
   ChatGuestAvatar,
 } from "@/components/app-shell/chat-account-avatar"
 import { ChatGsapViewStack } from "@/components/app-shell/chat-gsap-view-stack"
-import {
-  chatMobileComposerSendClass,
-  chatMobileHeaderButtonClass,
-  chatUpgradePillClass,
-} from "@/components/app-shell/chat-mobile-gemini-styles"
+import { chatUpgradePillClass } from "@/components/app-shell/chat-mobile-gemini-styles"
 import { LocaleFlag } from "@/components/i18n/locale-flag"
 import {
   SfBookIcon,
@@ -88,6 +84,16 @@ const sheetPrimaryPillClass = cn(
   "inline-flex h-9 w-fit items-center justify-center gap-1.5 px-4 text-[13px] font-semibold"
 )
 
+/** Frost liquid-glass icon — opaque enough to read on the solid sheet canvas. */
+const sheetGlassIconButtonClass =
+  "chat-ios26-liquid-glass relative isolate flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-full border border-black/10 bg-white/95 text-foreground shadow-[inset_0_1px_0_0_rgba(255,255,255,1),inset_0_-6px_12px_-8px_rgba(0,0,0,0.08),0_1px_2px_rgba(0,0,0,0.06),0_6px_14px_-6px_rgba(0,0,0,0.12)] backdrop-blur-[22px] backdrop-saturate-[190%] transition-transform duration-150 ease-out active:scale-[0.96] dark:border-white/20 dark:bg-white/20 dark:text-white dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.35),inset_0_-8px_14px_-10px_rgba(0,0,0,0.45),0_6px_16px_-6px_rgba(0,0,0,0.4)]"
+
+/** Blue liquid-glass Done check circle. */
+const sheetBlueGlassIconButtonClass = cn(
+  chatUpgradePillClass,
+  "chat-ios26-liquid-glass flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-full px-0 text-white"
+)
+
 const sheetRowClass =
   "flex min-h-[3.25rem] w-full items-center gap-3.5 px-4 text-start text-[16px] font-normal tracking-[-0.01em] transition-colors active:bg-black/[0.03] dark:active:bg-white/[0.06]"
 
@@ -139,7 +145,7 @@ function SheetDoneCheck({ onClick }: { onClick: () => void }) {
       type="button"
       onClick={onClick}
       aria-label={common("done")}
-      className={cn(chatMobileComposerSendClass, "size-10")}
+      className={sheetBlueGlassIconButtonClass}
     >
       <SfCheckIcon className="size-5" strokeWidth={2.4} />
     </button>
@@ -316,16 +322,14 @@ function NestedViewChrome({
     <div className="flex min-h-0 flex-1 flex-col overflow-hidden px-4 pb-6">
       <div className="flex shrink-0 items-center gap-2 pb-3 pt-1">
         {onBack ? (
-          <Button
+          <button
             type="button"
-            variant="ghost"
-            size="icon"
-            className={cn(chatMobileHeaderButtonClass, "size-10")}
+            className={sheetGlassIconButtonClass}
             aria-label={common("back")}
             onClick={onBack}
           >
             <SfChevronLeftIcon className="size-5 rtl:rotate-180" />
-          </Button>
+          </button>
         ) : null}
         <h2 className="min-w-0 flex-1 truncate text-start text-[22px] font-normal tracking-tight text-foreground">
           {title}
