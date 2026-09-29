@@ -54,6 +54,8 @@ function ChatMobileSlidePanel({
   const off = slideOffscreenXPercent(side, dir)
 
   const [mounted, setMounted] = React.useState(false)
+  /** True after GSAP has parked the panel offscreen (avoids open flash). */
+  const [parked, setParked] = React.useState(false)
   const panelRef = React.useRef<HTMLDivElement>(null)
   const scrimRef = React.useRef<HTMLDivElement>(null)
   const tlRef = React.useRef<{ kill: () => void } | null>(null)
@@ -71,11 +73,12 @@ function ChatMobileSlidePanel({
   // Keep mounted while open, or during close tween.
   React.useEffect(() => {
     if (open) {
+      setParked(false)
       setMounted(true)
     }
   }, [open])
 
-  React.useEffect(() => {
+  React.useLayoutEffect(() => {
     if (!mounted) return
 
     const panel = panelRef.current
@@ -91,6 +94,9 @@ function ChatMobileSlidePanel({
 
       const scrim = scrimRef.current
       if (open) {
+        // Park offscreen before the open tween so the first paint never flashes.
+        gsap.set(panelRef.current, { xPercent: off, force3D: true })
+        setParked(true)
         tlRef.current = openChatSidebar(gsap, {
           sidebarEl: panelRef.current,
           scrimEl: backdrop ? scrim : null,
@@ -117,15 +123,25 @@ function ChatMobileSlidePanel({
       cancelled = true
       tlRef.current?.kill()
       tlRef.current = null
-      // Drop inline GSAP styles so React can unmount cleanly.
-      panel.style.transform = ""
-      panel.style.opacity = ""
-      if (scrimRef.current) {
-        scrimRef.current.style.opacity = ""
-        scrimRef.current.style.display = ""
-      }
     }
   }, [mounted, open, off, backdrop])
+
+  // Only clear GSAP inline props when the drawer fully unmounts.
+  React.useEffect(() => {
+    if (mounted) return
+    const gsap = gsapRef.current
+    const panel = panelRef.current
+    if (gsap && panel) {
+      gsap.set(panel, {
+        clearProps: "transform,translate,x,y,xPercent,yPercent,scale,opacity",
+      })
+    }
+    if (gsap && scrimRef.current) {
+      gsap.set(scrimRef.current, {
+        clearProps: "transform,opacity,display",
+      })
+    }
+  }, [mounted])
 
   React.useEffect(() => {
     if (!mounted || !open) return
@@ -298,9 +314,10 @@ function ChatMobileSlidePanel({
         tabIndex={-1}
         className={cn(
           "absolute inset-0 flex min-h-0 flex-col outline-none will-change-transform touch-pan-y",
+          // Hide until GSAP parks offscreen — never fight GSAP with inline transform.
+          open && !parked && "invisible",
           panelClassName
         )}
-        style={{ transform: `translate3d(${off}%,0,0)` }}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={endDrag}

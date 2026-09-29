@@ -75,7 +75,7 @@ function ChatMobileSlidePanel({
     }
   }, [open])
 
-  React.useEffect(() => {
+  React.useLayoutEffect(() => {
     if (!mounted) return
 
     const panel = panelRef.current
@@ -91,6 +91,8 @@ function ChatMobileSlidePanel({
 
       const scrim = scrimRef.current
       if (open) {
+        // Park offscreen before the open tween so the first paint never flashes.
+        gsap.set(panelRef.current, { xPercent: off, force3D: true })
         tlRef.current = openChatSidebar(gsap, {
           sidebarEl: panelRef.current,
           scrimEl: backdrop ? scrim : null,
@@ -117,15 +119,25 @@ function ChatMobileSlidePanel({
       cancelled = true
       tlRef.current?.kill()
       tlRef.current = null
-      // Drop inline GSAP styles so React can unmount cleanly.
-      panel.style.transform = ""
-      panel.style.opacity = ""
-      if (scrimRef.current) {
-        scrimRef.current.style.opacity = ""
-        scrimRef.current.style.display = ""
-      }
     }
   }, [mounted, open, off, backdrop])
+
+  // Only clear GSAP inline props when the drawer fully unmounts.
+  React.useEffect(() => {
+    if (mounted) return
+    const gsap = gsapRef.current
+    const panel = panelRef.current
+    if (gsap && panel) {
+      gsap.set(panel, {
+        clearProps: "transform,translate,x,y,xPercent,yPercent,scale,opacity",
+      })
+    }
+    if (gsap && scrimRef.current) {
+      gsap.set(scrimRef.current, {
+        clearProps: "transform,opacity,display",
+      })
+    }
+  }, [mounted])
 
   React.useEffect(() => {
     if (!mounted || !open) return
@@ -300,7 +312,6 @@ function ChatMobileSlidePanel({
           "absolute inset-0 flex min-h-0 flex-col outline-none will-change-transform touch-pan-y",
           panelClassName
         )}
-        style={{ transform: `translate3d(${off}%,0,0)` }}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={endDrag}
