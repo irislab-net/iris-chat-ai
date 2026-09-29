@@ -15,7 +15,6 @@ import {
   SfBookIcon,
   SfCheckIcon,
   SfChevronDownIcon,
-  SfChevronLeftIcon,
   SfChevronRightIcon,
   SfCookieIcon,
   SfCreditCardIcon,
@@ -81,18 +80,12 @@ const sheetPillClass = cn(
 
 const sheetPrimaryPillClass = cn(
   chatUpgradePillClass,
-  "inline-flex h-9 w-fit items-center justify-center gap-1.5 px-4 text-[13px] font-semibold"
+  "inline-flex h-8 w-fit items-center justify-center gap-1.5 px-3.5 text-[13px] font-semibold"
 )
 
-/** Frost liquid-glass icon — opaque enough to read on the solid sheet canvas. */
-const sheetGlassIconButtonClass =
-  "chat-ios26-liquid-glass relative isolate flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-full border border-black/10 bg-white/95 text-foreground shadow-[inset_0_1px_0_0_rgba(255,255,255,1),inset_0_-6px_12px_-8px_rgba(0,0,0,0.08),0_1px_2px_rgba(0,0,0,0.06),0_6px_14px_-6px_rgba(0,0,0,0.12)] backdrop-blur-[22px] backdrop-saturate-[190%] transition-transform duration-150 ease-out active:scale-[0.96] dark:border-white/20 dark:bg-white/20 dark:text-white dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.35),inset_0_-8px_14px_-10px_rgba(0,0,0,0.45),0_6px_16px_-6px_rgba(0,0,0,0.4)]"
-
-/** Blue liquid-glass Done check circle. */
-const sheetBlueGlassIconButtonClass = cn(
-  chatUpgradePillClass,
-  "chat-ios26-liquid-glass flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-full px-0 text-white"
-)
+/** Blue Done check circle — opaque brand fill, not the text pill. */
+const sheetBlueGlassIconButtonClass =
+  "flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-full border-0 bg-[#2563EB] text-white shadow-[inset_0_1px_1px_rgba(255,255,255,0.42),inset_0_-1px_2px_rgba(29,78,216,0.28),0_4px_16px_-4px_rgba(37,99,235,0.28)] transition-[transform,background-color,box-shadow] duration-150 ease-out hover:bg-[#1D4ED8] active:scale-[0.96]"
 
 const sheetRowClass =
   "flex min-h-[3.25rem] w-full items-center gap-3.5 px-4 text-start text-[16px] font-normal tracking-[-0.01em] transition-colors active:bg-black/[0.03] dark:active:bg-white/[0.06]"
@@ -125,19 +118,6 @@ type ChatAccountSheetProps = {
   onOpenNews?: () => void
 }
 
-function SheetDoneText({ onClick }: { onClick: () => void }) {
-  const common = useTranslations("common")
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={sheetPrimaryPillClass}
-    >
-      {common("done")}
-    </button>
-  )
-}
-
 function SheetDoneCheck({ onClick }: { onClick: () => void }) {
   const common = useTranslations("common")
   return (
@@ -145,9 +125,10 @@ function SheetDoneCheck({ onClick }: { onClick: () => void }) {
       type="button"
       onClick={onClick}
       aria-label={common("done")}
+      title={common("done")}
       className={sheetBlueGlassIconButtonClass}
     >
-      <SfCheckIcon className="size-5" strokeWidth={2.4} />
+      <SfCheckIcon className="size-5 text-white" strokeWidth={2.6} />
     </button>
   )
 }
@@ -309,28 +290,15 @@ function SheetPill({
 function NestedViewChrome({
   title,
   onDone,
-  onBack,
   children,
 }: {
   title: string
   onDone: () => void
-  onBack?: () => void
   children: React.ReactNode
 }) {
-  const common = useTranslations("common")
   return (
     <div className="flex min-h-0 flex-1 flex-col overflow-hidden px-4 pb-6">
       <div className="flex shrink-0 items-center gap-2 pb-3 pt-1">
-        {onBack ? (
-          <button
-            type="button"
-            className={sheetGlassIconButtonClass}
-            aria-label={common("back")}
-            onClick={onBack}
-          >
-            <SfChevronLeftIcon className="size-5 rtl:rotate-180" />
-          </button>
-        ) : null}
         <h2 className="min-w-0 flex-1 truncate text-start text-[22px] font-normal tracking-tight text-foreground">
           {title}
         </h2>
@@ -465,10 +433,10 @@ function ChatAccountSheet({
               <h2 className="min-w-0 flex-1 truncate text-start text-[22px] font-normal tracking-tight text-foreground">
                 {t("accountSection")}
               </h2>
-              <SheetDoneText onClick={closeSheet} />
+              <SheetDoneCheck onClick={closeSheet} />
             </div>
 
-            <div className="min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-contain px-4 pb-4">
+            <div className="min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-contain px-4 pt-1.5 pb-4">
               {user ? (
                 /* Signed-in profile card — Switch account expands inside card */
                 <div className={cn(sheetCardClass, "overflow-hidden")}>
@@ -571,8 +539,8 @@ function ChatAccountSheet({
                     avatarClassName="size-14"
                     badgeClassName="h-4 translate-y-[35%] px-1.5 text-[9px]"
                   />
-                  <div className="flex min-w-0 flex-1 flex-col gap-2">
-                    <p className="truncate text-[17px] font-semibold tracking-tight">
+                  <div className="flex min-w-0 flex-1 flex-col gap-1">
+                    <p className="truncate ps-0.5 text-[17px] font-semibold tracking-tight">
                       {common("brand")}
                     </p>
                     <Button
@@ -674,7 +642,6 @@ function ChatAccountSheet({
             <NestedViewChrome
               title={t("exurSettings")}
               onDone={closeSheet}
-              onBack={() => go("root", "pop")}
             >
               <p className={sheetSectionLabelClass}>
                 {t("preferencesSection")}
@@ -736,7 +703,6 @@ function ChatAccountSheet({
             <NestedViewChrome
               title={common("theme")}
               onDone={closeSheet}
-              onBack={() => go("settings", "pop")}
             >
               <SheetCard>
                 {themeOptions.map(({ id, label, Icon }, index) => (
@@ -766,7 +732,6 @@ function ChatAccountSheet({
             <NestedViewChrome
               title={common("language")}
               onDone={closeSheet}
-              onBack={() => go("settings", "pop")}
             >
               <SheetCard>
                 {routing.locales.map((code, index) => {
@@ -807,7 +772,6 @@ function ChatAccountSheet({
             <NestedViewChrome
               title={t("help")}
               onDone={closeSheet}
-              onBack={() => go("settings", "pop")}
             >
               <SheetCard>
                 <SheetRow

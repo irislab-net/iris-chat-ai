@@ -31,7 +31,9 @@ function UsageMeter({
   className?: string
 }) {
   const t = useTranslations("billingPage")
-  const pct = Math.round(period.usedFraction * 100)
+  const usedPct = Math.round(period.usedFraction * 100)
+  const remainingPct = Math.max(0, Math.min(100, 100 - usedPct))
+  const critical = usedPct >= 90
   return (
     <div className={cn("min-w-0 px-5 py-4 sm:px-6", className)}>
       <div className="flex items-start justify-between gap-3">
@@ -51,14 +53,28 @@ function UsageMeter({
           {t("usedCount", { count: formatCreditCount(period.used) })}
         </p>
       </div>
-      <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-white/55 dark:bg-white/10">
+      <div
+        role="progressbar"
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-valuenow={remainingPct}
+        aria-label={title}
+        className="relative isolate mt-3.5 h-3 overflow-hidden rounded-full border border-black/5 bg-[rgba(118,118,128,0.18)] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.55),inset_0_-4px_10px_-6px_rgba(0,0,0,0.08),0_1px_2px_rgba(0,0,0,0.03)] backdrop-blur-md backdrop-saturate-[160%] dark:border-white/10 dark:bg-[rgba(118,118,128,0.34)] dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.14),inset_0_-6px_12px_-6px_rgba(0,0,0,0.4)]"
+      >
         <div
           className={cn(
-            "h-full rounded-full transition-[width]",
-            pct >= 90 ? "bg-destructive" : "bg-[#2563EB]"
+            "relative h-full overflow-hidden rounded-full transition-[width] duration-500 ease-out",
+            critical
+              ? "bg-[linear-gradient(90deg,#F87171_0%,#EF4444_45%,#DC2626_100%)] shadow-[0_0_12px_-2px_rgba(239,68,68,0.45)]"
+              : "bg-[linear-gradient(90deg,#60A5FA_0%,#3B82F6_42%,#2563EB_78%,#1D4ED8_100%)] shadow-[0_0_14px_-2px_rgba(37,99,235,0.42)]"
           )}
-          style={{ width: `${pct}%` }}
-        />
+          style={{ width: `${remainingPct}%` }}
+        >
+          <span
+            aria-hidden
+            className="pointer-events-none absolute inset-0 rounded-full bg-[linear-gradient(180deg,rgba(255,255,255,0.45)_0%,rgba(255,255,255,0.12)_42%,transparent_100%)]"
+          />
+        </div>
       </div>
       <p className="mt-2 text-[11px] text-muted-foreground">
         {t("resetsAt", { date: formatCreditResetAt(period.resetAt) })}

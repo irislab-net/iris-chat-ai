@@ -389,7 +389,7 @@ const chatDesktopDialogClass = chatLoginConsentDialogClass
 
 /** Wider search / command-style dialog — sheet-tier 34pt. */
 const chatDesktopSearchDialogClass =
-  "flex w-full max-w-[calc(100%-2rem)] flex-col gap-0 overflow-hidden rounded-[28px] border-0 bg-white/78 p-0 text-foreground shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_75%,transparent),0_24px_64px_-24px_color-mix(in_oklch,var(--foreground)_22%,transparent)] ring-0 backdrop-blur-2xl backdrop-saturate-[180%] supports-[backdrop-filter]:bg-white/62 sm:max-w-xl dark:bg-white/[0.08] dark:shadow-[inset_0_1px_0_0_color-mix(in_oklch,var(--foreground)_10%,transparent),0_24px_64px_-24px_color-mix(in_oklch,black_50%,transparent)] dark:supports-[backdrop-filter]:bg-white/[0.06]"
+  "flex max-h-[min(32rem,calc(100dvh-2rem))] min-h-0 w-full max-w-[calc(100%-2rem)] flex-col gap-0 overflow-hidden rounded-[28px] border-0 bg-white/78 p-0 text-foreground shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_75%,transparent),0_24px_64px_-24px_color-mix(in_oklch,var(--foreground)_22%,transparent)] ring-0 backdrop-blur-2xl backdrop-saturate-[180%] supports-[backdrop-filter]:bg-white/62 sm:max-h-[min(36rem,calc(100dvh-3rem))] sm:max-w-xl dark:bg-white/[0.08] dark:shadow-[inset_0_1px_0_0_color-mix(in_oklch,var(--foreground)_10%,transparent),0_24px_64px_-24px_color-mix(in_oklch,black_50%,transparent)] dark:supports-[backdrop-filter]:bg-white/[0.06]"
 
 const chatDesktopDialogInputClass = `h-10 w-full rounded-2xl border-0 px-3 text-sm text-foreground shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_70%,transparent)] backdrop-blur-xl ${chatMobileGlassSurfaceClass} placeholder:text-muted-foreground/50 focus-visible:ring-2 focus-visible:ring-foreground/15 dark:placeholder:text-muted-foreground/40`
 
@@ -602,6 +602,7 @@ export {
   chatSamplePromptIconClass,
   chatSamplePromptTextClass,
   chatSamplePromptTitleClass,
+  chatMobileGlassSurfaceClass,
   chatMobileSheetBodyClass,
   chatMobileSheetCardClass,
   chatMobileSheetConsentCheckedClass,

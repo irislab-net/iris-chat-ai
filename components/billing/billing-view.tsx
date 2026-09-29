@@ -7,17 +7,17 @@ import {
   ReceiptIcon,
   RefreshCwIcon,
   WalletIcon,
-  XIcon,
 } from "lucide-react"
 import { useLocale, useTranslations } from "next-intl"
 
 import { useAuth } from "@/components/auth/auth-provider"
-import { ExurLogo } from "@/components/brand/exur-logo"
+import { BillingPageHeader } from "@/components/billing/billing-page-header"
 import { BillingGlassPanel } from "@/components/billing/billing-glass"
 import {
   CreditUsageStatusPanel,
   useCreditUsage,
 } from "@/components/billing/credit-usage-status"
+import { chatMobileGlassSurfaceClass } from "@/components/app-shell/chat-mobile-gemini-styles"
 import { PaymentTokenLogo } from "@/components/billing/payment-token-logo"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -29,7 +29,7 @@ import {
   EmptyTitle,
 } from "@/components/ui/empty"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { displayPlanName } from "@/lib/billing/catalog"
+import { localizedPlanLabel } from "@/lib/billing/localized-plan-label"
 import { formatCryptoAmount } from "@/lib/billing/crypto-format"
 import {
   formatInvoiceDate,
@@ -49,12 +49,11 @@ import {
   landingCta,
   landingGlassNavIcon,
   landingGlassSheen,
-  landingGlassSurface,
   landingShell,
   landingTitleCard,
   landingTitleSection,
 } from "@/lib/landing-modern-styles"
-import { APP_NEWS_PATH, SITE_NAME, UPGRADE_PATH } from "@/lib/site"
+import { SITE_NAME, UPGRADE_PATH } from "@/lib/site"
 import { cn } from "@/lib/utils"
 
 import "@/app/styles/landing-modern.css"
@@ -207,13 +206,30 @@ function HistoryList({
   )
 }
 
+type StatTone = "default" | "active" | "pending" | "muted"
+
+function statValueClass(tone: StatTone): string {
+  if (tone === "active") {
+    return "inline-flex w-fit max-w-full items-center rounded-full bg-[#2563EB]/12 px-2.5 py-0.5 text-[13px] font-semibold tracking-tight text-[#1D4ED8] dark:bg-[#2563EB]/22 dark:text-[#93C5FD]"
+  }
+  if (tone === "pending") {
+    return "inline-flex w-fit max-w-full items-center rounded-full bg-amber-500/12 px-2.5 py-0.5 text-[13px] font-semibold tracking-tight text-amber-800 dark:bg-amber-400/16 dark:text-amber-200"
+  }
+  if (tone === "muted") {
+    return "text-[1.05rem] font-medium tracking-tight text-muted-foreground"
+  }
+  return "truncate text-[1.05rem] font-medium tracking-tight text-foreground tabular-nums"
+}
+
 function StatCell({
   label,
   value,
+  tone = "default",
   className,
 }: {
   label: string
   value: string
+  tone?: StatTone
   className?: string
 }) {
   return (
@@ -221,15 +237,14 @@ function StatCell({
       <p className="text-[11px] font-medium tracking-[0.14em] text-muted-foreground uppercase">
         {label}
       </p>
-      <p className="mt-1.5 truncate text-[1.05rem] font-medium tracking-tight">
-        {value}
-      </p>
+      <p className={cn("mt-1.5 min-w-0", statValueClass(tone))}>{value}</p>
     </div>
   )
 }
 
 function BillingView() {
   const t = useTranslations("billingPage")
+  const tw = useTranslations("workspace")
   const locale = useLocale()
   const dir = localeDirection(locale)
   const { user, isAuthenticated, isProUser, login, loginPending } = useAuth()
@@ -238,7 +253,7 @@ function BillingView() {
   const [loading, setLoading] = React.useState(false)
   const creditUsage = useCreditUsage(isAuthenticated)
 
-  const planName = displayPlanName(user?.tier)
+  const planName = localizedPlanLabel(user?.tier, (key) => tw(key))
   const proExpires = formatExpiry(user?.pro_expires_at)
   const trialEnds = formatExpiry(user?.trial_ends_at)
 
@@ -292,6 +307,14 @@ function BillingView() {
         ? t("statusPaymentPending")
         : t("statusFree")
 
+  const statusTone: StatTone = !isAuthenticated
+    ? "muted"
+    : isProUser
+      ? "active"
+      : pendingCount > 0
+        ? "pending"
+        : "default"
+
   const renewValue = isProUser
     ? (proExpires ?? "—")
     : trialEnds
@@ -304,50 +327,9 @@ function BillingView() {
       className="landing-modern min-h-dvh bg-background font-sans text-foreground antialiased selection:bg-foreground/10 selection:text-foreground"
     >
       <div className={cn(landingShell, "relative z-10 pb-8 sm:pb-10")}>
-        <header className="mt-3 flex items-center gap-3 sm:mt-5">
-          <div
-            className={cn(
-              landingGlassSurface,
-              "flex min-w-0 flex-1 items-center gap-3 rounded-full bg-white/44 px-3 py-2.5 sm:px-4 dark:bg-white/10"
-            )}
-          >
-            <span
-              aria-hidden
-              className={cn(landingGlassSheen, "rounded-full")}
-            />
-            <ExurLogo
-              decorative
-              variant="mark"
-              size={36}
-              className="relative z-10 size-9 shrink-0"
-            />
-            <div className="relative z-10 min-w-0 flex-1">
-              <p className="text-sm leading-none font-medium tracking-tight">
-                {t("title")}
-              </p>
-              <p className="mt-1 truncate text-xs text-muted-foreground">
-                {t("currentPlanLine", {
-                  plan: isAuthenticated ? planName : "—",
-                })}
-              </p>
-            </div>
-          </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            className={cn(landingGlassNavIcon, "text-foreground")}
-            nativeButton={false}
-            render={<Link href={APP_NEWS_PATH} aria-label={t("backToDesk")} />}
-          >
-            <span
-              aria-hidden
-              className={cn(landingGlassSheen, "rounded-full")}
-            />
-            <XIcon className="relative z-10 size-4" />
-          </Button>
-        </header>
+        <BillingPageHeader isAuthenticated={isAuthenticated} user={user} />
 
-        <div className="mt-6 py-6 sm:py-8">
+        <div className="mt-4 pt-1.5 pb-6 sm:mt-6 sm:py-8">
             <header className="mx-auto max-w-3xl text-center sm:text-start">
               <p className="text-[11px] font-medium tracking-[0.18em] text-muted-foreground uppercase">
                 {SITE_NAME}
@@ -404,20 +386,14 @@ function BillingView() {
                         {t("upgrade")}
                         <ArrowUpRightIcon className="size-3.5" />
                       </Button>
-                    ) : (
-                      <Badge
-                        variant="default"
-                        className="rounded-full border-transparent bg-[#2563EB] text-white"
-                      >
-                        {t("active")}
-                      </Badge>
-                    )}
+                    ) : null}
                   </div>
 
                   <div className="grid sm:grid-cols-3">
                     <StatCell
                       label={t("status")}
                       value={statusValue}
+                      tone={statusTone}
                       className="border-b border-white/45 sm:border-e sm:border-b-0 dark:border-white/10"
                     />
                     <StatCell
@@ -494,11 +470,16 @@ function BillingView() {
 
                 <BillingGlassPanel>
                   <Tabs defaultValue="invoices" className="gap-0">
-                    <div className="flex justify-center border-b border-white/55 px-4 py-3 dark:border-white/10">
-                      <TabsList className="h-11 rounded-full bg-white/45 p-1.5 group-data-horizontal/tabs:h-11 dark:bg-white/10">
+                    <div className="border-b border-white/55 px-4 py-3 dark:border-white/10">
+                      <TabsList
+                        className={cn(
+                          "relative isolate h-11 w-full rounded-full p-1.5 group-data-horizontal/tabs:h-11 sm:w-fit",
+                          chatMobileGlassSurfaceClass
+                        )}
+                      >
                         <TabsTrigger
                           value="invoices"
-                          className="h-8 rounded-full px-5 text-sm data-active:bg-white data-active:shadow-sm dark:data-active:bg-white/15"
+                          className="h-8 min-w-0 flex-1 rounded-full px-3 text-sm font-medium transition-[background-color,box-shadow,color] sm:flex-initial sm:px-5 data-active:bg-white/90 data-active:text-foreground data-active:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.95),0_1px_3px_rgba(15,23,42,0.06)] dark:data-active:bg-white/18 dark:data-active:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.2),0_1px_3px_rgba(0,0,0,0.2)]"
                         >
                           {t("invoices")}
                           {invoiceRows.length > 0 ? (
@@ -509,7 +490,7 @@ function BillingView() {
                         </TabsTrigger>
                         <TabsTrigger
                           value="payments"
-                          className="h-8 rounded-full px-5 text-sm data-active:bg-white data-active:shadow-sm dark:data-active:bg-white/15"
+                          className="h-8 min-w-0 flex-1 rounded-full px-3 text-sm font-medium transition-[background-color,box-shadow,color] sm:flex-initial sm:px-5 data-active:bg-white/90 data-active:text-foreground data-active:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.95),0_1px_3px_rgba(15,23,42,0.06)] dark:data-active:bg-white/18 dark:data-active:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.2),0_1px_3px_rgba(0,0,0,0.2)]"
                         >
                           {t("payments")}
                           {paymentRows.length > 0 ? (

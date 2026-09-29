@@ -1,13 +1,13 @@
 "use client"
 
 import * as React from "react"
-import { Link, useRouter } from "@/i18n/navigation"
-import { Clock3Icon, XIcon } from "lucide-react"
+import { useRouter } from "@/i18n/navigation"
+import { Clock3Icon } from "lucide-react"
 import { useLocale, useTranslations } from "next-intl"
 
 import { useAuth } from "@/components/auth/auth-provider"
 import { markPlanUpgradePendingRefresh } from "@/lib/api/auth"
-import { ExurLogo } from "@/components/brand/exur-logo"
+import { BillingPageHeader } from "@/components/billing/billing-page-header"
 import { BillingGlassPanel } from "@/components/billing/billing-glass"
 import type { CryptoCheckoutRequest } from "@/components/billing/crypto-payment-sheet"
 import { CryptoPaymentSheet } from "@/components/billing/crypto-payment-sheet"
@@ -43,7 +43,6 @@ import {
 import { localeDirection } from "@/lib/i18n/locale"
 import {
   landingCta,
-  landingGlassNavIcon,
   landingGlassSheen,
   landingGlassSurface,
   landingHeroGlass,
@@ -239,51 +238,16 @@ function UpgradeView() {
           "relative z-10 flex flex-1 flex-col pb-28 sm:pb-32"
         )}
       >
-        <header className="mt-3 flex items-center gap-3 sm:mt-5">
-          <div
-            className={cn(
-              landingGlassSurface,
-              "flex min-w-0 flex-1 items-center gap-3 rounded-full bg-white/44 px-3 py-2.5 sm:px-4 dark:bg-white/10"
-            )}
-          >
-            <span
-              aria-hidden
-              className={cn(landingGlassSheen, "rounded-full")}
-            />
-            <ExurLogo
-              decorative
-              variant="mark"
-              size={36}
-              className="relative z-10 size-9 shrink-0"
-            />
-            <div className="relative z-10 min-w-0 flex-1">
-              <p className="text-sm leading-none font-medium tracking-tight">
-                {t("title")}
-              </p>
-              <p className="mt-1 truncate text-xs text-muted-foreground">
-                {t("currentPlanLine", { plan: currentPlan })}
-              </p>
-            </div>
-          </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            className={cn(landingGlassNavIcon, "text-foreground")}
-            nativeButton={false}
-            render={<Link href={APP_NEWS_PATH} aria-label={t("backToDesk")} />}
-          >
-            <span
-              aria-hidden
-              className={cn(landingGlassSheen, "rounded-full")}
-            />
-            <XIcon className="relative z-10 size-4" />
-          </Button>
-        </header>
+        <BillingPageHeader
+          isAuthenticated={isAuthenticated}
+          user={user}
+          page="upgrade"
+        />
 
         <article
           className={cn(
             landingHeroGlass,
-            "mt-6 min-h-0 flex-1 rounded-[2rem] sm:rounded-[2.5rem]"
+            "mt-4 min-h-0 flex-1 rounded-[2rem] pt-1.5 sm:mt-6 sm:rounded-[2.5rem]"
           )}
         >
           <div className={cn(landingInner, "py-10 sm:py-12 lg:py-14")}>

@@ -350,13 +350,13 @@ function MobileHistoryDrawerFooter({
             variant="mobile"
             sheetInitialView="root"
             onOpenNews={onOpenNews}
-            className="h-11 min-w-0 flex-1 justify-start gap-2.5 px-1"
+            className="h-11 min-w-0 flex-1 justify-start gap-2.5 rounded-full px-1"
             trigger={
               <Button
                 type="button"
                 variant="ghost"
                 size="sm"
-                className="h-11 min-w-0 flex-1 justify-start gap-2.5 px-1 text-[15px] font-normal"
+                className="h-11 min-w-0 flex-1 justify-start gap-2.5 rounded-full px-1.5 text-[15px] font-normal"
                 aria-label={t("accountMenuFor", {
                   name: userAccountLabel(user),
                 })}
@@ -387,7 +387,7 @@ function MobileHistoryDrawerFooter({
             type="button"
             variant="ghost"
             size="sm"
-            className="h-11 flex-1 justify-start gap-2.5 px-1 text-[15px] font-normal"
+            className="h-11 flex-1 justify-start gap-2.5 rounded-full px-1.5 text-[15px] font-normal"
             disabled={loginPending}
             onClick={() => login({ source: "chat" })}
           >

@@ -7,6 +7,7 @@ import { useTranslations } from "next-intl"
 import {
   chatDesktopSearchDialogClass,
 } from "@/components/app-shell/chat-mobile-gemini-styles"
+import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
 import {
@@ -185,7 +186,7 @@ function ChatHistorySearchDialogBody({
   return (
     <DialogContent
       ref={panelRef}
-      className={chatDesktopSearchDialogClass}
+      className={cn(chatDesktopSearchDialogClass, "!flex")}
       showCloseButton={false}
       onKeyDown={onKeyDown}
     >
