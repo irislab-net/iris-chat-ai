@@ -86,11 +86,13 @@ const sheetPrimaryPillClass = cn(
 
 /** Frost liquid-glass icon — opaque enough to read on the solid sheet canvas. */
 const sheetGlassIconButtonClass =
-  "chat-ios26-liquid-glass relative isolate flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-full border border-black/8 bg-[rgba(255,255,255,0.92)] text-foreground shadow-[inset_0_1px_0_0_rgba(255,255,255,1),inset_0_-6px_12px_-8px_rgba(0,0,0,0.08),0_1px_2px_rgba(0,0,0,0.06),0_6px_14px_-6px_rgba(0,0,0,0.12)] backdrop-blur-[22px] backdrop-saturate-[190%] transition-transform duration-150 ease-out active:scale-[0.96] dark:border-white/20 dark:bg-[rgba(255,255,255,0.16)] dark:text-white dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.35),inset_0_-8px_14px_-10px_rgba(0,0,0,0.45),0_6px_16px_-6px_rgba(0,0,0,0.4)]"
+  "chat-ios26-liquid-glass relative isolate flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-full border border-black/10 bg-white/95 text-foreground shadow-[inset_0_1px_0_0_rgba(255,255,255,1),inset_0_-6px_12px_-8px_rgba(0,0,0,0.08),0_1px_2px_rgba(0,0,0,0.06),0_6px_14px_-6px_rgba(0,0,0,0.12)] backdrop-blur-[22px] backdrop-saturate-[190%] transition-transform duration-150 ease-out active:scale-[0.96] dark:border-white/20 dark:bg-white/20 dark:text-white dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.35),inset_0_-8px_14px_-10px_rgba(0,0,0,0.45),0_6px_16px_-6px_rgba(0,0,0,0.4)]"
 
 /** Blue liquid-glass Done check circle. */
-const sheetBlueGlassIconButtonClass =
-  "chat-ios26-liquid-glass relative isolate flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-full border border-white/50 bg-[rgba(37,99,235,0.88)] text-white shadow-[inset_0_1px_1px_rgba(255,255,255,0.55),inset_0_-6px_12px_-8px_rgba(29,78,216,0.45),0_4px_14px_-4px_rgba(37,99,235,0.4)] backdrop-blur-xl backdrop-saturate-[180%] transition-[transform,background-color] duration-150 ease-out hover:bg-[rgba(37,99,235,0.96)] active:scale-[0.96] dark:border-white/30 dark:bg-[rgba(37,99,235,0.75)]"
+const sheetBlueGlassIconButtonClass = cn(
+  chatUpgradePillClass,
+  "chat-ios26-liquid-glass flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-full px-0 text-white"
+)
 
 const sheetRowClass =
   "flex min-h-[3.25rem] w-full items-center gap-3.5 px-4 text-start text-[16px] font-normal tracking-[-0.01em] transition-colors active:bg-black/[0.03] dark:active:bg-white/[0.06]"
