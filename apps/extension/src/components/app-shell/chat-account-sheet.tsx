@@ -561,14 +561,9 @@ function ChatAccountSheet({
                     badgeClassName="h-4 translate-y-[35%] px-1.5 text-[9px]"
                   />
                   <div className="flex min-w-0 flex-1 flex-col gap-2">
-                    <div className="flex min-w-0 flex-col gap-0.5">
-                      <p className="truncate text-[17px] font-semibold tracking-tight">
-                        {common("brand")}
-                      </p>
-                      <p className="truncate text-[13px] text-muted-foreground">
-                        {t("guest")}
-                      </p>
-                    </div>
+                    <p className="truncate text-[17px] font-semibold tracking-tight">
+                      {common("brand")}
+                    </p>
                     <Button
                       type="button"
                       size="sm"
