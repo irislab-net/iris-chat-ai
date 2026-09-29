@@ -1,36 +1,36 @@
 "use client"
 
 import * as React from "react"
-import {
-  ArrowLeftRightIcon,
-  BookOpenIcon,
-  CheckIcon,
-  ChevronDownIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  CircleHelpIcon,
-  CookieIcon,
-  FileTextIcon,
-  LanguagesIcon,
-  LogOutIcon,
-  MailIcon,
-  MonitorIcon,
-  MoonIcon,
-  NewspaperIcon,
-  ReceiptIcon,
-  SettingsIcon,
-  ShieldIcon,
-  SmartphoneIcon,
-  SparklesIcon,
-  SunIcon,
-  UserRoundIcon,
-} from "lucide-react"
 import { useLocale, useTranslations } from "next-intl"
 import { useTheme } from "@wrksz/themes/client/use-theme"
 
 import { ChatAccountAvatar } from "@/components/app-shell/chat-account-avatar"
 import { ChatGsapViewStack } from "@/components/app-shell/chat-gsap-view-stack"
 import { LocaleFlag } from "@/components/i18n/locale-flag"
+import {
+  SfBookIcon,
+  SfCheckIcon,
+  SfChevronDownIcon,
+  SfChevronLeftIcon,
+  SfChevronRightIcon,
+  SfCookieIcon,
+  SfCreditCardIcon,
+  SfDesktopIcon,
+  SfDocTextIcon,
+  SfGearIcon,
+  SfGlobeIcon,
+  SfIphoneIcon,
+  SfLogoutIcon,
+  SfMailIcon,
+  SfMoonIcon,
+  SfNewspaperIcon,
+  SfPersonCircleIcon,
+  SfQuestionCircleIcon,
+  SfShieldIcon,
+  SfSparklesIcon,
+  SfSunIcon,
+  SfSwitchAccountIcon,
+} from "@/components/icons/sf-menu-icons"
 import { openCookieSettings } from "@/components/privacy/cookie-consent-banner"
 import { Button } from "@/components/ui/button"
 import {
@@ -128,7 +128,7 @@ function SheetDoneCheck({ onClick }: { onClick: () => void }) {
       aria-label={common("done")}
       className="flex size-10 shrink-0 items-center justify-center rounded-full bg-[#1A73E8] text-white shadow-sm transition-transform active:scale-95 dark:bg-[#8AB4F8] dark:text-[#0F172A]"
     >
-      <CheckIcon className="size-5" strokeWidth={2.5} />
+      <SfCheckIcon className="size-5" strokeWidth={2.4} />
     </button>
   )
 }
@@ -180,7 +180,7 @@ function SheetRow({
         </span>
       ) : null}
       {chevron ? (
-        <ChevronRightIcon
+        <SfChevronRightIcon
           className="size-4.5 shrink-0 text-foreground/25 rtl:rotate-180"
           aria-hidden
         />
@@ -311,7 +311,7 @@ function NestedViewChrome({
             aria-label={common("back")}
             onClick={onBack}
           >
-            <ChevronLeftIcon className="size-5 rtl:rotate-180" />
+            <SfChevronLeftIcon className="size-5 rtl:rotate-180" />
           </Button>
         ) : (
           <span className="size-10 shrink-0" aria-hidden />
@@ -385,9 +385,9 @@ function ChatAccountSheet({
       ? theme
       : "system"
   const themeOptions = [
-    { id: "system" as const, label: common("themeSystem"), Icon: MonitorIcon },
-    { id: "light" as const, label: common("themeLight"), Icon: SunIcon },
-    { id: "dark" as const, label: common("themeDark"), Icon: MoonIcon },
+    { id: "system" as const, label: common("themeSystem"), Icon: SfDesktopIcon },
+    { id: "light" as const, label: common("themeLight"), Icon: SfSunIcon },
+    { id: "dark" as const, label: common("themeDark"), Icon: SfMoonIcon },
   ] as const
   const currentTheme =
     themeOptions.find((option) => option.id === activeTheme) ?? themeOptions[0]
@@ -452,16 +452,18 @@ function ChatAccountSheet({
 
             <div className="min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-contain px-4 pb-4">
               {user ? (
-                <div className="space-y-2">
-                  {/* Signed-in profile card — expandable for Switch account */}
+                /* Signed-in profile card — Switch account expands inside card */
+                <div
+                  className={cn(
+                    sheetCardClass,
+                    "overflow-hidden rounded-[22px]"
+                  )}
+                >
                   <button
                     type="button"
                     aria-expanded={accountExpanded}
                     onClick={() => setAccountExpanded((v) => !v)}
-                    className={cn(
-                      sheetCardClass,
-                      "flex w-full items-start gap-3.5 rounded-[22px] p-3.5 text-start transition-colors active:bg-black/[0.02] dark:active:bg-white/[0.04]"
-                    )}
+                    className="flex w-full items-start gap-3.5 p-3.5 text-start transition-colors active:bg-black/[0.02] dark:active:bg-white/[0.04]"
                   >
                     <ChatAccountAvatar
                       user={user}
@@ -497,36 +499,53 @@ function ChatAccountSheet({
                           }}
                           className="inline-flex h-8 w-fit items-center gap-1.5 rounded-full bg-[#1A73E8] px-3 text-[13px] font-semibold text-white shadow-sm active:scale-[0.98] dark:bg-[#8AB4F8] dark:text-[#0F172A]"
                         >
-                          <SparklesIcon className="size-3.5" aria-hidden />
+                          <SfSparklesIcon className="size-3.5" aria-hidden />
                           {t("upgrade")}
                         </Link>
                       ) : null}
                     </div>
                     <span
                       className={cn(
-                        "mt-1 flex size-8 shrink-0 items-center justify-center rounded-full bg-foreground/6 transition-transform dark:bg-white/10",
+                        "mt-1 flex size-8 shrink-0 items-center justify-center rounded-full bg-foreground/6 transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] dark:bg-white/10",
                         accountExpanded && "rotate-180"
                       )}
                     >
-                      <ChevronDownIcon
+                      <SfChevronDownIcon
                         className="size-4 text-foreground/55"
                         aria-hidden
                       />
                     </span>
                   </button>
 
-                  {accountExpanded ? (
-                    <SheetPill
-                      icon={
-                        <ArrowLeftRightIcon className={sheetIconClass} />
-                      }
-                      label={t("switchAccount")}
-                      onClick={() => {
-                        closeSheet()
-                        void onSwitchAccount?.()
-                      }}
-                    />
-                  ) : null}
+                  <div
+                    className={cn(
+                      "grid transition-[grid-template-rows] duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]",
+                      accountExpanded ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+                    )}
+                  >
+                    <div className="min-h-0 overflow-hidden">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          closeSheet()
+                          void onSwitchAccount?.()
+                        }}
+                        className={cn(
+                          "flex min-h-12 w-full items-center gap-3.5 border-t border-foreground/8 px-4 py-3 text-start text-[16px] font-medium tracking-[-0.01em] transition-[opacity,transform,background-color] duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] active:bg-black/[0.03] dark:border-white/10 dark:active:bg-white/[0.06]",
+                          accountExpanded
+                            ? "translate-y-0 opacity-100"
+                            : "-translate-y-1 opacity-0"
+                        )}
+                      >
+                        <span className="flex size-6 shrink-0 items-center justify-center">
+                          <SfSwitchAccountIcon className={sheetIconClass} />
+                        </span>
+                        <span className="min-w-0 flex-1">
+                          {t("switchAccount")}
+                        </span>
+                      </button>
+                    </div>
+                  </div>
                 </div>
               ) : (
                 <div
@@ -536,7 +555,7 @@ function ChatAccountSheet({
                   )}
                 >
                   <div className="flex size-14 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground">
-                    <UserRoundIcon className="size-7" aria-hidden />
+                    <SfPersonCircleIcon className="size-7" aria-hidden />
                   </div>
                   <div className="flex min-w-0 flex-1 flex-col gap-2">
                     <div className="flex min-w-0 flex-col gap-0.5">
@@ -568,7 +587,7 @@ function ChatAccountSheet({
               <div className="flex flex-col gap-2.5 pt-1">
                 {user ? (
                   <SheetPill
-                    icon={<ReceiptIcon className={sheetIconClass} />}
+                    icon={<SfCreditCardIcon className={sheetIconClass} />}
                     label={t("billing")}
                     href={BILLING_PATH}
                     onClick={closeSheet}
@@ -576,14 +595,14 @@ function ChatAccountSheet({
                 ) : null}
 
                 <SheetPill
-                  icon={<SettingsIcon className={sheetIconClass} />}
+                  icon={<SfGearIcon className={sheetIconClass} />}
                   label={common("settings")}
                   onClick={() => go("settings")}
                 />
 
                 {isEligible ? (
                   <SheetPill
-                    icon={<SmartphoneIcon className={sheetIconClass} />}
+                    icon={<SfIphoneIcon className={sheetIconClass} />}
                     label={
                       needsManualInstall
                         ? t("addToHomeScreen")
@@ -597,7 +616,7 @@ function ChatAccountSheet({
 
                 {onOpenNews ? (
                   <SheetPill
-                    icon={<NewspaperIcon className={sheetIconClass} />}
+                    icon={<SfNewspaperIcon className={sheetIconClass} />}
                     label={t("news")}
                     onClick={() => {
                       closeSheet()
@@ -608,7 +627,7 @@ function ChatAccountSheet({
 
                 {user ? (
                   <SheetPill
-                    icon={<LogOutIcon className="size-[22px] shrink-0" />}
+                    icon={<SfLogoutIcon className="size-[22px] shrink-0" />}
                     label={t("logOut")}
                     destructive
                     onClick={() => {
@@ -659,7 +678,7 @@ function ChatAccountSheet({
                   onClick={() => go("theme")}
                 />
                 <SheetRow
-                  icon={<LanguagesIcon className={sheetIconClass} />}
+                  icon={<SfGlobeIcon className={sheetIconClass} />}
                   label={common("language")}
                   value={currentLocaleLabel}
                   onClick={() => go("language")}
@@ -672,7 +691,7 @@ function ChatAccountSheet({
               </p>
               <SheetCard>
                 <SheetRow
-                  icon={<CookieIcon className={sheetIconClass} />}
+                  icon={<SfCookieIcon className={sheetIconClass} />}
                   label={consent("manageTitle")}
                   chevron={false}
                   onClick={() => {
@@ -681,7 +700,7 @@ function ChatAccountSheet({
                   }}
                 />
                 <SheetRow
-                  icon={<ShieldIcon className={sheetIconClass} />}
+                  icon={<SfShieldIcon className={sheetIconClass} />}
                   label={t("helpPrivacy")}
                   href={privacyHref}
                   external
@@ -695,7 +714,7 @@ function ChatAccountSheet({
               </p>
               <SheetCard>
                 <SheetRow
-                  icon={<CircleHelpIcon className={sheetIconClass} />}
+                  icon={<SfQuestionCircleIcon className={sheetIconClass} />}
                   label={t("help")}
                   onClick={() => go("help")}
                 />
@@ -720,7 +739,7 @@ function ChatAccountSheet({
                     divider={index > 0}
                     value={
                       activeTheme === id ? (
-                        <CheckIcon
+                        <SfCheckIcon
                           className="size-5 text-[#1A73E8] dark:text-[#8AB4F8]"
                           aria-hidden
                         />
@@ -760,7 +779,7 @@ function ChatAccountSheet({
                       divider={index > 0}
                       value={
                         active ? (
-                          <CheckIcon
+                          <SfCheckIcon
                             className="size-5 text-[#1A73E8] dark:text-[#8AB4F8]"
                             aria-hidden
                           />
@@ -783,14 +802,14 @@ function ChatAccountSheet({
             >
               <SheetCard>
                 <SheetRow
-                  icon={<CircleHelpIcon className={sheetIconClass} />}
+                  icon={<SfQuestionCircleIcon className={sheetIconClass} />}
                   label={t("helpFaq")}
                   href={faqHref}
                   external
                   onClick={closeSheet}
                 />
                 <SheetRow
-                  icon={<BookOpenIcon className={sheetIconClass} />}
+                  icon={<SfBookIcon className={sheetIconClass} />}
                   label={t("helpWhatIsExur")}
                   href={whatIsHref}
                   external
@@ -798,7 +817,7 @@ function ChatAccountSheet({
                   divider
                 />
                 <SheetRow
-                  icon={<FileTextIcon className={sheetIconClass} />}
+                  icon={<SfDocTextIcon className={sheetIconClass} />}
                   label={t("helpTerms")}
                   href={termsHref}
                   external
@@ -806,7 +825,7 @@ function ChatAccountSheet({
                   divider
                 />
                 <SheetRow
-                  icon={<MailIcon className={sheetIconClass} />}
+                  icon={<SfMailIcon className={sheetIconClass} />}
                   label={t("helpContact")}
                   href={`mailto:${CONTACT_EMAIL}`}
                   external
