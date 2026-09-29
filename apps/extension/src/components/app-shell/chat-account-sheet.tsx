@@ -10,8 +10,8 @@ import {
 } from "@/components/app-shell/chat-account-avatar"
 import { ChatGsapViewStack } from "@/components/app-shell/chat-gsap-view-stack"
 import {
-  chatMobileComposerSendClass,
   chatMobileHeaderButtonClass,
+  chatMobilePrimaryButtonClass,
   chatUpgradePillClass,
 } from "@/components/app-shell/chat-mobile-gemini-styles"
 import { LocaleFlag } from "@/components/i18n/locale-flag"
@@ -139,7 +139,10 @@ function SheetDoneCheck({ onClick }: { onClick: () => void }) {
       type="button"
       onClick={onClick}
       aria-label={common("done")}
-      className={cn(chatMobileComposerSendClass, "size-10")}
+      className={cn(
+        "flex size-10 shrink-0 items-center justify-center rounded-full text-white",
+        chatMobilePrimaryButtonClass
+      )}
     >
       <SfCheckIcon className="size-5" strokeWidth={2.4} />
     </button>
@@ -316,16 +319,14 @@ function NestedViewChrome({
     <div className="flex min-h-0 flex-1 flex-col overflow-hidden px-4 pb-6">
       <div className="flex shrink-0 items-center gap-2 pb-3 pt-1">
         {onBack ? (
-          <Button
+          <button
             type="button"
-            variant="ghost"
-            size="icon"
             className={cn(chatMobileHeaderButtonClass, "size-10")}
             aria-label={common("back")}
             onClick={onBack}
           >
             <SfChevronLeftIcon className="size-5 rtl:rotate-180" />
-          </Button>
+          </button>
         ) : null}
         <h2 className="min-w-0 flex-1 truncate text-start text-[22px] font-normal tracking-tight text-foreground">
           {title}
