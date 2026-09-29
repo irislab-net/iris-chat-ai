@@ -5,7 +5,6 @@ import {
   ArrowLeftRightIcon,
   BookOpenIcon,
   CheckIcon,
-  ChevronDownIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
   CircleHelpIcon,
@@ -89,7 +88,6 @@ type AccountSheetView =
   | "theme"
   | "language"
   | "help"
-  | "account"
 
 type ChatAccountSheetProps = {
   open: boolean
@@ -237,13 +235,20 @@ function SheetPill({
   onClick,
   href,
   external,
+  destructive,
 }: {
   icon: React.ReactNode
   label: React.ReactNode
   onClick?: () => void
   href?: string
   external?: boolean
+  destructive?: boolean
 }) {
+  const className = cn(
+    sheetPillClass,
+    destructive && "text-destructive active:bg-destructive/8"
+  )
+
   const body = (
     <>
       <span className="flex size-6 shrink-0 items-center justify-center">
@@ -260,7 +265,7 @@ function SheetPill({
           href={href}
           target="_blank"
           rel="noopener noreferrer"
-          className={sheetPillClass}
+          className={className}
           onClick={onClick}
         >
           {body}
@@ -268,14 +273,14 @@ function SheetPill({
       )
     }
     return (
-      <Link href={href} className={sheetPillClass} onClick={onClick}>
+      <Link href={href} className={className} onClick={onClick}>
         {body}
       </Link>
     )
   }
 
   return (
-    <button type="button" className={sheetPillClass} onClick={onClick}>
+    <button type="button" className={className} onClick={onClick}>
       {body}
     </button>
   )
@@ -443,14 +448,12 @@ function ChatAccountSheet({
             </div>
 
             <div className="min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-contain px-4 pb-4">
-              {/* Profile card */}
+              {/* Profile card — display only; actions live in the pill list below */}
               {user ? (
-                <button
-                  type="button"
-                  onClick={() => go("account")}
+                <div
                   className={cn(
                     sheetCardClass,
-                    "flex w-full items-center gap-3.5 rounded-[22px] p-3.5 text-start transition-colors active:bg-black/[0.02] dark:active:bg-white/[0.04]"
+                    "flex w-full items-center gap-3.5 rounded-[22px] p-3.5"
                   )}
                 >
                   <ChatAccountAvatar
@@ -481,13 +484,7 @@ function ChatAccountSheet({
                       {planName}
                     </span>
                   </div>
-                  <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-foreground/6 dark:bg-white/10">
-                    <ChevronDownIcon
-                      className="size-4 text-foreground/55"
-                      aria-hidden
-                    />
-                  </span>
-                </button>
+                </div>
               ) : (
                 <div
                   className={cn(
@@ -509,6 +506,7 @@ function ChatAccountSheet({
                 </div>
               )}
 
+              {/* Single source of truth for primary actions — no nested Account menu */}
               <div className="flex flex-col gap-2.5 pt-1">
                 {user ? (
                   <>
@@ -526,6 +524,14 @@ function ChatAccountSheet({
                       href={BILLING_PATH}
                       onClick={closeSheet}
                     />
+                    {!isProUser ? (
+                      <SheetPill
+                        icon={<SparklesIcon className={sheetIconClass} />}
+                        label={t("upgradeToPlus")}
+                        href={UPGRADE_PATH}
+                        onClick={closeSheet}
+                      />
+                    ) : null}
                   </>
                 ) : (
                   <SheetPill
@@ -545,6 +551,20 @@ function ChatAccountSheet({
                   onClick={() => go("settings")}
                 />
 
+                {isEligible ? (
+                  <SheetPill
+                    icon={<SmartphoneIcon className={sheetIconClass} />}
+                    label={
+                      needsManualInstall
+                        ? t("addToHomeScreen")
+                        : t("installApp")
+                    }
+                    onClick={() => {
+                      void promptInstall()
+                    }}
+                  />
+                ) : null}
+
                 {onOpenNews ? (
                   <SheetPill
                     icon={<NewspaperIcon className={sheetIconClass} />}
@@ -552,6 +572,18 @@ function ChatAccountSheet({
                     onClick={() => {
                       closeSheet()
                       onOpenNews()
+                    }}
+                  />
+                ) : null}
+
+                {user ? (
+                  <SheetPill
+                    icon={<LogOutIcon className="size-[22px] shrink-0" />}
+                    label={t("logOut")}
+                    destructive
+                    onClick={() => {
+                      closeSheet()
+                      void onLogout?.()
                     }}
                   />
                 ) : null}
@@ -579,82 +611,13 @@ function ChatAccountSheet({
             </footer>
           </div>
 
-          {/* —— Account details (from profile chevron) —— */}
-          <div data-view="account" className="flex min-h-0 flex-1 flex-col">
-            <NestedViewChrome
-              title={t("accountSection")}
-              onDone={closeSheet}
-              onBack={() => go("root", "pop")}
-            >
-              <SheetCard>
-                {user && !isProUser ? (
-                  <SheetRow
-                    icon={<SparklesIcon className={sheetIconClass} />}
-                    label={t("upgradeToPlus")}
-                    href={UPGRADE_PATH}
-                    onClick={closeSheet}
-                    divider={false}
-                  />
-                ) : null}
-                {user ? (
-                  <SheetRow
-                    icon={<ReceiptIcon className={sheetIconClass} />}
-                    label={t("billing")}
-                    href={BILLING_PATH}
-                    onClick={closeSheet}
-                    divider={Boolean(user && !isProUser)}
-                  />
-                ) : null}
-                {isEligible ? (
-                  <SheetRow
-                    icon={<SmartphoneIcon className={sheetIconClass} />}
-                    label={
-                      needsManualInstall
-                        ? t("addToHomeScreen")
-                        : t("installApp")
-                    }
-                    onClick={() => {
-                      void promptInstall()
-                    }}
-                    chevron={false}
-                    divider={Boolean(user)}
-                  />
-                ) : null}
-                {user ? (
-                  <SheetRow
-                    icon={<LogOutIcon className="size-[22px] shrink-0" />}
-                    label={t("logOut")}
-                    destructive
-                    chevron={false}
-                    divider
-                    onClick={() => {
-                      closeSheet()
-                      void onLogout?.()
-                    }}
-                  />
-                ) : null}
-              </SheetCard>
-            </NestedViewChrome>
-          </div>
-
-          {/* —— Settings (Gemini Settings pattern) —— */}
+          {/* —— Settings (preferences / privacy / support only) —— */}
           <div data-view="settings" className="flex min-h-0 flex-1 flex-col">
             <NestedViewChrome
               title={t("exurSettings")}
               onDone={closeSheet}
               onBack={() => go("root", "pop")}
             >
-              {user && !isProUser ? (
-                <SheetCard className="mb-1">
-                  <SheetRow
-                    icon={<SparklesIcon className={sheetIconClass} />}
-                    label={t("upgradeToPlus")}
-                    href={UPGRADE_PATH}
-                    onClick={closeSheet}
-                  />
-                </SheetCard>
-              ) : null}
-
               <p className={sheetSectionLabelClass}>
                 {t("preferencesSection")}
               </p>
