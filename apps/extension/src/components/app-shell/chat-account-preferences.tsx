@@ -1,13 +1,5 @@
 "use client"
 
-import {
-  CheckIcon,
-  CookieIcon,
-  LanguagesIcon,
-  MonitorIcon,
-  MoonIcon,
-  SunIcon,
-} from "lucide-react"
 import { useLocale, useTranslations } from "next-intl"
 import { useTheme } from "@wrksz/themes/client/use-theme"
 
@@ -17,6 +9,14 @@ import {
   chatContextMenuItemClass,
 } from "@/components/app-shell/chat-context-menu-styles"
 import { LocaleFlag } from "@/components/i18n/locale-flag"
+import {
+  SfCheckIcon,
+  SfCookieIcon,
+  SfDesktopIcon,
+  SfGlobeIcon,
+  SfMoonIcon,
+  SfSunIcon,
+} from "@/components/icons/sf-menu-icons"
 import { openCookieSettings } from "@/components/privacy/cookie-consent-banner"
 import {
   DropdownMenuGroup,
@@ -57,9 +57,9 @@ function useThemeOptions() {
       : "system"
 
   const options = [
-    { id: "system" as const, label: common("themeSystem"), Icon: MonitorIcon },
-    { id: "light" as const, label: common("themeLight"), Icon: SunIcon },
-    { id: "dark" as const, label: common("themeDark"), Icon: MoonIcon },
+    { id: "system" as const, label: common("themeSystem"), Icon: SfDesktopIcon },
+    { id: "light" as const, label: common("themeLight"), Icon: SfSunIcon },
+    { id: "dark" as const, label: common("themeDark"), Icon: SfMoonIcon },
   ] as const
 
   const current = options.find((option) => option.id === active) ?? options[0]
@@ -94,7 +94,7 @@ function AccountThemeItems() {
             <Icon className={chatContextMenuIconClass} />
             <span className="flex-1">{label}</span>
             {active === id ? (
-              <CheckIcon
+              <SfCheckIcon
                 className="size-4 shrink-0 text-muted-foreground"
                 aria-hidden
               />
@@ -116,7 +116,7 @@ function AccountLanguageItems() {
   return (
     <DropdownMenuSub>
       <DropdownMenuSubTrigger className={cn(chatContextMenuItemClass, "gap-3")}>
-        <LanguagesIcon className={chatContextMenuIconClass} />
+        <SfGlobeIcon className={chatContextMenuIconClass} />
         <span className="flex-1 text-start">{common("language")}</span>
         <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
           <LocaleFlag locale={locale} tone="color" className="size-3.5" />
@@ -144,7 +144,7 @@ function AccountLanguageItems() {
               />
               <span className="flex-1">{label}</span>
               {active ? (
-                <CheckIcon
+                <SfCheckIcon
                   className="size-4 shrink-0 text-muted-foreground"
                   aria-hidden
                 />
@@ -167,7 +167,7 @@ function AccountCookieSettingsItem() {
       className={chatContextMenuItemClass}
       onClick={() => openCookieSettings()}
     >
-      <CookieIcon className={chatContextMenuIconClass} />
+      <SfCookieIcon className={chatContextMenuIconClass} />
       <span className="flex-1">{t("manageTitle")}</span>
     </DropdownMenuItem>
   )

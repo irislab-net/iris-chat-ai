@@ -2,18 +2,6 @@
 
 import * as React from "react"
 import { Link } from "@/i18n/navigation"
-import {
-  BookOpenIcon,
-  CircleHelpIcon,
-  FileTextIcon,
-  LogOutIcon,
-  MailIcon,
-  NewspaperIcon,
-  ReceiptIcon,
-  ShieldIcon,
-  SmartphoneIcon,
-  SparklesIcon,
-} from "lucide-react"
 import { useTranslations } from "next-intl"
 
 import { ChatAccountAvatar } from "@/components/app-shell/chat-account-avatar"
@@ -26,6 +14,18 @@ import {
   chatContextMenuItemClass,
 } from "@/components/app-shell/chat-context-menu-styles"
 import { GoogleGlyph } from "@/components/auth/google-glyph"
+import {
+  SfBookIcon,
+  SfCreditCardIcon,
+  SfDocTextIcon,
+  SfIphoneIcon,
+  SfLogoutIcon,
+  SfMailIcon,
+  SfNewspaperIcon,
+  SfQuestionCircleIcon,
+  SfShieldIcon,
+  SfSparklesIcon,
+} from "@/components/icons/sf-menu-icons"
 import { Badge } from "@/components/ui/badge"
 import {
   DropdownMenuGroup,
@@ -64,7 +64,7 @@ function AccountPlanBadge({
         isProUser && "border-0 bg-[#2563EB] text-white"
       )}
     >
-      {isProUser ? <SparklesIcon className="size-2.5" aria-hidden /> : null}
+      {isProUser ? <SfSparklesIcon className="size-2.5" aria-hidden /> : null}
       {planName}
     </Badge>
   )
@@ -83,7 +83,7 @@ function AccountInstallMenuItem() {
         void promptInstall()
       }}
     >
-      <SmartphoneIcon className={chatContextMenuIconClass} />
+      <SfIphoneIcon className={chatContextMenuIconClass} />
       {needsManualInstall ? t("addToHomeScreen") : t("installApp")}
     </DropdownMenuItem>
   )
@@ -102,7 +102,7 @@ function AccountHelpGroup() {
         <DropdownMenuSubTrigger
           className={cn(chatContextMenuItemClass, "gap-3")}
         >
-          <CircleHelpIcon className={chatContextMenuIconClass} />
+          <SfQuestionCircleIcon className={chatContextMenuIconClass} />
           <span className="flex-1 text-start">{t("help")}</span>
         </DropdownMenuSubTrigger>
         <DropdownMenuSubContent
@@ -116,7 +116,7 @@ function AccountHelpGroup() {
               <a href={faqHref} target="_blank" rel="noopener noreferrer" />
             }
           >
-            <CircleHelpIcon className={chatContextMenuIconClass} />
+            <SfQuestionCircleIcon className={chatContextMenuIconClass} />
             {t("helpFaq")}
           </DropdownMenuItem>
           <DropdownMenuItem
@@ -126,7 +126,7 @@ function AccountHelpGroup() {
               <a href={whatIsHref} target="_blank" rel="noopener noreferrer" />
             }
           >
-            <BookOpenIcon className={chatContextMenuIconClass} />
+            <SfBookIcon className={chatContextMenuIconClass} />
             {t("helpWhatIsExur")}
           </DropdownMenuItem>
           <DropdownMenuItem
@@ -136,7 +136,7 @@ function AccountHelpGroup() {
               <a href={termsHref} target="_blank" rel="noopener noreferrer" />
             }
           >
-            <FileTextIcon className={chatContextMenuIconClass} />
+            <SfDocTextIcon className={chatContextMenuIconClass} />
             {t("helpTerms")}
           </DropdownMenuItem>
           <DropdownMenuItem
@@ -146,7 +146,7 @@ function AccountHelpGroup() {
               <a href={privacyHref} target="_blank" rel="noopener noreferrer" />
             }
           >
-            <ShieldIcon className={chatContextMenuIconClass} />
+            <SfShieldIcon className={chatContextMenuIconClass} />
             {t("helpPrivacy")}
           </DropdownMenuItem>
           <DropdownMenuItem
@@ -160,7 +160,7 @@ function AccountHelpGroup() {
               />
             }
           >
-            <MailIcon className={chatContextMenuIconClass} />
+            <SfMailIcon className={chatContextMenuIconClass} />
             {t("helpContact")}
           </DropdownMenuItem>
         </DropdownMenuSubContent>
@@ -230,7 +230,7 @@ function AccountSignedInMenuSections({
             nativeButton={false}
             render={<Link href={UPGRADE_PATH} />}
           >
-            <SparklesIcon className={chatContextMenuIconClass} />
+            <SfSparklesIcon className={chatContextMenuIconClass} />
             {t("upgradeToPlus")}
           </DropdownMenuItem>
         ) : null}
@@ -239,7 +239,7 @@ function AccountSignedInMenuSections({
           nativeButton={false}
           render={<Link href={BILLING_PATH} />}
         >
-          <ReceiptIcon className={chatContextMenuIconClass} />
+          <SfCreditCardIcon className={chatContextMenuIconClass} />
           {t("billing")}
         </DropdownMenuItem>
         {onOpenNews ? (
@@ -247,7 +247,7 @@ function AccountSignedInMenuSections({
             className={chatContextMenuItemClass}
             onClick={onOpenNews}
           >
-            <NewspaperIcon className={chatContextMenuIconClass} />
+            <SfNewspaperIcon className={chatContextMenuIconClass} />
             {t("news")}
           </DropdownMenuItem>
         ) : null}
@@ -262,7 +262,7 @@ function AccountSignedInMenuSections({
         className={chatContextMenuDeleteClass}
         onClick={() => void onLogout()}
       >
-        <LogOutIcon className="size-4.5 shrink-0" />
+        <SfLogoutIcon className="size-4.5 shrink-0" />
         {t("logOut")}
       </DropdownMenuItem>
     </>

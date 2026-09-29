@@ -4,16 +4,11 @@ import * as React from "react"
 import { Link } from "@/i18n/navigation"
 import {
   MessageSquareIcon,
-  MoreHorizontalIcon,
   NewspaperIcon,
   PanelLeftCloseIcon,
   PanelLeftOpenIcon,
-  PencilIcon,
-  PinIcon,
-  PinOffIcon,
   SearchIcon,
   Settings,
-  Trash2Icon,
   XIcon,
   HouseIcon,
 } from "lucide-react"
@@ -24,6 +19,14 @@ import { ChatAccountAvatar } from "@/components/app-shell/chat-account-avatar"
 import { ChatAccountMenu } from "@/components/app-shell/chat-account-menu"
 import { ChatGeminiNewChatIcon } from "@/components/app-shell/chat-gemini-new-chat-icon"
 import { ChatHistorySearchDialog } from "@/components/app-shell/chat-history-search-dialog"
+import {
+  SfBubbleIcon,
+  SfEllipsisIcon,
+  SfPencilIcon,
+  SfPinIcon,
+  SfPinSlashIcon,
+  SfTrashIcon,
+} from "@/components/icons/sf-menu-icons"
 import { ExurLogo } from "@/components/brand/exur-logo"
 import { useAuth } from "@/components/auth/auth-provider"
 import { displayPlanName } from "@/lib/billing/catalog"
@@ -842,14 +845,14 @@ function ChatConversationOptionsItems({
   return (
     <>
       <Item className={chatContextMenuItemClass} onClick={onRename}>
-        <PencilIcon className={chatContextMenuIconClass} />
+        <SfPencilIcon className={chatContextMenuIconClass} />
         {t("renameChat")}
       </Item>
       <Item className={chatContextMenuItemClass} onClick={onTogglePin}>
         {pinned ? (
-          <PinOffIcon className={chatContextMenuIconClass} />
+          <SfPinSlashIcon className={chatContextMenuIconClass} />
         ) : (
-          <PinIcon className={chatContextMenuIconClass} />
+          <SfPinIcon className={chatContextMenuIconClass} />
         )}
         {pinned ? t("unpinChat") : t("pinChat")}
       </Item>
@@ -859,7 +862,7 @@ function ChatConversationOptionsItems({
         className={chatContextMenuDeleteClass}
         onClick={onDelete}
       >
-        <Trash2Icon className="size-4.5 shrink-0" />
+        <SfTrashIcon className="size-4.5 shrink-0" />
         {t("deleteChat")}
       </Item>
     </>
@@ -913,9 +916,9 @@ function ConversationRow({
       >
         {!compact ? (
           pinned ? (
-            <PinIcon className="size-4 shrink-0 text-muted-foreground" />
+            <SfPinIcon className="size-4 shrink-0 text-muted-foreground" />
           ) : (
-            <MessageSquareIcon className="size-4 shrink-0 text-muted-foreground" />
+            <SfBubbleIcon className="size-4 shrink-0 text-muted-foreground" />
           )
         ) : null}
         <span className="truncate">{title}</span>
@@ -943,7 +946,7 @@ function ConversationRow({
             />
           }
         >
-          <MoreHorizontalIcon className={compact ? "size-5" : "size-4.5"} />
+          <SfEllipsisIcon className={compact ? "size-5" : "size-4.5"} />
         </DropdownMenuTrigger>
         <DropdownMenuContent
           align="end"

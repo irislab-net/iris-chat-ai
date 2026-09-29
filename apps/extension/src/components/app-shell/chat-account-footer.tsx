@@ -2,12 +2,12 @@
 
 import * as React from "react"
 import { Link } from "@/i18n/navigation"
-import { SettingsIcon } from "lucide-react"
 import { useTranslations } from "next-intl"
 
 import { ChatAccountAvatar } from "@/components/app-shell/chat-account-avatar"
 import { AccountSignedInMenuSections } from "@/components/app-shell/chat-account-menu-sections"
 import { AccountPreferencesGroup } from "@/components/app-shell/chat-account-preferences"
+import { SfGearIcon } from "@/components/icons/sf-menu-icons"
 import { chatContextMenuContentClass } from "@/components/app-shell/chat-context-menu-styles"
 import {
   chatHistoryRailFooterBarClass,
@@ -45,7 +45,7 @@ function ThemeSettingsMenu() {
           />
         }
       >
-        <SettingsIcon className="size-5 text-muted-foreground" />
+        <SfGearIcon className="size-5 text-muted-foreground" />
       </DropdownMenuTrigger>
       <DropdownMenuContent
         side="top"
@@ -192,7 +192,7 @@ function ChatAccountFooterSignedIn({
                   </span>
                 ) : null}
               </span>
-              <SettingsIcon
+              <SfGearIcon
                 className="size-4 shrink-0 text-muted-foreground"
                 aria-hidden
               />
