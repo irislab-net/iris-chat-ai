@@ -292,10 +292,11 @@ function ChatAccountSheet({
         showCloseButton={false}
         className={cn(
           chatMobileSheetContentClass,
-          "flex h-[min(88dvh,680px)] flex-col overflow-hidden pb-0"
+          // Override Sheet's data-[side=bottom]:h-auto so the view stack can flex.
+          "flex h-[min(88dvh,680px)] flex-col overflow-hidden pb-0 data-[side=bottom]:h-[min(88dvh,680px)]"
         )}
       >
-        <div aria-hidden className={chatMobileSheetHandleClass} />
+        <div aria-hidden className={cn(chatMobileSheetHandleClass, "shrink-0")} />
         <SheetHeader className="sr-only">
           <SheetTitle>
             {view === "root" ? t("accountMenuFor", { name: user ? userAccountLabel(user) : t("signIn") }) : common("settings")}
@@ -305,7 +306,7 @@ function ChatAccountSheet({
         <ChatGsapViewStack
           active={view}
           enterFromSign={enterFromSign}
-          className="min-h-0 flex-1"
+          className="min-h-0 w-full flex-1"
         >
           {/* —— Root profile menu —— */}
           <div
