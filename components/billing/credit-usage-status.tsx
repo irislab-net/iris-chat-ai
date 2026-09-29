@@ -59,7 +59,7 @@ function UsageMeter({
         aria-valuemax={100}
         aria-valuenow={remainingPct}
         aria-label={title}
-        className="relative isolate mt-3.5 h-3 overflow-hidden rounded-full border border-black/5 bg-[rgba(118,118,128,0.18)] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.55),inset_0_-4px_10px_-6px_rgba(0,0,0,0.08),0_1px_2px_rgba(0,0,0,0.03)] backdrop-blur-md backdrop-saturate-[160%] dark:border-white/10 dark:bg-[rgba(118,118,128,0.34)] dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.14),inset_0_-6px_12px_-6px_rgba(0,0,0,0.4)]"
+        className="relative isolate mt-3.5 h-3 overflow-hidden rounded-full border border-black/5 bg-[rgba(118,118,128,0.18)] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.55),inset_0_-4px_10px_-6px_rgba(0,0,0,0.08),0_1px_2px_rgba(0,0,0,0.03)] backdrop-blur-md backdrop-saturate-160 dark:border-white/10 dark:bg-[rgba(118,118,128,0.34)] dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.14),inset_0_-6px_12px_-6px_rgba(0,0,0,0.4)]"
       >
         <div
           className={cn(

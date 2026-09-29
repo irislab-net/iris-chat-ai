@@ -2,7 +2,8 @@
  * Rebuild square PWA / Apple touch / favicon icons.
  *
  * Install icons: opaque white plate + black-gradient Exur mark (matches empty-hero).
- * Maskable stays edge-to-edge white so Android adaptive crop stays clean.
+ * Plate fill is edge-to-edge; the mark sits inside the safe zone (home ~12%,
+ * maskable ~14%) so OS masks on iOS/Android don't clip the logo.
  *
  * Usage: node scripts/generate-pwa-icons.mjs
  */
@@ -104,15 +105,22 @@ function encodeIco(frames) {
   return buf
 }
 
-/** Home-screen / any — fill the plate; markScale cancels empty viewBox margin. */
-const HOME_MARK_PAD = 0
-const HOME_MARK_SCALE = 1.14
-/** Maskable safe zone ≈ center 80%; mild boost so adaptive icons still read large. */
-const MASK_MARK_PAD = 0.08
-const MASK_MARK_SCALE = 1.08
+/**
+ * Home-screen / any — ~12% inset so iOS squircle & Android launchers don't
+ * crowd the mark against the mask edge (Apple: don't fill the entire icon).
+ * Mild markScale recovers empty viewBox margin without spilling past the pad.
+ */
+const HOME_MARK_PAD = 0.12
+const HOME_MARK_SCALE = 1.05
+/**
+ * Maskable — W3C / web.dev safe zone is a center circle with radius 40% of
+ * the icon (central 80%). Outer 10%+ may be cropped by adaptive shapes.
+ */
+const MASK_MARK_PAD = 0.14
+const MASK_MARK_SCALE = 1.05
 /** Favicons — slightly tighter for legibility at 16–48px. */
-const FAVICON_MARK_PAD = 0.04
-const FAVICON_MARK_SCALE = 1.1
+const FAVICON_MARK_PAD = 0.06
+const FAVICON_MARK_SCALE = 1.05
 
 writePng(
   buildIconSvg({

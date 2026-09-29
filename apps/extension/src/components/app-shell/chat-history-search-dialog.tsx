@@ -186,7 +186,7 @@ function ChatHistorySearchDialogBody({
   return (
     <DialogContent
       ref={panelRef}
-      className={cn(chatDesktopSearchDialogClass, "!flex")}
+      className={cn(chatDesktopSearchDialogClass, "flex!")}
       showCloseButton={false}
       onKeyDown={onKeyDown}
     >

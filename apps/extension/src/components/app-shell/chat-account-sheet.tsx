@@ -444,7 +444,7 @@ function ChatAccountSheet({
                     type="button"
                     aria-expanded={accountExpanded}
                     onClick={() => setAccountExpanded((v) => !v)}
-                    className="flex w-full items-start gap-3.5 p-3.5 text-start transition-colors active:bg-black/[0.02] dark:active:bg-white/[0.04]"
+                    className="flex w-full items-start gap-3.5 p-3.5 text-start transition-colors active:bg-black/2 dark:active:bg-white/4"
                   >
                     <ChatAccountAvatar
                       user={user}
@@ -512,7 +512,7 @@ function ChatAccountSheet({
                           void onSwitchAccount?.()
                         }}
                         className={cn(
-                          "flex min-h-12 w-full items-center gap-3.5 border-t border-foreground/8 px-4 py-3 text-start text-[16px] font-medium tracking-[-0.01em] transition-[opacity,transform,background-color] duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] active:bg-black/[0.03] dark:border-white/10 dark:active:bg-white/[0.06]",
+                          "flex min-h-12 w-full items-center gap-3.5 border-t border-foreground/8 px-4 py-3 text-start text-[16px] font-medium tracking-[-0.01em] transition-[opacity,transform,background-color] duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] active:bg-black/3 dark:border-white/10 dark:active:bg-white/6",
                           accountExpanded
                             ? "translate-y-0 opacity-100"
                             : "-translate-y-1 opacity-0"
@@ -604,7 +604,7 @@ function ChatAccountSheet({
 
                 {user ? (
                   <SheetPill
-                    icon={<SfLogoutIcon className="size-[22px] shrink-0" />}
+                    icon={<SfLogoutIcon className="size-5.5 shrink-0" />}
                     label={t("logOut")}
                     destructive
                     onClick={() => {
