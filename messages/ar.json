@@ -942,6 +942,7 @@
   "upgradePage": {
     "title": "الترقية",
     "currentPlanLine": "الخطة الحالية: {plan}",
+    "statusSignedOut": "غير مسجّل",
     "backToDesk": "العودة إلى المكتب",
     "heading": "اختر خطة",
     "subtitle": "ابدأ مجانًا، أو رقِّ إلى Plus للمكتب الكامل. ادفع بالعملات المشفرة في خطوات بسيطة.",
@@ -963,7 +964,7 @@
     "payWithCrypto": "الدفع بالعملات المشفرة",
     "contactUs": "تواصل معنا",
     "hintPending": "أكمل دفعك · متبقٍ {time}",
-    "hintPlusAuth": "{price}{cadence} · USDT أو USDC على إيثريوم",
+    "hintPlusAuth": "<amount>{price} {cadence}</amount> · USDT أو USDC",
     "hintPlusGuest": "سجّل الدخول للمتابعة إلى الدفع",
     "hintUltimate": "نضبط Ultimate معك على X",
     "hintFree": "لا رسوم على Free",

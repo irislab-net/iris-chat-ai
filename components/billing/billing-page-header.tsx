@@ -35,7 +35,12 @@ function BillingPageHeader({
     : t("statusSignedOut")
 
   return (
-    <header className="mt-3 flex items-center gap-3 sm:mt-5">
+    <header
+      className={cn(
+        "sticky top-0 z-50 -mx-4.5 flex items-center gap-3 bg-background/85 px-4.5 py-3 backdrop-blur-xl sm:-mx-3 sm:px-3 sm:py-4 lg:-mx-4 lg:px-4",
+        "dark:bg-background/80"
+      )}
+    >
       <div
         className={cn(
           landingGlassSurface,

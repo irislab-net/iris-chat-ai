@@ -13,7 +13,6 @@ import type { CryptoCheckoutRequest } from "@/components/billing/crypto-payment-
 import { CryptoPaymentSheet } from "@/components/billing/crypto-payment-sheet"
 import { UpgradePlanCard } from "@/components/billing/upgrade-plan-card"
 import { Button } from "@/components/ui/button"
-import { Separator } from "@/components/ui/separator"
 import {
   UPGRADE_PLANS,
   displayPlanName,
@@ -45,8 +44,6 @@ import {
   landingCta,
   landingGlassSheen,
   landingGlassSurface,
-  landingHeroGlass,
-  landingInner,
   landingShell,
   landingTitleSection,
 } from "@/lib/landing-modern-styles"
@@ -206,9 +203,16 @@ function UpgradeView() {
       return t("hintPending", { time: formatCountdown(pendingMsRemaining) })
     }
     if (selected === "plus") {
-      return isAuthenticated
-        ? t("hintPlusAuth", { price: plusPriceLabel, cadence })
-        : t("hintPlusGuest")
+      if (!isAuthenticated) return t("hintPlusGuest")
+      return t.rich("hintPlusAuth", {
+        price: plusPriceLabel,
+        cadence,
+        amount: (chunks) => (
+          <span className="font-medium tabular-nums tracking-tight text-foreground">
+            {chunks}
+          </span>
+        ),
+      })
     }
     if (selected === "ultimate") {
       return t("hintUltimate")
@@ -230,112 +234,93 @@ function UpgradeView() {
   return (
     <div
       dir={dir}
-      className="landing-modern flex min-h-dvh flex-col bg-background font-sans text-foreground antialiased selection:bg-foreground/10 selection:text-foreground"
+      className="landing-modern min-h-dvh bg-background font-sans text-foreground antialiased selection:bg-foreground/10 selection:text-foreground"
     >
-      <div
-        className={cn(
-          landingShell,
-          "relative z-10 flex flex-1 flex-col pb-28 sm:pb-32"
-        )}
-      >
+      <div className={cn(landingShell, "relative z-10 pb-32 sm:pb-36")}>
         <BillingPageHeader
           isAuthenticated={isAuthenticated}
           user={user}
           page="upgrade"
         />
 
-        <article
-          className={cn(
-            landingHeroGlass,
-            "mt-4 min-h-0 flex-1 rounded-[2rem] pt-1.5 sm:mt-6 sm:rounded-[2.5rem]"
-          )}
-        >
-          <div className={cn(landingInner, "py-10 sm:py-12 lg:py-14")}>
-            <header className="mx-auto max-w-3xl text-center sm:text-start">
-              <p className="text-[11px] font-medium tracking-[0.18em] text-muted-foreground uppercase">
-                {SITE_NAME}
-              </p>
-              <h1 className={cn(landingTitleSection, "mt-3")}>
-                {t("heading")}
-              </h1>
-              <p className="mt-4 max-w-2xl text-[0.9375rem] leading-relaxed text-muted-foreground sm:text-base">
-                {t("subtitle")}
-              </p>
-            </header>
+        <div className="mt-4 pt-1.5 pb-6 sm:mt-6 sm:py-8">
+          <header className="mx-auto max-w-3xl text-center sm:text-start">
+            <p className="text-[11px] font-medium tracking-[0.18em] text-muted-foreground uppercase">
+              {SITE_NAME}
+            </p>
+            <h1 className={cn(landingTitleSection, "mt-3")}>
+              {t("heading")}
+            </h1>
+            <p className="mt-4 max-w-2xl text-[0.9375rem] leading-relaxed text-muted-foreground sm:text-base">
+              {t("subtitle")}
+            </p>
+          </header>
 
-            <Separator className="mx-auto my-8 max-w-3xl bg-foreground/8 sm:my-10" />
-
-            <div className="mx-auto flex w-full max-w-5xl flex-col items-center">
-              {pendingInvoice && !isProUser ? (
-                <button
-                  type="button"
-                  onClick={resumePendingCheckout}
-                  className="w-full max-w-3xl text-start"
-                >
-                  <BillingGlassPanel className="bg-white/50 transition-colors hover:bg-white/58 dark:bg-white/10 dark:hover:bg-white/14">
-                    <div className="flex items-start justify-between gap-3 px-5 py-4 sm:px-6">
-                      <div className="min-w-0">
-                        <p className="text-sm font-medium">
-                          {t("pendingTitle")}
-                        </p>
-                        <p className="mt-1 text-sm text-muted-foreground">
-                          {t("pendingBody", { amount: pendingAmountLabel })}
-                        </p>
-                      </div>
-                      <div className="flex shrink-0 items-center gap-1.5 text-xs text-muted-foreground">
-                        <Clock3Icon className="size-3.5" />
-                        <span className="font-medium text-foreground tabular-nums">
-                          {formatCountdown(pendingMsRemaining)}
-                        </span>
-                      </div>
-                    </div>
-                  </BillingGlassPanel>
-                </button>
-              ) : null}
-
-              <div
-                role="radiogroup"
-                aria-label={t("plansAria")}
-                className={cn(
-                  "grid w-full gap-4 lg:grid-cols-3 lg:items-stretch",
-                  pendingInvoice && !isProUser ? "mt-8" : "mt-0"
-                )}
+          <div className="mx-auto mt-10 flex w-full max-w-5xl flex-col gap-8">
+            {pendingInvoice && !isProUser ? (
+              <button
+                type="button"
+                onClick={resumePendingCheckout}
+                className="w-full text-start"
               >
-                {UPGRADE_PLANS.map((plan) => {
-                  const features = t.raw(
-                    `plans.${plan.key}.features`
-                  ) as string[]
-                  return (
-                    <UpgradePlanCard
-                      key={plan.key}
-                      planKey={plan.key}
-                      name={t(`plans.${plan.key}.name`)}
-                      description={t(`plans.${plan.key}.description`)}
-                      price={planPrice(plan.key)}
-                      cadence={cadence}
-                      features={features}
-                      selected={selected === plan.key}
-                      isCurrent={isCurrentPlan(plan.key, currentPlan)}
-                      currentLabel={t("currentBadge")}
-                      badge={
-                        "badge" in plan && plan.badge
-                          ? t("mostChosen")
-                          : undefined
+                <BillingGlassPanel className="bg-white/50 transition-colors hover:bg-white/58 dark:bg-white/10 dark:hover:bg-white/14">
+                  <div className="flex items-start justify-between gap-3 px-5 py-4 sm:px-6">
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium">{t("pendingTitle")}</p>
+                      <p className="mt-1 text-sm text-muted-foreground">
+                        {t("pendingBody", { amount: pendingAmountLabel })}
+                      </p>
+                    </div>
+                    <div className="flex shrink-0 items-center gap-1.5 text-xs text-muted-foreground">
+                      <Clock3Icon className="size-3.5" />
+                      <span className="font-medium text-foreground tabular-nums">
+                        {formatCountdown(pendingMsRemaining)}
+                      </span>
+                    </div>
+                  </div>
+                </BillingGlassPanel>
+              </button>
+            ) : null}
+
+            <div
+              role="radiogroup"
+              aria-label={t("plansAria")}
+              className="grid w-full gap-4 lg:grid-cols-3 lg:items-stretch lg:gap-4"
+            >
+              {UPGRADE_PLANS.map((plan) => {
+                const features = t.raw(
+                  `plans.${plan.key}.features`
+                ) as string[]
+                return (
+                  <UpgradePlanCard
+                    key={plan.key}
+                    planKey={plan.key}
+                    name={t(`plans.${plan.key}.name`)}
+                    description={t(`plans.${plan.key}.description`)}
+                    price={planPrice(plan.key)}
+                    cadence={cadence}
+                    features={features}
+                    selected={selected === plan.key}
+                    isCurrent={isCurrentPlan(plan.key, currentPlan)}
+                    currentLabel={t("currentBadge")}
+                    badge={
+                      "badge" in plan && plan.badge
+                        ? t("mostChosen")
+                        : undefined
+                    }
+                    featured={"featured" in plan ? plan.featured : undefined}
+                    onSelect={() => {
+                      if (selected !== plan.key) {
+                        trackUpgradePlanSelect({ plan: plan.key })
                       }
-                      featured={"featured" in plan ? plan.featured : undefined}
-                      onSelect={() => {
-                        if (selected !== plan.key) {
-                          trackUpgradePlanSelect({ plan: plan.key })
-                        }
-                        setSelected(plan.key)
-                      }}
-                    />
-                  )
-                })}
-              </div>
+                      setSelected(plan.key)
+                    }}
+                  />
+                )
+              })}
             </div>
           </div>
-        </article>
+        </div>
       </div>
 
       <CryptoPaymentSheet
@@ -345,11 +330,11 @@ function UpgradeView() {
         onPaid={handleInvoicePaid}
       />
 
-      <footer className="pointer-events-none fixed inset-x-0 bottom-0 z-40 px-4 pt-4 pb-[max(0.75rem,env(safe-area-inset-bottom,0px))] sm:px-6">
+      <footer className="pointer-events-none fixed inset-x-0 bottom-0 z-40 px-4.5 pt-4 pb-[max(0.75rem,env(safe-area-inset-bottom,0px))] sm:px-3 lg:px-4">
         <div
           className={cn(
             landingGlassSurface,
-            "pointer-events-auto mx-auto w-full max-w-5xl rounded-[1.75rem] bg-white/55 px-4 py-3.5 sm:px-5 dark:bg-white/10"
+            "pointer-events-auto mx-auto w-full max-w-5xl rounded-[1.75rem] bg-white/55 px-6 py-3.5 sm:px-7 dark:bg-white/10"
           )}
         >
           <span
@@ -357,11 +342,13 @@ function UpgradeView() {
             className={cn(landingGlassSheen, "rounded-[1.75rem]")}
           />
           <div className="relative z-10 flex flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-sm text-muted-foreground">{footerHint()}</p>
+            <p className="min-w-0 px-0.5 text-[13px] leading-snug text-muted-foreground sm:px-1 sm:text-sm">
+              {footerHint()}
+            </p>
             <Button
               className={cn(
                 landingCta("glass", "md"),
-                "w-full sm:w-auto sm:min-w-44"
+                "w-full shrink-0 sm:w-auto sm:min-w-44"
               )}
               disabled={busy || plusLocked}
               onClick={() => {

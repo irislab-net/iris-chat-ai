@@ -942,6 +942,7 @@
   "upgradePage": {
     "title": "ارتقا",
     "currentPlanLine": "طرح فعلی: {plan}",
+    "statusSignedOut": "خارج از حساب",
     "backToDesk": "بازگشت به میز",
     "heading": "یک طرح انتخاب کن",
     "subtitle": "رایگان شروع کن، یا برای میز کامل به Plus ارتقا بده. پرداخت با کریپتو در چند قدم ساده.",
@@ -963,7 +964,7 @@
     "payWithCrypto": "پرداخت با کریپتو",
     "contactUs": "تماس با ما",
     "hintPending": "پرداخت را تمام کن · {time} مانده",
-    "hintPlusAuth": "{price}{cadence} · USDT یا USDC روی اتریوم",
+    "hintPlusAuth": "<amount>{price} {cadence}</amount> · USDT یا USDC",
     "hintPlusGuest": "برای ادامهٔ پرداخت وارد شو",
     "hintUltimate": "Ultimate را با هم در X تنظیم می‌کنیم",
     "hintFree": "روی Free هزینه‌ای نیست",
