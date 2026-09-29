@@ -23,6 +23,7 @@
     "darkMode": "Dark mode",
     "settings": "Settings",
     "back": "Back",
+    "done": "Done",
     "ready": "Ready",
     "comingSoon": "Coming soon",
     "live": "Live",
@@ -888,7 +889,13 @@
     "planFree": "Free",
     "planPlus": "Plus",
     "planUltimate": "Ultimate",
-    "accountMenuFor": "Account menu for {name}"
+    "accountMenuFor": "Account menu for {name}",
+    "manageGoogleAccount": "Manage your Google Account",
+    "exurSettings": "Exur Settings",
+    "preferencesSection": "Preferences",
+    "dataPrivacySection": "Data & privacy",
+    "getSupportSection": "Get support",
+    "accountSection": "Account"
   },
   "billingPage": {
     "title": "Billing",

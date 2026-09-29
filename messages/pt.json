@@ -23,6 +23,7 @@
     "darkMode": "Modo escuro",
     "settings": "Configurações",
     "back": "Voltar",
+    "done": "Concluído",
     "ready": "Pronto",
     "comingSoon": "Em breve",
     "live": "Ao vivo",
@@ -588,6 +589,12 @@
     "planFree": "Grátis",
     "planPlus": "Plus",
     "planUltimate": "Ultimate",
-    "accountMenuFor": "Menu da conta de {name}"
+    "accountMenuFor": "Menu da conta de {name}",
+    "manageGoogleAccount": "Gerenciar sua Conta do Google",
+    "exurSettings": "Configurações do Exur",
+    "preferencesSection": "Preferências",
+    "dataPrivacySection": "Dados e privacidade",
+    "getSupportSection": "Obter suporte",
+    "accountSection": "Conta"
   }
 }

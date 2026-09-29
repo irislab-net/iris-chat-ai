@@ -23,6 +23,7 @@
     "darkMode": "تم تیره",
     "settings": "تنظیمات",
     "back": "بازگشت",
+    "done": "انجام شد",
     "ready": "آماده",
     "comingSoon": "به‌زودی",
     "live": "زنده",
@@ -872,7 +873,13 @@
     "planFree": "رایگان",
     "planPlus": "Plus",
     "planUltimate": "Ultimate",
-    "accountMenuFor": "منوی حساب {name}"
+    "accountMenuFor": "منوی حساب {name}",
+    "manageGoogleAccount": "مدیریت حساب Google",
+    "exurSettings": "تنظیمات Exur",
+    "preferencesSection": "ترجیحات",
+    "dataPrivacySection": "داده‌ها و حریم خصوصی",
+    "getSupportSection": "پشتیبانی",
+    "accountSection": "حساب"
   },
   "billingPage": {
     "title": "پرداخت",

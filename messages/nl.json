@@ -23,6 +23,7 @@
     "darkMode": "Donkere modus",
     "settings": "Instellingen",
     "back": "Terug",
+    "done": "Klaar",
     "ready": "Klaar",
     "comingSoon": "Binnenkort",
     "live": "Live",
@@ -588,6 +589,12 @@
     "planFree": "Gratis",
     "planPlus": "Plus",
     "planUltimate": "Ultimate",
-    "accountMenuFor": "Accountmenu voor {name}"
+    "accountMenuFor": "Accountmenu voor {name}",
+    "manageGoogleAccount": "Google-account beheren",
+    "exurSettings": "Exur-instellingen",
+    "preferencesSection": "Voorkeuren",
+    "dataPrivacySection": "Gegevens en privacy",
+    "getSupportSection": "Ondersteuning",
+    "accountSection": "Account"
   }
 }
