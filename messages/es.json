@@ -595,6 +595,7 @@
     "dataPrivacySection": "Datos y privacidad",
     "getSupportSection": "Obtener ayuda",
     "accountSection": "Cuenta",
-    "switchAccount": "Cambiar de cuenta"
+    "switchAccount": "Cambiar de cuenta",
+    "guest": "Invitado"
   }
 }

@@ -895,7 +895,8 @@
     "dataPrivacySection": "Data & privacy",
     "getSupportSection": "Get support",
     "accountSection": "Account",
-    "switchAccount": "Switch account"
+    "switchAccount": "Switch account",
+    "guest": "Guest"
   },
   "billingPage": {
     "title": "Billing",

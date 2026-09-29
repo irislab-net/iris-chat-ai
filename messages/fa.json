@@ -879,7 +879,8 @@
     "dataPrivacySection": "داده‌ها و حریم خصوصی",
     "getSupportSection": "پشتیبانی",
     "accountSection": "حساب",
-    "switchAccount": "تعویض حساب"
+    "switchAccount": "تعویض حساب",
+    "guest": "میهمان"
   },
   "billingPage": {
     "title": "پرداخت",

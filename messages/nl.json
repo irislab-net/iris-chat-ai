@@ -595,6 +595,7 @@
     "dataPrivacySection": "Gegevens en privacy",
     "getSupportSection": "Ondersteuning",
     "accountSection": "Account",
-    "switchAccount": "Account wisselen"
+    "switchAccount": "Account wisselen",
+    "guest": "Gast"
   }
 }

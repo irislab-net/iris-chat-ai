@@ -595,6 +595,7 @@
     "dataPrivacySection": "Данные и конфиденциальность",
     "getSupportSection": "Поддержка",
     "accountSection": "Аккаунт",
-    "switchAccount": "Сменить аккаунт"
+    "switchAccount": "Сменить аккаунт",
+    "guest": "Гость"
   }
 }

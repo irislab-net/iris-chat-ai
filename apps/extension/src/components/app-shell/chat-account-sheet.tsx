@@ -5,6 +5,7 @@ import {
   ArrowLeftRightIcon,
   BookOpenIcon,
   CheckIcon,
+  ChevronDownIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
   CircleHelpIcon,
@@ -22,13 +23,13 @@ import {
   SmartphoneIcon,
   SparklesIcon,
   SunIcon,
+  UserRoundIcon,
 } from "lucide-react"
 import { useLocale, useTranslations } from "next-intl"
 import { useTheme } from "@wrksz/themes/client/use-theme"
 
 import { ChatAccountAvatar } from "@/components/app-shell/chat-account-avatar"
 import { ChatGsapViewStack } from "@/components/app-shell/chat-gsap-view-stack"
-import { GoogleGlyph } from "@/components/auth/google-glyph"
 import { LocaleFlag } from "@/components/i18n/locale-flag"
 import { openCookieSettings } from "@/components/privacy/cookie-consent-banner"
 import { Button } from "@/components/ui/button"
@@ -354,12 +355,14 @@ function ChatAccountSheet({
   const [view, setView] = React.useState<AccountSheetView>(initialView)
   const [enterFromSign, setEnterFromSign] = React.useState<1 | -1>(pushSign)
   const [openSnapshot, setOpenSnapshot] = React.useState(open)
+  const [accountExpanded, setAccountExpanded] = React.useState(false)
 
   if (open !== openSnapshot) {
     setOpenSnapshot(open)
     if (open) {
       setView(initialView)
       setEnterFromSign(pushSign)
+      setAccountExpanded(false)
     }
   }
 
@@ -449,42 +452,82 @@ function ChatAccountSheet({
             </div>
 
             <div className="min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-contain px-4 pb-4">
-              {/* Profile card — display only; actions live in the pill list below */}
               {user ? (
-                <div
-                  className={cn(
-                    sheetCardClass,
-                    "flex w-full items-center gap-3.5 rounded-[22px] p-3.5"
-                  )}
-                >
-                  <ChatAccountAvatar
-                    user={user}
-                    avatarUrl={avatarUrl}
-                    isProUser={isProUser}
-                    planName={planName}
-                    showPlanBadge={false}
-                    avatarClassName="size-14 ring-2 ring-[#1A73E8]/70 ring-offset-2 ring-offset-[#F1F3F9] dark:ring-[#8AB4F8]/80 dark:ring-offset-[oklch(0.22_0.01_260)]"
-                  />
-                  <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-                    <span className="truncate text-[17px] font-semibold tracking-tight text-foreground">
-                      {userAccountLabel(user)}
-                    </span>
-                    {email ? (
-                      <span className="truncate text-[13px] text-muted-foreground">
-                        {email}
-                      </span>
-                    ) : null}
+                <div className="space-y-2">
+                  {/* Signed-in profile card — expandable for Switch account */}
+                  <button
+                    type="button"
+                    aria-expanded={accountExpanded}
+                    onClick={() => setAccountExpanded((v) => !v)}
+                    className={cn(
+                      sheetCardClass,
+                      "flex w-full items-start gap-3.5 rounded-[22px] p-3.5 text-start transition-colors active:bg-black/[0.02] dark:active:bg-white/[0.04]"
+                    )}
+                  >
+                    <ChatAccountAvatar
+                      user={user}
+                      avatarUrl={avatarUrl}
+                      isProUser={isProUser}
+                      planName={planName}
+                      showPlanBadge
+                      planBadgeClassName={cn(
+                        "h-4 translate-y-[35%] px-1.5 text-[9px]",
+                        isProUser
+                          ? "border-background bg-[#1A73E8] text-white"
+                          : "border-border/60 bg-background text-muted-foreground"
+                      )}
+                      avatarClassName="size-14"
+                    />
+                    <div className="flex min-w-0 flex-1 flex-col gap-1.5 pt-0.5">
+                      <div className="flex min-w-0 flex-col gap-0.5">
+                        <span className="truncate text-[17px] font-semibold tracking-tight text-foreground">
+                          {userAccountLabel(user)}
+                        </span>
+                        {email ? (
+                          <span className="truncate text-[13px] text-muted-foreground">
+                            {email}
+                          </span>
+                        ) : null}
+                      </div>
+                      {!isProUser ? (
+                        <Link
+                          href={UPGRADE_PATH}
+                          onClick={(event) => {
+                            event.stopPropagation()
+                            closeSheet()
+                          }}
+                          className="inline-flex h-8 w-fit items-center gap-1.5 rounded-full bg-[#1A73E8] px-3 text-[13px] font-semibold text-white shadow-sm active:scale-[0.98] dark:bg-[#8AB4F8] dark:text-[#0F172A]"
+                        >
+                          <SparklesIcon className="size-3.5" aria-hidden />
+                          {t("upgrade")}
+                        </Link>
+                      ) : null}
+                    </div>
                     <span
                       className={cn(
-                        "mt-1 inline-flex w-fit items-center rounded-full border px-2 py-0.5 text-[11px] font-semibold tracking-wide",
-                        isProUser
-                          ? "border-[#1A73E8] text-[#1A73E8] dark:border-[#8AB4F8] dark:text-[#8AB4F8]"
-                          : "border-foreground/20 text-muted-foreground"
+                        "mt-1 flex size-8 shrink-0 items-center justify-center rounded-full bg-foreground/6 transition-transform dark:bg-white/10",
+                        accountExpanded && "rotate-180"
                       )}
                     >
-                      {planName}
+                      <ChevronDownIcon
+                        className="size-4 text-foreground/55"
+                        aria-hidden
+                      />
                     </span>
-                  </div>
+                  </button>
+
+                  {accountExpanded ? (
+                    <SheetPill
+                      icon={
+                        <ArrowLeftRightIcon className={sheetIconClass} />
+                      }
+                      label={t("switchAccount")}
+                      onClick={() => {
+                        closeSheet()
+                        void onSwitchAccount?.()
+                      }}
+                    />
+                  ) : null}
                 </div>
               ) : (
                 <div
@@ -493,58 +536,45 @@ function ChatAccountSheet({
                     "flex items-center gap-3.5 rounded-[22px] p-3.5"
                   )}
                 >
-                  <div className="flex size-14 items-center justify-center rounded-full bg-muted">
-                    <GoogleGlyph className="size-6" />
+                  <div className="flex size-14 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground">
+                    <UserRoundIcon className="size-7" aria-hidden />
                   </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="text-[17px] font-semibold tracking-tight">
-                      {common("brand")}
-                    </p>
-                    <p className="text-[13px] text-muted-foreground">
-                      {t("signIn")}
-                    </p>
+                  <div className="flex min-w-0 flex-1 flex-col gap-2">
+                    <div className="flex min-w-0 flex-col gap-0.5">
+                      <p className="truncate text-[17px] font-semibold tracking-tight">
+                        {common("brand")}
+                      </p>
+                      <p className="truncate text-[13px] text-muted-foreground">
+                        {t("guest")}
+                      </p>
+                    </div>
+                    <Button
+                      type="button"
+                      size="sm"
+                      disabled={loginPending}
+                      className="h-8 w-fit rounded-full bg-[#1A73E8] px-3.5 text-[13px] font-semibold text-white hover:bg-[#1558B0] dark:bg-[#8AB4F8] dark:text-[#0F172A] dark:hover:bg-[#a8c7fa]"
+                      onClick={() => {
+                        if (loginPending) return
+                        closeSheet()
+                        onLogin?.()
+                      }}
+                    >
+                      {loginPending ? t("connecting") : t("signIn")}
+                    </Button>
                   </div>
                 </div>
               )}
 
-              {/* Single source of truth for primary actions — no nested Account menu */}
+              {/* Primary actions — no Sign in / Switch / Upgrade duplicates */}
               <div className="flex flex-col gap-2.5 pt-1">
                 {user ? (
-                  <>
-                    <SheetPill
-                      icon={<ArrowLeftRightIcon className={sheetIconClass} />}
-                      label={t("switchAccount")}
-                      onClick={() => {
-                        closeSheet()
-                        void onSwitchAccount?.()
-                      }}
-                    />
-                    <SheetPill
-                      icon={<ReceiptIcon className={sheetIconClass} />}
-                      label={t("billing")}
-                      href={BILLING_PATH}
-                      onClick={closeSheet}
-                    />
-                    {!isProUser ? (
-                      <SheetPill
-                        icon={<SparklesIcon className={sheetIconClass} />}
-                        label={t("upgradeToPlus")}
-                        href={UPGRADE_PATH}
-                        onClick={closeSheet}
-                      />
-                    ) : null}
-                  </>
-                ) : (
                   <SheetPill
-                    icon={<GoogleGlyph className="size-5" />}
-                    label={loginPending ? t("connecting") : t("signIn")}
-                    onClick={() => {
-                      if (loginPending) return
-                      closeSheet()
-                      onLogin?.()
-                    }}
+                    icon={<ReceiptIcon className={sheetIconClass} />}
+                    label={t("billing")}
+                    href={BILLING_PATH}
+                    onClick={closeSheet}
                   />
-                )}
+                ) : null}
 
                 <SheetPill
                   icon={<SettingsIcon className={sheetIconClass} />}
