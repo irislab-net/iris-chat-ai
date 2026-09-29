@@ -1,11 +1,17 @@
 "use client"
 
+import { useTranslations } from "next-intl"
+
+import { SfPersonCircleIcon } from "@/components/icons/sf-menu-icons"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { displayPlanName } from "@/lib/billing/catalog"
 import type { User } from "@/lib/api/types"
 import { userAccountLabel, userAvatarFallback } from "@/lib/user-profile"
 import { cn } from "@/lib/utils"
+
+const avatarPlanBadgeClass =
+  "absolute bottom-0 left-1/2 z-10 h-3 min-w-0 -translate-x-1/2 translate-y-[42%] rounded-full border border-border/50 bg-background px-1 text-[7px] leading-none font-bold tracking-wide text-muted-foreground shadow-sm"
 
 type ChatAccountAvatarProps = {
   user: User
@@ -53,10 +59,8 @@ function ChatAccountAvatar({
       {showPlanBadge ? (
         <Badge
           className={cn(
-            "absolute bottom-0 left-1/2 z-10 h-3 min-w-0 -translate-x-1/2 translate-y-[42%] rounded-full border px-1 text-[7px] leading-none font-bold tracking-wide shadow-sm",
-            isProUser
-              ? "border-background bg-[#2563EB] text-white"
-              : "border-border/50 bg-background text-muted-foreground",
+            avatarPlanBadgeClass,
+            isProUser && "border-background bg-[#2563EB] text-white",
             planBadgeClassName
           )}
           aria-hidden
@@ -68,4 +72,44 @@ function ChatAccountAvatar({
   )
 }
 
-export { ChatAccountAvatar }
+type ChatGuestAvatarProps = {
+  className?: string
+  avatarClassName?: string
+  iconClassName?: string
+  showBadge?: boolean
+  badgeClassName?: string
+}
+
+/** Guest session avatar — person glyph + Guest plan badge (sheet / new chat / sidebar). */
+function ChatGuestAvatar({
+  className,
+  avatarClassName,
+  iconClassName,
+  showBadge = true,
+  badgeClassName,
+}: ChatGuestAvatarProps) {
+  const t = useTranslations("workspace")
+
+  return (
+    <span className={cn("relative inline-flex shrink-0", className)}>
+      <Avatar className={cn("size-8 after:border-0", avatarClassName)}>
+        <AvatarFallback className="bg-muted text-muted-foreground">
+          <SfPersonCircleIcon
+            className={cn("size-[55%]", iconClassName)}
+            aria-hidden
+          />
+        </AvatarFallback>
+      </Avatar>
+      {showBadge ? (
+        <Badge
+          className={cn(avatarPlanBadgeClass, badgeClassName)}
+          aria-hidden
+        >
+          {t("guest")}
+        </Badge>
+      ) : null}
+    </span>
+  )
+}
+
+export { ChatAccountAvatar, ChatGuestAvatar }

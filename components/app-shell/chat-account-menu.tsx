@@ -3,7 +3,10 @@
 import * as React from "react"
 import { useTranslations } from "next-intl"
 
-import { ChatAccountAvatar } from "@/components/app-shell/chat-account-avatar"
+import {
+  ChatAccountAvatar,
+  ChatGuestAvatar,
+} from "@/components/app-shell/chat-account-avatar"
 import {
   AccountGuestMenuSections,
   AccountSignedInMenuSections,
@@ -19,8 +22,6 @@ import {
 import { useAuth } from "@/components/auth/auth-provider"
 import { GoogleGlyph } from "@/components/auth/google-glyph"
 import { useUserAvatarUrl } from "@/hooks/use-user-avatar-url"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -99,22 +100,10 @@ function ChatAccountMenu({
         aria-expanded={sheetOpen}
         onClick={() => setSheetOpen(true)}
       >
-        <span className="relative inline-flex shrink-0">
-          <Avatar className={chatMobileHeaderAvatarClass}>
-            <AvatarFallback className="bg-muted text-[11px] font-medium text-muted-foreground">
-              <GoogleGlyph className="size-3.5" />
-            </AvatarFallback>
-          </Avatar>
-          <Badge
-            className={cn(
-              "absolute bottom-0 left-1/2 z-10 min-w-0 -translate-x-1/2 rounded-full border border-border/50 bg-background text-muted-foreground",
-              chatMobileHeaderPlanBadgeClass
-            )}
-            aria-hidden
-          >
-            {t("planFree")}
-          </Badge>
-        </span>
+        <ChatGuestAvatar
+          avatarClassName={chatMobileHeaderAvatarClass}
+          badgeClassName={chatMobileHeaderPlanBadgeClass}
+        />
       </Button>
     ) : (
       <Button

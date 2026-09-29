@@ -15,7 +15,10 @@ import {
 import { useLocale, useTranslations } from "next-intl"
 
 import { AttentionPulseDot } from "@/components/app-shell/attention-pulse-dot"
-import { ChatAccountAvatar } from "@/components/app-shell/chat-account-avatar"
+import {
+  ChatAccountAvatar,
+  ChatGuestAvatar,
+} from "@/components/app-shell/chat-account-avatar"
 import { ChatAccountMenu } from "@/components/app-shell/chat-account-menu"
 import { ChatGeminiNewChatIcon } from "@/components/app-shell/chat-gemini-new-chat-icon"
 import { ChatHistorySearchDialog } from "@/components/app-shell/chat-history-search-dialog"
@@ -30,9 +33,7 @@ import {
 import { ExurLogo } from "@/components/brand/exur-logo"
 import { useAuth } from "@/components/auth/auth-provider"
 import { displayPlanName } from "@/lib/billing/catalog"
-import { GoogleGlyph } from "@/components/auth/google-glyph"
 import { useUserAvatarUrl } from "@/hooks/use-user-avatar-url"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import {
   ContextMenu,
@@ -390,11 +391,7 @@ function MobileHistoryDrawerFooter({
             disabled={loginPending}
             onClick={() => login({ source: "chat" })}
           >
-            <Avatar className="size-9 after:border-0">
-              <AvatarFallback className="bg-muted text-[11px]">
-                <GoogleGlyph className="size-4" />
-              </AvatarFallback>
-            </Avatar>
+            <ChatGuestAvatar avatarClassName="size-9" />
             {loginPending ? t("connecting") : t("signIn")}
           </Button>
         )}
