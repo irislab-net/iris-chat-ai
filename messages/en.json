@@ -890,12 +890,12 @@
     "planPlus": "Plus",
     "planUltimate": "Ultimate",
     "accountMenuFor": "Account menu for {name}",
-    "manageGoogleAccount": "Manage your Google Account",
     "exurSettings": "Exur Settings",
     "preferencesSection": "Preferences",
     "dataPrivacySection": "Data & privacy",
     "getSupportSection": "Get support",
-    "accountSection": "Account"
+    "accountSection": "Account",
+    "switchAccount": "Switch account"
   },
   "billingPage": {
     "title": "Billing",

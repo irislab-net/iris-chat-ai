@@ -874,12 +874,12 @@
     "planPlus": "Plus",
     "planUltimate": "Ultimate",
     "accountMenuFor": "قائمة حساب {name}",
-    "manageGoogleAccount": "إدارة حساب Google",
     "exurSettings": "إعدادات Exur",
     "preferencesSection": "التفضيلات",
     "dataPrivacySection": "البيانات والخصوصية",
     "getSupportSection": "الحصول على الدعم",
-    "accountSection": "الحساب"
+    "accountSection": "الحساب",
+    "switchAccount": "تبديل الحساب"
   },
   "billingPage": {
     "title": "الفوترة",

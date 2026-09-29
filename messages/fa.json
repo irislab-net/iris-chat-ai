@@ -874,12 +874,12 @@
     "planPlus": "Plus",
     "planUltimate": "Ultimate",
     "accountMenuFor": "منوی حساب {name}",
-    "manageGoogleAccount": "مدیریت حساب Google",
     "exurSettings": "تنظیمات Exur",
     "preferencesSection": "ترجیحات",
     "dataPrivacySection": "داده‌ها و حریم خصوصی",
     "getSupportSection": "پشتیبانی",
-    "accountSection": "حساب"
+    "accountSection": "حساب",
+    "switchAccount": "تعویض حساب"
   },
   "billingPage": {
     "title": "پرداخت",

@@ -590,11 +590,11 @@
     "planPlus": "Plus",
     "planUltimate": "Ultimate",
     "accountMenuFor": "Menu da conta de {name}",
-    "manageGoogleAccount": "Gerenciar sua Conta do Google",
     "exurSettings": "Configurações do Exur",
     "preferencesSection": "Preferências",
     "dataPrivacySection": "Dados e privacidade",
     "getSupportSection": "Obter suporte",
-    "accountSection": "Conta"
+    "accountSection": "Conta",
+    "switchAccount": "Trocar de conta"
   }
 }

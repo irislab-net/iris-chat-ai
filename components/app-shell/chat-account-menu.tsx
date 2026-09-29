@@ -81,6 +81,10 @@ function ChatAccountMenu({
       loginPending={loginPending}
       onLogin={() => login({ source: "chat" })}
       onLogout={logout}
+      onSwitchAccount={async () => {
+        await logout()
+        login({ source: "chat" })
+      }}
       onOpenNews={onOpenNews}
     />
   )
