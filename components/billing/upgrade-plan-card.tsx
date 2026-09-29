@@ -86,7 +86,7 @@ export function UpgradePlanCard({
                     "relative isolate inline-flex overflow-hidden rounded-full px-2.5 py-0.5",
                     "border-0 bg-[#2563EB]/14 text-[11px] font-medium tracking-[-0.01em] text-[#1D4ED8]",
                     "shadow-[inset_0_1px_0_0_rgba(255,255,255,0.65),0_1px_3px_rgba(37,99,235,0.12)]",
-                    "backdrop-blur-md backdrop-saturate-[160%]",
+                    "backdrop-blur-md backdrop-saturate-160",
                     "dark:bg-[#2563EB]/24 dark:text-[#93C5FD] dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.14),0_1px_3px_rgba(37,99,235,0.2)]"
                   )}
                 >
@@ -118,7 +118,7 @@ export function UpgradePlanCard({
                 ? cn(
                     "bg-[#2563EB]/88 text-white",
                     "shadow-[inset_0_1px_1px_rgba(255,255,255,0.45),inset_0_-1px_2px_rgba(29,78,216,0.3),0_4px_14px_-2px_rgba(37,99,235,0.35)]",
-                    "backdrop-blur-xl backdrop-saturate-[180%]"
+                    "backdrop-blur-xl backdrop-saturate-180"
                   )
                 : "bg-white/70 text-transparent shadow-[inset_0_0_0_1px_rgba(15,23,42,0.08),inset_0_1px_0_rgba(255,255,255,0.9)] dark:bg-white/10 dark:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.14)]"
             )}
