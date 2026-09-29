@@ -14,9 +14,10 @@ const chatContextMenuContentClass = [
   "dark:bg-[oklch(0.22_0_0_/0.82)]",
   "dark:shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_12%,transparent),inset_0_0_0_1px_color-mix(in_oklch,white_8%,transparent),0_20px_56px_-18px_color-mix(in_oklch,black_55%,transparent)]",
   "dark:supports-backdrop-filter:bg-[oklch(0.2_0_0_/0.62)]",
-  "origin-(--transform-origin) duration-220 ease-[cubic-bezier(0.22,1,0.36,1)]",
+  // Match chat GSAP popup feel (power3.out / slight overshoot ≈ back.out).
+  "origin-(--transform-origin) duration-250 ease-[cubic-bezier(0.34,1.3,0.64,1)]",
   "data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-open:slide-in-from-top-1",
-  "data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
+  "data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95 data-closed:duration-200 data-closed:ease-[cubic-bezier(0.4,0,1,1)]",
 ].join(" ")
 
 const chatContextMenuItemClass = [

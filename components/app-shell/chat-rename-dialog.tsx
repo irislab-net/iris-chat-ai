@@ -116,7 +116,12 @@ function ChatRenameDialog({
   if (isDesktop) {
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className={chatDesktopDialogClass} showCloseButton>
+        <DialogContent
+          className={chatDesktopDialogClass}
+          showCloseButton
+          gsapMotion
+          open={open}
+        >
           <div className="flex flex-col gap-4 px-5 pt-5 pb-1">
             <DialogHeader className="gap-3 space-y-0 text-start">
               <DialogTitle className="font-heading text-[1.35rem] font-normal tracking-tight text-foreground">
