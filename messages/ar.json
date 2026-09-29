@@ -879,7 +879,8 @@
     "dataPrivacySection": "البيانات والخصوصية",
     "getSupportSection": "الحصول على الدعم",
     "accountSection": "الحساب",
-    "switchAccount": "تبديل الحساب"
+    "switchAccount": "تبديل الحساب",
+    "guest": "زائر"
   },
   "billingPage": {
     "title": "الفوترة",

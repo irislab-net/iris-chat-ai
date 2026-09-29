@@ -595,6 +595,7 @@
     "dataPrivacySection": "Veri ve gizlilik",
     "getSupportSection": "Destek al",
     "accountSection": "Hesap",
-    "switchAccount": "Hesap değiştir"
+    "switchAccount": "Hesap değiştir",
+    "guest": "Misafir"
   }
 }
