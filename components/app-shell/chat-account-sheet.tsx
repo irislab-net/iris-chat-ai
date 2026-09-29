@@ -9,6 +9,11 @@ import {
   ChatGuestAvatar,
 } from "@/components/app-shell/chat-account-avatar"
 import { ChatGsapViewStack } from "@/components/app-shell/chat-gsap-view-stack"
+import {
+  chatMobileComposerSendClass,
+  chatMobileHeaderButtonClass,
+  chatUpgradePillClass,
+} from "@/components/app-shell/chat-mobile-gemini-styles"
 import { LocaleFlag } from "@/components/i18n/locale-flag"
 import {
   SfBookIcon,
@@ -70,11 +75,17 @@ const sheetHandleClass =
   "mx-auto mb-3 h-1 w-10 shrink-0 rounded-full bg-foreground/15 dark:bg-white/20"
 
 const sheetCardClass =
-  "rounded-[22px] bg-white shadow-[0_1px_2px_color-mix(in_oklch,var(--foreground)_6%,transparent)] dark:bg-white/[0.08] dark:shadow-none"
+  "rounded-2xl bg-white shadow-[0_1px_2px_color-mix(in_oklch,var(--foreground)_6%,transparent)] dark:bg-white/[0.08] dark:shadow-none"
 
+/** Menu rows — slightly less round than full capsules. */
 const sheetPillClass = cn(
   sheetCardClass,
-  "flex min-h-14 w-full items-center gap-3.5 rounded-full px-5 text-start text-[16px] font-medium tracking-[-0.01em] transition-colors active:bg-black/[0.03] dark:active:bg-white/[0.06]"
+  "flex min-h-14 w-full items-center gap-3.5 rounded-2xl px-5 text-start text-[16px] font-medium tracking-[-0.01em] transition-colors active:bg-black/[0.03] dark:active:bg-white/[0.06]"
+)
+
+const sheetPrimaryPillClass = cn(
+  chatUpgradePillClass,
+  "inline-flex h-9 w-fit items-center justify-center gap-1.5 px-4 text-[13px] font-semibold"
 )
 
 const sheetRowClass =
@@ -114,7 +125,7 @@ function SheetDoneText({ onClick }: { onClick: () => void }) {
     <button
       type="button"
       onClick={onClick}
-      className="shrink-0 px-1 text-[17px] font-medium text-[#1A73E8] dark:text-[#8AB4F8]"
+      className={sheetPrimaryPillClass}
     >
       {common("done")}
     </button>
@@ -128,7 +139,7 @@ function SheetDoneCheck({ onClick }: { onClick: () => void }) {
       type="button"
       onClick={onClick}
       aria-label={common("done")}
-      className="flex size-10 shrink-0 items-center justify-center rounded-full bg-[#1A73E8] text-white shadow-sm transition-transform active:scale-95 dark:bg-[#8AB4F8] dark:text-[#0F172A]"
+      className={cn(chatMobileComposerSendClass, "size-10")}
     >
       <SfCheckIcon className="size-5" strokeWidth={2.4} />
     </button>
@@ -309,16 +320,14 @@ function NestedViewChrome({
             type="button"
             variant="ghost"
             size="icon"
-            className="size-10 shrink-0 rounded-full"
+            className={cn(chatMobileHeaderButtonClass, "size-10")}
             aria-label={common("back")}
             onClick={onBack}
           >
             <SfChevronLeftIcon className="size-5 rtl:rotate-180" />
           </Button>
-        ) : (
-          <span className="size-10 shrink-0" aria-hidden />
-        )}
-        <h2 className="min-w-0 flex-1 truncate text-[22px] font-normal tracking-tight text-foreground">
+        ) : null}
+        <h2 className="min-w-0 flex-1 truncate text-start text-[22px] font-normal tracking-tight text-foreground">
           {title}
         </h2>
         <SheetDoneCheck onClick={onDone} />
@@ -448,19 +457,17 @@ function ChatAccountSheet({
             data-view="root"
             className="flex min-h-0 flex-1 flex-col overflow-hidden"
           >
-            <div className="flex shrink-0 items-center justify-end px-5 pb-2 pt-0.5">
+            <div className="flex shrink-0 items-center justify-between gap-3 px-5 pb-2 pt-0.5">
+              <h2 className="min-w-0 flex-1 truncate text-start text-[22px] font-normal tracking-tight text-foreground">
+                {t("accountSection")}
+              </h2>
               <SheetDoneText onClick={closeSheet} />
             </div>
 
             <div className="min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-contain px-4 pb-4">
               {user ? (
                 /* Signed-in profile card — Switch account expands inside card */
-                <div
-                  className={cn(
-                    sheetCardClass,
-                    "overflow-hidden rounded-[22px]"
-                  )}
-                >
+                <div className={cn(sheetCardClass, "overflow-hidden")}>
                   <button
                     type="button"
                     aria-expanded={accountExpanded}
@@ -499,7 +506,7 @@ function ChatAccountSheet({
                             event.stopPropagation()
                             closeSheet()
                           }}
-                          className="inline-flex h-8 w-fit items-center gap-1.5 rounded-full bg-[#1A73E8] px-3 text-[13px] font-semibold text-white shadow-sm active:scale-[0.98] dark:bg-[#8AB4F8] dark:text-[#0F172A]"
+                          className={sheetPrimaryPillClass}
                         >
                           <SfSparklesIcon className="size-3.5" aria-hidden />
                           {t("upgrade")}
@@ -553,7 +560,7 @@ function ChatAccountSheet({
                 <div
                   className={cn(
                     sheetCardClass,
-                    "flex items-center gap-3.5 rounded-[22px] p-3.5"
+                    "flex items-center gap-3.5 p-3.5"
                   )}
                 >
                   <ChatGuestAvatar
@@ -568,7 +575,7 @@ function ChatAccountSheet({
                       type="button"
                       size="sm"
                       disabled={loginPending}
-                      className="h-8 w-fit rounded-full bg-[#1A73E8] px-3.5 text-[13px] font-semibold text-white hover:bg-[#1558B0] dark:bg-[#8AB4F8] dark:text-[#0F172A] dark:hover:bg-[#a8c7fa]"
+                      className={sheetPrimaryPillClass}
                       onClick={() => {
                         if (loginPending) return
                         closeSheet()
