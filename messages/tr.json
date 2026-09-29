@@ -23,6 +23,7 @@
     "darkMode": "Koyu mod",
     "settings": "Ayarlar",
     "back": "Geri",
+    "done": "Bitti",
     "ready": "Hazır",
     "comingSoon": "Yakında",
     "live": "Canlı",
@@ -588,6 +589,12 @@
     "planFree": "Ücretsiz",
     "planPlus": "Plus",
     "planUltimate": "Ultimate",
-    "accountMenuFor": "{name} için hesap menüsü"
+    "accountMenuFor": "{name} için hesap menüsü",
+    "manageGoogleAccount": "Google Hesabınızı yönetin",
+    "exurSettings": "Exur Ayarları",
+    "preferencesSection": "Tercihler",
+    "dataPrivacySection": "Veri ve gizlilik",
+    "getSupportSection": "Destek al",
+    "accountSection": "Hesap"
   }
 }

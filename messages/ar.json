@@ -23,6 +23,7 @@
     "darkMode": "الوضع الداكن",
     "settings": "الإعدادات",
     "back": "رجوع",
+    "done": "تم",
     "ready": "جاهز",
     "comingSoon": "قريبًا",
     "live": "مباشر",
@@ -872,7 +873,13 @@
     "planFree": "مجاني",
     "planPlus": "Plus",
     "planUltimate": "Ultimate",
-    "accountMenuFor": "قائمة حساب {name}"
+    "accountMenuFor": "قائمة حساب {name}",
+    "manageGoogleAccount": "إدارة حساب Google",
+    "exurSettings": "إعدادات Exur",
+    "preferencesSection": "التفضيلات",
+    "dataPrivacySection": "البيانات والخصوصية",
+    "getSupportSection": "الحصول على الدعم",
+    "accountSection": "الحساب"
   },
   "billingPage": {
     "title": "الفوترة",

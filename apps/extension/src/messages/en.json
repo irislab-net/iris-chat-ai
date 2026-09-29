@@ -27,7 +27,8 @@
     "comingSoon": "Coming soon",
     "live": "Live",
     "demo": "Demo",
-    "filled": "Filled"
+    "filled": "Filled",
+    "done": "Done"
   },
   "consent": {
     "title": "We use cookies",
@@ -880,7 +881,13 @@
     "planFree": "Free",
     "planPlus": "Plus",
     "planUltimate": "Ultimate",
-    "accountMenuFor": "Account menu for {name}"
+    "accountMenuFor": "Account menu for {name}",
+    "manageGoogleAccount": "Manage your Google Account",
+    "exurSettings": "Exur Settings",
+    "preferencesSection": "Preferences",
+    "dataPrivacySection": "Data & privacy",
+    "getSupportSection": "Get support",
+    "accountSection": "Account"
   },
   "billingPage": {
     "title": "Billing",
