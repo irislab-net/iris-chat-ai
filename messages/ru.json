@@ -590,11 +590,11 @@
     "planPlus": "Plus",
     "planUltimate": "Ultimate",
     "accountMenuFor": "Меню аккаунта {name}",
-    "manageGoogleAccount": "Управление аккаунтом Google",
     "exurSettings": "Настройки Exur",
     "preferencesSection": "Настройки",
     "dataPrivacySection": "Данные и конфиденциальность",
     "getSupportSection": "Поддержка",
-    "accountSection": "Аккаунт"
+    "accountSection": "Аккаунт",
+    "switchAccount": "Сменить аккаунт"
   }
 }

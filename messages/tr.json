@@ -590,11 +590,11 @@
     "planPlus": "Plus",
     "planUltimate": "Ultimate",
     "accountMenuFor": "{name} için hesap menüsü",
-    "manageGoogleAccount": "Google Hesabınızı yönetin",
     "exurSettings": "Exur Ayarları",
     "preferencesSection": "Tercihler",
     "dataPrivacySection": "Veri ve gizlilik",
     "getSupportSection": "Destek al",
-    "accountSection": "Hesap"
+    "accountSection": "Hesap",
+    "switchAccount": "Hesap değiştir"
   }
 }

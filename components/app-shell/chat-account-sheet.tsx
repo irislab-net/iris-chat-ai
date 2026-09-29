@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import {
+  ArrowLeftRightIcon,
   BookOpenIcon,
   CheckIcon,
   ChevronDownIcon,
@@ -58,7 +59,6 @@ import { userAccountLabel, userAccountSubline } from "@/lib/user-profile"
 import { cn } from "@/lib/utils"
 
 const CONTACT_EMAIL = "hello@exur.ai"
-const GOOGLE_ACCOUNT_URL = "https://myaccount.google.com/"
 
 /** Soft gray sheet canvas — Gemini account / settings reference. */
 const sheetCanvasClass =
@@ -102,6 +102,8 @@ type ChatAccountSheetProps = {
   loginPending?: boolean
   onLogin?: () => void
   onLogout?: () => void | Promise<void>
+  /** Log out then start a new sign-in (account picker). */
+  onSwitchAccount?: () => void | Promise<void>
   onOpenNews?: () => void
 }
 
@@ -335,6 +337,7 @@ function ChatAccountSheet({
   loginPending = false,
   onLogin,
   onLogout,
+  onSwitchAccount,
   onOpenNews,
 }: ChatAccountSheetProps) {
   const t = useTranslations("workspace")
@@ -508,12 +511,22 @@ function ChatAccountSheet({
 
               <div className="flex flex-col gap-2.5 pt-1">
                 {user ? (
-                  <SheetPill
-                    icon={<GoogleGlyph className="size-5" />}
-                    label={t("manageGoogleAccount")}
-                    href={GOOGLE_ACCOUNT_URL}
-                    external
-                  />
+                  <>
+                    <SheetPill
+                      icon={<ArrowLeftRightIcon className={sheetIconClass} />}
+                      label={t("switchAccount")}
+                      onClick={() => {
+                        closeSheet()
+                        void onSwitchAccount?.()
+                      }}
+                    />
+                    <SheetPill
+                      icon={<ReceiptIcon className={sheetIconClass} />}
+                      label={t("billing")}
+                      href={BILLING_PATH}
+                      onClick={closeSheet}
+                    />
+                  </>
                 ) : (
                   <SheetPill
                     icon={<GoogleGlyph className="size-5" />}
