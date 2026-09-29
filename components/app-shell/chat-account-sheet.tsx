@@ -4,6 +4,7 @@ import * as React from "react"
 import {
   BookOpenIcon,
   CheckIcon,
+  ChevronDownIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
   CircleHelpIcon,
@@ -27,22 +28,9 @@ import { useTheme } from "@wrksz/themes/client/use-theme"
 
 import { ChatAccountAvatar } from "@/components/app-shell/chat-account-avatar"
 import { ChatGsapViewStack } from "@/components/app-shell/chat-gsap-view-stack"
-import {
-  chatContextMenuDeleteClass,
-  chatContextMenuIconClass,
-  chatContextMenuItemClass,
-} from "@/components/app-shell/chat-context-menu-styles"
-import {
-  chatMobileSheetBodyClass,
-  chatMobileSheetContentClass,
-  chatMobileSheetHandleClass,
-  chatMobileSheetHeaderClass,
-  chatMobileSheetTitleClass,
-} from "@/components/app-shell/chat-mobile-gemini-styles"
 import { GoogleGlyph } from "@/components/auth/google-glyph"
 import { LocaleFlag } from "@/components/i18n/locale-flag"
 import { openCookieSettings } from "@/components/privacy/cookie-consent-banner"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
   Sheet,
@@ -54,7 +42,11 @@ import { usePwaInstall } from "@/hooks/use-pwa-install"
 import { Link, getPathname, usePathname } from "@/i18n/navigation"
 import { routing, type AppLocale } from "@/i18n/routing"
 import type { User } from "@/lib/api/types"
-import { localeDirection, localeLabelKey, persistLocaleChoice } from "@/lib/i18n/locale"
+import {
+  localeDirection,
+  localeLabelKey,
+  persistLocaleChoice,
+} from "@/lib/i18n/locale"
 import { getPrivacyNoticeHref, getTermsOfServiceHref } from "@/lib/legal"
 import {
   BILLING_PATH,
@@ -66,6 +58,30 @@ import { userAccountLabel, userAccountSubline } from "@/lib/user-profile"
 import { cn } from "@/lib/utils"
 
 const CONTACT_EMAIL = "hello@exur.ai"
+const GOOGLE_ACCOUNT_URL = "https://myaccount.google.com/"
+
+/** Soft gray sheet canvas — Gemini account / settings reference. */
+const sheetCanvasClass =
+  "gap-0 border-0 bg-[#F1F3F9] text-foreground shadow-[0_-16px_48px_-18px_color-mix(in_oklch,var(--foreground)_14%,transparent)] dark:bg-[oklch(0.22_0.01_260)] dark:shadow-[0_-16px_48px_-18px_color-mix(in_oklch,black_50%,transparent)]"
+
+const sheetHandleClass =
+  "mx-auto mb-3 h-1 w-10 shrink-0 rounded-full bg-foreground/15 dark:bg-white/20"
+
+const sheetCardClass =
+  "rounded-[22px] bg-white shadow-[0_1px_2px_color-mix(in_oklch,var(--foreground)_6%,transparent)] dark:bg-white/[0.08] dark:shadow-none"
+
+const sheetPillClass = cn(
+  sheetCardClass,
+  "flex min-h-14 w-full items-center gap-3.5 rounded-full px-5 text-start text-[16px] font-medium tracking-[-0.01em] transition-colors active:bg-black/[0.03] dark:active:bg-white/[0.06]"
+)
+
+const sheetRowClass =
+  "flex min-h-[3.25rem] w-full items-center gap-3.5 px-4 text-start text-[16px] font-normal tracking-[-0.01em] transition-colors active:bg-black/[0.03] dark:active:bg-white/[0.06]"
+
+const sheetSectionLabelClass =
+  "px-1 pb-2 pt-4 text-[13px] font-normal tracking-[0.01em] text-muted-foreground"
+
+const sheetIconClass = "size-[22px] shrink-0 text-foreground/85"
 
 type AccountSheetView =
   | "root"
@@ -73,11 +89,11 @@ type AccountSheetView =
   | "theme"
   | "language"
   | "help"
+  | "account"
 
 type ChatAccountSheetProps = {
   open: boolean
   onOpenChange: (open: boolean) => void
-  /** Open directly on a nested view (e.g. history gear → settings). */
   initialView?: AccountSheetView
   user: User | null
   isProUser: boolean
@@ -89,15 +105,43 @@ type ChatAccountSheetProps = {
   onOpenNews?: () => void
 }
 
-function AccountSheetRow({
+function SheetDoneText({ onClick }: { onClick: () => void }) {
+  const common = useTranslations("common")
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="shrink-0 px-1 text-[17px] font-medium text-[#1A73E8] dark:text-[#8AB4F8]"
+    >
+      {common("done")}
+    </button>
+  )
+}
+
+function SheetDoneCheck({ onClick }: { onClick: () => void }) {
+  const common = useTranslations("common")
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={common("done")}
+      className="flex size-10 shrink-0 items-center justify-center rounded-full bg-[#1A73E8] text-white shadow-sm transition-transform active:scale-95 dark:bg-[#8AB4F8] dark:text-[#0F172A]"
+    >
+      <CheckIcon className="size-5" strokeWidth={2.5} />
+    </button>
+  )
+}
+
+function SheetRow({
   icon,
   label,
   value,
   onClick,
   href,
   external,
+  chevron = true,
   destructive,
-  chevron,
+  divider,
 }: {
   icon: React.ReactNode
   label: React.ReactNode
@@ -105,27 +149,38 @@ function AccountSheetRow({
   onClick?: () => void
   href?: string
   external?: boolean
-  destructive?: boolean
   chevron?: boolean
+  destructive?: boolean
+  divider?: boolean
 }) {
   const className = cn(
-    chatContextMenuItemClass,
-    "flex w-full items-center gap-3 text-start",
-    destructive && chatContextMenuDeleteClass
+    sheetRowClass,
+    destructive && "text-destructive",
+    divider &&
+      "border-t border-foreground/8 dark:border-white/10 [border-image:none]"
   )
 
   const body = (
     <>
-      {icon}
-      <span className="min-w-0 flex-1">{label}</span>
+      <span className="flex size-6 shrink-0 items-center justify-center">
+        {icon}
+      </span>
+      <span
+        className={cn(
+          "min-w-0 flex-1",
+          destructive ? "text-destructive" : "text-foreground"
+        )}
+      >
+        {label}
+      </span>
       {value ? (
-        <span className="flex max-w-32 shrink-0 items-center justify-end gap-1.5 truncate text-xs text-muted-foreground">
+        <span className="flex max-w-32 shrink-0 items-center justify-end gap-1.5 truncate text-[14px] text-muted-foreground">
           {value}
         </span>
       ) : null}
       {chevron ? (
         <ChevronRightIcon
-          className="size-4 shrink-0 text-muted-foreground rtl:rotate-180"
+          className="size-4.5 shrink-0 text-foreground/25 rtl:rotate-180"
           aria-hidden
         />
       ) : null}
@@ -160,7 +215,7 @@ function AccountSheetRow({
   )
 }
 
-function AccountSheetSection({
+function SheetCard({
   children,
   className,
 }: {
@@ -168,40 +223,106 @@ function AccountSheetSection({
   className?: string
 }) {
   return (
-    <div className={cn("flex flex-col gap-1 py-1", className)}>{children}</div>
+    <div className={cn(sheetCardClass, "overflow-hidden", className)}>
+      {children}
+    </div>
   )
 }
 
-function AccountSheetNavHeader({
+function SheetPill({
+  icon,
+  label,
+  onClick,
+  href,
+  external,
+}: {
+  icon: React.ReactNode
+  label: React.ReactNode
+  onClick?: () => void
+  href?: string
+  external?: boolean
+}) {
+  const body = (
+    <>
+      <span className="flex size-6 shrink-0 items-center justify-center">
+        {icon}
+      </span>
+      <span className="min-w-0 flex-1">{label}</span>
+    </>
+  )
+
+  if (href) {
+    if (external) {
+      return (
+        <a
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={sheetPillClass}
+          onClick={onClick}
+        >
+          {body}
+        </a>
+      )
+    }
+    return (
+      <Link href={href} className={sheetPillClass} onClick={onClick}>
+        {body}
+      </Link>
+    )
+  }
+
+  return (
+    <button type="button" className={sheetPillClass} onClick={onClick}>
+      {body}
+    </button>
+  )
+}
+
+function NestedViewChrome({
   title,
+  onDone,
   onBack,
+  children,
 }: {
   title: string
-  onBack: () => void
+  onDone: () => void
+  onBack?: () => void
+  children: React.ReactNode
 }) {
   const common = useTranslations("common")
   return (
-    <div className="flex items-center gap-1 px-2 pb-2 pt-1">
-      <Button
-        type="button"
-        variant="ghost"
-        size="icon"
-        className="size-10 shrink-0 rounded-full"
-        aria-label={common("back")}
-        onClick={onBack}
-      >
-        <ChevronLeftIcon className="size-5 rtl:rotate-180" />
-      </Button>
-      <h3 className="min-w-0 flex-1 truncate text-[17px] font-medium tracking-tight">
-        {title}
-      </h3>
+    <div className="flex min-h-0 flex-1 flex-col overflow-hidden px-4 pb-6">
+      <div className="flex shrink-0 items-center gap-2 pb-3 pt-1">
+        {onBack ? (
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="size-10 shrink-0 rounded-full"
+            aria-label={common("back")}
+            onClick={onBack}
+          >
+            <ChevronLeftIcon className="size-5 rtl:rotate-180" />
+          </Button>
+        ) : (
+          <span className="size-10 shrink-0" aria-hidden />
+        )}
+        <h2 className="min-w-0 flex-1 truncate text-[22px] font-normal tracking-tight text-foreground">
+          {title}
+        </h2>
+        <SheetDoneCheck onClick={onDone} />
+      </div>
+      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
+        {children}
+      </div>
     </div>
   )
 }
 
 /**
- * Mobile profile / settings bottom sheet with GSAP push navigation.
- * Views: root → settings → theme | language; help is a sibling of settings.
+ * Mobile profile / settings bottom sheet — Gemini-style cards, pills, and
+ * grouped settings with GSAP push navigation.
  */
 function ChatAccountSheet({
   open,
@@ -289,15 +410,18 @@ function ChatAccountSheet({
         side="bottom"
         showCloseButton={false}
         className={cn(
-          chatMobileSheetContentClass,
-          // Override Sheet's data-[side=bottom]:h-auto so the view stack can flex.
-          "flex h-[min(88dvh,680px)] flex-col overflow-hidden pb-0 data-[side=bottom]:h-[min(88dvh,680px)]"
+          sheetCanvasClass,
+          "flex h-[min(90dvh,720px)] flex-col overflow-hidden rounded-t-[28px] pt-2 pb-0 data-[side=bottom]:h-[min(90dvh,720px)]"
         )}
       >
-        <div aria-hidden className={cn(chatMobileSheetHandleClass, "shrink-0")} />
+        <div aria-hidden className={sheetHandleClass} />
         <SheetHeader className="sr-only">
           <SheetTitle>
-            {view === "root" ? t("accountMenuFor", { name: user ? userAccountLabel(user) : t("signIn") }) : common("settings")}
+            {view === "root"
+              ? t("accountMenuFor", {
+                  name: user ? userAccountLabel(user) : t("signIn"),
+                })
+              : t("exurSettings")}
           </SheetTitle>
         </SheetHeader>
 
@@ -306,24 +430,36 @@ function ChatAccountSheet({
           enterFromSign={enterFromSign}
           className="min-h-0 w-full flex-1"
         >
-          {/* —— Root profile menu —— */}
+          {/* —— Root profile (Gemini account sheet) —— */}
           <div
             data-view="root"
-            className={cn(chatMobileSheetBodyClass, "overflow-y-auto pb-6")}
+            className="flex min-h-0 flex-1 flex-col overflow-hidden"
           >
-            {user ? (
-              <div className="mb-3 flex items-start justify-between gap-3 px-1 pt-1">
-                <div className="flex min-w-0 items-center gap-3">
+            <div className="flex shrink-0 items-center justify-end px-5 pb-2 pt-0.5">
+              <SheetDoneText onClick={closeSheet} />
+            </div>
+
+            <div className="min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-contain px-4 pb-4">
+              {/* Profile card */}
+              {user ? (
+                <button
+                  type="button"
+                  onClick={() => go("account")}
+                  className={cn(
+                    sheetCardClass,
+                    "flex w-full items-center gap-3.5 rounded-[22px] p-3.5 text-start transition-colors active:bg-black/[0.02] dark:active:bg-white/[0.04]"
+                  )}
+                >
                   <ChatAccountAvatar
                     user={user}
                     avatarUrl={avatarUrl}
                     isProUser={isProUser}
                     planName={planName}
                     showPlanBadge={false}
-                    avatarClassName="size-12"
+                    avatarClassName="size-14 ring-2 ring-[#1A73E8]/70 ring-offset-2 ring-offset-[#F1F3F9] dark:ring-[#8AB4F8]/80 dark:ring-offset-[oklch(0.22_0.01_260)]"
                   />
-                  <div className="flex min-w-0 flex-col gap-0.5">
-                    <span className="truncate text-[17px] font-medium tracking-tight">
+                  <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+                    <span className="truncate text-[17px] font-semibold tracking-tight text-foreground">
                       {userAccountLabel(user)}
                     </span>
                     {email ? (
@@ -331,276 +467,348 @@ function ChatAccountSheet({
                         {email}
                       </span>
                     ) : null}
+                    <span
+                      className={cn(
+                        "mt-1 inline-flex w-fit items-center rounded-full border px-2 py-0.5 text-[11px] font-semibold tracking-wide",
+                        isProUser
+                          ? "border-[#1A73E8] text-[#1A73E8] dark:border-[#8AB4F8] dark:text-[#8AB4F8]"
+                          : "border-foreground/20 text-muted-foreground"
+                      )}
+                    >
+                      {planName}
+                    </span>
                   </div>
-                </div>
-                <Badge
-                  variant={isProUser ? "default" : "secondary"}
+                  <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-foreground/6 dark:bg-white/10">
+                    <ChevronDownIcon
+                      className="size-4 text-foreground/55"
+                      aria-hidden
+                    />
+                  </span>
+                </button>
+              ) : (
+                <div
                   className={cn(
-                    "h-5 shrink-0 px-1.5 text-[10px] font-semibold tracking-wide",
-                    isProUser && "border-0 bg-[#2563EB] text-white"
+                    sheetCardClass,
+                    "flex items-center gap-3.5 rounded-[22px] p-3.5"
                   )}
                 >
-                  {isProUser ? (
-                    <SparklesIcon className="size-2.5" aria-hidden />
-                  ) : null}
-                  {planName}
-                </Badge>
-              </div>
-            ) : (
-              <div className={cn(chatMobileSheetHeaderClass, "px-1")}>
-                <p className={chatMobileSheetTitleClass}>{common("brand")}</p>
-              </div>
-            )}
-
-            <AccountSheetSection>
-              {user && !isProUser ? (
-                <AccountSheetRow
-                  icon={
-                    <SparklesIcon className={chatContextMenuIconClass} />
-                  }
-                  label={t("upgradeToPlus")}
-                  href={UPGRADE_PATH}
-                  onClick={closeSheet}
-                />
-              ) : null}
-              {user ? (
-                <AccountSheetRow
-                  icon={<ReceiptIcon className={chatContextMenuIconClass} />}
-                  label={t("billing")}
-                  href={BILLING_PATH}
-                  onClick={closeSheet}
-                />
-              ) : null}
-              {onOpenNews ? (
-                <AccountSheetRow
-                  icon={
-                    <NewspaperIcon className={chatContextMenuIconClass} />
-                  }
-                  label={t("news")}
-                  onClick={() => {
-                    closeSheet()
-                    onOpenNews()
-                  }}
-                />
-              ) : null}
-            </AccountSheetSection>
-
-            <AccountSheetSection>
-              <AccountSheetRow
-                icon={<SettingsIcon className={chatContextMenuIconClass} />}
-                label={common("settings")}
-                chevron
-                onClick={() => go("settings")}
-              />
-              {isEligible ? (
-                <AccountSheetRow
-                  icon={
-                    <SmartphoneIcon className={chatContextMenuIconClass} />
-                  }
-                  label={
-                    needsManualInstall ? t("addToHomeScreen") : t("installApp")
-                  }
-                  onClick={() => {
-                    void promptInstall()
-                  }}
-                />
-              ) : null}
-              <AccountSheetRow
-                icon={
-                  <CircleHelpIcon className={chatContextMenuIconClass} />
-                }
-                label={t("help")}
-                chevron
-                onClick={() => go("help")}
-              />
-            </AccountSheetSection>
-
-            <AccountSheetSection>
-              {user ? (
-                <AccountSheetRow
-                  icon={<LogOutIcon className="size-4.5 shrink-0" />}
-                  label={t("logOut")}
-                  destructive
-                  onClick={() => {
-                    closeSheet()
-                    void onLogout?.()
-                  }}
-                />
-              ) : (
-                <AccountSheetRow
-                  icon={<GoogleGlyph className="size-4 shrink-0" />}
-                  label={loginPending ? t("connecting") : t("signIn")}
-                  onClick={() => {
-                    if (loginPending) return
-                    closeSheet()
-                    onLogin?.()
-                  }}
-                />
+                  <div className="flex size-14 items-center justify-center rounded-full bg-muted">
+                    <GoogleGlyph className="size-6" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-[17px] font-semibold tracking-tight">
+                      {common("brand")}
+                    </p>
+                    <p className="text-[13px] text-muted-foreground">
+                      {t("signIn")}
+                    </p>
+                  </div>
+                </div>
               )}
-            </AccountSheetSection>
+
+              <div className="flex flex-col gap-2.5 pt-1">
+                {user ? (
+                  <SheetPill
+                    icon={<GoogleGlyph className="size-5" />}
+                    label={t("manageGoogleAccount")}
+                    href={GOOGLE_ACCOUNT_URL}
+                    external
+                  />
+                ) : (
+                  <SheetPill
+                    icon={<GoogleGlyph className="size-5" />}
+                    label={loginPending ? t("connecting") : t("signIn")}
+                    onClick={() => {
+                      if (loginPending) return
+                      closeSheet()
+                      onLogin?.()
+                    }}
+                  />
+                )}
+
+                <SheetPill
+                  icon={<SettingsIcon className={sheetIconClass} />}
+                  label={common("settings")}
+                  onClick={() => go("settings")}
+                />
+
+                {onOpenNews ? (
+                  <SheetPill
+                    icon={<NewspaperIcon className={sheetIconClass} />}
+                    label={t("news")}
+                    onClick={() => {
+                      closeSheet()
+                      onOpenNews()
+                    }}
+                  />
+                ) : null}
+              </div>
+            </div>
+
+            <footer className="flex shrink-0 items-center justify-center gap-2 px-4 pt-2 pb-[max(1rem,env(safe-area-inset-bottom,0px))] text-[12px] text-foreground/55">
+              <a
+                href={privacyHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-foreground"
+              >
+                {t("helpPrivacy")}
+              </a>
+              <span aria-hidden>·</span>
+              <a
+                href={termsHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-foreground"
+              >
+                {t("helpTerms")}
+              </a>
+            </footer>
           </div>
 
-          {/* —— Settings —— */}
-          <div
-            data-view="settings"
-            className={cn(chatMobileSheetBodyClass, "overflow-y-auto pb-6")}
-          >
-            <AccountSheetNavHeader
-              title={common("settings")}
+          {/* —— Account details (from profile chevron) —— */}
+          <div data-view="account" className="flex min-h-0 flex-1 flex-col">
+            <NestedViewChrome
+              title={t("accountSection")}
+              onDone={closeSheet}
               onBack={() => go("root", "pop")}
-            />
-            <AccountSheetSection>
-              <AccountSheetRow
-                icon={<ThemeIcon className={chatContextMenuIconClass} />}
-                label={common("theme")}
-                value={currentTheme.label}
-                chevron
-                onClick={() => go("theme")}
-              />
-              <AccountSheetRow
-                icon={<LanguagesIcon className={chatContextMenuIconClass} />}
-                label={common("language")}
-                value={
-                  <span className="inline-flex items-center gap-1.5">
-                    <LocaleFlag
-                      locale={locale}
-                      tone="color"
-                      className="size-3.5"
-                    />
-                    {currentLocaleLabel}
-                  </span>
-                }
-                chevron
-                onClick={() => go("language")}
-              />
-              <AccountSheetRow
-                icon={<CookieIcon className={chatContextMenuIconClass} />}
-                label={consent("manageTitle")}
-                onClick={() => {
-                  closeSheet()
-                  openCookieSettings()
-                }}
-              />
-            </AccountSheetSection>
+            >
+              <SheetCard>
+                {user && !isProUser ? (
+                  <SheetRow
+                    icon={<SparklesIcon className={sheetIconClass} />}
+                    label={t("upgradeToPlus")}
+                    href={UPGRADE_PATH}
+                    onClick={closeSheet}
+                    divider={false}
+                  />
+                ) : null}
+                {user ? (
+                  <SheetRow
+                    icon={<ReceiptIcon className={sheetIconClass} />}
+                    label={t("billing")}
+                    href={BILLING_PATH}
+                    onClick={closeSheet}
+                    divider={Boolean(user && !isProUser)}
+                  />
+                ) : null}
+                {isEligible ? (
+                  <SheetRow
+                    icon={<SmartphoneIcon className={sheetIconClass} />}
+                    label={
+                      needsManualInstall
+                        ? t("addToHomeScreen")
+                        : t("installApp")
+                    }
+                    onClick={() => {
+                      void promptInstall()
+                    }}
+                    chevron={false}
+                    divider={Boolean(user)}
+                  />
+                ) : null}
+                {user ? (
+                  <SheetRow
+                    icon={<LogOutIcon className="size-[22px] shrink-0" />}
+                    label={t("logOut")}
+                    destructive
+                    chevron={false}
+                    divider
+                    onClick={() => {
+                      closeSheet()
+                      void onLogout?.()
+                    }}
+                  />
+                ) : null}
+              </SheetCard>
+            </NestedViewChrome>
+          </div>
+
+          {/* —— Settings (Gemini Settings pattern) —— */}
+          <div data-view="settings" className="flex min-h-0 flex-1 flex-col">
+            <NestedViewChrome
+              title={t("exurSettings")}
+              onDone={closeSheet}
+              onBack={() => go("root", "pop")}
+            >
+              {user && !isProUser ? (
+                <SheetCard className="mb-1">
+                  <SheetRow
+                    icon={<SparklesIcon className={sheetIconClass} />}
+                    label={t("upgradeToPlus")}
+                    href={UPGRADE_PATH}
+                    onClick={closeSheet}
+                  />
+                </SheetCard>
+              ) : null}
+
+              <p className={sheetSectionLabelClass}>
+                {t("preferencesSection")}
+              </p>
+              <SheetCard>
+                <SheetRow
+                  icon={<ThemeIcon className={sheetIconClass} />}
+                  label={common("theme")}
+                  value={currentTheme.label}
+                  onClick={() => go("theme")}
+                />
+                <SheetRow
+                  icon={<LanguagesIcon className={sheetIconClass} />}
+                  label={common("language")}
+                  value={currentLocaleLabel}
+                  onClick={() => go("language")}
+                  divider
+                />
+              </SheetCard>
+
+              <p className={sheetSectionLabelClass}>
+                {t("dataPrivacySection")}
+              </p>
+              <SheetCard>
+                <SheetRow
+                  icon={<CookieIcon className={sheetIconClass} />}
+                  label={consent("manageTitle")}
+                  chevron={false}
+                  onClick={() => {
+                    closeSheet()
+                    openCookieSettings()
+                  }}
+                />
+                <SheetRow
+                  icon={<ShieldIcon className={sheetIconClass} />}
+                  label={t("helpPrivacy")}
+                  href={privacyHref}
+                  external
+                  onClick={closeSheet}
+                  divider
+                />
+              </SheetCard>
+
+              <p className={sheetSectionLabelClass}>
+                {t("getSupportSection")}
+              </p>
+              <SheetCard>
+                <SheetRow
+                  icon={<CircleHelpIcon className={sheetIconClass} />}
+                  label={t("help")}
+                  onClick={() => go("help")}
+                />
+              </SheetCard>
+            </NestedViewChrome>
           </div>
 
           {/* —— Theme —— */}
-          <div
-            data-view="theme"
-            className={cn(chatMobileSheetBodyClass, "overflow-y-auto pb-6")}
-          >
-            <AccountSheetNavHeader
+          <div data-view="theme" className="flex min-h-0 flex-1 flex-col">
+            <NestedViewChrome
               title={common("theme")}
+              onDone={closeSheet}
               onBack={() => go("settings", "pop")}
-            />
-            <AccountSheetSection>
-              {themeOptions.map(({ id, label, Icon }) => (
-                <AccountSheetRow
-                  key={id}
-                  icon={<Icon className={chatContextMenuIconClass} />}
-                  label={label}
-                  value={
-                    activeTheme === id ? (
-                      <CheckIcon
-                        className="size-4 text-muted-foreground"
-                        aria-hidden
-                      />
-                    ) : null
-                  }
-                  onClick={() => setTheme(id)}
-                />
-              ))}
-            </AccountSheetSection>
-          </div>
-
-          {/* —— Language —— */}
-          <div
-            data-view="language"
-            className={cn(chatMobileSheetBodyClass, "overflow-y-auto pb-6")}
-          >
-            <AccountSheetNavHeader
-              title={common("language")}
-              onBack={() => go("settings", "pop")}
-            />
-            <AccountSheetSection>
-              {routing.locales.map((code) => {
-                const active = locale === code
-                const label = common(localeLabelKey(code))
-                return (
-                  <AccountSheetRow
-                    key={code}
-                    icon={
-                      <LocaleFlag
-                        locale={code}
-                        title={label}
-                        tone={active ? "color" : "mono"}
-                        className="size-5"
-                      />
-                    }
+            >
+              <SheetCard>
+                {themeOptions.map(({ id, label, Icon }, index) => (
+                  <SheetRow
+                    key={id}
+                    icon={<Icon className={sheetIconClass} />}
                     label={label}
+                    chevron={false}
+                    divider={index > 0}
                     value={
-                      active ? (
+                      activeTheme === id ? (
                         <CheckIcon
-                          className="size-4 text-muted-foreground"
+                          className="size-5 text-[#1A73E8] dark:text-[#8AB4F8]"
                           aria-hidden
                         />
                       ) : null
                     }
-                    onClick={() => switchLocale(code)}
+                    onClick={() => setTheme(id)}
                   />
-                )
-              })}
-            </AccountSheetSection>
+                ))}
+              </SheetCard>
+            </NestedViewChrome>
+          </div>
+
+          {/* —— Language —— */}
+          <div data-view="language" className="flex min-h-0 flex-1 flex-col">
+            <NestedViewChrome
+              title={common("language")}
+              onDone={closeSheet}
+              onBack={() => go("settings", "pop")}
+            >
+              <SheetCard>
+                {routing.locales.map((code, index) => {
+                  const active = locale === code
+                  const label = common(localeLabelKey(code))
+                  return (
+                    <SheetRow
+                      key={code}
+                      icon={
+                        <LocaleFlag
+                          locale={code}
+                          title={label}
+                          tone={active ? "color" : "mono"}
+                          className="size-5"
+                        />
+                      }
+                      label={label}
+                      chevron={false}
+                      divider={index > 0}
+                      value={
+                        active ? (
+                          <CheckIcon
+                            className="size-5 text-[#1A73E8] dark:text-[#8AB4F8]"
+                            aria-hidden
+                          />
+                        ) : null
+                      }
+                      onClick={() => switchLocale(code)}
+                    />
+                  )
+                })}
+              </SheetCard>
+            </NestedViewChrome>
           </div>
 
           {/* —— Help —— */}
-          <div
-            data-view="help"
-            className={cn(chatMobileSheetBodyClass, "overflow-y-auto pb-6")}
-          >
-            <AccountSheetNavHeader
+          <div data-view="help" className="flex min-h-0 flex-1 flex-col">
+            <NestedViewChrome
               title={t("help")}
-              onBack={() => go("root", "pop")}
-            />
-            <AccountSheetSection>
-              <AccountSheetRow
-                icon={
-                  <CircleHelpIcon className={chatContextMenuIconClass} />
-                }
-                label={t("helpFaq")}
-                href={faqHref}
-                external
-                onClick={closeSheet}
-              />
-              <AccountSheetRow
-                icon={<BookOpenIcon className={chatContextMenuIconClass} />}
-                label={t("helpWhatIsExur")}
-                href={whatIsHref}
-                external
-                onClick={closeSheet}
-              />
-              <AccountSheetRow
-                icon={<FileTextIcon className={chatContextMenuIconClass} />}
-                label={t("helpTerms")}
-                href={termsHref}
-                external
-                onClick={closeSheet}
-              />
-              <AccountSheetRow
-                icon={<ShieldIcon className={chatContextMenuIconClass} />}
-                label={t("helpPrivacy")}
-                href={privacyHref}
-                external
-                onClick={closeSheet}
-              />
-              <AccountSheetRow
-                icon={<MailIcon className={chatContextMenuIconClass} />}
-                label={t("helpContact")}
-                href={`mailto:${CONTACT_EMAIL}`}
-                external
-                onClick={closeSheet}
-              />
-            </AccountSheetSection>
+              onDone={closeSheet}
+              onBack={() => go("settings", "pop")}
+            >
+              <SheetCard>
+                <SheetRow
+                  icon={<CircleHelpIcon className={sheetIconClass} />}
+                  label={t("helpFaq")}
+                  href={faqHref}
+                  external
+                  onClick={closeSheet}
+                />
+                <SheetRow
+                  icon={<BookOpenIcon className={sheetIconClass} />}
+                  label={t("helpWhatIsExur")}
+                  href={whatIsHref}
+                  external
+                  onClick={closeSheet}
+                  divider
+                />
+                <SheetRow
+                  icon={<FileTextIcon className={sheetIconClass} />}
+                  label={t("helpTerms")}
+                  href={termsHref}
+                  external
+                  onClick={closeSheet}
+                  divider
+                />
+                <SheetRow
+                  icon={<MailIcon className={sheetIconClass} />}
+                  label={t("helpContact")}
+                  href={`mailto:${CONTACT_EMAIL}`}
+                  external
+                  onClick={closeSheet}
+                  divider
+                />
+              </SheetCard>
+            </NestedViewChrome>
           </div>
         </ChatGsapViewStack>
       </SheetContent>

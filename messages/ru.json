@@ -23,6 +23,7 @@
     "darkMode": "Тёмный режим",
     "settings": "Настройки",
     "back": "Назад",
+    "done": "Готово",
     "ready": "Готово",
     "comingSoon": "Скоро",
     "live": "Онлайн",
@@ -588,6 +589,12 @@
     "planFree": "Бесплатный",
     "planPlus": "Plus",
     "planUltimate": "Ultimate",
-    "accountMenuFor": "Меню аккаунта {name}"
+    "accountMenuFor": "Меню аккаунта {name}",
+    "manageGoogleAccount": "Управление аккаунтом Google",
+    "exurSettings": "Настройки Exur",
+    "preferencesSection": "Настройки",
+    "dataPrivacySection": "Данные и конфиденциальность",
+    "getSupportSection": "Поддержка",
+    "accountSection": "Аккаунт"
   }
 }
