@@ -9,17 +9,32 @@ import * as React from "react"
 export const CHAT_MOTION = {
   ease: "power3.out",
   easeIn: "power2.in",
-  panelOpen: 0.42,
-  panelClose: 0.34,
-  backdropOpen: 0.36,
-  backdropClose: 0.28,
-  backdropOpacity: 0.22,
+  panelOpen: 0.35,
+  panelClose: 0.3,
+  backdropOpen: 0.3,
+  backdropClose: 0.3,
+  backdropOpacity: 0.4,
   /** Full-edge slide distance as xPercent. */
   panelXPercent: 100,
+  /** Drag past this progress (0–1) snaps open; below snaps closed. */
+  panelDragSnap: 0.42,
   /** Thread nudge on conversation switch (px). */
   threadX: 18,
   threadDuration: 0.32,
   threadFromOpacity: 0.35,
+  /** Model pickers / glass popups. */
+  popupOpen: 0.25,
+  popupClose: 0.2,
+  popupFromScale: 0.8,
+  popupToScale: 0.9,
+  popupEase: "back.out(1.7)",
+  /** Chat → settings (or similar) push transition. */
+  viewDuration: 0.3,
+  viewEase: "power2.inOut",
+  viewXPercent: 100,
+  viewRecedeXPercent: 30,
+  viewRecedeOpacity: 0.5,
+  viewRecedeScale: 0.95,
 } as const
 
 const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)"

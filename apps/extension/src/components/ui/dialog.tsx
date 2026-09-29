@@ -3,6 +3,7 @@
 import * as React from "react"
 import { Dialog as DialogPrimitive } from "@base-ui/react/dialog"
 
+import { useChatGsapPopup } from "@/hooks/use-chat-gsap-popup"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { XIcon } from "lucide-react"
@@ -43,19 +44,53 @@ const DialogContent = React.forwardRef<
   HTMLDivElement,
   DialogPrimitive.Popup.Props & {
     showCloseButton?: boolean
+    /**
+     * GSAP scale + opacity (back.out / power2.in) instead of CSS animate-in.
+     * Pass the controlled `open` from Dialog root so close tweens can run.
+     */
+    gsapMotion?: boolean
+    open?: boolean
   }
 >(function DialogContent(
-  { className, children, showCloseButton = true, ...props },
+  {
+    className,
+    children,
+    showCloseButton = true,
+    gsapMotion = false,
+    open = true,
+    ...props
+  },
   ref
 ) {
+  const gsapRef = useChatGsapPopup({
+    open,
+    enabled: gsapMotion,
+    transformOrigin: "center center",
+    // Base UI owns exit presence; GSAP only handles the enter spring.
+    phase: "open-only",
+  })
+
+  const setRefs = React.useCallback(
+    (node: HTMLDivElement | null) => {
+      gsapRef.current = node
+      if (typeof ref === "function") ref(node)
+      else if (ref) ref.current = node
+    },
+    [gsapRef, ref]
+  )
+
   return (
     <DialogPortal>
       <DialogOverlay />
       <DialogPrimitive.Popup
-        ref={ref}
+        ref={setRefs}
         data-slot="dialog-content"
+        data-gsap-motion={gsapMotion ? "true" : undefined}
         className={cn(
-          "fixed top-1/2 left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-4 rounded-xl bg-popover p-4 text-sm text-popover-foreground ring-1 ring-foreground/10 duration-100 outline-none sm:max-w-sm data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
+          "fixed top-1/2 left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-4 rounded-xl bg-popover p-4 text-sm text-popover-foreground ring-1 ring-foreground/10 outline-none sm:max-w-sm",
+          gsapMotion
+            ? "duration-100 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95"
+            : "duration-100 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
           className
         )}
         {...props}
