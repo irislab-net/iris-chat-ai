@@ -33,22 +33,38 @@ function ChatGsapViewStack({
   const skipFirstRef = React.useRef(true)
   const tlRef = React.useRef<{ kill: () => void } | null>(null)
 
-  React.useLayoutEffect(() => {
-    const root = rootRef.current
-    if (!root) return
-
-    const views = Array.from(
-      root.querySelectorAll<HTMLElement>(":scope > [data-view]")
-    )
-    for (const view of views) {
-      const isActive = view.dataset.view === active
-      view.hidden = !isActive
-      view.setAttribute("aria-hidden", isActive ? "false" : "true")
-      if (isActive) {
-        view.style.display = "flex"
+  const syncVisibility = React.useCallback(
+    (activeKey: string, opts?: { hideOthers: boolean }) => {
+      const root = rootRef.current
+      if (!root) return
+      const views = Array.from(
+        root.querySelectorAll<HTMLElement>(":scope > [data-view]")
+      )
+      for (const view of views) {
+        const isActive = view.dataset.view === activeKey
+        if (isActive) {
+          view.hidden = false
+          view.style.display = "flex"
+          view.setAttribute("aria-hidden", "false")
+          continue
+        }
+        if (opts?.hideOthers !== false) {
+          view.hidden = true
+          view.style.display = "none"
+          view.setAttribute("aria-hidden", "true")
+          view.style.opacity = ""
+          view.style.transform = ""
+        }
       }
-    }
-  }, [active])
+    },
+    []
+  )
+
+  // Initial paint only — transitions own visibility after that.
+  React.useLayoutEffect(() => {
+    if (!skipFirstRef.current) return
+    syncVisibility(active, { hideOthers: true })
+  }, [active, syncVisibility])
 
   React.useEffect(() => {
     const root = rootRef.current
@@ -71,16 +87,20 @@ function ChatGsapViewStack({
     const nextView = root.querySelector<HTMLElement>(
       `:scope > [data-view="${CSS.escape(active)}"]`
     )
-    if (!currentView || !nextView) return
+    if (!currentView || !nextView) {
+      syncVisibility(active, { hideOthers: true })
+      return
+    }
 
     currentView.hidden = false
     nextView.hidden = false
     currentView.style.display = "flex"
     nextView.style.display = "flex"
+    currentView.setAttribute("aria-hidden", "true")
+    nextView.setAttribute("aria-hidden", "false")
 
     if (prefersChatReducedMotion()) {
-      currentView.hidden = true
-      currentView.style.display = "none"
+      syncVisibility(active, { hideOthers: true })
       return
     }
 
@@ -94,12 +114,7 @@ function ChatGsapViewStack({
         enterFromSign,
         onComplete: () => {
           if (cancelled) return
-          currentView.hidden = true
-          currentView.style.display = "none"
-          currentView.style.opacity = ""
-          currentView.style.transform = ""
-          nextView.style.opacity = ""
-          nextView.style.transform = ""
+          syncVisibility(active, { hideOthers: true })
         },
       })
     })
@@ -109,7 +124,7 @@ function ChatGsapViewStack({
       tlRef.current?.kill()
       tlRef.current = null
     }
-  }, [active, enterFromSign])
+  }, [active, enterFromSign, syncVisibility])
 
   return (
     <div

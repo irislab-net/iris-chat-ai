@@ -21,10 +21,7 @@ import { useLocale, useTranslations } from "next-intl"
 
 import { AttentionPulseDot } from "@/components/app-shell/attention-pulse-dot"
 import { ChatAccountAvatar } from "@/components/app-shell/chat-account-avatar"
-import {
-  AccountGuestMenuSections,
-  AccountSignedInMenuSections,
-} from "@/components/app-shell/chat-account-menu-sections"
+import { ChatAccountMenu } from "@/components/app-shell/chat-account-menu"
 import { ChatGeminiNewChatIcon } from "@/components/app-shell/chat-gemini-new-chat-icon"
 import { ChatHistorySearchDialog } from "@/components/app-shell/chat-history-search-dialog"
 import { ExurLogo } from "@/components/brand/exur-logo"
@@ -333,7 +330,7 @@ function MobileHistoryDrawerFooter({
 }) {
   const t = useTranslations("workspace")
   const common = useTranslations("common")
-  const { user, isProUser, login, logout, loginPending } = useAuth()
+  const { user, isProUser, login, loginPending } = useAuth()
   const avatarUrl = useUserAvatarUrl(user)
 
   return (
@@ -345,26 +342,42 @@ function MobileHistoryDrawerFooter({
         )}
       >
         {user ? (
-          <div className="flex min-w-0 flex-1 items-center gap-2.5">
-            <ChatAccountAvatar
-              user={user}
-              avatarUrl={avatarUrl}
-              isProUser={isProUser}
-              planName={displayPlanName(user.tier)}
-              compact
-              avatarClassName="size-9"
-            />
-            <div className="min-w-0">
-              <p className="truncate text-[15px] leading-tight font-normal">
-                {userAccountLabel(user)}
-              </p>
-              {userAccountSubline(user) ? (
-                <p className="truncate text-[13px] text-muted-foreground">
-                  {userAccountSubline(user)}
-                </p>
-              ) : null}
-            </div>
-          </div>
+          <ChatAccountMenu
+            variant="mobile"
+            sheetInitialView="root"
+            onOpenNews={onOpenNews}
+            className="h-11 min-w-0 flex-1 justify-start gap-2.5 px-1"
+            trigger={
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className="h-11 min-w-0 flex-1 justify-start gap-2.5 px-1 text-[15px] font-normal"
+                aria-label={t("accountMenuFor", {
+                  name: userAccountLabel(user),
+                })}
+              >
+                <ChatAccountAvatar
+                  user={user}
+                  avatarUrl={avatarUrl}
+                  isProUser={isProUser}
+                  planName={displayPlanName(user.tier)}
+                  compact
+                  avatarClassName="size-9"
+                />
+                <span className="min-w-0 text-start">
+                  <span className="block truncate text-[15px] leading-tight font-normal">
+                    {userAccountLabel(user)}
+                  </span>
+                  {userAccountSubline(user) ? (
+                    <span className="block truncate text-[13px] text-muted-foreground">
+                      {userAccountSubline(user)}
+                    </span>
+                  ) : null}
+                </span>
+              </Button>
+            }
+          />
         ) : (
           <Button
             type="button"
@@ -392,61 +405,22 @@ function MobileHistoryDrawerFooter({
             {t("upgrade")}
           </Button>
         ) : null}
-        <DropdownMenu>
-          <DropdownMenuTrigger
-            render={
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                className={cn(chatMobileHeaderButtonClass, "shrink-0")}
-                aria-label={common("settings")}
-              />
-            }
-          >
-            <Settings className="size-5" />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent
-            align="end"
-            side="top"
-            sideOffset={8}
-            showBackdrop="mobile"
-            className={cn(chatContextMenuContentClass, "min-w-64")}
-          >
-            {user ? (
-              <AccountSignedInMenuSections
-                user={user}
-                isProUser={isProUser}
-                planName={
-                  displayPlanName(user.tier) === "Plus"
-                    ? t("planPlus")
-                    : displayPlanName(user.tier) === "Ultimate"
-                      ? t("planUltimate")
-                      : t("planFree")
-                }
-                avatarUrl={avatarUrl ?? null}
-                onLogout={logout}
-                onOpenNews={onOpenNews}
-              />
-            ) : (
-              <>
-                {onOpenNews ? (
-                  <DropdownMenuItem
-                    className={chatContextMenuItemClass}
-                    onClick={onOpenNews}
-                  >
-                    <NewspaperIcon className={chatContextMenuIconClass} />
-                    {t("news")}
-                  </DropdownMenuItem>
-                ) : null}
-                <AccountGuestMenuSections
-                  loginPending={loginPending}
-                  onLogin={() => login({ source: "chat" })}
-                />
-              </>
-            )}
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <ChatAccountMenu
+          variant="mobile"
+          sheetInitialView="settings"
+          onOpenNews={onOpenNews}
+          trigger={
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className={cn(chatMobileHeaderButtonClass, "shrink-0")}
+              aria-label={common("settings")}
+            >
+              <Settings className="size-5" />
+            </Button>
+          }
+        />
       </div>
     </footer>
   )
