@@ -9,7 +9,10 @@ import {
   ChatGuestAvatar,
 } from "@/components/app-shell/chat-account-avatar"
 import { ChatGsapViewStack } from "@/components/app-shell/chat-gsap-view-stack"
-import { chatUpgradePillClass } from "@/components/app-shell/chat-mobile-gemini-styles"
+import {
+  chatAccentSecondaryFillClass,
+  chatUpgradePillClass,
+} from "@/components/app-shell/chat-mobile-gemini-styles"
 import { LocaleFlag } from "@/components/i18n/locale-flag"
 import {
   SfBookIcon,
@@ -83,9 +86,11 @@ const sheetPrimaryPillClass = cn(
   "inline-flex h-8 w-fit items-center justify-center gap-1.5 px-3.5 text-[13px] font-semibold"
 )
 
-/** Blue Done check circle — opaque brand fill, not the text pill. */
-const sheetBlueGlassIconButtonClass =
-  "flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-full border-0 bg-[#2563EB] text-white shadow-[inset_0_1px_1px_rgba(255,255,255,0.42),inset_0_-1px_2px_rgba(29,78,216,0.28),0_4px_16px_-4px_rgba(37,99,235,0.28)] transition-[transform,background-color,box-shadow] duration-150 ease-out hover:bg-[#1D4ED8] active:scale-[0.96]"
+/** Secondary blue liquid-glass Done check circle. */
+const sheetBlueGlassIconButtonClass = cn(
+  chatAccentSecondaryFillClass,
+  "chat-ios26-liquid-glass relative isolate flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-full px-0"
+)
 
 const sheetRowClass =
   "flex min-h-[3.25rem] w-full items-center gap-3.5 px-4 text-start text-[16px] font-normal tracking-[-0.01em] transition-colors active:bg-black/[0.03] dark:active:bg-white/[0.06]"
@@ -128,7 +133,7 @@ function SheetDoneCheck({ onClick }: { onClick: () => void }) {
       title={common("done")}
       className={sheetBlueGlassIconButtonClass}
     >
-      <SfCheckIcon className="size-5 text-white" strokeWidth={2.6} />
+      <SfCheckIcon className="size-5" strokeWidth={2.6} />
     </button>
   )
 }

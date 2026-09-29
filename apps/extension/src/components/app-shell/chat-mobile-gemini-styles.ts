@@ -566,6 +566,7 @@ export {
   chatMobileHeaderPlanBadgeClass,
   chatMobileHeaderModelPrimaryClass,
   chatMobileHeaderModelSecondaryClass,
+  chatAccentSecondaryFillClass,
   chatMobilePrimaryButtonClass,
   chatNewsFreshnessBadgeClass,
   chatNewsFreshnessBadgeDesktopClass,
