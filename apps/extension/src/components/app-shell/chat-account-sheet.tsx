@@ -4,7 +4,10 @@ import * as React from "react"
 import { useLocale, useTranslations } from "next-intl"
 import { useTheme } from "@wrksz/themes/client/use-theme"
 
-import { ChatAccountAvatar } from "@/components/app-shell/chat-account-avatar"
+import {
+  ChatAccountAvatar,
+  ChatGuestAvatar,
+} from "@/components/app-shell/chat-account-avatar"
 import { ChatGsapViewStack } from "@/components/app-shell/chat-gsap-view-stack"
 import { LocaleFlag } from "@/components/i18n/locale-flag"
 import {
@@ -24,7 +27,6 @@ import {
   SfMailIcon,
   SfMoonIcon,
   SfNewspaperIcon,
-  SfPersonCircleIcon,
   SfQuestionCircleIcon,
   SfShieldIcon,
   SfSparklesIcon,
@@ -554,9 +556,10 @@ function ChatAccountSheet({
                     "flex items-center gap-3.5 rounded-[22px] p-3.5"
                   )}
                 >
-                  <div className="flex size-14 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground">
-                    <SfPersonCircleIcon className="size-7" aria-hidden />
-                  </div>
+                  <ChatGuestAvatar
+                    avatarClassName="size-14"
+                    badgeClassName="h-4 translate-y-[35%] px-1.5 text-[9px]"
+                  />
                   <div className="flex min-w-0 flex-1 flex-col gap-2">
                     <div className="flex min-w-0 flex-col gap-0.5">
                       <p className="truncate text-[17px] font-semibold tracking-tight">

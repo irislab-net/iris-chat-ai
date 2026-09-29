@@ -4,7 +4,10 @@ import * as React from "react"
 import { Link } from "@/i18n/navigation"
 import { useTranslations } from "next-intl"
 
-import { ChatAccountAvatar } from "@/components/app-shell/chat-account-avatar"
+import {
+  ChatAccountAvatar,
+  ChatGuestAvatar,
+} from "@/components/app-shell/chat-account-avatar"
 import { AccountSignedInMenuSections } from "@/components/app-shell/chat-account-menu-sections"
 import { AccountPreferencesGroup } from "@/components/app-shell/chat-account-preferences"
 import { SfGearIcon } from "@/components/icons/sf-menu-icons"
@@ -15,9 +18,7 @@ import {
   chatHistoryRailUpgradeClass,
 } from "@/components/app-shell/chat-mobile-gemini-styles"
 import { useAuth } from "@/components/auth/auth-provider"
-import { GoogleGlyph } from "@/components/auth/google-glyph"
 import { useUserAvatarUrl } from "@/hooks/use-user-avatar-url"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -90,11 +91,7 @@ function ChatAccountFooter({
         disabled={loginPending}
         onClick={() => login({ source: "chat" })}
       >
-        <Avatar className="size-9 after:border-0">
-          <AvatarFallback className="bg-muted text-[11px]">
-            <GoogleGlyph className="size-4" />
-          </AvatarFallback>
-        </Avatar>
+        <ChatGuestAvatar avatarClassName="size-9" />
         {!collapsed ? (
           <span className="min-w-0 flex-1 truncate text-start text-[15px] font-medium">
             {loginPending ? t("connecting") : t("signIn")}
