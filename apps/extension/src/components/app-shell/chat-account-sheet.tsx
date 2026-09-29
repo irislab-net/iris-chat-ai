@@ -84,13 +84,13 @@ const sheetPrimaryPillClass = cn(
   "inline-flex h-9 w-fit items-center justify-center gap-1.5 px-4 text-[13px] font-semibold"
 )
 
-/** Frost liquid-glass icon — denser so it reads on the solid sheet canvas. */
+/** Frost liquid-glass icon — opaque enough to read on the solid sheet canvas. */
 const sheetGlassIconButtonClass =
-  "chat-ios26-liquid-glass relative isolate flex size-10 shrink-0 items-center justify-center rounded-full border border-white/60 bg-white/75 text-foreground shadow-[inset_0_1px_0_0_rgba(255,255,255,0.95),inset_0_0_0_0.5px_rgba(255,255,255,0.55),inset_0_-8px_14px_-10px_rgba(0,0,0,0.1),0_1px_2px_rgba(0,0,0,0.06),0_8px_18px_-10px_rgba(0,0,0,0.14)] backdrop-blur-[22px] backdrop-saturate-[190%] transition-[transform,background-color,box-shadow] duration-150 ease-out active:scale-[0.96] dark:border-white/22 dark:bg-white/[0.18] dark:text-white dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.38),inset_0_0_0_0.5px_rgba(255,255,255,0.16),inset_0_-10px_18px_-12px_rgba(0,0,0,0.5),0_8px_20px_-10px_rgba(0,0,0,0.45)] dark:supports-[backdrop-filter]:bg-white/[0.14]"
+  "chat-ios26-liquid-glass relative isolate flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-full border border-black/8 bg-[rgba(255,255,255,0.92)] text-foreground shadow-[inset_0_1px_0_0_rgba(255,255,255,1),inset_0_-6px_12px_-8px_rgba(0,0,0,0.08),0_1px_2px_rgba(0,0,0,0.06),0_6px_14px_-6px_rgba(0,0,0,0.12)] backdrop-blur-[22px] backdrop-saturate-[190%] transition-transform duration-150 ease-out active:scale-[0.96] dark:border-white/20 dark:bg-[rgba(255,255,255,0.16)] dark:text-white dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.35),inset_0_-8px_14px_-10px_rgba(0,0,0,0.45),0_6px_16px_-6px_rgba(0,0,0,0.4)]"
 
 /** Blue liquid-glass Done check circle. */
 const sheetBlueGlassIconButtonClass =
-  "chat-ios26-liquid-glass relative isolate flex size-10 shrink-0 items-center justify-center rounded-full border border-white/45 bg-[#2563EB]/75 text-white shadow-[inset_0_1px_1px_rgba(255,255,255,0.58),inset_0_0_0_0.5px_rgba(255,255,255,0.28),inset_0_-8px_14px_-10px_rgba(29,78,216,0.4),0_4px_16px_-4px_rgba(37,99,235,0.38)] backdrop-blur-xl backdrop-saturate-[180%] transition-[transform,background-color,box-shadow] duration-150 ease-out hover:bg-[#2563EB]/88 active:scale-[0.96] dark:border-white/28 dark:bg-[#2563EB]/68"
+  "chat-ios26-liquid-glass relative isolate flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-full border border-white/50 bg-[rgba(37,99,235,0.88)] text-white shadow-[inset_0_1px_1px_rgba(255,255,255,0.55),inset_0_-6px_12px_-8px_rgba(29,78,216,0.45),0_4px_14px_-4px_rgba(37,99,235,0.4)] backdrop-blur-xl backdrop-saturate-[180%] transition-[transform,background-color] duration-150 ease-out hover:bg-[rgba(37,99,235,0.96)] active:scale-[0.96] dark:border-white/30 dark:bg-[rgba(37,99,235,0.75)]"
 
 const sheetRowClass =
   "flex min-h-[3.25rem] w-full items-center gap-3.5 px-4 text-start text-[16px] font-normal tracking-[-0.01em] transition-colors active:bg-black/[0.03] dark:active:bg-white/[0.06]"
