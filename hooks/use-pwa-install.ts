@@ -2,6 +2,7 @@
 
 import * as React from "react"
 
+import { useAuth } from "@/components/auth/auth-provider"
 import { isStandaloneDisplay } from "@/lib/display-mode"
 import {
   type BeforeInstallPromptEventLike,
@@ -116,6 +117,7 @@ function useHostname() {
 }
 
 function usePwaInstall(): PwaInstallState {
+  const { isAuthenticated, loading: authLoading } = useAuth()
   const promptEvent = React.useSyncExternalStore(
     subscribeDeferred,
     getDeferredSnapshot,
@@ -167,9 +169,13 @@ function usePwaInstall(): PwaInstallState {
   const ios = hydrated && isIosLikeDevice()
   const canPrompt = Boolean(promptEvent) && !isInstalled
   const needsManualInstall = ios && !isInstalled
+  // iOS isolates Home Screen storage from Safari unless the user installs
+  // while already signed in — never nudge guests to install first.
   const isEligible =
     hydrated &&
     onChatDesk &&
+    !authLoading &&
+    isAuthenticated &&
     !isInstalled &&
     (canPrompt || needsManualInstall)
 

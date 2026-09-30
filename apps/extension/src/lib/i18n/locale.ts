@@ -1,7 +1,10 @@
 import type { AppLocale } from "@/i18n/routing"
+import { routing } from "@/i18n/routing"
 
 /** Must match next-intl default (`routing/config.js`). */
 export const LOCALE_COOKIE_NAME = "NEXT_LOCALE"
+/** Extension-only durable locale (MV3 has no reliable cross-reload cookies). */
+export const LOCALE_STORAGE_KEY = "exur_ext_locale"
 
 const LOCALE_COOKIE_MAX_AGE = 60 * 60 * 24 * 365
 
@@ -58,13 +61,42 @@ const OPEN_GRAPH_LOCALES: Record<AppLocale, string> = {
 
 const RTL_LOCALES = new Set<string>(["ar", "fa"])
 
-/** Sync middleware locale detection before a hard navigation. */
+export function isAppLocale(value: unknown): value is AppLocale {
+  return (
+    typeof value === "string" &&
+    (routing.locales as readonly string[]).includes(value)
+  )
+}
+
+export async function readStoredLocale(): Promise<AppLocale> {
+  try {
+    const data = await chrome.storage.local.get(LOCALE_STORAGE_KEY)
+    const value = data[LOCALE_STORAGE_KEY]
+    if (isAppLocale(value)) return value
+  } catch {
+    // ignore
+  }
+  return routing.defaultLocale
+}
+
+/** Persist locale for the next side-panel / login load. */
 export function persistLocaleChoice(locale: AppLocale) {
   const secure =
     typeof location !== "undefined" && location.protocol === "https:"
       ? "; Secure"
       : ""
   document.cookie = `${LOCALE_COOKIE_NAME}=${locale}; path=/; max-age=${LOCALE_COOKIE_MAX_AGE}; SameSite=Lax${secure}`
+  try {
+    void chrome.storage.local.set({ [LOCALE_STORAGE_KEY]: locale })
+  } catch {
+    // ignore
+  }
+}
+
+/** Apply `lang` / `dir` on the document for the active locale. */
+export function applyLocaleToDocument(locale: AppLocale) {
+  document.documentElement.lang = locale
+  document.documentElement.dir = localeDirection(locale)
 }
 
 export function localeDirection(locale: string): "ltr" | "rtl" {

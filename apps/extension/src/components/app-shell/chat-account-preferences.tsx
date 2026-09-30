@@ -11,13 +11,11 @@ import {
 import { LocaleFlag } from "@/components/i18n/locale-flag"
 import {
   SfCheckIcon,
-  SfCookieIcon,
   SfDesktopIcon,
   SfGlobeIcon,
   SfMoonIcon,
   SfSunIcon,
 } from "@/components/icons/sf-menu-icons"
-import { openCookieSettings } from "@/components/privacy/cookie-consent-banner"
 import {
   DropdownMenuGroup,
   DropdownMenuItem,
@@ -25,25 +23,20 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
 } from "@/components/ui/dropdown-menu"
-import { getPathname, usePathname } from "@/i18n/navigation"
 import { routing, type AppLocale } from "@/i18n/routing"
 import { localeLabelKey, persistLocaleChoice } from "@/lib/i18n/locale"
 import { cn } from "@/lib/utils"
 
 function useAccountLocaleSwitch() {
   const locale = useLocale() as AppLocale
-  const pathname = usePathname()
 
   return {
     locale,
     switchLocale(next: AppLocale) {
       if (next === locale) return
       persistLocaleChoice(next)
-      const nextPath = getPathname({ locale: next, href: pathname })
-      const { search, hash } = window.location
-      // Hard reload so html dir, cookies, and desk state reset cleanly after locale switch.
-      // eslint-disable-next-line @next/next/no-location-assign-relative-destination -- intentional full navigation
-      window.location.assign(`${nextPath}${search}${hash}`)
+      // Side panel has no locale-prefixed routes — reload to remount providers.
+      window.location.reload()
     },
   }
 }
@@ -159,33 +152,17 @@ function AccountLanguageItems() {
   )
 }
 
-function AccountCookieSettingsItem() {
-  const t = useTranslations("consent")
-
-  return (
-    <DropdownMenuItem
-      className={chatContextMenuItemClass}
-      onClick={() => openCookieSettings()}
-    >
-      <SfCookieIcon className={chatContextMenuIconClass} />
-      <span className="flex-1">{t("manageTitle")}</span>
-    </DropdownMenuItem>
-  )
-}
-
 /** Preferences block used across account menus. */
 function AccountPreferencesGroup() {
   return (
     <DropdownMenuGroup>
       <AccountThemeItems />
       <AccountLanguageItems />
-      <AccountCookieSettingsItem />
     </DropdownMenuGroup>
   )
 }
 
 export {
-  AccountCookieSettingsItem,
   AccountLanguageItems,
   AccountPreferencesGroup,
   AccountThemeItems,

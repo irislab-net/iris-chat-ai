@@ -50,27 +50,23 @@ export const APP_PATH = "/"
  */
 export const LANDING_PATH = "/"
 
-/** Absolute landing URL for cross-host links (chat desk → apex). */
+/** Absolute marketing home — always external in the extension. */
 export function getLandingHref(): string {
-  if (process.env.NODE_ENV === "development") return "/home"
   return MARKETING_ORIGIN
 }
 
 /**
  * Marketing page href for links that may render on chat.exur.ai.
- * Relative `/privacy` (etc.) on the desk triggers Next RSC prefetch → cross-origin
- * 308 to exur.ai → CORS console errors. Apex absolute URLs skip that.
- * Local/preview keep relative paths (no host split).
+ * Extension always uses absolute apex URLs (no in-extension marketing routes).
  */
 export function getMarketingPageHref(path: string): string {
   const normalized = path.startsWith("/") ? path : `/${path}`
-  if (process.env.NODE_ENV === "development") return normalized
   return `${MARKETING_ORIGIN}${normalized}`
 }
 
-/** In-app path to the marketing landing (nav/logo off-landing). */
+/** Marketing home path fragment for FAQ anchors — always apex. */
 export function getMarketingHomePath(): string {
-  return process.env.NODE_ENV === "development" ? "/home" : "/"
+  return "/"
 }
 
 /** Canonical in-app desk entry (news workspace at `/`). */
@@ -90,11 +86,11 @@ export function isAppDeskPath(pathname: string | null | undefined): boolean {
   return pathname === APP_PATH || pathname === "/app"
 }
 
-/** Full-screen plan picker → crypto invoice checkout. */
-export const UPGRADE_PATH = "/upgrade"
+/** Plan picker on the web chat app (opens in a new tab from the extension). */
+export const UPGRADE_PATH = `${PRODUCTION_ORIGIN}/upgrade`
 
-/** Account billing status, invoices, and payment history. */
-export const BILLING_PATH = "/billing"
+/** Billing status on the web chat app (opens in a new tab from the extension). */
+export const BILLING_PATH = `${PRODUCTION_ORIGIN}/billing`
 
 /** Public indexable paths (sitemap + IA) — keep in sync with INDEXABLE_ROUTES. */
 export const PUBLIC_INDEXABLE_PATHS = [

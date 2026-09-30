@@ -1,7 +1,6 @@
 "use client"
 
 import * as React from "react"
-import { Link } from "@/i18n/navigation"
 import { useTranslations } from "next-intl"
 
 import {
@@ -215,7 +214,9 @@ function ChatAccountFooterSignedIn({
           size="sm"
           className={chatHistoryRailUpgradeClass}
           nativeButton={false}
-          render={<Link href={UPGRADE_PATH} />}
+          render={
+            <a href={UPGRADE_PATH} target="_blank" rel="noopener noreferrer" />
+          }
         >
           {t("upgrade")}
         </Button>

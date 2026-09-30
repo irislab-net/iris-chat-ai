@@ -14,9 +14,13 @@ import type {
 } from "@/lib/api/types"
 import { buildChatClientContext as buildChatClientContextFromTools } from "@/lib/chat/client-tools"
 import { isChatCreditBalance } from "@/lib/api/credit-usage"
+import { CHAT_API_ORIGIN } from "@/lib/api/origins"
 
-/** Same-origin chat proxy base — browser calls go through app/v1/[...path]/route.ts. */
-export const CHAT_API_BASE = "/v1/chat"
+/**
+ * Absolute chat API base — extension has no Next.js `/v1` proxy.
+ * Must hit api.exur.ai directly (see AUTH.md / host_permissions).
+ */
+export const CHAT_API_BASE = `${CHAT_API_ORIGIN}/v1/chat`
 
 export function chatApiPath(subpath: string): string {
   const path = subpath.startsWith("/") ? subpath : `/${subpath}`

@@ -288,7 +288,7 @@ export async function refreshAccessToken(): Promise<TokenPair> {
 }
 
 export async function getMe(accessToken: string): Promise<User> {
-  // Same-origin rewrite avoids CORS blocks on api.exur.ai/v1/me
+  // Extension calls api.exur.ai with Bearer — CORS must allow chrome-extension:// origins.
   const res = await fetch(authUrl("/v1/me"), {
     headers: { Authorization: `Bearer ${accessToken}` },
   })

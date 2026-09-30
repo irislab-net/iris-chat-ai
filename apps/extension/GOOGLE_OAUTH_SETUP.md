@@ -37,3 +37,4 @@ It must print **exactly** the same string you added in Google Cloud (including t
 - Do **not** use `http://localhost` or `https://chat.exur.ai/...` as the extension redirect.
 - JavaScript origins are for GIS/One Tap on the website; this flow needs the **redirect URI**.
 - If mismatch persists, wait 1–2 minutes after saving in Google Cloud and try again.
+- **Store builds:** `pnpm extension:pack` removes `manifest.key`, so the live extension ID differs from the local ID above. Always add `https://<STORE_EXTENSION_ID>.chromiumapp.org/` as well — see [`STORE_CHECKLIST.md`](./STORE_CHECKLIST.md).

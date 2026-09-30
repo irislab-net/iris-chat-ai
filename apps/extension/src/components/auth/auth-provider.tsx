@@ -9,6 +9,7 @@ import {
   isExurLoginMessage,
 } from "@/adapters/login-messages"
 import { chromeTokenStore } from "@/adapters/token-store"
+import { AuthErrorSheet } from "@/components/auth/auth-error-sheet"
 import {
   AUTH_SESSION_EXPIRED_EVENT,
   bootstrapSession,
@@ -20,8 +21,20 @@ import {
   storeTokenPair,
 } from "@/lib/api/auth"
 import type { User } from "@/lib/api/types"
-import { readChatStore } from "@/lib/chat-storage"
-import { mergeGuestAccount } from "@/lib/guest-chat"
+import { toAuthUserError, type AuthUserError } from "@/lib/auth-user-errors"
+import { setChatRegisteredUserId } from "@/lib/chat-auth-session"
+import {
+  readChatStore,
+  setActiveConversation,
+  upsertConversation,
+  writeChatStore,
+  type ChatStore,
+} from "@/lib/chat-storage"
+import { getStoredGuestUserId, mergeGuestAccount } from "@/lib/guest-chat"
+import {
+  isValidWebSessionId,
+  reboundWebSessionId,
+} from "@/lib/web-session-id"
 
 type LoginOptions = { source?: string }
 
@@ -49,17 +62,53 @@ async function hydrateAccessFromChrome(): Promise<boolean> {
   return true
 }
 
-async function mergeGuestAfterLogin() {
+/** Copy guest threads that the backend can rewrite onto the registered user store. */
+async function adoptGuestConversations(
+  guestUserId: string,
+  registeredUserId: string,
+  guestStore: ChatStore
+) {
+  let next = readChatStore(registeredUserId)
+  let changed = false
+  for (const conversation of guestStore.conversations) {
+    if (!(await isValidWebSessionId(guestUserId, conversation.id))) continue
+    const id = await reboundWebSessionId(registeredUserId, conversation.id)
+    if (!id) continue
+    next = upsertConversation(next, { ...conversation, id })
+    changed = true
+  }
+  if (
+    guestStore.activeId &&
+    (await isValidWebSessionId(guestUserId, guestStore.activeId))
+  ) {
+    const activeId = await reboundWebSessionId(
+      registeredUserId,
+      guestStore.activeId
+    )
+    if (activeId) {
+      next = setActiveConversation(next, activeId)
+      changed = true
+    }
+  }
+  if (changed) writeChatStore(registeredUserId, next)
+}
+
+async function mergeGuestAfterLogin(registeredUserId: string) {
   const token = getStoredAccessToken()
   if (!token) return
-  const guestSessions = readChatStore(null).conversations.map(
+  const guestUserId = getStoredGuestUserId()
+  const guestStore = readChatStore(null)
+  const guestSessions = guestStore.conversations.map(
     (conversation) => conversation.id
   )
   try {
-    await mergeGuestAccount(
+    const merged = await mergeGuestAccount(
       token,
       guestSessions.length > 0 ? guestSessions : undefined
     )
+    if (merged && guestUserId) {
+      await adoptGuestConversations(guestUserId, registeredUserId, guestStore)
+    }
   } catch {
     // Best-effort; guest storage remains for retry.
   }
@@ -69,28 +118,47 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = React.useState<User | null>(null)
   const [loading, setLoading] = React.useState(true)
   const [loginPending, setLoginPending] = React.useState(false)
-  const [loginError, setLoginError] = React.useState<string | null>(null)
+  const [userError, setUserError] = React.useState<AuthUserError | null>(null)
 
-  const refresh = React.useCallback(async () => {
+  const showError = React.useCallback((raw: unknown) => {
+    console.error("[exur-auth]", raw)
+    setUserError(toAuthUserError(raw))
+  }, [])
+
+  const clearError = React.useCallback(() => setUserError(null), [])
+
+  const applySession = React.useCallback((session: { user: User | null }) => {
+    setUser(session.user)
+    // Drives chatApiFetch guest vs authed Bearer — must stay in sync with UI auth.
+    setChatRegisteredUserId(session.user?.id ?? null)
+  }, [])
+
+  const refreshSession = React.useCallback(async () => {
     await hydrateAccessFromChrome()
     try {
       const session = await bootstrapSession()
-      setUser(session.user)
+      applySession(session)
       if (!session.user) clearStoredTokens()
-    } catch {
+      return session
+    } catch (err) {
       clearStoredTokens()
-      setUser(null)
+      applySession({ user: null })
+      throw err
     }
-  }, [])
+  }, [applySession])
+
+  const refresh = React.useCallback(async () => {
+    await refreshSession()
+  }, [refreshSession])
 
   const refreshAfterUpgrade = React.useCallback(async () => {
     try {
       const session = await establishSessionAfterPlanUpgrade()
-      setUser(session.user)
+      applySession(session)
     } catch {
       await refresh()
     }
-  }, [refresh])
+  }, [refresh, applySession])
 
   React.useEffect(() => {
     void (async () => {
@@ -98,7 +166,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         if (hasPlanUpgradePendingRefresh()) {
           try {
             const session = await establishSessionAfterPlanUpgrade()
-            setUser(session.user)
+            applySession(session)
             return
           } catch {
             // Keep pending flag so chat can retry minting a Plus JWT.
@@ -109,27 +177,30 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         setLoading(false)
       }
     })()
-  }, [refresh])
+  }, [refresh, applySession])
 
   React.useEffect(() => {
     function onSessionExpired() {
       clearStoredTokens()
-      setUser(null)
+      applySession({ user: null })
       setLoginPending(false)
     }
     window.addEventListener(AUTH_SESSION_EXPIRED_EVENT, onSessionExpired)
     return () =>
       window.removeEventListener(AUTH_SESSION_EXPIRED_EVENT, onSessionExpired)
-  }, [])
+  }, [applySession])
 
   React.useEffect(() => {
     function onMessage(message: unknown) {
       if (!isExurLoginMessage(message)) return
       if (message.type === EXUR_AUTH_SUCCESS) {
-        void refresh()
-          .then(() => mergeGuestAfterLogin())
+        void refreshSession()
+          .then((session) => {
+            if (session.user?.id) return mergeGuestAfterLogin(session.user.id)
+          })
+          .then(() => clearError())
           .catch((err) => {
-            console.error("extension login refresh", err)
+            showError(err)
           })
           .finally(() => setLoginPending(false))
         return
@@ -140,34 +211,32 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
       }
       if (message.type === EXUR_LOGIN_ERROR) {
         setLoginPending(false)
-        setLoginError(message.error)
+        showError(message.error)
       }
     }
 
     chrome.runtime.onMessage.addListener(onMessage)
     return () => chrome.runtime.onMessage.removeListener(onMessage)
-  }, [refresh])
+  }, [clearError, refreshSession, showError])
 
-  const login = React.useCallback((_options?: LoginOptions) => {
-    setLoginPending(true)
-    setLoginError(null)
-    void chrome.runtime
-      .sendMessage({ type: EXUR_OPEN_LOGIN })
-      .catch((err) => {
-        const message =
-          err instanceof Error ? err.message : "Could not open sign-in"
+  const login = React.useCallback(
+    (_options?: LoginOptions) => {
+      setLoginPending(true)
+      clearError()
+      void chrome.runtime.sendMessage({ type: EXUR_OPEN_LOGIN }).catch((err) => {
         console.error("extension open login", err)
-        setLoginError(message)
+        showError(err)
         setLoginPending(false)
-        window.alert(message)
       })
-  }, [])
+    },
+    [clearError, showError]
+  )
 
   const logout = React.useCallback(async () => {
     await extensionLogout()
     clearStoredTokens()
-    setUser(null)
-  }, [])
+    applySession({ user: null })
+  }, [applySession])
 
   const value = React.useMemo<AuthContextValue>(
     () => ({
@@ -186,12 +255,17 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <AuthContext.Provider value={value}>
-      {loginError ? (
-        <p className="sr-only" role="alert">
-          {loginError}
-        </p>
-      ) : null}
-      {children}
+      <div className="relative flex h-full min-h-0 flex-1 flex-col">
+        {children}
+      </div>
+      <AuthErrorSheet
+        error={userError}
+        open={Boolean(userError)}
+        onOpenChange={(open) => {
+          if (!open) clearError()
+        }}
+        onClose={clearError}
+      />
     </AuthContext.Provider>
   )
 }

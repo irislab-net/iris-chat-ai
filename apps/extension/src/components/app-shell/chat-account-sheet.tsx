@@ -19,13 +19,11 @@ import {
   SfCheckIcon,
   SfChevronDownIcon,
   SfChevronRightIcon,
-  SfCookieIcon,
   SfCreditCardIcon,
   SfDesktopIcon,
   SfDocTextIcon,
   SfGearIcon,
   SfGlobeIcon,
-  SfIphoneIcon,
   SfLogoutIcon,
   SfMailIcon,
   SfMoonIcon,
@@ -36,7 +34,6 @@ import {
   SfSunIcon,
   SfSwitchAccountIcon,
 } from "@/components/icons/sf-menu-icons"
-import { openCookieSettings } from "@/components/privacy/cookie-consent-banner"
 import { Button } from "@/components/ui/button"
 import {
   Sheet,
@@ -44,8 +41,6 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet"
-import { usePwaInstall } from "@/hooks/use-pwa-install"
-import { Link, getPathname, usePathname } from "@/i18n/navigation"
 import { routing, type AppLocale } from "@/i18n/routing"
 import type { User } from "@/lib/api/types"
 import {
@@ -144,7 +139,6 @@ function SheetRow({
   value,
   onClick,
   href,
-  external,
   chevron = true,
   destructive,
   divider,
@@ -154,7 +148,6 @@ function SheetRow({
   value?: React.ReactNode
   onClick?: () => void
   href?: string
-  external?: boolean
   chevron?: boolean
   destructive?: boolean
   divider?: boolean
@@ -194,23 +187,16 @@ function SheetRow({
   )
 
   if (href) {
-    if (external) {
-      return (
-        <a
-          href={href}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={className}
-          onClick={onClick}
-        >
-          {body}
-        </a>
-      )
-    }
     return (
-      <Link href={href} className={className} onClick={onClick}>
+      <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={className}
+        onClick={onClick}
+      >
         {body}
-      </Link>
+      </a>
     )
   }
 
@@ -240,14 +226,12 @@ function SheetPill({
   label,
   onClick,
   href,
-  external,
   destructive,
 }: {
   icon: React.ReactNode
   label: React.ReactNode
   onClick?: () => void
   href?: string
-  external?: boolean
   destructive?: boolean
 }) {
   const className = cn(
@@ -265,23 +249,16 @@ function SheetPill({
   )
 
   if (href) {
-    if (external) {
-      return (
-        <a
-          href={href}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={className}
-          onClick={onClick}
-        >
-          {body}
-        </a>
-      )
-    }
     return (
-      <Link href={href} className={className} onClick={onClick}>
+      <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={className}
+        onClick={onClick}
+      >
         {body}
-      </Link>
+      </a>
     )
   }
 
@@ -336,7 +313,6 @@ function ChatAccountSheet({
 }: ChatAccountSheetProps) {
   const t = useTranslations("workspace")
   const common = useTranslations("common")
-  const consent = useTranslations("consent")
   const dir = localeDirection(useLocale())
   const pushSign: 1 | -1 = dir === "rtl" ? -1 : 1
   const popSign: 1 | -1 = dir === "rtl" ? 1 : -1
@@ -382,19 +358,13 @@ function ChatAccountSheet({
   const ThemeIcon = currentTheme.Icon
 
   const locale = useLocale() as AppLocale
-  const pathname = usePathname()
   const currentLocaleLabel = common(localeLabelKey(locale))
 
   function switchLocale(next: AppLocale) {
     if (next === locale) return
     persistLocaleChoice(next)
-    const nextPath = getPathname({ locale: next, href: pathname })
-    const { search, hash } = window.location
-    // eslint-disable-next-line @next/next/no-location-assign-relative-destination -- intentional full navigation
-    window.location.assign(`${nextPath}${search}${hash}`)
+    window.location.reload()
   }
-
-  const { isEligible, needsManualInstall, promptInstall } = usePwaInstall()
 
   const faqHref = `${getMarketingPageHref(getMarketingHomePath())}#faq`
   const whatIsHref = getMarketingPageHref("/what-is-exur")
@@ -477,8 +447,10 @@ function ChatAccountSheet({
                         ) : null}
                       </div>
                       {!isProUser ? (
-                        <Link
+                        <a
                           href={UPGRADE_PATH}
+                          target="_blank"
+                          rel="noopener noreferrer"
                           onClick={(event) => {
                             event.stopPropagation()
                             closeSheet()
@@ -487,7 +459,7 @@ function ChatAccountSheet({
                         >
                           <SfSparklesIcon className="size-3.5" aria-hidden />
                           {t("upgrade")}
-                        </Link>
+                        </a>
                       ) : null}
                     </div>
                     <span
@@ -582,20 +554,6 @@ function ChatAccountSheet({
                   onClick={() => go("settings")}
                 />
 
-                {isEligible ? (
-                  <SheetPill
-                    icon={<SfIphoneIcon className={sheetIconClass} />}
-                    label={
-                      needsManualInstall
-                        ? t("addToHomeScreen")
-                        : t("installApp")
-                    }
-                    onClick={() => {
-                      void promptInstall()
-                    }}
-                  />
-                ) : null}
-
                 {onOpenNews ? (
                   <SheetPill
                     icon={<SfNewspaperIcon className={sheetIconClass} />}
@@ -672,21 +630,10 @@ function ChatAccountSheet({
               </p>
               <SheetCard>
                 <SheetRow
-                  icon={<SfCookieIcon className={sheetIconClass} />}
-                  label={consent("manageTitle")}
-                  chevron={false}
-                  onClick={() => {
-                    closeSheet()
-                    openCookieSettings()
-                  }}
-                />
-                <SheetRow
                   icon={<SfShieldIcon className={sheetIconClass} />}
                   label={t("helpPrivacy")}
                   href={privacyHref}
-                  external
                   onClick={closeSheet}
-                  divider
                 />
               </SheetCard>
 
@@ -783,14 +730,12 @@ function ChatAccountSheet({
                   icon={<SfQuestionCircleIcon className={sheetIconClass} />}
                   label={t("helpFaq")}
                   href={faqHref}
-                  external
                   onClick={closeSheet}
                 />
                 <SheetRow
                   icon={<SfBookIcon className={sheetIconClass} />}
                   label={t("helpWhatIsExur")}
                   href={whatIsHref}
-                  external
                   onClick={closeSheet}
                   divider
                 />
@@ -798,7 +743,6 @@ function ChatAccountSheet({
                   icon={<SfDocTextIcon className={sheetIconClass} />}
                   label={t("helpTerms")}
                   href={termsHref}
-                  external
                   onClick={closeSheet}
                   divider
                 />
@@ -806,7 +750,6 @@ function ChatAccountSheet({
                   icon={<SfMailIcon className={sheetIconClass} />}
                   label={t("helpContact")}
                   href={`mailto:${CONTACT_EMAIL}`}
-                  external
                   onClick={closeSheet}
                   divider
                 />

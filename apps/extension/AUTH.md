@@ -2,27 +2,40 @@
 
 ## Error 400: `redirect_uri_mismatch`
 
-Google rejected the redirect URI. Fix:
+Google rejected the redirect URI. The URI is derived from the **installed extension ID**.
 
-1. Rebuild/reload so the stable manifest `key` is applied (fixed extension ID).
-2. In Google Cloud → OAuth **Web** client → **Authorized redirect URIs**, add **exactly**:
+### Local / unpacked (stable `manifest.key`)
 
 ```
 https://adnehcimnmfchnaoegcomjpknpgfgnpj.chromiumapp.org/
 ```
 
-3. Remove old unpacked extension, load `apps/extension/dist` again, confirm ID
-   is `adnehcimnmfchnaoegcomjpknpgfgnpj`.
+### Chrome Web Store build (`pnpm extension:pack` strips `key`)
 
-Full steps: [`GOOGLE_OAUTH_SETUP.md`](./GOOGLE_OAUTH_SETUP.md).
+CWS assigns a **new** ID. Add:
+
+```
+https://<STORE_EXTENSION_ID>.chromiumapp.org/
+```
+
+Full production steps: [`STORE_CHECKLIST.md`](./STORE_CHECKLIST.md).  
+OAuth URI details: [`GOOGLE_OAUTH_SETUP.md`](./GOOGLE_OAUTH_SETUP.md).
 
 ## How sign-in works
 
-1. Side panel **Sign in** opens `login.html` in a normal Chrome tab — Exur consent
-   wizard (Terms + Privacy switches) plus the cookie/privacy banner.
-2. After consent, `chrome.identity.launchWebAuthFlow` → Google OIDC `id_token`
-3. `POST https://api.exur.ai/v1/auth/google/one-tap` (same as web One Tap)
-4. Tokens land in `chrome.storage`; popup notifies the side panel and closes
+1. Side panel **Sign in** opens `login.html` in a normal Chrome tab — Exur consent wizard (Terms + Privacy).
+2. After consent, full navigation to  
+   `GET https://api.exur.ai/v1/auth/google/login?app=chromimum_extension&destination=<chrome-extension://…/callback.html>&terms&privacy_notice`  
+   (same PKCE/cookie Google flow as web).
+3. Backend sets the HttpOnly `refresh_token` cookie (`Domain=.exur.ai`, `Path=/v1/auth`) and redirects to `callback.html` (usually **without** tokens in the URL).
+4. `callback.html` reads that cookie via `chrome.cookies`, calls `POST /v1/auth/refresh` with the refresh token in the body, stores access + refresh in `chrome.storage.local`, sends `exur:auth-success`, shows success, and closes the tab.
+5. Side panel refreshes via `GET https://api.exur.ai/v1/me` and chat on `https://api.exur.ai/v1/chat/*`.
+
+If the API ever puts tokens in the hash/query instead, the callback still accepts them as a fallback.
+
+Failures show a visible banner in the side panel (not screen-reader-only).
+
+**Backend contract:** for `app=chromimum_extension`, honor `destination` (the extension callback URL) after setting the same auth cookies as web.
 
 ## Env
 
@@ -32,10 +45,19 @@ Full steps: [`GOOGLE_OAUTH_SETUP.md`](./GOOGLE_OAUTH_SETUP.md).
 VITE_GOOGLE_CLIENT_ID=<same as NEXT_PUBLIC_GOOGLE_CLIENT_ID>
 ```
 
+Keep this for Google Cloud Console / the legacy `chrome.identity` helper.  
+Primary store sign-in is API PKCE and does **not** embed the client ID in the JS bundle.  
+`pnpm extension:pack` requires the env var and aborts if `app=chromimum_extension` is missing from the build.
+
 ## CORS
 
-`api.exur.ai` must allow `chrome-extension://adnehcimnmfchnaoegcomjpknpgfgnpj`
-on `/v1/auth/google/one-tap`, `/v1/auth/refresh`, and `/v1/me`.
+`api.exur.ai` must allow **both**:
+
+- `chrome-extension://adnehcimnmfchnaoegcomjpknpgfgnpj` (local)
+- `chrome-extension://<STORE_EXTENSION_ID>` (store)
+
+on `/v1/auth/refresh`, `/v1/me`, and `/v1/chat/*`.  
+(Google login itself is a top-level navigation to `api.exur.ai`, not a CORS call.)
 
 ## Token refresh
 

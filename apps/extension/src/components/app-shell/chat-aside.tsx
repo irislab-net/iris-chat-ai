@@ -1,8 +1,6 @@
 "use client"
 
 import * as React from "react"
-import { useSearchParams } from "next/navigation"
-import { Link, usePathname, useRouter } from "@/i18n/navigation"
 import { useLocale, useTranslations } from "next-intl"
 import {
   ArrowUpRightIcon,
@@ -39,7 +37,6 @@ import { ChatMobileHeader } from "@/components/app-shell/chat-mobile-header"
 import { ChatMobileSlidePanel } from "@/components/app-shell/chat-mobile-slide-panel"
 import { ChatGeminiNewChatIcon } from "@/components/app-shell/chat-gemini-new-chat-icon"
 import { ChatComposer } from "@/components/app-shell/chat-composer"
-import { MAIN_CONTENT_ID } from "@/components/landing/modern/skip-to-content"
 import { ChatMessageActions } from "@/components/app-shell/chat-message-actions"
 import {
   ChatAssistantTurn,
@@ -70,7 +67,6 @@ import {
   formatConversationTranscript,
 } from "@/lib/chat/transcript"
 import { ChatAsideSkeleton } from "@/components/app-shell/shell-skeletons"
-import { useTicketSlot } from "@/components/app-shell/ticket-slot"
 import { typewriterReveal } from "@/components/app-shell/chat-typing"
 import { useAuth } from "@/components/auth/auth-provider"
 import { GoogleGlyph } from "@/components/auth/google-glyph"
@@ -100,8 +96,7 @@ import {
   syncChatHistoryFromServer,
 } from "@/lib/chat-history-sync"
 import { displayPlanName } from "@/lib/billing/catalog"
-import { LANDING_CHAT_QUERY_PARAM } from "@/lib/landing-chat-handoff"
-import { isAppDeskPath, UPGRADE_PATH } from "@/lib/site"
+import { PRODUCTION_ORIGIN, UPGRADE_PATH } from "@/lib/site"
 import { resolveUserDisplayName } from "@/lib/user-profile"
 import type {
   CoPilotHistoryMessage,
@@ -116,6 +111,7 @@ import {
 import {
   ensureGuestSession,
   formatGuestTrialLabel,
+  getStoredGuestUserId,
   GuestChatError,
 } from "@/lib/guest-chat"
 import {
@@ -155,6 +151,7 @@ import {
   type ChatEffort,
 } from "@/lib/chat-effort"
 import { SESSION_RESET_EVENT } from "@/lib/session-reset"
+import { isValidWebSessionId, newWebSessionId } from "@/lib/web-session-id"
 import type { ChatDisplayMode } from "@/lib/shell-layout-prefs"
 import {
   readShellLayoutPrefs,
@@ -271,16 +268,22 @@ function ChatHeaderIconButton({
   )
 }
 
-function blankConversation(id?: string): {
+function blankConversation(id: string): {
   id: string
   messages: ChatUiMessage[]
   history: CoPilotHistoryMessage[]
 } {
   return {
-    id: id ?? crypto.randomUUID(),
+    id,
     messages: [],
     history: [],
   }
+}
+
+/** Empty-thread ids may be reused only when they already match the web format. */
+function reusableBlankSessionId(activeId: string | null | undefined): string {
+  if (!activeId || !/^[0-9a-f]{40}$/.test(activeId)) return ""
+  return activeId
 }
 
 function IrisFollowUpPrompts({
@@ -337,20 +340,9 @@ function ChatAside({
   const t = useTranslations("workspace")
   const common = useTranslations("common")
   const textDir = localeDirection(useLocale())
-  const router = useRouter()
-  const pathname = usePathname()
-  const searchParams = useSearchParams()
   const isDesktop = useIsDesktop()
   const shellSidebars =
     useShellSidebarLayout() ?? SHELL_SIDEBAR_COMPACT_FALLBACK
-  const ticketSlot = useTicketSlot()
-  const [deskWaitTimedOut, setDeskWaitTimedOut] = React.useState(false)
-  const waitForDesk = isAppDeskPath(pathname) && isDesktop === true
-  React.useEffect(() => {
-    if (!waitForDesk) return
-    const id = window.setTimeout(() => setDeskWaitTimedOut(true), 4000)
-    return () => window.clearTimeout(id)
-  }, [waitForDesk])
   const {
     isAuthenticated,
     isProUser,
@@ -374,21 +366,15 @@ function ChatAside({
     if (!hasPlanUpgradePendingRefresh()) return
     void refreshAfterUpgrade()
   }, [authLoading, isAuthenticated, refreshAfterUpgrade])
-  const showDeskSkeleton =
-    waitForDesk &&
-    displayMode === "docked" &&
-    !authLoading &&
-    !ticketSlot?.occupied &&
-    !deskWaitTimedOut
   const chatClientContext = useChatClientContext({ user, isProUser })
   /** Stable backend user id when signed in; null for guest (isolated bucket). */
   const chatOwnerId = isAuthenticated && user?.id ? user.id : null
   const [hydrated, setHydrated] = React.useState(false)
   const [messages, setMessages] = React.useState<ChatUiMessage[]>([])
   const [history, setHistory] = React.useState<CoPilotHistoryMessage[]>([])
-  const [conversationId, setConversationId] = React.useState<string>(() =>
-    crypto.randomUUID()
-  )
+  const [conversationId, setConversationId] = React.useState("")
+  const conversationIdRef = React.useRef(conversationId)
+  conversationIdRef.current = conversationId
   const [conversations, setConversations] = React.useState<
     StoredConversation[]
   >([])
@@ -456,11 +442,13 @@ function ChatAside({
   const [guestSendError, setGuestSendError] = React.useState<string | null>(
     null
   )
+  const [guestOwnerId, setGuestOwnerId] = React.useState<string | null>(null)
 
   React.useEffect(() => {
     if (authLoading || isAuthenticated) {
       setGuestTrial(null)
       setGuestUnavailable(false)
+      if (isAuthenticated) setGuestOwnerId(null)
       return
     }
 
@@ -468,6 +456,7 @@ function ChatAside({
     void ensureGuestSession()
       .then((session) => {
         if (!cancelled) {
+          setGuestOwnerId(session.user_id)
           setGuestTrial(session.trial)
           setGuestUnavailable(false)
           setGuestSendError(null)
@@ -624,13 +613,14 @@ function ChatAside({
           writeChatStore(chatOwnerId, setActiveConversation(store, restored.id))
         }
       } else {
-        // Keep the same blank id across refresh when user left a New chat open.
-        const blank = blankConversation(
+        // Keep a blank id across refresh only when it already matches the web format.
+        // Prefix check is async, so a 40-char candidate is confirmed in an effect.
+        const storedBlankId =
           store.activeId &&
-            !store.conversations.some((c) => c.id === store.activeId)
+          !store.conversations.some((c) => c.id === store.activeId)
             ? store.activeId
-            : undefined
-        )
+            : ""
+        const blank = blankConversation(reusableBlankSessionId(storedBlankId))
         setConversationId(blank.id)
         setMessages(blank.messages)
         setHistory(blank.history)
@@ -755,6 +745,30 @@ function ChatAside({
   }, [])
 
   React.useEffect(() => {
+    if (!hydrated || authLoading) return
+    if (hasUserMessages(messages)) return
+    const ownerId = chatOwnerId ?? guestOwnerId
+    if (!ownerId) return
+    const storageOwnerId = chatOwnerId
+    let cancelled = false
+    const seen = conversationIdRef.current
+    void (async () => {
+      if (seen && (await isValidWebSessionId(ownerId, seen))) return
+      const next = await newWebSessionId(ownerId)
+      if (cancelled || conversationIdRef.current !== seen) return
+      conversationIdRef.current = next
+      setConversationId(next)
+      writeChatStore(
+        storageOwnerId,
+        setActiveConversation(readChatStore(storageOwnerId), next)
+      )
+    })()
+    return () => {
+      cancelled = true
+    }
+  }, [authLoading, chatOwnerId, guestOwnerId, hydrated, messages, session])
+
+  React.useEffect(() => {
     function onSessionReset() {
       window.clearTimeout(persistTimer.current)
       abortRef.current?.abort()
@@ -767,7 +781,10 @@ function ChatAside({
       setConversations([])
       setMessages([])
       setHistory([])
-      setConversationId(crypto.randomUUID())
+      // Logout drops the signed-in owner. Keep a placeholder until the guest
+      // user id is known, then the mint effect binds a new session id.
+      conversationIdRef.current = ""
+      setConversationId("")
       setSession("guest")
       setHydrated(true)
     }
@@ -798,7 +815,7 @@ function ChatAside({
     setHistoryOpen(false)
   }
 
-  function startNewChat() {
+  async function startNewChat() {
     abortRef.current?.abort()
     abortRef.current = null
     setSending(false)
@@ -814,7 +831,10 @@ function ChatAside({
       })
     }
 
-    const blank = blankConversation()
+    const ownerId = chatOwnerId ?? getStoredGuestUserId()
+    const id = ownerId ? await newWebSessionId(ownerId) : ""
+    const blank = blankConversation(id)
+    conversationIdRef.current = blank.id
     setConversationId(blank.id)
     setMessages(blank.messages)
     setHistory(blank.history)
@@ -822,6 +842,7 @@ function ChatAside({
     setReplyTarget(null)
     setEffort(DEFAULT_CHAT_EFFORT)
     writeChatEffort(DEFAULT_CHAT_EFFORT)
+    if (!blank.id) return
     const store = setActiveConversation(readChatStore(chatOwnerId), blank.id)
     writeChatStore(chatOwnerId, store)
   }
@@ -862,14 +883,19 @@ function ChatAside({
     void refreshConversationFromServer(target.id)
   }
 
-  function startBlankConversation(store: ReturnType<typeof readChatStore>) {
-    const blank = blankConversation()
+  async function startBlankConversation() {
+    const ownerId = chatOwnerId ?? getStoredGuestUserId()
+    const id = ownerId ? await newWebSessionId(ownerId) : ""
+    const blank = blankConversation(id)
+    conversationIdRef.current = blank.id
     setConversationId(blank.id)
     setMessages(blank.messages)
     setHistory(blank.history)
     setReplyTarget(null)
-    const next = setActiveConversation(store, blank.id)
+    if (!blank.id) return readChatStore(chatOwnerId)
+    const next = setActiveConversation(readChatStore(chatOwnerId), blank.id)
     writeChatStore(chatOwnerId, next)
+    setConversations(next.conversations)
     return next
   }
 
@@ -894,13 +920,13 @@ function ChatAside({
       const store = deleteConversation(readChatStore(chatOwnerId), id)
       writeChatStore(chatOwnerId, store)
       setConversations(store.conversations)
-      if (wasActive) startBlankConversation(store)
+      if (wasActive) void startBlankConversation()
       return
     }
 
     markConversationDeleting(id)
     if (wasActive) {
-      startBlankConversation(readChatStore(chatOwnerId))
+      void startBlankConversation()
     }
 
     void deleteChatSession(id)
@@ -1438,6 +1464,22 @@ function ChatAside({
     }
   }
 
+  async function ensureSendableConversationId(
+    ownerId: string
+  ): Promise<string> {
+    const current = conversationIdRef.current
+    if (current && (await isValidWebSessionId(ownerId, current))) return current
+    const next = await newWebSessionId(ownerId)
+    conversationIdRef.current = next
+    setConversationId(next)
+    const store = readChatStore(chatOwnerId)
+    const isStoredThread = store.conversations.some((c) => c.id === current)
+    if (!isStoredThread) {
+      writeChatStore(chatOwnerId, setActiveConversation(store, next))
+    }
+    return next
+  }
+
   async function handleSend(content: string) {
     if (sending) return
 
@@ -1454,9 +1496,12 @@ function ChatAside({
       return
     }
 
+    let sendOwnerId: string | null = chatOwnerId
     if (!isAuthenticated) {
       try {
         const session = await ensureGuestSession()
+        sendOwnerId = session.user_id
+        setGuestOwnerId(session.user_id)
         setGuestTrial(session.trial)
         setGuestUnavailable(false)
         setGuestSendError(null)
@@ -1497,10 +1542,15 @@ function ChatAside({
         login({ source: "chat" })
         return
       }
+      if (!chatOwnerId) return
+      sendOwnerId = chatOwnerId
     }
 
+    if (!sendOwnerId) return
+    const activeId = await ensureSendableConversationId(sendOwnerId)
+
     trackChatMessageSent({
-      conversation_id: conversationId,
+      conversation_id: activeId,
       message_length: userMessage.length,
     })
 
@@ -1519,7 +1569,7 @@ function ChatAside({
           { id: crypto.randomUUID(), role: "user", content: userMessage },
           { id: assistantId, role: "assistant", content: reply },
         ],
-        { id: conversationId, history: nextHistory, ownerId: chatOwnerId }
+        { id: activeId, history: nextHistory, ownerId: chatOwnerId }
       )
       return
     }
@@ -1528,7 +1578,6 @@ function ChatAside({
     const optimisticUserId = crypto.randomUUID()
     const replyToId = replyTarget?.id
     const historySnapshot = history
-    const activeId = conversationId
 
     const displayUserMessage = summarizeSignalUserMessage(
       userMessage,
@@ -1550,25 +1599,6 @@ function ChatAside({
       replyToId,
     })
   }
-
-  const handleSendRef = React.useRef(handleSend)
-  handleSendRef.current = handleSend
-  const landingChatQueryHandledRef = React.useRef(false)
-
-  React.useEffect(() => {
-    const question = searchParams.get(LANDING_CHAT_QUERY_PARAM)?.trim()
-    if (!question || landingChatQueryHandledRef.current) return
-    if (authLoading || !hydrated) return
-
-    landingChatQueryHandledRef.current = true
-
-    const params = new URLSearchParams(searchParams.toString())
-    params.delete(LANDING_CHAT_QUERY_PARAM)
-    const qs = params.toString()
-    router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false })
-
-    void handleSendRef.current(question)
-  }, [authLoading, hydrated, pathname, router, searchParams])
 
   async function handleRetry(assistantId: string) {
     if (sending || authLoading) return
@@ -1817,7 +1847,7 @@ function ChatAside({
 
   const showMobileSkeleton = Boolean(onClose) && (authLoading || !hydrated)
 
-  if (showDeskSkeleton || showMobileSkeleton) {
+  if (showMobileSkeleton) {
     return (
       <ChatAsideSkeleton
         className={className}
@@ -1830,7 +1860,7 @@ function ChatAside({
 
   return (
     <aside
-      id={isPrimaryContent ? MAIN_CONTENT_ID : undefined}
+      id={isPrimaryContent ? "main-content" : undefined}
       tabIndex={isPrimaryContent ? -1 : undefined}
       data-slot="chat-aside"
       dir={textDir}
@@ -1960,8 +1990,10 @@ function ChatAside({
               onClose && "app-mobile-safe-header"
             )}
           >
-            <Link
-              href="/"
+            <a
+              href={PRODUCTION_ORIGIN}
+              target="_blank"
+              rel="noopener noreferrer"
               aria-label={common("brand")}
               className="shrink-0 rounded-md outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
             >
@@ -1972,7 +2004,7 @@ function ChatAside({
                 className="size-7 shrink-0 overflow-hidden rounded-full"
                 priority
               />
-            </Link>
+            </a>
             <div className="min-w-0 flex-1">
               <span className="block text-sm leading-none font-medium tracking-tight">
                 {t("iris")}
@@ -2007,7 +2039,13 @@ function ChatAside({
                 size="sm"
                 className={chatThreadUpgradeClass}
                 nativeButton={false}
-                render={<Link href={UPGRADE_PATH} />}
+                render={
+                  <a
+                    href={UPGRADE_PATH}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  />
+                }
               >
                 {t("upgrade")}
               </Button>
@@ -2197,7 +2235,13 @@ function ChatAside({
                                 size="sm"
                                 className={chatUpgradePillClass}
                                 nativeButton={false}
-                                render={<Link href={UPGRADE_PATH} />}
+                                render={
+                                  <a
+                                    href={UPGRADE_PATH}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                  />
+                                }
                               >
                                 {t("upgrade")}
                               </Button>

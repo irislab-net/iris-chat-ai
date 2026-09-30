@@ -281,7 +281,6 @@ function AccountGuestMenuSections({
   return (
     <>
       <AccountPreferencesGroup />
-      <AccountInstallMenuItem />
       <AccountHelpGroup />
       <DropdownMenuItem
         className={chatContextMenuItemClass}

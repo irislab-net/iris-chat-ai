@@ -34,7 +34,6 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet"
 import { useIsDesktop } from "@/hooks/use-media-query"
-import { landingCta } from "@/lib/landing-modern-styles"
 import { cn } from "@/lib/utils"
 
 type ChatRenameDialogProps = {
@@ -140,14 +139,20 @@ function ChatRenameDialog({
           <DialogFooter className={chatDesktopDialogFooterClass}>
             <Button
               type="button"
-              className={cn(landingCta("secondary", "sm"), "rounded-full")}
+              className={cn(
+                chatMobileSheetSecondaryButtonClass,
+                "h-10! min-h-10 w-auto rounded-full px-5"
+              )}
               onClick={() => onOpenChange(false)}
             >
               {t("cancelRename")}
             </Button>
             <Button
               type="button"
-              className={cn(landingCta("primary", "sm"), "rounded-full")}
+              className={cn(
+                chatMobileSheetPrimaryButtonClass,
+                "h-10! min-h-10 w-auto rounded-full px-5"
+              )}
               disabled={!canSave}
               onClick={handleSubmit}
             >

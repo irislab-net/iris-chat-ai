@@ -2,7 +2,7 @@ import { defineConfig, loadEnv } from "vite"
 import react from "@vitejs/plugin-react"
 import tailwindcss from "@tailwindcss/vite"
 import { crx } from "@crxjs/vite-plugin"
-import { resolve } from "node:path"
+import { resolve, sep } from "node:path"
 import manifest from "./manifest.config"
 
 const src = resolve(__dirname, "src")
@@ -48,10 +48,25 @@ export default defineConfig(({ mode }) => {
     build: {
       outDir: "dist",
       emptyOutDir: true,
+      // Side panel + chat UI is one chunk by design; CRX size is fine above 500 kB.
+      chunkSizeWarningLimit: 700,
       rollupOptions: {
         input: {
-          // Extra HTML page (not in manifest) — Volt-style Google login wizard
+          // Extra HTML pages (not in manifest) — consent wizard + OAuth return
           login: resolve(__dirname, "login.html"),
+          callback: resolve(__dirname, "callback.html"),
+        },
+        onwarn(warning, warn) {
+          // zod v4 ships `@__PURE__` comments Rollup cannot parse; safe to ignore.
+          const id = warning.id ?? warning.loc?.file ?? ""
+          const message = warning.message ?? ""
+          if (
+            id.includes(`${sep}zod${sep}`) ||
+            message.includes("annotation that Rollup cannot interpret")
+          ) {
+            return
+          }
+          warn(warning)
         },
       },
     },

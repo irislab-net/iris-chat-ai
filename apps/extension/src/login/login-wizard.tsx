@@ -4,16 +4,14 @@ import * as React from "react"
 import { ExternalLinkIcon } from "lucide-react"
 import { useTranslations } from "next-intl"
 
-import { loginWithGoogle } from "@/adapters/auth"
+import { getExtensionGoogleLoginUrl } from "@/adapters/auth"
 import {
   EXUR_AUTH_CANCELLED,
-  EXUR_AUTH_SUCCESS,
-  EXUR_LOGIN_ERROR,
 } from "@/adapters/login-messages"
+import { AuthErrorSheet } from "@/components/auth/auth-error-sheet"
 import { GoogleGlyph } from "@/components/auth/google-glyph"
 import { ExurLogo } from "@/components/brand/exur-logo"
 import { ChatMobileGeminiBackground } from "@/components/app-shell/chat-mobile-gemini-background"
-import { CookieConsentBanner } from "@/components/privacy/cookie-consent-banner"
 import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
 import {
@@ -21,9 +19,11 @@ import {
   chatLoginConsentDialogClass,
   chatMobileSheetConsentCheckedClass,
   chatMobileSheetConsentUncheckedClass,
+  chatMobileSheetPrimaryButtonClass,
+  chatMobileSheetSecondaryButtonClass,
 } from "@/components/app-shell/chat-mobile-gemini-styles"
+import { toAuthUserError, type AuthUserError } from "@/lib/auth-user-errors"
 import { getPrivacyNoticeHref, getTermsOfServiceHref } from "@/lib/legal"
-import { landingCta } from "@/lib/landing-modern-styles"
 import { cn } from "@/lib/utils"
 
 function LegalLink({
@@ -91,37 +91,14 @@ function ConsentCheck({
   )
 }
 
-function friendlyLoginError(raw: string): { title: string; detail?: string } {
-  if (/cancel/i.test(raw)) {
-    return { title: "Sign-in was cancelled. You can try again when ready." }
-  }
-  if (/redirect|chromiumapp|did not approve|id_token/i.test(raw)) {
-    const uriMatch = raw.match(/https:\/\/[a-z0-9]+\.chromiumapp\.org\/?/)
-    return {
-      title: "Google sign-in isn’t set up for this extension yet.",
-      detail: uriMatch
-        ? `Add this redirect URI in Google Cloud Console → OAuth client:\n${uriMatch[0]}`
-        : undefined,
-    }
-  }
-  if (/Client ID|VITE_GOOGLE/i.test(raw)) {
-    return {
-      title: "Missing Google Client ID in the extension build.",
-      detail: raw,
-    }
-  }
-  return { title: "Couldn’t complete Google sign-in. Please try again." }
-}
-
 function LoginWizard() {
   const t = useTranslations("workspace")
   const [termsAccepted, setTermsAccepted] = React.useState(false)
   const [privacyAccepted, setPrivacyAccepted] = React.useState(false)
   const [confirming, setConfirming] = React.useState(false)
-  const [error, setError] = React.useState<string | null>(null)
+  const [userError, setUserError] = React.useState<AuthUserError | null>(null)
 
   const canContinue = termsAccepted && privacyAccepted && !confirming
-  const friendlyError = error ? friendlyLoginError(error) : null
 
   const finishTab = React.useCallback(() => {
     window.setTimeout(() => {
@@ -138,28 +115,21 @@ function LoginWizard() {
     finishTab()
   }, [finishTab])
 
+  const clearError = React.useCallback(() => setUserError(null), [])
+
   const handleConfirm = React.useCallback(() => {
     if (!canContinue) return
     setConfirming(true)
-    setError(null)
-    void loginWithGoogle()
-      .then(() => {
-        void chrome.runtime.sendMessage({ type: EXUR_AUTH_SUCCESS })
-        finishTab()
-      })
-      .catch((err) => {
-        const message =
-          err instanceof Error ? err.message : "Google sign-in failed"
-        if (!/cancel/i.test(message)) {
-          setError(message)
-          void chrome.runtime.sendMessage({
-            type: EXUR_LOGIN_ERROR,
-            error: message,
-          })
-        }
-        setConfirming(false)
-      })
-  }, [canContinue, finishTab])
+    clearError()
+    try {
+      // Full navigation so api.exur.ai can set PKCE cookies, then Google OAuth.
+      window.location.assign(getExtensionGoogleLoginUrl())
+    } catch (err) {
+      console.error("[exur-auth] redirect to Google login failed", err)
+      setUserError(toAuthUserError(err))
+      setConfirming(false)
+    }
+  }, [canContinue, clearError])
 
   return (
     <div className="relative flex min-h-dvh flex-col overflow-x-hidden bg-[#FAFBFC] text-foreground">
@@ -252,30 +222,14 @@ function LoginWizard() {
             <p className="px-0.5 text-[11.5px] leading-relaxed text-pretty text-muted-foreground">
               {t("loginConsentDisclaimer")}
             </p>
-
-            {friendlyError ? (
-              <div
-                role="alert"
-                className="rounded-2xl bg-[#FEF2F2] px-3.5 py-3 text-start dark:bg-destructive/15"
-              >
-                <p className="text-[13px] leading-snug font-medium text-[#B91C1C] dark:text-destructive">
-                  {friendlyError.title}
-                </p>
-                {friendlyError.detail ? (
-                  <p className="mt-1.5 font-mono text-[11px] leading-relaxed break-all text-[#991B1B]/85 dark:text-destructive/80">
-                    {friendlyError.detail}
-                  </p>
-                ) : null}
-              </div>
-            ) : null}
           </div>
 
           <div className="flex flex-col gap-2.5 p-4 pt-2 sm:p-5 sm:pt-3">
             <Button
               type="button"
               className={cn(
-                landingCta("primary", "md"),
-                "h-12! min-h-12 w-full disabled:opacity-45"
+                chatMobileSheetPrimaryButtonClass,
+                "w-full disabled:opacity-45"
               )}
               disabled={!canContinue}
               onClick={handleConfirm}
@@ -285,10 +239,7 @@ function LoginWizard() {
             </Button>
             <Button
               type="button"
-              className={cn(
-                landingCta("secondary", "md"),
-                "h-12! min-h-12 w-full"
-              )}
+              className={cn(chatMobileSheetSecondaryButtonClass, "w-full")}
               disabled={confirming}
               onClick={handleCancel}
             >
@@ -298,7 +249,15 @@ function LoginWizard() {
         </div>
       </main>
 
-      <CookieConsentBanner />
+      <AuthErrorSheet
+        variant="dialog"
+        error={userError}
+        open={Boolean(userError)}
+        onOpenChange={(open) => {
+          if (!open) clearError()
+        }}
+        onClose={clearError}
+      />
     </div>
   )
 }

@@ -2,7 +2,7 @@ import { StrictMode, useEffect, useState } from "react"
 import { createRoot } from "react-dom/client"
 import { NextIntlClientProvider } from "next-intl"
 
-import { LoginWizard } from "@/login/login-wizard"
+import { AuthCallback } from "@/callback/auth-callback"
 import type { AppLocale } from "@/i18n/routing"
 import {
   applyLocaleToDocument,
@@ -12,12 +12,11 @@ import { applyThemeToDocument } from "@/shims/use-theme"
 import "@/styles/globals.css"
 import "@/styles/chat-gemini.css"
 
-// Login tab matches the marketing / consent surface (light glass), not system dark.
 document.documentElement.classList.remove("dark")
 document.documentElement.style.colorScheme = "light"
 applyThemeToDocument("light")
 
-function LoginRoot() {
+function CallbackRoot() {
   const [locale, setLocale] = useState<AppLocale | null>(null)
 
   useEffect(() => {
@@ -36,13 +35,13 @@ function LoginRoot() {
 
   return (
     <NextIntlClientProvider locale={locale}>
-      <LoginWizard />
+      <AuthCallback />
     </NextIntlClientProvider>
   )
 }
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <LoginRoot />
+    <CallbackRoot />
   </StrictMode>
 )

@@ -34,18 +34,19 @@ pnpm extension:pack
 
 Upload `apps/extension/exur-chat-extension.zip` (not the raw `dist/` folder).
 
-After the first upload, the store assigns a new extension ID. Add this redirect URI on the Google OAuth **Web** client:
+**Before reviewers test again**, complete [`STORE_CHECKLIST.md`](./STORE_CHECKLIST.md):
 
-```
-https://<STORE_EXTENSION_ID>.chromiumapp.org/
-```
-
-Also allow `chrome-extension://<STORE_EXTENSION_ID>` on `api.exur.ai` CORS if needed.
+1. Add store redirect URI on the Google OAuth **Web** client:
+   `https://<STORE_EXTENSION_ID>.chromiumapp.org/`
+2. Allow `chrome-extension://<STORE_EXTENSION_ID>` on `api.exur.ai` CORS
+3. OAuth consent **In production** (or add reviewer test users)
+4. Paste reviewer notes from the checklist into the CWS dashboard
 
 Local unpacked builds keep `key` so the ID stays `adnehcimnmfchnaoegcomjpknpgfgnpj`.
 
 ## Docs
 
+- [`STORE_CHECKLIST.md`](./STORE_CHECKLIST.md) — production / resubmit checklist
 - [`BOUNDARIES.md`](./BOUNDARIES.md) — independence rules
 - [`PORTING.md`](./PORTING.md) — how to copy UI from web when it changes
 - [`AUTH.md`](./AUTH.md) — extension OAuth / CORS requirements (backend)
@@ -65,4 +66,4 @@ src/
   background.ts
 ```
 
-The side panel renders the **same `ChatAside`** tree as the web chat column (composer, history, thinking, signals, account menu). Desk/news are stubbed.
+The side panel renders the **same `ChatAside`** tree as the web chat column (composer, history, thinking, signals, **news sheet**, account menu). Marketing landing, desk workspace, cookie banner, and PWA install are out of scope — billing/upgrade open `https://chat.exur.ai` in a new tab.

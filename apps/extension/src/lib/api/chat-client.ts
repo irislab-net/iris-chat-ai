@@ -9,7 +9,7 @@ import { chatApiPath } from "@/lib/api/chat"
 import { isGuestChatSession } from "@/lib/chat-auth-session"
 import { ensureGuestSession, getStoredGuestToken } from "@/lib/guest-chat"
 
-/** Browser chat calls use same-origin /v1/chat proxy (see app/v1/[...path]/route.ts). */
+/** Extension chat calls hit api.exur.ai directly (no Next.js proxy). */
 export async function chatApiFetch(path: string, init: RequestInit = {}) {
   const accessToken = getStoredAccessToken()
   if (!isGuestChatSession() && accessToken) {

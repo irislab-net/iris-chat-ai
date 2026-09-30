@@ -17,8 +17,8 @@
 4. **UI alignment is intentional copy/port**, not a forced single package. When web chat UI changes and you want the same in the extension, follow [`PORTING.md`](./PORTING.md).
 5. **API alignment is shared.** Chat SSE shapes, path helpers, and fetch/token abstractions live in `packages/api-client` so web and extension do not invent divergent contracts.
 
-## What is ported vs never ported (MVP)
+## What is ported vs never ported
 
-**Port (chat parity):** composer, messages, thinking/SSE, history, signal cards, chat styles, account extras needed for chat.
+**Port (chat + chat news):** composer, messages, thinking/SSE, history, signal cards, chat styles, account extras needed for chat, **chat news panel** (`chat-news-panel` + `news-bulletin` / intel helpers used by it).
 
-**Do not port:** desk/dashboard, news panel, marketing/landing, website toolbar, Google One Tap (use extension OAuth instead), billing checkout pages (link out to web).
+**Do not port:** full desk/dashboard workspace, marketing/landing pages, website toolbar, Google One Tap (use extension OAuth instead), web cookie-consent banner, PWA install, billing checkout pages (link out to `https://chat.exur.ai`).

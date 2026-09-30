@@ -1,7 +1,6 @@
 "use client"
 
 import * as React from "react"
-import { Link } from "@/i18n/navigation"
 import { useTranslations } from "next-intl"
 
 import { ChatAccountAvatar } from "@/components/app-shell/chat-account-avatar"
@@ -18,7 +17,6 @@ import {
   SfBookIcon,
   SfCreditCardIcon,
   SfDocTextIcon,
-  SfIphoneIcon,
   SfLogoutIcon,
   SfMailIcon,
   SfNewspaperIcon,
@@ -35,7 +33,6 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
 } from "@/components/ui/dropdown-menu"
-import { usePwaInstall } from "@/hooks/use-pwa-install"
 import type { User } from "@/lib/api/types"
 import { getPrivacyNoticeHref, getTermsOfServiceHref } from "@/lib/legal"
 import {
@@ -67,25 +64,6 @@ function AccountPlanBadge({
       {isProUser ? <SfSparklesIcon className="size-2.5" aria-hidden /> : null}
       {planName}
     </Badge>
-  )
-}
-
-function AccountInstallMenuItem() {
-  const t = useTranslations("workspace")
-  const { isEligible, needsManualInstall, promptInstall } = usePwaInstall()
-
-  if (!isEligible) return null
-
-  return (
-    <DropdownMenuItem
-      className={chatContextMenuItemClass}
-      onClick={() => {
-        void promptInstall()
-      }}
-    >
-      <SfIphoneIcon className={chatContextMenuIconClass} />
-      {needsManualInstall ? t("addToHomeScreen") : t("installApp")}
-    </DropdownMenuItem>
   )
 }
 
@@ -228,7 +206,9 @@ function AccountSignedInMenuSections({
           <DropdownMenuItem
             className={chatContextMenuItemClass}
             nativeButton={false}
-            render={<Link href={UPGRADE_PATH} />}
+            render={
+              <a href={UPGRADE_PATH} target="_blank" rel="noopener noreferrer" />
+            }
           >
             <SfSparklesIcon className={chatContextMenuIconClass} />
             {t("upgradeToPlus")}
@@ -237,7 +217,9 @@ function AccountSignedInMenuSections({
         <DropdownMenuItem
           className={chatContextMenuItemClass}
           nativeButton={false}
-          render={<Link href={BILLING_PATH} />}
+          render={
+            <a href={BILLING_PATH} target="_blank" rel="noopener noreferrer" />
+          }
         >
           <SfCreditCardIcon className={chatContextMenuIconClass} />
           {t("billing")}
@@ -254,7 +236,6 @@ function AccountSignedInMenuSections({
       </DropdownMenuGroup>
 
       <AccountPreferencesGroup />
-      <AccountInstallMenuItem />
       <AccountHelpGroup />
 
       <DropdownMenuItem
@@ -281,7 +262,6 @@ function AccountGuestMenuSections({
   return (
     <>
       <AccountPreferencesGroup />
-      <AccountInstallMenuItem />
       <AccountHelpGroup />
       <DropdownMenuItem
         className={chatContextMenuItemClass}

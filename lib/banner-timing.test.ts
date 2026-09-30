@@ -12,12 +12,13 @@ describe("banner-timing gates", () => {
     expect(shouldShowCookieBanner(true, true)).toBe(false)
   })
 
-  it("shows PWA nudge only when eligible, consent resolved, and reveal ready", () => {
+  it("shows PWA nudge only when eligible, signed in, consent resolved, and reveal ready", () => {
     expect(
       shouldShowPwaNudge({
         eligible: true,
         consentResolved: false,
         revealReady: true,
+        authenticated: true,
       })
     ).toBe(false)
     expect(
@@ -25,6 +26,7 @@ describe("banner-timing gates", () => {
         eligible: true,
         consentResolved: true,
         revealReady: false,
+        authenticated: true,
       })
     ).toBe(false)
     expect(
@@ -32,6 +34,7 @@ describe("banner-timing gates", () => {
         eligible: false,
         consentResolved: true,
         revealReady: true,
+        authenticated: true,
       })
     ).toBe(false)
     expect(
@@ -39,6 +42,15 @@ describe("banner-timing gates", () => {
         eligible: true,
         consentResolved: true,
         revealReady: true,
+        authenticated: false,
+      })
+    ).toBe(false)
+    expect(
+      shouldShowPwaNudge({
+        eligible: true,
+        consentResolved: true,
+        revealReady: true,
+        authenticated: true,
       })
     ).toBe(true)
   })

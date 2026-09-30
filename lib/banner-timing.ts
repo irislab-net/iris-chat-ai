@@ -6,6 +6,7 @@
  *   settles before consent UI (web.dev: prefer overlay/footer, avoid CLS/LCP fight).
  * - PWA: Chrome’s install heuristics historically require ~30s dwell + a tap;
  *   custom nudges should never cold-prompt on first paint (web.dev / OpenPWA).
+ *   Prefer prompting only after sign-in so iOS Home Screen inherits the session.
  * - Never stack: cookie/privacy wins; PWA only after consent is resolved + a gap.
  */
 
@@ -37,10 +38,13 @@ export function shouldShowPwaNudge({
   eligible,
   consentResolved,
   revealReady,
+  authenticated,
 }: {
   eligible: boolean
   consentResolved: boolean
   revealReady: boolean
+  /** Install only after sign-in so iOS Home Screen inherits the session. */
+  authenticated: boolean
 }): boolean {
-  return eligible && consentResolved && revealReady
+  return eligible && consentResolved && revealReady && authenticated
 }

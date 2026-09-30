@@ -1,10 +1,14 @@
-import { StrictMode } from "react"
+import { StrictMode, useEffect, useState } from "react"
 import { createRoot } from "react-dom/client"
 
 import { AuthProvider } from "@/components/auth/auth-provider"
 import { ChatAside } from "@/components/app-shell/chat-aside"
-import { CookieConsentBanner } from "@/components/privacy/cookie-consent-banner"
 import { NextIntlClientProvider } from "next-intl"
+import type { AppLocale } from "@/i18n/routing"
+import {
+  applyLocaleToDocument,
+  readStoredLocale,
+} from "@/lib/i18n/locale"
 import {
   applyThemeToDocument,
   ThemeProvider,
@@ -20,9 +24,25 @@ applyThemeToDocument()
  * overlay): Gemini menu → history drawer, account menu → news sheet.
  * Side panel has no parent to dismiss into, so onClose is a no-op.
  */
-createRoot(document.getElementById("root")!).render(
-  <StrictMode>
-    <NextIntlClientProvider locale="en">
+function SidePanelRoot() {
+  const [locale, setLocale] = useState<AppLocale | null>(null)
+
+  useEffect(() => {
+    let cancelled = false
+    void readStoredLocale().then((next) => {
+      if (cancelled) return
+      applyLocaleToDocument(next)
+      setLocale(next)
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  if (!locale) return null
+
+  return (
+    <NextIntlClientProvider locale={locale}>
       <ThemeProvider>
         <AuthProvider>
           <div className="relative flex h-full min-h-0 flex-col">
@@ -31,10 +51,15 @@ createRoot(document.getElementById("root")!).render(
               onClose={() => {}}
               isPrimaryContent
             />
-            <CookieConsentBanner />
           </div>
         </AuthProvider>
       </ThemeProvider>
     </NextIntlClientProvider>
+  )
+}
+
+createRoot(document.getElementById("root")!).render(
+  <StrictMode>
+    <SidePanelRoot />
   </StrictMode>
 )
