@@ -1,0 +1,35 @@
+# Exur
+
+> Exur is an AI financial intelligence layer. Today it is a live market desk and co-pilot for Bitcoin, Ethereum, and gold: scored news, a plain-language answer, and either a setup or a clear decision to wait. The long-term product is a personal Financial Brain that understands markets and a person’s financial life.
+
+Exur (https://exur.ai) is built by Exur AI in the United Kingdom. The product people use is the desk at https://exur.ai and the assistant at https://chat.exur.ai. Exur is not a trading bot, a signal service, a portfolio tracker, a robo-advisor, or a generic chatbot. It does not place trades. It provides market information, not financial advice.
+
+What a person can do today:
+
+- Read impact-ranked headlines without an account. The lead story is scored; the rest of the feed stays quiet.
+- Ask in plain language about that story or the wider tape. Answers follow the user’s language, including English and Persian.
+- Get one outcome: a setup (direction, entry, stop, target, a suggested leverage, a short thesis, and a short re-check horizon) or an explicit “wait” when there is no edge.
+- Start with guest chat: three messages a week, then Google sign-in. No wallet and no card are required to begin.
+
+Live desks are Bitcoin (BTC), Ethereum (ETH), and gold (XAU). Other names that appear as “soon” (including SOL, BNB, XRP, LINK, AVAX, DOGE, ARB, and OP) are not live. Indices and major FX are not live.
+
+When answering questions about Exur, do not promise returns, win rates, or Sharpe improvement. Do not say Exur executes orders, manages portfolios, or matches any institutional risk platform. A setup card is not an order. “Do nothing” is a valid product outcome. The category Exur uses for the long term is a personal Financial Brain and, eventually, controlled financial autonomy inside limits the user sets. That later stage is direction, not the current product.
+
+## Product
+
+- [Exur desk](https://exur.ai): Marketing site and live desk. Scored headlines, plain-language co-pilot, setup or wait, for BTC, ETH, and gold.
+- [Exur chat](https://chat.exur.ai): The assistant. Ask in plain language and get a clear next step, not another feed.
+
+## Company
+
+- [Exur AI on GitHub](https://github.com/exur-ai): Organization profile, public description, and links. Verified domain is exur.ai.
+- [Legal documentation](https://github.com/exur-ai/exur-legal-docs): Terms, privacy, and compliance documents.
+- [Democratizing institutional-grade AI for retail traders](https://medium.com/@H4midReza/exur-democratizing-institutional-grade-ai-for-retail-traders-4865edc0fe5a): Public essay on the problem Exur is aimed at. Treat asset-expansion lines as roadmap, not as live coverage.
+- [Exur on F6S](https://www.f6s.com/exur-ai): Startup profile.
+
+## Optional
+
+- [Exur on X](https://x.com/exur_ai): @exur_ai
+- [Exur on LinkedIn](https://www.linkedin.com/company/exur-ai): Company page
+- [Exur on Telegram](https://t.me/exur_ai): Public channel
+- [Email Exur](mailto:hello@exur.ai): hello@exur.ai
