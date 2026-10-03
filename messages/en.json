@@ -796,6 +796,13 @@
     "composerToolSignalPlaceholder": "ETH, BTC, SOL…",
     "composerToolCorrelationLabel": "Asset Correlation",
     "composerToolVolatilityLabel": "Volatility Forecast",
+    "composerToolUploadLabel": "Upload file",
+    "composerToolUploadDesc": "Coming soon",
+    "composerToolUploadComingSoonBody": "File uploads are on the roadmap. We’ll unlock them here when they’re ready.",
+    "composerPasteAttachmentLines": "{count} lines",
+    "composerPasteAttachmentRemove": "Remove file",
+    "composerPasteAttachmentUnwrap": "Show in text field",
+    "composerPasteAttachmentEmptyPrompt": "Please review the attached file.",
     "composerPremiumToolsTitle": "Premium Tools",
     "composerPremiumToolsBody": "Deep analysis models are locked. Upgrade to Plus to unlock market correlation and volatility forecasting.",
     "composerPremiumToolsPaymentNote": "Pay with USDT or USDC.",
@@ -942,7 +949,9 @@
     "thinkingTrace": {
       "aria": "Model thinking steps",
       "live": "Thinking…",
+      "liveWithDuration": "Thinking… {seconds}s",
       "done": "Thought process",
+      "doneWithDuration": "Thought for {seconds}s",
       "waiting": "Working on your request…",
       "usingTool": "Searching {tool}…"
     },

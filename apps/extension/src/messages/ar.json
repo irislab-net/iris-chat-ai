@@ -743,6 +743,9 @@
     "composerToolSignalPlaceholder": "مثل BTC أو ETH…",
     "composerToolAnalyticsLabel": "تحليلات الرسوم",
     "composerToolAnalyticsDesc": "قريباً",
+    "composerToolUploadLabel": "رفع ملف",
+    "composerToolUploadDesc": "قريبًا",
+    "composerToolUploadComingSoonBody": "رفع الملفات على خارطة الطريق. سنفعّله هنا عندما يكون جاهزًا.",
     "composerRemoveTool": "إزالة الأداة",
     "composerHint": "Exur للمعلومات السوقية فقط، وليس نصيحة مالية",
     "lowSignalUserReply": "لم أفهم ذلك جيداً. اسأل عن ETH أو BTC أو أخبار السوق، أو صِف السيناريو الذي تريد أن يتحقق منه Exur.",
@@ -854,9 +857,11 @@
     "thinkingTrace": {
       "aria": "خطوات تفكير النموذج",
       "live": "يفكر…",
+      "liveWithDuration": "يفكر… {seconds}ث",
       "done": "عملية التفكير",
+      "doneWithDuration": "فكر لمدة {seconds}ث",
       "waiting": "يعمل على طلبك…",
-      "usingTool": "يستخدم {tool}…"
+      "usingTool": "يبحث في {tool}…"
     },
     "loadingExur": "جاري تحميل Exur",
     "errors": {
@@ -899,7 +904,11 @@
     "shared": "تمت المشاركة",
     "shareResponse": "مشاركة الرد",
     "sharedResponse": "تمت مشاركة الرد",
-    "noTradeShareTitle": "مشاركة عدم التداول"
+    "noTradeShareTitle": "مشاركة عدم التداول",
+    "composerPasteAttachmentLines": "{count} أسطر",
+    "composerPasteAttachmentRemove": "إزالة الملف",
+    "composerPasteAttachmentUnwrap": "إظهار في حقل النص",
+    "composerPasteAttachmentEmptyPrompt": "يرجى مراجعة الملف المرفق."
   },
   "billingPage": {
     "title": "الفوترة",

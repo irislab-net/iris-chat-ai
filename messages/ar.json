@@ -745,6 +745,13 @@
     "composerToolSignalPlaceholder": "مثل BTC أو ETH…",
     "composerToolCorrelationLabel": "ارتباط الأصول",
     "composerToolVolatilityLabel": "توقّع التقلّب",
+    "composerToolUploadLabel": "رفع ملف",
+    "composerToolUploadDesc": "قريبًا",
+    "composerToolUploadComingSoonBody": "رفع الملفات على خارطة الطريق. سنفعّله هنا عندما يكون جاهزًا.",
+    "composerPasteAttachmentLines": "{count} أسطر",
+    "composerPasteAttachmentRemove": "إزالة الملف",
+    "composerPasteAttachmentUnwrap": "إظهار في حقل النص",
+    "composerPasteAttachmentEmptyPrompt": "يرجى مراجعة الملف المرفق.",
     "composerPremiumToolsTitle": "أدوات Premium",
     "composerPremiumToolsBody": "نماذج التحليل العميق مقفلة. رقِّ إلى Plus لفتح ارتباط السوق وتوقّع التقلّب.",
     "composerPremiumToolsCta": "عرض الخطط",
@@ -873,9 +880,11 @@
     "thinkingTrace": {
       "aria": "خطوات تفكير النموذج",
       "live": "يفكر…",
+      "liveWithDuration": "يفكر… {seconds}ث",
       "done": "عملية التفكير",
+      "doneWithDuration": "فكر لمدة {seconds}ث",
       "waiting": "يعمل على طلبك…",
-      "usingTool": "يستخدم {tool}…"
+      "usingTool": "يبحث في {tool}…"
     },
     "loadingExur": "جاري تحميل Exur",
     "errors": {

@@ -459,6 +459,13 @@
     "composerToolSignalPlaceholder": "ETH, BTC, SOL…",
     "composerToolAnalyticsLabel": "Analytics Charts",
     "composerToolAnalyticsDesc": "Coming soon",
+    "composerToolUploadLabel": "Enviar arquivo",
+    "composerToolUploadDesc": "Em breve",
+    "composerToolUploadComingSoonBody": "O envio de arquivos está no roadmap. Vamos liberar aqui quando estiver pronto.",
+    "composerPasteAttachmentLines": "{count} linhas",
+    "composerPasteAttachmentRemove": "Remover arquivo",
+    "composerPasteAttachmentUnwrap": "Mostrar no campo de texto",
+    "composerPasteAttachmentEmptyPrompt": "Revise o arquivo anexado.",
     "composerRemoveTool": "Remover ferramenta",
     "composerHint": "O Exur fornece apenas informação de mercado, não aconselhamento financeiro",
     "lowSignalUserReply": "Não entendi bem. Pergunte sobre ETH ou BTC, notícias do mercado, ou descreva o setup que o Exur deve checar.",
@@ -568,11 +575,13 @@
       }
     },
     "thinkingTrace": {
-      "aria": "Passos de raciocínio do modelo",
+      "aria": "Etapas de raciocínio do modelo",
       "live": "Pensando…",
+      "liveWithDuration": "Pensando… {seconds}s",
       "done": "Processo de pensamento",
-      "waiting": "Trabalhando no seu pedido…",
-      "usingTool": "Usando {tool}…"
+      "doneWithDuration": "Pensou por {seconds}s",
+      "waiting": "Trabalhando na sua solicitação…",
+      "usingTool": "Pesquisando {tool}…"
     },
     "loadingExur": "Carregando Exur",
     "errors": {

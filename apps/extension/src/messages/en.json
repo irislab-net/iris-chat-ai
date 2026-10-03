@@ -758,6 +758,9 @@
     "composerToolSignalPlaceholder": "ETH, BTC, SOL…",
     "composerToolAnalyticsLabel": "Analytics Charts",
     "composerToolAnalyticsDesc": "Coming soon",
+    "composerToolUploadLabel": "Upload file",
+    "composerToolUploadDesc": "Coming soon",
+    "composerToolUploadComingSoonBody": "File uploads are on the roadmap. We’ll unlock them here when they’re ready.",
     "composerRemoveTool": "Remove tool",
     "composerHint": "Exur provides market information only, not financial advice",
     "lowSignalUserReply": "I didn't quite get that. Ask about ETH or BTC, market news, or describe the setup you want Exur to check.",
@@ -881,7 +884,9 @@
     "thinkingTrace": {
       "aria": "Model thinking steps",
       "live": "Thinking…",
+      "liveWithDuration": "Thinking… {seconds}s",
       "done": "Thought process",
+      "doneWithDuration": "Thought for {seconds}s",
       "waiting": "Working on your request…",
       "usingTool": "Searching {tool}…"
     },
@@ -926,7 +931,11 @@
     "shared": "Shared",
     "shareResponse": "Share response",
     "sharedResponse": "Shared response",
-    "noTradeShareTitle": "Share no-trade"
+    "noTradeShareTitle": "Share no-trade",
+    "composerPasteAttachmentLines": "{count} lines",
+    "composerPasteAttachmentRemove": "Remove file",
+    "composerPasteAttachmentUnwrap": "Show in text field",
+    "composerPasteAttachmentEmptyPrompt": "Please review the attached file."
   },
   "billingPage": {
     "title": "Billing",

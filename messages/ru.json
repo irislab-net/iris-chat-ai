@@ -459,6 +459,13 @@
     "composerToolSignalPlaceholder": "ETH, BTC, SOL…",
     "composerToolAnalyticsLabel": "Analytics Charts",
     "composerToolAnalyticsDesc": "Coming soon",
+    "composerToolUploadLabel": "Загрузить файл",
+    "composerToolUploadDesc": "Скоро",
+    "composerToolUploadComingSoonBody": "Загрузка файлов в дорожной карте. Откроем её здесь, когда будет готова.",
+    "composerPasteAttachmentLines": "{count} строк",
+    "composerPasteAttachmentRemove": "Удалить файл",
+    "composerPasteAttachmentUnwrap": "Показать в текстовом поле",
+    "composerPasteAttachmentEmptyPrompt": "Просмотрите прикреплённый файл.",
     "composerRemoveTool": "Убрать инструмент",
     "composerHint": "Exur даёт только рыночную информацию, не финансовый совет",
     "lowSignalUserReply": "Не совсем понял. Спросите про ETH или BTC, новости рынка или опишите сетап, который Exur должен проверить.",
@@ -570,9 +577,11 @@
     "thinkingTrace": {
       "aria": "Шаги рассуждения модели",
       "live": "Думаю…",
-      "done": "Ход мысли",
-      "waiting": "Обрабатываю запрос…",
-      "usingTool": "Использую {tool}…"
+      "liveWithDuration": "Думаю… {seconds}с",
+      "done": "Ход мыслей",
+      "doneWithDuration": "Думал {seconds}с",
+      "waiting": "Работаю над запросом…",
+      "usingTool": "Ищу {tool}…"
     },
     "loadingExur": "Загрузка Exur",
     "errors": {

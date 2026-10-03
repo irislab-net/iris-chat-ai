@@ -459,6 +459,9 @@
     "composerToolSignalPlaceholder": "ETH, BTC, SOL…",
     "composerToolAnalyticsLabel": "Analytics Charts",
     "composerToolAnalyticsDesc": "Coming soon",
+    "composerToolUploadLabel": "Bestand uploaden",
+    "composerToolUploadDesc": "Binnenkort",
+    "composerToolUploadComingSoonBody": "Bestandsuploads staan op de roadmap. We ontgrendelen ze hier zodra ze klaar zijn.",
     "composerRemoveTool": "Tool verwijderen",
     "composerHint": "Exur geeft alleen marktinformatie, geen financieel advies",
     "lowSignalUserReply": "Ik begreep het niet helemaal. Vraag over ETH of BTC, marktnieuws, of beschrijf de setup die Exur moet checken.",
@@ -570,9 +573,11 @@
     "thinkingTrace": {
       "aria": "Denkstappen van het model",
       "live": "Nadenken…",
+      "liveWithDuration": "Nadenken… {seconds}s",
       "done": "Denkproces",
+      "doneWithDuration": "Nagedacht gedurende {seconds}s",
       "waiting": "Bezig met je verzoek…",
-      "usingTool": "{tool} gebruiken…"
+      "usingTool": "{tool} zoeken…"
     },
     "loadingExur": "Exur laden",
     "errors": {
@@ -615,6 +620,10 @@
     "shared": "Gedeeld",
     "shareResponse": "Antwoord delen",
     "sharedResponse": "Antwoord gedeeld",
-    "noTradeShareTitle": "Geen trade delen"
+    "noTradeShareTitle": "Geen trade delen",
+    "composerPasteAttachmentLines": "{count} regels",
+    "composerPasteAttachmentRemove": "Bestand verwijderen",
+    "composerPasteAttachmentUnwrap": "Tonen in tekstveld",
+    "composerPasteAttachmentEmptyPrompt": "Bekijk het bijgevoegde bestand."
   }
 }

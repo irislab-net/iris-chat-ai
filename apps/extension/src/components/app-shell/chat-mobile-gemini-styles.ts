@@ -283,6 +283,19 @@ const chatMobileComposerToolChipCloseClass = `${chatComposerToolChipCloseClass} 
 
 const chatDesktopComposerToolChipCloseClass = `${chatComposerToolChipCloseClass} size-3.5`
 
+/** Pasted long-text file chip — ChatGPT / Gemini attachment card in composer. */
+const chatComposerPasteChipClass =
+  "group relative flex max-w-full min-w-0 items-center gap-2.5 rounded-2xl border-0 bg-[rgba(118,118,128,0.10)] px-2.5 py-2 text-start shadow-none transition-[background-color,transform] duration-150 hover:bg-[rgba(118,118,128,0.14)] dark:bg-white/[0.10] dark:hover:bg-white/[0.14]"
+
+const chatComposerPasteChipIconClass =
+  "flex size-9 shrink-0 items-center justify-center rounded-xl bg-white/70 text-foreground shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_80%,transparent)] dark:bg-white/10"
+
+const chatComposerPasteChipMetaClass =
+  "text-[11px] leading-3.5 tracking-[-0.006em] text-muted-foreground"
+
+const chatComposerPasteChipCloseClass =
+  "flex size-6 shrink-0 items-center justify-center rounded-full text-muted-foreground/70 transition-[color,background-color,transform] duration-150 hover:bg-foreground/8 hover:text-foreground active:scale-95"
+
 const chatMobileScrollDownClass =
   `absolute bottom-[calc(4.875rem+env(safe-area-inset-bottom,0px))] left-1/2 z-10 size-9 -translate-x-1/2 rounded-full border border-white/35 bg-white/[0.18] text-foreground backdrop-blur-[22px] backdrop-saturate-[190%] supports-[backdrop-filter]:bg-white/[0.12] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.72),0_2px_10px_-3px_rgba(0,0,0,0.06),0_8px_24px_-10px_rgba(0,0,0,0.1)] transition-[transform,background-color,box-shadow,border-color] duration-150 ease-out hover:border-white/55 hover:bg-white/[0.32] active:scale-[0.96] dark:border-white/16 dark:bg-white/[0.10] dark:supports-[backdrop-filter]:bg-white/[0.07] dark:hover:border-white/28 dark:hover:bg-white/[0.18]`
 
@@ -531,6 +544,10 @@ export {
   chatDesktopComposerShellClass,
   chatDesktopComposerToolChipClass,
   chatDesktopComposerToolChipCloseClass,
+  chatComposerPasteChipClass,
+  chatComposerPasteChipIconClass,
+  chatComposerPasteChipMetaClass,
+  chatComposerPasteChipCloseClass,
   chatMobileComposerToolChipClass,
   chatMobileComposerToolChipCloseClass,
   chatMobileComposerShellClass,

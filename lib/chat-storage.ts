@@ -33,6 +33,10 @@ export type ChatUiMessage = {
   reasoning?: string
   /** Live + final chronological thinking steps (reasoning passes + MCP tools). */
   thinkingTrace?: ChatThinkingStep[]
+  /** Wall-clock start of the first thinking SSE event for this turn. */
+  thinkingStartedAt?: number
+  /** Frozen thinking duration in seconds (ChatGPT-style “Thought for Ns”). */
+  thinkingDurationSec?: number
   /** User quality signal for assistant replies. */
   feedback?: "up" | "down"
 }

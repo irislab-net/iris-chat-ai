@@ -459,6 +459,9 @@
     "composerToolSignalPlaceholder": "ETH, BTC, SOL…",
     "composerToolAnalyticsLabel": "Analytics Charts",
     "composerToolAnalyticsDesc": "Coming soon",
+    "composerToolUploadLabel": "Dosya yükle",
+    "composerToolUploadDesc": "Yakında",
+    "composerToolUploadComingSoonBody": "Dosya yükleme yol haritasında. Hazır olduğunda burada açacağız.",
     "composerRemoveTool": "Aracı kaldır",
     "composerHint": "Exur yalnızca piyasa bilgisi verir, finansal tavsiye değil",
     "lowSignalUserReply": "Tam anlayamadım. ETH veya BTC, piyasa haberleri sorun ya da Exur’un kontrol etmesini istediğiniz kurulumu anlatın.",
@@ -570,9 +573,11 @@
     "thinkingTrace": {
       "aria": "Model düşünme adımları",
       "live": "Düşünüyor…",
+      "liveWithDuration": "Düşünüyor… {seconds}sn",
       "done": "Düşünme süreci",
+      "doneWithDuration": "{seconds} sn düşündü",
       "waiting": "İsteğin üzerinde çalışıyor…",
-      "usingTool": "{tool} kullanılıyor…"
+      "usingTool": "{tool} aranıyor…"
     },
     "loadingExur": "Exur yükleniyor",
     "errors": {
@@ -615,6 +620,10 @@
     "shared": "Paylaşıldı",
     "shareResponse": "Yanıtı paylaş",
     "sharedResponse": "Yanıt paylaşıldı",
-    "noTradeShareTitle": "İşlem yok paylaş"
+    "noTradeShareTitle": "İşlem yok paylaş",
+    "composerPasteAttachmentLines": "{count} satır",
+    "composerPasteAttachmentRemove": "Dosyayı kaldır",
+    "composerPasteAttachmentUnwrap": "Metin alanında göster",
+    "composerPasteAttachmentEmptyPrompt": "Lütfen ekli dosyayı incele."
   }
 }

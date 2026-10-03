@@ -796,6 +796,13 @@
     "composerToolSignalPlaceholder": "مثلاً BTC یا ETH…",
     "composerToolCorrelationLabel": "همبستگی دارایی‌ها",
     "composerToolVolatilityLabel": "پیش‌بینی نوسان",
+    "composerToolUploadLabel": "آپلود فایل",
+    "composerToolUploadDesc": "به‌زودی",
+    "composerToolUploadComingSoonBody": "آپلود فایل در نقشه راه است. وقتی آماده شد همین‌جا باز می‌شود.",
+    "composerPasteAttachmentLines": "{count} خط",
+    "composerPasteAttachmentRemove": "حذف فایل",
+    "composerPasteAttachmentUnwrap": "نمایش در فیلد متن",
+    "composerPasteAttachmentEmptyPrompt": "لطفاً فایل پیوست را بررسی کن.",
     "composerPremiumToolsTitle": "ابزارهای Premium",
     "composerPremiumToolsBody": "مدل‌های تحلیل عمیق قفل‌اند. برای باز کردن همبستگی بازار و پیش‌بینی نوسان به Plus ارتقا بده.",
     "composerPremiumToolsPaymentNote": "پرداخت با USDT یا USDC.",
@@ -942,7 +949,9 @@
     "thinkingTrace": {
       "aria": "مراحل فکر کردن مدل",
       "live": "در حال فکر کردن…",
+      "liveWithDuration": "در حال فکر کردن… {seconds}ث",
       "done": "فرآیند فکر",
+      "doneWithDuration": "فکر کرد به مدت {seconds}ثانیه",
       "waiting": "روی درخواستت کار می‌کنه…",
       "usingTool": "در حال جست‌وجوی {tool}…"
     },

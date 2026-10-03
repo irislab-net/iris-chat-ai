@@ -41,6 +41,8 @@ type ComposerPremiumToolsDialogProps = {
   onOpenChange: (open: boolean) => void
   /** Plus users see a coming-soon notice instead of the upgrade pitch. */
   isProUser?: boolean
+  /** Locked feature that opened the dialog — upload is always coming-soon. */
+  feature?: "premium-tools" | "upload"
 }
 
 function ShimmerTokenMark({ currency }: { currency: "USDT" | "USDC" }) {
@@ -69,18 +71,23 @@ function ComposerPremiumToolsDialog({
   open,
   onOpenChange,
   isProUser = false,
+  feature = "premium-tools",
 }: ComposerPremiumToolsDialogProps) {
   const t = useTranslations("workspace")
   const isDesktop = useIsDesktop()
 
   if (isDesktop === null) return null
 
-  const title = isProUser
+  const comingSoon = isProUser || feature === "upload"
+  const title = comingSoon
     ? t("composerPremiumToolsComingSoonTitle")
     : t("composerPremiumToolsTitle")
-  const body = isProUser
-    ? t("composerPremiumToolsComingSoonBody")
-    : t("composerPremiumToolsBody")
+  const body =
+    feature === "upload"
+      ? t("composerToolUploadComingSoonBody")
+      : comingSoon
+        ? t("composerPremiumToolsComingSoonBody")
+        : t("composerPremiumToolsBody")
 
   const copy = (
     <div className="space-y-2 text-start">
@@ -90,7 +97,7 @@ function ComposerPremiumToolsDialog({
       <p className="text-pretty text-[15px] leading-relaxed text-muted-foreground">
         {body}
       </p>
-      {!isProUser ? (
+      {!comingSoon ? (
         <div className="flex items-center gap-2 pt-0.5">
           <span className="flex items-center -space-x-1.5" aria-hidden>
             <ShimmerTokenMark currency="USDT" />
@@ -122,7 +129,7 @@ function ComposerPremiumToolsDialog({
               "flex-col gap-2 sm:flex-col sm:justify-stretch"
             )}
           >
-            {isProUser ? (
+            {comingSoon ? (
               <Button
                 type="button"
                 className={cn(landingCta("secondary", "sm"), "rounded-full")}
@@ -160,7 +167,7 @@ function ComposerPremiumToolsDialog({
         <div className={cn(chatMobileSheetBodyClass, "pt-1 pb-2")}>{copy}</div>
         <SheetFooter className={chatMobileSheetFooterClass}>
           <div className={cn(chatMobileSheetFooterBarClass, "pt-4")}>
-            {isProUser ? (
+            {comingSoon ? (
               <Button
                 type="button"
                 className={chatMobileSheetSecondaryButtonClass}

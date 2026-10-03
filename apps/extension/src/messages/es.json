@@ -459,6 +459,9 @@
     "composerToolSignalPlaceholder": "ETH, BTC, SOL…",
     "composerToolAnalyticsLabel": "Analytics Charts",
     "composerToolAnalyticsDesc": "Coming soon",
+    "composerToolUploadLabel": "Subir archivo",
+    "composerToolUploadDesc": "Próximamente",
+    "composerToolUploadComingSoonBody": "La subida de archivos está en la hoja de ruta. La desbloquearemos aquí cuando esté lista.",
     "composerRemoveTool": "Quitar herramienta",
     "composerHint": "Exur solo ofrece información de mercado, no asesoramiento financiero",
     "lowSignalUserReply": "No lo entendí del todo. Pregunta por ETH o BTC, noticias del mercado, o describe el setup que Exur debe revisar.",
@@ -570,9 +573,11 @@
     "thinkingTrace": {
       "aria": "Pasos de razonamiento del modelo",
       "live": "Pensando…",
+      "liveWithDuration": "Pensando… {seconds}s",
       "done": "Proceso de pensamiento",
+      "doneWithDuration": "Pensó durante {seconds}s",
       "waiting": "Trabajando en tu solicitud…",
-      "usingTool": "Usando {tool}…"
+      "usingTool": "Buscando {tool}…"
     },
     "loadingExur": "Cargando Exur",
     "errors": {
@@ -615,6 +620,10 @@
     "shared": "Compartido",
     "shareResponse": "Compartir respuesta",
     "sharedResponse": "Respuesta compartida",
-    "noTradeShareTitle": "Compartir sin trade"
+    "noTradeShareTitle": "Compartir sin trade",
+    "composerPasteAttachmentLines": "{count} líneas",
+    "composerPasteAttachmentRemove": "Quitar archivo",
+    "composerPasteAttachmentUnwrap": "Mostrar en el campo de texto",
+    "composerPasteAttachmentEmptyPrompt": "Revisa el archivo adjunto."
   }
 }

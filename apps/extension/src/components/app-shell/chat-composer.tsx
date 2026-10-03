@@ -5,6 +5,10 @@ import {
   ArrowUpIcon,
   BarChart3Icon,
   ChevronDownIcon,
+  FileCode2Icon,
+  FileTextIcon,
+  LockIcon,
+  PaperclipIcon,
   PlusIcon,
   SquareIcon,
   TrendingUpIcon,
@@ -45,6 +49,14 @@ import {
   type IrisMentionTool,
   type MentionPaletteState,
 } from "@/lib/chat/composer-mentions"
+import {
+  buildMessageWithPasteAttachments,
+  createPasteAttachment,
+  formatPasteAttachmentSize,
+  PASTE_ATTACHMENT_MAX,
+  shouldConvertPasteToAttachment,
+  type ComposerPasteAttachment,
+} from "@/lib/chat/composer-paste-attachment"
 import { localeDirection } from "@/lib/i18n/locale"
 import { mergeRefs } from "@/lib/merge-refs"
 import {
@@ -69,6 +81,10 @@ import {
   chatDesktopComposerTextareaClass,
   chatDesktopComposerToolChipClass,
   chatDesktopComposerToolChipCloseClass,
+  chatComposerPasteChipClass,
+  chatComposerPasteChipIconClass,
+  chatComposerPasteChipMetaClass,
+  chatComposerPasteChipCloseClass,
   chatMobileComposerToolChipClass,
   chatMobileComposerToolChipCloseClass,
   chatMobileComposerShellClass,
@@ -133,6 +149,9 @@ function ChatComposer({
   const [activeTool, setActiveTool] = React.useState<IrisMentionTool | null>(
     null
   )
+  const [pasteAttachments, setPasteAttachments] = React.useState<
+    ComposerPasteAttachment[]
+  >([])
   const [mentionIndex, setMentionIndex] = React.useState(0)
   const [cursor, setCursor] = React.useState(0)
   const localRef = React.useRef<HTMLTextAreaElement>(null)
@@ -205,17 +224,48 @@ function ChatComposer({
           </span>
         </span>
       </DropdownMenuItem>
+      <DropdownMenuItem
+        disabled
+        className={cn(
+          chatMobileToolsMenuItemClass,
+          "flex-row items-center gap-3 py-2.5 opacity-55"
+        )}
+      >
+        <span className="flex size-9 shrink-0 items-center justify-center rounded-2xl bg-foreground/4 text-muted-foreground dark:bg-white/6">
+          <PaperclipIcon className="size-4" aria-hidden />
+        </span>
+        <span className="flex min-w-0 flex-1 items-center gap-2 text-start">
+          <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+            <span className={chatMobileToolsMenuItemTitleClass}>
+              {t("composerToolUploadLabel")}
+            </span>
+            <span
+              className={cn(chatMobileToolsMenuItemDescClass, "line-clamp-2")}
+            >
+              {t("composerToolUploadDesc")}
+            </span>
+          </span>
+          <LockIcon
+            className="size-3.5 shrink-0 text-muted-foreground/70"
+            aria-hidden
+          />
+        </span>
+      </DropdownMenuItem>
     </DropdownMenuGroup>
   )
   const [floatingPastSingleLine, setFloatingPastSingleLine] =
     React.useState(false)
   const floatingExpandedRef = React.useRef(false)
-  const floatingComposerExpanded = floatingPastSingleLine
+  const floatingComposerExpanded =
+    floatingPastSingleLine || pasteAttachments.length > 0
 
   React.useEffect(() => {
-    floatingExpandedRef.current = floatingPastSingleLine
-  }, [floatingPastSingleLine])
-  const canSend = !disabled && !sending && composerValue.trim().length > 0
+    floatingExpandedRef.current = floatingComposerExpanded
+  }, [floatingComposerExpanded])
+  const canSend =
+    !disabled &&
+    !sending &&
+    (composerValue.trim().length > 0 || pasteAttachments.length > 0)
   const showStop = sending && Boolean(onStop)
 
   const measureFloatingComposerLines = React.useCallback(
@@ -430,17 +480,61 @@ function ChatComposer({
 
   function send() {
     if (disabled || sending) return
+    const withFiles = buildMessageWithPasteAttachments(
+      composerValue,
+      pasteAttachments,
+      t("composerPasteAttachmentEmptyPrompt")
+    )
     const expanded = effectiveActiveTool
       ? expandComposerDraft({
           tool: effectiveActiveTool,
-          text: composerValue.trim(),
+          text: withFiles.trim(),
         })
-      : expandComposerMentions(composerValue.trim())
-    if (!expanded) return
-    onSend?.(expanded)
+      : expandComposerMentions(withFiles.trim())
+    if (!expanded && pasteAttachments.length === 0) return
+    const outbound = expanded || withFiles.trim()
+    if (!outbound) return
+    onSend?.(outbound)
     setActiveTool(null)
+    setPasteAttachments([])
     if (!isControlled) setUncontrolled("")
     onValueChange?.("")
+  }
+
+  function onPaste(event: React.ClipboardEvent<HTMLTextAreaElement>) {
+    // Ctrl/Cmd+Shift+V → keep as plain text (ChatGPT escape hatch).
+    if (event.shiftKey) return
+    const text = event.clipboardData.getData("text/plain")
+    if (!text || !shouldConvertPasteToAttachment(text)) return
+    if (pasteAttachments.length >= PASTE_ATTACHMENT_MAX) return
+    event.preventDefault()
+    setPasteAttachments((prev) => [...prev, createPasteAttachment(text, prev)])
+    requestAnimationFrame(syncFloatingComposerLayout)
+  }
+
+  function removePasteAttachment(id: string) {
+    setPasteAttachments((prev) => prev.filter((item) => item.id !== id))
+    requestAnimationFrame(syncFloatingComposerLayout)
+  }
+
+  function unwrapPasteAttachment(id: string) {
+    const attachment = pasteAttachments.find((item) => item.id === id)
+    if (!attachment) return
+    setPasteAttachments((prev) => prev.filter((item) => item.id !== id))
+    const el = localRef.current
+    const start = el?.selectionStart ?? composerValue.length
+    const end = el?.selectionEnd ?? start
+    const next = `${composerValue.slice(0, start)}${attachment.content}${composerValue.slice(end)}`
+    setValue(next)
+    queueMicrotask(() => {
+      const node = localRef.current
+      if (!node) return
+      const cursorAt = start + attachment.content.length
+      node.setSelectionRange(cursorAt, cursorAt)
+      setCursor(cursorAt)
+      focusComposer()
+      syncFloatingComposerLayout()
+    })
   }
 
   function stop() {
@@ -627,13 +721,43 @@ function ChatComposer({
             ? cn(
                 chatMobileComposerPillClass,
                 floatingComposerExpanded
-                  ? chatMobileComposerPillExpandedClass
+                  ? pasteAttachments.length > 0
+                    ? "min-h-0 w-full rounded-3xl grid-cols-[auto_minmax(0,1fr)_auto] grid-rows-[auto_auto_auto] items-end gap-x-0.5 gap-y-0.5 px-2.5 py-2.5 [grid-template-areas:'attachments_attachments_attachments'_'field_field_field'_'leading_._trailing']"
+                    : chatMobileComposerPillExpandedClass
                   : chatMobileComposerPillCompactClass
               )
-            : chatDesktopComposerBodyClass
+            : pasteAttachments.length > 0
+              ? cn(
+                  chatDesktopComposerBodyClass,
+                  "[grid-template-areas:'attachments_attachments_attachments'_'primary_primary_primary'_'leading_._trailing']"
+                )
+              : chatDesktopComposerBodyClass
         )}
         onClick={focusField}
       >
+        {pasteAttachments.length > 0 ? (
+          <div
+            className={cn(
+              "flex flex-wrap gap-1.5 [grid-area:attachments]",
+              isFloating ? "px-1.5 pt-0.5" : "px-3.5 pt-3"
+            )}
+            onClick={(event) => event.stopPropagation()}
+          >
+            {pasteAttachments.map((attachment) => (
+              <ComposerPasteAttachmentChip
+                key={attachment.id}
+                attachment={attachment}
+                onRemove={() => removePasteAttachment(attachment.id)}
+                onUnwrap={() => unwrapPasteAttachment(attachment.id)}
+                removeLabel={t("composerPasteAttachmentRemove")}
+                unwrapLabel={t("composerPasteAttachmentUnwrap")}
+                linesLabel={t("composerPasteAttachmentLines", {
+                  count: attachment.lineCount,
+                })}
+              />
+            ))}
+          </div>
+        ) : null}
         {isFloating ? (
           <>
             <div className={chatMobileComposerLeadingClass}>
@@ -700,6 +824,7 @@ function ChatComposer({
                 setCursor(start)
                 requestAnimationFrame(syncFloatingComposerLayout)
               }}
+              onPaste={onPaste}
               onKeyDown={onKeyDown}
               onKeyUp={syncCursor}
               onClick={syncCursor}
@@ -800,6 +925,7 @@ function ChatComposer({
                 setValue(next)
                 setCursor(start)
               }}
+              onPaste={onPaste}
               onKeyDown={onKeyDown}
               onKeyUp={syncCursor}
               onClick={syncCursor}
@@ -956,6 +1082,58 @@ function ChatComposer({
         </p>
       ) : null}
     </form>
+  )
+}
+
+function ComposerPasteAttachmentChip({
+  attachment,
+  onRemove,
+  onUnwrap,
+  removeLabel,
+  unwrapLabel,
+  linesLabel,
+}: {
+  attachment: ComposerPasteAttachment
+  onRemove: () => void
+  onUnwrap: () => void
+  removeLabel: string
+  unwrapLabel: string
+  linesLabel: string
+}) {
+  const Icon =
+    attachment.kind === "markdown" ? FileCode2Icon : FileTextIcon
+
+  return (
+    <div
+      className={chatComposerPasteChipClass}
+      role="group"
+      aria-label={attachment.name}
+    >
+      <span className={chatComposerPasteChipIconClass} aria-hidden>
+        <Icon className="size-4" strokeWidth={1.75} />
+      </span>
+      <button
+        type="button"
+        className="min-w-0 flex-1 text-start"
+        onClick={onUnwrap}
+        title={unwrapLabel}
+      >
+        <span className="block truncate text-[13px] font-medium leading-4 tracking-[-0.01em] text-foreground">
+          {attachment.name}
+        </span>
+        <span className={chatComposerPasteChipMetaClass}>
+          {formatPasteAttachmentSize(attachment.charCount)} · {linesLabel}
+        </span>
+      </button>
+      <button
+        type="button"
+        aria-label={removeLabel}
+        className={chatComposerPasteChipCloseClass}
+        onClick={onRemove}
+      >
+        <XIcon className="size-3.5 stroke-[2.25]" />
+      </button>
+    </div>
   )
 }
 

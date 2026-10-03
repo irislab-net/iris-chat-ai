@@ -1069,6 +1069,7 @@ function ChatAside({
                 m.id === assistantId
                   ? {
                       ...m,
+                      thinkingStartedAt: m.thinkingStartedAt ?? Date.now(),
                       thinkingTrace: appendThinkingStep(m.thinkingTrace, {
                         type: "reasoning",
                         text,
@@ -1084,6 +1085,7 @@ function ChatAside({
                 m.id === assistantId
                   ? {
                       ...m,
+                      thinkingStartedAt: m.thinkingStartedAt ?? Date.now(),
                       thinkingTrace: appendThinkingStep(m.thinkingTrace, {
                         type: "tool",
                         name: tool,
@@ -1181,6 +1183,14 @@ function ChatAside({
                 noTradeReason: extras?.noTradeReason,
                 retryUserMessage: undefined,
                 suggestedPrompts,
+                thinkingDurationSec:
+                  m.thinkingDurationSec ??
+                  (m.thinkingStartedAt
+                    ? Math.max(
+                        1,
+                        Math.round((Date.now() - m.thinkingStartedAt) / 1000)
+                      )
+                    : undefined),
                 ...(result.reasoning
                   ? { reasoning: result.reasoning }
                   : m.reasoning
@@ -2366,6 +2376,7 @@ function ChatAside({
                               waiting={isWaiting}
                               thinkingTrace={message.thinkingTrace}
                               reasoning={message.reasoning}
+                              thinkingDurationSec={message.thinkingDurationSec}
                               streaming={
                                 isStreamingAssistant && Boolean(message.content)
                               }

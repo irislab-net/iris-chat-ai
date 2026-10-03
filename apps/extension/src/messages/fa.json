@@ -758,6 +758,9 @@
     "composerToolSignalPlaceholder": "مثلاً BTC یا ETH…",
     "composerToolAnalyticsLabel": "آنالیتیکس چارتز",
     "composerToolAnalyticsDesc": "به‌زودی",
+    "composerToolUploadLabel": "آپلود فایل",
+    "composerToolUploadDesc": "به‌زودی",
+    "composerToolUploadComingSoonBody": "آپلود فایل در نقشه راه است. وقتی آماده شد همین‌جا باز می‌شود.",
     "composerRemoveTool": "حذف ابزار",
     "composerHint": "Exur فقط اطلاعات بازار می‌دهد، نه مشاورهٔ مالی",
     "lowSignalUserReply": "درست متوجه نشدم. دربارهٔ اتریوم یا بیت‌کوین یا خبر بازار بپرس، یا موقعیتی که می‌خوای چک کنم را بگو.",
@@ -870,7 +873,9 @@
     "thinkingTrace": {
       "aria": "مراحل فکر کردن مدل",
       "live": "در حال فکر کردن…",
+      "liveWithDuration": "در حال فکر کردن… {seconds}ث",
       "done": "فرآیند فکر",
+      "doneWithDuration": "فکر کرد به مدت {seconds}ثانیه",
       "waiting": "روی درخواستت کار می‌کنه…",
       "usingTool": "در حال جست‌وجوی {tool}…"
     },
@@ -915,7 +920,11 @@
     "shared": "اشتراک‌گذاری شد",
     "shareResponse": "اشتراک‌گذاری پاسخ",
     "sharedResponse": "پاسخ اشتراک‌گذاری شد",
-    "noTradeShareTitle": "اشتراک‌گذاری بدون معامله"
+    "noTradeShareTitle": "اشتراک‌گذاری بدون معامله",
+    "composerPasteAttachmentLines": "{count} خط",
+    "composerPasteAttachmentRemove": "حذف فایل",
+    "composerPasteAttachmentUnwrap": "نمایش در فیلد متن",
+    "composerPasteAttachmentEmptyPrompt": "لطفاً فایل پیوست را بررسی کن."
   },
   "billingPage": {
     "title": "پرداخت",
