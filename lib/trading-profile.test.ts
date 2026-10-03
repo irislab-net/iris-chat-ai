@@ -4,6 +4,7 @@ import {
   clearTradingProfile,
   parseTradingProfile,
   readTradingProfile,
+  resetTradingProfileCache,
   tradingProfileForClientContext,
   tradingProfileToDraft,
   writeTradingProfile,
@@ -14,6 +15,7 @@ describe("trading profile", () => {
 
   beforeEach(() => {
     store = {}
+    resetTradingProfileCache()
     vi.stubGlobal("window", {
       dispatchEvent: vi.fn(),
       addEventListener: vi.fn(),
@@ -31,6 +33,7 @@ describe("trading profile", () => {
   })
 
   afterEach(() => {
+    resetTradingProfileCache()
     vi.unstubAllGlobals()
   })
 
@@ -83,6 +86,19 @@ describe("trading profile", () => {
     expect(saved?.country).toBeUndefined()
     expect(readTradingProfile()).toEqual(saved)
     expect(tradingProfileToDraft(saved).country).toBe("")
+  })
+
+  it("returns a stable snapshot reference for useSyncExternalStore", () => {
+    writeTradingProfile({
+      experience_level: "beginner",
+      country: "Iran",
+      target_market: "crypto",
+      risk_tolerance: "low",
+    })
+    const first = readTradingProfile()
+    const second = readTradingProfile()
+    expect(first).not.toBeNull()
+    expect(first).toBe(second)
   })
 
   it("defaults draft to not_sure when empty", () => {

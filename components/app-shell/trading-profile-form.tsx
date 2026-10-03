@@ -121,7 +121,8 @@ function TradingProfileForm({
 
   function onSave() {
     const saved = writeTradingProfile(draft)
-    if (saved) onSaved?.(saved)
+    if (!saved) return
+    onSaved?.(saved)
   }
 
   function experienceLabel(level: ExperienceLevel) {

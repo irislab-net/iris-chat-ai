@@ -80,8 +80,24 @@ export function tradingProfileForClientContext(
 
 let profileVersion = 0
 
+/**
+ * Cached for useSyncExternalStore — getSnapshot must return a stable
+ * reference or React will infinite-loop after the first save.
+ */
+let cachedSnapshot: TradingProfile | null | undefined
+let cachedRaw: string | null | undefined
+
 function canUseLocalStorage() {
   return typeof window !== "undefined" && typeof localStorage !== "undefined"
+}
+
+function readRawTradingProfile(): string | null {
+  if (!canUseLocalStorage()) return null
+  try {
+    return localStorage.getItem(TRADING_PROFILE_STORAGE_KEY)
+  } catch {
+    return null
+  }
 }
 
 function notifyTradingProfileChanged() {
@@ -96,9 +112,18 @@ export function getTradingProfileVersion() {
 
 export function subscribeTradingProfile(onStoreChange: () => void) {
   if (typeof window === "undefined") return () => {}
-  window.addEventListener(TRADING_PROFILE_CHANGED_EVENT, onStoreChange)
+  const onStorage = (event: StorageEvent) => {
+    if (event.key === TRADING_PROFILE_STORAGE_KEY || event.key === null) {
+      resetTradingProfileCache()
+      onStoreChange()
+    }
+  }
+  const onChanged = () => onStoreChange()
+  window.addEventListener("storage", onStorage)
+  window.addEventListener(TRADING_PROFILE_CHANGED_EVENT, onChanged)
   return () => {
-    window.removeEventListener(TRADING_PROFILE_CHANGED_EVENT, onStoreChange)
+    window.removeEventListener("storage", onStorage)
+    window.removeEventListener(TRADING_PROFILE_CHANGED_EVENT, onChanged)
   }
 }
 
@@ -109,15 +134,36 @@ export function parseTradingProfile(raw: unknown): TradingProfile | null {
   return parsed.data
 }
 
-export function readTradingProfile(): TradingProfile | null {
-  if (!canUseLocalStorage()) return null
-  try {
-    const raw = localStorage.getItem(TRADING_PROFILE_STORAGE_KEY)
-    if (!raw) return null
-    return parseTradingProfile(JSON.parse(raw) as unknown)
-  } catch {
+/**
+ * Synchronize the in-memory snapshot with localStorage (stable identity).
+ * Safe for `useSyncExternalStore` getSnapshot.
+ */
+export function getTradingProfileSnapshot(): TradingProfile | null {
+  const raw = readRawTradingProfile()
+  if (raw === cachedRaw) {
+    return cachedSnapshot ?? null
+  }
+  cachedRaw = raw
+  if (!raw) {
+    cachedSnapshot = null
     return null
   }
+  try {
+    cachedSnapshot = parseTradingProfile(JSON.parse(raw) as unknown)
+  } catch {
+    cachedSnapshot = null
+  }
+  return cachedSnapshot
+}
+
+export function readTradingProfile(): TradingProfile | null {
+  return getTradingProfileSnapshot()
+}
+
+/** Invalidate snapshot cache (tests + external storage writes). */
+export function resetTradingProfileCache() {
+  cachedRaw = undefined
+  cachedSnapshot = undefined
 }
 
 export function tradingProfileToDraft(
@@ -143,17 +189,18 @@ export function writeTradingProfile(
   })
   if (!parsed) return null
 
+  const raw = JSON.stringify(parsed)
   if (canUseLocalStorage()) {
     try {
-      localStorage.setItem(
-        TRADING_PROFILE_STORAGE_KEY,
-        JSON.stringify(parsed)
-      )
+      localStorage.setItem(TRADING_PROFILE_STORAGE_KEY, raw)
     } catch {
       // Private mode / quota — still notify so in-memory readers refresh.
     }
   }
 
+  // Cache before notify so getSnapshot returns a stable object reference.
+  cachedRaw = raw
+  cachedSnapshot = parsed
   notifyTradingProfileChanged()
   return parsed
 }
@@ -166,5 +213,7 @@ export function clearTradingProfile() {
       // ignore
     }
   }
+  cachedRaw = null
+  cachedSnapshot = null
   notifyTradingProfileChanged()
 }
