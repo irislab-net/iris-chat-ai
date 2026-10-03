@@ -392,7 +392,7 @@ function ChatAccountSheet({
   const popSign: 1 | -1 = dir === "rtl" ? 1 : -1
 
   const [view, setView] = React.useState<AccountSheetView>(initialView)
-  const [viewStack, setViewStack] = React.useState<AccountSheetView[]>([])
+  const [, setViewStack] = React.useState<AccountSheetView[]>([])
   const [enterFromSign, setEnterFromSign] = React.useState<1 | -1>(pushSign)
   const [openSnapshot, setOpenSnapshot] = React.useState(open)
   const [accountExpanded, setAccountExpanded] = React.useState(false)
