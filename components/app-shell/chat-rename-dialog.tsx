@@ -94,11 +94,11 @@ function ChatRenameDialog({
 }: ChatRenameDialogProps) {
   const t = useTranslations("workspace")
   const isDesktop = useIsDesktop()
-  const [draft, setDraft] = React.useState(title)
+  const [draft, setDraft] = React.useState(title ?? "")
   const [draftSource, setDraftSource] = React.useState({ open, title })
   if (open && (draftSource.open !== open || draftSource.title !== title)) {
     setDraftSource({ open, title })
-    setDraft(title)
+    setDraft(title ?? "")
   } else if (!open && draftSource.open) {
     setDraftSource({ open, title })
   }
