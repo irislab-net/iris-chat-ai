@@ -58,7 +58,7 @@ export function BentoSection() {
               <article
                 className={cn(
                   landingGlassSurface,
-                  "group relative flex h-full flex-col items-center overflow-hidden rounded-[1.75rem] bg-white/42 text-center dark:bg-white/8",
+                  "group relative flex h-full flex-col items-center overflow-visible rounded-[1.75rem] bg-white/42 text-center dark:bg-white/8",
                   "px-6 py-8 sm:px-7 sm:py-9"
                 )}
               >

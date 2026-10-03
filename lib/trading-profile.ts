@@ -7,6 +7,7 @@ export const EXPERIENCE_LEVELS = [
   "beginner",
   "intermediate",
   "advanced",
+  "not_sure",
 ] as const
 
 export const TARGET_MARKETS = [
@@ -14,9 +15,10 @@ export const TARGET_MARKETS = [
   "forex",
   "commodities",
   "multi",
+  "not_sure",
 ] as const
 
-export const RISK_TOLERANCES = ["low", "medium", "high"] as const
+export const RISK_TOLERANCES = ["low", "medium", "high", "not_sure"] as const
 
 export const tradingProfileSchema = z.object({
   experience_level: z.enum(EXPERIENCE_LEVELS),
@@ -43,10 +45,37 @@ export type TradingProfileDraft = {
 }
 
 export const DEFAULT_TRADING_PROFILE_DRAFT: TradingProfileDraft = {
-  experience_level: "intermediate",
+  experience_level: "not_sure",
   country: "",
-  target_market: "crypto",
-  risk_tolerance: "medium",
+  target_market: "not_sure",
+  risk_tolerance: "not_sure",
+}
+
+/** Concrete prefs only — omit when any required field is still "not sure". */
+export function tradingProfileForClientContext(
+  profile: TradingProfile | null | undefined
+):
+  | {
+      experience_level: Exclude<ExperienceLevel, "not_sure">
+      country?: string
+      target_market: Exclude<TargetMarket, "not_sure">
+      risk_tolerance: Exclude<RiskTolerance, "not_sure">
+    }
+  | undefined {
+  if (!profile) return undefined
+  if (
+    profile.experience_level === "not_sure" ||
+    profile.target_market === "not_sure" ||
+    profile.risk_tolerance === "not_sure"
+  ) {
+    return undefined
+  }
+  return {
+    experience_level: profile.experience_level,
+    target_market: profile.target_market,
+    risk_tolerance: profile.risk_tolerance,
+    ...(profile.country ? { country: profile.country } : {}),
+  }
 }
 
 let profileVersion = 0

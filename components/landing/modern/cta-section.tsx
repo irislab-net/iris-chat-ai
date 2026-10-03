@@ -22,7 +22,7 @@ export function CtaSection() {
       id="get-started"
       className={cn(
         landingSection,
-        // Shares the standard section shell (radius, clip, vertical rhythm) so
+        // Shares the standard section shell (radius, vertical rhythm) so
         // the band sits on the same scale as every other section.
         landingSectionBody,
         // Glass shell from the hero card, so the shared mesh reads as one system.

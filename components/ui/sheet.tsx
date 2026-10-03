@@ -68,7 +68,13 @@ function SheetContent({
             render={
               <Button
                 variant="ghost"
-                className="absolute inset-e-3 top-3"
+                className={cn(
+                  "absolute",
+                  // Bottom sheets: align with title row after handle (pt-2 + h-1 + mb-4).
+                  side === "bottom"
+                    ? "end-5 top-[1.75rem]"
+                    : "inset-e-3 top-3"
+                )}
                 size="icon-sm"
               />
             }

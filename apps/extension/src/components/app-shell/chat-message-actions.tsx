@@ -5,6 +5,7 @@ import {
   CheckIcon,
   CopyIcon,
   ReplyIcon,
+  Share2Icon,
   ThumbsDownIcon,
   ThumbsUpIcon,
 } from "lucide-react"
@@ -19,6 +20,12 @@ import {
   trackChatMessageCopied,
   trackChatMessageFeedback,
 } from "@/lib/analytics"
+import {
+  buildNoTradeShareText,
+  buildSignalShareText,
+} from "@/lib/chat/signal-share"
+import type { PaperTradeTicket } from "@/lib/chat/signal-ticket"
+import { shareTextOrCopy } from "@/lib/chat/transcript"
 import type { ChatMessageFeedback } from "@/lib/chat-storage"
 import { cn } from "@/lib/utils"
 
@@ -26,6 +33,8 @@ type ChatMessageActionsProps = {
   messageId: string
   conversationId: string
   content: string
+  shareTicket?: PaperTradeTicket
+  shareNoTradeReason?: string
   feedback?: ChatMessageFeedback
   onFeedbackChange: (feedback: ChatMessageFeedback | undefined) => void
   onReply?: () => void
@@ -38,6 +47,8 @@ function ChatMessageActions({
   messageId,
   conversationId,
   content,
+  shareTicket,
+  shareNoTradeReason,
   feedback,
   onFeedbackChange,
   onReply,
@@ -47,28 +58,69 @@ function ChatMessageActions({
 }: ChatMessageActionsProps) {
   const t = useTranslations("workspace")
   const [copied, setCopied] = React.useState(false)
-  const copyTimerRef = React.useRef(0)
+  const [shared, setShared] = React.useState(false)
+  const flashTimerRef = React.useRef(0)
   const isGemini = variant === "gemini"
+  const canCopy = Boolean(content.trim())
+  const noTradeReason = shareNoTradeReason?.trim() ?? ""
+  const canShareSignal = Boolean(shareTicket)
+  const canShareNoTrade = !canShareSignal && Boolean(noTradeReason)
+  const canShareCard = canShareSignal || canShareNoTrade
 
   React.useEffect(() => {
-    return () => window.clearTimeout(copyTimerRef.current)
+    return () => window.clearTimeout(flashTimerRef.current)
   }, [])
+
+  function flash(kind: "copied" | "shared") {
+    if (kind === "copied") setCopied(true)
+    else setShared(true)
+    window.clearTimeout(flashTimerRef.current)
+    flashTimerRef.current = window.setTimeout(() => {
+      setCopied(false)
+      setShared(false)
+    }, 1_600)
+  }
 
   async function onCopy() {
     const text = content.trim()
     if (!text || disabled) return
     try {
       await navigator.clipboard.writeText(text)
-      setCopied(true)
+      flash("copied")
       trackChatMessageCopied({
         conversation_id: conversationId,
         message_id: messageId,
       })
-      window.clearTimeout(copyTimerRef.current)
-      copyTimerRef.current = window.setTimeout(() => setCopied(false), 1_600)
     } catch {
       setCopied(false)
     }
+  }
+
+  async function onShareCard() {
+    if (disabled) return
+    let text = ""
+    if (shareTicket) {
+      text = buildSignalShareText(shareTicket, {
+        entry: t("signalCardEntry"),
+        stopLoss: t("signalCardStopLoss"),
+        target: t("signalShareTarget"),
+      })
+    } else if (noTradeReason) {
+      text = buildNoTradeShareText(noTradeReason, {
+        title: t("noTradeTitle"),
+        badge: t("noTradeBadge"),
+        capitalProtected: t("noTradeCapitalProtected"),
+        reasonHeading: t("noTradeReasonHeading"),
+      })
+    }
+    if (!text) return
+    const result = await shareTextOrCopy(text)
+    if (!result) return
+    flash("shared")
+    trackChatMessageCopied({
+      conversation_id: conversationId,
+      message_id: messageId,
+    })
   }
 
   function onReaction(next: ChatMessageFeedback) {
@@ -104,22 +156,41 @@ function ChatMessageActions({
           <ReplyIcon className={isGemini ? "size-4.5" : undefined} />
         </Button>
       ) : null}
-      <Button
-        type="button"
-        variant="ghost"
-        size="icon-sm"
-        className={buttonClass}
-        aria-label={copied ? t("copiedResponse") : t("copyResponse")}
-        title={copied ? t("copied") : t("copy")}
-        disabled={disabled || !content.trim()}
-        onClick={() => void onCopy()}
-      >
-        {copied ? (
-          <CheckIcon className={isGemini ? "size-4.5" : undefined} />
-        ) : (
-          <CopyIcon className={isGemini ? "size-4.5" : undefined} />
-        )}
-      </Button>
+      {canShareCard ? (
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon-sm"
+          className={buttonClass}
+          aria-label={t("signalCardShare")}
+          title={t("share")}
+          disabled={disabled}
+          onClick={() => void onShareCard()}
+        >
+          {shared ? (
+            <CheckIcon className={isGemini ? "size-4.5" : undefined} />
+          ) : (
+            <Share2Icon className={isGemini ? "size-4.5" : undefined} />
+          )}
+        </Button>
+      ) : (
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon-sm"
+          className={buttonClass}
+          aria-label={copied ? t("copiedResponse") : t("copyResponse")}
+          title={copied ? t("copied") : t("copy")}
+          disabled={disabled || !canCopy}
+          onClick={() => void onCopy()}
+        >
+          {copied ? (
+            <CheckIcon className={isGemini ? "size-4.5" : undefined} />
+          ) : (
+            <CopyIcon className={isGemini ? "size-4.5" : undefined} />
+          )}
+        </Button>
+      )}
       <Button
         type="button"
         variant="ghost"

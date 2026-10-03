@@ -329,9 +329,9 @@
     },
     "hero": {
       "badge": "مستشار أسواق بالذكاء الاصطناعي",
-      "titleBefore": "ذكاء مؤسسي،",
-      "titleAfter": "وضوح شخصي.",
-      "subtitle": "يعالج Exur الشريط الحي وتدفق الأوامر وأثر الأخبار ليمنحك إعدادًا واضحًا أو سببًا محسوبًا للانتظار. عقلك السوقي الموضوعي.",
+      "titleBefore": "مساعدك المالي",
+      "titleAfter": "الذكي.",
+      "subtitle": "اسأل Exur عن الأخبار والسعر. احصل على إعداد واضح، أو سببًا للبقاء جانبًا.",
       "inputPlaceholder": "هل خبر ETF اليوم مهم لإيثريوم؟",
       "exchanges": {
         "0": {
@@ -894,6 +894,11 @@
       "descriptionPro": "وصلت لحد هذه الفترة. يُعاد ضبطه تلقائيًا.",
       "viewBilling": "عرض الفوترة"
     },
+    "guestTrialExhausted": {
+      "title": "انتهت رسائلك المجانية",
+      "description": "سجّل الدخول بحسابك لمتابعة الدردشة مع Exur.",
+      "notNow": "ليس الآن"
+    },
     "justNow": "الآن",
     "minutesAgo": "منذ {count}د",
     "hoursAgo": "منذ {count}س",
@@ -912,7 +917,7 @@
     "tradingProfile": {
       "menuLabel": "ملف التداول",
       "title": "ملف التداول",
-      "description": "يُحفظ على هذا الجهاز. يستخدمه Exur بصمت لتخصيص الإجابات — ولا يظهر في سجل المحادثة.",
+      "description": "يُحفظ على هذا الجهاز. يستخدمه Exur بصمت لتخصيص الإجابات، ولا يظهر في سجل المحادثة.",
       "experienceLabel": "الخبرة",
       "experience": {
         "beginner": "مبتدئ",
@@ -935,7 +940,12 @@
       "countryLabel": "البلد (اختياري)",
       "countryPlaceholder": "مثال: الإمارات",
       "save": "حفظ الملف"
-    }
+    },
+    "share": "مشاركة",
+    "shared": "تمت المشاركة",
+    "shareResponse": "مشاركة الرد",
+    "sharedResponse": "تمت مشاركة الرد",
+    "noTradeShareTitle": "مشاركة عدم التداول"
   },
   "billingPage": {
     "title": "الفوترة",

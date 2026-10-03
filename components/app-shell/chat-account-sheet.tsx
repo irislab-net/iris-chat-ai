@@ -835,23 +835,17 @@ function ChatAccountSheet({
             data-view="tradingProfile"
             className="flex min-h-0 flex-1 flex-col"
           >
-            <NestedViewChrome
+            <TradingProfileForm
+              key={
+                view === "tradingProfile"
+                  ? "trading-profile-active"
+                  : "trading-profile-idle"
+              }
               title={t("tradingProfile.title")}
               onDone={closeSheet}
-            >
-              <p className="px-1 pb-3 text-[13px] leading-relaxed text-muted-foreground">
-                {t("tradingProfile.description")}
-              </p>
-              <TradingProfileForm
-                key={
-                  view === "tradingProfile"
-                    ? "trading-profile-active"
-                    : "trading-profile-idle"
-                }
-                initialProfile={readTradingProfile()}
-                onSaved={() => go("root", "pop")}
-              />
-            </NestedViewChrome>
+              initialProfile={readTradingProfile()}
+              onSaved={() => go("root", "pop")}
+            />
           </div>
         </ChatGsapViewStack>
       </SheetContent>

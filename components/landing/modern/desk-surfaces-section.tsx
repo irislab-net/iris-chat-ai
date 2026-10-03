@@ -423,7 +423,7 @@ export function DeskSurfacesSection() {
           ref={articleRef}
           className={cn(
             landingGlassSurface,
-            "relative overflow-hidden rounded-[1.75rem] bg-white/42 dark:bg-white/8"
+            "relative overflow-visible rounded-[1.75rem] bg-white/42 dark:bg-white/8"
           )}
         >
           <span
@@ -437,7 +437,7 @@ export function DeskSurfacesSection() {
           <ol className="sr-only">
             {board.map((item) => (
               <li key={item.id}>
-                {t(`news.${item.id}.headline`)} — {item.impact}{" "}
+                {t(`news.${item.id}.headline`)}: {item.impact}{" "}
                 {t("impactLabel")}
               </li>
             ))}

@@ -1,8 +1,20 @@
 "use client"
 
 import * as React from "react"
+import { LoaderCircleIcon } from "lucide-react"
 import { useTranslations } from "next-intl"
 
+import {
+  chatThinkingLabelClass,
+  chatThinkingRowClass,
+  chatThinkingShellClass,
+  chatThinkingSpinnerClass,
+} from "@/components/app-shell/chat-thinking-styles"
+import {
+  CHAT_MOTION,
+  loadChatGsap,
+  prefersChatReducedMotion,
+} from "@/lib/chat-motion"
 import { cn } from "@/lib/utils"
 
 export const THINKING_TERMINAL_LINE_KEYS = [
@@ -15,9 +27,11 @@ export const THINKING_TERMINAL_LINE_KEYS = [
 export type ThinkingTerminalLineKey =
   (typeof THINKING_TERMINAL_LINE_KEYS)[number]
 
-/** Cosmetic pre-trace cadence — fast enough to feel live, slow enough to read. */
-const LINE_ROTATE_MS = 600
-const MAX_VISIBLE_LINES = 3
+/** Cadence between GSAP line crossfades — readable, not twitchy. */
+const LINE_ROTATE_MS = 1600
+const LINE_OUT_DURATION = 0.22
+const LINE_IN_DURATION = 0.34
+const LINE_SHIFT_Y = 10
 
 function shuffleLineKeys(): ThinkingTerminalLineKey[] {
   const keys = [...THINKING_TERMINAL_LINE_KEYS]
@@ -35,86 +49,186 @@ type ChatThinkingTerminalProps = {
 }
 
 /**
- * Pre-trace waiting UI — cosmetic terminal lines while SSE thinking steps
- * have not arrived yet. Parent must unmount when `hasThinking` becomes true.
+ * Pre-trace waiting UI — same shell as Thought process, with a GSAP
+ * crossfade of cosmetic status lines until SSE thinking steps arrive.
  */
-type TerminalLine = {
-  id: number
-  key: ThinkingTerminalLineKey
-}
-
 function ChatThinkingTerminal({ className }: ChatThinkingTerminalProps) {
   const t = useTranslations("workspace.thinkingTerminal")
-  const [lines, setLines] = React.useState<TerminalLine[]>(() => [
-    { id: 0, key: THINKING_TERMINAL_LINE_KEYS[0] },
-  ])
+  const shellRef = React.useRef<HTMLDivElement>(null)
+  const outgoingRef = React.useRef<HTMLSpanElement>(null)
+  const incomingRef = React.useRef<HTMLSpanElement>(null)
   const orderRef = React.useRef<ThinkingTerminalLineKey[]>([])
   const orderAtRef = React.useRef(0)
-  const lineIdRef = React.useRef(0)
+  const tweenRef = React.useRef<{ kill: () => void } | null>(null)
+  const [activeKey, setActiveKey] = React.useState<ThinkingTerminalLineKey>(
+    THINKING_TERMINAL_LINE_KEYS[0]
+  )
+
+  const labelFor = React.useCallback(
+    (key: ThinkingTerminalLineKey) => t(`lines.${key}`),
+    [t]
+  )
 
   React.useEffect(() => {
-    const reduced = window.matchMedia(
-      "(prefers-reduced-motion: reduce)"
-    ).matches
-
     orderRef.current = shuffleLineKeys()
     orderAtRef.current = 0
-    lineIdRef.current = 0
     const first = orderRef.current[0] ?? THINKING_TERMINAL_LINE_KEYS[0]
-    setLines([{ id: 0, key: first }])
+    setActiveKey(first)
 
-    if (reduced) return
+    const outgoing = outgoingRef.current
+    const incoming = incomingRef.current
+    if (outgoing) outgoing.textContent = labelFor(first)
+    if (incoming) incoming.textContent = ""
 
-    const timer = window.setInterval(() => {
-      orderAtRef.current =
-        (orderAtRef.current + 1) % orderRef.current.length
-      const next =
-        orderRef.current[orderAtRef.current] ?? THINKING_TERMINAL_LINE_KEYS[0]
-      lineIdRef.current += 1
-      const entry: TerminalLine = { id: lineIdRef.current, key: next }
-      setLines((prev) => [...prev, entry].slice(-MAX_VISIBLE_LINES))
-    }, LINE_ROTATE_MS)
+    if (prefersChatReducedMotion()) {
+      const timer = window.setInterval(() => {
+        orderAtRef.current =
+          (orderAtRef.current + 1) % orderRef.current.length
+        const next =
+          orderRef.current[orderAtRef.current] ?? THINKING_TERMINAL_LINE_KEYS[0]
+        setActiveKey(next)
+        if (outgoingRef.current) {
+          outgoingRef.current.textContent = labelFor(next)
+        }
+      }, LINE_ROTATE_MS)
+      return () => window.clearInterval(timer)
+    }
 
-    return () => window.clearInterval(timer)
+    let cancelled = false
+    let rotateTimer = 0
+    let startTimer = 0
+
+    void loadChatGsap().then((gsap) => {
+      if (cancelled) return
+
+      const outEl = outgoingRef.current
+      const inEl = incomingRef.current
+      if (!outEl || !inEl) return
+
+      gsap.set(outEl, { y: 0, autoAlpha: 1, force3D: true })
+      gsap.set(inEl, { y: LINE_SHIFT_Y, autoAlpha: 0, force3D: true })
+
+      const crossfade = () => {
+        const out = outgoingRef.current
+        const inn = incomingRef.current
+        if (!out || !inn) return
+
+        orderAtRef.current =
+          (orderAtRef.current + 1) % orderRef.current.length
+        const next =
+          orderRef.current[orderAtRef.current] ?? THINKING_TERMINAL_LINE_KEYS[0]
+        const nextLabel = labelFor(next)
+
+        inn.textContent = nextLabel
+        gsap.set(inn, { y: LINE_SHIFT_Y, autoAlpha: 0 })
+
+        tweenRef.current?.kill()
+        const tl = gsap.timeline({
+          defaults: { force3D: true, overwrite: "auto" },
+          onComplete: () => {
+            out.textContent = nextLabel
+            gsap.set(out, { y: 0, autoAlpha: 1 })
+            gsap.set(inn, { y: LINE_SHIFT_Y, autoAlpha: 0 })
+            inn.textContent = ""
+            setActiveKey(next)
+          },
+        })
+
+        tl.to(
+          out,
+          {
+            y: -LINE_SHIFT_Y,
+            autoAlpha: 0,
+            duration: LINE_OUT_DURATION,
+            ease: CHAT_MOTION.easeIn,
+          },
+          0
+        )
+        tl.to(
+          inn,
+          {
+            y: 0,
+            autoAlpha: 1,
+            duration: LINE_IN_DURATION,
+            ease: CHAT_MOTION.ease,
+          },
+          0.06
+        )
+
+        tweenRef.current = tl
+      }
+
+      // First swap after a beat so the initial line can be read.
+      startTimer = window.setTimeout(() => {
+        if (cancelled) return
+        crossfade()
+        rotateTimer = window.setInterval(crossfade, LINE_ROTATE_MS)
+      }, LINE_ROTATE_MS)
+    })
+
+    return () => {
+      cancelled = true
+      window.clearTimeout(startTimer)
+      window.clearInterval(rotateTimer)
+      tweenRef.current?.kill()
+      tweenRef.current = null
+    }
+  }, [labelFor])
+
+  React.useEffect(() => {
+    const shell = shellRef.current
+    if (!shell || prefersChatReducedMotion()) return
+
+    let cancelled = false
+    void loadChatGsap().then((gsap) => {
+      if (cancelled || !shellRef.current) return
+      gsap.fromTo(
+        shellRef.current,
+        { autoAlpha: 0, y: 6 },
+        {
+          autoAlpha: 1,
+          y: 0,
+          duration: CHAT_MOTION.threadDuration,
+          ease: CHAT_MOTION.ease,
+          overwrite: true,
+        }
+      )
+    })
+
+    return () => {
+      cancelled = true
+    }
   }, [])
 
   return (
     <div
-      className={cn(
-        "flex h-[4.125rem] w-full max-w-xs flex-col justify-end gap-1 overflow-hidden py-0.5",
-        className
-      )}
+      ref={shellRef}
+      className={cn(chatThinkingShellClass, className)}
       role="status"
       aria-live="polite"
       aria-label={t("aria")}
+      data-thinking-terminal=""
     >
-      {lines.map((line, index) => {
-        const isLatest = index === lines.length - 1
-        return (
-          <p
-            key={line.id}
-            className={cn(
-              "flex min-h-5 items-center gap-1.5 truncate font-mono text-[12px] leading-5 tracking-tight",
-              isLatest
-                ? "text-muted-foreground/75"
-                : "text-muted-foreground/40",
-              isLatest &&
-                "motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-bottom-1 motion-safe:duration-300"
-            )}
+      <div className={chatThinkingRowClass}>
+        <LoaderCircleIcon className={chatThinkingSpinnerClass} aria-hidden />
+        <span className="relative block min-h-5 min-w-0 flex-1 overflow-hidden">
+          <span
+            ref={outgoingRef}
+            className={cn(chatThinkingLabelClass, "absolute inset-x-0 top-0")}
           >
-            <span
-              className={cn(
-                "shrink-0 select-none",
-                isLatest ? "text-sky-500/70 dark:text-sky-400/65" : "opacity-50"
-              )}
-              aria-hidden
-            >
-              ›
-            </span>
-            <span className="min-w-0 truncate">{t(`lines.${line.key}`)}</span>
-          </p>
-        )
-      })}
+            {labelFor(activeKey)}
+          </span>
+          <span
+            ref={incomingRef}
+            className={cn(chatThinkingLabelClass, "absolute inset-x-0 top-0")}
+            aria-hidden
+          />
+          {/* Reserve layout height while labels are absolutely positioned. */}
+          <span className={cn(chatThinkingLabelClass, "invisible")} aria-hidden>
+            {labelFor(activeKey)}
+          </span>
+        </span>
+      </div>
     </div>
   )
 }

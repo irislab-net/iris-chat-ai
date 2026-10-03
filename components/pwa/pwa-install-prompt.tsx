@@ -19,6 +19,7 @@ import {
   chatMobileSheetTitleClass,
 } from "@/components/app-shell/chat-mobile-gemini-styles"
 import { ExurLogo } from "@/components/brand/exur-logo"
+import { IosShareIcon } from "@/components/icons/ios-share-icon"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -44,39 +45,6 @@ import { cn } from "@/lib/utils"
 
 const nudgeSurfaceClass =
   "relative isolate overflow-hidden border-0 bg-white/82 shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_75%,transparent),0_16px_48px_-18px_color-mix(in_oklch,var(--foreground)_16%,transparent)] backdrop-blur-2xl backdrop-saturate-[180%] supports-[backdrop-filter]:bg-white/68 before:pointer-events-none before:absolute before:inset-0 before:-z-10 before:rounded-[inherit] before:bg-[radial-gradient(120%_80%_at_0%_0%,rgba(37,99,235,0.12),transparent_55%),radial-gradient(90%_60%_at_100%_0%,rgba(37,99,235,0.06),transparent_50%),linear-gradient(180deg,rgba(255,255,255,0.5)_0%,transparent_42%)] before:content-[''] dark:bg-white/[0.1] dark:shadow-[inset_0_1px_0_0_color-mix(in_oklch,var(--foreground)_12%,transparent),0_16px_48px_-18px_color-mix(in_oklch,black_45%,transparent)] dark:supports-[backdrop-filter]:bg-white/[0.07] dark:before:bg-[radial-gradient(120%_80%_at_0%_0%,rgba(96,165,250,0.14),transparent_55%),radial-gradient(90%_60%_at_100%_0%,rgba(37,99,235,0.08),transparent_50%),linear-gradient(180deg,rgba(255,255,255,0.06)_0%,transparent_40%)]"
-
-/** iOS SF Symbol–like: square.and.arrow.up (Share). */
-function IosShareIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      className={className}
-      aria-hidden
-    >
-      <path
-        d="M12 3.25v10.5"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-      />
-      <path
-        d="M8.4 6.6 12 3.1l3.6 3.5"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M5.25 11.5v6.25A2.5 2.5 0 0 0 7.75 20.25h8.5a2.5 2.5 0 0 0 2.5-2.5V11.5"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  )
-}
 
 /** iOS SF Symbol–like: plus.square (Add to Home Screen). */
 function IosAddHomeIcon({ className }: { className?: string }) {

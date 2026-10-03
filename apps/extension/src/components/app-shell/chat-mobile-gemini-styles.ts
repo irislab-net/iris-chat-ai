@@ -347,10 +347,11 @@ const chatMobileSheetContentClass =
 const chatMobileSheetHandleClass =
   "mx-auto mb-4 h-1 w-10 shrink-0 rounded-full bg-foreground/15 dark:bg-white/20"
 
-const chatMobileSheetHeaderClass = "gap-1.5 space-y-0 px-5 pb-2 pt-0 text-start"
+const chatMobileSheetHeaderClass =
+  "gap-1.5 space-y-0 px-5 pe-14 pb-2 pt-0 text-start"
 
 const chatMobileSheetTitleClass =
-  "text-[22px] font-normal tracking-tight text-foreground"
+  "flex min-h-7 items-center text-[22px] font-normal leading-none tracking-tight text-foreground"
 
 const chatMobileSheetDescriptionClass =
   "text-pretty text-[15px] leading-relaxed text-muted-foreground"
@@ -367,7 +368,7 @@ const chatMobileSheetFooterClass = "mt-auto gap-0 border-0 !p-0"
 
 /** When the keyboard is open, subtract its inset so we don't double-pad above it. */
 const chatMobileSheetFooterBarClass =
-  "w-full border-0 bg-transparent px-5 pt-3 pb-[max(0.75rem,calc(env(safe-area-inset-bottom,0px)-var(--keyboard-inset-bottom,0px)))]"
+  "w-full border-0 bg-transparent shadow-none backdrop-blur-none px-5 pt-3 pb-[max(0.75rem,calc(env(safe-area-inset-bottom,0px)-var(--keyboard-inset-bottom,0px)))]"
 
 /** Sheet CTAs — tinted glass primary; secondary soft tint (not opaque marketing fill). */
 const chatMobileSheetPrimaryButtonClass = `h-12! min-h-12 w-full rounded-full text-[15px] font-semibold ${chatLandingAccentFillClass}`

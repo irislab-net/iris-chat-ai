@@ -57,19 +57,16 @@ function ChatNoTradeCard({
             <h3 className="text-lg font-semibold tracking-[-0.03em] text-foreground">
               {t("noTradeTitle")}
             </h3>
-            <p className="mt-0.5 text-xs leading-snug text-muted-foreground">
-              {t("noTradeSubtitle")}
-            </p>
           </div>
         </div>
         <div className="flex shrink-0 flex-col items-end gap-1.5">
-          <span className={cn(noTradeChipClass, "uppercase")}>
-            <PauseCircleIcon className="size-3 shrink-0 opacity-80" aria-hidden />
-            {t("noTradeBadge")}
-          </span>
           <span className={capitalProtectedChipClass}>
             <ShieldCheckIcon className="size-3 shrink-0 opacity-80" aria-hidden />
             {t("noTradeCapitalProtected")}
+          </span>
+          <span className={cn(noTradeChipClass, "uppercase")}>
+            <PauseCircleIcon className="size-3 shrink-0 opacity-80" aria-hidden />
+            {t("noTradeBadge")}
           </span>
         </div>
       </header>

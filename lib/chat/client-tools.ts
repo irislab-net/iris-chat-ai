@@ -6,7 +6,7 @@ import {
 } from "@/lib/api/chat"
 import type { User } from "@/lib/api/types"
 import type { PaperTradeTicket } from "@/lib/chat/signal-ticket"
-import { readTradingProfile } from "@/lib/trading-profile"
+import { readTradingProfile, tradingProfileForClientContext } from "@/lib/trading-profile"
 
 export const CHAT_FRONTEND_TOOLS = [
   "show_trade_signal",
@@ -160,6 +160,7 @@ export function buildChatClientContext(input: {
     input.tradingProfile !== undefined
       ? input.tradingProfile
       : readTradingProfile()
+  const tradingProfileContext = tradingProfileForClientContext(tradingProfile)
 
   return {
     active_page: "chat",
@@ -168,7 +169,9 @@ export function buildChatClientContext(input: {
     locale: input.locale,
     ...(timezone ? { timezone } : {}),
     available_ui_actions: resolveAvailableUiActions({ role }),
-    ...(tradingProfile ? { trading_profile: tradingProfile } : {}),
+    ...(tradingProfileContext
+      ? { trading_profile: tradingProfileContext }
+      : {}),
   }
 }
 

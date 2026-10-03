@@ -329,9 +329,9 @@
     },
     "hero": {
       "badge": "مشاور مالی هوش مصنوعی",
-      "titleBefore": "هوش نهادی،",
-      "titleAfter": "تصمیم گیری شفاف.",
-      "subtitle": "اکسور جریان زنده بازار، نقدینگی و تاثیر اخبار را پردازش می کند تا یک ستاپ روشن یا دلیل محاسباتی برای صبر به شما بدهد. مغز بدون احساس شما در بازار.",
+      "titleBefore": "دستیار مالی",
+      "titleAfter": "هوشمند تو.",
+      "subtitle": "از Exur درباره خبر و قیمت بپرس. یا ستاپ بگیر، یا دلیل کنار بایست.",
       "inputPlaceholder": "خبر ETF برای اتریوم مهمه؟",
       "exchanges": {
         "0": {
@@ -754,6 +754,7 @@
     "signalCardSize": "حجم",
     "signalCardRisk": "ریسک",
     "signalCardRewardRisk": "ریسک/ریوارد",
+    "signalShareTarget": "هدف",
     "signalCardTimeHorizon": "بازهٔ زمانی",
     "signalCardThesisHeading": "چرا این موقعیت",
     "signalCardWatchlist": "افزودن به فهرست پیگیری",
@@ -889,7 +890,17 @@
     "getSupportSection": "پشتیبانی",
     "accountSection": "حساب",
     "switchAccount": "تعویض حساب",
-    "guest": "میهمان"
+    "guest": "میهمان",
+    "guestTrialExhausted": {
+      "title": "پیام‌های رایگانت تمام شده",
+      "description": "برای ادامه باید با حسابت وارد شوی.",
+      "notNow": "الان نه"
+    },
+    "share": "اشتراک‌گذاری",
+    "shared": "اشتراک‌گذاری شد",
+    "shareResponse": "اشتراک‌گذاری پاسخ",
+    "sharedResponse": "پاسخ اشتراک‌گذاری شد",
+    "noTradeShareTitle": "اشتراک‌گذاری بدون معامله"
   },
   "billingPage": {
     "title": "پرداخت",

@@ -49,9 +49,9 @@
     },
     "hero": {
       "badge": "AI-marktadviseur",
-      "titleBefore": "Institutionele intelligentie,",
-      "titleAfter": "persoonlijke helderheid.",
-      "subtitle": "Exur verwerkt live tape, orderflow en nieuwsimpact om je een duidelijk setup of een berekende reden om te wachten te geven. Je objectieve markthersen.",
+      "titleBefore": "Jouw slimme",
+      "titleAfter": "financiële assistent.",
+      "subtitle": "Vraag Exur over nieuws en prijsactie. Krijg een duidelijk setup, of een reden om stil te blijven.",
       "inputPlaceholder": "Doet het ETF-nieuws van vandaag ertoe voor ETH?",
       "exchanges": {
         "0": {
@@ -605,6 +605,16 @@
     "getSupportSection": "Ondersteuning",
     "accountSection": "Account",
     "switchAccount": "Account wisselen",
-    "guest": "Gast"
+    "guest": "Gast",
+    "guestTrialExhausted": {
+      "title": "Je gratis berichten zijn op",
+      "description": "Log in met je account om verder te chatten met Exur.",
+      "notNow": "Niet nu"
+    },
+    "share": "Delen",
+    "shared": "Gedeeld",
+    "shareResponse": "Antwoord delen",
+    "sharedResponse": "Antwoord gedeeld",
+    "noTradeShareTitle": "Geen trade delen"
   }
 }

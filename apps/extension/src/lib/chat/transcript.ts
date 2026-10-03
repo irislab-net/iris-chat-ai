@@ -172,6 +172,30 @@ async function copyTextToClipboard(text: string): Promise<boolean> {
   }
 }
 
+/**
+ * Prefer the platform share sheet; fall back to clipboard when share is
+ * unavailable or rejected for a non-cancel reason.
+ */
+async function shareTextOrCopy(text: string): Promise<"shared" | "copied" | false> {
+  const value = text.trim()
+  if (!value) return false
+
+  if (typeof navigator !== "undefined" && typeof navigator.share === "function") {
+    try {
+      await navigator.share({ text: value })
+      return "shared"
+    } catch (error) {
+      if (error instanceof DOMException && error.name === "AbortError") {
+        return false
+      }
+      // Desktop / blocked share — fall through to clipboard.
+    }
+  }
+
+  const copied = await copyTextToClipboard(value)
+  return copied ? "copied" : false
+}
+
 export {
   conversationMarkdownFilename,
   copyTextToClipboard,
@@ -179,4 +203,5 @@ export {
   formatConversationMarkdown,
   formatConversationTranscript,
   formatPaperTicketBlock,
+  shareTextOrCopy,
 }

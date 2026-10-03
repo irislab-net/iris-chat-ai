@@ -21,9 +21,7 @@ export function AboutSection() {
       id="about"
       className={cn(
         landingSection,
-        landingSectionBody,
-        // Full-bleed in the page column: no side inset on the stage.
-        "relative isolate overflow-visible"
+        landingSectionBody
       )}
     >
       {/* Exur introduces itself out loud, so the section stays near-wordless. */}

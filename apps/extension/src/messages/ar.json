@@ -329,9 +329,9 @@
     },
     "hero": {
       "badge": "مستشار أسواق بالذكاء الاصطناعي",
-      "titleBefore": "ذكاء مؤسسي،",
-      "titleAfter": "وضوح شخصي.",
-      "subtitle": "يعالج Exur الشريط الحي وتدفق الأوامر وأثر الأخبار ليمنحك إعدادًا واضحًا أو سببًا محسوبًا للانتظار. عقلك السوقي الموضوعي.",
+      "titleBefore": "مساعدك المالي",
+      "titleAfter": "الذكي.",
+      "subtitle": "اسأل Exur عن الأخبار والسعر. احصل على إعداد واضح، أو سببًا للبقاء جانبًا.",
       "inputPlaceholder": "هل خبر ETF اليوم مهم لإيثريوم؟",
       "exchanges": {
         "0": {
@@ -889,7 +889,17 @@
     "getSupportSection": "الحصول على الدعم",
     "accountSection": "الحساب",
     "switchAccount": "تبديل الحساب",
-    "guest": "زائر"
+    "guest": "زائر",
+    "guestTrialExhausted": {
+      "title": "انتهت رسائلك المجانية",
+      "description": "سجّل الدخول بحسابك لمتابعة الدردشة مع Exur.",
+      "notNow": "ليس الآن"
+    },
+    "share": "مشاركة",
+    "shared": "تمت المشاركة",
+    "shareResponse": "مشاركة الرد",
+    "sharedResponse": "تمت مشاركة الرد",
+    "noTradeShareTitle": "مشاركة عدم التداول"
   },
   "billingPage": {
     "title": "الفوترة",

@@ -74,6 +74,7 @@ import { useTicketSlot } from "@/components/app-shell/ticket-slot"
 import { typewriterReveal } from "@/components/app-shell/chat-typing"
 import { useAuth } from "@/components/auth/auth-provider"
 import { GoogleGlyph } from "@/components/auth/google-glyph"
+import { GuestTrialExhaustedDialog } from "@/components/auth/guest-trial-exhausted-dialog"
 import { CreditsExhaustedDialog } from "@/components/billing/credits-exhausted-dialog"
 import dynamic from "next/dynamic"
 import { useIsDesktop } from "@/hooks/use-media-query"
@@ -367,6 +368,7 @@ function ChatAside({
     isProUser,
     loading: authLoading,
     login,
+    loginPending,
     refresh,
     refreshAfterUpgrade,
     user,
@@ -464,6 +466,8 @@ function ChatAside({
   const [creditBalance, setCreditBalance] =
     React.useState<ChatCreditBalance | null>(null)
   const [creditsExhaustedOpen, setCreditsExhaustedOpen] = React.useState(false)
+  const [guestTrialExhaustedOpen, setGuestTrialExhaustedOpen] =
+    React.useState(false)
   const [guestUnavailable, setGuestUnavailable] = React.useState(false)
   const [guestSendError, setGuestSendError] = React.useState<string | null>(
     null
@@ -474,6 +478,7 @@ function ChatAside({
     if (authLoading || isAuthenticated) {
       setGuestTrial(null)
       setGuestUnavailable(false)
+      setGuestTrialExhaustedOpen(false)
       if (isAuthenticated) setGuestOwnerId(null)
       return
     }
@@ -1324,13 +1329,14 @@ function ChatAside({
       setPendingAssistantId(null)
       if (!isAuthenticated) {
         const trial = await trialFromChatError(error)
-        if (shouldShowGuestSignInPrompt(error, trial)) {
-          replaceAssistantWithGuestLoginPrompt(
+        if (shouldShowGuestSignInPrompt(error, trial ?? guestTrial)) {
+          promptGuestTrialExhausted({
+            trial: trial ?? guestTrial,
             assistantId,
             activeId,
             historySnapshot,
-            trial
-          )
+            partialContent,
+          })
           return
         }
       } else if (isCreditExhaustedError(error)) {
@@ -1447,62 +1453,45 @@ function ChatAside({
     }
   }
 
-  function appendGuestLoginRequiredTurn(
-    userMessage: string,
+  function promptGuestTrialExhausted(options?: {
     trial?: TrialInfo | null
-  ) {
-    if (trial) setGuestTrial(trial)
-    setMessagesAndPersist(
-      (prev) => {
-        const last = prev.at(-1)
-        const lastUser = prev.at(-2)
-        if (
-          last?.role === "assistant" &&
-          last.action === "connect" &&
-          lastUser?.role === "user" &&
-          lastUser.content === userMessage
-        ) {
-          return prev
-        }
-        return [
-          ...prev,
-          { id: crypto.randomUUID(), role: "user", content: userMessage },
-          {
-            id: crypto.randomUUID(),
-            role: "assistant",
-            content: t("guestTrialExhaustedPrompt"),
-            action: "connect",
-          },
-        ]
-      },
-      { id: conversationId, history, ownerId: chatOwnerId }
-    )
-  }
+    /** When mid-stream: clear the empty/failed assistant bubble (keep user turn). */
+    assistantId?: string
+    activeId?: string
+    historySnapshot?: CoPilotHistoryMessage[]
+    partialContent?: string
+  }) {
+    if (options?.trial) setGuestTrial(options.trial)
+    setGuestTrialExhaustedOpen(true)
 
-  function replaceAssistantWithGuestLoginPrompt(
-    assistantId: string,
-    activeId: string,
-    historySnapshot: CoPilotHistoryMessage[],
-    trial?: TrialInfo | null
-  ) {
-    if (trial) setGuestTrial(trial)
+    const assistantId = options?.assistantId
+    if (!assistantId || !options.activeId) return
+
+    const partial = options.partialContent?.trim() ?? ""
+    const historySnapshot = options.historySnapshot ?? history
     setMessagesAndPersist(
       (prev) =>
-        prev.map((m) =>
-          m.id === assistantId
-            ? {
-                ...m,
-                content: t("guestTrialExhaustedPrompt"),
-                error: false,
-                action: "connect" as const,
-                errorText: undefined,
-                retryUserMessage: undefined,
-                thinkingTrace: undefined,
-                reasoning: undefined,
-              }
-            : m
-        ),
-      { id: activeId, history: historySnapshot, ownerId: chatOwnerId }
+        partial
+          ? prev.map((m) =>
+              m.id === assistantId
+                ? {
+                    ...m,
+                    content: partial,
+                    error: false,
+                    errorText: undefined,
+                    action: undefined,
+                    retryUserMessage: undefined,
+                    thinkingTrace: undefined,
+                    reasoning: undefined,
+                  }
+                : m
+            )
+          : removeEmptyAssistantTurn(prev, assistantId),
+      {
+        id: options.activeId,
+        history: historySnapshot,
+        ownerId: chatOwnerId,
+      }
     )
   }
 
@@ -1552,7 +1541,8 @@ function ChatAside({
     if (authLoading) return
 
     if (!isAuthenticated && guestTrialExhausted) {
-      appendGuestLoginRequiredTurn(userMessage, guestTrial)
+      setDraft(userMessage)
+      promptGuestTrialExhausted({ trial: guestTrial })
       return
     }
 
@@ -1566,7 +1556,8 @@ function ChatAside({
         setGuestUnavailable(false)
         setGuestSendError(null)
         if (session.trial.messages_remaining <= 0) {
-          appendGuestLoginRequiredTurn(userMessage, session.trial)
+          setDraft(userMessage)
+          promptGuestTrialExhausted({ trial: session.trial })
           return
         }
       } catch (error) {
@@ -1588,7 +1579,8 @@ function ChatAside({
             error.code === "login_required" ||
             (error.trial?.messages_remaining ?? 0) <= 0
           ) {
-            appendGuestLoginRequiredTurn(userMessage, error.trial)
+            setDraft(userMessage)
+            promptGuestTrialExhausted({ trial: error.trial })
             return
           }
         }
@@ -1697,7 +1689,10 @@ function ChatAside({
     let sendOwnerId: string | null = chatOwnerId
     if (!isAuthenticated) {
       if (guestUnavailable) return
-      if (guestTrialExhausted) return
+      if (guestTrialExhausted) {
+        setGuestTrialExhaustedOpen(true)
+        return
+      }
       try {
         const session = await ensureGuestSession()
         sendOwnerId = session.user_id
@@ -2460,6 +2455,8 @@ function ChatAside({
                                     messageId={message.id}
                                     conversationId={conversationId}
                                     content={message.content}
+                                    shareTicket={signalParts?.ticket ?? undefined}
+                                    shareNoTradeReason={message.noTradeReason}
                                     feedback={message.feedback}
                                     disabled={sending}
                                     variant={
@@ -2635,6 +2632,12 @@ function ChatAside({
             open={creditsExhaustedOpen}
             onOpenChange={setCreditsExhaustedOpen}
             isProUser={isProUser}
+          />
+          <GuestTrialExhaustedDialog
+            open={guestTrialExhaustedOpen}
+            onOpenChange={setGuestTrialExhaustedOpen}
+            signingIn={loginPending}
+            onSignIn={() => login({ source: "chat" })}
           />
         </div>
       </div>

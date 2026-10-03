@@ -49,9 +49,9 @@
     },
     "hero": {
       "badge": "YZ piyasa danışmanı",
-      "titleBefore": "Kurumsal zeka,",
-      "titleAfter": "kişisel netlik.",
-      "subtitle": "Exur, net bir kurulum veya beklemeye dair hesaplanmış bir gerekçe sunmak için canlı bandı, emir akışını ve haber etkisini işler. Objektif piyasa beyniniz.",
+      "titleBefore": "Akıllı finansal",
+      "titleAfter": "asistanın.",
+      "subtitle": "Exur'a haber ve fiyat hakkında sor. Net bir setup al, ya da kenarda kalma gerekçesi.",
       "inputPlaceholder": "Bugünkü ETF haberi ETH için önemli mi?",
       "exchanges": {
         "0": {
@@ -591,6 +591,11 @@
       "descriptionPro": "Bu dönemin limitine ulaştınız. Otomatik sıfırlanır.",
       "viewBilling": "Faturalandırmayı gör"
     },
+    "guestTrialExhausted": {
+      "title": "Ücretsiz mesajlarınız bitti",
+      "description": "Exur ile sohbete devam etmek için hesabınızla giriş yapın.",
+      "notNow": "Şimdi değil"
+    },
     "justNow": "Az önce",
     "minutesAgo": "{count}dk önce",
     "hoursAgo": "{count}sa önce",
@@ -605,6 +610,11 @@
     "getSupportSection": "Destek al",
     "accountSection": "Hesap",
     "switchAccount": "Hesap değiştir",
-    "guest": "Misafir"
+    "guest": "Misafir",
+    "share": "Paylaş",
+    "shared": "Paylaşıldı",
+    "shareResponse": "Yanıtı paylaş",
+    "sharedResponse": "Yanıt paylaşıldı",
+    "noTradeShareTitle": "İşlem yok paylaş"
   }
 }

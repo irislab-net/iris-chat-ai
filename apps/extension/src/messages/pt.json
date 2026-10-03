@@ -49,9 +49,9 @@
     },
     "hero": {
       "badge": "Consultor de mercado com IA",
-      "titleBefore": "Inteligência institucional,",
-      "titleAfter": "clareza pessoal.",
-      "subtitle": "O Exur processa a fita ao vivo, o fluxo de ordens e o impacto das notícias para lhe dar um setup claro ou uma razão calculada para esperar. O seu cérebro de mercado objetivo.",
+      "titleBefore": "Seu assistente",
+      "titleAfter": "financeiro inteligente.",
+      "subtitle": "Pergunte ao Exur sobre notícias e preço. Receba um setup claro, ou um motivo para ficar de fora.",
       "inputPlaceholder": "A notícia de ETF de hoje importa para o ETH?",
       "exchanges": {
         "0": {
@@ -605,6 +605,16 @@
     "getSupportSection": "Obter suporte",
     "accountSection": "Conta",
     "switchAccount": "Trocar de conta",
-    "guest": "Convidado"
+    "guest": "Convidado",
+    "guestTrialExhausted": {
+      "title": "Suas mensagens grátis acabaram",
+      "description": "Entre com a sua conta para continuar a conversar com o Exur.",
+      "notNow": "Agora não"
+    },
+    "share": "Partilhar",
+    "shared": "Partilhado",
+    "shareResponse": "Partilhar resposta",
+    "sharedResponse": "Resposta partilhada",
+    "noTradeShareTitle": "Partilhar sem trade"
   }
 }

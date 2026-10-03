@@ -329,9 +329,9 @@
     },
     "hero": {
       "badge": "مشاور مالی هوش مصنوعی",
-      "titleBefore": "هوش نهادی،",
-      "titleAfter": "تصمیم گیری شفاف.",
-      "subtitle": "اکسور جریان زنده بازار، نقدینگی و تاثیر اخبار را پردازش می کند تا یک ستاپ روشن یا دلیل محاسباتی برای صبر به شما بدهد. مغز بدون احساس شما در بازار.",
+      "titleBefore": "دستیار مالی",
+      "titleAfter": "هوشمند تو.",
+      "subtitle": "از Exur درباره خبر و قیمت بپرس. یا ستاپ بگیر، یا دلیل کنار بایست.",
       "inputPlaceholder": "خبر ETF برای اتریوم مهمه؟",
       "exchanges": {
         "0": {
@@ -747,6 +747,7 @@
     "composerToolVolatilityLabel": "پیش‌بینی نوسان",
     "composerPremiumToolsTitle": "ابزارهای Premium",
     "composerPremiumToolsBody": "مدل‌های تحلیل عمیق قفل‌اند. برای باز کردن همبستگی بازار و پیش‌بینی نوسان به Plus ارتقا بده.",
+    "composerPremiumToolsPaymentNote": "پرداخت با USDT یا USDC.",
     "composerPremiumToolsCta": "مشاهدهٔ پلن‌ها",
     "composerPremiumToolsComingSoonTitle": "به‌زودی",
     "composerPremiumToolsComingSoonBody": "همبستگی و پیش‌بینی نوسان در نقشهٔ راه Plus هستند. وقتی آماده شوند همین‌جا باز می‌شوند.",
@@ -768,7 +769,20 @@
     "signalCardThesisHeading": "چرا این موقعیت",
     "signalCardWatchlist": "افزودن به فهرست پیگیری",
     "signalCardWatchlistAdded": "افزوده شد",
+    "signalCardShare": "اشتراک‌گذاری",
+    "signalShareTitle": "اشتراک سیگنال",
+    "signalShareTabImage": "تصویر",
+    "signalShareTabText": "متن",
+    "signalShareTarget": "هدف",
+    "signalShareCopy": "کپی",
+    "signalShareCopyText": "کپی متن",
+    "signalShareShare": "اشتراک",
+    "signalShareShareImage": "اشتراک تصویر",
+    "signalShareCopied": "کپی شد",
+    "signalShareCopyFailed": "کپی نشد",
+    "signalShareShareFailed": "اشتراک‌گذاری نشد",
     "signalCardDisclaimer": "Exur فقط اطلاعات بازار می‌دهد، نه مشاورهٔ مالی.",
+    "noTradeShareTitle": "اشتراک‌گذاری بدون معامله",
     "samplePromptsLabel": "شروع‌های پیشنهادی",
     "samplePrompts": {
       "usePrompt": "استفاده از پیشنهاد: {title}",
@@ -833,10 +847,14 @@
     "cancelReply": "لغو پاسخ",
     "copy": "کپی",
     "copied": "کپی شد",
+    "share": "اشتراک‌گذاری",
+    "shared": "اشتراک‌گذاری شد",
     "copyMessage": "کپی پیام",
     "copyResponse": "کپی پاسخ",
+    "shareResponse": "اشتراک‌گذاری پاسخ",
     "copiedMessage": "پیام کپی شد",
     "copiedResponse": "پاسخ کپی شد",
+    "sharedResponse": "پاسخ اشتراک‌گذاری شد",
     "edit": "ویرایش",
     "editMessage": "ویرایش پیام",
     "helpful": "مفید",
@@ -894,6 +912,11 @@
       "descriptionPro": "به سقف این دوره رسیدی. به‌صورت خودکار ریست می‌شود.",
       "viewBilling": "مشاهده صورتحساب"
     },
+    "guestTrialExhausted": {
+      "title": "پیام‌های رایگانت تمام شده",
+      "description": "برای ادامه باید با حسابت وارد شوی.",
+      "notNow": "الان نه"
+    },
     "justNow": "همین الان",
     "minutesAgo": "{count}د پیش",
     "hoursAgo": "{count}س پیش",
@@ -910,30 +933,45 @@
     "switchAccount": "تعویض حساب",
     "guest": "میهمان",
     "tradingProfile": {
-      "menuLabel": "پروفایل معاملاتی",
-      "title": "پروفایل معاملاتی",
-      "description": "روی این دستگاه ذخیره می‌شود. Exur برای شخصی‌سازی پاسخ‌ها بی‌صدا از آن استفاده می‌کند — در تاریخچهٔ چت دیده نمی‌شود.",
+      "menuLabel": "شخصی‌سازی",
+      "title": "شخصی‌سازی",
+      "description": "روی این دستگاه ذخیره می‌شود. Exur برای شخصی‌سازی پاسخ‌ها بی‌صدا از آن استفاده می‌کند. در تاریخچهٔ چت دیده نمی‌شود.",
       "experienceLabel": "سطح تجربه",
       "experience": {
         "beginner": "مبتدی",
         "intermediate": "متوسط",
-        "advanced": "حرفه‌ای"
+        "advanced": "حرفه‌ای",
+        "not_sure": "مطمئن نیستم"
+      },
+      "experienceHint": {
+        "beginner": "تازه‌وارد بازارها هستی.",
+        "intermediate": "با ثبت و مدیریت معامله راحت هستی.",
+        "advanced": "در ستاپ و ریسک تجربه داری.",
+        "not_sure": "فعلاً رد کن. Exur پاسخ‌ها را کلی نگه می‌دارد."
       },
       "targetMarketLabel": "بازار هدف",
       "targetMarket": {
         "crypto": "کریپتو",
         "forex": "فارکس",
         "commodities": "کالاها",
-        "multi": "چند دارایی"
+        "multi": "چند دارایی",
+        "not_sure": "مطمئن نیستم"
       },
       "riskLabel": "تحمل ریسک",
       "risk": {
         "low": "کم",
         "medium": "متوسط",
-        "high": "زیاد"
+        "high": "زیاد",
+        "not_sure": "مطمئن نیستم"
       },
-      "countryLabel": "کشور (اختیاری)",
-      "countryPlaceholder": "مثلاً ایران",
+      "countryLabel": "کشور",
+      "countryPlaceholder": "انتخاب کشور",
+      "notSure": "مطمئن نیستم",
+      "introTitle": "پاسخ‌ها را شخصی کن",
+      "introBody": "به Exur بگو چطور معامله می‌کنی تا پاسخ‌ها با تجربه، بازار و ریسک تو جور شود، بدون اینکه در تاریخچهٔ چت دیده شود.",
+      "setup": "راه‌اندازی",
+      "editSetup": "ویرایش پروفایل",
+      "editorHint": "روی هر ردیف بزن و انتخاب کن. تا وقتی ذخیره نزنی چیزی ذخیره نمی‌شود.",
       "save": "ذخیرهٔ پروفایل"
     }
   },

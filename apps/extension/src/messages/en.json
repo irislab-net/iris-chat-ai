@@ -344,9 +344,9 @@
     },
     "hero": {
       "badge": "AI market advisor",
-      "titleBefore": "Institutional intelligence,",
-      "titleAfter": "personal clarity.",
-      "subtitle": "Exur processes live tape, order flow, and news impact to give you a clear setup or a calculated reason to wait. Your objective market brain.",
+      "titleBefore": "Your smart",
+      "titleAfter": "financial assistant.",
+      "subtitle": "Ask Exur about news and price action. Get a clear setup, or a reason to sit out.",
       "inputPlaceholder": "Does today’s ETF news matter for ETH?",
       "exchanges": {
         "0": {
@@ -773,6 +773,18 @@
     "signalCardThesisHeading": "Thesis: why this setup",
     "signalCardWatchlist": "Add to Watchlist",
     "signalCardWatchlistAdded": "Added",
+    "signalCardShare": "Share",
+    "signalShareTitle": "Share signal",
+    "signalShareTabImage": "Image",
+    "signalShareTabText": "Text",
+    "signalShareTarget": "Target",
+    "signalShareCopy": "Copy",
+    "signalShareCopyText": "Copy text",
+    "signalShareShare": "Share",
+    "signalShareShareImage": "Share image",
+    "signalShareCopied": "Copied",
+    "signalShareCopyFailed": "Could not copy",
+    "signalShareShareFailed": "Could not share",
     "signalCardDisclaimer": "Exur provides market information only, not financial advice.",
     "samplePromptsLabel": "Starters",
     "samplePrompts": {
@@ -890,6 +902,11 @@
       "descriptionPro": "You've hit this period's limit. It resets automatically.",
       "viewBilling": "View billing"
     },
+    "guestTrialExhausted": {
+      "title": "Your free messages are used up",
+      "description": "Sign in with your account to keep chatting with Exur.",
+      "notNow": "Not now"
+    },
     "justNow": "Just now",
     "minutesAgo": "{count}m ago",
     "hoursAgo": "{count}h ago",
@@ -904,7 +921,12 @@
     "getSupportSection": "Get support",
     "accountSection": "Account",
     "switchAccount": "Switch account",
-    "guest": "Guest"
+    "guest": "Guest",
+    "share": "Share",
+    "shared": "Shared",
+    "shareResponse": "Share response",
+    "sharedResponse": "Shared response",
+    "noTradeShareTitle": "Share no-trade"
   },
   "billingPage": {
     "title": "Billing",

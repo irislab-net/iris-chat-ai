@@ -1,7 +1,6 @@
 "use client"
 
 import * as React from "react"
-import { SparklesIcon } from "lucide-react"
 import { Link } from "@/i18n/navigation"
 import { useTranslations } from "next-intl"
 
@@ -10,23 +9,19 @@ import {
   chatDesktopDialogFooterClass,
   chatMobileSheetBodyClass,
   chatMobileSheetContentClass,
-  chatMobileSheetDescriptionClass,
   chatMobileSheetFooterBarClass,
   chatMobileSheetFooterClass,
   chatMobileSheetHandleClass,
-  chatMobileSheetHeaderClass,
   chatMobileSheetPrimaryButtonClass,
   chatMobileSheetSecondaryButtonClass,
-  chatMobileSheetTitleClass,
-  chatSignalCardIconShellClass,
 } from "@/components/app-shell/chat-mobile-gemini-styles"
+import { PaymentTokenLogo } from "@/components/billing/payment-token-logo"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogFooter,
-  DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
 import {
@@ -34,7 +29,6 @@ import {
   SheetContent,
   SheetDescription,
   SheetFooter,
-  SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet"
 import { useIsDesktop } from "@/hooks/use-media-query"
@@ -49,15 +43,24 @@ type ComposerPremiumToolsDialogProps = {
   isProUser?: boolean
 }
 
-function PremiumHeroIcon() {
+function ShimmerTokenMark({ currency }: { currency: "USDT" | "USDC" }) {
   return (
-    <span
-      className={cn(
-        chatSignalCardIconShellClass,
-        "size-12 bg-sky-500/18 text-sky-600 supports-[backdrop-filter]:bg-sky-500/16 dark:bg-sky-400/22 dark:text-sky-300 dark:supports-[backdrop-filter]:bg-sky-400/18"
-      )}
-    >
-      <SparklesIcon className="size-5" aria-hidden />
+    <span className="relative isolate inline-flex shrink-0 overflow-hidden rounded-full">
+      <PaymentTokenLogo
+        currency={currency}
+        size="sm"
+        className="ring-2 ring-background"
+      />
+      <span className="pointer-events-none absolute inset-0 z-20 overflow-hidden rounded-[inherit]">
+        <span
+          className={cn(
+            "absolute inset-y-[-12%] left-0 w-[62%]",
+            "bg-linear-to-r from-transparent via-white/55 to-transparent",
+            "animate-exur-logo-shimmer will-change-transform",
+            "dark:via-white/70"
+          )}
+        />
+      </span>
     </span>
   )
 }
@@ -79,27 +82,26 @@ function ComposerPremiumToolsDialog({
     ? t("composerPremiumToolsComingSoonBody")
     : t("composerPremiumToolsBody")
 
-  const header = (
-    <>
-      <PremiumHeroIcon />
-      {isDesktop ? (
-        <DialogHeader className="gap-2 space-y-0 text-start">
-          <DialogTitle className="font-heading text-[1.35rem] font-normal tracking-tight text-foreground">
-            {title}
-          </DialogTitle>
-          <DialogDescription className="text-[13px] leading-relaxed text-pretty text-muted-foreground">
-            {body}
-          </DialogDescription>
-        </DialogHeader>
-      ) : (
-        <SheetHeader className={cn(chatMobileSheetHeaderClass, "gap-2")}>
-          <SheetTitle className={chatMobileSheetTitleClass}>{title}</SheetTitle>
-          <SheetDescription className={chatMobileSheetDescriptionClass}>
-            {body}
-          </SheetDescription>
-        </SheetHeader>
-      )}
-    </>
+  const copy = (
+    <div className="space-y-2 text-start">
+      <p className="font-heading text-[22px] font-normal tracking-tight text-foreground">
+        {title}
+      </p>
+      <p className="text-pretty text-[15px] leading-relaxed text-muted-foreground">
+        {body}
+      </p>
+      {!isProUser ? (
+        <div className="flex items-center gap-2 pt-0.5">
+          <span className="flex items-center -space-x-1.5" aria-hidden>
+            <ShimmerTokenMark currency="USDT" />
+            <ShimmerTokenMark currency="USDC" />
+          </span>
+          <p className="text-[13px] leading-relaxed text-muted-foreground/85">
+            {t("composerPremiumToolsPaymentNote")}
+          </p>
+        </div>
+      ) : null}
+    </div>
   )
 
   if (isDesktop) {
@@ -111,9 +113,9 @@ function ComposerPremiumToolsDialog({
           gsapMotion
           open={open}
         >
-          <div className="flex flex-col items-start gap-4 px-5 pt-5 pb-1">
-            {header}
-          </div>
+          <DialogTitle className="sr-only">{title}</DialogTitle>
+          <DialogDescription className="sr-only">{body}</DialogDescription>
+          <div className="px-5 pt-5 pb-1">{copy}</div>
           <DialogFooter
             className={cn(
               chatDesktopDialogFooterClass,
@@ -153,14 +155,9 @@ function ComposerPremiumToolsDialog({
         className={cn(chatMobileSheetContentClass, "gap-0 border-0")}
       >
         <div aria-hidden className={chatMobileSheetHandleClass} />
-        <div
-          className={cn(
-            chatMobileSheetBodyClass,
-            "flex flex-col items-start gap-4 pt-1 pb-2"
-          )}
-        >
-          {header}
-        </div>
+        <SheetTitle className="sr-only">{title}</SheetTitle>
+        <SheetDescription className="sr-only">{body}</SheetDescription>
+        <div className={cn(chatMobileSheetBodyClass, "pt-1 pb-2")}>{copy}</div>
         <SheetFooter className={chatMobileSheetFooterClass}>
           <div className={cn(chatMobileSheetFooterBarClass, "pt-4")}>
             {isProUser ? (

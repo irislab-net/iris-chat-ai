@@ -14,11 +14,15 @@ import {
   chatTurnActionButtonClass,
   chatTurnActionsClass,
 } from "@/components/app-shell/chat-turn-actions"
+import { ChatNoTradeShareDialog } from "@/components/app-shell/chat-no-trade-share-dialog"
+import { ChatSignalShareDialog } from "@/components/app-shell/chat-signal-share-dialog"
+import { IosShareIcon } from "@/components/icons/ios-share-icon"
 import { Button } from "@/components/ui/button"
 import {
   trackChatMessageCopied,
   trackChatMessageFeedback,
 } from "@/lib/analytics"
+import type { PaperTradeTicket } from "@/lib/chat/signal-ticket"
 import type { ChatMessageFeedback } from "@/lib/chat-storage"
 import { cn } from "@/lib/utils"
 
@@ -26,6 +30,10 @@ type ChatMessageActionsProps = {
   messageId: string
   conversationId: string
   content: string
+  /** When set, Share opens the same image/text sheet as the signal card. */
+  shareTicket?: PaperTradeTicket
+  /** When set (and no ticket), Share opens the no-trade share sheet. */
+  shareNoTradeReason?: string
   feedback?: ChatMessageFeedback
   onFeedbackChange: (feedback: ChatMessageFeedback | undefined) => void
   onReply?: () => void
@@ -38,6 +46,8 @@ function ChatMessageActions({
   messageId,
   conversationId,
   content,
+  shareTicket,
+  shareNoTradeReason,
   feedback,
   onFeedbackChange,
   onReply,
@@ -47,8 +57,14 @@ function ChatMessageActions({
 }: ChatMessageActionsProps) {
   const t = useTranslations("workspace")
   const [copied, setCopied] = React.useState(false)
+  const [shareOpen, setShareOpen] = React.useState(false)
   const copyTimerRef = React.useRef(0)
   const isGemini = variant === "gemini"
+  const canCopy = Boolean(content.trim())
+  const noTradeReason = shareNoTradeReason?.trim() ?? ""
+  const canShareSignal = Boolean(shareTicket)
+  const canShareNoTrade = !canShareSignal && Boolean(noTradeReason)
+  const canShareCard = canShareSignal || canShareNoTrade
 
   React.useEffect(() => {
     return () => window.clearTimeout(copyTimerRef.current)
@@ -104,22 +120,37 @@ function ChatMessageActions({
           <ReplyIcon className={isGemini ? "size-4.5" : undefined} />
         </Button>
       ) : null}
-      <Button
-        type="button"
-        variant="ghost"
-        size="icon-sm"
-        className={buttonClass}
-        aria-label={copied ? t("copiedResponse") : t("copyResponse")}
-        title={copied ? t("copied") : t("copy")}
-        disabled={disabled || !content.trim()}
-        onClick={() => void onCopy()}
-      >
-        {copied ? (
-          <CheckIcon className={isGemini ? "size-4.5" : undefined} />
-        ) : (
-          <CopyIcon className={isGemini ? "size-4.5" : undefined} />
-        )}
-      </Button>
+      {canShareCard ? (
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon-sm"
+          className={buttonClass}
+          aria-label={t("signalCardShare")}
+          title={t("share")}
+          disabled={disabled}
+          onClick={() => setShareOpen(true)}
+        >
+          <IosShareIcon className={isGemini ? "size-4.5" : "size-4"} />
+        </Button>
+      ) : (
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon-sm"
+          className={buttonClass}
+          aria-label={copied ? t("copiedResponse") : t("copyResponse")}
+          title={copied ? t("copied") : t("copy")}
+          disabled={disabled || !canCopy}
+          onClick={() => void onCopy()}
+        >
+          {copied ? (
+            <CheckIcon className={isGemini ? "size-4.5" : undefined} />
+          ) : (
+            <CopyIcon className={isGemini ? "size-4.5" : undefined} />
+          )}
+        </Button>
+      )}
       <Button
         type="button"
         variant="ghost"
@@ -158,6 +189,20 @@ function ChatMessageActions({
           fill={feedback === "down" ? "currentColor" : "none"}
         />
       </Button>
+      {shareTicket ? (
+        <ChatSignalShareDialog
+          open={shareOpen}
+          onOpenChange={setShareOpen}
+          ticket={shareTicket}
+        />
+      ) : null}
+      {canShareNoTrade ? (
+        <ChatNoTradeShareDialog
+          open={shareOpen}
+          onOpenChange={setShareOpen}
+          reason={noTradeReason}
+        />
+      ) : null}
     </div>
   )
 }

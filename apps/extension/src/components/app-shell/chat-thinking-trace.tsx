@@ -10,6 +10,13 @@ import {
 import { useTranslations } from "next-intl"
 
 import {
+  chatThinkingIconMutedClass,
+  chatThinkingLabelClass,
+  chatThinkingRowClass,
+  chatThinkingShellClass,
+  chatThinkingSpinnerClass,
+} from "@/components/app-shell/chat-thinking-styles"
+import {
   Accordion,
   AccordionContent,
   AccordionItem,
@@ -72,29 +79,32 @@ function ChatThinkingTrace({
     : t("done")
 
   return (
-    <Accordion className={cn("mb-3 w-full max-w-xl", className)}>
+    <Accordion className={cn(chatThinkingShellClass, className)}>
       <AccordionItem value="thinking" className="border-0">
         <AccordionTrigger
           className={cn(
-            "group/thinking gap-2 rounded-lg border-0 px-2 py-1.5 text-muted-foreground hover:text-foreground hover:no-underline",
+            chatThinkingRowClass,
+            "group/thinking border-0 hover:text-foreground hover:no-underline",
             "**:data-[slot=accordion-trigger-icon]:hidden"
           )}
         >
-          <span className="flex min-w-0 flex-1 items-center gap-2 text-[13px] font-medium tracking-tight">
+          <span className="flex min-w-0 flex-1 items-center gap-2">
             {live ? (
               <LoaderCircleIcon
-                className="size-3.5 shrink-0 animate-spin text-[#2563EB] dark:text-[#93C5FD]"
+                className={chatThinkingSpinnerClass}
                 aria-hidden
               />
             ) : (
               <SparklesIcon
-                className="size-3.5 shrink-0 opacity-70"
+                className={chatThinkingIconMutedClass}
                 aria-hidden
               />
             )}
-            <span className="min-w-0 flex-1 truncate text-start">{summary}</span>
+            <span className={cn(chatThinkingLabelClass, "text-current")}>
+              {summary}
+            </span>
             <ChevronRightIcon
-              className="size-3.5 shrink-0 opacity-45 transition-transform group-aria-expanded/accordion-trigger:rotate-90"
+              className="size-3.5 shrink-0 opacity-45 transition-transform duration-200 ease-out group-aria-expanded/accordion-trigger:rotate-90"
               aria-hidden
             />
           </span>

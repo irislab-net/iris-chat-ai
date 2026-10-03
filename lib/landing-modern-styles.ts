@@ -29,7 +29,7 @@ export const landingSection = "scroll-mt-24"
 
 /** Rounded section shell + vertical padding (use on main content blocks). */
 export const landingSectionBody =
-  "relative isolate overflow-hidden rounded-[2.5rem] py-16 sm:py-20 lg:py-24"
+  "relative isolate overflow-visible rounded-[2.5rem] py-16 sm:py-20 lg:py-24"
 
 /** White space between sections inside main (min 50px). */
 export const landingMainStack = "flex flex-col gap-12.5 sm:gap-20 lg:gap-24"
@@ -70,7 +70,7 @@ export const landingContentWide = "mx-auto w-full"
 
 export const landingCardRadius = "rounded-[2.5rem]"
 
-export const landingCardShell = `relative isolate overflow-hidden ${landingCardRadius}`
+export const landingCardShell = `relative isolate overflow-visible ${landingCardRadius}`
 
 /** Hero card — no overflow clip so compose bubble shadows stay visible. */
 export const landingHeroCard = `relative isolate ${landingCardRadius} mt-3 mb-6 sm:mt-5 sm:mb-0`
@@ -97,7 +97,7 @@ export const landingSurfaceMuted = "bg-muted"
 
 /** Liquid glass surface — shared sheen + depth (no borders). */
 export const landingGlassSurface =
-  "relative isolate overflow-hidden bg-white/38 backdrop-blur-2xl shadow-[0_16px_48px_rgba(15,23,42,0.08),inset_0_1px_1px_rgba(255,255,255,0.92),inset_0_-1px_2px_rgba(255,255,255,0.28)] dark:bg-white/8 dark:shadow-[0_16px_48px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.12),inset_0_-1px_2px_rgba(255,255,255,0.04)]"
+  "relative isolate overflow-visible bg-white/38 backdrop-blur-2xl shadow-[0_16px_48px_rgba(15,23,42,0.08),inset_0_1px_1px_rgba(255,255,255,0.92),inset_0_-1px_2px_rgba(255,255,255,0.28)] dark:bg-white/8 dark:shadow-[0_16px_48px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.12),inset_0_-1px_2px_rgba(255,255,255,0.04)]"
 
 /** Frosted glass pill — hero composer */
 export const landingGlassPill = `${landingGlassSurface} rounded-full bg-white/44 shadow-[0_20px_56px_rgba(15,23,42,0.09),inset_0_1px_1px_rgba(255,255,255,0.96),inset_0_-1px_2px_rgba(255,255,255,0.3)] dark:bg-white/10 dark:shadow-[0_20px_56px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.14),inset_0_-1px_2px_rgba(255,255,255,0.04)]`
