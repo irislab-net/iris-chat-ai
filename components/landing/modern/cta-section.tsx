@@ -26,7 +26,7 @@ export function CtaSection() {
         // the band sits on the same scale as every other section.
         landingSectionBody,
         // Glass shell from the hero card, so the shared mesh reads as one system.
-        "overflow-hidden bg-white/48 shadow-[0_28px_80px_rgba(15,23,42,0.07)] backdrop-blur-2xl dark:bg-white/8 dark:shadow-[0_28px_80px_rgba(0,0,0,0.45)]"
+        "overflow-hidden bg-white/40 shadow-[0_28px_80px_rgba(15,23,42,0.07)] backdrop-blur-2xl dark:bg-white/6 dark:shadow-[0_28px_80px_rgba(0,0,0,0.45)]"
       )}
     >
       <HeroLiquidGlassBg tone="blue" />

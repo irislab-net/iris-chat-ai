@@ -251,7 +251,7 @@ export function SignalWaitSection() {
             "relative isolate overflow-hidden",
             landingCardRadius,
             // Fixed shell: ChatSignalCard + chat row + composer must fit without clipping.
-            "flex h-152 flex-col bg-white/48 text-foreground shadow-[0_28px_80px_rgba(15,23,42,0.07)] backdrop-blur-2xl sm:h-164 lg:h-172 dark:bg-white/8 dark:shadow-[0_28px_80px_rgba(0,0,0,0.45)]"
+            "flex h-152 flex-col bg-white/40 text-foreground shadow-[0_28px_80px_rgba(15,23,42,0.07)] backdrop-blur-2xl sm:h-164 lg:h-172 dark:bg-white/6 dark:shadow-[0_28px_80px_rgba(0,0,0,0.45)]"
           )}
         >
           <HeroLiquidGlassBg tone="blue" />

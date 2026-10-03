@@ -779,14 +779,13 @@
 }
 
 .chat-gemini-bg-hero.chat-gemini-bg-blue .chat-gemini-mesh {
-  left: -2%;
-  right: -2%;
+  left: -4%;
+  right: -4%;
   width: auto;
-  /* Keep liquid color in the lower band so compose bubbles don’t pick up a blue halo. */
-  height: 56%;
-  bottom: -16%;
+  height: 74%;
+  bottom: -10%;
   margin-inline: 0;
-  filter: blur(min(36px, calc(100cqw * 34 / 507))) saturate(1.06) contrast(1.02);
+  filter: blur(min(42px, calc(100cqw * 38 / 507))) saturate(1.12) contrast(1.04);
   animation: gemini-liquid-mesh-sway 14s ease-in-out infinite;
 }
 
