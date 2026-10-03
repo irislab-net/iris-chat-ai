@@ -3,9 +3,12 @@ import { describe, expect, it } from "vitest"
 import {
   applyMentionSelection,
   buildSignalPrompt,
+  composerHasMixedBidiScripts,
+  composerInputDirection,
   expandComposerDraft,
   expandComposerMentions,
   expandSummarizedSignalUserMessage,
+  filterComposerPaletteTools,
   filterMentionOptions,
   formatSignalCommand,
   mentionTokenForTool,
@@ -33,12 +36,50 @@ describe("composer mentions", () => {
     expect(parseMentionPalette("hello @sig", 10)).toBeNull()
   })
 
-  it("shows only the signal tool", () => {
+  it("shows only the signal tool in mention options", () => {
     expect(filterMentionOptions("").map((item) => item.id)).toEqual(["signal"])
     expect(filterMentionOptions("signal").map((item) => item.id)).toEqual([
       "signal",
     ])
     expect(filterMentionOptions("eth")).toEqual([])
+  })
+
+  it("filters composer palette tools by typed query", () => {
+    const labels = {
+      signal: "Signal",
+      correlation: "Asset Correlation",
+      volatility: "Volatility Forecast",
+    }
+    expect(filterComposerPaletteTools("", labels).map((item) => item.id)).toEqual([
+      "signal",
+      "correlation",
+      "volatility",
+    ])
+    expect(
+      filterComposerPaletteTools("vol", labels).map((item) => item.id)
+    ).toEqual(["volatility"])
+    expect(
+      filterComposerPaletteTools("همبستگی", labels).map((item) => item.id)
+    ).toEqual(["correlation"])
+    expect(filterComposerPaletteTools("eth", labels)).toEqual([])
+  })
+
+  it("picks composer input direction from first strong character", () => {
+    expect(composerInputDirection("", "rtl")).toBe("rtl")
+    expect(composerInputDirection("/Signal eth", "rtl")).toBe("ltr")
+    expect(composerInputDirection("/سیگنال اتریوم", "ltr")).toBe("rtl")
+    expect(composerInputDirection("hello", "rtl")).toBe("ltr")
+    expect(composerInputDirection("سلام", "ltr")).toBe("rtl")
+    // Mixed: Persian first → RTL (must not flip to LTR because of /Signal).
+    expect(composerInputDirection("سلام /Signal", "ltr")).toBe("rtl")
+    expect(composerInputDirection("/Signal سلام", "rtl")).toBe("ltr")
+  })
+
+  it("detects mixed RTL/LTR scripts for mention-mirror safety", () => {
+    expect(composerHasMixedBidiScripts("/Signal ETH")).toBe(false)
+    expect(composerHasMixedBidiScripts("سلام دنیا")).toBe(false)
+    expect(composerHasMixedBidiScripts("سلام /Signal")).toBe(true)
+    expect(composerHasMixedBidiScripts("/سیگنال ETH")).toBe(true)
   })
 
   it("formats a short @signal command for compact assets", () => {

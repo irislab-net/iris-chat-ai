@@ -10,14 +10,16 @@ function Toaster({ ...props }: ToasterProps) {
     <Sonner
       theme={theme as ToasterProps["theme"]}
       className="toaster group"
-      gap={8}
-      offset={14}
+      gap={10}
+      offset={16}
+      mobileOffset={14}
       expand={false}
       visibleToasts={3}
       closeButton={false}
       toastOptions={{
         unstyled: true,
         classNames: {
+          // Transparent shell — glass lives only on AppToastCard (no nested frame).
           toast:
             "!w-auto !max-w-none !border-0 !bg-transparent !p-0 !shadow-none",
         },

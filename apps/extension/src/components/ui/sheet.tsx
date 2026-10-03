@@ -49,39 +49,87 @@ function SheetContent({
   /** Match elevated sheet stacking (e.g. cookie manage above banner). */
   overlayClassName?: string
 }) {
+  const isBottom = side === "bottom"
+
   return (
     <SheetPortal>
-      <SheetOverlay className={overlayClassName} />
+      <SheetOverlay
+        className={cn(
+          // Bottom sheets share the soft liquid scrim (composer tools / mention).
+          isBottom &&
+            "overscroll-none bg-black/20 supports-backdrop-filter:bg-black/10 supports-backdrop-filter:backdrop-blur-sm dark:bg-black/40 dark:supports-backdrop-filter:bg-black/28",
+          overlayClassName
+        )}
+      />
       <SheetPrimitive.Popup
         data-slot="sheet-content"
         data-side={side}
         className={cn(
-          "fixed z-50 flex flex-col gap-4 bg-popover bg-clip-padding text-sm text-popover-foreground shadow-lg transition duration-200 ease-in-out data-ending-style:opacity-0 data-starting-style:opacity-0 data-[side=bottom]:inset-x-0 data-[side=bottom]:bottom-(--keyboard-inset-bottom,0px) data-[side=bottom]:h-auto data-[side=bottom]:border-t data-[side=bottom]:data-ending-style:translate-y-10 data-[side=bottom]:data-starting-style:translate-y-10 data-[side=left]:inset-y-0 data-[side=left]:left-0 data-[side=left]:h-full data-[side=left]:w-3/4 data-[side=left]:border-r data-[side=left]:data-ending-style:-translate-x-10 data-[side=left]:data-starting-style:-translate-x-10 data-[side=right]:inset-y-0 data-[side=right]:right-0 data-[side=right]:h-full data-[side=right]:w-3/4 data-[side=right]:border-l data-[side=right]:data-ending-style:translate-x-10 data-[side=right]:data-starting-style:translate-x-10 data-[side=top]:inset-x-0 data-[side=top]:top-0 data-[side=top]:h-auto data-[side=top]:border-b data-[side=top]:data-ending-style:-translate-y-10 data-[side=top]:data-starting-style:-translate-y-10 data-[side=left]:sm:max-w-sm data-[side=right]:sm:max-w-sm",
-          className
+          "fixed z-50 flex flex-col text-sm transition duration-200 ease-in-out data-ending-style:opacity-0 data-starting-style:opacity-0",
+          /**
+           * Bottom sheets: transparent shell only.
+           * Safari drops `backdrop-filter` when it shares a node with
+           * `translateY` enter/exit — the working mention listbox never
+           * transforms. Animate opacity here; frost lives on the inner surface.
+           */
+          isBottom &&
+            "inset-x-0 bottom-(--keyboard-inset-bottom,0px) h-auto gap-0 border-0 bg-transparent p-0 shadow-none",
+          side === "right" &&
+            "inset-y-0 right-0 h-full w-3/4 gap-4 border-l bg-popover bg-clip-padding p-0 text-popover-foreground shadow-lg data-ending-style:translate-x-10 data-starting-style:translate-x-10 sm:max-w-sm",
+          side === "left" &&
+            "inset-y-0 left-0 h-full w-3/4 gap-4 border-r bg-popover bg-clip-padding p-0 text-popover-foreground shadow-lg data-ending-style:-translate-x-10 data-starting-style:-translate-x-10 sm:max-w-sm",
+          side === "top" &&
+            "inset-x-0 top-0 h-auto gap-4 border-b bg-popover bg-clip-padding text-popover-foreground shadow-lg data-ending-style:-translate-y-10 data-starting-style:-translate-y-10",
+          !isBottom && className
         )}
         {...props}
       >
-        {children}
-        {showCloseButton && (
-          <SheetPrimitive.Close
-            data-slot="sheet-close"
-            render={
-              <Button
-                variant="ghost"
-                className={cn(
-                  "absolute",
-                  // Bottom sheets: align with title row after handle (pt-2 + h-1 + mb-4).
-                  side === "bottom"
-                    ? "end-5 top-[1.75rem]"
-                    : "inset-e-3 top-3"
-                )}
-                size="icon-sm"
-              />
-            }
+        {isBottom ? (
+          <div
+            data-slot="sheet-surface"
+            data-side={side}
+            className={cn(
+              // WebKit: overflow clips backdrop-blur to rounded corners.
+              "chat-sheet-glass relative flex w-full flex-col overflow-hidden",
+              className
+            )}
           >
-            <XIcon />
-            <span className="sr-only">Close</span>
-          </SheetPrimitive.Close>
+            {children}
+            {showCloseButton ? (
+              <SheetPrimitive.Close
+                data-slot="sheet-close"
+                render={
+                  <Button
+                    variant="ghost"
+                    className="absolute inset-e-5 top-7"
+                    size="icon-sm"
+                  />
+                }
+              >
+                <XIcon />
+                <span className="sr-only">Close</span>
+              </SheetPrimitive.Close>
+            ) : null}
+          </div>
+        ) : (
+          <>
+            {children}
+            {showCloseButton ? (
+              <SheetPrimitive.Close
+                data-slot="sheet-close"
+                render={
+                  <Button
+                    variant="ghost"
+                    className="absolute inset-e-3 top-3"
+                    size="icon-sm"
+                  />
+                }
+              >
+                <XIcon />
+                <span className="sr-only">Close</span>
+              </SheetPrimitive.Close>
+            ) : null}
+          </>
         )}
       </SheetPrimitive.Popup>
     </SheetPortal>

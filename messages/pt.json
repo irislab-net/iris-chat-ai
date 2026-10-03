@@ -447,7 +447,7 @@
     "composerPlaceholder": "Pergunte ao Exur ou digite / para ferramentas…",
     "composerMobilePlaceholder": "Pergunte ao Exur",
     "composerAriaLabel": "Mensagem para o Exur",
-    "composerVoiceInput": "Entrada de voz",
+    "composerVoiceInput": "Segure para falar",
     "composerVoiceMode": "Modo de voz",
     "mobileGreeting": "Em que posso ajudar, <highlight>{name}</highlight>?",
     "mobileGreetingGuest": "Em que posso ajudar?",
@@ -656,7 +656,19 @@
     "assistantCopied": "Copied",
     "signalCardCopyLevels": "Copy levels",
     "composerPasteAttachmentMax": "You can attach up to {count} pasted files.",
-    "composerVoiceUnavailable": "Voice input isn’t available in this browser.",
-    "composerVoiceStop": "Stop listening"
+    "composerVoiceUnavailable": "A entrada de voz não está disponível neste navegador.",
+    "composerVoiceStop": "Solte para parar",
+    "composerVoiceListening": "Solte para parar",
+    "composerVoiceLanguageUnsupported": "Voz para {language} não é suportada neste navegador. Tente o Chrome ou digite.",
+    "composerVoicePermissionDenied": "O acesso ao microfone está bloqueado. Permita nas configurações do navegador para falar.",
+    "composerVoiceMicMissing": "Nenhum microfone encontrado. Conecte um microfone ou digite.",
+    "composerVoiceNetworkError": "O reconhecimento de voz perdeu a rede. Verifique a conexão e tente novamente.",
+    "composerVoiceListeningTitle": "Ouvindo",
+    "composerVoiceUnavailableTitle": "Voz indisponível",
+    "composerVoiceLanguageUnsupportedTitle": "Idioma não suportado",
+    "composerVoicePermissionDeniedTitle": "Microfone bloqueado",
+    "composerVoiceMicMissingTitle": "Sem microfone",
+    "composerVoiceNetworkErrorTitle": "Conexão perdida",
+    "composerPasteAttachmentMaxTitle": "Attachment limit"
   }
 }

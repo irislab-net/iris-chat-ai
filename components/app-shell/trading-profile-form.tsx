@@ -3,7 +3,6 @@
 import * as React from "react"
 import {
   BitcoinIcon,
-  ChevronLeftIcon,
   ChevronRightIcon,
   CircleHelpIcon,
   GaugeIcon,
@@ -19,7 +18,8 @@ import { useLocale, useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import {
   chatAccentSecondaryFillClass,
-  chatMobileGlassSurfaceClass,
+  chatComposerLiquidSheetRowClass,
+  chatComposerLiquidSheetRowIconClass,
   chatMobileSheetFooterBarClass,
   chatMobileSheetPrimaryButtonClass,
 } from "@/components/app-shell/chat-mobile-gemini-styles"
@@ -74,8 +74,12 @@ const RISK_ICONS: Record<RiskTolerance, LucideIcon> = {
   not_sure: CircleHelpIcon,
 }
 
-const rowClass =
-  "flex min-h-[3.25rem] w-full items-center gap-3.5 px-4 text-start text-[15px] font-normal tracking-[-0.01em] transition-colors active:bg-black/[0.03] dark:active:bg-white/[0.06]"
+const fieldRowClass = cn(
+  chatComposerLiquidSheetRowClass,
+  "min-h-13 gap-3 px-3.5 text-[15px] font-medium tracking-[-0.016em]"
+)
+
+const fieldIconClass = "size-4.5 shrink-0 text-foreground/80"
 
 type TradingProfileFormProps = {
   title: string
@@ -101,7 +105,7 @@ function TradingProfileForm({
   const [view, setView] = React.useState<FormView>(() =>
     hasSavedProfile ? "home" : "intro"
   )
-  // Draft only commits on Save. Closing without Save discards it.
+  // Draft commits on Done (check). Swipe-dismiss without Done discards it.
   const [draft, setDraft] = React.useState<TradingProfileDraft>(() =>
     tradingProfileToDraft(initialProfile)
   )
@@ -158,14 +162,6 @@ function TradingProfileForm({
       >
         {hasSavedProfile ? t("editSetup") : t("setup")}
       </Button>
-    ) : view === "home" ? (
-      <Button
-        type="button"
-        className={chatMobileSheetPrimaryButtonClass}
-        onClick={onSave}
-      >
-        {t("save")}
-      </Button>
     ) : null
 
   const isPickerView =
@@ -174,34 +170,52 @@ function TradingProfileForm({
     view === "risk" ||
     view === "country"
 
+  function handleDone() {
+    if (isPickerView) {
+      setView("home")
+      return
+    }
+    if (view === "home") {
+      onSave()
+      return
+    }
+    onDone()
+  }
+
+  const headerTitle =
+    view === "experience"
+      ? t("experienceLabel")
+      : view === "target_market"
+        ? t("targetMarketLabel")
+        : view === "risk"
+          ? t("riskLabel")
+          : view === "country"
+            ? t("countryLabel")
+            : title
+
   let body: React.ReactNode
 
   if (view === "intro") {
     body = (
-      <div
-        className={cn(
-          "relative overflow-hidden rounded-[1.35rem] px-5 pt-6 pb-6 text-center",
-          chatMobileGlassSurfaceClass
-        )}
-      >
+      <div className="flex h-full min-h-0 flex-1 flex-col items-center justify-center px-3.5 text-center">
         <IntroIllustration />
-        <p className="relative mt-5 text-[17px] font-semibold tracking-tight text-foreground">
+        <p className="mt-5 text-[17px] font-semibold tracking-tight text-foreground">
           {t("introTitle")}
         </p>
-        <p className="relative mx-auto mt-2 max-w-[20rem] text-[14px] leading-relaxed text-muted-foreground">
+        <p className="mx-auto mt-2 max-w-[20rem] text-[14px] leading-relaxed text-muted-foreground">
           {t("introBody")}
         </p>
       </div>
     )
   } else if (view === "experience") {
     body = (
-      <PickerView title={t("experienceLabel")} onBack={() => setView("home")}>
+      <PickerStack>
         {EXPERIENCE_LEVELS.map((level) => {
           const Icon = EXPERIENCE_ICONS[level]
           return (
             <OptionRow
               key={level}
-              icon={<Icon className="size-[22px]" />}
+              icon={<Icon className={fieldIconClass} />}
               label={experienceLabel(level)}
               selected={draft.experience_level === level}
               onSelect={() => {
@@ -211,20 +225,17 @@ function TradingProfileForm({
             />
           )
         })}
-      </PickerView>
+      </PickerStack>
     )
   } else if (view === "target_market") {
     body = (
-      <PickerView
-        title={t("targetMarketLabel")}
-        onBack={() => setView("home")}
-      >
+      <PickerStack>
         {TARGET_MARKETS.map((market) => {
           const Icon = MARKET_ICONS[market]
           return (
             <OptionRow
               key={market}
-              icon={<Icon className="size-[22px]" />}
+              icon={<Icon className={fieldIconClass} />}
               label={marketLabel(market)}
               selected={draft.target_market === market}
               onSelect={() => {
@@ -234,17 +245,17 @@ function TradingProfileForm({
             />
           )
         })}
-      </PickerView>
+      </PickerStack>
     )
   } else if (view === "risk") {
     body = (
-      <PickerView title={t("riskLabel")} onBack={() => setView("home")}>
+      <PickerStack>
         {RISK_TOLERANCES.map((risk) => {
           const Icon = RISK_ICONS[risk]
           return (
             <OptionRow
               key={risk}
-              icon={<Icon className="size-[22px]" />}
+              icon={<Icon className={fieldIconClass} />}
               label={riskLabel(risk)}
               selected={draft.risk_tolerance === risk}
               onSelect={() => {
@@ -254,13 +265,13 @@ function TradingProfileForm({
             />
           )
         })}
-      </PickerView>
+      </PickerStack>
     )
   } else if (view === "country") {
     body = (
-      <PickerView title={t("countryLabel")} onBack={() => setView("home")}>
+      <PickerStack>
         <OptionRow
-          icon={<CircleHelpIcon className="size-[22px]" />}
+          icon={<CircleHelpIcon className={fieldIconClass} />}
           label={t("notSure")}
           selected={!draft.country.trim()}
           onSelect={() => {
@@ -271,7 +282,7 @@ function TradingProfileForm({
         {countryOptions.map((option) => (
           <OptionRow
             key={option.code}
-            icon={<GlobeIcon className="size-[22px]" />}
+            icon={<GlobeIcon className={fieldIconClass} />}
             label={option.name}
             selected={selectedCountryCode === option.code}
             onSelect={() => {
@@ -280,46 +291,38 @@ function TradingProfileForm({
             }}
           />
         ))}
-      </PickerView>
+      </PickerStack>
     )
   } else {
     body = (
-      <div className="flex flex-col gap-4">
-        <p className="px-1 text-[13px] leading-relaxed text-muted-foreground">
+      <div className="flex flex-col gap-3">
+        <p className="px-3.5 text-[13px] leading-relaxed text-muted-foreground">
           {t("editorHint")}
         </p>
-        <div
-          className={cn(
-            "overflow-hidden rounded-[1.35rem]",
-            chatMobileGlassSurfaceClass
-          )}
-        >
+        <div className="flex flex-col gap-1.5">
           <FieldRow
-            icon={<GaugeIcon className="size-[22px]" />}
+            icon={<GaugeIcon className={fieldIconClass} />}
             label={t("experienceLabel")}
             value={experienceLabel(draft.experience_level)}
             onClick={() => setView("experience")}
           />
           <FieldRow
-            icon={<LineChartIcon className="size-[22px]" />}
+            icon={<LineChartIcon className={fieldIconClass} />}
             label={t("targetMarketLabel")}
             value={marketLabel(draft.target_market)}
             onClick={() => setView("target_market")}
-            divider
           />
           <FieldRow
-            icon={<ShieldIcon className="size-[22px]" />}
+            icon={<ShieldIcon className={fieldIconClass} />}
             label={t("riskLabel")}
             value={riskLabel(draft.risk_tolerance)}
             onClick={() => setView("risk")}
-            divider
           />
           <FieldRow
-            icon={<GlobeIcon className="size-[22px]" />}
+            icon={<GlobeIcon className={fieldIconClass} />}
             label={t("countryLabel")}
             value={countrySummary()}
             onClick={() => setView("country")}
-            divider
           />
         </div>
       </div>
@@ -329,46 +332,46 @@ function TradingProfileForm({
   return (
     <div
       className={cn(
-        "flex min-h-0 flex-1 flex-col overflow-hidden px-4 pb-1",
+        "flex min-h-0 flex-1 flex-col px-4 pb-1",
+        view === "intro" ? "overflow-visible" : "overflow-hidden",
         className
       )}
     >
       <div className="flex shrink-0 items-center gap-2 pt-1 pb-3">
         <h2 className="min-w-0 flex-1 truncate text-start text-[22px] font-normal tracking-tight text-foreground">
-          {title}
+          {headerTitle}
         </h2>
-        <button
+        <Button
           type="button"
-          onClick={onDone}
+          variant="ghost"
+          size="icon"
+          onClick={handleDone}
           aria-label={common("done")}
           title={common("done")}
           className={cn(
             chatAccentSecondaryFillClass,
-            "chat-ios26-liquid-glass relative isolate flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-full px-0"
+            "chat-ios26-liquid-glass relative isolate size-10 shrink-0 overflow-hidden rounded-full border-0 px-0 hover:bg-transparent"
           )}
         >
           <SfCheckIcon className="size-5" strokeWidth={2.6} />
-        </button>
+        </Button>
       </div>
 
       <div
         className={cn(
           "min-h-0 flex-1",
-          isPickerView
-            ? "flex flex-col overflow-hidden"
-            : "overflow-y-auto overscroll-contain pb-2"
+          view === "intro"
+            ? "flex flex-col"
+            : isPickerView
+              ? "flex flex-col overflow-hidden"
+              : "overflow-y-auto overscroll-contain pb-2"
         )}
       >
         {body}
       </div>
 
       {footer ? (
-        <div
-          className={cn(
-            chatMobileSheetFooterBarClass,
-            "relative z-10 shrink-0 border-t border-foreground/6 bg-[#F1F3F9] px-0 pt-3 shadow-[0_-12px_24px_-16px_color-mix(in_oklch,var(--foreground)_12%,transparent)] dark:border-white/8 dark:bg-[oklch(0.22_0.01_260)] dark:shadow-[0_-12px_24px_-16px_rgba(0,0,0,0.45)]"
-          )}
-        >
+        <div className={cn(chatMobileSheetFooterBarClass, "relative z-10 shrink-0 px-0")}>
           {footer}
         </div>
       ) : null}
@@ -404,33 +407,21 @@ function FieldRow({
   label,
   value,
   onClick,
-  divider,
 }: {
   icon: React.ReactNode
   label: string
   value: string
   onClick: () => void
-  divider?: boolean
 }) {
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={cn(
-        rowClass,
-        divider &&
-          "border-t border-foreground/8 dark:border-white/10 [border-image:none]"
-      )}
-    >
-      <span className="flex size-6 shrink-0 items-center justify-center text-foreground/85">
-        {icon}
-      </span>
+    <button type="button" onClick={onClick} className={fieldRowClass}>
+      <span className={chatComposerLiquidSheetRowIconClass}>{icon}</span>
       <span className="min-w-0 flex-1 text-foreground">{label}</span>
-      <span className="max-w-[40%] shrink-0 truncate text-[13px] text-muted-foreground">
+      <span className="max-w-[40%] shrink-0 truncate text-[14px] text-muted-foreground">
         {value}
       </span>
       <ChevronRightIcon
-        className="size-4 shrink-0 text-foreground/25 rtl:rotate-180"
+        className="size-4 shrink-0 text-muted-foreground/50 rtl:rotate-180"
         aria-hidden
       />
     </button>
@@ -449,10 +440,8 @@ function OptionRow({
   onSelect: () => void
 }) {
   return (
-    <button type="button" onClick={onSelect} className={rowClass}>
-      <span className="flex size-6 shrink-0 items-center justify-center text-foreground/85">
-        {icon}
-      </span>
+    <button type="button" onClick={onSelect} className={fieldRowClass}>
+      <span className={chatComposerLiquidSheetRowIconClass}>{icon}</span>
       <span className="min-w-0 flex-1 text-foreground">{label}</span>
       {selected ? (
         <SelectionCheckBadge />
@@ -463,33 +452,10 @@ function OptionRow({
   )
 }
 
-function PickerView({
-  title,
-  onBack,
-  children,
-}: {
-  title: string
-  onBack: () => void
-  children: React.ReactNode
-}) {
+function PickerStack({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex h-full min-h-0 flex-1 flex-col gap-3 overflow-hidden">
-      <button
-        type="button"
-        onClick={onBack}
-        className="flex shrink-0 items-center gap-1 self-start rounded-full px-1 py-1 text-[14px] font-medium text-[#1A73E8] dark:text-[#8AB4F8]"
-      >
-        <ChevronLeftIcon className="size-4 rtl:rotate-180" aria-hidden />
-        {title}
-      </button>
-      <div
-        className={cn(
-          "min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain rounded-[1.35rem] [scrollbar-gutter:stable]",
-          chatMobileGlassSurfaceClass
-        )}
-      >
-        {children}
-      </div>
+    <div className="flex min-h-0 flex-1 flex-col gap-1.5 overflow-x-hidden overflow-y-auto overscroll-contain scrollbar-gutter-stable">
+      {children}
     </div>
   )
 }

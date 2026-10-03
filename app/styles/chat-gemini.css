@@ -417,6 +417,16 @@
 }
 
 /*
+ * Bottom-sheet frost — explicit -webkit prefix + no transform on this node.
+ * Mention listbox works because it never shares a node with translateY;
+ * Sheet popups animate opacity on the shell and put blur here instead.
+ */
+.chat-sheet-glass {
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  backdrop-filter: blur(40px) saturate(180%);
+}
+
+/*
  * iOS 26 liquid glass specular — diagonal highlight like light through wet glass.
  * Used by header controls / chips (`chat-ios26-liquid-glass`).
  */

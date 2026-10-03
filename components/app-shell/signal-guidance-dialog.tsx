@@ -8,6 +8,8 @@ import {
   chatDesktopDialogFooterClass,
   chatMobileSheetBodyClass,
   chatMobileSheetCardClass,
+  chatMobileSheetChipActiveClass,
+  chatMobileSheetChipClass,
   chatMobileSheetContentClass,
   chatMobileSheetDescriptionClass,
   chatMobileSheetFooterBarClass,
@@ -85,14 +87,12 @@ function SignalGuidanceBody({
             <Button
               key={asset}
               type="button"
-              variant={selected ? "default" : "secondary"}
+              variant="ghost"
               size="sm"
               aria-pressed={selected}
               className={cn(
-                "h-9 rounded-full px-3.5 text-[13px] font-semibold tracking-tight",
-                selected
-                  ? "bg-foreground text-background hover:bg-foreground/90"
-                  : "bg-foreground/5 text-foreground hover:bg-foreground/8 dark:bg-white/8 dark:hover:bg-white/12"
+                chatMobileSheetChipClass,
+                selected && chatMobileSheetChipActiveClass
               )}
               onClick={() => onSelectAsset(asset)}
             >

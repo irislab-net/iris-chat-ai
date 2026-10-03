@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl"
 
+import { chatMobileGlassSurfaceClass } from "@/components/app-shell/chat-mobile-gemini-styles"
 import { SfPersonCircleIcon } from "@/components/icons/sf-menu-icons"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
@@ -80,7 +81,7 @@ type ChatGuestAvatarProps = {
   badgeClassName?: string
 }
 
-/** Guest session avatar — person glyph + Guest plan badge (sheet / new chat / sidebar). */
+/** Guest session avatar — liquid-glass disc + person icon (no brand mark). */
 function ChatGuestAvatar({
   className,
   avatarClassName,
@@ -92,10 +93,18 @@ function ChatGuestAvatar({
 
   return (
     <span className={cn("relative inline-flex shrink-0", className)}>
-      <Avatar className={cn("size-8 after:border-0", avatarClassName)}>
-        <AvatarFallback className="bg-muted text-muted-foreground">
+      <Avatar
+        className={cn(
+          "size-8 after:border-0",
+          chatMobileGlassSurfaceClass,
+          "border-0",
+          avatarClassName
+        )}
+      >
+        <AvatarFallback className="bg-transparent text-foreground">
           <SfPersonCircleIcon
-            className={cn("size-[55%]", iconClassName)}
+            className={cn("size-[88%]", iconClassName)}
+            strokeWidth={1}
             aria-hidden
           />
         </AvatarFallback>

@@ -447,7 +447,7 @@
     "composerPlaceholder": "Exur'a sorun veya araçlar için / yazın…",
     "composerMobilePlaceholder": "Exur'a sorun",
     "composerAriaLabel": "Exur'a mesaj",
-    "composerVoiceInput": "Sesli giriş",
+    "composerVoiceInput": "Konuşmak için basılı tutun",
     "composerVoiceMode": "Sesli mod",
     "mobileGreeting": "Nasıl yardımcı olabilirim, <highlight>{name}</highlight>?",
     "mobileGreetingGuest": "Nasıl yardımcı olabilirim?",
@@ -663,7 +663,19 @@
     "assistantCopied": "Copied",
     "signalCardCopyLevels": "Copy levels",
     "composerPasteAttachmentMax": "You can attach up to {count} pasted files.",
-    "composerVoiceUnavailable": "Voice input isn’t available in this browser.",
-    "composerVoiceStop": "Stop listening"
+    "composerVoiceUnavailable": "Ses girişi bu tarayıcıda kullanılamıyor.",
+    "composerVoiceStop": "Durdurmak için bırakın",
+    "composerVoiceListening": "Durdurmak için bırakın",
+    "composerVoiceLanguageUnsupported": "{language} için ses bu tarayıcıda desteklenmiyor. Chrome deneyin veya yazın.",
+    "composerVoicePermissionDenied": "Mikrofon erişimi engellendi. Konuşmak için tarayıcı ayarlarından izin verin.",
+    "composerVoiceMicMissing": "Mikrofon bulunamadı. Bir mikrofon bağlayın veya yazın.",
+    "composerVoiceNetworkError": "Ses tanıma ağ bağlantısını kaybetti. Bağlantınızı kontrol edip tekrar deneyin.",
+    "composerVoiceListeningTitle": "Dinleniyor",
+    "composerVoiceUnavailableTitle": "Ses kullanılamıyor",
+    "composerVoiceLanguageUnsupportedTitle": "Dil desteklenmiyor",
+    "composerVoicePermissionDeniedTitle": "Mikrofon engellendi",
+    "composerVoiceMicMissingTitle": "Mikrofon yok",
+    "composerVoiceNetworkErrorTitle": "Bağlantı kesildi",
+    "composerPasteAttachmentMaxTitle": "Attachment limit"
   }
 }

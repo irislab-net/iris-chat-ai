@@ -199,7 +199,10 @@ function ChatRenameDialog({
               value={draft}
               onValueChange={setDraft}
               onSubmit={handleSubmit}
-              inputClassName="h-12 rounded-2xl border-border/60 bg-card/75 px-4 text-base"
+              inputClassName={cn(
+                chatDesktopDialogInputClass,
+                "h-12 px-4 text-base"
+              )}
             />
           ) : null}
         </div>

@@ -447,7 +447,7 @@
     "composerPlaceholder": "Спросите Exur или введите / для инструментов…",
     "composerMobilePlaceholder": "Спросите Exur",
     "composerAriaLabel": "Сообщение Exur",
-    "composerVoiceInput": "Голосовой ввод",
+    "composerVoiceInput": "Удерживайте, чтобы говорить",
     "composerVoiceMode": "Голосовой режим",
     "mobileGreeting": "Чем помочь, <highlight>{name}</highlight>?",
     "mobileGreetingGuest": "Чем помочь?",
@@ -656,7 +656,19 @@
     "assistantCopied": "Copied",
     "signalCardCopyLevels": "Copy levels",
     "composerPasteAttachmentMax": "You can attach up to {count} pasted files.",
-    "composerVoiceUnavailable": "Voice input isn’t available in this browser.",
-    "composerVoiceStop": "Stop listening"
+    "composerVoiceUnavailable": "Голосовой ввод недоступен в этом браузере.",
+    "composerVoiceStop": "Отпустите, чтобы остановить",
+    "composerVoiceListening": "Отпустите, чтобы остановить",
+    "composerVoiceLanguageUnsupported": "Голосовой ввод для языка {language} не поддерживается в этом браузере. Попробуйте Chrome или введите текст.",
+    "composerVoicePermissionDenied": "Доступ к микрофону заблокирован. Разрешите его в настройках браузера, чтобы говорить.",
+    "composerVoiceMicMissing": "Микрофон не найден. Подключите микрофон или введите текст.",
+    "composerVoiceNetworkError": "Распознавание речи потеряло сеть. Проверьте соединение и попробуйте снова.",
+    "composerVoiceListeningTitle": "Слушаю",
+    "composerVoiceUnavailableTitle": "Голос недоступен",
+    "composerVoiceLanguageUnsupportedTitle": "Язык не поддерживается",
+    "composerVoicePermissionDeniedTitle": "Микрофон заблокирован",
+    "composerVoiceMicMissingTitle": "Нет микрофона",
+    "composerVoiceNetworkErrorTitle": "Соединение потеряно",
+    "composerPasteAttachmentMaxTitle": "Attachment limit"
   }
 }

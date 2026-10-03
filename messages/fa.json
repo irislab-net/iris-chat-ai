@@ -784,7 +784,7 @@
     "composerPlaceholder": "از Exur بپرس یا برای ابزارها / بزن…",
     "composerMobilePlaceholder": "از Exur بپرس",
     "composerAriaLabel": "پیام به Exur",
-    "composerVoiceInput": "ورودی صوتی",
+    "composerVoiceInput": "نگه دارید و صحبت کنید",
     "composerVoiceMode": "حالت صوتی",
     "mobileGreeting": "سلام <highlight>{name}</highlight>، از کجا شروع کنیم؟",
     "mobileGreetingGuest": "از کجا شروع کنیم؟",
@@ -1038,7 +1038,7 @@
       "introBody": "به Exur بگو چطور معامله می‌کنی تا پاسخ‌ها با تجربه، بازار و ریسک تو جور شود، بدون اینکه در تاریخچهٔ چت دیده شود.",
       "setup": "راه‌اندازی",
       "editSetup": "ویرایش پروفایل",
-      "editorHint": "روی هر ردیف بزن و انتخاب کن. تا وقتی ذخیره نزنی چیزی ذخیره نمی‌شود.",
+      "editorHint": "روی هر ردیف بزن و انتخاب کن. برای ذخیره و برگشت، تیک را بزن.",
       "save": "ذخیرهٔ پروفایل"
     },
     "signalGuidance": {
@@ -1066,7 +1066,19 @@
     "signalCardCopyLevels": "کپی سطوح",
     "composerPasteAttachmentMax": "حداکثر {count} فایل چسبانده‌شده می‌توانید پیوست کنید.",
     "composerVoiceUnavailable": "ورودی صوتی در این مرورگر در دسترس نیست.",
-    "composerVoiceStop": "توقف شنیدن"
+    "composerVoiceLanguageUnsupported": "ورودی صوتی برای {language} در این مرورگر پشتیبانی نمی‌شود. Chrome را امتحان کنید یا تایپ کنید.",
+    "composerVoiceListening": "رها کنید تا متوقف شود",
+    "composerVoiceStop": "رها کنید تا متوقف شود",
+    "composerVoicePermissionDenied": "دسترسی میکروفون مسدود است. برای صحبت، در تنظیمات مرورگر اجازه بدهید.",
+    "composerVoiceMicMissing": "میکروفونی پیدا نشد. میکروفون وصل کنید یا تایپ کنید.",
+    "composerVoiceNetworkError": "تشخیص صدا شبکه را از دست داد. اتصال را بررسی کنید و دوباره تلاش کنید.",
+    "composerVoiceListeningTitle": "در حال شنیدن",
+    "composerVoiceUnavailableTitle": "صدا در دسترس نیست",
+    "composerVoiceLanguageUnsupportedTitle": "زبان پشتیبانی نمی‌شود",
+    "composerVoicePermissionDeniedTitle": "میکروفون مسدود است",
+    "composerVoiceMicMissingTitle": "میکروفون پیدا نشد",
+    "composerVoiceNetworkErrorTitle": "قطع ارتباط",
+    "composerPasteAttachmentMaxTitle": "حد پیوست"
   },
   "billingPage": {
     "title": "پرداخت",

@@ -7,12 +7,14 @@ import {
   chatDesktopDialogClass,
   chatDesktopDialogFooterClass,
   chatMobileSheetBodyClass,
+  chatMobileSheetCardClass,
   chatMobileSheetContentClass,
   chatMobileSheetFooterBarClass,
   chatMobileSheetFooterClass,
   chatMobileSheetHandleClass,
   chatMobileSheetPrimaryButtonClass,
   chatMobileSheetSecondaryButtonClass,
+  chatMobileSheetTitleClass,
 } from "@/components/app-shell/chat-mobile-gemini-styles"
 import { Button } from "@/components/ui/button"
 import {
@@ -70,9 +72,7 @@ function ComposerPremiumToolsDialog({
 
   const copy = (
     <div className="space-y-2 text-start">
-      <p className="font-heading text-[22px] font-normal tracking-tight text-foreground">
-        {title}
-      </p>
+      <p className={chatMobileSheetTitleClass}>{title}</p>
       <p className="text-pretty text-[15px] leading-relaxed text-muted-foreground">
         {body}
       </p>

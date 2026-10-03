@@ -8,12 +8,14 @@ import {
   chatDesktopDialogClass,
   chatDesktopDialogFooterClass,
   chatMobileSheetBodyClass,
+  chatMobileSheetCardClass,
   chatMobileSheetContentClass,
   chatMobileSheetFooterBarClass,
   chatMobileSheetFooterClass,
   chatMobileSheetHandleClass,
   chatMobileSheetPrimaryButtonClass,
   chatMobileSheetSecondaryButtonClass,
+  chatMobileSheetTitleClass,
 } from "@/components/app-shell/chat-mobile-gemini-styles"
 import { PaymentTokenLogo } from "@/components/billing/payment-token-logo"
 import { Button } from "@/components/ui/button"
@@ -94,20 +96,25 @@ function ComposerPremiumToolsDialog({
           : t("composerPremiumToolsBody")
 
   const copy = (
-    <div className="space-y-2 text-start">
-      <p className="font-heading text-[22px] font-normal tracking-tight text-foreground">
-        {title}
-      </p>
-      <p className="text-pretty text-[15px] leading-relaxed text-muted-foreground">
-        {body}
-      </p>
+    <div className="space-y-3 text-start">
+      <div className="space-y-2">
+        <p className={chatMobileSheetTitleClass}>{title}</p>
+        <p className="text-pretty text-[15px] leading-relaxed text-muted-foreground">
+          {body}
+        </p>
+      </div>
       {!comingSoon ? (
-        <div className="flex items-center gap-2 pt-0.5">
+        <div
+          className={cn(
+            chatMobileSheetCardClass,
+            "flex items-center gap-3 py-3"
+          )}
+        >
           <span className="flex items-center -space-x-1.5" aria-hidden>
             <ShimmerTokenMark currency="USDT" />
             <ShimmerTokenMark currency="USDC" />
           </span>
-          <p className="text-[13px] leading-relaxed text-muted-foreground/85">
+          <p className="min-w-0 text-[13px] leading-snug text-muted-foreground">
             {t("composerPremiumToolsPaymentNote")}
           </p>
         </div>

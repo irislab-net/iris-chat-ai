@@ -10,7 +10,6 @@ import {
   LineChartIcon,
   LockIcon,
   MicIcon,
-  MicOffIcon,
   PlusIcon,
   SquareIcon,
   TrendingUpIcon,
@@ -18,7 +17,7 @@ import {
 } from "lucide-react"
 // Paperclip/upload stays out of the + menu until real file attach ships.
 import { useLocale, useTranslations } from "next-intl"
-import { toast } from "sonner"
+import { dismissAppToast, showAppErrorToast, showAppToast } from "@/components/ui/app-toast"
 
 import {
   chatContextMenuContentClass,
@@ -38,6 +37,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetTitle,
+} from "@/components/ui/sheet"
 import { Textarea } from "@/components/ui/textarea"
 import {
   CHAT_EFFORT_OPTIONS,
@@ -46,12 +51,15 @@ import {
 } from "@/lib/chat-effort"
 import {
   applyMentionSelection,
+  composerHasMixedBidiScripts,
+  composerInputDirection,
   expandComposerMentions,
-  filterMentionOptions,
+  filterComposerPaletteTools,
   IRIS_MENTION_OPTIONS,
   mentionTokenForTool,
   parseMentionPalette,
   splitComposerMentionHighlights,
+  type ComposerPaletteTool,
   type IrisMentionOption,
   type MentionPaletteState,
 } from "@/lib/chat/composer-mentions"
@@ -63,11 +71,17 @@ import {
   shouldConvertPasteToAttachment,
   type ComposerPasteAttachment,
 } from "@/lib/chat/composer-paste-attachment"
-import { localeDirection } from "@/lib/i18n/locale"
+import {
+  localeDirection,
+  localeLabelKey,
+  speechLocale,
+} from "@/lib/i18n/locale"
+import type { AppLocale } from "@/i18n/routing"
 import { mergeRefs } from "@/lib/merge-refs"
 import {
   chatMobileComposerIconButtonClass,
   chatMobileComposerIconButtonCompactClass,
+  chatMobileComposerVoiceListeningClass,
   chatMobileComposerLeadingClass,
   chatMobileComposerPillClass,
   chatMobileComposerTrailingClass,
@@ -89,7 +103,14 @@ import {
   chatComposerPasteChipIconClass,
   chatComposerPasteChipMetaClass,
   chatComposerPasteChipCloseClass,
+  chatComposerLiquidDockCardClass,
+  chatComposerLiquidSheetClass,
+  chatComposerLiquidSheetOverlayClass,
+  chatComposerLiquidSheetRowActiveClass,
+  chatComposerLiquidSheetRowClass,
+  chatComposerLiquidSheetRowIconClass,
   chatMobileComposerShellClass,
+  chatMobileSheetHandleClass,
   chatMobileToolsMenuClass,
   chatMobileToolsMenuItemClass,
   chatMobileToolsMenuItemDescClass,
@@ -101,6 +122,15 @@ import { cn } from "@/lib/utils"
 
 /** Composer "+" tools menu (signal). */
 const SHOW_COMPOSER_TOOLS_MENU = true
+
+/**
+ * Typing `/` mention — full-bleed liquid sheet behind the composer pill.
+ * Must stay inside the composer stacking context so the pill (z-10) paints above.
+ */
+const composerMentionBackdropSheetClass = cn(
+  chatComposerLiquidSheetClass,
+  "pointer-events-auto fixed inset-x-0 bottom-(--keyboard-inset-bottom,0px) z-1 flex flex-col"
+)
 
 type ChatComposerProps = {
   onSend?: (message: string) => void
@@ -141,6 +171,7 @@ function ChatComposer({
   isProUser = false,
 }: ChatComposerProps) {
   const t = useTranslations("workspace")
+  const common = useTranslations("common")
   const locale = useLocale()
   const textDir = localeDirection(locale)
   const isDesktop = useIsDesktop()
@@ -153,15 +184,23 @@ function ChatComposer({
   const keyboardUnlockAllowedAtRef = React.useRef(0)
   const [uncontrolled, setUncontrolled] = React.useState("")
   const [premiumToolsOpen, setPremiumToolsOpen] = React.useState(false)
-
-  function openPremiumTools() {
-    setPremiumToolsOpen(true)
-  }
-
+  const [toolsSheetOpen, setToolsSheetOpen] = React.useState(false)
+  const [mentionSuppressed, setMentionSuppressed] = React.useState(false)
   const [pasteAttachments, setPasteAttachments] = React.useState<
     ComposerPasteAttachment[]
   >([])
   const [mentionIndex, setMentionIndex] = React.useState(0)
+
+  function openPremiumTools() {
+    setToolsSheetOpen(false)
+    // Hide `/` sheet so it does not sit under the premium dialog.
+    setMentionSuppressed(true)
+    setPremiumToolsOpen(true)
+  }
+
+  function closeToolsSheet() {
+    setToolsSheetOpen(false)
+  }
   const [cursor, setCursor] = React.useState(0)
   const localRef = React.useRef<HTMLTextAreaElement>(null)
   const highlightRef = React.useRef<HTMLDivElement>(null)
@@ -170,6 +209,14 @@ function ChatComposer({
   const isControlled = valueProp !== undefined
   const value = isControlled ? valueProp : uncontrolled
   const composerValue = value
+  const composerValueRef = React.useRef(composerValue)
+  composerValueRef.current = composerValue
+  /**
+   * Textarea + mention mirror must share one dir. Use first-strong (like
+   * `dir="auto"`) — ChatGPT/Gemini avoid this class of bug by putting chips
+   * in a real contenteditable; our mirror overlay cannot invent a second bidi.
+   */
+  const inputDir = composerInputDirection(composerValue, textDir)
   const signalToolLabel = t("composerToolSignalLabel")
   function mentionOptionLabel(option: IrisMentionOption) {
     return option.tool === "signal" ? signalToolLabel : option.label
@@ -178,8 +225,77 @@ function ChatComposer({
     () => splitComposerMentionHighlights(composerValue),
     [composerValue]
   )
-  const hasMentionHighlight = mentionHighlightParts.some(
-    (part) => part.type === "mention"
+  const hasMentionHighlight =
+    mentionHighlightParts.some((part) => part.type === "mention") &&
+    // Mixed FA+EN: skip mirror chips so the native caret stays glued to glyphs.
+    !composerHasMixedBidiScripts(composerValue)
+
+  function selectToolsMention(option: IrisMentionOption) {
+    closeToolsSheet()
+    insertMentionToken(option)
+  }
+
+  const toolsRows = (
+    <div className="flex flex-col gap-1 px-3 pb-[max(1rem,env(safe-area-inset-bottom,0px))] pt-1">
+      {IRIS_MENTION_OPTIONS.map((option) => (
+        <button
+          key={option.id}
+          type="button"
+          className={chatComposerLiquidSheetRowClass}
+          onClick={() => selectToolsMention(option)}
+        >
+          <span className={chatComposerLiquidSheetRowIconClass}>
+            <TrendingUpIcon className="size-4" aria-hidden />
+          </span>
+          <span className="flex min-w-0 flex-1 flex-col gap-0.5 text-start">
+            <span className={chatMobileToolsMenuItemTitleClass}>
+              {mentionOptionLabel(option)}
+            </span>
+            <span
+              className={cn(chatMobileToolsMenuItemDescClass, "line-clamp-2")}
+            >
+              {t("composerToolSignalDesc")}
+            </span>
+          </span>
+        </button>
+      ))}
+      <button
+        type="button"
+        className={chatComposerLiquidSheetRowClass}
+        onClick={openPremiumTools}
+      >
+        <span className={chatComposerLiquidSheetRowIconClass}>
+          <LineChartIcon className="size-4" aria-hidden />
+        </span>
+        <span className="min-w-0 flex-1 text-start">
+          <span className={chatMobileToolsMenuItemTitleClass}>
+            {t("composerToolCorrelationLabel")}
+          </span>
+        </span>
+        <LockIcon
+          className="size-4 shrink-0 text-muted-foreground/70"
+          aria-hidden
+        />
+      </button>
+      <button
+        type="button"
+        className={chatComposerLiquidSheetRowClass}
+        onClick={openPremiumTools}
+      >
+        <span className={chatComposerLiquidSheetRowIconClass}>
+          <ActivityIcon className="size-4" aria-hidden />
+        </span>
+        <span className="min-w-0 flex-1 text-start">
+          <span className={chatMobileToolsMenuItemTitleClass}>
+            {t("composerToolVolatilityLabel")}
+          </span>
+        </span>
+        <LockIcon
+          className="size-4 shrink-0 text-muted-foreground/70"
+          aria-hidden
+        />
+      </button>
+    </div>
   )
 
   const toolsMenuItems = (
@@ -350,37 +466,71 @@ function ChatComposer({
     () => parseMentionPalette(composerValue, cursor),
     [composerValue, cursor]
   )
-  const [mentionSuppressed, setMentionSuppressed] = React.useState(false)
   const mentionPaletteKey = mentionPalette
     ? `${mentionPalette.replaceStart}:${mentionPalette.query}`
     : ""
 
   React.useEffect(() => {
     setMentionSuppressed(false)
+    setMentionIndex(0)
   }, [mentionPaletteKey])
 
-  const mentionOptions = React.useMemo(
-    () => (mentionPalette ? filterMentionOptions(mentionPalette.query) : []),
-    [mentionPalette]
+  const paletteLabels = React.useMemo(
+    () => ({
+      signal: t("composerToolSignalLabel"),
+      correlation: t("composerToolCorrelationLabel"),
+      volatility: t("composerToolVolatilityLabel"),
+    }),
+    [t]
+  )
+
+  const paletteTools = React.useMemo(
+    () =>
+      mentionPalette
+        ? filterComposerPaletteTools(mentionPalette.query, paletteLabels)
+        : [],
+    [mentionPalette, paletteLabels]
   )
 
   const mentionOpen = Boolean(
-    mentionPalette && mentionOptions.length > 0 && !mentionSuppressed
+    mentionPalette && paletteTools.length > 0 && !mentionSuppressed
   )
-  const activeMentionOptionId = mentionOptions[mentionIndex]?.id
+  const safeMentionIndex =
+    paletteTools.length === 0
+      ? 0
+      : Math.min(mentionIndex, paletteTools.length - 1)
+  const activeMentionOptionId = paletteTools[safeMentionIndex]?.id
+
+  React.useEffect(() => {
+    if (mentionIndex !== safeMentionIndex) {
+      setMentionIndex(safeMentionIndex)
+    }
+  }, [mentionIndex, safeMentionIndex])
+
+  function selectPaletteTool(tool: ComposerPaletteTool) {
+    if (tool.locked || !tool.mention) {
+      openPremiumTools()
+      return
+    }
+    applyMention(tool.mention)
+  }
   const [listening, setListening] = React.useState(false)
+  /** Bumps on stop so a dying SpeechRecognition can't block the next hold. */
+  const voiceSessionRef = React.useRef(0)
   const recognitionRef = React.useRef<{
     stop: () => void
     abort: () => void
     start: () => void
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onresult: ((event: any) => void) | null
-    onerror: (() => void) | null
+    onerror: ((event: { error?: string }) => void) | null
     onend: (() => void) | null
     lang: string
     continuous: boolean
     interimResults: boolean
   } | null>(null)
+  const VOICE_LISTENING_TOAST_ID = "composer-voice-listening"
+  const VOICE_ERROR_TOAST_ID = "composer-voice-error"
 
   const speechSupported =
     typeof window !== "undefined" &&
@@ -399,8 +549,36 @@ function ChatComposer({
         ).webkitSpeechRecognition
     )
 
-  function toggleVoiceInput() {
-    if (disabled || sending) return
+  function stopVoiceInput() {
+    dismissAppToast(VOICE_LISTENING_TOAST_ID)
+    voiceSessionRef.current += 1
+    const recognition = recognitionRef.current
+    recognitionRef.current = null
+    setListening(false)
+    if (!recognition) return
+    try {
+      recognition.stop()
+    } catch {
+      recognition.abort()
+    }
+  }
+
+  function showVoiceError(
+    title: string,
+    description: string,
+    icon: "mic-off" | "globe" | "wifi-off" | "info" = "mic-off"
+  ) {
+    dismissAppToast(VOICE_LISTENING_TOAST_ID)
+    showAppErrorToast({
+      id: VOICE_ERROR_TOAST_ID,
+      title,
+      description,
+      icon,
+    })
+  }
+
+  function startVoiceInput() {
+    if (disabled || sending || listening || recognitionRef.current) return
     type SpeechCtor = new () => NonNullable<typeof recognitionRef.current>
     const Ctor =
       (
@@ -416,46 +594,147 @@ function ChatComposer({
         }
       ).webkitSpeechRecognition
     if (!Ctor) {
-      toast.message(t("composerVoiceUnavailable"))
+      showVoiceError(
+        t("composerVoiceUnavailableTitle"),
+        t("composerVoiceUnavailable")
+      )
       return
     }
 
-    if (listening && recognitionRef.current) {
-      recognitionRef.current.stop()
-      setListening(false)
-      return
-    }
-
+    const session = voiceSessionRef.current + 1
+    voiceSessionRef.current = session
     const recognition = new Ctor()
-    recognition.lang = locale
-    recognition.continuous = false
+    // BCP-47 tag required (fa → fa-IR); bare "fa" breaks Persian STT in Chrome.
+    recognition.lang = speechLocale(locale)
+    // Hold-to-talk: keep listening until the user releases.
+    recognition.continuous = true
     recognition.interimResults = true
+    // Commit each final result once — stop() often re-emits the last final.
+    let nextResultIndex = 0
     recognition.onresult = (event) => {
-      const result = event.results?.[event.results.length - 1]
-      const transcript = result?.[0]?.transcript?.trim()
-      if (!transcript || !result?.isFinal) return
-      const el = localRef.current
-      const start = el?.selectionStart ?? composerValue.length
-      const end = el?.selectionEnd ?? start
-      const spacer =
-        start > 0 && !/\s$/.test(composerValue.slice(0, start)) ? " " : ""
-      const next = `${composerValue.slice(0, start)}${spacer}${transcript}${composerValue.slice(end)}`
-      setValue(next)
-      placeCaret(start + spacer.length + transcript.length)
+      if (voiceSessionRef.current !== session) return
+      const results = event.results
+      if (!results) return
+      for (let i = nextResultIndex; i < results.length; i += 1) {
+        const result = results[i]
+        if (!result?.isFinal) continue
+        nextResultIndex = i + 1
+        const transcript = result[0]?.transcript?.trim()
+        if (!transcript) continue
+        const current = composerValueRef.current
+        const el = localRef.current
+        const start = el?.selectionStart ?? current.length
+        const end = el?.selectionEnd ?? start
+        const spacer =
+          start > 0 && !/\s$/.test(current.slice(0, start)) ? " " : ""
+        const next = `${current.slice(0, start)}${spacer}${transcript}${current.slice(end)}`
+        setValue(next)
+        placeCaret(start + spacer.length + transcript.length)
+      }
     }
-    recognition.onerror = () => setListening(false)
+    recognition.onerror = (event: { error?: string } | null) => {
+      const stale = voiceSessionRef.current !== session
+      if (!stale) {
+        setListening(false)
+        recognitionRef.current = null
+      }
+      const code = event?.error
+      if (code === "aborted" || code === "no-speech") {
+        if (!stale) dismissAppToast(VOICE_LISTENING_TOAST_ID)
+        return
+      }
+      if (stale) return
+      if (
+        code === "language-not-supported" ||
+        code === "service-not-allowed"
+      ) {
+        showVoiceError(
+          t("composerVoiceLanguageUnsupportedTitle"),
+          t("composerVoiceLanguageUnsupported", {
+            language: common(localeLabelKey(locale as AppLocale)),
+          }),
+          "globe"
+        )
+        return
+      }
+      if (code === "not-allowed") {
+        showVoiceError(
+          t("composerVoicePermissionDeniedTitle"),
+          t("composerVoicePermissionDenied")
+        )
+        return
+      }
+      if (code === "audio-capture") {
+        showVoiceError(
+          t("composerVoiceMicMissingTitle"),
+          t("composerVoiceMicMissing")
+        )
+        return
+      }
+      if (code === "network") {
+        showVoiceError(
+          t("composerVoiceNetworkErrorTitle"),
+          t("composerVoiceNetworkError"),
+          "wifi-off"
+        )
+        return
+      }
+      showVoiceError(
+        t("composerVoiceUnavailableTitle"),
+        t("composerVoiceUnavailable")
+      )
+    }
     recognition.onend = () => {
+      if (voiceSessionRef.current !== session) return
       setListening(false)
       recognitionRef.current = null
+      dismissAppToast(VOICE_LISTENING_TOAST_ID)
     }
     recognitionRef.current = recognition
     try {
       recognition.start()
       setListening(true)
+      showAppToast({
+        id: VOICE_LISTENING_TOAST_ID,
+        title: t("composerVoiceListeningTitle"),
+        description: t("composerVoiceListening"),
+        icon: "mic",
+        duration: Number.POSITIVE_INFINITY,
+      })
     } catch {
+      recognitionRef.current = null
       setListening(false)
-      toast.message(t("composerVoiceUnavailable"))
+      showVoiceError(
+        t("composerVoiceUnavailableTitle"),
+        t("composerVoiceUnavailable")
+      )
     }
+  }
+
+  function handleVoicePointerDown(event: React.PointerEvent<HTMLButtonElement>) {
+    if (event.button !== 0 || disabled || sending) return
+    event.preventDefault()
+    event.currentTarget.setPointerCapture(event.pointerId)
+    startVoiceInput()
+  }
+
+  function handleVoicePointerUp(event: React.PointerEvent<HTMLButtonElement>) {
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId)
+    }
+    stopVoiceInput()
+  }
+
+  function handleVoiceKeyDown(event: React.KeyboardEvent<HTMLButtonElement>) {
+    if (event.key !== " " && event.key !== "Enter") return
+    event.preventDefault()
+    if (!event.repeat) startVoiceInput()
+  }
+
+  function handleVoiceKeyUp(event: React.KeyboardEvent<HTMLButtonElement>) {
+    if (event.key !== " " && event.key !== "Enter") return
+    event.preventDefault()
+    stopVoiceInput()
   }
 
   React.useEffect(() => {
@@ -463,6 +742,20 @@ function ChatComposer({
       recognitionRef.current?.abort()
     }
   }, [])
+
+  React.useEffect(() => {
+    if (!toolsSheetOpen) return
+    stopVoiceInput()
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") closeToolsSheet()
+    }
+    window.addEventListener("keydown", onKeyDown)
+    return () => window.removeEventListener("keydown", onKeyDown)
+  }, [toolsSheetOpen])
+
+  React.useEffect(() => {
+    if (mentionOpen) closeToolsSheet()
+  }, [mentionOpen])
 
   React.useEffect(() => {
     if (!isFloating) return
@@ -579,6 +872,9 @@ function ChatComposer({
     if (!expanded && pasteAttachments.length === 0) return
     const outbound = expanded || withFiles.trim()
     if (!outbound) return
+    stopVoiceInput()
+    closeToolsSheet()
+    setMentionSuppressed(true)
     onSend?.(outbound)
     setPasteAttachments([])
     if (!isControlled) setUncontrolled("")
@@ -594,9 +890,13 @@ function ChatComposer({
     if (!text || !shouldConvertPasteToAttachment(text)) return
     if (pasteAttachments.length >= PASTE_ATTACHMENT_MAX) {
       event.preventDefault()
-      toast.message(
-        t("composerPasteAttachmentMax", { count: PASTE_ATTACHMENT_MAX })
-      )
+      showAppToast({
+        title: t("composerPasteAttachmentMaxTitle"),
+        description: t("composerPasteAttachmentMax", {
+          count: PASTE_ATTACHMENT_MAX,
+        }),
+        icon: "info",
+      })
       return
     }
     event.preventDefault()
@@ -688,20 +988,20 @@ function ChatComposer({
     if (mentionOpen) {
       if (event.key === "ArrowDown") {
         event.preventDefault()
-        setMentionIndex((index) => (index + 1) % mentionOptions.length)
+        setMentionIndex((index) => (index + 1) % paletteTools.length)
         return
       }
       if (event.key === "ArrowUp") {
         event.preventDefault()
         setMentionIndex(
-          (index) => (index - 1 + mentionOptions.length) % mentionOptions.length
+          (index) => (index - 1 + paletteTools.length) % paletteTools.length
         )
         return
       }
       if (event.key === "Enter" || event.key === "Tab") {
         event.preventDefault()
-        const option = mentionOptions[mentionIndex]
-        if (option) applyMention(option)
+        const tool = paletteTools[safeMentionIndex]
+        if (tool) selectPaletteTool(tool)
         return
       }
       if (event.key === "Escape") {
@@ -730,8 +1030,89 @@ function ChatComposer({
     }
   }
 
+  /** `/` typing on mobile: sheet behind composer. `+` menu: modal sheet on top. */
+  const floatingMentionBehind = isFloating && mentionOpen && !toolsSheetOpen
+  const formRef = React.useRef<HTMLFormElement>(null)
+  const [composerDockHeight, setComposerDockHeight] = React.useState(96)
+
+  function dismissFloatingDock() {
+    closeToolsSheet()
+    if (mentionOpen) setMentionSuppressed(true)
+  }
+
+  React.useLayoutEffect(() => {
+    if (!floatingMentionBehind) return
+    const el = formRef.current
+    if (!el) return
+    const sync = () => {
+      setComposerDockHeight(Math.ceil(el.getBoundingClientRect().height))
+    }
+    sync()
+    const observer = new ResizeObserver(sync)
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [
+    floatingMentionBehind,
+    floatingComposerExpanded,
+    pasteAttachments.length,
+    composerValue,
+  ])
+
+  const floatingMentionList = (
+    <ul className="flex flex-col gap-0.5 px-3 pb-2 pt-0.5">
+      {paletteTools.map((tool, index) => {
+        const Icon =
+          tool.id === "correlation"
+            ? LineChartIcon
+            : tool.id === "volatility"
+              ? ActivityIcon
+              : TrendingUpIcon
+        return (
+          <li key={tool.id}>
+            <button
+              type="button"
+              id={`composer-mention-${tool.id}`}
+              data-mention-item=""
+              role="option"
+              aria-selected={index === safeMentionIndex}
+              className={cn(
+                chatComposerLiquidSheetRowClass,
+                "py-2.5",
+                index === safeMentionIndex &&
+                  chatComposerLiquidSheetRowActiveClass
+              )}
+              onMouseDown={(event) => {
+                event.preventDefault()
+                selectPaletteTool(tool)
+              }}
+            >
+              <span
+                className={cn(
+                  chatComposerLiquidSheetRowIconClass,
+                  "size-8 [&_svg]:size-3.5"
+                )}
+              >
+                <Icon className="size-3.5" aria-hidden />
+              </span>
+              <span className="min-w-0 flex-1 truncate text-[15px] font-medium tracking-[-0.016em] text-foreground">
+                {paletteLabels[tool.id]}
+              </span>
+              {tool.locked ? (
+                <LockIcon
+                  className="size-3.5 shrink-0 text-muted-foreground/65"
+                  aria-hidden
+                />
+              ) : null}
+            </button>
+          </li>
+        )
+      })}
+    </ul>
+  )
+
   return (
     <form
+      ref={formRef}
       data-slot="chat-composer"
       dir={textDir}
       className={cn(
@@ -739,6 +1120,8 @@ function ChatComposer({
         isFloating
           ? chatMobileComposerShellClass
           : chatDesktopComposerShellClass,
+        // Isolate so the mention sheet (z-1) stays under the pill (z-10).
+        floatingMentionBehind && "z-30",
         className
       )}
       onSubmit={(event) => {
@@ -750,12 +1133,72 @@ function ChatComposer({
         send()
       }}
     >
-      {mentionOpen ? (
+      {isFloating ? (
+        <Sheet
+          open={toolsSheetOpen}
+          onOpenChange={(open) => {
+            if (!open) {
+              closeToolsSheet()
+              queueMicrotask(() => focusComposer({ force: true }))
+            }
+          }}
+        >
+          <SheetContent
+            side="bottom"
+            showCloseButton={false}
+            overlayClassName={chatComposerLiquidSheetOverlayClass}
+            className={chatComposerLiquidSheetClass}
+          >
+            <SheetTitle className="sr-only">{t("composerToolsMenu")}</SheetTitle>
+            <SheetDescription className="sr-only">
+              {t("composerToolsMenu")}
+            </SheetDescription>
+            <div className={chatMobileSheetHandleClass} aria-hidden />
+            <p className={cn(chatMobileToolsMenuLabelClass, "px-5")}>
+              {t("composerToolsMenu")}
+            </p>
+            {toolsRows}
+          </SheetContent>
+        </Sheet>
+      ) : null}
+
+      {floatingMentionBehind ? (
+        <>
+          <div
+            role="presentation"
+            className={cn(
+              "fixed inset-0 z-0 touch-none",
+              chatComposerLiquidSheetOverlayClass
+            )}
+            onClick={dismissFloatingDock}
+          />
+          <div
+            id="composer-mention-listbox"
+            role="listbox"
+            aria-label={t("composerMentionMenu")}
+            aria-activedescendant={
+              activeMentionOptionId
+                ? `composer-mention-${activeMentionOptionId}`
+                : undefined
+            }
+            className={composerMentionBackdropSheetClass}
+            style={{ paddingBottom: composerDockHeight }}
+          >
+            <div className={chatMobileSheetHandleClass} aria-hidden />
+            <p className={cn(chatMobileToolsMenuLabelClass, "px-5")}>
+              {t("composerMentionMenu")}
+            </p>
+            {floatingMentionList}
+          </div>
+        </>
+      ) : null}
+
+      {!isFloating && mentionOpen ? (
         <div
           id="composer-mention-listbox"
           className={cn(
-            "absolute inset-x-3 bottom-full z-20 mb-2",
-            chatMobileToolsMenuClass
+            "absolute inset-x-3 bottom-full z-20 mb-2 min-w-60 max-w-[min(100vw-1.5rem,20rem)]",
+            chatComposerLiquidDockCardClass
           )}
           role="listbox"
           aria-label={t("composerMentionMenu")}
@@ -768,34 +1211,7 @@ function ChatComposer({
           <p className={chatMobileToolsMenuLabelClass}>
             {t("composerMentionMenu")}
           </p>
-          <ul className="max-h-48 overflow-y-auto p-1">
-            {mentionOptions.map((option, index) => (
-              <li key={option.id}>
-                <button
-                  type="button"
-                  id={`composer-mention-${option.id}`}
-                  data-mention-item=""
-                  role="option"
-                  aria-selected={index === mentionIndex}
-                  className={cn(
-                    chatMobileToolsMenuItemClass,
-                    index === mentionIndex && "bg-foreground/[0.07]"
-                  )}
-                  onMouseDown={(event) => {
-                    event.preventDefault()
-                    applyMention(option)
-                  }}
-                >
-                  <span className={chatMobileToolsMenuItemTitleClass}>
-                    {mentionOptionLabel(option)}
-                  </span>
-                  <span className={chatMobileToolsMenuItemDescClass}>
-                    {t("composerToolSignalDesc")}
-                  </span>
-                </button>
-              </li>
-            ))}
-          </ul>
+          {floatingMentionList}
         </div>
       ) : null}
 
@@ -804,7 +1220,7 @@ function ChatComposer({
         data-composer-expanded={floatingComposerExpanded ? "" : undefined}
         data-composer-multiline={floatingPastSingleLine ? "" : undefined}
         className={cn(
-          "cursor-text transition-[background-color,box-shadow,border-color]",
+          "relative z-10 cursor-text transition-[background-color,box-shadow,border-color]",
           isFloating
             ? cn(
                 chatMobileComposerPillClass,
@@ -850,38 +1266,32 @@ function ChatComposer({
           <>
             <div className={chatMobileComposerLeadingClass}>
               {SHOW_COMPOSER_TOOLS_MENU ? (
-                <DropdownMenu modal={false}>
-                  <ActionTooltip label={t("composerToolsMenu")}>
-                    <DropdownMenuTrigger
-                      render={
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon-sm"
-                          aria-label={t("composerToolsMenu")}
-                          disabled={disabled}
-                          className={
-                            floatingComposerExpanded
-                              ? chatMobileComposerIconButtonClass
-                              : chatMobileComposerIconButtonCompactClass
-                          }
-                        />
-                      }
-                    >
-                      <PlusIcon className="size-5" />
-                    </DropdownMenuTrigger>
-                  </ActionTooltip>
-                  <DropdownMenuContent
-                    align="start"
-                    side="top"
-                    sideOffset={18}
-                    showBackdrop
-                    backdropClassName="bg-black/8 supports-backdrop-filter:bg-black/[0.04] supports-backdrop-filter:backdrop-blur-xs dark:bg-black/30 dark:supports-backdrop-filter:bg-black/20"
-                    className={cn(chatMobileToolsMenuClass, "z-60")}
+                <ActionTooltip label={t("composerToolsMenu")}>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon-sm"
+                    aria-label={t("composerToolsMenu")}
+                    aria-expanded={toolsSheetOpen}
+                    aria-haspopup="dialog"
+                    disabled={disabled}
+                    onClick={(event) => {
+                      event.stopPropagation()
+                      setToolsSheetOpen((open) => !open)
+                    }}
+                    className={
+                      floatingComposerExpanded
+                        ? chatMobileComposerIconButtonClass
+                        : chatMobileComposerIconButtonCompactClass
+                    }
                   >
-                    {toolsMenuItems}
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                    {toolsSheetOpen ? (
+                      <XIcon className="size-5" />
+                    ) : (
+                      <PlusIcon className="size-5" />
+                    )}
+                  </Button>
+                </ActionTooltip>
               ) : null}
             </div>
             <div
@@ -896,10 +1306,10 @@ function ChatComposer({
                 <div
                   ref={highlightRef}
                   aria-hidden
-                  dir={textDir}
+                  dir={inputDir}
                   className={cn(
                     chatMobileComposerTextareaClass,
-                    "pointer-events-none absolute inset-0 z-0 overflow-hidden whitespace-pre-wrap break-words text-foreground",
+                    "pointer-events-none absolute inset-0 z-0 overflow-hidden break-words text-foreground",
                     floatingComposerExpanded
                       ? chatMobileComposerTextareaExpandedClass
                       : chatMobileComposerTextareaCompactClass
@@ -949,7 +1359,7 @@ function ChatComposer({
                 onBlur={() => {
                   onFloatingFocusChange?.(false)
                 }}
-                dir={textDir}
+                dir={inputDir}
                 className={cn(
                   chatMobileComposerTextareaClass,
                   // `block` overrides Textarea's default `flex`, which misaligns
@@ -967,7 +1377,9 @@ function ChatComposer({
               {speechSupported && !showStop ? (
                 <ActionTooltip
                   label={
-                    listening ? t("composerVoiceStop") : t("composerVoiceInput")
+                    listening
+                      ? t("composerVoiceListening")
+                      : t("composerVoiceInput")
                   }
                 >
                   <Button
@@ -976,23 +1388,27 @@ function ChatComposer({
                     variant="ghost"
                     aria-label={
                       listening
-                        ? t("composerVoiceStop")
+                        ? t("composerVoiceListening")
                         : t("composerVoiceInput")
                     }
                     aria-pressed={listening}
                     disabled={disabled}
-                    onClick={toggleVoiceInput}
-                    className={
-                      floatingComposerExpanded
-                        ? chatMobileComposerIconButtonClass
-                        : chatMobileComposerIconButtonCompactClass
-                    }
-                  >
-                    {listening ? (
-                      <MicOffIcon className="size-4.5" />
-                    ) : (
-                      <MicIcon className="size-4.5" />
+                    onPointerDown={handleVoicePointerDown}
+                    onPointerUp={handleVoicePointerUp}
+                    onPointerCancel={handleVoicePointerUp}
+                    onKeyDown={handleVoiceKeyDown}
+                    onKeyUp={handleVoiceKeyUp}
+                    onContextMenu={(event) => event.preventDefault()}
+                    className={cn(
+                      "touch-none select-none",
+                      listening
+                        ? chatMobileComposerVoiceListeningClass
+                        : floatingComposerExpanded
+                          ? chatMobileComposerIconButtonClass
+                          : chatMobileComposerIconButtonCompactClass
                     )}
+                  >
+                    <MicIcon className="size-4.5" />
                   </Button>
                 </ActionTooltip>
               ) : null}
@@ -1036,7 +1452,7 @@ function ChatComposer({
                 <div
                   ref={highlightRef}
                   aria-hidden
-                  dir={textDir}
+                  dir={inputDir}
                   className={cn(
                     chatDesktopComposerTextareaClass,
                     "pointer-events-none absolute inset-0 z-0 overflow-hidden whitespace-pre-wrap break-words text-foreground"
@@ -1078,10 +1494,10 @@ function ChatComposer({
                     return
                   }
                 }}
-                dir={textDir}
+                dir={inputDir}
                 className={cn(
                   chatDesktopComposerTextareaClass,
-                  "relative z-10 block caret-foreground",
+                  "relative z-10 block whitespace-pre-wrap caret-foreground",
                   hasMentionHighlight &&
                     "text-transparent [-webkit-text-fill-color:transparent]"
                 )}
@@ -1186,7 +1602,9 @@ function ChatComposer({
             {speechSupported && !showStop ? (
               <ActionTooltip
                 label={
-                  listening ? t("composerVoiceStop") : t("composerVoiceInput")
+                  listening
+                    ? t("composerVoiceListening")
+                    : t("composerVoiceInput")
                 }
               >
                 <Button
@@ -1195,19 +1613,25 @@ function ChatComposer({
                   variant="ghost"
                   aria-label={
                     listening
-                      ? t("composerVoiceStop")
+                      ? t("composerVoiceListening")
                       : t("composerVoiceInput")
                   }
                   aria-pressed={listening}
                   disabled={disabled}
-                  onClick={toggleVoiceInput}
-                  className={chatDesktopComposerIconButtonClass}
-                >
-                  {listening ? (
-                    <MicOffIcon className="size-4" />
-                  ) : (
-                    <MicIcon className="size-4" />
+                  onPointerDown={handleVoicePointerDown}
+                  onPointerUp={handleVoicePointerUp}
+                  onPointerCancel={handleVoicePointerUp}
+                  onKeyDown={handleVoiceKeyDown}
+                  onKeyUp={handleVoiceKeyUp}
+                  onContextMenu={(event) => event.preventDefault()}
+                  className={cn(
+                    "touch-none select-none",
+                    listening
+                      ? chatMobileComposerVoiceListeningClass
+                      : chatDesktopComposerIconButtonClass
                   )}
+                >
+                  <MicIcon className="size-4" />
                 </Button>
               </ActionTooltip>
             ) : null}
@@ -1252,7 +1676,11 @@ function ChatComposer({
       ) : null}
       <ComposerPremiumToolsDialog
         open={premiumToolsOpen}
-        onOpenChange={setPremiumToolsOpen}
+        onOpenChange={(open) => {
+          setPremiumToolsOpen(open)
+          // Restore `/` suggestions after the premium dialog closes.
+          if (!open) setMentionSuppressed(false)
+        }}
         isProUser={isProUser}
         feature="premium-tools"
       />
@@ -1274,6 +1702,8 @@ function ComposerMentionHighlight({
           // theme primary is near-black and the mention disappears.
           <span
             key={`mention-${index}`}
+            // Color/background only — never unicode-bidi/padding. The caret
+            // lives in the transparent textarea; any bidi isolate here desyncs it.
             className="rounded-[0.3em] bg-[#2563EB]/14 font-normal text-[#2563EB] [box-decoration-break:clone] box-decoration-clone dark:bg-[#60A5FA]/20 dark:text-[#93C5FD]"
           >
             {part.value}

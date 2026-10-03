@@ -447,7 +447,7 @@
     "composerPlaceholder": "Vraag Exur of typ / voor tools…",
     "composerMobilePlaceholder": "Vraag Exur",
     "composerAriaLabel": "Bericht aan Exur",
-    "composerVoiceInput": "Spraakinvoer",
+    "composerVoiceInput": "Vasthouden om te spreken",
     "composerVoiceMode": "Spraakmodus",
     "mobileGreeting": "Waarmee kan ik helpen, <highlight>{name}</highlight>?",
     "mobileGreetingGuest": "Waarmee kan ik helpen?",
@@ -663,7 +663,19 @@
     "assistantCopied": "Copied",
     "signalCardCopyLevels": "Copy levels",
     "composerPasteAttachmentMax": "You can attach up to {count} pasted files.",
-    "composerVoiceUnavailable": "Voice input isn’t available in this browser.",
-    "composerVoiceStop": "Stop listening"
+    "composerVoiceUnavailable": "Spraakinvoer is niet beschikbaar in deze browser.",
+    "composerVoiceStop": "Loslaten om te stoppen",
+    "composerVoiceListening": "Loslaten om te stoppen",
+    "composerVoiceLanguageUnsupported": "Spraak voor {language} wordt niet ondersteund in deze browser. Probeer Chrome, of typ in plaats daarvan.",
+    "composerVoicePermissionDenied": "Microfoontoegang is geblokkeerd. Sta dit toe in de browserinstellingen om te spreken.",
+    "composerVoiceMicMissing": "Geen microfoon gevonden. Sluit een microfoon aan of typ in plaats daarvan.",
+    "composerVoiceNetworkError": "Spraakherkenning heeft het netwerk verloren. Controleer je verbinding en probeer opnieuw.",
+    "composerVoiceListeningTitle": "Luisteren",
+    "composerVoiceUnavailableTitle": "Spraak niet beschikbaar",
+    "composerVoiceLanguageUnsupportedTitle": "Taal niet ondersteund",
+    "composerVoicePermissionDeniedTitle": "Microfoon geblokkeerd",
+    "composerVoiceMicMissingTitle": "Geen microfoon",
+    "composerVoiceNetworkErrorTitle": "Verbinding verbroken",
+    "composerPasteAttachmentMaxTitle": "Attachment limit"
   }
 }

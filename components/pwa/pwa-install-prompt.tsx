@@ -103,17 +103,17 @@ function IosCheckCircleIcon({ className }: { className?: string }) {
 
 const iosStepIconClass = "size-5 shrink-0 text-foreground"
 
-/** Mark on white plate — install sheets header. */
+/** Mark on liquid-glass disc — install sheets header. */
 function InstallHeaderLogo({ className }: { className?: string }) {
   return (
-    <ExurLogo
-      decorative
-      variant="mark"
+    <span
       className={cn(
-        "size-10 shrink-0 overflow-hidden rounded-full bg-white text-black",
+        "chat-ios26-liquid-glass relative isolate flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white/55 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.75)] backdrop-blur-md dark:bg-white/12",
         className
       )}
-    />
+    >
+      <ExurLogo decorative variant="mark" className="size-7 text-foreground" />
+    </span>
   )
 }
 
@@ -199,10 +199,7 @@ function IosInstallSteps() {
         return (
           <li
             key={step.label}
-            className={cn(
-              chatMobileSheetCardClass,
-              "flex items-center gap-3 shadow-none dark:shadow-none"
-            )}
+            className={cn(chatMobileSheetCardClass, "flex items-center gap-3")}
           >
             <IosStepIconBadge
               animation={step.animation}

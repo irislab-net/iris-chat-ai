@@ -48,6 +48,30 @@ export const IRIS_MENTION_OPTIONS: IrisMentionOption[] = [
   },
 ]
 
+/** `/` palette rows — insertable mentions + locked premium tools. */
+export type ComposerPaletteToolId = "signal" | "correlation" | "volatility"
+
+export type ComposerPaletteTool = {
+  id: ComposerPaletteToolId
+  /** Present when the row inserts an inline mention token. */
+  mention?: IrisMentionOption
+  locked?: boolean
+}
+
+export const COMPOSER_PALETTE_TOOLS: ComposerPaletteTool[] = [
+  { id: "signal", mention: IRIS_MENTION_OPTIONS[0] },
+  { id: "correlation", locked: true },
+  { id: "volatility", locked: true },
+]
+
+const COMPOSER_PALETTE_ALIASES: Record<ComposerPaletteToolId, string> = {
+  signal: "signal trade setup سیگنال إشارة",
+  correlation: "correlation asset correlate همبستگی مرتبط",
+  volatility: "volatility forecast oscillate نوسان پیش‌بینی",
+}
+
+export type ComposerPaletteLabels = Record<ComposerPaletteToolId, string>
+
 export function findIrisMentionOption(
   tool: IrisMentionTool
 ): IrisMentionOption | undefined {
@@ -158,6 +182,74 @@ export function filterMentionOptions(query: string): IrisMentionOption[] {
     )
     return key.split(" ").every((part) => haystack.includes(part))
   })
+}
+
+/** Filter `/` sheet rows by typed query + localized titles. */
+export function filterComposerPaletteTools(
+  query: string,
+  labels: ComposerPaletteLabels
+): ComposerPaletteTool[] {
+  const key = normalizeMentionQuery(query)
+  if (!key) return COMPOSER_PALETTE_TOOLS
+
+  return COMPOSER_PALETTE_TOOLS.filter((tool) => {
+    const haystack = normalizeMentionQuery(
+      `${tool.id} ${labels[tool.id]} ${COMPOSER_PALETTE_ALIASES[tool.id]}`
+    )
+    return key.split(" ").every((part) => haystack.includes(part))
+  })
+}
+
+/**
+ * First-strong direction for the composer textarea + mention mirror.
+ * Matches HTML `dir="auto"` / `unicode-bidi: plaintext` — do NOT special-case
+ * `/Signal`, or mixed FA+EN lines force LTR and the caret floats away from text.
+ */
+export function composerInputDirection(
+  text: string,
+  fallback: "ltr" | "rtl"
+): "ltr" | "rtl" {
+  if (!text) return fallback
+
+  for (const char of text) {
+    if (isRtlScriptChar(char)) return "rtl"
+    if (isLtrScriptChar(char)) return "ltr"
+  }
+  return fallback
+}
+
+/**
+ * True when the draft has both RTL and LTR letters.
+ * Transparent-textarea + highlight-mirror cannot keep the caret aligned in
+ * that case (ChatGPT/Gemini avoid it via ProseMirror/Quill chip nodes).
+ */
+export function composerHasMixedBidiScripts(text: string): boolean {
+  let hasRtl = false
+  let hasLtr = false
+  for (const char of text) {
+    if (isRtlScriptChar(char)) hasRtl = true
+    else if (isLtrScriptChar(char)) hasLtr = true
+    if (hasRtl && hasLtr) return true
+  }
+  return false
+}
+
+function isRtlScriptChar(char: string): boolean {
+  const code = char.codePointAt(0) ?? 0
+  return (
+    (code >= 0x0590 && code <= 0x08ff) ||
+    (code >= 0xfb1d && code <= 0xfdfd) ||
+    (code >= 0xfe70 && code <= 0xfefc)
+  )
+}
+
+function isLtrScriptChar(char: string): boolean {
+  const code = char.codePointAt(0) ?? 0
+  return (
+    (code >= 0x0041 && code <= 0x005a) ||
+    (code >= 0x0061 && code <= 0x007a) ||
+    (code >= 0x00c0 && code <= 0x024f)
+  )
 }
 
 /** Short history/UI label for signal commands so follow-ups are not re-primed. */

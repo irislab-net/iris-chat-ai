@@ -228,7 +228,7 @@ export default async function RootLayout({
                 <AnalyticsConsentGate>
                   <PwaSplash />
                   {children}
-                  <Toaster position="top-right" />
+                  <Toaster position="top-center" />
                 </AnalyticsConsentGate>
               </AuthProvider>
             </NextIntlClientProvider>

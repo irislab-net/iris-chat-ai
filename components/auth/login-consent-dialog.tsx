@@ -117,14 +117,14 @@ function ConsentCheck({
 
 function LoginConsentLogo({ className }: { className?: string }) {
   return (
-    <ExurLogo
-      decorative
-      variant="mark"
+    <span
       className={cn(
-        "size-10 shrink-0 overflow-hidden rounded-full bg-white text-black",
+        "chat-ios26-liquid-glass relative isolate flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white/55 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.75)] backdrop-blur-md dark:bg-white/12",
         className
       )}
-    />
+    >
+      <ExurLogo decorative variant="mark" className="size-7 text-foreground" />
+    </span>
   )
 }
 

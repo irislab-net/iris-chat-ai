@@ -771,7 +771,9 @@
     "signalCardCopyLevels": "Copy levels",
     "composerPasteAttachmentMax": "You can attach up to {count} pasted files.",
     "composerVoiceUnavailable": "Voice input isn’t available in this browser.",
-    "composerVoiceStop": "Stop listening",
+    "composerVoiceLanguageUnsupported": "Voice for {language} isn’t supported in this browser. Try Chrome, or type instead.",
+    "composerVoiceListening": "Release to stop",
+    "composerVoiceStop": "Release to stop",
     "chatHistory": "Chat history",
     "closeChatHistory": "Close chat history",
     "closeNews": "Close news",
@@ -798,7 +800,7 @@
     "composerPlaceholder": "Ask Exur or type / for tools…",
     "composerMobilePlaceholder": "Ask Exur",
     "composerAriaLabel": "Message Exur",
-    "composerVoiceInput": "Voice input",
+    "composerVoiceInput": "Hold to speak",
     "composerVoiceMode": "Voice mode",
     "mobileGreeting": "What can I help with, <highlight>{name}</highlight>?",
     "mobileGreetingGuest": "What can I help with?",
@@ -1052,7 +1054,7 @@
       "introBody": "Tell Exur how you trade so answers fit your experience, markets, and risk, without showing this in chat history.",
       "setup": "Setup",
       "editSetup": "Edit profile",
-      "editorHint": "Tap a row to choose. Nothing is saved until you tap Save.",
+      "editorHint": "Tap a row to choose. Tap the check to save and go back.",
       "save": "Save profile"
     },
     "signalGuidance": {
@@ -1066,7 +1068,17 @@
       "title": "Couldn't finish that reply",
       "dismiss": "Dismiss",
       "retrying": "Trying again…"
-    }
+    },
+    "composerVoicePermissionDenied": "Microphone access is blocked. Allow it in browser settings to speak.",
+    "composerVoiceMicMissing": "No microphone found. Connect a mic, or type instead.",
+    "composerVoiceNetworkError": "Voice recognition lost the network. Check your connection and try again.",
+    "composerVoiceListeningTitle": "Listening",
+    "composerVoiceUnavailableTitle": "Voice unavailable",
+    "composerVoiceLanguageUnsupportedTitle": "Language not supported",
+    "composerVoicePermissionDeniedTitle": "Microphone blocked",
+    "composerVoiceMicMissingTitle": "No microphone",
+    "composerVoiceNetworkErrorTitle": "Connection lost",
+    "composerPasteAttachmentMaxTitle": "Attachment limit"
   },
   "billingPage": {
     "title": "Billing",

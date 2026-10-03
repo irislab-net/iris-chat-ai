@@ -368,3 +368,41 @@
   background: color-mix(in oklch, var(--background) 70%, transparent);
   backdrop-filter: blur(12px);
 }
+
+/* Hold-to-speak toast — soft brand-blue listen pulse on the mic */
+@keyframes app-toast-mic-record {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 0 color-mix(in oklch, #2563eb 38%, transparent),
+      0 0 12px 0 color-mix(in oklch, #2563eb 32%, transparent);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow:
+      0 0 0 9px transparent,
+      0 0 18px 2px color-mix(in oklch, #2563eb 18%, transparent);
+    transform: scale(1.05);
+  }
+}
+
+.app-toast-mic-record {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  color: #2563eb;
+  animation: app-toast-mic-record 1.35s ease-in-out infinite;
+}
+
+.dark .app-toast-mic-record {
+  color: #93c5fd;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-toast-mic-record {
+    animation: none;
+    box-shadow: 0 0 0 3px color-mix(in oklch, #2563eb 30%, transparent);
+  }
+}

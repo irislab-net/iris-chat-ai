@@ -10,25 +10,26 @@ import { ChatGeminiMenuIcon } from "@/components/app-shell/chat-gemini-menu-icon
 import { ChatGeminiNewChatIcon } from "@/components/app-shell/chat-gemini-new-chat-icon"
 
 import {
-  chatContextMenuContentClass,
-  chatContextMenuItemClass,
-} from "@/components/app-shell/chat-context-menu-styles"
-import {
+  chatComposerLiquidSheetRowActiveClass,
+  chatComposerLiquidSheetRowClass,
   chatMobileHeaderButtonClass,
   chatMobileHeaderModelClass,
   chatMobileHeaderScrimClass,
   chatMobileHeaderShellClass,
+  chatMobileSheetContentClass,
+  chatMobileSheetHandleClass,
+  chatMobileSheetHeaderClass,
+  chatMobileSheetTitleClass,
 } from "@/components/app-shell/chat-mobile-gemini-styles"
 import { ChatAccountMenu } from "@/components/app-shell/chat-account-menu"
 import { ChatThreadOptionsMenu } from "@/components/app-shell/chat-thread-toolbar"
 import { Button } from "@/components/ui/button"
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet"
 import {
   SelectionCheckBadge,
   SelectionCheckSpacer,
@@ -93,6 +94,7 @@ function ChatMobileHeader({
   const showThreadChrome = Boolean(threadMenu)
   const trailingSpring = reduceMotion ? { duration: 0 } : HEADER_TRAILING_SPRING
   const morphSpring = reduceMotion ? { duration: 0 } : HEADER_MORPH_SPRING
+  const [effortOpen, setEffortOpen] = React.useState(false)
   const effortValue = effort ?? "instant"
   const effortLabel = t(`effort.${effortValue}`)
 
@@ -104,59 +106,74 @@ function ChatMobileHeader({
   const effortControl =
     onEffortChange && !hideEffort ? (
       <div className="flex h-11 shrink-0 items-center self-center">
-        <DropdownMenu modal={false}>
-          <DropdownMenuTrigger
-            render={
-              <Button
-                type="button"
-                variant="ghost"
-                aria-label={t("effort.aria", { mode: effortLabel })}
-                aria-haspopup="menu"
-                className={effortTriggerClass}
-              />
-            }
+        <Button
+          type="button"
+          variant="ghost"
+          aria-label={t("effort.aria", { mode: effortLabel })}
+          aria-haspopup="dialog"
+          aria-expanded={effortOpen}
+          className={effortTriggerClass}
+          onClick={() => setEffortOpen(true)}
+        >
+          <span className="truncate leading-none">{effortLabel}</span>
+          <ChevronDownIcon
+            className="size-3.5 shrink-0 self-center opacity-70"
+            aria-hidden
+          />
+        </Button>
+        <Sheet open={effortOpen} onOpenChange={setEffortOpen}>
+          <SheetContent
+            side="bottom"
+            showCloseButton={false}
+            className={cn(
+              chatMobileSheetContentClass,
+              // Tall enough to feel roomy; max-height avoids a huge empty glass void.
+              "flex max-h-[min(60dvh,32rem)] flex-col overflow-hidden rounded-t-[28px] pt-2 pb-[max(1rem,env(safe-area-inset-bottom,0px))] data-[side=bottom]:max-h-[min(60dvh,32rem)]"
+            )}
           >
-            <span className="truncate leading-none">{effortLabel}</span>
-            <ChevronDownIcon
-              className="size-3.5 shrink-0 self-center opacity-70"
-              aria-hidden
-            />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent
-            align="start"
-            sideOffset={8}
-            showBackdrop
-            backdropClassName="bg-black/8 supports-backdrop-filter:bg-black/[0.04] supports-backdrop-filter:backdrop-blur-xs dark:bg-black/30 dark:supports-backdrop-filter:bg-black/20"
-            className={cn(chatContextMenuContentClass, "min-w-48")}
-          >
-            <DropdownMenuGroup>
-              {CHAT_EFFORT_OPTIONS.map((item) => (
-                <DropdownMenuItem
-                  key={item.value}
-                  className={cn(
-                    chatContextMenuItemClass,
-                    "items-center gap-2.5"
-                  )}
-                  onClick={() => onEffortChange(item.value)}
-                >
-                  <span className="flex min-w-0 flex-1 flex-col gap-0.5 text-start">
-                    <span className="text-[15px] font-medium leading-5 tracking-[-0.016em]">
-                      {t(`effort.${item.value}`)}
+            <div aria-hidden className={chatMobileSheetHandleClass} />
+            <SheetHeader className={cn(chatMobileSheetHeaderClass, "pb-3")}>
+              <SheetTitle className={chatMobileSheetTitleClass}>
+                {t("effort.label")}
+              </SheetTitle>
+            </SheetHeader>
+            <div className="flex min-h-0 flex-1 flex-col gap-1.5 overflow-y-auto overscroll-contain px-4 pb-2">
+              {CHAT_EFFORT_OPTIONS.map((item) => {
+                const selected = effortValue === item.value
+                return (
+                  <Button
+                    key={item.value}
+                    type="button"
+                    variant="ghost"
+                    className={cn(
+                      chatComposerLiquidSheetRowClass,
+                      "h-auto min-h-16 justify-start gap-3 px-3.5 py-3 text-[15px] font-medium tracking-[-0.016em] hover:bg-white/58 dark:hover:bg-white/12",
+                      selected && chatComposerLiquidSheetRowActiveClass
+                    )}
+                    onClick={() => {
+                      onEffortChange(item.value)
+                      setEffortOpen(false)
+                    }}
+                  >
+                    <span className="flex min-w-0 flex-1 flex-col gap-0.5 text-start">
+                      <span className="text-[15px] font-medium leading-5 tracking-[-0.016em] text-foreground">
+                        {t(`effort.${item.value}`)}
+                      </span>
+                      <span className="text-[13px] font-normal leading-4.5 tracking-[-0.006em] text-muted-foreground">
+                        {t(`effort.${item.value}Hint`)}
+                      </span>
                     </span>
-                    <span className="text-[13px] font-normal leading-4.5 tracking-[-0.006em] text-muted-foreground">
-                      {t(`effort.${item.value}Hint`)}
-                    </span>
-                  </span>
-                  {effortValue === item.value ? (
-                    <SelectionCheckBadge />
-                  ) : (
-                    <SelectionCheckSpacer />
-                  )}
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
+                    {selected ? (
+                      <SelectionCheckBadge />
+                    ) : (
+                      <SelectionCheckSpacer />
+                    )}
+                  </Button>
+                )
+              })}
+            </div>
+          </SheetContent>
+        </Sheet>
       </div>
     ) : null
 
@@ -229,12 +246,12 @@ function ChatMobileHeader({
             ) : null}
           </AnimatePresence>
 
-          <div className="relative size-12 shrink-0">
+          <div className="relative size-12 shrink-0 overflow-visible">
             <AnimatePresence initial={false} mode="wait">
               {showThreadChrome && threadMenu ? (
                 <motion.div
                   key="thread-options"
-                  className="absolute inset-0 flex items-center justify-center will-change-transform"
+                  className="absolute inset-0 flex items-center justify-center overflow-visible will-change-transform"
                   initial={{
                     opacity: 0,
                     scale: 0.68,
@@ -260,7 +277,7 @@ function ChatMobileHeader({
               ) : (
                 <motion.div
                   key="account-menu"
-                  className="absolute inset-0 flex items-center justify-center will-change-transform"
+                  className="absolute inset-0 flex items-center justify-center overflow-visible will-change-transform"
                   initial={{
                     opacity: 0,
                     scale: 0.68,
