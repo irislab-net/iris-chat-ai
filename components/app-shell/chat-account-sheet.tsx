@@ -821,7 +821,7 @@ function ChatAccountSheet({
           {/* —— Trading profile (silent client_context prefs) —— */}
           <div
             data-view="tradingProfile"
-            className="flex min-h-0 flex-1 flex-col"
+            className="flex min-h-0 flex-1 flex-col overflow-hidden"
           >
             <TradingProfileForm
               key={
@@ -847,7 +847,7 @@ function ChatAccountSheet({
           open={open}
           className={cn(
             sheetCanvasClass,
-            "flex h-[min(85dvh,640px)] max-h-[min(85dvh,640px)] w-full flex-col overflow-hidden rounded-3xl p-0 pt-3 sm:max-w-[26rem]"
+            "flex h-[min(85dvh,640px)] max-h-[min(85dvh,640px)] min-h-0 w-full flex-col overflow-hidden rounded-3xl p-0 pt-3 pb-4 sm:max-w-[26rem]"
           )}
         >
           <DialogHeader className="sr-only">
@@ -866,7 +866,7 @@ function ChatAccountSheet({
         showCloseButton={false}
         className={cn(
           sheetCanvasClass,
-          "flex h-[min(90dvh,720px)] flex-col overflow-hidden rounded-t-[28px] pt-2 pb-0 data-[side=bottom]:h-[min(90dvh,720px)]"
+          "flex h-[min(90dvh,720px)] min-h-0 flex-col overflow-hidden rounded-t-[28px] pt-2 pb-[max(1rem,env(safe-area-inset-bottom,0px))] data-[side=bottom]:h-[min(90dvh,720px)]"
         )}
       >
         <div aria-hidden className={sheetHandleClass} />

@@ -96,7 +96,11 @@ function TradingProfileForm({
   const common = useTranslations("common")
   const locale = useLocale()
   const hasSavedProfile = Boolean(initialProfile)
-  const [view, setView] = React.useState<FormView>("intro")
+  // Returning users skip the intro / "Edit profile" gate and land on the
+  // saved values summary; first-time setup still starts on intro.
+  const [view, setView] = React.useState<FormView>(() =>
+    hasSavedProfile ? "home" : "intro"
+  )
   // Draft only commits on Save. Closing without Save discards it.
   const [draft, setDraft] = React.useState<TradingProfileDraft>(() =>
     tradingProfileToDraft(initialProfile)
@@ -163,6 +167,12 @@ function TradingProfileForm({
         {t("save")}
       </Button>
     ) : null
+
+  const isPickerView =
+    view === "experience" ||
+    view === "target_market" ||
+    view === "risk" ||
+    view === "country"
 
   let body: React.ReactNode
 
@@ -319,7 +329,7 @@ function TradingProfileForm({
   return (
     <div
       className={cn(
-        "flex min-h-0 flex-1 flex-col overflow-hidden px-4",
+        "flex min-h-0 flex-1 flex-col overflow-hidden px-4 pb-1",
         className
       )}
     >
@@ -341,7 +351,14 @@ function TradingProfileForm({
         </button>
       </div>
 
-      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain pb-2">
+      <div
+        className={cn(
+          "min-h-0 flex-1",
+          isPickerView
+            ? "flex flex-col overflow-hidden"
+            : "overflow-y-auto overscroll-contain pb-2"
+        )}
+      >
         {body}
       </div>
 
@@ -349,7 +366,7 @@ function TradingProfileForm({
         <div
           className={cn(
             chatMobileSheetFooterBarClass,
-            "shrink-0 !bg-transparent px-0 shadow-none backdrop-blur-none"
+            "relative z-10 shrink-0 border-t border-foreground/6 bg-[#F1F3F9] px-0 pt-3 shadow-[0_-12px_24px_-16px_color-mix(in_oklch,var(--foreground)_12%,transparent)] dark:border-white/8 dark:bg-[oklch(0.22_0.01_260)] dark:shadow-[0_-12px_24px_-16px_rgba(0,0,0,0.45)]"
           )}
         >
           {footer}
@@ -456,18 +473,18 @@ function PickerView({
   children: React.ReactNode
 }) {
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex h-full min-h-0 flex-1 flex-col gap-3 overflow-hidden">
       <button
         type="button"
         onClick={onBack}
-        className="flex items-center gap-1 self-start rounded-full px-1 py-1 text-[14px] font-medium text-[#1A73E8] dark:text-[#8AB4F8]"
+        className="flex shrink-0 items-center gap-1 self-start rounded-full px-1 py-1 text-[14px] font-medium text-[#1A73E8] dark:text-[#8AB4F8]"
       >
         <ChevronLeftIcon className="size-4 rtl:rotate-180" aria-hidden />
         {title}
       </button>
       <div
         className={cn(
-          "overflow-hidden rounded-[1.35rem]",
+          "min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain rounded-[1.35rem] [scrollbar-gutter:stable]",
           chatMobileGlassSurfaceClass
         )}
       >
