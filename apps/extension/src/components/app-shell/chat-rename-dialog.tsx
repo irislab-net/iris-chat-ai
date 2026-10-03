@@ -38,13 +38,22 @@ import { cn } from "@/lib/utils"
 
 type ChatRenameDialogProps = {
   open: boolean
-  /** Current chat title — loaded into the field whenever the dialog opens. */
-  title: string
+  /**
+   * Current chat title — loaded into the field whenever the dialog opens.
+   * Accepts null/undefined because corrupted local history or sync stubs
+   * can omit `title` at runtime (Sentry EXUR-FRONT-3).
+   */
+  title?: string | null
   onOpenChange: (open: boolean) => void
   onSubmit: (nextTitle: string) => void
 }
 
 const RENAME_INPUT_ID = "chat-rename-title"
+
+/** Keep draft state a real string so `.trim()` never throws. */
+function normalizeRenameTitle(title: string | null | undefined): string {
+  return typeof title === "string" ? title : ""
+}
 
 function RenameFields({
   value,
@@ -93,20 +102,27 @@ function ChatRenameDialog({
 }: ChatRenameDialogProps) {
   const t = useTranslations("workspace")
   const isDesktop = useIsDesktop()
-  const [draft, setDraft] = React.useState(title)
-  const [draftSource, setDraftSource] = React.useState({ open, title })
-  if (open && (draftSource.open !== open || draftSource.title !== title)) {
-    setDraftSource({ open, title })
-    setDraft(title)
+  const safeTitle = normalizeRenameTitle(title)
+  const [draft, setDraft] = React.useState(safeTitle)
+  const [draftSource, setDraftSource] = React.useState({
+    open,
+    title: safeTitle,
+  })
+  if (
+    open &&
+    (draftSource.open !== open || draftSource.title !== safeTitle)
+  ) {
+    setDraftSource({ open, title: safeTitle })
+    setDraft(safeTitle)
   } else if (!open && draftSource.open) {
-    setDraftSource({ open, title })
+    setDraftSource({ open, title: safeTitle })
   }
-  const canSave = Boolean(draft.trim())
+  const trimmedDraft = normalizeRenameTitle(draft).trim()
+  const canSave = trimmedDraft.length > 0
 
   function handleSubmit() {
-    const next = draft.trim()
-    if (!next) return
-    onSubmit(next)
+    if (!trimmedDraft) return
+    onSubmit(trimmedDraft)
     onOpenChange(false)
   }
 
