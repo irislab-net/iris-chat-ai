@@ -108,6 +108,21 @@ $82,550 ──┴── [Pocket 4: Major HTF External Liquidity Pool] ($82,500 �
     expect(out).toContain("  - Primary limit buyer reload pocket")
   })
 
+  it("normalizes unfenced file-tree ladders", () => {
+    const input = `**$84,757** ─── **Current Spot Market**
+│
+├── **$84,736 – $84,749** ─── **Immediate Microstructure Bid Cluster**
+│   • Sits directly beneath active prints
+│   • Primary passive absorption layer
+├── **$84,613 – $84,638** ─── **Intraday Structural Shelf**
+│   • Confluence of the 30-minute compression origin`
+
+    const out = prepareAssistantMarkdown(input)
+    expect(out).not.toContain("├──")
+    expect(out).toContain("**$84,736 – $84,749** — Immediate Microstructure Bid Cluster")
+    expect(out).toContain("  - Sits directly beneath active prints")
+  })
+
   it("keeps real code fences intact", () => {
     const input = "Example:\n\n```js\nconst x = 1\n```\n"
     expect(prepareAssistantMarkdown(input)).toContain("```js")

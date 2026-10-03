@@ -262,7 +262,10 @@ function ChatAssistantTurn({
             <>
               {replyTo ? <ChatMessageQuote quote={replyTo} /> : null}
               {renderContent?.trim() ? (
-                <AIMessageRenderer content={renderContent} />
+                <AIMessageRenderer
+                  content={renderContent}
+                  streaming={streaming}
+                />
               ) : null}
               {children}
             </>

@@ -1,0 +1,9 @@
+{
+  "id": 2479,
+  "session_id": "98ef12fc34f4a5ffcdae63097272d611cd47721f",
+  "title": "Are you know about me?",
+  "created_at": "2026-10-03T13:24:19.275518Z",
+  "content": "| Level | Price | Type | Why it matters |\n| :--- | :--- | :--- | :--- |\n| **Macro Range High** | $2,779.40 | Resistance (1D Peak) | Upper boundary of the daily expansion leg; major pool of resting buy stops and swing invalidation point. |\n| **Overhead Supply Pivot** | $2,723.00 | Resistance (Prior Day High) | Intermediary breakdown level from earlier consolidation; acts as primary take-profit target for multi-day buyers. |\n| **Intraday Session Cap** | $2,686.60 | Resistance (4H / 30M High) | Local high tested across recent 4-hour sessions; rejection here maintains short-term sideways compression. |\n| **Immediate Microstructure Pivot** | $2,676.70 – $2,677.20 | Support (5M / 1M Base) | Low of the active 5-minute pullback; immediate floor absorbing ask-heavy order book pressure ($2,678.10 spot). |\n| **Session Demand Anchor** | $2,666.00 | Support (24H / 4H Sweep Low) | Strong rejection zone marking the low of the current 24-hour cycle; failure here opens a test of macro structure. |\n| **Macro Structural Range Low** | $2,651.00 | Major Support (Daily Swing Low) | Multi-day structural base; clean acceptance below this level breaks range equilibrium and triggers trend continuation down. |",
+  "reasoning": "",
+  "client_actions": []
+}

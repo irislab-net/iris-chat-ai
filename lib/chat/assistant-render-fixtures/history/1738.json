@@ -1,0 +1,15 @@
+{
+  "id": 1738,
+  "session_id": "98ef12fc34f4a5ffcdae63097272d6112b47e141",
+  "title": "@signal BTC",
+  "created_at": "2026-09-29T19:46:38.643134Z",
+  "content": "",
+  "reasoning": "**Analyzing BTC Signal**\n\nI'm currently processing the BTC signal, evaluating the positive 4-hour trend and ETF inflow data. The compression above the bull flag floor at 83,266 is a key factor I'm considering for a long continuation setup.",
+  "client_actions": [
+    {
+      "tool_name": "show_trade_signal",
+      "execution_target": "client",
+      "input": "{\"timeHorizon\":\"Re-check in 30 minutes\",\"entry\":83400,\"thesis\":\"Eight-day ETF inflow streak and constructive 4h tape (+0.70%) support dip defense above 83,266 for continuation toward 83,850.\",\"entryReason\":\"Compression holding above intraday swing lows with 4h positive momentum.\",\"direction\":\"LONG\",\"takeProfitReason\":\"Targeting local swing highs and 4h range resistance near 83,680-83,850.\",\"setup\":\"Bull Flag Continuation\",\"horizon\":\"30m\",\"leverage\":10,\"stopLossReason\":\"Invalidation below the 83,266 structure floor and 4h demand low.\",\"stopLoss\":83150,\"symbol\":\"BTC\",\"takeProfit\":83850}"
+    }
+  ]
+}

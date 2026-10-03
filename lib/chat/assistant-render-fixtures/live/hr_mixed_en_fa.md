@@ -1,0 +1,5 @@
+Bitcoin (BTC) maintains a neutral, range-bound posture around $84,866, with sideways multi-timeframe alignment across daily, hourly, and 1-minute horizons keeping directional edge suppressed. Recent micro-volatility remains tightly compressed inside the 4-hour range of $84,637 to $84,886; while order book depth shows short-term bid support (1.63x imbalance), capital protection requires standing aside until price confirms acceptance above $84,886 resistance or breaks below the $84,637 floor.
+
+---
+
+بیت‌کوین (BTC) در محدوده ۸۴,۸۶۶ دلار ساختاری کاملاً خنثی و رنج دارد؛ چرا که همگرایی روندی در تایم‌فریم‌های روزانه، یک‌ساعته و یک‌دقیقه همگی در فاز افقی و بدون جهت قفل شده‌اند. نوسانات اخیر درون کانال چهارساعته ۸۴,۶۳۷ تا ۸۴,۸۸۶ دلار فشرده مانده و علیرغم برتری مقطعی خریداران در دفتر سفارشات، منطق مدیریت ریسک ماندن در وضعیت نقد را تا زمان شکست قطعی سقف ۸۴,۸۸۶ دلار یا از دست رفتن کف حمایتی ۸۴,۶۳۷ دلار الزامی می‌داند.

@@ -14,6 +14,7 @@ import {
   chatThinkingLabelClass,
   chatThinkingRowClass,
   chatThinkingShellClass,
+  chatThinkingShimmerClass,
   chatThinkingSpinnerClass,
 } from "@/components/app-shell/chat-thinking-styles"
 import {
@@ -79,12 +80,16 @@ function ChatThinkingTrace({
     : t("done")
 
   return (
-    <Accordion className={cn(chatThinkingShellClass, className)}>
+    <Accordion
+      className={cn(chatThinkingShellClass, className)}
+      data-chat-thinking=""
+      data-live={live ? "" : undefined}
+    >
       <AccordionItem value="thinking" className="border-0">
         <AccordionTrigger
           className={cn(
             chatThinkingRowClass,
-            "group/thinking border-0 hover:text-foreground hover:no-underline",
+            "group/thinking border-0 hover:text-foreground/80 hover:no-underline",
             "**:data-[slot=accordion-trigger-icon]:hidden"
           )}
         >
@@ -100,23 +105,29 @@ function ChatThinkingTrace({
                 aria-hidden
               />
             )}
-            <span className={cn(chatThinkingLabelClass, "text-current")}>
+            <span
+              className={cn(
+                chatThinkingLabelClass,
+                "text-current",
+                live && chatThinkingShimmerClass
+              )}
+            >
               {summary}
             </span>
             <ChevronRightIcon
-              className="size-3.5 shrink-0 opacity-45 transition-transform duration-200 ease-out group-aria-expanded/accordion-trigger:rotate-90"
+              className="size-3.5 shrink-0 opacity-40 transition-transform duration-200 ease-out group-aria-expanded/accordion-trigger:rotate-90"
               aria-hidden
             />
           </span>
         </AccordionTrigger>
-        <AccordionContent className="px-2 pb-0">
+        <AccordionContent className="px-1 pb-0">
           <div
-            className="mt-1.5 flex flex-col gap-2.5 border-s border-border/50 ps-3"
+            className="mt-1.5 flex flex-col gap-2 border-s border-border/45 ps-3"
             role="list"
             aria-label={t("aria")}
           >
             {resolvedSteps.length === 0 && live ? (
-              <p className="text-[13px] leading-5 text-muted-foreground">
+              <p className="text-[12px] leading-5 text-muted-foreground/80">
                 {t("waiting")}
               </p>
             ) : null}
@@ -125,10 +136,10 @@ function ChatThinkingTrace({
                 <div
                   key={`tool-${index}-${step.name}`}
                   role="listitem"
-                  className="inline-flex w-fit max-w-full items-center gap-2 rounded-full bg-foreground/5 px-2.5 py-1.5 text-xs font-medium text-foreground/80 dark:bg-white/8"
+                  className="inline-flex w-fit max-w-full items-center gap-1.5 rounded-full bg-foreground/[0.04] px-2.5 py-1 text-[12px] font-medium text-muted-foreground"
                 >
                   <WrenchIcon
-                    className="size-3.5 shrink-0 text-muted-foreground"
+                    className="size-3 shrink-0 opacity-70"
                     aria-hidden
                   />
                   <span className="min-w-0 truncate">
@@ -139,7 +150,7 @@ function ChatThinkingTrace({
                 <p
                   key={`reason-${index}`}
                   role="listitem"
-                  className="text-[13px] leading-relaxed whitespace-pre-wrap text-muted-foreground"
+                  className="text-[12px] leading-relaxed whitespace-pre-wrap text-muted-foreground/85"
                 >
                   {step.text}
                 </p>

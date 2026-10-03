@@ -2,17 +2,21 @@
 
 /**
  * Shared visual language for pre-trace terminal + Thought process accordion.
- * Keep these in sync so waiting → live thinking feels like one control.
+ * Peer pattern (ChatGPT / Gemini): muted status chrome above the answer —
+ * shimmer while live, collapse to a quiet receipt when done.
  */
-export const chatThinkingShellClass = "mb-3 w-full max-w-xl"
+export const chatThinkingShellClass = "mb-2 w-full min-w-0"
 
 export const chatThinkingRowClass =
-  "flex min-w-0 w-full items-center gap-2 rounded-lg px-2 py-1.5 text-[13px] font-medium tracking-tight text-muted-foreground"
+  "flex min-w-0 w-full items-center gap-2 rounded-md px-1 py-1 text-[13px] font-normal tracking-tight text-muted-foreground"
 
 export const chatThinkingSpinnerClass =
-  "size-3.5 shrink-0 animate-spin text-[#2563EB] dark:text-[#93C5FD]"
+  "size-3.5 shrink-0 animate-spin text-muted-foreground/80"
 
 export const chatThinkingLabelClass =
-  "min-w-0 flex-1 truncate text-start text-[13px] font-medium tracking-tight"
+  "min-w-0 flex-1 truncate text-start text-[13px] font-normal tracking-tight text-muted-foreground"
 
-export const chatThinkingIconMutedClass = "size-3.5 shrink-0 opacity-70"
+/** Live label shimmer — ChatGPT-style “thinking” pulse on the status text. */
+export const chatThinkingShimmerClass = "chat-thinking-shimmer"
+
+export const chatThinkingIconMutedClass = "size-3.5 shrink-0 opacity-55"

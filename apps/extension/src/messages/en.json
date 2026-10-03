@@ -883,7 +883,7 @@
       "live": "Thinking…",
       "done": "Thought process",
       "waiting": "Working on your request…",
-      "usingTool": "Using {tool}…"
+      "usingTool": "Searching {tool}…"
     },
     "loadingExur": "Loading Exur",
     "errors": {

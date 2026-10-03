@@ -1,0 +1,85 @@
+{
+  "status": 200,
+  "event_types": [
+    "reasoning",
+    "done"
+  ],
+  "reasoning_parts": [
+    "**Formulating JavaScript Function**\n\nI'm currently focusing on generating the requested JavaScript function. The core task is to ensure it accurately formats a numerical input into a US dollar string, adhering strictly to the \"only a fenced JavaScript code block\" requirement, with no introductory or concluding text."
+  ],
+  "tools": [],
+  "done": {
+    "session_id": "98ef12fc34f4a5ffcdae63097272d611cd47721f",
+    "output_text": "```js\nfunction formatUsd(n) {\n  return new Intl.NumberFormat('en-US', {\n    style: 'currency',\n    currency: 'USD',\n  }).format(n);\n}\n```",
+    "reasoning": "**Formulating JavaScript Function**\n\nI'm currently focusing on generating the requested JavaScript function. The core task is to ensure it accurately formats a numerical input into a US dollar string, adhering strictly to the \"only a fenced JavaScript code block\" requirement, with no introductory or concluding text.",
+    "tokens_used": 7678,
+    "credit_balance": {
+      "remaining_daily": 509211,
+      "remaining_weekly": 1904211,
+      "daily_limit": 833333,
+      "weekly_limit": 2500000,
+      "daily_reset_at": "2026-10-04T00:00:00Z",
+      "weekly_reset_at": "2026-10-05T00:00:00Z"
+    },
+    "metadata": {
+      "finish_reason": "stop",
+      "frontend_tools_offered": 1,
+      "is_fallback": false,
+      "mcp_tools_offered": 21,
+      "model_used": "google/gemini-3.8-flash",
+      "rag_items_used": 0,
+      "tools_offered": 22
+    },
+    "user_message": {
+      "id": 2486,
+      "created_at": "2026-10-03T13:34:09.6369Z"
+    },
+    "assistant_message": {
+      "id": 2487,
+      "created_at": "2026-10-03T13:34:14.234905Z"
+    }
+  },
+  "error": null,
+  "all": [
+    {
+      "event": "reasoning",
+      "data": {
+        "text": "**Formulating JavaScript Function**\n\nI'm currently focusing on generating the requested JavaScript function. The core task is to ensure it accurately formats a numerical input into a US dollar string, adhering strictly to the \"only a fenced JavaScript code block\" requirement, with no introductory or concluding text."
+      }
+    },
+    {
+      "event": "done",
+      "data": {
+        "session_id": "98ef12fc34f4a5ffcdae63097272d611cd47721f",
+        "output_text": "```js\nfunction formatUsd(n) {\n  return new Intl.NumberFormat('en-US', {\n    style: 'currency',\n    currency: 'USD',\n  }).format(n);\n}\n```",
+        "reasoning": "**Formulating JavaScript Function**\n\nI'm currently focusing on generating the requested JavaScript function. The core task is to ensure it accurately formats a numerical input into a US dollar string, adhering strictly to the \"only a fenced JavaScript code block\" requirement, with no introductory or concluding text.",
+        "tokens_used": 7678,
+        "credit_balance": {
+          "remaining_daily": 509211,
+          "remaining_weekly": 1904211,
+          "daily_limit": 833333,
+          "weekly_limit": 2500000,
+          "daily_reset_at": "2026-10-04T00:00:00Z",
+          "weekly_reset_at": "2026-10-05T00:00:00Z"
+        },
+        "metadata": {
+          "finish_reason": "stop",
+          "frontend_tools_offered": 1,
+          "is_fallback": false,
+          "mcp_tools_offered": 21,
+          "model_used": "google/gemini-3.8-flash",
+          "rag_items_used": 0,
+          "tools_offered": 22
+        },
+        "user_message": {
+          "id": 2486,
+          "created_at": "2026-10-03T13:34:09.6369Z"
+        },
+        "assistant_message": {
+          "id": 2487,
+          "created_at": "2026-10-03T13:34:14.234905Z"
+        }
+      }
+    }
+  ]
+}

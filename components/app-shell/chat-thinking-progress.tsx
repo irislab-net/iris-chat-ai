@@ -8,6 +8,7 @@ import {
   chatThinkingLabelClass,
   chatThinkingRowClass,
   chatThinkingShellClass,
+  chatThinkingShimmerClass,
   chatThinkingSpinnerClass,
 } from "@/components/app-shell/chat-thinking-styles"
 import {
@@ -214,13 +215,21 @@ function ChatThinkingTerminal({ className }: ChatThinkingTerminalProps) {
         <span className="relative block min-h-5 min-w-0 flex-1 overflow-hidden">
           <span
             ref={outgoingRef}
-            className={cn(chatThinkingLabelClass, "absolute inset-x-0 top-0")}
+            className={cn(
+              chatThinkingLabelClass,
+              chatThinkingShimmerClass,
+              "absolute inset-x-0 top-0"
+            )}
           >
             {labelFor(activeKey)}
           </span>
           <span
             ref={incomingRef}
-            className={cn(chatThinkingLabelClass, "absolute inset-x-0 top-0")}
+            className={cn(
+              chatThinkingLabelClass,
+              chatThinkingShimmerClass,
+              "absolute inset-x-0 top-0"
+            )}
             aria-hidden
           />
           {/* Reserve layout height while labels are absolutely positioned. */}

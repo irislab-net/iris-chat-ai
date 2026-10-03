@@ -1,0 +1,15 @@
+{
+  "id": 1741,
+  "session_id": "98ef12fc34f4a5ffcdae63097272d6112b47e141",
+  "title": "@signal BTC",
+  "created_at": "2026-09-29T19:47:54.705341Z",
+  "content": "",
+  "reasoning": "**Analyzing BTC Signal**\n\nI'm processing the recent BTC signal, noting the LONG direction, entry at 83,400, and a stop-loss identified at 83,260, based on structural invalidation 140 points below the entry.",
+  "client_actions": [
+    {
+      "tool_name": "show_trade_signal",
+      "execution_target": "client",
+      "input": "{\"stopLossReason\":\"Structural invalidation sitting 140 points below entry, beneath the 83,266 support shelf and clearing half 15-minute ATR noise.\",\"direction\":\"LONG\",\"takeProfitReason\":\"Target captures the 83,580 resistance band and prior 30-minute swing high.\",\"takeProfit\":83566,\"stopLoss\":83260,\"setup\":\"Bull Flag Consolidation\",\"leverage\":10,\"timeHorizon\":\"Re-check in 30 minutes\",\"entry\":83400,\"symbol\":\"BTC\",\"horizon\":\"30m\",\"thesis\":\"With the 4-hour tape trending positive (+0.70%) and steady ETF inflows absorbing pullbacks, compression holding above the 83,266 bull flag floor offers favorable long continuation.\",\"entryReason\":\"Market buying into the 83,400 consolidation shelf as selling pressure exhausts near the local low.\"}"
+    }
+  ]
+}
