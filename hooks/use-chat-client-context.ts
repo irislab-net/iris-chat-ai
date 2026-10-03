@@ -6,7 +6,7 @@ import { useLocale } from "next-intl"
 import { buildChatClientContext } from "@/lib/api/chat"
 import type { User } from "@/lib/api/types"
 import {
-  readTradingProfile,
+  getTradingProfileSnapshot,
   subscribeTradingProfile,
 } from "@/lib/trading-profile"
 
@@ -17,7 +17,7 @@ export function useChatClientContext(input: {
   const locale = useLocale()
   const tradingProfile = React.useSyncExternalStore(
     subscribeTradingProfile,
-    readTradingProfile,
+    getTradingProfileSnapshot,
     () => null
   )
 
