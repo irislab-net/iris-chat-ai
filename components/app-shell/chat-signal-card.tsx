@@ -1,6 +1,9 @@
 "use client"
 
+import * as React from "react"
 import {
+  BookmarkIcon,
+  CheckIcon,
   ClockIcon,
   CrosshairIcon,
   FlagIcon,
@@ -26,6 +29,9 @@ import {
   chatSignalCardInsetClass,
   chatSignalCardMetricTileClass,
 } from "@/components/app-shell/chat-mobile-gemini-styles"
+import { TermText } from "@/components/app-shell/term-text"
+import { Button } from "@/components/ui/button"
+import { trackChatSignalWatchlist } from "@/lib/analytics"
 import { signalRewardRiskRatio } from "@/lib/chat/signal-setup"
 import { formatTradePrice } from "@/lib/chat/trade-signal"
 import type { PaperTradeTicket } from "@/lib/chat/signal-ticket"
@@ -87,7 +93,7 @@ function PriceTile({
         />
       ) : column.reason ? (
         <p className="mt-2.5 w-full wrap-break-word text-[11px] leading-snug text-foreground/65">
-          {column.reason}
+          <TermText text={column.reason} />
         </p>
       ) : null}
     </div>
@@ -154,6 +160,12 @@ function ChatSignalCard({
   tone?: "accent" | "neutral"
 }) {
   const t = useTranslations("workspace")
+  const ticketKey = `${ticket.symbol}:${ticket.side}`
+  const [watchlistAddedFor, setWatchlistAddedFor] = React.useState<
+    string | null
+  >(null)
+  const watchlistAdded = watchlistAddedFor === ticketKey
+  const watchlistTimerRef = React.useRef(0)
   const isLong = ticket.side === "LONG"
   const isNeutral = tone === "neutral"
   const SideIcon = isLong ? TrendingUpIcon : TrendingDownIcon
@@ -170,6 +182,28 @@ function ChatSignalCard({
   const takeProfitReason = proseSkeleton
     ? ""
     : (ticket.takeProfitReason?.trim() ?? "")
+
+  React.useEffect(() => {
+    return () => window.clearTimeout(watchlistTimerRef.current)
+  }, [])
+
+  React.useEffect(() => {
+    window.clearTimeout(watchlistTimerRef.current)
+  }, [ticketKey])
+
+  function onAddToWatchlist() {
+    if (watchlistAdded) return
+    trackChatSignalWatchlist({
+      symbol: ticket.symbol,
+      side: ticket.side,
+    })
+    setWatchlistAddedFor(ticketKey)
+    window.clearTimeout(watchlistTimerRef.current)
+    watchlistTimerRef.current = window.setTimeout(
+      () => setWatchlistAddedFor(null),
+      2_000
+    )
+  }
 
   const priceColumns: PriceColumn[] = [
     {
@@ -291,7 +325,7 @@ function ChatSignalCard({
           />
         ) : setup ? (
           <p className="mt-2.5 max-w-md text-[13px] leading-relaxed text-muted-foreground">
-            {setup}
+            <TermText text={setup} />
           </p>
         ) : null}
       </header>
@@ -323,8 +357,34 @@ function ChatSignalCard({
               {t("signalCardThesisHeading")}
             </p>
             <p className="mt-2 text-[13px] leading-relaxed text-foreground/85">
-              {thesis}
+              <TermText text={thesis} />
             </p>
+          </div>
+        ) : null}
+
+        {!proseSkeleton ? (
+          <div className="flex justify-center">
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="h-7 gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground"
+              aria-label={
+                watchlistAdded
+                  ? t("signalCardWatchlistAdded")
+                  : t("signalCardWatchlist")
+              }
+              onClick={onAddToWatchlist}
+            >
+              {watchlistAdded ? (
+                <CheckIcon className="size-3.5 text-emerald-600 dark:text-emerald-400" />
+              ) : (
+                <BookmarkIcon className="size-3.5" />
+              )}
+              {watchlistAdded
+                ? t("signalCardWatchlistAdded")
+                : t("signalCardWatchlist")}
+            </Button>
           </div>
         ) : null}
 

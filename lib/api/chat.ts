@@ -59,6 +59,9 @@ export function buildChatClientContext(input: {
   isProUser?: boolean
   locale?: string
   timezone?: string
+  tradingProfile?: Parameters<
+    typeof buildChatClientContextFromTools
+  >[0]["tradingProfile"]
 }): ChatClientContext {
   return buildChatClientContextFromTools(input)
 }

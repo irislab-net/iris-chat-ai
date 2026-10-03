@@ -1,0 +1,68 @@
+=== ping hss.hsselite.com ===
+
+Pinging hss.hsselite.com [143.204.142.50] with 32 bytes of data:
+Reply from 143.204.142.50: bytes=32 time<1ms TTL=64
+
+Ping statistics for 143.204.142.50:
+    Packets: Sent = 1, Received = 1, Lost = 0 (0% loss),
+Approximate round trip times in milli-seconds:
+    Minimum = 0ms, Maximum = 0ms, Average = 0ms
+
+=== ping anchorfree.com ===
+
+Pinging anchorfree.com [143.204.142.100] with 32 bytes of data:
+Reply from 143.204.142.100: bytes=32 time<1ms TTL=64
+
+Ping statistics for 143.204.142.100:
+    Packets: Sent = 1, Received = 1, Lost = 0 (0% loss),
+Approximate round trip times in milli-seconds:
+    Minimum = 0ms, Maximum = 0ms, Average = 0ms
+
+=== ping local.exur.ai ===
+Ping request could not find host local.exur.ai. Please check the name and try again.
+
+=== ping local.irislab.info ===
+
+Pinging local.irislab.info [2.28.121.46] with 32 bytes of data:
+Reply from 2.28.121.46: bytes=32 time<1ms TTL=64
+
+Ping statistics for 2.28.121.46:
+    Packets: Sent = 1, Received = 1, Lost = 0 (0% loss),
+Approximate round trip times in milli-seconds:
+    Minimum = 0ms, Maximum = 0ms, Average = 0ms
+
+=== ping exur-hosts-test.local ===
+Ping request could not find host exur-hosts-test.local. Please check the name and try again.
+
+=== Get-DnsClientServerAddress ===
+
+InterfaceAlias                InterfaceIndex AddressFamily ServerAddresses               
+--------------                -------------- ------------- ---------------               
+Local Area Connection                      5 IPv4          {}                            
+Ethernet                                  11 IPv4          {}                            
+SetupVPN                                  54 IPv4          {54.81.22.119}                
+HotspotShield Network Adapter             50 IPv4          {}                            
+Local Area Connection* 1                  19 IPv4          {}                            
+Local Area Connection* 2                  10 IPv4          {}                            
+Ethernet 3                                46 IPv4          {8.8.8.8}                     
+Wi-Fi                                      8 IPv4          {10.139.177.21, 10.139.177.22}
+Loopback Pseudo-Interface 1                1 IPv4          {}                            
+
+
+
+=== netsh winhttp proxy ===
+
+Current WinHTTP proxy settings:
+
+    Direct access (no proxy server).
+
+
+=== adapters ===
+
+Name     InterfaceDescription                                           MacAddress       
+----     --------------------                                           ----------       
+Wi-Fi    Realtek RTL8188EU Wireless LAN 802.11n USB 2.0 Network Adapter 54-AF-97-49-CA-1B
+SetupVPN TAP-Windows Adapter V9 #2                                      00-FF-24-EE-41-18
+
+
+

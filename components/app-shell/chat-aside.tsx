@@ -11,6 +11,7 @@ import {
   Maximize2Icon,
   RefreshCwIcon,
 } from "lucide-react"
+import { toast } from "sonner"
 
 import { ChatAccountFooter } from "@/components/app-shell/chat-account-footer"
 import { ChatAccountMenu } from "@/components/app-shell/chat-account-menu"
@@ -106,6 +107,7 @@ import { resolveUserDisplayName } from "@/lib/user-profile"
 import type {
   CoPilotHistoryMessage,
   ChatCreditBalance,
+  NewsItem,
   TrialInfo,
 } from "@/lib/api/types"
 import { formatCreditUsageCompact } from "@/lib/api/credit-usage"
@@ -1662,6 +1664,18 @@ function ChatAside({
   handleSendRef.current = handleSend
   const landingChatQueryHandledRef = React.useRef(false)
 
+  const onAnalyzeNews = React.useEffectEvent((item: NewsItem) => {
+    const title = item.title?.trim()
+    if (!title) return
+    if (sendingRef.current) {
+      toast.message(t("analyzeNewsBusy"))
+      return
+    }
+    const prompt = `"${title}"\n\n${t("analyzeNewsInstruction")}`
+    setNewsOpen(false)
+    void handleSendRef.current(prompt)
+  })
+
   React.useEffect(() => {
     const question = searchParams.get(LANDING_CHAT_QUERY_PARAM)?.trim()
     if (!question || landingChatQueryHandledRef.current) return
@@ -2599,14 +2613,23 @@ function ChatAside({
                     isMobileOverlay ? setMobileComposerFocused : undefined
                   }
                   className={isMobileOverlay ? undefined : "px-3 sm:px-4"}
+                  isProUser={isProUser}
                 />
               </div>
             ) : null}
           </div>
           {!isMobileOverlay ? (
-            <ChatNewsSidePanel open={newsOpen} onOpenChange={setNewsOpen} />
+            <ChatNewsSidePanel
+              open={newsOpen}
+              onOpenChange={setNewsOpen}
+              onAnalyzeNews={onAnalyzeNews}
+            />
           ) : (
-            <ChatNewsMobileSheet open={newsOpen} onOpenChange={setNewsOpen} />
+            <ChatNewsMobileSheet
+              open={newsOpen}
+              onOpenChange={setNewsOpen}
+              onAnalyzeNews={onAnalyzeNews}
+            />
           )}
           <CreditsExhaustedDialog
             open={creditsExhaustedOpen}

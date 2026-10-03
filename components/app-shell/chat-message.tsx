@@ -7,8 +7,8 @@ import dynamic from "next/dynamic"
 import { ExurLogo } from "@/components/brand/exur-logo"
 import { ChatMessageQuote } from "@/components/app-shell/chat-message-quote"
 import { chatUserBubbleClass } from "@/components/app-shell/chat-turn-actions"
+import { ChatThinkingTerminal } from "@/components/app-shell/chat-thinking-progress"
 import { ChatThinkingTrace } from "@/components/app-shell/chat-thinking-trace"
-import { TypingDots } from "@/components/app-shell/chat-typing"
 import type { ChatThinkingStep } from "@/lib/api/chat-sse"
 import type { MessageQuote } from "@/lib/api/types"
 import { parseServerMessageId } from "@/lib/chat-message-id"
@@ -241,10 +241,8 @@ function ChatAssistantTurn({
           )}
           data-chat-assistant-bubble=""
         >
-          {waiting && !hasThinking ? (
-            <TypingDots className="text-muted-foreground/70" />
-          ) : null}
-          {hasThinking || (waiting && hasThinking) ? (
+          {waiting && !hasThinking ? <ChatThinkingTerminal /> : null}
+          {hasThinking ? (
             <ChatThinkingTrace
               steps={thinkingTrace}
               reasoning={reasoning}

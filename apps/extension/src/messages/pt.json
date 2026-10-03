@@ -49,9 +49,9 @@
     },
     "hero": {
       "badge": "Consultor de mercado com IA",
-      "titleBefore": "Notícias do mercado,",
-      "titleAfter": "respostas claras.",
-      "subtitle": "Leia o desk e pergunte ao Exur na mesma tela. Respostas curtas ligadas à manchete à sua frente.",
+      "titleBefore": "Inteligência institucional,",
+      "titleAfter": "clareza pessoal.",
+      "subtitle": "O Exur processa a fita ao vivo, o fluxo de ordens e o impacto das notícias para lhe dar um setup claro ou uma razão calculada para esperar. O seu cérebro de mercado objetivo.",
       "inputPlaceholder": "A notícia de ETF de hoje importa para o ETH?",
       "exchanges": {
         "0": {
@@ -64,10 +64,10 @@
         },
         "2": {
           "q": "O que significa funding negativo?",
-          "a": "Alavancagem está saindo — a multidão ainda não está long. Não apresse a entrada."
+          "a": "Alavancagem está saindo. A multidão ainda não está long. Não apresse a entrada."
         },
         "3": {
-          "q": "Reservas das exchanges baixas — bom ou ruim?",
+          "q": "Reservas das exchanges baixas. Bom ou ruim?",
           "a": "Em geral menos pressão de venda. Sozinho não é sinal de compra sem confirmação spot."
         },
         "4": {
@@ -88,7 +88,7 @@
         },
         "8": {
           "q": "Mercado em uma linha?",
-          "a": "Spot um pouco mais forte, alavancagem ainda cautelosa. Não persiga — espere nível confirmado."
+          "a": "Spot um pouco mais forte, alavancagem ainda cautelosa. Não persiga. Espere nível confirmado."
         },
         "9": {
           "q": "Algo urgente hoje?",
@@ -135,7 +135,7 @@
     },
     "desk": {
       "title": "Manchetes com nota. Não um feed.",
-      "subtitle": "O impacto ordena a fita. O lead se destaca — o resto fica quieto.",
+      "subtitle": "O impacto ordena a fita. O lead se destaca. O resto fica quieto.",
       "you": "Você",
       "lead": "Lead",
       "impactLabel": "Impacto",
@@ -192,7 +192,7 @@
       "hold": {
         "label": "Sem operação",
         "question": "Short nesse rebote?",
-        "answer": "Não. A fita está mista e o alavancamento ainda está se resetando.",
+        "answer": "A fita está mista e a razão mínima de recompensa para risco não é cumprida. Proteção de capital ativada. Aguarde uma ruptura confirmada.",
         "reason": "Hoje não há edge que valha forçar."
       }
     },
@@ -284,7 +284,7 @@
     },
     "pricing": {
       "title": "Escolha sua profundidade.",
-      "subtitle": "Pague com cripto — sem complicação. Notícias grátis. Plus quando o Exur faz parte da sua rotina.",
+      "subtitle": "Pague com cripto: sem complicação. Notícias grátis. Plus quando o Exur faz parte da sua rotina.",
       "perMonth": "/mês",
       "plans": {
         "free": {
@@ -386,7 +386,7 @@
     "copilotGuestTry": "Convidado · 3 mensagens grátis esta semana",
     "emptyGuestUnavailable": "O teste de convidado não está disponível agora. Entre para conversar com o Exur.",
     "guestSendBlocked": "O chat convidado não está disponível agora. Entre para continuar.",
-    "guestTrialExhaustedPrompt": "Suas mensagens grátis desta semana acabaram. Entre para continuar conversando com o Exur.",
+    "guestTrialExhaustedPrompt": "Para oferecer análise mais profunda e guardar as suas preferências de mercado, o Exur exige uma sessão segura. Entre com o Google para continuar.",
     "guestChatUpstreamUnreachable": "O Exur está temporariamente indisponível. Tente em instantes ou entre para continuar.",
     "upgrade": "Upgrade",
     "upgradeToPlus": "Upgrade para Plus",
@@ -405,12 +405,12 @@
     "agreeContinueWithGoogle": "Aceitar e continuar com o Google",
     "secureSignInWithGoogle": "Entrada segura com o Google",
     "loginConsentDescription": "Aceite os termos abaixo para entrar com segurança.",
-    "loginConsentDisclaimer": "Você deve ter 18+ e não estar em uma jurisdição sob sanções abrangentes. O Exur fornece análise apenas informativa — não é aconselhamento financeiro.",
-    "loginConsentPwaHint": "No iPhone, o início de sessão continua no Safari. Se já estiver com sessão Google aí, escolha a conta — depois abra o Exur de novo pelo ecrã principal.",
+    "loginConsentDisclaimer": "Você deve ter 18+ e não estar em uma jurisdição sob sanções abrangentes. O Exur fornece análise apenas informativa. Não é aconselhamento financeiro.",
+    "loginConsentPwaHint": "No iPhone, o início de sessão continua no Safari. Se já estiver com sessão Google aí, escolha a conta, depois abra o Exur de novo pelo ecrã principal.",
     "installApp": "Install Exur",
     "addToHomeScreen": "Install web app",
-    "installNudgeDescription": "You’re signed in — install Exur for quicker access and a full-screen workspace. Your session stays with the app.",
-    "installNudgeIosDescription": "You’re signed in — add Exur to your Home Screen for a full-screen app. Your session comes with it.",
+    "installNudgeDescription": "You’re signed in. Install Exur for quicker access and a full-screen workspace. Your session stays with the app.",
+    "installNudgeIosDescription": "You’re signed in. Add Exur to your Home Screen for a full-screen app. Your session comes with it.",
     "installShowHow": "Show me how",
     "installNotNow": "Not now",
     "installGotIt": "Got it",
@@ -418,7 +418,7 @@
     "installIosDescription": "Use Share, then Add to Home Screen. You’re signed in, so the app opens ready to use.",
     "installIosStepShare": "Tap the Share button in Safari",
     "installIosStepAdd": "Choose Add to Home Screen",
-    "installIosStepConfirm": "Tap Add — then open Exur from your Home Screen",
+    "installIosStepConfirm": "Tap Add, then open Exur from your Home Screen",
     "agreeTerms": "Concordo com os <link>Termos de Serviço</link>",
     "agreePrivacy": "Concordo com a <link>Política de Privacidade</link>",
     "cancel": "Cancelar",
@@ -446,6 +446,7 @@
     "primaryNav": "Principal",
     "composerPlaceholder": "Pergunte ao Exur ou digite @ para ferramentas…",
     "composerMobilePlaceholder": "Pergunte ao Exur",
+    "composerAriaLabel": "Mensagem para o Exur",
     "composerVoiceInput": "Entrada de voz",
     "composerVoiceMode": "Modo de voz",
     "mobileGreeting": "Em que posso ajudar, <highlight>{name}</highlight>?",
@@ -470,25 +471,32 @@
     "signalCardRisk": "Risco",
     "signalCardRewardRisk": "R:R",
     "signalCardTimeHorizon": "Horizonte",
-    "signalCardThesisHeading": "Tese — por que este setup",
+    "signalCardThesisHeading": "Tese: por que este setup",
+    "signalCardWatchlist": "Adicionar à lista de observação",
+    "signalCardWatchlistAdded": "Adicionado",
     "signalCardDisclaimer": "O Exur fornece apenas informação de mercado, não aconselhamento financeiro.",
     "samplePromptsLabel": "Começar",
     "samplePrompts": {
       "usePrompt": "Usar prompt: {title}",
       "btc-signal": {
         "title": "Sinal de trade BTC",
-        "description": "Peça um setup ao vivo — cartão só quando a leitura estiver clara.",
+        "description": "Peça um setup ao vivo. Cartão só quando a leitura estiver clara.",
         "text": "@signal BTC"
+      },
+      "xau-macro": {
+        "title": "Ouro (XAU) vs. inflação",
+        "description": "Verifique se o ouro é uma entrada segura agora.",
+        "text": "Analise a estrutura ao vivo do ouro (XAU). Dado o momentum atual e os níveis-chave, é estruturalmente seguro entrar agora para proteção de capital, ou devo esperar por uma zona de entrada melhor?"
       },
       "market-pulse": {
         "title": "Pulso do mercado",
-        "description": "Stance, viés do modelo e notícias — só análise.",
-        "text": "Qual é a stance e o viés do modelo do Exur no BTC agora, e o que diz o pulso de notícias? Seja factual e conciso. Só análise — sem cartão de trade."
+        "description": "Stance, viés do modelo e notícias. Só análise.",
+        "text": "Qual é a stance e o viés do modelo do Exur no BTC agora, e o que diz o pulso de notícias? Seja factual e conciso. Só análise: sem cartão de trade."
       },
       "key-levels": {
         "title": "Níveis-chave",
         "description": "Suporte e resistência mais próximos que importam agora.",
-        "text": "Mapeie suporte e resistência do BTC pela estrutura recente e preço ao vivo. Destaque os níveis mais próximos e se o preço está pressionando, rejeitando ou no meio da faixa. Só análise — sem cartão de trade."
+        "text": "Mapeie suporte e resistência do BTC pela estrutura recente e preço ao vivo. Destaque os níveis mais próximos e se o preço está pressionando, rejeitando ou no meio da faixa. Só análise: sem cartão de trade."
       }
     },
     "emptySignedIn": "Comece por um prompt ou pergunte em linguagem simples.",
@@ -543,8 +551,9 @@
     "unhelpfulResponse": "Resposta não útil",
     "noTradeTitle": "Sem trade",
     "noTradeBadge": "Aguarde",
-    "noTradeSubtitle": "Sem setup claro agora",
-    "noTradeReasonHeading": "Por que esperar",
+    "noTradeCapitalProtected": "Capital protegido",
+    "noTradeSubtitle": "Proteção de capital ativa",
+    "noTradeReasonHeading": "Análise de risco",
     "signalSideLong": "LONG",
     "signalSideShort": "SHORT",
     "assistantTyping": "Assistente digitando",
@@ -572,7 +581,7 @@
       "credits": "Você usou os créditos de chat deste período. Faça upgrade para continuar.",
       "proSessionRefresh": "Seu plano Plus está ativo, mas esta sessão precisa ser atualizada. Tente de novo.",
       "auth": "Entre com o Google para obter respostas do Exur. Você pode explorar prompts primeiro.",
-      "trialExhausted": "Suas mensagens grátis desta semana acabaram. Entre para continuar."
+      "trialExhausted": "Para oferecer análise mais profunda e guardar as suas preferências de mercado, o Exur exige uma sessão segura. Entre com o Google para continuar."
     },
     "creditsExhausted": {
       "title": "Seus créditos acabaram",

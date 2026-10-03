@@ -5,7 +5,7 @@
 
 /* Arabic/Persian only — Latin uses the system SF Pro / Roboto stack below. */
 @font-face {
-    font-family: "IRIS Sans";
+    font-family: "Exur Sans";
     src: url("./fonts/vazirmatn-arabic-wght-normal.woff2") format("woff2");
     font-weight: 100 900;
     font-display: swap;
@@ -20,7 +20,7 @@
 @theme inline {
     --font-heading: var(--font-sans);
     /* Apple → SF Pro; Android → Roboto; Windows → Segoe UI. Vazirmatn for fa/ar. */
-    --font-sans: "IRIS Sans", -apple-system, BlinkMacSystemFont, "SF Pro Text",
+    --font-sans: "Exur Sans", -apple-system, BlinkMacSystemFont, "SF Pro Text",
       "SF Pro Display", system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial,
       sans-serif;
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,

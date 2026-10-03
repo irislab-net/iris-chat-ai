@@ -3,26 +3,24 @@
 import * as React from "react"
 import { useTranslations } from "next-intl"
 
-import { Progress } from "@/components/ui/progress"
 import { cn } from "@/lib/utils"
 
-export const THINKING_STATUS_KEYS = [
-  "thinking",
-  "analyzing",
-  "weighing",
-  "synthesizing",
-  "concluding",
+export const THINKING_TERMINAL_LINE_KEYS = [
+  "orderBooks",
+  "headlines",
+  "atr",
+  "rewardRisk",
 ] as const
 
-export type ThinkingStatusKey = (typeof THINKING_STATUS_KEYS)[number]
+export type ThinkingTerminalLineKey =
+  (typeof THINKING_TERMINAL_LINE_KEYS)[number]
 
-/** Minimum time the thinking UI stays up so fast replies still feel deliberate. */
-const MIN_THINKING_MS = 2200
-const STATUS_ROTATE_MS = 2000
-const COMPLETE_HOLD_MS = 280
+/** Cosmetic pre-trace cadence — fast enough to feel live, slow enough to read. */
+const LINE_ROTATE_MS = 600
+const MAX_VISIBLE_LINES = 3
 
-function shuffleStatusKeys(): ThinkingStatusKey[] {
-  const keys = [...THINKING_STATUS_KEYS]
+function shuffleLineKeys(): ThinkingTerminalLineKey[] {
+  const keys = [...THINKING_TERMINAL_LINE_KEYS]
   for (let i = keys.length - 1; i > 0; i -= 1) {
     const j = Math.floor(Math.random() * (i + 1))
     const a = keys[i]!
@@ -32,124 +30,96 @@ function shuffleStatusKeys(): ThinkingStatusKey[] {
   return keys
 }
 
-type ChatThinkingProgressProps = {
-  /** True once the model reply is ready — bar finishes, then onComplete. */
-  ready: boolean
-  onComplete: () => void
+type ChatThinkingTerminalProps = {
   className?: string
 }
 
-function ChatThinkingProgress({
-  ready,
-  onComplete,
-  className,
-}: ChatThinkingProgressProps) {
-  const t = useTranslations("workspace.thinkingProgress")
-  const [value, setValue] = React.useState(5)
-  const [statusKey, setStatusKey] =
-    React.useState<ThinkingStatusKey>("thinking")
-  const onCompleteRef = React.useRef(onComplete)
-  const readyRef = React.useRef(ready)
+/**
+ * Pre-trace waiting UI — cosmetic terminal lines while SSE thinking steps
+ * have not arrived yet. Parent must unmount when `hasThinking` becomes true.
+ */
+type TerminalLine = {
+  id: number
+  key: ThinkingTerminalLineKey
+}
 
-  React.useEffect(() => {
-    onCompleteRef.current = onComplete
-  }, [onComplete])
-
-  React.useEffect(() => {
-    readyRef.current = ready
-  }, [ready])
+function ChatThinkingTerminal({ className }: ChatThinkingTerminalProps) {
+  const t = useTranslations("workspace.thinkingTerminal")
+  const [lines, setLines] = React.useState<TerminalLine[]>(() => [
+    { id: 0, key: THINKING_TERMINAL_LINE_KEYS[0] },
+  ])
+  const orderRef = React.useRef<ThinkingTerminalLineKey[]>([])
+  const orderAtRef = React.useRef(0)
+  const lineIdRef = React.useRef(0)
 
   React.useEffect(() => {
     const reduced = window.matchMedia(
       "(prefers-reduced-motion: reduce)"
     ).matches
-    let raf = 0
-    let startRotateTimer = 0
-    let rotateTimer = 0
-    let completeTimer = 0
-    let finished = false
 
-    const finish = () => {
-      if (finished) return
-      finished = true
-      window.cancelAnimationFrame(raf)
-      window.clearTimeout(startRotateTimer)
-      window.clearInterval(rotateTimer)
-      setValue(100)
-      completeTimer = window.setTimeout(
-        () => {
-          onCompleteRef.current()
-        },
-        reduced ? 0 : COMPLETE_HOLD_MS
-      )
-    }
+    orderRef.current = shuffleLineKeys()
+    orderAtRef.current = 0
+    lineIdRef.current = 0
+    const first = orderRef.current[0] ?? THINKING_TERMINAL_LINE_KEYS[0]
+    setLines([{ id: 0, key: first }])
 
-    if (reduced) {
-      completeTimer = window.setTimeout(finish, 0)
-      return () => {
-        finished = true
-        window.clearTimeout(completeTimer)
-      }
-    }
+    if (reduced) return
 
-    const order = shuffleStatusKeys()
-    let orderAt = 0
-    const start = performance.now()
+    const timer = window.setInterval(() => {
+      orderAtRef.current =
+        (orderAtRef.current + 1) % orderRef.current.length
+      const next =
+        orderRef.current[orderAtRef.current] ?? THINKING_TERMINAL_LINE_KEYS[0]
+      lineIdRef.current += 1
+      const entry: TerminalLine = { id: lineIdRef.current, key: next }
+      setLines((prev) => [...prev, entry].slice(-MAX_VISIBLE_LINES))
+    }, LINE_ROTATE_MS)
 
-    startRotateTimer = window.setTimeout(() => {
-      setStatusKey(order[0] ?? "thinking")
-      rotateTimer = window.setInterval(() => {
-        if (finished || readyRef.current) return
-        orderAt = (orderAt + 1) % order.length
-        setStatusKey(order[orderAt] ?? "thinking")
-      }, STATUS_ROTATE_MS)
-    }, 0)
-
-    const tick = (now: number) => {
-      if (finished) return
-      const elapsed = now - start
-      const isReady = readyRef.current
-
-      if (isReady && elapsed >= MIN_THINKING_MS) {
-        finish()
-        return
-      }
-
-      if (isReady) {
-        const progress = Math.min(1, elapsed / MIN_THINKING_MS)
-        setValue(Math.round(12 + progress * 86))
-      } else {
-        const progress = 1 - Math.exp(-elapsed / 11_000)
-        setValue(Math.round(5 + progress * 85))
-      }
-
-      raf = window.requestAnimationFrame(tick)
-    }
-
-    raf = window.requestAnimationFrame(tick)
-
-    return () => {
-      finished = true
-      window.cancelAnimationFrame(raf)
-      window.clearTimeout(startRotateTimer)
-      window.clearInterval(rotateTimer)
-      window.clearTimeout(completeTimer)
-    }
+    return () => window.clearInterval(timer)
   }, [])
 
   return (
     <div
-      className={cn("flex w-full max-w-xs flex-col gap-2.5 py-0.5", className)}
+      className={cn(
+        "flex h-[4.125rem] w-full max-w-xs flex-col justify-end gap-1 overflow-hidden py-0.5",
+        className
+      )}
       role="status"
       aria-live="polite"
       aria-label={t("aria")}
     >
-      <p className="min-h-5 text-sm leading-5 text-muted-foreground">
-        {t(`statuses.${statusKey}`)}
-      </p>
-      <Progress value={value} className="w-full gap-0" />
+      {lines.map((line, index) => {
+        const isLatest = index === lines.length - 1
+        return (
+          <p
+            key={line.id}
+            className={cn(
+              "flex min-h-5 items-center gap-1.5 truncate font-mono text-[12px] leading-5 tracking-tight",
+              isLatest
+                ? "text-muted-foreground/75"
+                : "text-muted-foreground/40",
+              isLatest &&
+                "motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-bottom-1 motion-safe:duration-300"
+            )}
+          >
+            <span
+              className={cn(
+                "shrink-0 select-none",
+                isLatest ? "text-sky-500/70 dark:text-sky-400/65" : "opacity-50"
+              )}
+              aria-hidden
+            >
+              ›
+            </span>
+            <span className="min-w-0 truncate">{t(`lines.${line.key}`)}</span>
+          </p>
+        )
+      })}
     </div>
   )
 }
 
-export { ChatThinkingProgress }
+/** @deprecated Prefer ChatThinkingTerminal — kept for any stale imports. */
+const ChatThinkingProgress = ChatThinkingTerminal
+
+export { ChatThinkingTerminal, ChatThinkingProgress }

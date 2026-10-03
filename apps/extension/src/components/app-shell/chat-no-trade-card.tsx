@@ -1,6 +1,6 @@
 "use client"
 
-import { PauseCircleIcon } from "lucide-react"
+import { PauseCircleIcon, ShieldCheckIcon } from "lucide-react"
 import { useTranslations } from "next-intl"
 
 import {
@@ -15,6 +15,9 @@ const noTradeWashClass =
 
 const noTradeChipClass =
   "inline-flex items-center gap-1 rounded-full border-0 bg-amber-500/16 px-2.5 py-1 text-[11px] font-medium tracking-[0.03em] text-amber-800 shadow-none backdrop-blur-md dark:bg-amber-400/18 dark:text-amber-200 dark:shadow-none"
+
+const capitalProtectedChipClass =
+  "inline-flex items-center gap-1 rounded-full border-0 bg-sky-500/12 px-2.5 py-1 text-[11px] font-medium tracking-[0.03em] text-sky-800 shadow-none backdrop-blur-md dark:bg-sky-400/14 dark:text-sky-200 dark:shadow-none"
 
 function ChatNoTradeCard({
   reason,
@@ -59,10 +62,16 @@ function ChatNoTradeCard({
             </p>
           </div>
         </div>
-        <span className={cn(noTradeChipClass, "shrink-0 uppercase")}>
-          <PauseCircleIcon className="size-3 shrink-0 opacity-80" aria-hidden />
-          {t("noTradeBadge")}
-        </span>
+        <div className="flex shrink-0 flex-col items-end gap-1.5">
+          <span className={cn(noTradeChipClass, "uppercase")}>
+            <PauseCircleIcon className="size-3 shrink-0 opacity-80" aria-hidden />
+            {t("noTradeBadge")}
+          </span>
+          <span className={capitalProtectedChipClass}>
+            <ShieldCheckIcon className="size-3 shrink-0 opacity-80" aria-hidden />
+            {t("noTradeCapitalProtected")}
+          </span>
+        </div>
       </header>
 
       <div className="px-4 pb-4">

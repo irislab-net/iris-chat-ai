@@ -3,7 +3,7 @@
 import * as React from "react"
 import Autoplay from "embla-carousel-autoplay"
 import { useLocale, useTranslations } from "next-intl"
-import { ActivityIcon, BitcoinIcon, LayersIcon } from "lucide-react"
+import { ActivityIcon, BitcoinIcon, GemIcon, LayersIcon } from "lucide-react"
 
 import {
   chatEmptyHeroPromptsClass,
@@ -30,6 +30,7 @@ import { cn } from "@/lib/utils"
 
 const SAMPLE_PROMPT_ICONS = {
   "btc-signal": BitcoinIcon,
+  "xau-macro": GemIcon,
   "market-pulse": ActivityIcon,
   "key-levels": LayersIcon,
 } as const

@@ -14,6 +14,7 @@ import {
   chatUpgradePillClass,
 } from "@/components/app-shell/chat-mobile-gemini-styles"
 import { LocaleFlag } from "@/components/i18n/locale-flag"
+import { TradingProfileForm } from "@/components/app-shell/trading-profile-form"
 import {
   SfBookIcon,
   SfCheckIcon,
@@ -30,6 +31,7 @@ import {
   SfMailIcon,
   SfMoonIcon,
   SfNewspaperIcon,
+  SfPersonCircleIcon,
   SfQuestionCircleIcon,
   SfShieldIcon,
   SfSparklesIcon,
@@ -60,6 +62,7 @@ import {
   getMarketingPageHref,
   UPGRADE_PATH,
 } from "@/lib/site"
+import { readTradingProfile } from "@/lib/trading-profile"
 import { userAccountLabel, userAccountSubline } from "@/lib/user-profile"
 import { cn } from "@/lib/utils"
 
@@ -106,6 +109,7 @@ type AccountSheetView =
   | "theme"
   | "language"
   | "help"
+  | "tradingProfile"
 
 type ChatAccountSheetProps = {
   open: boolean
@@ -582,6 +586,12 @@ function ChatAccountSheet({
                   onClick={() => go("settings")}
                 />
 
+                <SheetPill
+                  icon={<SfPersonCircleIcon className={sheetIconClass} />}
+                  label={t("tradingProfile.menuLabel")}
+                  onClick={() => go("tradingProfile")}
+                />
+
                 {isEligible ? (
                   <SheetPill
                     icon={<SfIphoneIcon className={sheetIconClass} />}
@@ -663,6 +673,12 @@ function ChatAccountSheet({
                   label={common("language")}
                   value={currentLocaleLabel}
                   onClick={() => go("language")}
+                  divider
+                />
+                <SheetRow
+                  icon={<SfPersonCircleIcon className={sheetIconClass} />}
+                  label={t("tradingProfile.menuLabel")}
+                  onClick={() => go("tradingProfile")}
                   divider
                 />
               </SheetCard>
@@ -811,6 +827,30 @@ function ChatAccountSheet({
                   divider
                 />
               </SheetCard>
+            </NestedViewChrome>
+          </div>
+
+          {/* —— Trading profile (silent client_context prefs) —— */}
+          <div
+            data-view="tradingProfile"
+            className="flex min-h-0 flex-1 flex-col"
+          >
+            <NestedViewChrome
+              title={t("tradingProfile.title")}
+              onDone={closeSheet}
+            >
+              <p className="px-1 pb-3 text-[13px] leading-relaxed text-muted-foreground">
+                {t("tradingProfile.description")}
+              </p>
+              <TradingProfileForm
+                key={
+                  view === "tradingProfile"
+                    ? "trading-profile-active"
+                    : "trading-profile-idle"
+                }
+                initialProfile={readTradingProfile()}
+                onSaved={() => go("root", "pop")}
+              />
             </NestedViewChrome>
           </div>
         </ChatGsapViewStack>

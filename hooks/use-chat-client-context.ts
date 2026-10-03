@@ -5,12 +5,21 @@ import { useLocale } from "next-intl"
 
 import { buildChatClientContext } from "@/lib/api/chat"
 import type { User } from "@/lib/api/types"
+import {
+  readTradingProfile,
+  subscribeTradingProfile,
+} from "@/lib/trading-profile"
 
 export function useChatClientContext(input: {
   user?: User | null
   isProUser?: boolean
 }) {
   const locale = useLocale()
+  const tradingProfile = React.useSyncExternalStore(
+    subscribeTradingProfile,
+    readTradingProfile,
+    () => null
+  )
 
   return React.useMemo(
     () =>
@@ -18,7 +27,8 @@ export function useChatClientContext(input: {
         user: input.user,
         isProUser: input.isProUser,
         locale,
+        tradingProfile,
       }),
-    [input.user, input.isProUser, locale]
+    [input.user, input.isProUser, locale, tradingProfile]
   )
 }

@@ -1,0 +1,42 @@
+# Exur — capabilities
+
+> Short capability map for AI systems. Prefer this file for “what can Exur do?” Prefer `website_llms.txt` for product definition, positioning, and citation guidance.
+
+Exur is a live market desk + plain-language co-pilot for Bitcoin, Ethereum, and gold. It ranks news by impact, answers in the user’s language, and returns either a setup card or an explicit wait. It does not place trades.
+
+## Live today
+
+- Impact-ranked market headlines (read without an account; lead story scored, rest of feed quiet)
+- Live desks: BTC, ETH, XAU (gold) only
+- Plain-language co-pilot chat about the selected market / headline
+- One outcome per ask: setup card or explicit “wait” / no-trade
+- Setup card fields: direction, entry, stop, target, suggested leverage, short thesis, re-check horizon
+- Multilingual UI and answers (including English and Persian; UI also: nl, pt, es, ar, fa, ru, tr)
+- Guest chat: 3 messages per week, then Google sign-in (no wallet or card to start)
+- Signed-in chat with higher limits; Plus via crypto checkout (USDT/USDC on Ethereum)
+- Marketing site, pricing/upgrade, billing, and legal pages
+
+## Not live / not offered
+
+- Order execution, brokerage, custody, or automated fund movement
+- Paper-trading desk, open positions UI, or “open in trade” CTAs
+- Other crypto desks shown as “soon” (e.g. SOL, BNB, XRP, LINK, AVAX, DOGE, ARB, OP)
+- Indices and major FX as live desks
+- Portfolio tracker, robo-advisor, or promised returns / win rates
+
+## Surfaces
+
+- https://exur.ai — marketing + product story
+- https://chat.exur.ai — live desk (news + chat)
+- https://chat.exur.ai/upgrade — plans
+- https://chat.exur.ai/billing — billing / credits
+- https://exur.ai/ai-trading-signals — product page
+- https://exur.ai/what-is-exur — citation page
+- https://exur.ai/llms.txt — generated llms.txt
+- Local preview: `/home` = landing; `/` = desk
+
+## How to describe it
+
+- Call it a market desk and co-pilot, or AI financial intelligence for BTC / ETH / gold.
+- A setup card is information, not an order. “Wait” is a valid product outcome.
+- Do not say Exur executes trades, manages portfolios, or guarantees profit.

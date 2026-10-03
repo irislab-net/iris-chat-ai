@@ -2,7 +2,7 @@
 export const LANDING_EASE = [0.16, 1, 0.3, 1] as const
 
 export const landingDisplay =
-  '[font-family:var(--font-display),var(--font-sans),"IRIS Sans",ui-sans-serif,system-ui,sans-serif]'
+  '[font-family:var(--font-display),var(--font-sans),"Exur Sans",ui-sans-serif,system-ui,sans-serif]'
 
 /** Apple-like display titles — regular weight, tight tracking, soft leading. */
 export const landingTitleHero = `${landingDisplay} text-[2.35rem] font-normal leading-[1.06] tracking-[-0.025em] text-foreground sm:text-5xl lg:text-[3.25rem]`

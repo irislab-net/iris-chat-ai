@@ -18,6 +18,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
+    "screenshots:ui": "node scripts/screenshot-ui-states.mjs",
     "analyze": "ANALYZE=true pnpm build:next",
     "benchmark:pages": "node scripts/benchmark-pages.mjs",
     "test:perf": "node scripts/benchmark-pages.mjs",

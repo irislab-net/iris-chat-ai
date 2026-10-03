@@ -5,26 +5,31 @@ export type IrisSamplePrompt = {
   text: string
 }
 
-/** Empty-state starters — regular chat; signal card only via show_trade_signal. */
+/** Empty-state starters aligned to BTC, ETH, XAU, and news impact. */
 export const IRIS_SAMPLE_PROMPTS: readonly IrisSamplePrompt[] = [
   {
-    id: "btc-signal",
-    title: "BTC trade signal",
-    description:
-      "Ask for a live setup — card only when the model has a clear read.",
-    text: "@signal BTC",
+    id: "btc-setup",
+    title: "BTC Setup Evaluation",
+    description: "Check live entry points and reward to risk ratio.",
+    text: "Evaluate the live tape for Bitcoin (BTC) to find a viable setup. If there is a market edge, provide the entry and invalidation levels. Otherwise, advise to wait.",
   },
   {
-    id: "market-pulse",
-    title: "Market pulse",
-    description: "Stance, model bias, and news — analysis only.",
-    text: "What is Exur's stance and model bias on BTC right now, and what does the news pulse say? Keep it factual and concise. Analysis only — no trade card.",
+    id: "news-impact",
+    title: "Macro News Filter",
+    description: "Check how today's top headlines impact the market.",
+    text: "What are the most critical live headlines today, and exactly how are they impacting market liquidity and sentiment? Only analyze high impact news.",
   },
   {
-    id: "key-levels",
-    title: "Key levels",
-    description: "Nearest support and resistance that matter now.",
-    text: "Map BTC's key support and resistance from recent structure and live price. Call out the nearest levels and whether price is pressing, rejecting, or mid-range. Analysis only — no trade card.",
+    id: "xau-macro",
+    title: "Gold (XAU) Macro Structure",
+    description: "Analyze gold trends for capital protection.",
+    text: "Analyze the live structure of Gold (XAU). Given the current momentum, is it structurally safe to enter now to protect capital, or should I wait for a pullback?",
+  },
+  {
+    id: "eth-liquidity",
+    title: "ETH Liquidity Map",
+    description: "Identify key structural support and resistance.",
+    text: "Map the key structural support and resistance levels for Ethereum (ETH) based on live price. Where is the primary liquidity resting right now?",
   },
 ] as const
 
@@ -36,18 +41,18 @@ export type IrisComposerQuickPrompt = {
 
 export const IRIS_COMPOSER_QUICK_PROMPTS: IrisComposerQuickPrompt[] = [
   {
-    id: "btc-signal",
-    label: "BTC signal",
-    text: "@signal BTC",
+    id: "btc-setup",
+    label: "BTC setup",
+    text: "Evaluate the live tape for Bitcoin (BTC) to find a viable setup. If there is a market edge, provide the entry and invalidation levels. Otherwise, advise to wait.",
   },
   {
-    id: "btc-signal-fa",
-    label: "سیگنال BTC",
-    text: "سیگنال BTC",
+    id: "btc-setup-fa",
+    label: "ستاپ BTC",
+    text: "وضعیت زنده بیت کوین (BTC) را برای یک ستاپ معاملاتی ارزیابی کن. در صورت وجود مزیت بازار، نقطه ورود و حد ضرر را بده و در غیر این صورت دستور صبر صادر کن.",
   },
   {
-    id: "market-pulse",
-    label: "Market pulse",
-    text: "What is Exur stance, model bias, and the news pulse on BTC right now? Keep it factual and concise. Analysis only — no trade card.",
+    id: "news-impact",
+    label: "News filter",
+    text: "What are the most critical live headlines today, and exactly how are they impacting market liquidity and sentiment? Only analyze high impact news.",
   },
 ]

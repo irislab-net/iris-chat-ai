@@ -15,6 +15,12 @@ export const IRIS_SAMPLE_PROMPTS: readonly IrisSamplePrompt[] = [
     text: "@signal BTC",
   },
   {
+    id: "xau-macro",
+    title: "XAU Macro Analysis",
+    description: "Check gold structure for inflation hedging",
+    text: "Analyze XAU (gold) structure for inflation hedging. Call out bias, nearest levels, and whether gold looks constructive as a macro hedge right now. Keep it factual and concise.",
+  },
+  {
     id: "market-pulse",
     title: "Market pulse",
     description: "Stance, model bias, and news — analysis only.",

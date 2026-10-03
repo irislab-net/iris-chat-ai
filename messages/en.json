@@ -344,9 +344,9 @@
     },
     "hero": {
       "badge": "AI market advisor",
-      "titleBefore": "Market news,",
-      "titleAfter": "clear answers.",
-      "subtitle": "Read the desk, ask Exur on the same screen. Short answers tied to the headline in front of you.",
+      "titleBefore": "Institutional intelligence,",
+      "titleAfter": "personal clarity.",
+      "subtitle": "Exur processes live tape, order flow, and news impact to give you a clear setup or a calculated reason to wait. Your objective market brain.",
       "inputPlaceholder": "Does today’s ETF news matter for ETH?",
       "exchanges": {
         "0": {
@@ -359,10 +359,10 @@
         },
         "2": {
           "q": "What does negative funding mean?",
-          "a": "Leverage is unwinding — the crowd isn’t long yet. Don’t rush an entry."
+          "a": "Leverage is unwinding. The crowd isn’t long yet. Don’t rush an entry."
         },
         "3": {
-          "q": "Exchange reserves are low — good or bad?",
+          "q": "Exchange reserves are low. Good or bad?",
           "a": "Usually less sell pressure. Alone it isn’t a buy signal without spot confirmation."
         },
         "4": {
@@ -383,7 +383,7 @@
         },
         "8": {
           "q": "One-line market read?",
-          "a": "Spot a bit stronger, leverage still cautious. Don’t chase — wait for a confirmed level."
+          "a": "Spot a bit stronger, leverage still cautious. Don’t chase. Wait for a confirmed level."
         },
         "9": {
           "q": "Anything urgent today?",
@@ -430,7 +430,7 @@
     },
     "desk": {
       "title": "The important story leads.",
-      "subtitle": "The rest stays quiet — not another noisy feed.",
+      "subtitle": "The rest stays quiet. Not another noisy feed.",
       "you": "You",
       "lead": "Lead",
       "impactLabel": "Impact",
@@ -487,7 +487,7 @@
       "hold": {
         "label": "No trade",
         "question": "Short this bounce?",
-        "answer": "No. Tape is mixed and leverage is still resetting.",
+        "answer": "Tape is mixed and the minimum reward to risk ratio is not met. Capital protection engaged. Wait for a confirmed break.",
         "reason": "No edge worth forcing today."
       }
     },
@@ -579,7 +579,7 @@
     },
     "pricing": {
       "title": "Pick your depth.",
-      "subtitle": "Pay with crypto — no hassle. Free to browse news. Plus when Exur is part of your routine.",
+      "subtitle": "Pay with crypto: no hassle. Free to browse news. Plus when Exur is part of your routine.",
       "perMonth": "/mo",
       "plans": {
         "free": {
@@ -685,7 +685,7 @@
     "copilotGuestTry": "Guest · 3 free messages this week",
     "emptyGuestUnavailable": "Guest trial isn't available right now. Sign in to chat with Exur.",
     "guestSendBlocked": "Guest chat isn't available right now. Sign in to continue.",
-    "guestTrialExhaustedPrompt": "Your free messages this week are used up. Sign in to continue chatting with Exur.",
+    "guestTrialExhaustedPrompt": "To provide deeper analysis and save your market preferences, Exur requires a secured session. Sign in with Google to continue.",
     "guestChatUpstreamUnreachable": "Exur is temporarily unavailable. Try again in a moment, or sign in to continue.",
     "upgrade": "Upgrade",
     "upgradeToPlus": "Upgrade to Plus",
@@ -704,12 +704,12 @@
     "agreeContinueWithGoogle": "Agree & continue with Google",
     "secureSignInWithGoogle": "Secure sign-in with Google",
     "loginConsentDescription": "Accept the terms below to sign in securely.",
-    "loginConsentDisclaimer": "You must be 18+ and not located in a comprehensively sanctioned jurisdiction. Exur provides analytics for information only — not financial advice.",
-    "loginConsentPwaHint": "On iPhone, sign-in continues in Safari. If you’re already signed into Google there, pick your account — then reopen Exur from your Home Screen.",
+    "loginConsentDisclaimer": "You must be 18+ and not located in a comprehensively sanctioned jurisdiction. Exur provides analytics for information only. Not financial advice.",
+    "loginConsentPwaHint": "On iPhone, sign-in continues in Safari. If you’re already signed into Google there, pick your account, then reopen Exur from your Home Screen.",
     "installApp": "Install Exur",
     "addToHomeScreen": "Install web app",
-    "installNudgeDescription": "You’re signed in — install Exur for quicker access and a full-screen workspace. Your session stays with the app.",
-    "installNudgeIosDescription": "You’re signed in — add Exur to your Home Screen for a full-screen app. Your session comes with it.",
+    "installNudgeDescription": "You’re signed in. Install Exur for quicker access and a full-screen workspace. Your session stays with the app.",
+    "installNudgeIosDescription": "You’re signed in. Add Exur to your Home Screen for a full-screen app. Your session comes with it.",
     "installShowHow": "Show me how",
     "installNotNow": "Not now",
     "installGotIt": "Got it",
@@ -717,7 +717,7 @@
     "installIosDescription": "Use Share, then Add to Home Screen. You’re signed in, so the app opens ready to use.",
     "installIosStepShare": "Tap the Share button in Safari",
     "installIosStepAdd": "Choose Add to Home Screen",
-    "installIosStepConfirm": "Tap Add — then open Exur from your Home Screen",
+    "installIosStepConfirm": "Tap Add, then open Exur from your Home Screen",
     "agreeTerms": "I agree to the <link>Terms of Service</link>",
     "agreePrivacy": "I agree to the <link>Privacy Policy</link>",
     "cancel": "Cancel",
@@ -725,6 +725,8 @@
     "chatHistory": "Chat history",
     "closeChatHistory": "Close chat history",
     "closeNews": "Close news",
+    "analyzeNewsInstruction": "Analyze the impact of this news on the current market structure.",
+    "analyzeNewsBusy": "Wait for the current reply to finish, then analyze again.",
     "collapseChatHistory": "Collapse chat history",
     "expandChatHistory": "Expand chat history",
     "searchChats": "Search chats",
@@ -756,6 +758,14 @@
     "composerToolSignalLabel": "Signal",
     "composerToolSignalDesc": "Get a trade setup for any asset",
     "composerToolSignalPlaceholder": "ETH, BTC, SOL…",
+    "composerToolCorrelationLabel": "Asset Correlation",
+    "composerToolVolatilityLabel": "Volatility Forecast",
+    "composerPremiumToolsTitle": "Premium Tools",
+    "composerPremiumToolsBody": "Deep analysis models are locked. Upgrade to Plus to unlock market correlation and volatility forecasting.",
+    "composerPremiumToolsCta": "View Plans",
+    "composerPremiumToolsComingSoonTitle": "Coming soon",
+    "composerPremiumToolsComingSoonBody": "Correlation and volatility forecasting are on the Plus roadmap. We’ll unlock them here when they’re ready.",
+    "composerPremiumToolsDismiss": "Got it",
     "composerToolAnalyticsLabel": "Analytics Charts",
     "composerToolAnalyticsDesc": "Coming soon",
     "composerRemoveTool": "Remove tool",
@@ -770,25 +780,32 @@
     "signalCardRisk": "Risk",
     "signalCardRewardRisk": "R:R",
     "signalCardTimeHorizon": "Time horizon",
-    "signalCardThesisHeading": "Thesis — why this setup",
+    "signalCardThesisHeading": "Thesis: why this setup",
+    "signalCardWatchlist": "Add to Watchlist",
+    "signalCardWatchlistAdded": "Added",
     "signalCardDisclaimer": "Exur provides market information only, not financial advice.",
     "samplePromptsLabel": "Starters",
     "samplePrompts": {
       "usePrompt": "Use prompt: {title}",
-      "btc-signal": {
-        "title": "BTC trade signal",
-        "description": "Ask for a live setup — card only when the model has a clear read.",
-        "text": "@signal BTC"
+      "btc-setup": {
+        "title": "BTC Setup Evaluation",
+        "description": "Check live entry points and reward to risk ratio.",
+        "text": "Evaluate the live tape for Bitcoin (BTC) to find a viable setup. If there is a market edge, provide the entry and invalidation levels. Otherwise, advise to wait."
       },
-      "market-pulse": {
-        "title": "Market pulse",
-        "description": "Stance, model bias, and news — analysis only.",
-        "text": "What is Exur's stance and model bias on BTC right now, and what does the news pulse say? Keep it factual and concise. Analysis only — no trade card."
+      "news-impact": {
+        "title": "Macro News Filter",
+        "description": "Check how today's top headlines impact the market.",
+        "text": "What are the most critical live headlines today, and exactly how are they impacting market liquidity and sentiment? Only analyze high impact news."
       },
-      "key-levels": {
-        "title": "Key levels",
-        "description": "Nearest support and resistance that matter now.",
-        "text": "Map BTC's key support and resistance from recent structure and live price. Call out the nearest levels and whether price is pressing, rejecting, or mid-range. Analysis only — no trade card."
+      "xau-macro": {
+        "title": "Gold (XAU) Macro Structure",
+        "description": "Analyze gold trends for capital protection.",
+        "text": "Analyze the live structure of Gold (XAU). Given the current momentum, is it structurally safe to enter now to protect capital, or should I wait for a pullback?"
+      },
+      "eth-liquidity": {
+        "title": "ETH Liquidity Map",
+        "description": "Identify key structural support and resistance.",
+        "text": "Map the key structural support and resistance levels for Ethereum (ETH) based on live price. Where is the primary liquidity resting right now?"
       }
     },
     "emptySignedIn": "Start from a prompt or ask in plain language.",
@@ -843,8 +860,9 @@
     "unhelpfulResponse": "Unhelpful response",
     "noTradeTitle": "No trade",
     "noTradeBadge": "Wait",
-    "noTradeSubtitle": "No clear setup right now",
-    "noTradeReasonHeading": "Why wait",
+    "noTradeCapitalProtected": "Capital Protected",
+    "noTradeSubtitle": "Capital Protection Active",
+    "noTradeReasonHeading": "Risk Analysis",
     "signalSideLong": "LONG",
     "signalSideShort": "SHORT",
     "assistantTyping": "Assistant is typing",
@@ -856,6 +874,15 @@
         "weighing": "Weighing possible angles…",
         "synthesizing": "Connecting the pieces…",
         "concluding": "Forming a conclusion…"
+      }
+    },
+    "thinkingTerminal": {
+      "aria": "Exur is preparing an analysis",
+      "lines": {
+        "orderBooks": "Fetching live order books…",
+        "headlines": "Scanning headline impact…",
+        "atr": "Calculating ATR bands…",
+        "rewardRisk": "Evaluating reward-to-risk…"
       }
     },
     "thinkingTrace": {
@@ -872,7 +899,7 @@
       "credits": "You've used this period's chat credits. Upgrade to continue.",
       "proSessionRefresh": "Your Plus plan is active, but this session needs a refresh. Try again.",
       "auth": "Sign in with Google to get answers from Exur. You can explore prompts and typing first.",
-      "trialExhausted": "Your free messages this week are used up. Sign in to continue."
+      "trialExhausted": "To provide deeper analysis and save your market preferences, Exur requires a secured session. Sign in with Google to continue."
     },
     "creditsExhausted": {
       "title": "You're out of credits",
@@ -896,7 +923,34 @@
     "getSupportSection": "Get support",
     "accountSection": "Account",
     "switchAccount": "Switch account",
-    "guest": "Guest"
+    "guest": "Guest",
+    "tradingProfile": {
+      "menuLabel": "Trading Profile",
+      "title": "Trading Profile",
+      "description": "Saved on this device. Exur uses it silently to tailor answers — it never appears in your chat history.",
+      "experienceLabel": "Experience",
+      "experience": {
+        "beginner": "Beginner",
+        "intermediate": "Intermediate",
+        "advanced": "Advanced"
+      },
+      "targetMarketLabel": "Target market",
+      "targetMarket": {
+        "crypto": "Crypto",
+        "forex": "Forex",
+        "commodities": "Commodities",
+        "multi": "Multi-asset"
+      },
+      "riskLabel": "Risk tolerance",
+      "risk": {
+        "low": "Low",
+        "medium": "Medium",
+        "high": "High"
+      },
+      "countryLabel": "Country (optional)",
+      "countryPlaceholder": "e.g. United States",
+      "save": "Save profile"
+    }
   },
   "billingPage": {
     "title": "Billing",
@@ -987,7 +1041,7 @@
     "plans": {
       "free": {
         "name": "Free",
-        "description": "Read the news desk with a capped co-pilot — enough to try the flow, not to run it all day.",
+        "description": "Read the news desk with a capped co-pilot. Enough to try the flow, not to run it all day.",
         "features": [
           "Live market news",
           "Chat co-pilot with trade signal cards",
@@ -1018,7 +1072,7 @@
     },
     "crypto": {
       "title": "Pay for Plus",
-      "subtitle": "Easy crypto payment — send and you're in.",
+      "subtitle": "Easy crypto payment. Send and you're in.",
       "plusUpgrade": "Plus upgrade",
       "billedMonthly": "Plus · billed monthly",
       "billedAnnually": "Plus · billed annually",
@@ -1072,7 +1126,7 @@
     "publicHeading": "Public market intelligence",
     "publicBody": "Guests can open the <desk>public desk</desk> and see market pulse, insights, model context, and news bullets without signing in. Freshness labels use timestamps from the API, such as when an insight was generated or when a story was published, not login state. We do not treat authentication as proof of “live” or delayed data.",
     "helpsHeading": "How Exur helps",
-    "helpsBody": "Exur brings scored market headlines and a chat co-pilot into one desk. News bullets are short distilled stories with source context, not a raw feed. Ask in plain English about what moved and why — support for your analysis, not a substitute for your own judgment.",
+    "helpsBody": "Exur brings scored market headlines and a chat co-pilot into one desk. News bullets are short distilled stories with source context, not a raw feed. Ask in plain English about what moved and why. Support for your analysis, not a substitute for your own judgment.",
     "privateHeading": "Private and member tools",
     "privateBody": "Connecting with Google unlocks account features such as co-pilot chat. Trade Desk and related premium guidance are treated as private / member capabilities when available. Turn-by-turn desk guidance is the product direction, not brokerage order execution on this site. Public pages do not expose private account data for search engines.",
     "trustHeading": "Transparency",
@@ -1104,6 +1158,7 @@
     "listenToArticle": "Listen to article",
     "copied": "Copied",
     "copyArticle": "Copy article",
+    "analyzeArticle": "Analyze",
     "openOriginalArticle": "Open original article",
     "stop": "Stop",
     "readAll": "Read all"

@@ -1,0 +1,8 @@
+IsAdmin=True
+User=DESKTOP-M9QNQ9I\RescueAdmin
+Attributes=ReadOnly, Archive
+IsReadOnly=True
+Owner=NT AUTHORITY\SYSTEM
+Access:
+  NT AUTHORITY\SYSTEM | FullControl | Allow
+  BUILTIN\Administrators | FullControl | Allow

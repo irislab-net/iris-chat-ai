@@ -49,9 +49,9 @@
     },
     "hero": {
       "badge": "AI-marktadviseur",
-      "titleBefore": "Marktniews,",
-      "titleAfter": "heldere antwoorden.",
-      "subtitle": "Lees de desk, vraag Exur op hetzelfde scherm. Korte antwoorden gekoppeld aan de headline voor je.",
+      "titleBefore": "Institutionele intelligentie,",
+      "titleAfter": "persoonlijke helderheid.",
+      "subtitle": "Exur verwerkt live tape, orderflow en nieuwsimpact om je een duidelijk setup of een berekende reden om te wachten te geven. Je objectieve markthersen.",
       "inputPlaceholder": "Doet het ETF-nieuws van vandaag ertoe voor ETH?",
       "exchanges": {
         "0": {
@@ -64,10 +64,10 @@
         },
         "2": {
           "q": "Wat betekent negatieve funding?",
-          "a": "Leverage wordt afgebouwd — de crowd is nog niet long. Geen haast met een entry."
+          "a": "Leverage wordt afgebouwd. De crowd is nog niet long. Geen haast met een entry."
         },
         "3": {
-          "q": "Lage exchange-reserves — goed of slecht?",
+          "q": "Lage exchange-reserves. Goed of slecht?",
           "a": "Meestal minder verkoopdruk. Alleen is het geen koopsignaal zonder spot-bevestiging."
         },
         "4": {
@@ -88,7 +88,7 @@
         },
         "8": {
           "q": "Markt in één zin?",
-          "a": "Spot iets sterker, leverage nog voorzichtig. Niet najagen — wacht op een bevestigd level."
+          "a": "Spot iets sterker, leverage nog voorzichtig. Niet najagen. Wacht op een bevestigd level."
         },
         "9": {
           "q": "Iets urgents vandaag?",
@@ -135,7 +135,7 @@
     },
     "desk": {
       "title": "Gescoorde koppen. Geen feed.",
-      "subtitle": "Impact rangschikt de tape. De lead springt eruit — de rest blijft stil.",
+      "subtitle": "Impact rangschikt de tape. De lead springt eruit. De rest blijft stil.",
       "you": "Jij",
       "lead": "Lead",
       "impactLabel": "Impact",
@@ -192,7 +192,7 @@
       "hold": {
         "label": "Geen trade",
         "question": "Short deze bounce?",
-        "answer": "Nee. Tape is gemengd en leverage reset nog.",
+        "answer": "De tape is gemengd en de minimale reward-risk ratio wordt niet gehaald. Kapitaalbescherming ingeschakeld. Wacht op een bevestigde break.",
         "reason": "Geen edge die je vandaag moet forceren."
       }
     },
@@ -284,7 +284,7 @@
     },
     "pricing": {
       "title": "Kies je diepte.",
-      "subtitle": "Betaal met crypto — zonder gedoe. Nieuws gratis. Plus als Exur bij je routine hoort.",
+      "subtitle": "Betaal met crypto: zonder gedoe. Nieuws gratis. Plus als Exur bij je routine hoort.",
       "perMonth": "/mnd",
       "plans": {
         "free": {
@@ -357,7 +357,7 @@
       "companiesHouse": "Companies House-registratie"
     },
     "context": {
-      "description": "Exur is je AI financiële assistent. Zie waar je geld naartoe gaat, vraag in gewone taal, en krijg een duidelijke volgende stap — geen nieuwe feed."
+      "description": "Exur is je AI financiële assistent. Zie waar je geld naartoe gaat, vraag in gewone taal, en krijg een duidelijke volgende stap. Geen nieuwe feed."
     }
   },
   "metadata": {
@@ -386,7 +386,7 @@
     "copilotGuestTry": "Gast · 3 gratis berichten deze week",
     "emptyGuestUnavailable": "Gastproef is nu niet beschikbaar. Log in om met Exur te chatten.",
     "guestSendBlocked": "Gastchat is nu niet beschikbaar. Log in om door te gaan.",
-    "guestTrialExhaustedPrompt": "Je gratis berichten van deze week zijn op. Log in om verder te chatten met Exur.",
+    "guestTrialExhaustedPrompt": "Voor diepere analyse en het bewaren van je marktvoorkeuren heeft Exur een beveiligde sessie nodig. Log in met Google om door te gaan.",
     "guestChatUpstreamUnreachable": "Exur is tijdelijk niet beschikbaar. Probeer zo opnieuw, of log in om door te gaan.",
     "upgrade": "Upgraden",
     "upgradeToPlus": "Upgraden naar Plus",
@@ -405,12 +405,12 @@
     "agreeContinueWithGoogle": "Akkoord & doorgaan met Google",
     "secureSignInWithGoogle": "Veilig inloggen met Google",
     "loginConsentDescription": "Accepteer de voorwaarden hieronder om veilig in te loggen.",
-    "loginConsentDisclaimer": "Je moet 18+ zijn en niet in een volledig gesanctioneerd rechtsgebied wonen. Exur geeft alleen analyse ter informatie — geen financieel advies.",
-    "loginConsentPwaHint": "Op iPhone gaat inloggen verder in Safari. Als je daar al bij Google bent ingelogd, kies je account — open daarna Exur opnieuw via je beginscherm.",
+    "loginConsentDisclaimer": "Je moet 18+ zijn en niet in een volledig gesanctioneerd rechtsgebied wonen. Exur geeft alleen analyse ter informatie. Geen financieel advies.",
+    "loginConsentPwaHint": "Op iPhone gaat inloggen verder in Safari. Als je daar al bij Google bent ingelogd, kies je account. Open daarna Exur opnieuw via je beginscherm.",
     "installApp": "Install Exur",
     "addToHomeScreen": "Install web app",
-    "installNudgeDescription": "You’re signed in — install Exur for quicker access and a full-screen workspace. Your session stays with the app.",
-    "installNudgeIosDescription": "You’re signed in — add Exur to your Home Screen for a full-screen app. Your session comes with it.",
+    "installNudgeDescription": "You’re signed in. Install Exur for quicker access and a full-screen workspace. Your session stays with the app.",
+    "installNudgeIosDescription": "You’re signed in. Add Exur to your Home Screen for a full-screen app. Your session comes with it.",
     "installShowHow": "Show me how",
     "installNotNow": "Not now",
     "installGotIt": "Got it",
@@ -418,7 +418,7 @@
     "installIosDescription": "Use Share, then Add to Home Screen. You’re signed in, so the app opens ready to use.",
     "installIosStepShare": "Tap the Share button in Safari",
     "installIosStepAdd": "Choose Add to Home Screen",
-    "installIosStepConfirm": "Tap Add — then open Exur from your Home Screen",
+    "installIosStepConfirm": "Tap Add, then open Exur from your Home Screen",
     "agreeTerms": "Ik ga akkoord met de <link>Servicevoorwaarden</link>",
     "agreePrivacy": "Ik ga akkoord met het <link>Privacybeleid</link>",
     "cancel": "Annuleren",
@@ -446,6 +446,7 @@
     "primaryNav": "Primair",
     "composerPlaceholder": "Vraag Exur of typ @ voor tools…",
     "composerMobilePlaceholder": "Vraag Exur",
+    "composerAriaLabel": "Bericht aan Exur",
     "composerVoiceInput": "Spraakinvoer",
     "composerVoiceMode": "Spraakmodus",
     "mobileGreeting": "Waarmee kan ik helpen, <highlight>{name}</highlight>?",
@@ -470,25 +471,32 @@
     "signalCardRisk": "Risico",
     "signalCardRewardRisk": "R:R",
     "signalCardTimeHorizon": "Tijdshorizon",
-    "signalCardThesisHeading": "These — waarom deze setup",
+    "signalCardThesisHeading": "These: waarom deze setup",
+    "signalCardWatchlist": "Toevoegen aan volglijst",
+    "signalCardWatchlistAdded": "Toegevoegd",
     "signalCardDisclaimer": "Exur geeft alleen marktinformatie, geen financieel advies.",
     "samplePromptsLabel": "Starters",
     "samplePrompts": {
       "usePrompt": "Gebruik prompt: {title}",
       "btc-signal": {
         "title": "BTC trade-signaal",
-        "description": "Vraag een live setup — kaart alleen bij een duidelijke lezing.",
+        "description": "Vraag een live setup. Kaart alleen bij een duidelijke lezing.",
         "text": "@signal BTC"
+      },
+      "xau-macro": {
+        "title": "Goud (XAU) vs. inflatie",
+        "description": "Controleer of goud nu een veilige entry is.",
+        "text": "Analyseer de live structuur van goud (XAU). Gezien het huidige momentum en de kernniveaus: is het structureel veilig om nu in te stappen voor kapitaalbescherming, of moet ik wachten op een betere entryzone?"
       },
       "market-pulse": {
         "title": "Marktpuls",
-        "description": "Stance, modelbias en nieuws — alleen analyse.",
-        "text": "Wat is de stance en modelbias van Exur op BTC nu, en wat zegt de nieuwspuls? Houd het feitelijk en beknopt. Alleen analyse — geen tradekaart."
+        "description": "Stance, modelbias en nieuws. Alleen analyse.",
+        "text": "Wat is de stance en modelbias van Exur op BTC nu, en wat zegt de nieuwspuls? Houd het feitelijk en beknopt. Alleen analyse: geen tradekaart."
       },
       "key-levels": {
         "title": "Kernniveaus",
         "description": "Dichtstbijzijnde steun en weerstand die nu tellen.",
-        "text": "Kaart BTC-steun en -weerstand uit recente structuur en liveprijs. Noem de dichtstbijzijnde niveaus en of prijs drukt, afwijst of mid-range is. Alleen analyse — geen tradekaart."
+        "text": "Kaart BTC-steun en -weerstand uit recente structuur en liveprijs. Noem de dichtstbijzijnde niveaus en of prijs drukt, afwijst of mid-range is. Alleen analyse: geen tradekaart."
       }
     },
     "emptySignedIn": "Begin met een prompt of vraag in gewone taal.",
@@ -543,8 +551,9 @@
     "unhelpfulResponse": "Niet nuttig antwoord",
     "noTradeTitle": "Geen trade",
     "noTradeBadge": "Wacht",
-    "noTradeSubtitle": "Geen duidelijke setup nu",
-    "noTradeReasonHeading": "Waarom wachten",
+    "noTradeCapitalProtected": "Kapitaal beschermd",
+    "noTradeSubtitle": "Kapitaalbescherming actief",
+    "noTradeReasonHeading": "Risicoanalyse",
     "signalSideLong": "LONG",
     "signalSideShort": "SHORT",
     "assistantTyping": "Assistent typt",
@@ -572,7 +581,7 @@
       "credits": "Je chatcredits voor deze periode zijn op. Upgrade om door te gaan.",
       "proSessionRefresh": "Je Plus-abonnement is actief, maar deze sessie moet worden vernieuwd. Probeer opnieuw.",
       "auth": "Log in met Google voor antwoorden van Exur. Je kunt eerst prompts verkennen.",
-      "trialExhausted": "Je gratis berichten van deze week zijn op. Log in om door te gaan."
+      "trialExhausted": "Voor diepere analyse en het bewaren van je marktvoorkeuren heeft Exur een beveiligde sessie nodig. Log in met Google om door te gaan."
     },
     "creditsExhausted": {
       "title": "Je credits zijn op",

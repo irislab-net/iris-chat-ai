@@ -2,10 +2,12 @@
 
 import * as React from "react"
 import {
+  ActivityIcon,
   ArrowUpIcon,
-  BarChart3Icon,
   CheckIcon,
   ChevronDownIcon,
+  LineChartIcon,
+  LockIcon,
   PlusIcon,
   SquareIcon,
   TrendingUpIcon,
@@ -13,6 +15,7 @@ import {
 } from "lucide-react"
 import { useLocale, useTranslations } from "next-intl"
 
+import { ComposerPremiumToolsDialog } from "@/components/app-shell/composer-premium-tools-dialog"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -98,6 +101,8 @@ type ChatComposerProps = {
   /** Gemini-style floating pill — used on mobile full-screen chat. */
   layout?: "default" | "floating"
   onFloatingFocusChange?: (focused: boolean) => void
+  /** Plus users see “Coming soon” for locked premium tools. */
+  isProUser?: boolean
 }
 
 function ChatComposer({
@@ -114,6 +119,7 @@ function ChatComposer({
   hideEffort = false,
   layout = "default",
   onFloatingFocusChange,
+  isProUser = false,
 }: ChatComposerProps) {
   const t = useTranslations("workspace")
   const textDir = localeDirection(useLocale())
@@ -129,6 +135,7 @@ function ChatComposer({
   const [activeTool, setActiveTool] = React.useState<IrisMentionTool | null>(
     null
   )
+  const [premiumToolsOpen, setPremiumToolsOpen] = React.useState(false)
   const [mentionIndex, setMentionIndex] = React.useState(0)
   const [cursor, setCursor] = React.useState(0)
   const localRef = React.useRef<HTMLTextAreaElement>(null)
@@ -181,24 +188,43 @@ function ChatComposer({
         </DropdownMenuItem>
       ))}
       <DropdownMenuItem
-        disabled
         className={cn(
           chatMobileToolsMenuItemClass,
-          "flex-row items-center gap-3 py-2.5 opacity-55"
+          "flex-row items-center gap-3 py-2.5"
         )}
+        onClick={() => setPremiumToolsOpen(true)}
       >
-        <span className="flex size-9 shrink-0 items-center justify-center rounded-2xl bg-foreground/4 text-muted-foreground dark:bg-white/6">
-          <BarChart3Icon className="size-4" aria-hidden />
+        <span className="flex size-9 shrink-0 items-center justify-center rounded-2xl bg-foreground/5 text-foreground dark:bg-white/8">
+          <LineChartIcon className="size-4" aria-hidden />
         </span>
-        <span className="flex min-w-0 flex-1 flex-col gap-0.5 text-start">
+        <span className="flex min-w-0 flex-1 items-center gap-2 text-start">
           <span className={chatMobileToolsMenuItemTitleClass}>
-            {t("composerToolAnalyticsLabel")}
+            {t("composerToolCorrelationLabel")}
           </span>
-          <span
-            className={cn(chatMobileToolsMenuItemDescClass, "line-clamp-2")}
-          >
-            {t("composerToolAnalyticsDesc")}
+          <LockIcon
+            className="ms-auto size-3.5 shrink-0 text-muted-foreground/70"
+            aria-hidden
+          />
+        </span>
+      </DropdownMenuItem>
+      <DropdownMenuItem
+        className={cn(
+          chatMobileToolsMenuItemClass,
+          "flex-row items-center gap-3 py-2.5"
+        )}
+        onClick={() => setPremiumToolsOpen(true)}
+      >
+        <span className="flex size-9 shrink-0 items-center justify-center rounded-2xl bg-foreground/5 text-foreground dark:bg-white/8">
+          <ActivityIcon className="size-4" aria-hidden />
+        </span>
+        <span className="flex min-w-0 flex-1 items-center gap-2 text-start">
+          <span className={chatMobileToolsMenuItemTitleClass}>
+            {t("composerToolVolatilityLabel")}
           </span>
+          <LockIcon
+            className="ms-auto size-3.5 shrink-0 text-muted-foreground/70"
+            aria-hidden
+          />
         </span>
       </DropdownMenuItem>
     </DropdownMenuGroup>
@@ -950,6 +976,11 @@ function ChatComposer({
           {t("composerHint")}
         </p>
       ) : null}
+      <ComposerPremiumToolsDialog
+        open={premiumToolsOpen}
+        onOpenChange={setPremiumToolsOpen}
+        isProUser={isProUser}
+      />
     </form>
   )
 }

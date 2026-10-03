@@ -44,7 +44,7 @@ function isGenericThesis(text: string): boolean {
   return (
     !trimmed ||
     trimmed === "Parsed from assistant reply" ||
-    /^IRIS signal$/i.test(trimmed)
+    /^(?:Exur|IRIS) signal$/i.test(trimmed)
   )
 }
 

@@ -22,6 +22,7 @@ import {
   SfLogoutIcon,
   SfMailIcon,
   SfNewspaperIcon,
+  SfPersonCircleIcon,
   SfQuestionCircleIcon,
   SfShieldIcon,
   SfSparklesIcon,
@@ -176,6 +177,7 @@ type AccountSignedInMenuSectionsProps = {
   avatarUrl: string | null
   onLogout: () => void | Promise<void>
   onOpenNews?: () => void
+  onOpenTradingProfile?: () => void
   showHeaderPlanBadge?: boolean
 }
 
@@ -186,6 +188,7 @@ function AccountSignedInMenuSections({
   avatarUrl,
   onLogout,
   onOpenNews,
+  onOpenTradingProfile,
   showHeaderPlanBadge = true,
 }: AccountSignedInMenuSectionsProps) {
   const t = useTranslations("workspace")
@@ -251,6 +254,15 @@ function AccountSignedInMenuSections({
             {t("news")}
           </DropdownMenuItem>
         ) : null}
+        {onOpenTradingProfile ? (
+          <DropdownMenuItem
+            className={chatContextMenuItemClass}
+            onClick={onOpenTradingProfile}
+          >
+            <SfPersonCircleIcon className={chatContextMenuIconClass} />
+            {t("tradingProfile.menuLabel")}
+          </DropdownMenuItem>
+        ) : null}
       </DropdownMenuGroup>
 
       <AccountPreferencesGroup />
@@ -272,15 +284,26 @@ function AccountSignedInMenuSections({
 function AccountGuestMenuSections({
   loginPending,
   onLogin,
+  onOpenTradingProfile,
 }: {
   loginPending: boolean
   onLogin: () => void
+  onOpenTradingProfile?: () => void
 }) {
   const t = useTranslations("workspace")
 
   return (
     <>
       <AccountPreferencesGroup />
+      {onOpenTradingProfile ? (
+        <DropdownMenuItem
+          className={chatContextMenuItemClass}
+          onClick={onOpenTradingProfile}
+        >
+          <SfPersonCircleIcon className={chatContextMenuIconClass} />
+          {t("tradingProfile.menuLabel")}
+        </DropdownMenuItem>
+      ) : null}
       <AccountHelpGroup />
       <DropdownMenuItem
         className={chatContextMenuItemClass}

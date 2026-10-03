@@ -1,0 +1,84 @@
+"use client"
+
+import * as React from "react"
+
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
+import { splitGlossarySegments } from "@/lib/chat/glossary-terms"
+import { cn } from "@/lib/utils"
+
+const termTriggerClassName = cn(
+  "rounded-[2px] underline decoration-dotted decoration-muted-foreground/50 underline-offset-4",
+  "cursor-help text-inherit transition-colors hover:decoration-muted-foreground/80",
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500/35 focus-visible:ring-offset-1"
+)
+
+const termTooltipClassName = cn(
+  "max-w-[16.5rem] flex-col items-start gap-0.5 rounded-lg border-0 px-3 py-2 text-[12px] leading-snug font-normal tracking-normal",
+  "bg-foreground/92 text-background shadow-[0_12px_32px_-16px_color-mix(in_oklch,var(--foreground)_45%,transparent)]",
+  "backdrop-blur-xl supports-[backdrop-filter]:bg-foreground/80",
+  "dark:bg-white/14 dark:text-foreground dark:shadow-[0_12px_32px_-16px_color-mix(in_oklch,black_55%,transparent)]",
+  "dark:supports-[backdrop-filter]:bg-white/12"
+)
+
+type TermTextProps = {
+  text: string
+  className?: string
+}
+
+/**
+ * Renders prose with glossary terms wrapped in Base UI tooltips.
+ * Numeric / non-prose fields should stay plain — do not use this on prices.
+ */
+function TermText({ text, className }: TermTextProps) {
+  const segments = React.useMemo(() => splitGlossarySegments(text), [text])
+
+  if (!text) return null
+
+  if (segments.length === 0 || segments.every((s) => s.type === "text")) {
+    return <span className={className}>{text}</span>
+  }
+
+  return (
+    <span className={className}>
+      {segments.map((segment, index) => {
+        if (segment.type === "text") {
+          return (
+            <React.Fragment key={`t-${index}`}>{segment.value}</React.Fragment>
+          )
+        }
+
+        return (
+          <Tooltip key={`g-${index}-${segment.term}`}>
+            <TooltipTrigger
+              render={
+                <button
+                  type="button"
+                  className={termTriggerClassName}
+                  aria-label={`${segment.term}: ${segment.definition}`}
+                />
+              }
+            >
+              {segment.value}
+            </TooltipTrigger>
+            <TooltipContent
+              side="top"
+              sideOffset={6}
+              className={termTooltipClassName}
+            >
+              <span className="font-medium">{segment.term}</span>
+              <span className="mt-0.5 block opacity-90">
+                {segment.definition}
+              </span>
+            </TooltipContent>
+          </Tooltip>
+        )
+      })}
+    </span>
+  )
+}
+
+export { TermText }

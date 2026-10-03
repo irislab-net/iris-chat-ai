@@ -3,7 +3,12 @@
 import * as React from "react"
 import Autoplay from "embla-carousel-autoplay"
 import { useLocale, useTranslations } from "next-intl"
-import { ActivityIcon, BitcoinIcon, LayersIcon } from "lucide-react"
+import {
+  BitcoinIcon,
+  GemIcon,
+  LayersIcon,
+  NewspaperIcon,
+} from "lucide-react"
 
 import {
   chatEmptyHeroPromptsClass,
@@ -29,9 +34,10 @@ import { localeDirection } from "@/lib/i18n/locale"
 import { cn } from "@/lib/utils"
 
 const SAMPLE_PROMPT_ICONS = {
-  "btc-signal": BitcoinIcon,
-  "market-pulse": ActivityIcon,
-  "key-levels": LayersIcon,
+  "btc-setup": BitcoinIcon,
+  "news-impact": NewspaperIcon,
+  "xau-macro": GemIcon,
+  "eth-liquidity": LayersIcon,
 } as const
 
 const SAMPLE_PROMPT_TAP_SLOP_PX = 8
@@ -71,7 +77,7 @@ function IrisSamplePromptCard({
 }) {
   const Icon =
     SAMPLE_PROMPT_ICONS[prompt.id as keyof typeof SAMPLE_PROMPT_ICONS] ??
-    ActivityIcon
+    NewspaperIcon
   const pointerStartRef = React.useRef<{ x: number; y: number } | null>(null)
 
   function handlePointerDown(event: React.PointerEvent<HTMLDivElement>) {

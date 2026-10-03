@@ -253,7 +253,7 @@ const chatSamplePromptCarouselDotsClass =
   "mt-2.5 [&_button]:bg-white/45 hover:[&_button]:bg-white/65 [&_button[aria-current=true]]:bg-white dark:[&_button]:bg-white/35 dark:hover:[&_button]:bg-white/55 dark:[&_button[aria-current=true]]:bg-white"
 
 const chatSamplePromptStaticListClass =
-  "mx-auto hidden w-full max-w-md grid-cols-1 gap-2 lg:grid"
+  "mx-auto hidden w-full max-w-2xl grid-cols-1 gap-2 lg:grid lg:grid-cols-2"
 
 /** Plain icon controls — 44pt hit target (HIG minimum). */
 const chatMobileComposerIconButtonClass =

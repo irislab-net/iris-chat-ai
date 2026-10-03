@@ -207,6 +207,16 @@ export function trackChatMessageFeedback(params?: {
   })
 }
 
+export function trackChatSignalWatchlist(params: {
+  symbol: string
+  side: "LONG" | "SHORT"
+}) {
+  trackEvent("chat_signal_watchlist", {
+    symbol: params.symbol,
+    side: params.side,
+  })
+}
+
 export function trackNewsArticleClick(params: {
   article_id: string
   source: string

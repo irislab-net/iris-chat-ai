@@ -1,9 +1,9 @@
 /* Modern marketing landing motion utilities. */
 
 .landing-modern {
-  /* Mono for numerals; falls back to IRIS Sans so fa/ar UI labels still render. */
+  /* Mono for numerals; falls back to Exur Sans so fa/ar UI labels still render. */
   --font-mono-modern: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
-    "Liberation Mono", var(--font-sans), "IRIS Sans", monospace;
+    "Liberation Mono", var(--font-sans), "Exur Sans", monospace;
   /* Same SF Pro / Roboto system stack as --font-sans. */
   --font-display: var(--font-sans);
 }

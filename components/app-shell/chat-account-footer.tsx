@@ -10,6 +10,10 @@ import {
 } from "@/components/app-shell/chat-account-avatar"
 import { AccountSignedInMenuSections } from "@/components/app-shell/chat-account-menu-sections"
 import { AccountPreferencesGroup } from "@/components/app-shell/chat-account-preferences"
+import {
+  ChatAccountSheet,
+  type AccountSheetView,
+} from "@/components/app-shell/chat-account-sheet"
 import { SfGearIcon } from "@/components/icons/sf-menu-icons"
 import { chatContextMenuContentClass } from "@/components/app-shell/chat-context-menu-styles"
 import {
@@ -134,6 +138,7 @@ function ChatAccountFooterSignedIn({
   logout: () => void | Promise<void>
 }) {
   const t = useTranslations("workspace")
+  const { login } = useAuth()
   const resolvedAvatarUrl = avatarUrl ?? null
   const rawPlan = displayPlanName(user.tier)
   const planName =
@@ -143,6 +148,14 @@ function ChatAccountFooterSignedIn({
         ? t("planUltimate")
         : t("planFree")
   const email = user.email?.trim()
+  const [sheetOpen, setSheetOpen] = React.useState(false)
+  const [sheetView, setSheetView] =
+    React.useState<AccountSheetView>("tradingProfile")
+
+  function openTradingProfile() {
+    setSheetView("tradingProfile")
+    setSheetOpen(true)
+  }
 
   return (
     <div
@@ -207,6 +220,7 @@ function ChatAccountFooterSignedIn({
             planName={planName}
             avatarUrl={resolvedAvatarUrl}
             onLogout={logout}
+            onOpenTradingProfile={openTradingProfile}
           />
         </DropdownMenuContent>
       </DropdownMenu>
@@ -220,6 +234,20 @@ function ChatAccountFooterSignedIn({
           {t("upgrade")}
         </Button>
       ) : null}
+      <ChatAccountSheet
+        open={sheetOpen}
+        onOpenChange={setSheetOpen}
+        initialView={sheetView}
+        user={user}
+        isProUser={isProUser}
+        planName={planName}
+        avatarUrl={resolvedAvatarUrl}
+        onLogout={logout}
+        onSwitchAccount={async () => {
+          await logout()
+          login({ source: "chat" })
+        }}
+      />
     </div>
   )
 }

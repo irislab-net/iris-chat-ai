@@ -1,4 +1,4 @@
-import type { ChatToolCallResult } from "@/lib/api/types"
+import type { ChatClientContext, ChatToolCallResult } from "@/lib/api/types"
 import {
   parseToolActionInput,
   chatRoleFromUser,
@@ -6,6 +6,7 @@ import {
 } from "@/lib/api/chat"
 import type { User } from "@/lib/api/types"
 import type { PaperTradeTicket } from "@/lib/chat/signal-ticket"
+import { readTradingProfile } from "@/lib/trading-profile"
 
 export const CHAT_FRONTEND_TOOLS = [
   "show_trade_signal",
@@ -150,16 +151,15 @@ export function buildChatClientContext(input: {
   isProUser?: boolean
   locale?: string
   timezone?: string
-}): {
-  active_page: ChatClientActivePage
-  active_symbol: string
-  role: string
-  locale?: string
-  timezone?: string
-  available_ui_actions: ChatFrontendTool[]
-} {
+  /** When omitted, reads the latest profile from localStorage (client-only). */
+  tradingProfile?: ReturnType<typeof readTradingProfile>
+}): ChatClientContext {
   const role = chatRoleFromUser(input.user, input.isProUser)
   const timezone = input.timezone?.trim() || resolveClientTimezone()
+  const tradingProfile =
+    input.tradingProfile !== undefined
+      ? input.tradingProfile
+      : readTradingProfile()
 
   return {
     active_page: "chat",
@@ -168,6 +168,7 @@ export function buildChatClientContext(input: {
     locale: input.locale,
     ...(timezone ? { timezone } : {}),
     available_ui_actions: resolveAvailableUiActions({ role }),
+    ...(tradingProfile ? { trading_profile: tradingProfile } : {}),
   }
 }
 

@@ -154,6 +154,14 @@ export type CoPilotEffort = "instant" | "medium" | "high"
 
 export type ChatApiEffort = "normal" | "high" | "ultimate"
 
+/** Client-only trading prefs — sent in `client_context`, never shown in chat UI. */
+export type ChatTradingProfileContext = {
+  experience_level: "beginner" | "intermediate" | "advanced"
+  country?: string
+  target_market: "crypto" | "forex" | "commodities" | "multi"
+  risk_tolerance: "low" | "medium" | "high"
+}
+
 export type ChatClientContext = {
   active_page: string
   active_symbol?: string
@@ -163,6 +171,8 @@ export type ChatClientContext = {
   available_ui_actions?: string[]
   capabilities?: string[]
   timeframe?: string
+  /** Silent personality prefs from localStorage — omitted when unset. */
+  trading_profile?: ChatTradingProfileContext
   open_positions?: Array<{
     id: string
     symbol: string
