@@ -387,3 +387,16 @@ export function getRetryUserMessage(
   const text = message.retryUserMessage?.trim()
   return text || null
 }
+
+/** User prompt immediately before an assistant turn (retry or regenerate). */
+export function getUserMessageBeforeAssistant(
+  messages: Array<{ id: string; role?: string; content?: string }>,
+  assistantId: string
+): string | null {
+  const index = messages.findIndex((message) => message.id === assistantId)
+  if (index <= 0) return null
+  const prior = messages[index - 1]
+  if (prior?.role !== "user") return null
+  const text = prior.content?.trim()
+  return text || null
+}

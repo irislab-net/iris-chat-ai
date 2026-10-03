@@ -85,6 +85,14 @@ import { useShellSidebarLayout } from "@/hooks/use-shell-sidebar-layout"
 import { useChatClientContext } from "@/hooks/use-chat-client-context"
 import { ActionTooltip } from "@/components/ui/action-tooltip"
 import { Button } from "@/components/ui/button"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { executeChatClientActions } from "@/lib/api/chat"
 import { submitChatMessageFeedback } from "@/lib/api/chat-feedback"
@@ -128,6 +136,7 @@ import {
 import { isValidWebSessionId, newWebSessionId } from "@/lib/web-session-id"
 import {
   getRetryUserMessage,
+  getUserMessageBeforeAssistant,
   isAbortError,
   isLowSignalUserMessage,
   prepareMessagesForRetry,
@@ -456,6 +465,9 @@ function ChatAside({
     })
   }, [])
   const [draft, setDraft] = React.useState("")
+  /** Draft text keyed by conversation — survives chat switches. */
+  const draftsByConversationRef = React.useRef<Record<string, string>>({})
+  const [editConfirmId, setEditConfirmId] = React.useState<string | null>(null)
   const [replyTarget, setReplyTarget] = React.useState<ChatReplyTarget | null>(
     null
   )
@@ -873,6 +885,10 @@ function ChatAside({
       })
     }
 
+    if (conversationId) {
+      draftsByConversationRef.current[conversationId] = draft
+    }
+
     const ownerId = chatOwnerId ?? getStoredGuestUserId()
     const id = ownerId ? await newWebSessionId(ownerId) : ""
     const blank = blankConversation(id)
@@ -880,7 +896,7 @@ function ChatAside({
     setConversationId(blank.id)
     setMessages(blank.messages)
     setHistory(blank.history)
-    setDraft("")
+    setDraft(draftsByConversationRef.current[blank.id] ?? "")
     setReplyTarget(null)
     setEffort(DEFAULT_CHAT_EFFORT)
     writeChatEffort(DEFAULT_CHAT_EFFORT)
@@ -895,6 +911,10 @@ function ChatAside({
     abortRef.current?.abort()
     abortRef.current = null
     setPendingAssistantId(null)
+
+    if (conversationId) {
+      draftsByConversationRef.current[conversationId] = draft
+    }
 
     if (hasUserMessages(messages) && id !== conversationId) {
       persistCurrent({
@@ -915,7 +935,7 @@ function ChatAside({
 
     applyStoredConversation(target)
     setConversations(store.conversations)
-    setDraft("")
+    setDraft(draftsByConversationRef.current[target.id] ?? "")
     setReplyTarget(null)
     closeHistoryPanelIfNeeded()
     writeChatStore(
@@ -1532,6 +1552,20 @@ function ChatAside({
 
   function handleEditUserMessage(messageId: string) {
     if (sending) return
+    const index = messages.findIndex((message) => message.id === messageId)
+    if (index < 0) return
+    const target = messages[index]
+    if (target.role !== "user" || !target.content.trim()) return
+    // Confirm when truncating later turns (ChatGPT keeps branches; we warn first).
+    if (index < messages.length - 1) {
+      setEditConfirmId(messageId)
+      return
+    }
+    applyEditUserMessage(messageId)
+  }
+
+  function applyEditUserMessage(messageId: string) {
+    if (sending) return
 
     const index = messages.findIndex((message) => message.id === messageId)
     if (index < 0) return
@@ -1542,6 +1576,7 @@ function ChatAside({
     abortRef.current = null
     setSending(false)
     setPendingAssistantId(null)
+    setEditConfirmId(null)
 
     const truncatedMessages = messages.slice(0, index)
     const truncatedHistory = truncateHistoryBeforeMessageIndex(
@@ -1842,6 +1877,54 @@ function ChatAside({
 
     // History for retry = API history before this failed turn (do not include partial).
     // Current `history` state was not advanced on failure — safe to reuse.
+    const historySnapshot = history
+    const assistantIndex = messages.findIndex((m) => m.id === assistantId)
+    const priorUser =
+      assistantIndex > 0 ? messages[assistantIndex - 1] : undefined
+    const optimisticUserId =
+      priorUser?.role === "user" ? priorUser.id : crypto.randomUUID()
+    const replyToId =
+      priorUser?.role === "user" ? priorUser.replyToId : undefined
+    setMessages(prepareMessagesForRetry(messages, assistantId))
+
+    await runAssistantRequest({
+      userMessage,
+      historySnapshot,
+      assistantId,
+      activeId,
+      optimisticUserId,
+      replyToId,
+    })
+  }
+
+  async function handleRegenerate(assistantId: string) {
+    if (sending || authLoading) return
+
+    let sendOwnerId: string | null = chatOwnerId
+    if (!isAuthenticated) {
+      if (guestUnavailable) return
+      if (guestTrialExhausted) {
+        setGuestTrialExhaustedOpen(true)
+        return
+      }
+      try {
+        const session = await ensureGuestSession()
+        sendOwnerId = session.user_id
+        setGuestOwnerId(session.user_id)
+      } catch {
+        return
+      }
+    } else if (!getStoredAccessToken()) {
+      login({ source: "chat" })
+      return
+    }
+
+    const userMessage =
+      getRetryUserMessage(messages.find((m) => m.id === assistantId)) ??
+      getUserMessageBeforeAssistant(messages, assistantId)
+    if (!userMessage || !sendOwnerId) return
+
+    const activeId = await ensureSendableConversationId(sendOwnerId)
     const historySnapshot = history
     const assistantIndex = messages.findIndex((m) => m.id === assistantId)
     const priorUser =
@@ -2379,6 +2462,9 @@ function ChatAside({
                               setDraft(text)
                               focusComposer()
                             }}
+                            onSend={(text: string) => {
+                              void handleSend(text)
+                            }}
                           />
                         </div>
                       </div>
@@ -2433,8 +2519,7 @@ function ChatAside({
                                 prompts={message.suggestedPrompts}
                                 disabled={sending}
                                 onSelect={(text) => {
-                                  setDraft(text)
-                                  focusComposer()
+                                  void handleSend(text)
                                 }}
                               />
                             ) : null}
@@ -2473,6 +2558,10 @@ function ChatAside({
                                 disabled={sending}
                                 variant={isMobileOverlay ? "gemini" : "default"}
                                 onEdit={() => handleEditUserMessage(message.id)}
+                                onReply={() => {
+                                  const target = replyTargetFromMessage(message)
+                                  if (target) setReplyTarget(target)
+                                }}
                               />
                             </div>
                           )
@@ -2579,6 +2668,18 @@ function ChatAside({
                                       assistantReplyTarget
                                         ? () =>
                                             setReplyTarget(assistantReplyTarget)
+                                        : undefined
+                                    }
+                                    onRegenerate={
+                                      !message.error &&
+                                      Boolean(
+                                        getUserMessageBeforeAssistant(
+                                          messages,
+                                          message.id
+                                        )
+                                      )
+                                        ? () =>
+                                            void handleRegenerate(message.id)
                                         : undefined
                                     }
                                   />
@@ -2776,6 +2877,36 @@ function ChatAside({
               void handleChatErrorRetry(retryMessage)
             }}
           />
+          <Dialog
+            open={editConfirmId !== null}
+            onOpenChange={(open) => {
+              if (!open) setEditConfirmId(null)
+            }}
+          >
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle>{t("editConfirmTitle")}</DialogTitle>
+                <DialogDescription>{t("editConfirmBody")}</DialogDescription>
+              </DialogHeader>
+              <DialogFooter className="gap-2 sm:gap-0">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setEditConfirmId(null)}
+                >
+                  {t("cancel")}
+                </Button>
+                <Button
+                  type="button"
+                  onClick={() => {
+                    if (editConfirmId) applyEditUserMessage(editConfirmId)
+                  }}
+                >
+                  {t("editConfirmAction")}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
           <GuestTrialExhaustedDialog
             open={guestTrialExhaustedOpen}
             onOpenChange={setGuestTrialExhaustedOpen}

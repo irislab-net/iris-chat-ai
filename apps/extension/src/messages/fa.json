@@ -950,7 +950,21 @@
       "title": "پاسخ کامل نشد",
       "dismiss": "بستن",
       "retrying": "در حال تلاش مجدد…"
-    }
+    },
+    "regenerate": "تولید مجدد",
+    "regenerateResponse": "تولید مجدد پاسخ",
+    "editConfirmTitle": "این پیام ویرایش شود؟",
+    "editConfirmBody": "پیام‌های بعدی این گفتگو حذف می‌شوند تا Exur از متن ویرایش‌شده دوباره پاسخ دهد.",
+    "editConfirmAction": "ویرایش و ادامه",
+    "assistantRawContent": "محتوای خام",
+    "assistantTablePreview": "پیش‌نمایش جدول",
+    "assistantLevelsPreview": "پیش‌نمایش سطوح",
+    "assistantFullView": "نمای کامل",
+    "assistantCopied": "کپی شد",
+    "signalCardCopyLevels": "کپی سطوح",
+    "composerPasteAttachmentMax": "حداکثر {count} فایل چسبانده‌شده می‌توانید پیوست کنید.",
+    "composerVoiceUnavailable": "ورودی صوتی در این مرورگر در دسترس نیست.",
+    "composerVoiceStop": "توقف شنیدن"
   },
   "billingPage": {
     "title": "پرداخت",

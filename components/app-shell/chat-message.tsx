@@ -261,18 +261,14 @@ function ChatAssistantTurn({
               durationSec={thinkingDurationSec}
             />
           ) : null}
-          {waiting && hasThinking ? null : (
-            <>
-              {replyTo ? <ChatMessageQuote quote={replyTo} /> : null}
-              {renderContent?.trim() ? (
-                <AIMessageRenderer
-                  content={renderContent}
-                  streaming={streaming}
-                />
-              ) : null}
-              {children}
-            </>
-          )}
+          {replyTo ? <ChatMessageQuote quote={replyTo} /> : null}
+          {renderContent?.trim() ? (
+            <AIMessageRenderer
+              content={renderContent}
+              streaming={streaming}
+            />
+          ) : null}
+          {children}
         </div>
       ) : null}
       {timestamp || toolbar ? (

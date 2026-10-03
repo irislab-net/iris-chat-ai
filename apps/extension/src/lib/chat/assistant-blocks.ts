@@ -88,16 +88,41 @@ export function segmentAssistantBlocks(
   let text = normalized.text
 
   if (normalized.residualBoxDrawing) {
-    return {
-      normalized,
-      blocks: [
-        {
-          type: "unknown",
-          raw: input,
-          reason: "residual-box-drawing",
-        },
-      ],
+    // Keep prose; isolate leftover box-drawing lines instead of nuking the turn.
+    const boxLine = /[├└┬┼┴│─┌┐┘┤┬║═╔╗╚╝╠╣╦╩╬]/
+    const lines = text.split("\n")
+    const softBlocks: AssistantBlock[] = []
+    let mdBuf: string[] = []
+    let boxBuf: string[] = []
+    const flushMd = () => {
+      const chunk = mdBuf.join("\n").trim()
+      if (chunk) softBlocks.push({ type: "markdown", text: chunk })
+      mdBuf = []
     }
+    const flushBox = () => {
+      if (boxBuf.length === 0) return
+      softBlocks.push({
+        type: "unknown",
+        raw: boxBuf.join("\n"),
+        reason: "residual-box-drawing",
+      })
+      boxBuf = []
+    }
+    for (const line of lines) {
+      if (boxLine.test(line)) {
+        flushMd()
+        boxBuf.push(line)
+      } else {
+        flushBox()
+        mdBuf.push(line)
+      }
+    }
+    flushMd()
+    flushBox()
+    if (softBlocks.length === 0) {
+      softBlocks.push({ type: "markdown", text: text || input })
+    }
+    return { normalized, blocks: softBlocks }
   }
 
   const blocks: AssistantBlock[] = []

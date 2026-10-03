@@ -417,20 +417,11 @@ const chatDesktopDialogFooterClass =
 const chatLoginConsentBrandMarkClass = `flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-full ${chatMobileGlassSurfaceClass} ${chatMobileHeaderShadowClass}`
 
 /**
- * Tools menu — iOS 26 thin Material popover (same family as context menus).
+ * Tools menu sizing on top of DropdownMenu liquid-glass defaults.
  * Sheet-tier continuous 34pt; nested rows concentric ≈ 20.
  */
-const chatMobileToolsMenuClass = [
-  "z-60 w-auto min-w-60 max-w-[min(100vw-1.5rem,20rem)]",
-  "overflow-hidden rounded-[28px] border-0 p-2.5",
-  "bg-white/55 text-foreground shadow-none ring-0",
-  "shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_90%,transparent),inset_0_0_0_1px_color-mix(in_oklch,var(--foreground)_7%,transparent),0_18px_52px_-18px_color-mix(in_oklch,var(--foreground)_18%,transparent)]",
-  "backdrop-blur-2xl backdrop-saturate-[180%]",
-  "supports-backdrop-filter:bg-white/40",
-  "dark:bg-[oklch(0.22_0_0_/0.82)]",
-  "dark:shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_12%,transparent),inset_0_0_0_1px_color-mix(in_oklch,white_8%,transparent),0_20px_56px_-18px_color-mix(in_oklch,black_50%,transparent)]",
-  "dark:supports-backdrop-filter:bg-[oklch(0.2_0_0_/0.62)]",
-].join(" ")
+const chatMobileToolsMenuClass =
+  "z-60 min-w-60 max-w-[min(100vw-1.5rem,20rem)]"
 
 /** Section label — Caption 2, sentence case (iOS 26). */
 const chatMobileToolsMenuLabelClass =

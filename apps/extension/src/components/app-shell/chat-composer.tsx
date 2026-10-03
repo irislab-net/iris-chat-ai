@@ -9,14 +9,21 @@ import {
   FileTextIcon,
   LineChartIcon,
   LockIcon,
-  PaperclipIcon,
+  MicIcon,
+  MicOffIcon,
   PlusIcon,
   SquareIcon,
   TrendingUpIcon,
   XIcon,
 } from "lucide-react"
+// Paperclip/upload stays out of the + menu until real file attach ships.
 import { useLocale, useTranslations } from "next-intl"
+import { toast } from "sonner"
 
+import {
+  chatContextMenuContentClass,
+  chatContextMenuItemClass,
+} from "@/components/app-shell/chat-context-menu-styles"
 import { ComposerPremiumToolsDialog } from "@/components/app-shell/composer-premium-tools-dialog"
 import { ActionTooltip } from "@/components/ui/action-tooltip"
 import { Button } from "@/components/ui/button"
@@ -134,7 +141,8 @@ function ChatComposer({
   isProUser = false,
 }: ChatComposerProps) {
   const t = useTranslations("workspace")
-  const textDir = localeDirection(useLocale())
+  const locale = useLocale()
+  const textDir = localeDirection(locale)
   const isDesktop = useIsDesktop()
   const isMobile = isDesktop === false
   const isFloating = layout === "floating"
@@ -145,17 +153,8 @@ function ChatComposer({
   const keyboardUnlockAllowedAtRef = React.useRef(0)
   const [uncontrolled, setUncontrolled] = React.useState("")
   const [premiumToolsOpen, setPremiumToolsOpen] = React.useState(false)
-  const [premiumToolsFeature, setPremiumToolsFeature] = React.useState<
-    "premium-tools" | "upload"
-  >("premium-tools")
 
   function openPremiumTools() {
-    setPremiumToolsFeature("premium-tools")
-    setPremiumToolsOpen(true)
-  }
-
-  function openLockedUpload() {
-    setPremiumToolsFeature("upload")
     setPremiumToolsOpen(true)
   }
 
@@ -242,26 +241,6 @@ function ChatComposer({
         <span className="flex min-w-0 flex-1 items-center gap-2 text-start">
           <span className={chatMobileToolsMenuItemTitleClass}>
             {t("composerToolVolatilityLabel")}
-          </span>
-          <LockIcon
-            className="ms-auto size-3.5 shrink-0 text-muted-foreground/70"
-            aria-hidden
-          />
-        </span>
-      </DropdownMenuItem>
-      <DropdownMenuItem
-        className={cn(
-          chatMobileToolsMenuItemClass,
-          "flex-row items-center gap-3 py-2.5"
-        )}
-        onClick={openLockedUpload}
-      >
-        <span className="flex size-9 shrink-0 items-center justify-center rounded-2xl bg-foreground/5 text-foreground dark:bg-white/8">
-          <PaperclipIcon className="size-4" aria-hidden />
-        </span>
-        <span className="flex min-w-0 flex-1 items-center gap-2 text-start">
-          <span className={chatMobileToolsMenuItemTitleClass}>
-            {t("composerToolUploadLabel")}
           </span>
           <LockIcon
             className="ms-auto size-3.5 shrink-0 text-muted-foreground/70"
@@ -371,13 +350,119 @@ function ChatComposer({
     () => parseMentionPalette(composerValue, cursor),
     [composerValue, cursor]
   )
+  const [mentionSuppressed, setMentionSuppressed] = React.useState(false)
+  const mentionPaletteKey = mentionPalette
+    ? `${mentionPalette.replaceStart}:${mentionPalette.query}`
+    : ""
+
+  React.useEffect(() => {
+    setMentionSuppressed(false)
+  }, [mentionPaletteKey])
 
   const mentionOptions = React.useMemo(
     () => (mentionPalette ? filterMentionOptions(mentionPalette.query) : []),
     [mentionPalette]
   )
 
-  const mentionOpen = Boolean(mentionPalette && mentionOptions.length > 0)
+  const mentionOpen = Boolean(
+    mentionPalette && mentionOptions.length > 0 && !mentionSuppressed
+  )
+  const activeMentionOptionId = mentionOptions[mentionIndex]?.id
+  const [listening, setListening] = React.useState(false)
+  const recognitionRef = React.useRef<{
+    stop: () => void
+    abort: () => void
+    start: () => void
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    onresult: ((event: any) => void) | null
+    onerror: (() => void) | null
+    onend: (() => void) | null
+    lang: string
+    continuous: boolean
+    interimResults: boolean
+  } | null>(null)
+
+  const speechSupported =
+    typeof window !== "undefined" &&
+    Boolean(
+      (
+        window as unknown as {
+          SpeechRecognition?: unknown
+          webkitSpeechRecognition?: unknown
+        }
+      ).SpeechRecognition ||
+        (
+          window as unknown as {
+            SpeechRecognition?: unknown
+            webkitSpeechRecognition?: unknown
+          }
+        ).webkitSpeechRecognition
+    )
+
+  function toggleVoiceInput() {
+    if (disabled || sending) return
+    type SpeechCtor = new () => NonNullable<typeof recognitionRef.current>
+    const Ctor =
+      (
+        window as unknown as {
+          SpeechRecognition?: SpeechCtor
+          webkitSpeechRecognition?: SpeechCtor
+        }
+      ).SpeechRecognition ||
+      (
+        window as unknown as {
+          SpeechRecognition?: SpeechCtor
+          webkitSpeechRecognition?: SpeechCtor
+        }
+      ).webkitSpeechRecognition
+    if (!Ctor) {
+      toast.message(t("composerVoiceUnavailable"))
+      return
+    }
+
+    if (listening && recognitionRef.current) {
+      recognitionRef.current.stop()
+      setListening(false)
+      return
+    }
+
+    const recognition = new Ctor()
+    recognition.lang = locale
+    recognition.continuous = false
+    recognition.interimResults = true
+    recognition.onresult = (event) => {
+      const result = event.results?.[event.results.length - 1]
+      const transcript = result?.[0]?.transcript?.trim()
+      if (!transcript || !result?.isFinal) return
+      const el = localRef.current
+      const start = el?.selectionStart ?? composerValue.length
+      const end = el?.selectionEnd ?? start
+      const spacer =
+        start > 0 && !/\s$/.test(composerValue.slice(0, start)) ? " " : ""
+      const next = `${composerValue.slice(0, start)}${spacer}${transcript}${composerValue.slice(end)}`
+      setValue(next)
+      placeCaret(start + spacer.length + transcript.length)
+    }
+    recognition.onerror = () => setListening(false)
+    recognition.onend = () => {
+      setListening(false)
+      recognitionRef.current = null
+    }
+    recognitionRef.current = recognition
+    try {
+      recognition.start()
+      setListening(true)
+    } catch {
+      setListening(false)
+      toast.message(t("composerVoiceUnavailable"))
+    }
+  }
+
+  React.useEffect(() => {
+    return () => {
+      recognitionRef.current?.abort()
+    }
+  }, [])
 
   React.useEffect(() => {
     if (!isFloating) return
@@ -507,7 +592,13 @@ function ChatComposer({
       return
     const text = event.clipboardData.getData("text/plain")
     if (!text || !shouldConvertPasteToAttachment(text)) return
-    if (pasteAttachments.length >= PASTE_ATTACHMENT_MAX) return
+    if (pasteAttachments.length >= PASTE_ATTACHMENT_MAX) {
+      event.preventDefault()
+      toast.message(
+        t("composerPasteAttachmentMax", { count: PASTE_ATTACHMENT_MAX })
+      )
+      return
+    }
     event.preventDefault()
     setPasteAttachments((prev) => [...prev, createPasteAttachment(text, prev)])
     requestAnimationFrame(syncFloatingComposerLayout)
@@ -615,6 +706,7 @@ function ChatComposer({
       }
       if (event.key === "Escape") {
         event.preventDefault()
+        setMentionSuppressed(true)
         return
       }
     }
@@ -660,12 +752,18 @@ function ChatComposer({
     >
       {mentionOpen ? (
         <div
+          id="composer-mention-listbox"
           className={cn(
             "absolute inset-x-3 bottom-full z-20 mb-2",
             chatMobileToolsMenuClass
           )}
           role="listbox"
           aria-label={t("composerMentionMenu")}
+          aria-activedescendant={
+            activeMentionOptionId
+              ? `composer-mention-${activeMentionOptionId}`
+              : undefined
+          }
         >
           <p className={chatMobileToolsMenuLabelClass}>
             {t("composerMentionMenu")}
@@ -675,6 +773,7 @@ function ChatComposer({
               <li key={option.id}>
                 <button
                   type="button"
+                  id={`composer-mention-${option.id}`}
                   data-mention-item=""
                   role="option"
                   aria-selected={index === mentionIndex}
@@ -865,6 +964,38 @@ function ChatComposer({
               />
             </div>
             <div className={chatMobileComposerTrailingClass}>
+              {speechSupported && !showStop ? (
+                <ActionTooltip
+                  label={
+                    listening ? t("composerVoiceStop") : t("composerVoiceInput")
+                  }
+                >
+                  <Button
+                    type="button"
+                    size="icon-sm"
+                    variant="ghost"
+                    aria-label={
+                      listening
+                        ? t("composerVoiceStop")
+                        : t("composerVoiceInput")
+                    }
+                    aria-pressed={listening}
+                    disabled={disabled}
+                    onClick={toggleVoiceInput}
+                    className={
+                      floatingComposerExpanded
+                        ? chatMobileComposerIconButtonClass
+                        : chatMobileComposerIconButtonCompactClass
+                    }
+                  >
+                    {listening ? (
+                      <MicOffIcon className="size-4.5" />
+                    ) : (
+                      <MicIcon className="size-4.5" />
+                    )}
+                  </Button>
+                </ActionTooltip>
+              ) : null}
               {showStop ? (
                 <ActionTooltip label={t("composerStopTitle")}>
                   <Button
@@ -1013,21 +1144,27 @@ function ChatComposer({
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
                   align="start"
-                  className="min-w-48 p-2.5"
                   side={isMobile ? "bottom" : "top"}
+                  sideOffset={8}
+                  showBackdrop
+                  backdropClassName="bg-black/8 supports-backdrop-filter:bg-black/[0.04] supports-backdrop-filter:backdrop-blur-xs dark:bg-black/30 dark:supports-backdrop-filter:bg-black/20"
+                  className={cn(chatContextMenuContentClass, "min-w-48")}
                 >
                   <DropdownMenuGroup>
                     {CHAT_EFFORT_OPTIONS.map((item) => (
                       <DropdownMenuItem
                         key={item.value}
-                        className="items-center gap-2.5 rounded-2xl px-3.5 py-2.5"
+                        className={cn(
+                          chatContextMenuItemClass,
+                          "items-center gap-2.5"
+                        )}
                         onClick={() => onEffortChange?.(item.value)}
                       >
                         <span className="flex min-w-0 flex-1 flex-col gap-0.5 text-start">
-                          <span className="text-[13px]">
+                          <span className="text-[15px] font-medium leading-5 tracking-[-0.016em]">
                             {t(`effort.${item.value}`)}
                           </span>
-                          <span className="text-[11px] text-muted-foreground">
+                          <span className="text-[13px] font-normal leading-4.5 tracking-[-0.006em] text-muted-foreground">
                             {t(`effort.${item.value}Hint`)}
                           </span>
                         </span>
@@ -1045,7 +1182,35 @@ function ChatComposer({
           </div>
         ) : null}
         {!isFloating ? (
-          <div className="flex items-center justify-end px-1 pb-0.5 [grid-area:trailing]">
+          <div className="flex items-center justify-end gap-1 px-1 pb-0.5 [grid-area:trailing]">
+            {speechSupported && !showStop ? (
+              <ActionTooltip
+                label={
+                  listening ? t("composerVoiceStop") : t("composerVoiceInput")
+                }
+              >
+                <Button
+                  type="button"
+                  size="icon"
+                  variant="ghost"
+                  aria-label={
+                    listening
+                      ? t("composerVoiceStop")
+                      : t("composerVoiceInput")
+                  }
+                  aria-pressed={listening}
+                  disabled={disabled}
+                  onClick={toggleVoiceInput}
+                  className={chatDesktopComposerIconButtonClass}
+                >
+                  {listening ? (
+                    <MicOffIcon className="size-4" />
+                  ) : (
+                    <MicIcon className="size-4" />
+                  )}
+                </Button>
+              </ActionTooltip>
+            ) : null}
             {showStop ? (
               <ActionTooltip label={t("composerStopTitle")}>
                 <Button
@@ -1089,7 +1254,7 @@ function ChatComposer({
         open={premiumToolsOpen}
         onOpenChange={setPremiumToolsOpen}
         isProUser={isProUser}
-        feature={premiumToolsFeature}
+        feature="premium-tools"
       />
     </form>
   )

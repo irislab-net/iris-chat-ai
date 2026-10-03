@@ -6,8 +6,23 @@ import { marked } from "marked"
 import { Streamdown } from "streamdown"
 import { code } from "@streamdown/code"
 import { CopyIcon, CheckIcon, Maximize2Icon } from "lucide-react"
+import { useTranslations } from "next-intl"
 
+import {
+  chatDesktopSearchDialogClass,
+  chatMobileSheetContentClass,
+  chatMobileSheetHandleClass,
+  chatMobileSheetHeaderClass,
+  chatMobileSheetTitleClass,
+} from "@/components/app-shell/chat-mobile-gemini-styles"
 import { Button } from "@/components/ui/button"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 import {
   Sheet,
   SheetContent,
@@ -15,6 +30,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet"
+import { useIsDesktop } from "@/hooks/use-media-query"
 import {
   segmentAssistantBlocks,
   tableExceedsPreviewThreshold,
@@ -182,6 +198,7 @@ function MarkdownBody({
 }
 
 function CopyButton({ value }: { value: string }) {
+  const t = useTranslations("workspace")
   const [copied, setCopied] = React.useState(false)
   return (
     <Button
@@ -198,7 +215,7 @@ function CopyButton({ value }: { value: string }) {
           // ignore
         }
       }}
-      aria-label={copied ? "Copied" : "Copy"}
+      aria-label={copied ? t("assistantCopied") : t("copy")}
     >
       {copied ? <CheckIcon /> : <CopyIcon />}
     </Button>
@@ -206,6 +223,7 @@ function CopyButton({ value }: { value: string }) {
 }
 
 function FallbackBlock({ raw, reason }: { raw: string; reason: string }) {
+  const t = useTranslations("workspace")
   return (
     <div
       data-assistant-fallback=""
@@ -214,7 +232,7 @@ function FallbackBlock({ raw, reason }: { raw: string; reason: string }) {
     >
       <div className="mb-2 flex items-center justify-between gap-2">
         <p className="text-[12px] font-medium tracking-wide text-muted-foreground uppercase">
-          Raw content
+          {t("assistantRawContent")}
         </p>
         <CopyButton value={raw} />
       </div>
@@ -236,43 +254,81 @@ function PreviewSheet({
   variant: "table" | "tree"
   animating?: boolean
 }) {
-  return (
-    <Sheet>
-      <div className="my-3 rounded-2xl border border-border/50 bg-foreground/3 p-3">
-        <div className="mb-2 flex items-center justify-between gap-2">
-          <p className="text-[13px] font-medium text-foreground/80">{title}</p>
-          <div className="flex items-center gap-1">
-            <CopyButton value={markdown} />
-            <SheetTrigger
-              render={
-                <Button type="button" variant="outline" size="xs" className="gap-1">
-                  <Maximize2Icon className="size-3.5" />
-                  Full view
-                </Button>
-              }
-            />
-          </div>
-        </div>
-        <div className="min-w-0">
-          <MarkdownBody
-            text={markdown}
-            animating={animating}
-            className={variant === "tree" ? treeClassName : proseClassName}
-          />
+  const t = useTranslations("workspace")
+  const isDesktop = useIsDesktop()
+  const bodyClass = variant === "tree" ? treeClassName : proseClassName
+  const trigger = (
+    <Button type="button" variant="outline" size="xs" className="gap-1">
+      <Maximize2Icon className="size-3.5" />
+      {t("assistantFullView")}
+    </Button>
+  )
+  const previewCard = (
+    <div className="my-3 rounded-2xl border border-border/45 bg-muted/25 p-1.5 shadow-none">
+      <div className="mb-1.5 flex min-h-7 items-center justify-between gap-2 px-0.5">
+        <p className="text-[13px] font-medium text-foreground/80">{title}</p>
+        <div className="flex items-center gap-1">
+          <CopyButton value={markdown} />
+          {isDesktop ? (
+            <DialogTrigger render={trigger} />
+          ) : (
+            <SheetTrigger render={trigger} />
+          )}
         </div>
       </div>
-      <SheetContent side="bottom" className="max-h-[85vh] gap-0 p-0">
-        <SheetHeader className="border-b border-border/50 px-4 py-3">
-          <div className="flex items-center justify-between gap-2 pr-8">
-            <SheetTitle>{title}</SheetTitle>
+      <div className="min-w-0 overflow-hidden rounded-xl border border-border/40 bg-background p-3.5">
+        <MarkdownBody
+          text={markdown}
+          animating={animating}
+          className={bodyClass}
+        />
+      </div>
+    </div>
+  )
+
+  if (isDesktop) {
+    return (
+      <Dialog>
+        {previewCard}
+        <DialogContent
+          className={cn(
+            chatDesktopSearchDialogClass,
+            "flex max-h-[min(85dvh,52rem)] w-full max-w-[min(56rem,calc(100%-2rem))] flex-col gap-0 overflow-hidden p-0 sm:max-w-[min(56rem,calc(100%-3rem))]"
+          )}
+          showCloseButton
+        >
+          <DialogHeader className="shrink-0 border-0 px-5 py-3.5 pe-14 text-start">
+            <div className="flex min-w-0 items-center justify-between gap-3">
+              <DialogTitle className="text-[17px] font-medium tracking-tight">
+                {title}
+              </DialogTitle>
+              <CopyButton value={markdown} />
+            </div>
+          </DialogHeader>
+          <div className="min-h-0 flex-1 overflow-y-auto px-5 py-4">
+            <MarkdownBody text={markdown} className={bodyClass} />
+          </div>
+        </DialogContent>
+      </Dialog>
+    )
+  }
+
+  return (
+    <Sheet>
+      {previewCard}
+      <SheetContent
+        side="bottom"
+        className={cn(chatMobileSheetContentClass, "flex flex-col p-0")}
+      >
+        <div className={chatMobileSheetHandleClass} aria-hidden />
+        <SheetHeader className={cn(chatMobileSheetHeaderClass, "shrink-0")}>
+          <div className="flex min-w-0 items-center justify-between gap-3">
+            <SheetTitle className={chatMobileSheetTitleClass}>{title}</SheetTitle>
             <CopyButton value={markdown} />
           </div>
         </SheetHeader>
-        <div className="min-h-0 flex-1 overflow-y-auto px-4 py-4">
-          <MarkdownBody
-            text={markdown}
-            className={variant === "tree" ? treeClassName : proseClassName}
-          />
+        <div className="min-h-0 flex-1 overflow-y-auto px-5 pt-2 pb-[max(1rem,env(safe-area-inset-bottom,0px))]">
+          <MarkdownBody text={markdown} className={bodyClass} />
         </div>
       </SheetContent>
     </Sheet>
@@ -286,6 +342,7 @@ function BlockView({
   block: AssistantBlock
   animating?: boolean
 }) {
+  const t = useTranslations("workspace")
   switch (block.type) {
     case "markdown":
       return <MarkdownBody text={block.text} animating={animating} />
@@ -304,7 +361,7 @@ function BlockView({
       if (tableExceedsPreviewThreshold(block.markdown)) {
         return (
           <PreviewSheet
-            title="Table preview"
+            title={t("assistantTablePreview")}
             markdown={block.markdown}
             variant="table"
             animating={animating}
@@ -316,7 +373,7 @@ function BlockView({
       if (treeExceedsPreviewThreshold(block.markdown)) {
         return (
           <PreviewSheet
-            title="Levels preview"
+            title={t("assistantLevelsPreview")}
             markdown={block.markdown}
             variant="tree"
             animating={animating}

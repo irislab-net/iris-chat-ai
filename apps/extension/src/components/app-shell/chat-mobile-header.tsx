@@ -9,7 +9,10 @@ import { AttentionPulseDot } from "@/components/app-shell/attention-pulse-dot"
 import { ChatGeminiMenuIcon } from "@/components/app-shell/chat-gemini-menu-icon"
 import { ChatGeminiNewChatIcon } from "@/components/app-shell/chat-gemini-new-chat-icon"
 
-import { chatContextMenuContentClass } from "@/components/app-shell/chat-context-menu-styles"
+import {
+  chatContextMenuContentClass,
+  chatContextMenuItemClass,
+} from "@/components/app-shell/chat-context-menu-styles"
 import {
   chatMobileHeaderButtonClass,
   chatMobileHeaderModelClass,
@@ -122,20 +125,25 @@ function ChatMobileHeader({
           <DropdownMenuContent
             align="start"
             sideOffset={8}
-            className={cn(chatContextMenuContentClass, "min-w-44 p-3.5")}
+            showBackdrop
+            backdropClassName="bg-black/8 supports-backdrop-filter:bg-black/[0.04] supports-backdrop-filter:backdrop-blur-xs dark:bg-black/30 dark:supports-backdrop-filter:bg-black/20"
+            className={cn(chatContextMenuContentClass, "min-w-48")}
           >
             <DropdownMenuGroup>
               {CHAT_EFFORT_OPTIONS.map((item) => (
                 <DropdownMenuItem
                   key={item.value}
-                  className="items-center gap-2.5 rounded-2xl px-3.5 py-2.5"
+                  className={cn(
+                    chatContextMenuItemClass,
+                    "items-center gap-2.5"
+                  )}
                   onClick={() => onEffortChange(item.value)}
                 >
                   <span className="flex min-w-0 flex-1 flex-col gap-0.5 text-start">
-                    <span className="text-[13px] font-medium">
+                    <span className="text-[15px] font-medium leading-5 tracking-[-0.016em]">
                       {t(`effort.${item.value}`)}
                     </span>
-                    <span className="text-[11px] text-muted-foreground">
+                    <span className="text-[13px] font-normal leading-4.5 tracking-[-0.006em] text-muted-foreground">
                       {t(`effort.${item.value}Hint`)}
                     </span>
                   </span>

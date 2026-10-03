@@ -3,7 +3,9 @@
 import * as React from "react"
 import {
   BookmarkIcon,
+  CheckIcon,
   ClockIcon,
+  CopyIcon,
   CrosshairIcon,
   FlagIcon,
   HexagonIcon,
@@ -15,6 +17,7 @@ import {
   type LucideIcon,
 } from "lucide-react"
 import { useTranslations } from "next-intl"
+import { toast } from "sonner"
 
 import {
   chatSignalCardChipClass,
@@ -34,6 +37,7 @@ import { useAuth } from "@/components/auth/auth-provider"
 import { Button } from "@/components/ui/button"
 import { trackChatSignalWatchlist } from "@/lib/analytics"
 import { signalRewardRiskRatio } from "@/lib/chat/signal-setup"
+import { buildSignalShareText } from "@/lib/chat/signal-share"
 import { formatTradePrice } from "@/lib/chat/trade-signal"
 import type { PaperTradeTicket } from "@/lib/chat/signal-ticket"
 import { cn } from "@/lib/utils"
@@ -163,6 +167,12 @@ function ChatSignalCard({
   const t = useTranslations("workspace")
   const { isProUser } = useAuth()
   const [premiumOpen, setPremiumOpen] = React.useState(false)
+  const [levelsCopied, setLevelsCopied] = React.useState(false)
+  const levelsCopyTimerRef = React.useRef(0)
+
+  React.useEffect(() => {
+    return () => window.clearTimeout(levelsCopyTimerRef.current)
+  }, [])
   const isLong = ticket.side === "LONG"
   const isNeutral = tone === "neutral"
   const SideIcon = isLong ? TrendingUpIcon : TrendingDownIcon
@@ -186,6 +196,25 @@ function ChatSignalCard({
       side: ticket.side,
     })
     setPremiumOpen(true)
+  }
+
+  async function onCopyLevels() {
+    const text = buildSignalShareText(ticket, {
+      entry: t("signalCardEntry"),
+      stopLoss: t("signalCardStopLoss"),
+      target: t("signalCardTakeProfit"),
+    })
+    try {
+      await navigator.clipboard.writeText(text)
+      setLevelsCopied(true)
+      window.clearTimeout(levelsCopyTimerRef.current)
+      levelsCopyTimerRef.current = window.setTimeout(
+        () => setLevelsCopied(false),
+        1600
+      )
+    } catch {
+      toast.message(t("signalShareCopyFailed"))
+    }
   }
 
   const priceColumns: PriceColumn[] = [
@@ -347,6 +376,27 @@ function ChatSignalCard({
 
         {!proseSkeleton ? (
           <div className="flex flex-wrap items-center justify-center gap-1">
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="h-7 gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground"
+              aria-label={
+                levelsCopied
+                  ? t("signalShareCopied")
+                  : t("signalCardCopyLevels")
+              }
+              onClick={() => void onCopyLevels()}
+            >
+              {levelsCopied ? (
+                <CheckIcon className="size-3.5" />
+              ) : (
+                <CopyIcon className="size-3.5" />
+              )}
+              {levelsCopied
+                ? t("signalShareCopied")
+                : t("signalCardCopyLevels")}
+            </Button>
             <Button
               type="button"
               variant="ghost"

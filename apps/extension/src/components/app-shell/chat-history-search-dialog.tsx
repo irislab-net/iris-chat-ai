@@ -38,6 +38,31 @@ function chatTitle(chat: StoredConversation, fallback: string) {
   return chat.title
 }
 
+function chatMessageHaystack(chat: StoredConversation) {
+  return chat.messages
+    .map((message) => message.content?.trim() ?? "")
+    .filter(Boolean)
+    .join("\n")
+    .toLocaleLowerCase()
+}
+
+function chatSnippet(chat: StoredConversation, query: string): string | null {
+  const q = normalizeQuery(query)
+  if (!q) return null
+  for (const message of chat.messages) {
+    const content = message.content?.trim() ?? ""
+    if (!content) continue
+    const lower = content.toLocaleLowerCase()
+    const at = lower.indexOf(q)
+    if (at < 0) continue
+    const start = Math.max(0, at - 28)
+    const end = Math.min(content.length, at + q.length + 48)
+    const slice = content.slice(start, end).replace(/\s+/g, " ").trim()
+    return `${start > 0 ? "…" : ""}${slice}${end < content.length ? "…" : ""}`
+  }
+  return null
+}
+
 function ChatHistorySearchDialogBody({
   conversations,
   onSelect,
@@ -62,9 +87,11 @@ function ChatHistorySearchDialogBody({
   const results = React.useMemo(() => {
     const q = normalizeQuery(query)
     if (!q) return sorted
-    return sorted.filter((chat) =>
-      normalizeQuery(chatTitle(chat, t("newChat"))).includes(q)
-    )
+    return sorted.filter((chat) => {
+      const titleHit = normalizeQuery(chatTitle(chat, t("newChat"))).includes(q)
+      if (titleHit) return true
+      return chatMessageHaystack(chat).includes(q)
+    })
   }, [query, sorted, t])
 
   const highlightIndex =
@@ -231,6 +258,7 @@ function ChatHistorySearchDialogBody({
             <ul className="flex min-w-0 flex-col gap-1" role="listbox">
               {results.map((chat, index) => {
                 const title = chatTitle(chat, t("newChat"))
+                const snippet = chatSnippet(chat, query)
                 const highlighted = index === highlightIndex
                 return (
                   <li
@@ -243,13 +271,21 @@ function ChatHistorySearchDialogBody({
                     <Button
                       type="button"
                       variant="ghost"
-                      className="h-10 w-full min-w-0 justify-start gap-2.5 overflow-hidden rounded-lg border-0 bg-transparent px-2.5 text-sm font-normal text-foreground shadow-none hover:bg-transparent hover:text-foreground dark:hover:bg-transparent"
+                      className={cn(
+                        "w-full min-w-0 justify-start gap-2.5 overflow-hidden rounded-lg border-0 bg-transparent px-2.5 text-sm font-normal text-foreground shadow-none hover:bg-transparent hover:text-foreground dark:hover:bg-transparent",
+                        snippet ? "h-auto min-h-10 py-2" : "h-10"
+                      )}
                       onClick={() => selectChat(chat.id)}
                       onMouseEnter={() => setActiveIndex(index)}
                     >
                       <MessageSquareIcon className="size-4 shrink-0 text-muted-foreground" />
-                      <span className="min-w-0 flex-1 truncate text-start">
-                        {title}
+                      <span className="flex min-w-0 flex-1 flex-col items-start gap-0.5 text-start">
+                        <span className="w-full truncate">{title}</span>
+                        {snippet ? (
+                          <span className="w-full truncate text-[11px] text-muted-foreground">
+                            {snippet}
+                          </span>
+                        ) : null}
                       </span>
                     </Button>
                   </li>

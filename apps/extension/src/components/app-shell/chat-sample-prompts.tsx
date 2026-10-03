@@ -24,6 +24,7 @@ import {
   CarouselDots,
   CarouselItem,
 } from "@/components/ui/carousel"
+import { Button } from "@/components/ui/button"
 import { IRIS_SAMPLE_PROMPTS } from "@/lib/chat/sample-prompts"
 import { localeDirection } from "@/lib/i18n/locale"
 import { cn } from "@/lib/utils"
@@ -63,24 +64,24 @@ function IrisSamplePromptCard({
   prompt,
   usePromptLabel,
   disabled,
-  onEdit,
+  onActivate,
 }: {
   prompt: LocalizedSamplePrompt
   usePromptLabel: string
   disabled?: boolean
-  onEdit: (text: string) => void
+  onActivate: (text: string) => void
 }) {
   const Icon =
     SAMPLE_PROMPT_ICONS[prompt.id as keyof typeof SAMPLE_PROMPT_ICONS] ??
     ActivityIcon
   const pointerStartRef = React.useRef<{ x: number; y: number } | null>(null)
 
-  function handlePointerDown(event: React.PointerEvent<HTMLDivElement>) {
+  function handlePointerDown(event: React.PointerEvent<HTMLButtonElement>) {
     if (disabled) return
     pointerStartRef.current = { x: event.clientX, y: event.clientY }
   }
 
-  function handlePointerUp(event: React.PointerEvent<HTMLDivElement>) {
+  function handlePointerUp(event: React.PointerEvent<HTMLButtonElement>) {
     const start = pointerStartRef.current
     pointerStartRef.current = null
     if (!start || disabled) return
@@ -88,32 +89,24 @@ function IrisSamplePromptCard({
     const dx = Math.abs(event.clientX - start.x)
     const dy = Math.abs(event.clientY - start.y)
     if (dx <= SAMPLE_PROMPT_TAP_SLOP_PX && dy <= SAMPLE_PROMPT_TAP_SLOP_PX) {
-      onEdit(prompt.text)
+      onActivate(prompt.text)
     }
   }
 
   return (
-    <div
-      role="button"
-      tabIndex={disabled ? -1 : 0}
-      aria-disabled={disabled || undefined}
+    <Button
+      type="button"
+      variant="ghost"
+      disabled={disabled}
       aria-label={usePromptLabel}
       className={cn(
         chatSamplePromptButtonClass,
-        "cursor-pointer select-none",
-        disabled && "pointer-events-none opacity-50"
+        "h-auto cursor-pointer select-none whitespace-normal"
       )}
       onPointerDown={handlePointerDown}
       onPointerUp={handlePointerUp}
       onPointerCancel={() => {
         pointerStartRef.current = null
-      }}
-      onKeyDown={(event) => {
-        if (disabled) return
-        if (event.key === "Enter" || event.key === " ") {
-          event.preventDefault()
-          onEdit(prompt.text)
-        }
       }}
       onPointerEnter={() => {
         void import("@/lib/chat/parse-trade-setup")
@@ -130,17 +123,21 @@ function IrisSamplePromptCard({
           </span>
         </span>
       </span>
-    </div>
+    </Button>
   )
 }
 
 export function IrisSamplePrompts({
   disabled,
   onEdit,
+  onSend,
 }: {
   disabled?: boolean
   onEdit: (text: string) => void
+  /** When set, tap sends immediately (ChatGPT/Gemini-style). */
+  onSend?: (text: string) => void
 }) {
+  const activate = onSend ?? onEdit
   const t = useTranslations("workspace")
   const textDir = localeDirection(useLocale())
   const reduceMotion = React.useSyncExternalStore(
@@ -184,7 +181,7 @@ export function IrisSamplePrompts({
               title: prompt.title,
             })}
             disabled={disabled}
-            onEdit={onEdit}
+            onActivate={activate}
           />
         ))}
       </div>
@@ -213,7 +210,7 @@ export function IrisSamplePrompts({
                   title: prompt.title,
                 })}
                 disabled={disabled}
-                onEdit={onEdit}
+                onActivate={activate}
               />
             </CarouselItem>
           ))}

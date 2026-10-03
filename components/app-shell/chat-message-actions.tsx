@@ -4,6 +4,7 @@ import * as React from "react"
 import {
   CheckIcon,
   CopyIcon,
+  RefreshCwIcon,
   ReplyIcon,
   ThumbsDownIcon,
   ThumbsUpIcon,
@@ -38,6 +39,7 @@ type ChatMessageActionsProps = {
   feedback?: ChatMessageFeedback
   onFeedbackChange: (feedback: ChatMessageFeedback | undefined) => void
   onReply?: () => void
+  onRegenerate?: () => void
   disabled?: boolean
   className?: string
   variant?: "default" | "gemini"
@@ -52,6 +54,7 @@ function ChatMessageActions({
   feedback,
   onFeedbackChange,
   onReply,
+  onRegenerate,
   disabled,
   className,
   variant = "default",
@@ -122,6 +125,23 @@ function ChatMessageActions({
           </Button>
         </ActionTooltip>
       ) : null}
+      <ActionTooltip label={copied ? t("copied") : t("copy")}>
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon-sm"
+          className={buttonClass}
+          aria-label={copied ? t("copiedResponse") : t("copyResponse")}
+          disabled={disabled || !canCopy}
+          onClick={() => void onCopy()}
+        >
+          {copied ? (
+            <CheckIcon className={isGemini ? "size-4.5" : undefined} />
+          ) : (
+            <CopyIcon className={isGemini ? "size-4.5" : undefined} />
+          )}
+        </Button>
+      </ActionTooltip>
       {canShareCard ? (
         <ActionTooltip label={t("share")}>
           <Button
@@ -136,25 +156,22 @@ function ChatMessageActions({
             <IosShareIcon className={isGemini ? "size-4.5" : "size-4"} />
           </Button>
         </ActionTooltip>
-      ) : (
-        <ActionTooltip label={copied ? t("copied") : t("copy")}>
+      ) : null}
+      {onRegenerate ? (
+        <ActionTooltip label={t("regenerate")}>
           <Button
             type="button"
             variant="ghost"
             size="icon-sm"
             className={buttonClass}
-            aria-label={copied ? t("copiedResponse") : t("copyResponse")}
-            disabled={disabled || !canCopy}
-            onClick={() => void onCopy()}
+            aria-label={t("regenerateResponse")}
+            disabled={disabled}
+            onClick={onRegenerate}
           >
-            {copied ? (
-              <CheckIcon className={isGemini ? "size-4.5" : undefined} />
-            ) : (
-              <CopyIcon className={isGemini ? "size-4.5" : undefined} />
-            )}
+            <RefreshCwIcon className={isGemini ? "size-4.5" : undefined} />
           </Button>
         </ActionTooltip>
-      )}
+      ) : null}
       <ActionTooltip label={t("helpful")}>
         <Button
           type="button"

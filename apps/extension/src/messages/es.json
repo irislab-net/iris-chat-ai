@@ -650,6 +650,20 @@
       "title": "No se pudo completar la respuesta",
       "dismiss": "Cerrar",
       "retrying": "Reintentando…"
-    }
+    },
+    "regenerate": "Regenerate",
+    "regenerateResponse": "Regenerate response",
+    "editConfirmTitle": "Edit this message?",
+    "editConfirmBody": "Later messages in this chat will be removed so Exur can reply from your edited prompt.",
+    "editConfirmAction": "Edit and continue",
+    "assistantRawContent": "Raw content",
+    "assistantTablePreview": "Table preview",
+    "assistantLevelsPreview": "Levels preview",
+    "assistantFullView": "Full view",
+    "assistantCopied": "Copied",
+    "signalCardCopyLevels": "Copy levels",
+    "composerPasteAttachmentMax": "You can attach up to {count} pasted files.",
+    "composerVoiceUnavailable": "Voice input isn’t available in this browser.",
+    "composerVoiceStop": "Stop listening"
   }
 }

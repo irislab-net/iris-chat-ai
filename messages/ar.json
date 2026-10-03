@@ -973,7 +973,21 @@
       "title": "تعذّر إكمال الرد",
       "dismiss": "إغلاق",
       "retrying": "إعادة المحاولة…"
-    }
+    },
+    "regenerate": "إعادة التوليد",
+    "regenerateResponse": "إعادة توليد الرد",
+    "editConfirmTitle": "هل تريد تعديل هذه الرسالة؟",
+    "editConfirmBody": "ستُحذف الرسائل اللاحقة في هذه المحادثة ليرد Exur من النص المعدَّل.",
+    "editConfirmAction": "تعديل ومتابعة",
+    "assistantRawContent": "محتوى خام",
+    "assistantTablePreview": "معاينة الجدول",
+    "assistantLevelsPreview": "معاينة المستويات",
+    "assistantFullView": "عرض كامل",
+    "assistantCopied": "تم النسخ",
+    "signalCardCopyLevels": "نسخ المستويات",
+    "composerPasteAttachmentMax": "يمكنك إرفاق ما يصل إلى {count} ملفات ملصوقة.",
+    "composerVoiceUnavailable": "الإدخال الصوتي غير متاح في هذا المتصفح.",
+    "composerVoiceStop": "إيقاف الاستماع"
   },
   "billingPage": {
     "title": "الفوترة",
