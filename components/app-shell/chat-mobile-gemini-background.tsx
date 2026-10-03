@@ -97,8 +97,9 @@ function ChatMobileGeminiBackground({
       {isHero ? (
         <div
           className={cn(
-            "absolute inset-x-0 bottom-0 bg-linear-to-b from-transparent via-white/70 to-white dark:via-background/70 dark:to-background",
-            isBlue ? "h-[30%] sm:h-[34%]" : "h-[36%] sm:h-[40%]"
+            "absolute inset-x-0 bottom-0 bg-linear-to-b from-transparent via-white/78 to-white dark:via-background/78 dark:to-background",
+            /* Taller fade under compose so the blue mesh doesn’t halo chat bubbles. */
+            isBlue ? "h-[42%] sm:h-[46%]" : "h-[36%] sm:h-[40%]"
           )}
         />
       ) : (

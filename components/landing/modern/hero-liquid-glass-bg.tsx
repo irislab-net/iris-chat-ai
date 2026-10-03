@@ -14,7 +14,7 @@ export function HeroLiquidGlassBg({
   return (
     <div
       aria-hidden
-      className="pointer-events-none absolute inset-0 z-0 overflow-hidden rounded-[2.5rem]"
+      className="pointer-events-none absolute inset-0 z-0 overflow-hidden rounded-[inherit]"
     >
       <ChatMobileGeminiBackground
         variant="hero"
@@ -23,8 +23,12 @@ export function HeroLiquidGlassBg({
         intro
         tone={tone}
       />
-      <div className="absolute inset-0 bg-white/12 backdrop-blur-[1px] dark:bg-black/15" />
-      <div className="absolute inset-x-[10%] top-0 h-px bg-linear-to-r from-transparent via-white to-transparent opacity-90 dark:via-white/40" />
+      {/*
+        Soft frost wash only — no second backdrop-filter.
+        The outer hero shell already blurs; stacking another blur + 1px rim
+        was painting hard fringes and “cut” corners on mobile.
+      */}
+      <div className="absolute inset-0 bg-white/14 dark:bg-black/14" />
     </div>
   )
 }

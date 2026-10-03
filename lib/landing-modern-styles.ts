@@ -72,8 +72,12 @@ export const landingCardRadius = "rounded-[2.5rem]"
 
 export const landingCardShell = `relative isolate overflow-visible ${landingCardRadius}`
 
-/** Hero card — no overflow clip so compose bubble shadows stay visible. */
-export const landingHeroCard = `relative isolate ${landingCardRadius} mt-3 mb-6 sm:mt-5 sm:mb-0`
+/**
+ * Hero card — clip to radius so backdrop-filter / mesh don't paint square
+ * fringes (WebKit). Compose sits inside with enough inset that soft shadows
+ * still read; blue mesh bleed is no longer relied on as "glow".
+ */
+export const landingHeroCard = `relative isolate overflow-hidden ${landingCardRadius} mt-3 mb-6 sm:mt-5 sm:mb-0`
 
 export const landingFooterCard = `${landingCardShell} mb-3 sm:mb-5 lg:mb-8`
 
@@ -97,10 +101,10 @@ export const landingSurfaceMuted = "bg-muted"
 
 /** Liquid glass surface — shared sheen + depth (no borders). */
 export const landingGlassSurface =
-  "relative isolate overflow-visible bg-white/38 backdrop-blur-2xl shadow-[0_16px_48px_rgba(15,23,42,0.08),inset_0_1px_1px_rgba(255,255,255,0.92),inset_0_-1px_2px_rgba(255,255,255,0.28)] dark:bg-white/8 dark:shadow-[0_16px_48px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.12),inset_0_-1px_2px_rgba(255,255,255,0.04)]"
+  "relative isolate overflow-visible bg-white/62 backdrop-blur-2xl shadow-[0_10px_28px_rgba(15,23,42,0.07),inset_0_1px_1px_rgba(255,255,255,0.92),inset_0_-1px_2px_rgba(255,255,255,0.28)] dark:bg-white/10 dark:shadow-[0_10px_28px_rgba(0,0,0,0.38),inset_0_1px_1px_rgba(255,255,255,0.12),inset_0_-1px_2px_rgba(255,255,255,0.04)]"
 
 /** Frosted glass pill — hero composer */
-export const landingGlassPill = `${landingGlassSurface} rounded-full bg-white/44 shadow-[0_20px_56px_rgba(15,23,42,0.09),inset_0_1px_1px_rgba(255,255,255,0.96),inset_0_-1px_2px_rgba(255,255,255,0.3)] dark:bg-white/10 dark:shadow-[0_20px_56px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.14),inset_0_-1px_2px_rgba(255,255,255,0.04)]`
+export const landingGlassPill = `${landingGlassSurface} rounded-full bg-white/72 shadow-[0_12px_32px_rgba(15,23,42,0.08),inset_0_1px_1px_rgba(255,255,255,0.96),inset_0_-1px_2px_rgba(255,255,255,0.3)] dark:bg-white/12 dark:shadow-[0_12px_32px_rgba(0,0,0,0.38),inset_0_1px_1px_rgba(255,255,255,0.14),inset_0_-1px_2px_rgba(255,255,255,0.04)]`
 
 export const landingGlassSheen =
   "pointer-events-none absolute inset-0 bg-[linear-gradient(145deg,rgba(255,255,255,0.72)_0%,rgba(255,255,255,0.18)_38%,rgba(255,255,255,0.04)_62%,rgba(255,255,255,0)_100%)] dark:bg-[linear-gradient(145deg,rgba(255,255,255,0.16)_0%,rgba(255,255,255,0.05)_38%,rgba(255,255,255,0.02)_62%,transparent_100%)]"
@@ -124,14 +128,19 @@ export const landingGlassBlueSheen =
 /** Circular liquid-glass chip — chat avatars beside hero bubbles. */
 export const landingGlassOrb = `${landingGlassSurface} inline-flex size-8 items-center justify-center rounded-full bg-white/52 shadow-[0_10px_28px_rgba(15,23,42,0.08),inset_0_1px_1px_rgba(255,255,255,0.96),inset_0_-1px_2px_rgba(255,255,255,0.32)] dark:bg-white/10 dark:shadow-[0_10px_28px_rgba(0,0,0,0.35),inset_0_1px_1px_rgba(255,255,255,0.12),inset_0_-1px_2px_rgba(255,255,255,0.04)]`
 
-export const landingGlassBubbleUser = `${landingGlassSurface} rounded-3xl rounded-br-md bg-white/48 dark:bg-white/10`
+export const landingGlassBubbleUser = `${landingGlassSurface} rounded-3xl rounded-br-md bg-white/74 dark:bg-white/12`
 
-export const landingGlassBubbleAi = `${landingGlassSurface} rounded-3xl rounded-tl-md bg-white/52 dark:bg-white/10`
+export const landingGlassBubbleAi = `${landingGlassSurface} rounded-3xl rounded-tl-md bg-white/78 dark:bg-white/12`
 
-export const landingGlassBubbleThinking = `${landingGlassSurface} rounded-3xl rounded-tl-md bg-white/46 dark:bg-white/8`
+export const landingGlassBubbleThinking = `${landingGlassSurface} rounded-3xl rounded-tl-md bg-white/70 dark:bg-white/10`
 
+/**
+ * Frosted hero / marketing glass plate.
+ * `overflow-hidden` is required so `backdrop-blur` follows `border-radius`
+ * instead of leaving a hard rectangular fringe on mobile WebKit.
+ */
 export const landingHeroGlass =
-  "relative flex min-h-[30rem] flex-col bg-white/40 text-foreground shadow-[0_28px_80px_rgba(15,23,42,0.07)] backdrop-blur-2xl dark:bg-white/6 dark:shadow-[0_28px_80px_rgba(0,0,0,0.45)] sm:min-h-[32rem] lg:min-h-[36rem]"
+  "relative flex min-h-[30rem] flex-col overflow-hidden bg-white/48 text-foreground shadow-[0_28px_80px_rgba(15,23,42,0.07)] backdrop-blur-2xl dark:bg-white/8 dark:shadow-[0_28px_80px_rgba(0,0,0,0.45)] sm:min-h-[32rem] lg:min-h-[36rem]"
 
 /**
  * Compose block — fixed rows + gaps (no layout shift).

@@ -126,7 +126,7 @@ function SharePreviewCard({
         colorScheme: "light",
         backgroundColor: SIGNAL_SHARE_CARD_BG,
         backgroundImage:
-          "radial-gradient(120% 80% at 0% 0%, rgba(245,158,11,0.18), transparent 55%), radial-gradient(90% 60% at 100% 0%, rgba(37,99,235,0.1), transparent 50%)",
+          "radial-gradient(120% 80% at 0% 0%, rgba(245,158,11,0.16), transparent 55%), radial-gradient(80% 50% at 100% 0%, rgba(15,23,42,0.04), transparent 52%)",
       }}
     >
       <header className="px-4 pt-4 pb-3">
