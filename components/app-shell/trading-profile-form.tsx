@@ -17,9 +17,9 @@ import { useLocale, useTranslations } from "next-intl"
 
 import { Button } from "@/components/ui/button"
 import {
-  chatAccentSecondaryFillClass,
   chatComposerLiquidSheetRowClass,
   chatComposerLiquidSheetRowIconClass,
+  chatMobilePrimaryButtonClass,
   chatMobileSheetFooterBarClass,
   chatMobileSheetPrimaryButtonClass,
 } from "@/components/app-shell/chat-mobile-gemini-styles"
@@ -349,11 +349,11 @@ function TradingProfileForm({
           aria-label={common("done")}
           title={common("done")}
           className={cn(
-            chatAccentSecondaryFillClass,
-            "chat-ios26-liquid-glass relative isolate size-10 shrink-0 overflow-hidden rounded-full border-0 px-0 hover:bg-transparent"
+            chatMobilePrimaryButtonClass,
+            "chat-ios26-liquid-glass relative isolate size-9 shrink-0 overflow-hidden rounded-full px-0 text-white hover:text-white"
           )}
         >
-          <SfCheckIcon className="size-5" strokeWidth={2.6} />
+          <SfCheckIcon className="size-4.5 stroke-[2.4] text-white" />
         </Button>
       </div>
 

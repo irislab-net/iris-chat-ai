@@ -10,9 +10,9 @@ import {
 } from "@/components/app-shell/chat-account-avatar"
 import { ChatGsapViewStack } from "@/components/app-shell/chat-gsap-view-stack"
 import {
-  chatAccentSecondaryFillClass,
   chatComposerLiquidSheetRowClass,
   chatComposerLiquidSheetRowIconClass,
+  chatMobilePrimaryButtonClass,
   chatMobileSheetPrimaryButtonClass,
   chatUpgradePillClass,
 } from "@/components/app-shell/chat-mobile-gemini-styles"
@@ -120,10 +120,10 @@ const sheetPrimaryPillClass = cn(
   "inline-flex h-8 w-fit items-center justify-center gap-1.5 px-3.5 text-[13px] font-semibold"
 )
 
-/** Secondary blue liquid-glass Done check circle. */
-const sheetBlueGlassIconButtonClass = cn(
-  chatAccentSecondaryFillClass,
-  "chat-ios26-liquid-glass relative isolate flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-full px-0"
+/** Blue liquid-glass Done — tinted glass circle, white check. */
+const sheetDoneCheckClass = cn(
+  chatMobilePrimaryButtonClass,
+  "chat-ios26-liquid-glass relative isolate size-9 shrink-0 overflow-hidden rounded-full px-0 text-white hover:text-white"
 )
 
 const sheetRowClass = cn(
@@ -163,15 +163,17 @@ type ChatAccountSheetProps = {
 function SheetDoneCheck({ onClick }: { onClick: () => void }) {
   const common = useTranslations("common")
   return (
-    <button
+    <Button
       type="button"
+      variant="ghost"
+      size="icon"
       onClick={onClick}
       aria-label={common("done")}
       title={common("done")}
-      className={sheetBlueGlassIconButtonClass}
+      className={sheetDoneCheckClass}
     >
-      <SfCheckIcon className="size-5" strokeWidth={2.6} />
-    </button>
+      <SfCheckIcon className="size-4.5 stroke-[2.4] text-white" />
+    </Button>
   )
 }
 
