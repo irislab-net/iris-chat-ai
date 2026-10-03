@@ -503,7 +503,9 @@ function ChatComposer({
 
   function onPaste(event: React.ClipboardEvent<HTMLTextAreaElement>) {
     // Ctrl/Cmd+Shift+V → keep as plain text (ChatGPT escape hatch).
-    if (event.shiftKey) return
+    // ClipboardEvent typings omit modifiers; browsers still expose them on paste.
+    if ((event.nativeEvent as ClipboardEvent & { shiftKey?: boolean }).shiftKey)
+      return
     const text = event.clipboardData.getData("text/plain")
     if (!text || !shouldConvertPasteToAttachment(text)) return
     if (pasteAttachments.length >= PASTE_ATTACHMENT_MAX) return
