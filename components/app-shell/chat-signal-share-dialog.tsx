@@ -181,8 +181,8 @@ function SharePreviewCard({
         colorScheme: "light",
         backgroundColor: SIGNAL_SHARE_CARD_BG,
         backgroundImage: isLong
-          ? "radial-gradient(120% 80% at 0% 0%, rgba(16,185,129,0.16), transparent 55%), radial-gradient(90% 60% at 100% 0%, rgba(37,99,235,0.1), transparent 50%)"
-          : "radial-gradient(120% 80% at 0% 0%, rgba(244,63,94,0.14), transparent 55%), radial-gradient(90% 60% at 100% 0%, rgba(37,99,235,0.08), transparent 50%)",
+          ? "radial-gradient(120% 80% at 0% 0%, rgba(16,185,129,0.14), transparent 55%), radial-gradient(80% 50% at 100% 0%, rgba(15,23,42,0.04), transparent 52%)"
+          : "radial-gradient(120% 80% at 0% 0%, rgba(244,63,94,0.12), transparent 55%), radial-gradient(80% 50% at 100% 0%, rgba(15,23,42,0.04), transparent 52%)",
       }}
     >
       <header className="px-4 pt-4 pb-3">
@@ -220,8 +220,10 @@ function SharePreviewCard({
             <div
               key={item.label}
               className={cn(
-                "rounded-2xl bg-white px-2.5 py-3 text-center",
-                item.emphasis && "ring-1 ring-sky-500/25"
+                "rounded-2xl px-2.5 py-3 text-center",
+                item.emphasis
+                  ? "bg-white shadow-[0_8px_22px_-14px_rgba(15,23,42,0.35)]"
+                  : "bg-white/88"
               )}
             >
               <p className="text-[10px] font-medium tracking-[0.07em] text-black/45 uppercase">
@@ -230,7 +232,7 @@ function SharePreviewCard({
               <p
                 className={cn(
                   "mt-1.5 font-semibold tracking-tight tabular-nums",
-                  item.emphasis ? "text-[1.1rem]" : "text-[15px]"
+                  item.emphasis ? "text-[1.1rem] text-[#0f172a]" : "text-[15px]"
                 )}
               >
                 {item.value}

@@ -873,10 +873,10 @@ export function HeroComposeDemo() {
               size="icon"
               onClick={handleAction}
               className={cn(
-                "size-10 shrink-0 rounded-full text-white shadow-[0_8px_24px_rgba(37,99,235,0.32)] transition-colors duration-300",
+                "size-10 shrink-0 rounded-full text-white transition-colors duration-300",
                 isStreaming
-                  ? "bg-foreground text-background hover:bg-foreground/90"
-                  : "bg-[#2563EB] hover:bg-[#1D4ED8]"
+                  ? "bg-foreground text-background shadow-[0_6px_16px_rgba(15,23,42,0.18)] hover:bg-foreground/90"
+                  : "bg-[#2563EB] shadow-[0_6px_16px_rgba(37,99,235,0.22)] hover:bg-[#1D4ED8]"
               )}
               aria-label={isStreaming ? "Stop" : "Ask Exur"}
             >

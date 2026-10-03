@@ -606,7 +606,7 @@ export function FeaturesOverview() {
         className={cn(
           landingSection,
           landingSectionBody,
-          "bg-white/40 shadow-[0_28px_80px_rgba(15,23,42,0.07)] backdrop-blur-2xl dark:bg-white/6 dark:shadow-[0_28px_80px_rgba(0,0,0,0.45)]"
+          "overflow-hidden bg-white/48 shadow-[0_28px_80px_rgba(15,23,42,0.07)] backdrop-blur-2xl dark:bg-white/8 dark:shadow-[0_28px_80px_rgba(0,0,0,0.45)]"
         )}
         aria-labelledby="features-cta-heading"
       >
