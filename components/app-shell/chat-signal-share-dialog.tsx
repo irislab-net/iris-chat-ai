@@ -220,10 +220,10 @@ function SharePreviewCard({
             <div
               key={item.label}
               className={cn(
-                "rounded-2xl px-2.5 py-3 text-center",
-                item.emphasis
-                  ? "bg-white shadow-[0_8px_22px_-14px_rgba(15,23,42,0.35)]"
-                  : "bg-white/88"
+                "rounded-2xl bg-white px-2.5 py-3 text-center",
+                // Emphasis = larger type only. No ring/shadow — both painted a
+                // dark/blue smudge in the gap between the three price tiles.
+                item.emphasis && "relative z-[1]"
               )}
             >
               <p className="text-[10px] font-medium tracking-[0.07em] text-black/45 uppercase">
@@ -231,8 +231,8 @@ function SharePreviewCard({
               </p>
               <p
                 className={cn(
-                  "mt-1.5 font-semibold tracking-tight tabular-nums",
-                  item.emphasis ? "text-[1.1rem] text-[#0f172a]" : "text-[15px]"
+                  "mt-1.5 font-semibold tracking-tight tabular-nums text-[#0f172a]",
+                  item.emphasis ? "text-[1.1rem]" : "text-[15px]"
                 )}
               >
                 {item.value}
