@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest"
 
 import {
   LEGACY_CHAT_STORAGE_KEY,
+  NEW_CHAT_TITLE,
   discardLegacyGlobalChatStore,
   getChatStorageKey,
   readChatStore,
@@ -135,6 +136,31 @@ describe("chat storage isolation", () => {
     expect(getChatStorageKey(null)).toBe("iris-chat-v1:guest")
     expect(getChatStorageKey("abc")).toBe("iris-chat-v1:user:abc")
     expect(getChatStorageKey("abc")).not.toBe(getChatStorageKey("def"))
+  })
+
+  it("normalizes missing conversation titles when reading storage", () => {
+    const userA = "user-a-id"
+    localStorage.setItem(
+      getChatStorageKey(userA),
+      JSON.stringify({
+        version: 1,
+        activeId: "broken",
+        conversations: [
+          {
+            id: "broken",
+            // title intentionally omitted — older / corrupted payloads
+            createdAt: "2026-01-01T00:00:00.000Z",
+            updatedAt: "2026-01-01T00:00:00.000Z",
+            messages: [],
+            history: [],
+          },
+        ],
+      })
+    )
+
+    const loaded = readChatStore(userA)
+    expect(loaded.conversations).toHaveLength(1)
+    expect(loaded.conversations[0]?.title).toBe(NEW_CHAT_TITLE)
   })
 })
 

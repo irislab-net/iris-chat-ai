@@ -117,6 +117,9 @@ export function discardLegacyGlobalChatStore(): void {
   }
 }
 
+/** Default conversation title sentinel — localize with workspace.newChat when displaying. */
+export const NEW_CHAT_TITLE = "New chat"
+
 /** Remove one owner bucket (guest or user). Authenticated history is kept until logout clears guest only. */
 export function clearChatStore(ownerId: ChatOwnerId): void {
   if (!canUseStorage()) return
@@ -124,6 +127,33 @@ export function clearChatStore(ownerId: ChatOwnerId): void {
     window.localStorage.removeItem(getChatStorageKey(ownerId))
   } catch {
     // private mode — ignore
+  }
+}
+
+function normalizeConversationTitle(value: unknown): string {
+  return typeof value === "string" && value.trim() ? value : NEW_CHAT_TITLE
+}
+
+function normalizeStoredConversation(
+  value: unknown
+): StoredConversation | null {
+  if (!value || typeof value !== "object") return null
+  const raw = value as Partial<StoredConversation>
+  if (typeof raw.id !== "string" || !raw.id.trim()) return null
+  return {
+    id: raw.id,
+    title: normalizeConversationTitle(raw.title),
+    createdAt:
+      typeof raw.createdAt === "string" && raw.createdAt
+        ? raw.createdAt
+        : new Date(0).toISOString(),
+    updatedAt:
+      typeof raw.updatedAt === "string" && raw.updatedAt
+        ? raw.updatedAt
+        : new Date(0).toISOString(),
+    messages: Array.isArray(raw.messages) ? raw.messages : [],
+    history: Array.isArray(raw.history) ? raw.history : [],
+    ...(typeof raw.pinned === "boolean" ? { pinned: raw.pinned } : {}),
   }
 }
 
@@ -140,7 +170,9 @@ function parseStore(raw: string | null): ChatStore {
     }
     return {
       version: 1,
-      conversations: parsed.conversations,
+      conversations: parsed.conversations
+        .map(normalizeStoredConversation)
+        .filter((chat): chat is StoredConversation => chat != null),
       activeId: parsed.activeId ?? null,
       deletedIds: normalizeDeletedIds(parsed.deletedIds),
     }
@@ -171,9 +203,6 @@ export function writeChatStore(ownerId: ChatOwnerId, store: ChatStore) {
     // quota / private mode — ignore
   }
 }
-
-/** Default conversation title sentinel — localize with workspace.newChat when displaying. */
-export const NEW_CHAT_TITLE = "New chat"
 
 export function conversationTitleFromMessages(messages: ChatUiMessage[]) {
   const firstUser = messages.find((m) => m.role === "user" && m.content.trim())
