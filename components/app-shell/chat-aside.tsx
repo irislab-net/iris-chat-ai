@@ -313,7 +313,7 @@ function IrisFollowUpPrompts({
       <p className="px-0.5 text-xs font-medium tracking-[0.08em] text-muted-foreground uppercase">
         {t("continueWith")}
       </p>
-      <div className="flex w-full flex-col gap-2">
+      <div className="grid w-full grid-cols-1 gap-2 lg:grid-cols-2">
         {prompts.map((prompt) => (
           <Button
             key={prompt}
@@ -323,7 +323,7 @@ function IrisFollowUpPrompts({
             dir="auto"
             className={cn(
               chatSamplePromptButtonClass,
-              "h-auto gap-3 px-4 py-2.5 text-[14px] leading-[1.3] font-medium tracking-[-0.01em] whitespace-normal text-foreground disabled:opacity-50 sm:px-4 sm:py-2.5"
+              "h-auto gap-3 px-4 py-2.5 text-[14px] leading-[1.3] font-medium tracking-[-0.01em] whitespace-normal text-foreground disabled:opacity-50 sm:px-4 sm:py-2.5 lg:h-full lg:items-start"
             )}
             onClick={() => onSelect(prompt)}
           >
