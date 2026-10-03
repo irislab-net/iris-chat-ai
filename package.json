@@ -46,7 +46,7 @@
     "gsap": "^3.15.0",
     "html-to-image": "^1.11.13",
     "isomorphic-dompurify": "^4.4.0",
-    "lucide-react": "^1.48.0",
+    "lucide-react": "1.48.0",
     "marked": "^18.0.14",
     "motion": "^13.4.4",
     "next": "16.3.6",

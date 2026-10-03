@@ -3,6 +3,12 @@ import { toBlob } from "html-to-image"
 /** Capture-safe brand mark (white disc + blue path) under /public. */
 export const SIGNAL_SHARE_BRAND_LOGO_SRC = "/exur-logo-brand.svg"
 export const SIGNAL_SHARE_CARD_BG = "#f7f8fa"
+/** Solid plate near in-chat dark signal card (oklch ~0.26). */
+export const SIGNAL_SHARE_CARD_BG_DARK = "#2a2a2a"
+
+export function signalShareCardBg(isDark: boolean): string {
+  return isDark ? SIGNAL_SHARE_CARD_BG_DARK : SIGNAL_SHARE_CARD_BG
+}
 
 export function formatSignalShareDate(
   locale: string,

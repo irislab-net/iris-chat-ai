@@ -63,6 +63,51 @@ describe("prepareAssistantMarkdown", () => {
     expect(out).toContain("---")
   })
 
+  it("unwraps fenced ASCII pocket ladders into nested markdown lists", () => {
+    const input = `Liquidity map:
+
+\`\`\`
+$83,050 ──┬── [Pocket 1: Sell-Stop Cluster & Stop-Run Void] ($82,980 – $83,050)
+│  • Resting retail stops under session lows ($83,050 / $83,055 / $83,057)
+│  • Thin resting bids; highly prone to slippage on liquidation spikes
+$82,850 ──┼── [Pocket 2: 4H Structural Pivot Shelf] ($82,800 – $82,920)
+│  • Open/close cluster of prior 4h consolidation bars ($82,922 – $82,950)
+│  • First structural absorption zone for momentum sellers
+$82,550 ──┴── [Pocket 4: Major HTF External Liquidity Pool] ($82,500 – $82,560)
+│  • Twin 4h reaction lows: $82,551 and $82,562
+\`\`\`
+`
+
+    const out = prepareAssistantMarkdown(input)
+    expect(out).not.toContain("```")
+    expect(out).not.toContain("──┬──")
+    expect(out).toContain(
+      "- **$83,050** — Pocket 1: Sell-Stop Cluster & Stop-Run Void · _$82,980 – $83,050_"
+    )
+    expect(out).toContain(
+      "  - Resting retail stops under session lows ($83,050 / $83,055 / $83,057)"
+    )
+    expect(out).toContain(
+      "- **$82,850** — Pocket 2: 4H Structural Pivot Shelf · _$82,800 – $82,920_"
+    )
+    expect(out).toContain(
+      "- **$82,550** — Pocket 4: Major HTF External Liquidity Pool · _$82,500 – $82,560_"
+    )
+  })
+
+  it("normalizes unfenced ASCII pocket ladders", () => {
+    const input = `$82,650 ──┼── [Pocket 3: Prior Session Wick Base] ($82,640 – $82,720)
+│  • Low of earlier 4h consolidation down-leg ($82,642)
+│  • Primary limit buyer reload pocket`
+
+    const out = prepareAssistantMarkdown(input)
+    expect(out).not.toContain("──┼──")
+    expect(out).toContain(
+      "- **$82,650** — Pocket 3: Prior Session Wick Base · _$82,640 – $82,720_"
+    )
+    expect(out).toContain("  - Primary limit buyer reload pocket")
+  })
+
   it("keeps real code fences intact", () => {
     const input = "Example:\n\n```js\nconst x = 1\n```\n"
     expect(prepareAssistantMarkdown(input)).toContain("```js")

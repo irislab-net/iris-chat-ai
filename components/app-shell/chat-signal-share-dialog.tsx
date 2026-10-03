@@ -6,18 +6,14 @@ import {
   TrendingDownIcon,
   TrendingUpIcon,
 } from "lucide-react"
+import { useTheme } from "@wrksz/themes/client/use-theme"
 import { useLocale, useTranslations } from "next-intl"
 import { toast } from "sonner"
 
 import {
   chatDesktopDialogClass,
-  chatMobileSheetContentClass,
-  chatMobileSheetFooterBarClass,
-  chatMobileSheetHandleClass,
-  chatMobileSheetHeaderClass,
   chatMobileSheetPrimaryButtonClass,
   chatMobileSheetSecondaryButtonClass,
-  chatMobileSheetTitleClass,
 } from "@/components/app-shell/chat-mobile-gemini-styles"
 import { IosShareIcon } from "@/components/icons/ios-share-icon"
 import { Button } from "@/components/ui/button"
@@ -29,19 +25,11 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet"
-import { useIsDesktop } from "@/hooks/use-media-query"
-import {
   captureShareNodeToBlob,
   formatSignalShareDate,
   shareImageWithCaption,
-  SIGNAL_SHARE_CARD_BG,
   signalShareBrandLogoSrc,
+  signalShareCardBg,
 } from "@/lib/chat/signal-share-capture"
 import {
   buildSignalShareText,
@@ -112,10 +100,12 @@ function SharePreviewCard({
   ticket,
   shareDate,
   captureRef,
+  isDark,
 }: {
   ticket: PaperTradeTicket
   shareDate: string
   captureRef: React.RefObject<HTMLDivElement | null>
+  isDark: boolean
 }) {
   const t = useTranslations("workspace")
   const isLong = ticket.side === "LONG"
@@ -130,6 +120,12 @@ function SharePreviewCard({
   const hasLeverage = ticket.leverage > 0
   const hasSize = ticket.quantity > 0
   const logoSrc = signalShareBrandLogoSrc()
+  const tileClass = "rounded-2xl bg-white px-2.5 py-3 dark:bg-white/[0.08]"
+  const panelClass = "rounded-2xl bg-white px-3.5 py-3 dark:bg-white/[0.08]"
+  const mutedLabelClass =
+    "text-[10px] font-medium tracking-[0.07em] text-black/45 uppercase dark:text-white/45"
+  const mutedMetaLabelClass =
+    "text-[10px] font-medium tracking-[0.06em] text-black/45 uppercase dark:text-white/45"
 
   const priceItems = [
     {
@@ -176,13 +172,18 @@ function SharePreviewCard({
   return (
     <div
       ref={captureRef}
-      className="relative mx-auto w-full max-w-[22rem] overflow-hidden rounded-[1.35rem] text-[#0f172a] shadow-[0_12px_40px_-18px_rgba(15,23,42,0.28)]"
+      className={cn(
+        "relative mx-auto w-full max-w-[22rem] overflow-hidden rounded-[1.35rem] bg-[#f7f8fa] text-[#0f172a] shadow-[0_12px_40px_-18px_rgba(15,23,42,0.28)]",
+        "dark:bg-[#2a2a2a] dark:text-[#f8fafc] dark:shadow-[0_12px_40px_-18px_rgba(0,0,0,0.55)]"
+      )}
       style={{
-        colorScheme: "light",
-        backgroundColor: SIGNAL_SHARE_CARD_BG,
-        backgroundImage: isLong
-          ? "radial-gradient(120% 80% at 0% 0%, rgba(16,185,129,0.16), transparent 55%), radial-gradient(90% 60% at 100% 0%, rgba(37,99,235,0.1), transparent 50%)"
-          : "radial-gradient(120% 80% at 0% 0%, rgba(244,63,94,0.14), transparent 55%), radial-gradient(90% 60% at 100% 0%, rgba(37,99,235,0.08), transparent 50%)",
+        backgroundImage: isDark
+          ? isLong
+            ? "radial-gradient(120% 80% at 0% 0%, rgba(52,211,153,0.18), transparent 55%), radial-gradient(90% 60% at 100% 0%, rgba(96,165,250,0.12), transparent 50%)"
+            : "radial-gradient(120% 80% at 0% 0%, rgba(251,113,133,0.18), transparent 55%), radial-gradient(90% 60% at 100% 0%, rgba(96,165,250,0.1), transparent 50%)"
+          : isLong
+            ? "radial-gradient(120% 80% at 0% 0%, rgba(16,185,129,0.16), transparent 55%), radial-gradient(90% 60% at 100% 0%, rgba(37,99,235,0.1), transparent 50%)"
+            : "radial-gradient(120% 80% at 0% 0%, rgba(244,63,94,0.14), transparent 55%), radial-gradient(90% 60% at 100% 0%, rgba(37,99,235,0.08), transparent 50%)",
       }}
     >
       <header className="px-4 pt-4 pb-3">
@@ -195,20 +196,20 @@ function SharePreviewCard({
               className={cn(
                 "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold tracking-wide uppercase",
                 isLong
-                  ? "bg-emerald-500/15 text-emerald-700"
-                  : "bg-rose-500/15 text-rose-700"
+                  ? "bg-emerald-500/15 text-emerald-700 dark:bg-emerald-400/18 dark:text-emerald-300"
+                  : "bg-rose-500/15 text-rose-700 dark:bg-rose-400/18 dark:text-rose-300"
               )}
             >
               <SideIcon className="size-3 shrink-0" aria-hidden />
               {isLong ? t("signalSideLong") : t("signalSideShort")}
             </span>
           </div>
-          <span className="shrink-0 text-[11px] font-medium tracking-[0.03em] text-black/45 uppercase">
+          <span className="shrink-0 text-[11px] font-medium tracking-[0.03em] text-black/45 uppercase dark:text-white/45">
             {t("signalCardTitle")}
           </span>
         </div>
         {setup ? (
-          <p className="mt-2.5 text-[13px] leading-relaxed text-black/55">
+          <p className="mt-2.5 text-[13px] leading-relaxed text-black/55 dark:text-white/55">
             {setup}
           </p>
         ) : null}
@@ -220,25 +221,24 @@ function SharePreviewCard({
             <div
               key={item.label}
               className={cn(
-                "rounded-2xl bg-white px-2.5 py-3 text-center",
+                tileClass,
+                "text-center",
                 // Emphasis = larger type only. No ring/shadow — both painted a
                 // dark/blue smudge in the gap between the three price tiles.
                 item.emphasis && "relative z-[1]"
               )}
             >
-              <p className="text-[10px] font-medium tracking-[0.07em] text-black/45 uppercase">
-                {item.label}
-              </p>
+              <p className={mutedLabelClass}>{item.label}</p>
               <p
                 className={cn(
-                  "mt-1.5 font-semibold tracking-tight tabular-nums text-[#0f172a]",
+                  "mt-1.5 font-semibold tracking-tight tabular-nums text-[#0f172a] dark:text-[#f8fafc]",
                   item.emphasis ? "text-[1.1rem]" : "text-[15px]"
                 )}
               >
                 {item.value}
               </p>
               {item.reason ? (
-                <p className="mt-2 text-[10px] leading-snug text-black/50">
+                <p className="mt-2 text-[10px] leading-snug text-black/50 dark:text-white/50">
                   {item.reason}
                 </p>
               ) : null}
@@ -247,12 +247,10 @@ function SharePreviewCard({
         </div>
 
         {metaItems.length > 0 ? (
-          <div className="grid grid-cols-2 gap-x-3 gap-y-2.5 rounded-2xl bg-white px-3.5 py-3">
+          <div className={cn("grid grid-cols-2 gap-x-3 gap-y-2.5", panelClass)}>
             {metaItems.map((item) => (
               <div key={item.label} className="min-w-0">
-                <p className="text-[10px] font-medium tracking-[0.06em] text-black/45 uppercase">
-                  {item.label}
-                </p>
+                <p className={mutedMetaLabelClass}>{item.label}</p>
                 <p className="mt-1 text-[13px] font-medium tabular-nums">
                   {item.value}
                 </p>
@@ -262,22 +260,22 @@ function SharePreviewCard({
         ) : null}
 
         {thesis ? (
-          <div className="rounded-2xl bg-white px-3.5 py-3">
-            <p className="text-[10px] font-medium tracking-[0.08em] text-black/45 uppercase">
+          <div className={panelClass}>
+            <p className="text-[10px] font-medium tracking-[0.08em] text-black/45 uppercase dark:text-white/45">
               {t("signalCardThesisHeading")}
             </p>
-            <p className="mt-2 text-[13px] leading-relaxed text-black/75">
+            <p className="mt-2 text-[13px] leading-relaxed text-black/75 dark:text-white/75">
               {thesis}
             </p>
           </div>
         ) : null}
 
-        <p className="text-center text-[9px] tracking-[0.06em] text-black/40 uppercase">
+        <p className="text-center text-[9px] tracking-[0.06em] text-black/40 uppercase dark:text-white/40">
           {t("signalCardDisclaimer")}
         </p>
       </div>
 
-      <footer className="flex items-center justify-between gap-3 border-t border-black/6 bg-white px-4 py-3">
+      <footer className="flex items-center justify-between gap-3 border-t border-black/6 bg-white px-4 py-3 dark:border-white/8 dark:bg-white/[0.08]">
         <div className="flex min-w-0 items-center gap-2">
           {/* eslint-disable-next-line @next/next/no-img-element -- capture-safe raster logo */}
           <img
@@ -291,10 +289,10 @@ function SharePreviewCard({
           <span className="text-[13px] font-semibold tracking-tight">Exur</span>
         </div>
         <div className="shrink-0 text-end">
-          <p className="text-[11px] font-medium tracking-tight text-black/50">
+          <p className="text-[11px] font-medium tracking-tight text-black/50 dark:text-white/50">
             {shareDate}
           </p>
-          <p className="text-[12px] font-medium tracking-tight text-black/45">
+          <p className="text-[12px] font-medium tracking-tight text-black/45 dark:text-white/45">
             {SIGNAL_SHARE_SITE}
           </p>
         </div>
@@ -310,7 +308,8 @@ function ChatSignalShareDialog({
 }: ChatSignalShareDialogProps) {
   const t = useTranslations("workspace")
   const locale = useLocale()
-  const isDesktop = useIsDesktop()
+  const { resolvedTheme } = useTheme()
+  const isDark = resolvedTheme === "dark"
   const [busy, setBusy] = React.useState(false)
   const [copied, setCopied] = React.useState(false)
   const captureRef = React.useRef<HTMLDivElement | null>(null)
@@ -377,7 +376,7 @@ function ChatSignalShareDialog({
     try {
       const node = captureRef.current
       if (!node) throw new Error("preview-missing")
-      const blob = await captureShareNodeToBlob(node)
+      const blob = await captureShareNodeToBlob(node, signalShareCardBg(isDark))
       try {
         const result = await shareImageWithCaption({
           blob,
@@ -402,89 +401,50 @@ function ChatSignalShareDialog({
     }
   }
 
-  if (isDesktop === null) return null
-
   const shareHeading = t("share")
 
-  const header = isDesktop ? (
-    <DialogHeader className="shrink-0 gap-0 space-y-0 px-5 pt-5 pb-3 text-start">
-      <DialogTitle className="font-heading text-[1.35rem] font-normal tracking-tight text-foreground">
-        {shareHeading}
-      </DialogTitle>
-      <DialogDescription className="sr-only">{shareHeading}</DialogDescription>
-    </DialogHeader>
-  ) : (
-    <SheetHeader className={cn(chatMobileSheetHeaderClass, "shrink-0 gap-0")}>
-      <SheetTitle className={chatMobileSheetTitleClass}>{shareHeading}</SheetTitle>
-      <SheetDescription className="sr-only">{shareHeading}</SheetDescription>
-    </SheetHeader>
-  )
-
-  const actionRow = (
-    <ActionRow
-      busy={busy}
-      copied={copied}
-      onCopyText={onCopyText}
-      onShareImage={onShareImage}
-      copyLabel={t("signalShareCopyText")}
-      shareLabel={t("signalShareShareImage")}
-      copiedLabel={t("signalShareCopied")}
-    />
-  )
-
-  const preview = (
-    <div className="rounded-[1.5rem] bg-foreground/[0.03] p-3 dark:bg-white/[0.04]">
-      <SharePreviewCard
-        ticket={ticket}
-        shareDate={shareDate}
-        captureRef={captureRef}
-      />
-    </div>
-  )
-
-  if (isDesktop) {
-    return (
-      <Dialog open={open} onOpenChange={handleOpenChange}>
-        <DialogContent
-          className={cn(
-            chatDesktopDialogClass,
-            "flex max-h-[min(85dvh,720px)] flex-col gap-0 overflow-hidden sm:max-w-[26rem]"
-          )}
-          showCloseButton
-          gsapMotion
-          open={open}
-        >
-          {header}
-          <div className="min-h-0 flex-1 overflow-y-auto px-5">{preview}</div>
-          <div className="shrink-0 bg-transparent px-5 pt-3 pb-5">{actionRow}</div>
-        </DialogContent>
-      </Dialog>
-    )
-  }
-
   return (
-    <Sheet open={open} onOpenChange={handleOpenChange}>
-      <SheetContent
-        side="bottom"
-        showCloseButton
+    <Dialog open={open} onOpenChange={handleOpenChange}>
+      <DialogContent
         className={cn(
-          chatMobileSheetContentClass,
-          "flex flex-col gap-0 overflow-hidden border-0"
+          chatDesktopDialogClass,
+          "flex h-auto max-h-none w-full flex-col gap-0 overflow-visible sm:max-w-[26rem]"
         )}
+        showCloseButton
+        gsapMotion
+        open={open}
       >
-        <div aria-hidden className={chatMobileSheetHandleClass} />
-        {header}
-        <div className="min-h-0 flex-1 overflow-y-auto px-5">{preview}</div>
-        <div
-          className={cn(
-            chatMobileSheetFooterBarClass,
-            "shrink-0 !bg-transparent shadow-none backdrop-blur-none"
-          )}
-        >
-          {actionRow}
+        <DialogHeader className="shrink-0 gap-0 space-y-0 px-5 pt-5 pb-3 text-start">
+          <DialogTitle className="font-heading text-[1.35rem] font-normal tracking-tight text-foreground">
+            {shareHeading}
+          </DialogTitle>
+          <DialogDescription className="sr-only">
+            {shareHeading}
+          </DialogDescription>
+        </DialogHeader>
+        <div className="px-5">
+          <div className="rounded-[1.5rem] bg-foreground/[0.03] p-3 dark:bg-white/[0.04]">
+            <SharePreviewCard
+              ticket={ticket}
+              shareDate={shareDate}
+              captureRef={captureRef}
+              isDark={isDark}
+            />
+          </div>
         </div>
-      </SheetContent>
-    </Sheet>
+        <div className="bg-transparent px-5 pt-3 pb-5">
+          <ActionRow
+            busy={busy}
+            copied={copied}
+            onCopyText={onCopyText}
+            onShareImage={onShareImage}
+            copyLabel={t("signalShareCopyText")}
+            shareLabel={t("signalShareShareImage")}
+            copiedLabel={t("signalShareCopied")}
+          />
+        </div>
+      </DialogContent>
+    </Dialog>
   )
 }
 

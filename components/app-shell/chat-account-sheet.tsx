@@ -42,11 +42,18 @@ import { SelectionCheckBadge } from "@/components/ui/selection-check-badge"
 import { openCookieSettings } from "@/components/privacy/cookie-consent-banner"
 import { Button } from "@/components/ui/button"
 import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import {
   Sheet,
   SheetContent,
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet"
+import { useIsDesktop } from "@/hooks/use-media-query"
 import { usePwaInstall } from "@/hooks/use-pwa-install"
 import { Link, getPathname, usePathname } from "@/i18n/navigation"
 import { routing, type AppLocale } from "@/i18n/routing"
@@ -322,8 +329,8 @@ function NestedViewChrome({
 }
 
 /**
- * Mobile profile / settings bottom sheet — Gemini-style cards, pills, and
- * grouped settings with GSAP push navigation.
+ * Profile / settings surface — bottom sheet on mobile, centered dialog on
+ * desktop (incl. Windows). Gemini-style cards with GSAP push navigation.
  */
 function ChatAccountSheet({
   open,
@@ -342,6 +349,7 @@ function ChatAccountSheet({
   const t = useTranslations("workspace")
   const common = useTranslations("common")
   const consent = useTranslations("consent")
+  const isDesktop = useIsDesktop()
   const dir = localeDirection(useLocale())
   const pushSign: 1 | -1 = dir === "rtl" ? -1 : 1
   const popSign: 1 | -1 = dir === "rtl" ? 1 : -1
@@ -408,27 +416,18 @@ function ChatAccountSheet({
 
   const email = user?.email?.trim() || (user ? userAccountSubline(user) : "")
 
-  return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent
-        side="bottom"
-        showCloseButton={false}
-        className={cn(
-          sheetCanvasClass,
-          "flex h-[min(90dvh,720px)] flex-col overflow-hidden rounded-t-[28px] pt-2 pb-0 data-[side=bottom]:h-[min(90dvh,720px)]"
-        )}
-      >
-        <div aria-hidden className={sheetHandleClass} />
-        <SheetHeader className="sr-only">
-          <SheetTitle>
-            {view === "root"
-              ? t("accountMenuFor", {
-                  name: user ? userAccountLabel(user) : t("signIn"),
-                })
-              : t("exurSettings")}
-          </SheetTitle>
-        </SheetHeader>
+  if (isDesktop === null) return null
 
+  const a11yTitle =
+    view === "root"
+      ? t("accountMenuFor", {
+          name: user ? userAccountLabel(user) : t("signIn"),
+        })
+      : view === "tradingProfile"
+        ? t("tradingProfile.title")
+        : t("exurSettings")
+
+  const stack = (
         <ChatGsapViewStack
           active={view}
           enterFromSign={enterFromSign}
@@ -837,6 +836,44 @@ function ChatAccountSheet({
             />
           </div>
         </ChatGsapViewStack>
+  )
+
+  if (isDesktop) {
+    return (
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent
+          showCloseButton={false}
+          gsapMotion
+          open={open}
+          className={cn(
+            sheetCanvasClass,
+            "flex h-[min(85dvh,640px)] max-h-[min(85dvh,640px)] w-full flex-col overflow-hidden rounded-3xl p-0 pt-3 sm:max-w-[26rem]"
+          )}
+        >
+          <DialogHeader className="sr-only">
+            <DialogTitle>{a11yTitle}</DialogTitle>
+          </DialogHeader>
+          {stack}
+        </DialogContent>
+      </Dialog>
+    )
+  }
+
+  return (
+    <Sheet open={open} onOpenChange={onOpenChange}>
+      <SheetContent
+        side="bottom"
+        showCloseButton={false}
+        className={cn(
+          sheetCanvasClass,
+          "flex h-[min(90dvh,720px)] flex-col overflow-hidden rounded-t-[28px] pt-2 pb-0 data-[side=bottom]:h-[min(90dvh,720px)]"
+        )}
+      >
+        <div aria-hidden className={sheetHandleClass} />
+        <SheetHeader className="sr-only">
+          <SheetTitle>{a11yTitle}</SheetTitle>
+        </SheetHeader>
+        {stack}
       </SheetContent>
     </Sheet>
   )

@@ -17,4 +17,19 @@ describe("renderAssistantHtml", () => {
     expect(html).toContain('href="https://exur.ai/home"')
     expect(html).toContain('rel="noopener noreferrer nofollow"')
   })
+
+  it("renders ASCII pocket ladders as nested lists, not pre blocks", () => {
+    const html = renderAssistantHtml(`\`\`\`
+$83,050 ──┬── [Pocket 1: Sell-Stop Cluster] ($82,980 – $83,050)
+│  • Resting retail stops under session lows
+│  • Thin resting bids
+$82,850 ──┼── [Pocket 2: 4H Pivot] ($82,800 – $82,920)
+│  • First structural absorption zone
+\`\`\``)
+    expect(html).not.toMatch(/<pre/i)
+    expect(html).not.toContain("──┬──")
+    expect(html).toMatch(/<ul>/i)
+    expect(html).toContain("<strong>$83,050</strong>")
+    expect(html).toContain("Resting retail stops under session lows")
+  })
 })

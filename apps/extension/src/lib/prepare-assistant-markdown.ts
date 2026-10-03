@@ -38,7 +38,13 @@ function cleanupRelativeTimeProse(text: string) {
       /\s*The published_at timestamps are in Unix milliseconds\.?\s*/gi,
       " "
     )
-    .replace(/[ \t]{2,}/g, " ")
+    .split("\n")
+    .map((line) => {
+      const match = line.match(/^(\s*)(.*)$/)
+      if (!match) return line
+      return `${match[1]}${match[2].replace(/[ \t]{2,}/g, " ")}`
+    })
+    .join("\n")
     .trim()
 }
 
@@ -165,6 +171,187 @@ function looksLikeProseBoard(body: string) {
   return /[\u0600-\u06FF]/.test(body) && bracketLines + dashSep >= 1
 }
 
+/** ASCII liquidity / pocket ladders drawn with box-drawing characters. */
+function looksLikeAsciiTimeline(body: string) {
+  if (!body.trim() || looksLikeCode(body)) return false
+  const boxChars = (body.match(/[─┬┼┴│├┤└┘┌┐━═]/g) || []).length
+  const connectors =
+    (
+      body.match(
+        /(?:[─━═\-]{2,})[┬┼┴+](?:[─━═\-]{2,})/g
+      ) || []
+    ).length
+  const railBullets = (body.match(/^[|│]\s*[•\-*]/gm) || []).length
+  const pocketLabels = (body.match(/\[(?:Pocket|Level|Zone)\b/gi) || []).length
+  if (connectors >= 2 && railBullets >= 2) return true
+  if (boxChars >= 6 && railBullets >= 2) return true
+  if (connectors >= 1 && pocketLabels >= 1 && railBullets >= 1) return true
+  return false
+}
+
+function isAsciiTimelineHeader(trimmed: string) {
+  return /(?:[─━═\-]{2,})[┬┼┴+](?:[─━═\-]{2,})/.test(trimmed)
+}
+
+function isAsciiTimelineBullet(trimmed: string) {
+  return /^[|│]?\s*[•\-*]\s+\S/.test(trimmed)
+}
+
+function isAsciiTimelineRailOnly(trimmed: string) {
+  return /^[|│]\s*$/.test(trimmed)
+}
+
+function parseAsciiTimelineHeader(trimmed: string): {
+  price?: string
+  title: string
+  range?: string
+} | null {
+  const withPrice = trimmed.match(
+    /^(\$?[\d,]+(?:\.\d+)?)\s+(?:[─━═\-]{2,})[┬┼┴+](?:[─━═\-]{2,})\s*(?:\[([^\]]+)\]|(.+?))(?:\s*\(([^)]+)\))?\s*$/
+  )
+  if (withPrice) {
+    return {
+      price: withPrice[1].trim(),
+      title: (withPrice[2] || withPrice[3] || "").trim(),
+      range: withPrice[4]?.trim(),
+    }
+  }
+
+  const withoutPrice = trimmed.match(
+    /^(?:[─━═\-]{2,})[┬┼┴+](?:[─━═\-]{2,})\s*(?:\[([^\]]+)\]|(.+?))(?:\s*\(([^)]+)\))?\s*$/
+  )
+  if (withoutPrice) {
+    return {
+      title: (withoutPrice[1] || withoutPrice[2] || "").trim(),
+      range: withoutPrice[3]?.trim(),
+    }
+  }
+
+  return null
+}
+
+function formatAsciiTimelineItem(item: {
+  price?: string
+  title: string
+  range?: string
+  bullets: string[]
+}) {
+  const title = item.title.replace(/^Pocket\s+/i, "Pocket ")
+  const head = item.price
+    ? `**${item.price}** — ${title}`
+    : `**${title}**`
+  const withRange = item.range ? `${head} · _${item.range}_` : head
+  const lines = [`- ${withRange}`]
+  for (const bullet of item.bullets) {
+    lines.push(`  - ${bullet}`)
+  }
+  return lines.join("\n")
+}
+
+function formatAsciiTimelineBody(body: string) {
+  const items: {
+    price?: string
+    title: string
+    range?: string
+    bullets: string[]
+  }[] = []
+  let current: (typeof items)[number] | null = null
+
+  for (const raw of body.replace(/\r\n/g, "\n").split("\n")) {
+    const trimmed = raw.trim()
+    if (!trimmed || isAsciiTimelineRailOnly(trimmed)) continue
+
+    if (isAsciiTimelineHeader(trimmed)) {
+      const parsed = parseAsciiTimelineHeader(trimmed)
+      if (parsed?.title) {
+        current = {
+          price: parsed.price,
+          title: parsed.title,
+          range: parsed.range,
+          bullets: [],
+        }
+        items.push(current)
+        continue
+      }
+    }
+
+    const bullet = trimmed.match(/^[|│]?\s*[•\-*]\s+(.+)$/)
+    if (bullet) {
+      if (!current) {
+        current = { title: "Level", bullets: [] }
+        items.push(current)
+      }
+      current.bullets.push(bullet[1].trim())
+      continue
+    }
+
+    // Soft-fail: keep leftover prose as its own bullet under the active node.
+    if (current && !/^```/.test(trimmed)) {
+      current.bullets.push(trimmed.replace(/^[|│]\s*/, ""))
+    }
+  }
+
+  if (items.length === 0) return body.trim()
+  return items.map(formatAsciiTimelineItem).join("\n\n")
+}
+
+/**
+ * Convert unfenced ASCII ladders (model sometimes skips code fences).
+ * Skips content already inside fenced blocks.
+ */
+function normalizeUnfencedAsciiTimelines(text: string) {
+  const lines = text.split("\n")
+  const out: string[] = []
+  let inFence = false
+  let block: string[] = []
+
+  const flushBlock = () => {
+    if (block.length === 0) return
+    const body = block.join("\n")
+    if (looksLikeAsciiTimeline(body)) {
+      out.push("", formatAsciiTimelineBody(body), "")
+    } else {
+      out.push(...block)
+    }
+    block = []
+  }
+
+  for (const line of lines) {
+    if (/^```/.test(line.trim())) {
+      flushBlock()
+      inFence = !inFence
+      out.push(line)
+      continue
+    }
+    if (inFence) {
+      out.push(line)
+      continue
+    }
+
+    const trimmed = line.trim()
+    const inTimelineLine =
+      isAsciiTimelineHeader(trimmed) ||
+      isAsciiTimelineBullet(trimmed) ||
+      isAsciiTimelineRailOnly(trimmed)
+
+    if (inTimelineLine) {
+      block.push(line)
+      continue
+    }
+
+    if (block.length > 0 && !trimmed) {
+      block.push(line)
+      continue
+    }
+
+    flushBlock()
+    out.push(line)
+  }
+
+  flushBlock()
+  return out.join("\n").replace(/\n{3,}/g, "\n\n")
+}
+
 function formatBoardLine(trimmed: string) {
   const bracket = trimmed.match(/^\[([^\]]+)\]\s*(.+)$/)
   if (bracket) {
@@ -209,13 +396,16 @@ function formatBoardBody(body: string) {
   return out.join("\n").replace(/\n{3,}/g, "\n\n").trim()
 }
 
-/** Unwrap ``` fences that are market boards / prose, not real code. */
+/** Unwrap ``` fences that are market boards / ASCII ladders / prose, not real code. */
 function unwrapProseFences(text: string) {
   return text.replace(
     /```([a-zA-Z0-9_-]*)[ \t]*\n([\s\S]*?)```/g,
     (match, lang: string, body: string) => {
       const language = (lang || "").toLowerCase()
       if (language && CODE_LANG_KEEP.has(language)) return match
+      if (looksLikeAsciiTimeline(body)) {
+        return `\n\n${formatAsciiTimelineBody(body)}\n\n`
+      }
       if (!looksLikeProseBoard(body)) return match
       return `\n\n${formatBoardBody(body)}\n\n`
     }
@@ -227,7 +417,9 @@ export function prepareAssistantMarkdown(
   now = Date.now()
 ): string {
   const text = humanizeRawEpochs(
-    unwrapProseFences(input.replace(/\r\n/g, "\n")),
+    normalizeUnfencedAsciiTimelines(
+      unwrapProseFences(input.replace(/\r\n/g, "\n"))
+    ),
     now
   )
   const withIntroSplit = text.replace(

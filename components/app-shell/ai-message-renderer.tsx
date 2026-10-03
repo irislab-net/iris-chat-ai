@@ -62,7 +62,11 @@ const aiMessageClassName = cn(
   "[&_h3]:mt-3 [&_h3]:mb-1.5 [&_h3]:text-[17px] [&_h3]:font-semibold [&_h3]:leading-[1.35] [&_h3:first-child]:mt-0 sm:[&_h3]:text-[15px] sm:[&_h3]:leading-5",
   "[&_ul]:my-2.5 [&_ul]:list-disc [&_ul]:space-y-1.5 [&_ul]:ps-5 [&_ul:last-child]:mb-0",
   "[&_ol]:my-2.5 [&_ol]:list-decimal [&_ol]:space-y-1.5 [&_ol]:ps-5 [&_ol:last-child]:mb-0",
-  "[&_li]:leading-[1.5]",
+  // Nested ladders (liquidity pockets / levels) read as a clean vertical timeline
+  "[&_li]:leading-[1.5] [&_li+li]:mt-0.5",
+  "[&_li>ul]:mt-1.5 [&_li>ul]:mb-0.5 [&_li>ul]:space-y-1 [&_li>ul]:border-s [&_li>ul]:border-border/45 [&_li>ul]:ps-3.5 [&_li>ul]:ms-0.5",
+  "[&_li>ol]:mt-1.5 [&_li>ol]:mb-0.5 [&_li>ol]:space-y-1 [&_li>ol]:border-s [&_li>ol]:border-border/45 [&_li>ol]:ps-3.5 [&_li>ol]:ms-0.5",
+  "[&_li>p]:mb-0",
   "[&_blockquote]:my-3 [&_blockquote]:border-s-2 [&_blockquote]:border-border/70 [&_blockquote]:ps-3 [&_blockquote]:text-muted-foreground",
   "[&_hr]:my-4 [&_hr]:border-border/60",
   "[&_a]:font-medium [&_a]:text-foreground [&_a]:underline [&_a]:decoration-foreground/30 [&_a]:underline-offset-2 hover:[&_a]:decoration-foreground/60",
