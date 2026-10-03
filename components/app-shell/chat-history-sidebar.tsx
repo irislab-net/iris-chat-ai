@@ -60,6 +60,8 @@ import {
   chatHistoryRailSectionLabelClass,
   chatMobileDrawerFooterBarClass,
   chatMobileDrawerFooterWrapClass,
+  chatMobileDrawerHeaderBarClass,
+  chatMobileDrawerHeaderWrapClass,
   chatMobileDrawerNavItemClass,
   chatMobileDrawerSectionLabelClass,
   chatMobileDrawerSurfaceClass,
@@ -502,43 +504,50 @@ function ChatHistorySidebar({
         )}
       >
         {isMobileDrawer ? (
-          <header className="app-mobile-safe-header flex shrink-0 items-center justify-between gap-3 px-4 pb-3">
-            <div className="flex min-w-0 items-center gap-2.5">
-              <ExurLogo
-                decorative
-                variant="gradient"
-                shimmer
-                priority
-                size={40}
-                className="size-10 shrink-0 overflow-hidden rounded-full"
-              />
-              <h2 className="text-lg leading-none font-normal tracking-tight text-foreground">
-                {t("iris")}
-              </h2>
-            </div>
-            <div className="flex shrink-0 items-center gap-1.5">
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                className={chatMobileHeaderButtonClass}
-                aria-label={t("searchChats")}
-                onClick={() => setSearchOpen(true)}
-              >
-                <SearchIcon className="size-4.5" />
-              </Button>
-              {onClose ? (
+          <header className={chatMobileDrawerHeaderWrapClass}>
+            <div
+              className={cn(
+                chatMobileDrawerHeaderBarClass,
+                "app-mobile-safe-header flex items-center justify-between gap-3 px-4 pb-3"
+              )}
+            >
+              <div className="flex min-w-0 items-center gap-2.5">
+                <ExurLogo
+                  decorative
+                  variant="gradient"
+                  shimmer
+                  priority
+                  size={40}
+                  className="size-10 shrink-0 overflow-hidden rounded-full"
+                />
+                <h2 className="text-lg leading-none font-normal tracking-tight text-foreground">
+                  {t("iris")}
+                </h2>
+              </div>
+              <div className="flex shrink-0 items-center gap-1.5">
                 <Button
                   type="button"
                   variant="ghost"
                   size="icon"
                   className={chatMobileHeaderButtonClass}
-                  aria-label={t("closeChatHistory")}
-                  onClick={onClose}
+                  aria-label={t("searchChats")}
+                  onClick={() => setSearchOpen(true)}
                 >
-                  <XIcon className="size-4.5" />
+                  <SearchIcon className="size-4.5" />
                 </Button>
-              ) : null}
+                {onClose ? (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className={chatMobileHeaderButtonClass}
+                    aria-label={t("closeChatHistory")}
+                    onClick={onClose}
+                  >
+                    <XIcon className="size-4.5" />
+                  </Button>
+                ) : null}
+              </div>
             </div>
           </header>
         ) : showBrandHeader ? (
@@ -597,7 +606,7 @@ function ChatHistorySidebar({
             className={cn(
               "flex flex-col",
                 isMobileDrawer
-                ? "gap-1.5 px-3.5 pt-3 pb-[calc(3.25rem+env(safe-area-inset-bottom,0px))]"
+                ? "gap-1.5 px-3.5 pt-3 pb-4"
                 : showBrandHeader
                   ? "gap-1.5 px-2 pt-3 pb-4"
                   : "gap-1.5 px-2 pt-1 pb-4"

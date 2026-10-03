@@ -349,9 +349,17 @@ const chatThreadUpgradeClass = `hidden gap-1.5 sm:inline-flex ${chatUpgradePillC
  */
 const chatThreadConnectButtonClass = `h-11 gap-2 rounded-full px-5 text-[15px] font-semibold ${chatLandingAccentFillClass}`
 
-const chatMobileDrawerFooterWrapClass = "relative z-10 shrink-0"
+/** Mobile history drawer footer — bg softens at the top into the list. */
+const chatMobileDrawerFooterWrapClass =
+  "pointer-events-none relative z-10 -mt-8 shrink-0 pt-8 [background:linear-gradient(to_top,var(--background)_0%,var(--background)_calc(100%-2rem),color-mix(in_oklch,var(--background)_45%,transparent)_calc(100%-0.75rem),transparent_100%)]"
 
-const chatMobileDrawerFooterBarClass = "relative bg-background"
+const chatMobileDrawerFooterBarClass = "pointer-events-auto relative"
+
+/** Mobile history drawer brand header — bg softens at the bottom into the list. */
+const chatMobileDrawerHeaderWrapClass =
+  "pointer-events-none relative z-10 -mb-8 shrink-0 pb-8 [background:linear-gradient(to_bottom,var(--background)_0%,var(--background)_calc(100%-2rem),color-mix(in_oklch,var(--background)_45%,transparent)_calc(100%-0.75rem),transparent_100%)]"
+
+const chatMobileDrawerHeaderBarClass = "pointer-events-auto relative"
 
 /** Desktop history rail account footer — bg itself softens at the top into the list. */
 const chatHistoryRailFooterWrapClass =
@@ -697,6 +705,8 @@ export {
   chatHistoryRailSectionLabelClass,
   chatMobileDrawerFooterBarClass,
   chatMobileDrawerFooterWrapClass,
+  chatMobileDrawerHeaderBarClass,
+  chatMobileDrawerHeaderWrapClass,
   chatMobileDrawerNavItemClass,
   chatMobileDrawerSectionLabelClass,
   chatMobileDrawerSurfaceClass,
