@@ -36,7 +36,6 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet"
 import { useIsDesktop } from "@/hooks/use-media-query"
-import { landingCta } from "@/lib/landing-modern-styles"
 import { cn } from "@/lib/utils"
 
 export type ChatErrorDialogAction = "retry" | "connect"
@@ -77,9 +76,9 @@ function ChatErrorDialog({
         <Button
           type="button"
           className={cn(
-            isDesktop
-              ? cn(landingCta("primary", "sm"), "rounded-full gap-2")
-              : cn(chatMobileSheetPrimaryButtonClass, "gap-2")
+            chatMobileSheetPrimaryButtonClass,
+            "gap-2",
+            isDesktop && "h-10! min-h-10"
           )}
           disabled={busy}
           onClick={() => {
@@ -94,9 +93,9 @@ function ChatErrorDialog({
         <Button
           type="button"
           className={cn(
-            isDesktop
-              ? cn(landingCta("primary", "sm"), "rounded-full gap-2")
-              : cn(chatMobileSheetPrimaryButtonClass, "gap-2")
+            chatMobileSheetPrimaryButtonClass,
+            "gap-2",
+            isDesktop && "h-10! min-h-10"
           )}
           disabled={busy || !onRetry}
           onClick={() => {
@@ -111,9 +110,8 @@ function ChatErrorDialog({
       <Button
         type="button"
         className={cn(
-          isDesktop
-            ? cn(landingCta("secondary", "sm"), "rounded-full")
-            : chatMobileSheetSecondaryButtonClass
+          chatMobileSheetSecondaryButtonClass,
+          isDesktop && "h-10! min-h-10"
         )}
         disabled={busy}
         onClick={() => onOpenChange(false)}

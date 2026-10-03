@@ -12,7 +12,7 @@ export const IRIS_SAMPLE_PROMPTS: readonly IrisSamplePrompt[] = [
     title: "BTC trade signal",
     description:
       "Ask for a live setup — card only when the model has a clear read.",
-    text: "@signal BTC",
+    text: "/Signal BTC",
   },
   {
     id: "xau-macro",
@@ -44,7 +44,7 @@ export const IRIS_COMPOSER_QUICK_PROMPTS: IrisComposerQuickPrompt[] = [
   {
     id: "btc-signal",
     label: "BTC signal",
-    text: "@signal BTC",
+    text: "/Signal BTC",
   },
   {
     id: "btc-signal-fa",

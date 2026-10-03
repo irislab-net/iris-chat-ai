@@ -50,8 +50,22 @@ describe("createPasteAttachment / buildMessageWithPasteAttachments", () => {
       [first, second],
       "Please review the attached file."
     )
-    expect(message).toContain("Summarize")
-    expect(message).toContain('file="pasted.txt"')
-    expect(message).toContain('file="pasted.md"')
+    expect(message.startsWith("Summarize\n\n")).toBe(true)
+    expect(message).toContain(first.content.trimEnd())
+    expect(message).toContain(second.content.trimEnd())
+    expect(message).not.toContain('file="pasted.txt"')
+    expect(message).not.toContain("Please review the attached file.")
+  })
+
+  it("sends paste body alone when the prompt is empty", () => {
+    const paste = createPasteAttachment("Rejected draft details\n".repeat(40))
+    const message = buildMessageWithPasteAttachments(
+      "   ",
+      [paste],
+      "Please review the attached file."
+    )
+    expect(message).toBe(paste.content.trimEnd())
+    expect(message).not.toContain("Please review")
+    expect(message).not.toContain("```")
   })
 })

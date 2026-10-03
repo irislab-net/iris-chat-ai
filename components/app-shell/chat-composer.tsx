@@ -853,11 +853,14 @@ function ChatComposer({
                 dir={textDir}
                 className={cn(
                   chatMobileComposerTextareaClass,
-                  "relative z-10 min-w-0 caret-foreground",
+                  // `block` overrides Textarea's default `flex`, which misaligns
+                  // the caret vs the mention mirror overlay on mobile Safari.
+                  "relative z-10 block min-w-0 caret-foreground",
                   floatingComposerExpanded
                     ? chatMobileComposerTextareaExpandedClass
                     : chatMobileComposerTextareaCompactClass,
-                  hasMentionHighlight && "text-transparent"
+                  hasMentionHighlight &&
+                    "text-transparent [-webkit-text-fill-color:transparent]"
                 )}
               />
             </div>
@@ -947,8 +950,9 @@ function ChatComposer({
                 dir={textDir}
                 className={cn(
                   chatDesktopComposerTextareaClass,
-                  "relative z-10 caret-foreground",
-                  hasMentionHighlight && "text-transparent"
+                  "relative z-10 block caret-foreground",
+                  hasMentionHighlight &&
+                    "text-transparent [-webkit-text-fill-color:transparent]"
                 )}
               />
             </div>
@@ -1100,14 +1104,19 @@ function ComposerMentionHighlight({
     <>
       {parts.map((part, index) =>
         part.type === "mention" ? (
+          // Keep font-weight/padding identical to the textarea so the caret
+          // stays aligned with the mirror. Do not use `text-primary` — in this
+          // theme primary is near-black and the mention disappears.
           <span
             key={`mention-${index}`}
-            className="font-semibold text-primary"
+            className="rounded-[0.3em] bg-[#2563EB]/14 font-normal text-[#2563EB] [box-decoration-break:clone] box-decoration-clone dark:bg-[#60A5FA]/20 dark:text-[#93C5FD]"
           >
             {part.value}
           </span>
         ) : (
-          <span key={`text-${index}`}>{part.value}</span>
+          <span key={`text-${index}`} className="font-normal text-foreground">
+            {part.value}
+          </span>
         )
       )}
       {/* Keep trailing newline height in sync with the textarea mirror. */}

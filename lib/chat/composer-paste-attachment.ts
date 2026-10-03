@@ -68,21 +68,25 @@ export function formatPasteAttachmentSize(charCount: number): string {
   return `${kb < 10 ? kb.toFixed(1) : Math.round(kb)} KB`
 }
 
-/** Embed chips into the outbound user message (no upload API yet). */
+/**
+ * Merge composer chips into the outbound user message.
+ * Chips stay in the UI; on the wire we send plain content only — no
+ * synthetic “please review…” prompt and no ```file="pasted.txt"``` wrapper.
+ */
 export function buildMessageWithPasteAttachments(
   text: string,
   attachments: ComposerPasteAttachment[],
-  emptyPrompt: string
+  /** @deprecated Kept for call-site compat; unused. */
+  _emptyPrompt?: string
 ): string {
   if (attachments.length === 0) return text.trim()
 
-  const blocks = attachments
-    .map((attachment) => {
-      const fence = attachment.kind === "markdown" ? "markdown" : "text"
-      return `\`\`\`${fence} file="${attachment.name}"\n${attachment.content}\n\`\`\``
-    })
+  const bodies = attachments
+    .map((attachment) => attachment.content.replace(/\r\n/g, "\n").trimEnd())
+    .filter(Boolean)
     .join("\n\n")
 
-  const prompt = text.trim() || emptyPrompt.trim()
-  return prompt ? `${prompt}\n\n${blocks}` : blocks
+  const prompt = text.trim()
+  if (prompt && bodies) return `${prompt}\n\n${bodies}`
+  return prompt || bodies
 }

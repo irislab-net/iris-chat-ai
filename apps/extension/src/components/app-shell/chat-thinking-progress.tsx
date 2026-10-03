@@ -1,16 +1,16 @@
 "use client"
 
 import * as React from "react"
-import { LoaderCircleIcon } from "lucide-react"
 import { useTranslations } from "next-intl"
 
 import {
+  chatThinkingDotsClass,
   chatThinkingLabelClass,
   chatThinkingRowClass,
   chatThinkingShellClass,
   chatThinkingShimmerClass,
-  chatThinkingSpinnerClass,
 } from "@/components/app-shell/chat-thinking-styles"
+import { TypingDots } from "@/components/app-shell/chat-typing"
 import {
   CHAT_MOTION,
   loadChatGsap,
@@ -211,7 +211,7 @@ function ChatThinkingTerminal({ className }: ChatThinkingTerminalProps) {
       data-thinking-terminal=""
     >
       <div className={chatThinkingRowClass}>
-        <LoaderCircleIcon className={chatThinkingSpinnerClass} aria-hidden />
+        <TypingDots decorative className={chatThinkingDotsClass} />
         <span className="relative block min-h-5 min-w-0 flex-1 overflow-hidden">
           <span
             ref={outgoingRef}

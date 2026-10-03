@@ -444,7 +444,7 @@
     "bitcoin": "Bitcoin",
     "gold": "Oro",
     "primaryNav": "Principal",
-    "composerPlaceholder": "Pregunta a Exur o escribe @ para herramientas…",
+    "composerPlaceholder": "Pregunta a Exur o escribe / para herramientas…",
     "composerMobilePlaceholder": "Pregunta a Exur",
     "composerAriaLabel": "Mensaje a Exur",
     "composerVoiceInput": "Entrada de voz",
@@ -581,12 +581,12 @@
     },
     "thinkingTrace": {
       "aria": "Pasos de razonamiento del modelo",
-      "live": "Pensando…",
-      "liveWithDuration": "Pensando… {seconds}s",
+      "live": "Exur está pensando…",
+      "liveWithDuration": "Exur está pensando… {seconds}s",
       "done": "Proceso de pensamiento",
       "doneWithDuration": "Pensó durante {seconds}s",
-      "waiting": "Trabajando en tu solicitud…",
-      "usingTool": "Buscando {tool}…"
+      "waiting": "Reuniendo contexto de tu solicitud…",
+      "usingTool": "Revisando {tool}…"
     },
     "loadingExur": "Cargando Exur",
     "errors": {
@@ -640,14 +640,11 @@
     "composerPasteAttachmentUnwrap": "Mostrar en el campo de texto",
     "composerPasteAttachmentEmptyPrompt": "Revisa el archivo adjunto.",
     "signalGuidance": {
-      "title": "Indica el mercado para Signal",
-      "description": "Signal necesita un activo claro — como ETH, BTC u oro — para evaluar un setup.",
-      "tipTitle": "Cómo escribirlo",
-      "tipBody": "Escribe {trigger} para abrir herramientas, elige {signal} y añade el mercado. Ejemplo: {trigger}{signal} ETH",
-      "examplesLabel": "Prueba uno",
-      "exampleHint": "Setup para {asset}",
-      "tryEth": "Usar /Signal ETH",
-      "gotIt": "Entendido"
+      "title": "Elige un mercado",
+      "description": "Signal necesita un símbolo de mercado.",
+      "pickMarket": "Mercado",
+      "useExample": "Insertar ejemplo",
+      "gotIt": "Ahora no"
     },
     "chatError": {
       "title": "No se pudo completar la respuesta",

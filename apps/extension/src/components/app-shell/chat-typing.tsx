@@ -10,7 +10,17 @@ const TYPEWRITER_MIN_EMIT_MS = 16
 /** Cap per frame: fast catch-up without dumping a whole paragraph. */
 const TYPEWRITER_MAX_CHARS_PER_FRAME = 14
 
-function TypingDots({ className }: { className?: string }) {
+function TypingDots({
+  className,
+  /** When true, dots are visual-only (parent already announces status). */
+  decorative = false,
+  label,
+}: {
+  className?: string
+  decorative?: boolean
+  /** Override the default “assistant typing” aria label when not decorative. */
+  label?: string
+}) {
   const t = useTranslations("workspace")
   return (
     <span
@@ -18,8 +28,9 @@ function TypingDots({ className }: { className?: string }) {
         "chat-typing-dots inline-flex items-center gap-1 px-0.5",
         className
       )}
-      aria-label={t("assistantTyping")}
-      role="status"
+      aria-hidden={decorative || undefined}
+      aria-label={decorative ? undefined : (label ?? t("assistantTyping"))}
+      role={decorative ? undefined : "status"}
     >
       <span />
       <span />

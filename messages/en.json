@@ -781,7 +781,7 @@
     "bitcoin": "Bitcoin",
     "gold": "Gold",
     "primaryNav": "Primary",
-    "composerPlaceholder": "Ask Exur or type @ for tools…",
+    "composerPlaceholder": "Ask Exur or type / for tools…",
     "composerMobilePlaceholder": "Ask Exur",
     "composerAriaLabel": "Message Exur",
     "composerVoiceInput": "Voice input",
@@ -950,12 +950,12 @@
     },
     "thinkingTrace": {
       "aria": "Model thinking steps",
-      "live": "Thinking…",
-      "liveWithDuration": "Thinking… {seconds}s",
+      "live": "Exur is thinking…",
+      "liveWithDuration": "Exur is thinking… {seconds}s",
       "done": "Thought process",
       "doneWithDuration": "Thought for {seconds}s",
-      "waiting": "Working on your request…",
-      "usingTool": "Searching {tool}…"
+      "waiting": "Gathering context for your request…",
+      "usingTool": "Checking {tool}…"
     },
     "loadingExur": "Loading Exur",
     "errors": {
@@ -1042,14 +1042,11 @@
       "save": "Save profile"
     },
     "signalGuidance": {
-      "title": "Tell Signal which market",
-      "description": "Signal needs a clear asset — like ETH, BTC, or gold — so it can evaluate a setup.",
-      "tipTitle": "How to write it",
-      "tipBody": "Type {trigger} to open tools, choose {signal}, then add the market. Example: {trigger}{signal} ETH",
-      "examplesLabel": "Try one",
-      "exampleHint": "Setup for {asset}",
-      "tryEth": "Use /Signal ETH",
-      "gotIt": "Got it"
+      "title": "Choose a market",
+      "description": "Signal needs a market symbol.",
+      "pickMarket": "Market",
+      "useExample": "Insert example",
+      "gotIt": "Not now"
     },
     "chatError": {
       "title": "Couldn't finish that reply",

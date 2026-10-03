@@ -743,7 +743,7 @@
     "bitcoin": "بیت‌کوین",
     "gold": "طلا",
     "primaryNav": "منوی اصلی",
-    "composerPlaceholder": "از Exur بپرس یا برای ابزارها @ بزن…",
+    "composerPlaceholder": "از Exur بپرس یا برای ابزارها / بزن…",
     "composerMobilePlaceholder": "از Exur بپرس",
     "composerAriaLabel": "پیام به Exur",
     "composerVoiceInput": "ورودی صوتی",
@@ -881,12 +881,12 @@
     },
     "thinkingTrace": {
       "aria": "مراحل فکر کردن مدل",
-      "live": "در حال فکر کردن…",
-      "liveWithDuration": "در حال فکر کردن… {seconds}ث",
+      "live": "Exur در حال فکر کردن است…",
+      "liveWithDuration": "Exur در حال فکر کردن است… {seconds}ث",
       "done": "فرآیند فکر",
       "doneWithDuration": "فکر کرد به مدت {seconds}ثانیه",
-      "waiting": "روی درخواستت کار می‌کنه…",
-      "usingTool": "در حال جست‌وجوی {tool}…"
+      "waiting": "در حال جمع‌آوری زمینهٔ درخواستت…",
+      "usingTool": "در حال بررسی {tool}…"
     },
     "loadingExur": "در حال بارگذاری Exur",
     "errors": {
@@ -940,14 +940,11 @@
     "composerPasteAttachmentUnwrap": "نمایش در فیلد متن",
     "composerPasteAttachmentEmptyPrompt": "لطفاً فایل پیوست را بررسی کن.",
     "signalGuidance": {
-      "title": "بازار را برای سیگنال مشخص کنید",
-      "description": "سیگنال به یک دارایی مشخص نیاز دارد — مثل ETH، BTC یا طلا — تا بتواند ستاپ را ارزیابی کند.",
-      "tipTitle": "چطور بنویسید",
-      "tipBody": "با {trigger} ابزارها را باز کنید، {signal} را انتخاب کنید، بعد بازار را بنویسید. مثلاً: {trigger}{signal} ETH",
-      "examplesLabel": "یکی را امتحان کنید",
-      "exampleHint": "ستاپ برای {asset}",
-      "tryEth": "استفاده از /سیگنال ETH",
-      "gotIt": "متوجه شدم"
+      "title": "بازار را انتخاب کنید",
+      "description": "سیگنال به نماد بازار نیاز دارد.",
+      "pickMarket": "بازار",
+      "useExample": "درج نمونه",
+      "gotIt": "الان نه"
     },
     "chatError": {
       "title": "پاسخ کامل نشد",

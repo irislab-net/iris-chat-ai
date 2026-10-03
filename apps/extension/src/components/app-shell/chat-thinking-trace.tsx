@@ -1,23 +1,18 @@
 "use client"
 
 import * as React from "react"
-import {
-  ChevronRightIcon,
-  LoaderCircleIcon,
-  SparklesIcon,
-  WrenchIcon,
-} from "lucide-react"
+import { ChevronRightIcon, WrenchIcon } from "lucide-react"
 import { useTranslations } from "next-intl"
 import { Streamdown } from "streamdown"
 
 import {
-  chatThinkingIconMutedClass,
+  chatThinkingDotsClass,
   chatThinkingLabelClass,
   chatThinkingRowClass,
   chatThinkingShellClass,
   chatThinkingShimmerClass,
-  chatThinkingSpinnerClass,
 } from "@/components/app-shell/chat-thinking-styles"
+import { TypingDots } from "@/components/app-shell/chat-typing"
 import {
   Accordion,
   AccordionContent,
@@ -177,16 +172,8 @@ function ChatThinkingTrace({
         >
           <span className="flex min-w-0 flex-1 items-center gap-2">
             {live ? (
-              <LoaderCircleIcon
-                className={chatThinkingSpinnerClass}
-                aria-hidden
-              />
-            ) : (
-              <SparklesIcon
-                className={chatThinkingIconMutedClass}
-                aria-hidden
-              />
-            )}
+              <TypingDots decorative className={chatThinkingDotsClass} />
+            ) : null}
             <span
               className={cn(
                 chatThinkingLabelClass,

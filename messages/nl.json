@@ -444,7 +444,7 @@
     "bitcoin": "Bitcoin",
     "gold": "Goud",
     "primaryNav": "Primair",
-    "composerPlaceholder": "Vraag Exur of typ @ voor tools…",
+    "composerPlaceholder": "Vraag Exur of typ / voor tools…",
     "composerMobilePlaceholder": "Vraag Exur",
     "composerAriaLabel": "Bericht aan Exur",
     "composerVoiceInput": "Spraakinvoer",
@@ -578,12 +578,12 @@
     },
     "thinkingTrace": {
       "aria": "Denkstappen van het model",
-      "live": "Nadenken…",
-      "liveWithDuration": "Nadenken… {seconds}s",
+      "live": "Exur denkt na…",
+      "liveWithDuration": "Exur denkt na… {seconds}s",
       "done": "Denkproces",
       "doneWithDuration": "Nagedacht gedurende {seconds}s",
-      "waiting": "Bezig met je verzoek…",
-      "usingTool": "{tool} zoeken…"
+      "waiting": "Context voor je verzoek verzamelen…",
+      "usingTool": "{tool} controleren…"
     },
     "loadingExur": "Exur laden",
     "errors": {
@@ -633,14 +633,11 @@
     "sharedResponse": "Antwoord gedeeld",
     "noTradeShareTitle": "Geen trade delen",
     "signalGuidance": {
-      "title": "Geef Signal een markt",
-      "description": "Signal heeft een duidelijk asset nodig — zoals ETH, BTC of goud — om een setup te beoordelen.",
-      "tipTitle": "Zo schrijf je het",
-      "tipBody": "Typ {trigger} om tools te openen, kies {signal} en voeg de markt toe. Voorbeeld: {trigger}{signal} ETH",
-      "examplesLabel": "Probeer er een",
-      "exampleHint": "Setup voor {asset}",
-      "tryEth": "Gebruik /Signal ETH",
-      "gotIt": "Begrepen"
+      "title": "Kies een markt",
+      "description": "Signal heeft een marktsymbool nodig.",
+      "pickMarket": "Markt",
+      "useExample": "Voorbeeld invoegen",
+      "gotIt": "Niet nu"
     },
     "chatError": {
       "title": "Antwoord kon niet worden voltooid",

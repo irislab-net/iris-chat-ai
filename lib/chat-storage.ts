@@ -226,7 +226,9 @@ export function resolvePersistedConversationTitle(
 ): string {
   const autoTitle = conversationTitleFromMessages(messages)
   const existingTitle = existing?.title?.trim()
-  if (!existingTitle || existingTitle === NEW_CHAT_TITLE) return autoTitle
+  if (!existing || !existingTitle || existingTitle === NEW_CHAT_TITLE) {
+    return autoTitle
+  }
   const previousAuto = conversationTitleFromMessages(existing.messages)
   if (existingTitle === previousAuto) return autoTitle
   return existingTitle

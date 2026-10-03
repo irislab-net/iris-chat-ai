@@ -161,6 +161,37 @@
   animation: exur-logo-shimmer 2.8s ease-in-out infinite;
 }
 
+@keyframes chat-typing-bounce {
+  0%,
+  70%,
+  100% {
+    transform: translateY(0) scale(0.82);
+    opacity: 0.28;
+  }
+  35% {
+    transform: translateY(-2.5px) scale(1);
+    opacity: 1;
+  }
+}
+
+.chat-typing-dots span {
+  display: block;
+  width: 0.35rem;
+  height: 0.35rem;
+  border-radius: 9999px;
+  background: currentColor;
+  animation: chat-typing-bounce 1.15s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+.chat-typing-dots span:nth-child(2) {
+  animation-delay: 0.16s;
+}
+
+.chat-typing-dots span:nth-child(3) {
+  animation-delay: 0.32s;
+}
+
 /* ChatGPT-style live thinking label shimmer */
 @keyframes chat-thinking-shimmer {
   0% {
@@ -188,6 +219,13 @@
 @media (prefers-reduced-motion: reduce) {
   .animate-exur-logo-shimmer {
     animation: none;
+  }
+
+  .chat-typing-dots span {
+    animation: none;
+    opacity: 0.7;
+    transform: none;
+    will-change: auto;
   }
 
   .chat-thinking-shimmer {

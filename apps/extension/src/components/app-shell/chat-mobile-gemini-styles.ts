@@ -175,7 +175,8 @@ const chatMobileComposerTrailingClass =
   "[grid-area:trailing] flex h-11 shrink-0 items-center justify-end"
 
 const chatMobileComposerTextareaClass =
-  "chat-bidi w-full min-w-0 flex-1 field-sizing-content resize-none rounded-none border-0 bg-transparent px-2.5 text-[16px] font-normal leading-[1.4] tracking-normal break-words text-foreground shadow-none placeholder:text-muted-foreground/45 focus-visible:border-transparent focus-visible:ring-0 disabled:cursor-not-allowed disabled:bg-transparent disabled:opacity-100 dark:bg-transparent dark:disabled:bg-transparent dark:placeholder:text-muted-foreground/40"
+  // `block` beats Textarea's baked-in `flex` so caret metrics match the mention mirror.
+  "chat-bidi block w-full min-w-0 flex-1 field-sizing-content resize-none rounded-none border-0 bg-transparent px-2.5 text-[16px] font-normal leading-[1.4] tracking-normal break-words text-foreground shadow-none placeholder:text-muted-foreground/45 focus-visible:border-transparent focus-visible:ring-0 disabled:cursor-not-allowed disabled:bg-transparent disabled:opacity-100 dark:bg-transparent dark:disabled:bg-transparent dark:placeholder:text-muted-foreground/40"
 
 const chatMobileComposerTextareaCompactClass =
   "h-11 min-h-11 max-h-11 w-full self-center py-0 overflow-hidden leading-11 [field-sizing:fixed]"
@@ -198,7 +199,7 @@ const chatDesktopComposerBodyClass = `isolate grid grid-cols-[auto_1fr_auto] ove
 
 /** Desktop textarea — grows with content up to ~12rem, then scrolls. */
 const chatDesktopComposerTextareaClass =
-  "field-sizing-content max-h-48 min-h-6 min-w-32 flex-1 resize-none overflow-y-auto rounded-none border-0 bg-transparent p-0 chat-bidi text-start text-[16px] font-normal leading-[1.4] tracking-normal shadow-none placeholder:text-muted-foreground/35 focus-visible:border-transparent focus-visible:ring-0 disabled:cursor-not-allowed disabled:bg-transparent disabled:opacity-100 sm:text-[15px] sm:leading-[1.4] sm:tracking-[-0.01em] dark:bg-transparent dark:placeholder:text-muted-foreground/30 dark:disabled:bg-transparent"
+  "block field-sizing-content max-h-48 min-h-6 min-w-32 flex-1 resize-none overflow-y-auto rounded-none border-0 bg-transparent p-0 chat-bidi text-start text-[16px] font-normal leading-[1.4] tracking-normal shadow-none placeholder:text-muted-foreground/35 focus-visible:border-transparent focus-visible:ring-0 disabled:cursor-not-allowed disabled:bg-transparent disabled:opacity-100 sm:text-[16px] sm:leading-[1.4] sm:tracking-[-0.01em] dark:bg-transparent dark:placeholder:text-muted-foreground/30 dark:disabled:bg-transparent"
 
 /** Nested control chips — liquid glass above the composer shell. */
 const chatDesktopComposerControlClass = `border-0 text-foreground transition-[transform,background-color,box-shadow,color] active:scale-[0.98] ${chatMobileGlassSurfaceClass} ${chatMobileHeaderShadowClass} ${chatMobileHeaderShadowHoverClass}`

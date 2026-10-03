@@ -444,7 +444,7 @@
     "bitcoin": "Bitcoin",
     "gold": "Altın",
     "primaryNav": "Birincil",
-    "composerPlaceholder": "Exur'a sorun veya araçlar için @ yazın…",
+    "composerPlaceholder": "Exur'a sorun veya araçlar için / yazın…",
     "composerMobilePlaceholder": "Exur'a sorun",
     "composerAriaLabel": "Exur'a mesaj",
     "composerVoiceInput": "Sesli giriş",
@@ -578,12 +578,12 @@
     },
     "thinkingTrace": {
       "aria": "Model düşünme adımları",
-      "live": "Düşünüyor…",
-      "liveWithDuration": "Düşünüyor… {seconds}sn",
+      "live": "Exur düşünüyor…",
+      "liveWithDuration": "Exur düşünüyor… {seconds}sn",
       "done": "Düşünme süreci",
       "doneWithDuration": "{seconds} sn düşündü",
-      "waiting": "İsteğin üzerinde çalışıyor…",
-      "usingTool": "{tool} aranıyor…"
+      "waiting": "İsteğin için bağlam toplanıyor…",
+      "usingTool": "{tool} kontrol ediliyor…"
     },
     "loadingExur": "Exur yükleniyor",
     "errors": {
@@ -633,14 +633,11 @@
     "sharedResponse": "Yanıt paylaşıldı",
     "noTradeShareTitle": "İşlem yok paylaş",
     "signalGuidance": {
-      "title": "Signal için piyasayı belirtin",
-      "description": "Signal’ın bir kurulum değerlendirmesi için ETH, BTC veya altın gibi net bir varlık gerekir.",
-      "tipTitle": "Nasıl yazılır",
-      "tipBody": "Araçları açmak için {trigger} yazın, {signal} seçin ve piyasayı ekleyin. Örnek: {trigger}{signal} ETH",
-      "examplesLabel": "Birini dene",
-      "exampleHint": "{asset} için kurulum",
-      "tryEth": "/Signal ETH kullan",
-      "gotIt": "Anladım"
+      "title": "Bir piyasa seçin",
+      "description": "Signal için bir piyasa sembolü gerekir.",
+      "pickMarket": "Piyasa",
+      "useExample": "Örneği ekle",
+      "gotIt": "Şimdi değil"
     },
     "chatError": {
       "title": "Yanıt tamamlanamadı",

@@ -1,7 +1,6 @@
 "use client"
 
 import * as React from "react"
-import { TrendingUpIcon } from "lucide-react"
 import { useTranslations } from "next-intl"
 
 import {
@@ -17,7 +16,6 @@ import {
   chatMobileSheetHeaderClass,
   chatMobileSheetPrimaryButtonClass,
   chatMobileSheetSecondaryButtonClass,
-  chatMobileSheetSectionLabelClass,
   chatMobileSheetTitleClass,
 } from "@/components/app-shell/chat-mobile-gemini-styles"
 import { Button } from "@/components/ui/button"
@@ -38,10 +36,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet"
 import { useIsDesktop } from "@/hooks/use-media-query"
-import {
-  COMPOSER_MENTION_TRIGGER,
-  mentionTokenForTool,
-} from "@/lib/chat/composer-mentions"
+import { mentionTokenForTool } from "@/lib/chat/composer-mentions"
 import { landingCta } from "@/lib/landing-modern-styles"
 import { cn } from "@/lib/utils"
 
@@ -60,57 +55,51 @@ function buildSignalExample(label: string, asset: string): string {
 
 function SignalGuidanceBody({
   signalLabel,
-  onPick,
+  selectedAsset,
+  onSelectAsset,
 }: {
   signalLabel: string
-  onPick: (draft: string) => void
+  selectedAsset: (typeof SIGNAL_EXAMPLE_ASSETS)[number]
+  onSelectAsset: (asset: (typeof SIGNAL_EXAMPLE_ASSETS)[number]) => void
 }) {
   const t = useTranslations("workspace.signalGuidance")
+  const token = mentionTokenForTool("signal", signalLabel).trimEnd()
 
   return (
-    <div className="space-y-3">
-      <div className={cn(chatMobileSheetCardClass, "flex items-start gap-3")}>
-        <span className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-2xl bg-foreground/5 text-foreground dark:bg-white/8">
-          <TrendingUpIcon className="size-4" aria-hidden />
-        </span>
-        <div className="min-w-0 space-y-1">
-          <p className="text-[13px] font-medium leading-snug text-foreground">
-            {t("tipTitle")}
-          </p>
-          <p className="text-[13px] leading-relaxed text-muted-foreground">
-            {t("tipBody", {
-              trigger: COMPOSER_MENTION_TRIGGER,
-              signal: signalLabel,
-            })}
-          </p>
-        </div>
-      </div>
-
-      <div className="space-y-2">
-        <p className={chatMobileSheetSectionLabelClass}>{t("examplesLabel")}</p>
-        <div className="grid grid-cols-2 gap-2">
-          {SIGNAL_EXAMPLE_ASSETS.map((asset) => {
-            const draft = buildSignalExample(signalLabel, asset)
-            return (
-              <button
-                key={asset}
-                type="button"
-                className={cn(
-                  chatMobileSheetCardClass,
-                  "text-start transition-[transform,background-color] active:scale-[0.98] hover:bg-foreground/4 dark:hover:bg-white/10"
-                )}
-                onClick={() => onPick(draft)}
-              >
-                <span className="block truncate font-mono text-[13px] font-semibold tracking-tight text-primary">
-                  {draft}
-                </span>
-                <span className="mt-0.5 block text-[11px] text-muted-foreground">
-                  {t("exampleHint", { asset })}
-                </span>
-              </button>
-            )
-          })}
-        </div>
+    <div className={cn(chatMobileSheetCardClass, "space-y-3")}>
+      <p
+        className="font-mono text-[15px] font-semibold tracking-tight text-foreground"
+        dir="ltr"
+      >
+        <span className="text-primary">{token}</span>
+        <span> {selectedAsset}</span>
+      </p>
+      <div
+        className="flex flex-wrap gap-2"
+        role="group"
+        aria-label={t("pickMarket")}
+      >
+        {SIGNAL_EXAMPLE_ASSETS.map((asset) => {
+          const selected = asset === selectedAsset
+          return (
+            <Button
+              key={asset}
+              type="button"
+              variant={selected ? "default" : "secondary"}
+              size="sm"
+              aria-pressed={selected}
+              className={cn(
+                "h-9 rounded-full px-3.5 text-[13px] font-semibold tracking-tight",
+                selected
+                  ? "bg-foreground text-background hover:bg-foreground/90"
+                  : "bg-foreground/5 text-foreground hover:bg-foreground/8 dark:bg-white/8 dark:hover:bg-white/12"
+              )}
+              onClick={() => onSelectAsset(asset)}
+            >
+              {asset}
+            </Button>
+          )
+        })}
       </div>
     </div>
   )
@@ -125,11 +114,19 @@ function SignalGuidanceDialog({
   const tw = useTranslations("workspace")
   const isDesktop = useIsDesktop()
   const signalLabel = tw("composerToolSignalLabel")
+  const [selectedAsset, setSelectedAsset] =
+    React.useState<(typeof SIGNAL_EXAMPLE_ASSETS)[number]>("ETH")
+
+  React.useEffect(() => {
+    if (open) setSelectedAsset("ETH")
+  }, [open])
 
   if (isDesktop === null) return null
 
-  function pickExample(draft: string) {
-    onUseExample(draft)
+  const example = buildSignalExample(signalLabel, selectedAsset)
+
+  function confirmExample() {
+    onUseExample(example)
     onOpenChange(false)
   }
 
@@ -142,9 +139,9 @@ function SignalGuidanceDialog({
             ? cn(landingCta("primary", "sm"), "rounded-full")
             : chatMobileSheetPrimaryButtonClass
         )}
-        onClick={() => pickExample(buildSignalExample(signalLabel, "ETH"))}
+        onClick={confirmExample}
       >
-        {t("tryEth")}
+        {t("useExample")}
       </Button>
       <Button
         type="button"
@@ -165,7 +162,7 @@ function SignalGuidanceDialog({
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent className={chatDesktopDialogClass} showCloseButton>
           <div className="flex flex-col gap-4 px-5 pt-5 pb-1">
-            <DialogHeader className="gap-2 space-y-0 text-start">
+            <DialogHeader className="gap-1.5 space-y-0 text-start">
               <DialogTitle className="font-heading text-[1.35rem] font-normal tracking-tight text-foreground">
                 {t("title")}
               </DialogTitle>
@@ -175,7 +172,8 @@ function SignalGuidanceDialog({
             </DialogHeader>
             <SignalGuidanceBody
               signalLabel={signalLabel}
-              onPick={pickExample}
+              selectedAsset={selectedAsset}
+              onSelectAsset={setSelectedAsset}
             />
           </div>
           <DialogFooter
@@ -199,16 +197,22 @@ function SignalGuidanceDialog({
         className={cn(chatMobileSheetContentClass, "gap-0 border-0")}
       >
         <div aria-hidden className={chatMobileSheetHandleClass} />
-        <SheetHeader className={cn(chatMobileSheetHeaderClass, "gap-2")}>
+        <SheetHeader className={cn(chatMobileSheetHeaderClass, "gap-1.5")}>
           <SheetTitle className={chatMobileSheetTitleClass}>
             {t("title")}
           </SheetTitle>
-          <SheetDescription className={chatMobileSheetDescriptionClass}>
+          <SheetDescription
+            className={cn(chatMobileSheetDescriptionClass, "text-[13px]")}
+          >
             {t("description")}
           </SheetDescription>
         </SheetHeader>
         <div className={cn(chatMobileSheetBodyClass, "pt-1 pb-5")}>
-          <SignalGuidanceBody signalLabel={signalLabel} onPick={pickExample} />
+          <SignalGuidanceBody
+            signalLabel={signalLabel}
+            selectedAsset={selectedAsset}
+            onSelectAsset={setSelectedAsset}
+          />
         </div>
         <SheetFooter className={chatMobileSheetFooterClass}>
           <div className={cn(chatMobileSheetFooterBarClass, "space-y-2 pt-4")}>

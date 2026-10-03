@@ -2,11 +2,12 @@
 
 import * as React from "react"
 import {
+  ActivityIcon,
   ArrowUpIcon,
-  BarChart3Icon,
   ChevronDownIcon,
   FileCode2Icon,
   FileTextIcon,
+  LineChartIcon,
   LockIcon,
   PaperclipIcon,
   PlusIcon,
@@ -16,6 +17,7 @@ import {
 } from "lucide-react"
 import { useLocale, useTranslations } from "next-intl"
 
+import { ComposerPremiumToolsDialog } from "@/components/app-shell/composer-premium-tools-dialog"
 import { ActionTooltip } from "@/components/ui/action-tooltip"
 import { Button } from "@/components/ui/button"
 import {
@@ -111,6 +113,8 @@ type ChatComposerProps = {
   /** Gemini-style floating pill — used on mobile full-screen chat. */
   layout?: "default" | "floating"
   onFloatingFocusChange?: (focused: boolean) => void
+  /** Plus users see “Coming soon” for locked premium tools. */
+  isProUser?: boolean
 }
 
 function ChatComposer({
@@ -127,6 +131,7 @@ function ChatComposer({
   hideEffort = false,
   layout = "default",
   onFloatingFocusChange,
+  isProUser = false,
 }: ChatComposerProps) {
   const t = useTranslations("workspace")
   const textDir = localeDirection(useLocale())
@@ -139,6 +144,21 @@ function ChatComposer({
   /** Ignore ghost taps when chat mounts under the finger (click retargeting). */
   const keyboardUnlockAllowedAtRef = React.useRef(0)
   const [uncontrolled, setUncontrolled] = React.useState("")
+  const [premiumToolsOpen, setPremiumToolsOpen] = React.useState(false)
+  const [premiumToolsFeature, setPremiumToolsFeature] = React.useState<
+    "premium-tools" | "upload"
+  >("premium-tools")
+
+  function openPremiumTools() {
+    setPremiumToolsFeature("premium-tools")
+    setPremiumToolsOpen(true)
+  }
+
+  function openLockedUpload() {
+    setPremiumToolsFeature("upload")
+    setPremiumToolsOpen(true)
+  }
+
   const [pasteAttachments, setPasteAttachments] = React.useState<
     ComposerPasteAttachment[]
   >([])
@@ -190,49 +210,61 @@ function ChatComposer({
         </DropdownMenuItem>
       ))}
       <DropdownMenuItem
-        disabled
         className={cn(
           chatMobileToolsMenuItemClass,
-          "flex-row items-center gap-3 py-2.5 opacity-55"
+          "flex-row items-center gap-3 py-2.5"
         )}
+        onClick={openPremiumTools}
       >
-        <span className="flex size-9 shrink-0 items-center justify-center rounded-2xl bg-foreground/4 text-muted-foreground dark:bg-white/6">
-          <BarChart3Icon className="size-4" aria-hidden />
+        <span className="flex size-9 shrink-0 items-center justify-center rounded-2xl bg-foreground/5 text-foreground dark:bg-white/8">
+          <LineChartIcon className="size-4" aria-hidden />
         </span>
-        <span className="flex min-w-0 flex-1 flex-col gap-0.5 text-start">
+        <span className="flex min-w-0 flex-1 items-center gap-2 text-start">
           <span className={chatMobileToolsMenuItemTitleClass}>
-            {t("composerToolAnalyticsLabel")}
+            {t("composerToolCorrelationLabel")}
           </span>
-          <span
-            className={cn(chatMobileToolsMenuItemDescClass, "line-clamp-2")}
-          >
-            {t("composerToolAnalyticsDesc")}
-          </span>
+          <LockIcon
+            className="ms-auto size-3.5 shrink-0 text-muted-foreground/70"
+            aria-hidden
+          />
         </span>
       </DropdownMenuItem>
       <DropdownMenuItem
-        disabled
         className={cn(
           chatMobileToolsMenuItemClass,
-          "flex-row items-center gap-3 py-2.5 opacity-55"
+          "flex-row items-center gap-3 py-2.5"
         )}
+        onClick={openPremiumTools}
       >
-        <span className="flex size-9 shrink-0 items-center justify-center rounded-2xl bg-foreground/4 text-muted-foreground dark:bg-white/6">
+        <span className="flex size-9 shrink-0 items-center justify-center rounded-2xl bg-foreground/5 text-foreground dark:bg-white/8">
+          <ActivityIcon className="size-4" aria-hidden />
+        </span>
+        <span className="flex min-w-0 flex-1 items-center gap-2 text-start">
+          <span className={chatMobileToolsMenuItemTitleClass}>
+            {t("composerToolVolatilityLabel")}
+          </span>
+          <LockIcon
+            className="ms-auto size-3.5 shrink-0 text-muted-foreground/70"
+            aria-hidden
+          />
+        </span>
+      </DropdownMenuItem>
+      <DropdownMenuItem
+        className={cn(
+          chatMobileToolsMenuItemClass,
+          "flex-row items-center gap-3 py-2.5"
+        )}
+        onClick={openLockedUpload}
+      >
+        <span className="flex size-9 shrink-0 items-center justify-center rounded-2xl bg-foreground/5 text-foreground dark:bg-white/8">
           <PaperclipIcon className="size-4" aria-hidden />
         </span>
         <span className="flex min-w-0 flex-1 items-center gap-2 text-start">
-          <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-            <span className={chatMobileToolsMenuItemTitleClass}>
-              {t("composerToolUploadLabel")}
-            </span>
-            <span
-              className={cn(chatMobileToolsMenuItemDescClass, "line-clamp-2")}
-            >
-              {t("composerToolUploadDesc")}
-            </span>
+          <span className={chatMobileToolsMenuItemTitleClass}>
+            {t("composerToolUploadLabel")}
           </span>
           <LockIcon
-            className="size-3.5 shrink-0 text-muted-foreground/70"
+            className="ms-auto size-3.5 shrink-0 text-muted-foreground/70"
             aria-hidden
           />
         </span>
@@ -821,11 +853,14 @@ function ChatComposer({
                 dir={textDir}
                 className={cn(
                   chatMobileComposerTextareaClass,
-                  "relative z-10 min-w-0 caret-foreground",
+                  // `block` overrides Textarea's default `flex`, which misaligns
+                  // the caret vs the mention mirror overlay on mobile Safari.
+                  "relative z-10 block min-w-0 caret-foreground",
                   floatingComposerExpanded
                     ? chatMobileComposerTextareaExpandedClass
                     : chatMobileComposerTextareaCompactClass,
-                  hasMentionHighlight && "text-transparent"
+                  hasMentionHighlight &&
+                    "text-transparent [-webkit-text-fill-color:transparent]"
                 )}
               />
             </div>
@@ -915,8 +950,9 @@ function ChatComposer({
                 dir={textDir}
                 className={cn(
                   chatDesktopComposerTextareaClass,
-                  "relative z-10 caret-foreground",
-                  hasMentionHighlight && "text-transparent"
+                  "relative z-10 block caret-foreground",
+                  hasMentionHighlight &&
+                    "text-transparent [-webkit-text-fill-color:transparent]"
                 )}
               />
             </div>
@@ -1049,6 +1085,12 @@ function ChatComposer({
           {t("composerHint")}
         </p>
       ) : null}
+      <ComposerPremiumToolsDialog
+        open={premiumToolsOpen}
+        onOpenChange={setPremiumToolsOpen}
+        isProUser={isProUser}
+        feature={premiumToolsFeature}
+      />
     </form>
   )
 }
@@ -1062,14 +1104,19 @@ function ComposerMentionHighlight({
     <>
       {parts.map((part, index) =>
         part.type === "mention" ? (
+          // Keep font-weight/padding identical to the textarea so the caret
+          // stays aligned with the mirror. Do not use `text-primary` — in this
+          // theme primary is near-black and the mention disappears.
           <span
             key={`mention-${index}`}
-            className="font-semibold text-primary"
+            className="rounded-[0.3em] bg-[#2563EB]/14 font-normal text-[#2563EB] [box-decoration-break:clone] box-decoration-clone dark:bg-[#60A5FA]/20 dark:text-[#93C5FD]"
           >
             {part.value}
           </span>
         ) : (
-          <span key={`text-${index}`}>{part.value}</span>
+          <span key={`text-${index}`} className="font-normal text-foreground">
+            {part.value}
+          </span>
         )
       )}
       {/* Keep trailing newline height in sync with the textarea mirror. */}

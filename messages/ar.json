@@ -730,7 +730,7 @@
     "bitcoin": "بيتكوين",
     "gold": "ذهب",
     "primaryNav": "التنقل الرئيسي",
-    "composerPlaceholder": "اسأل Exur أو اكتب @ للأدوات…",
+    "composerPlaceholder": "اسأل Exur أو اكتب / للأدوات…",
     "composerMobilePlaceholder": "اسأل Exur",
     "composerAriaLabel": "مراسلة Exur",
     "composerVoiceInput": "إدخال صوتي",
@@ -881,12 +881,12 @@
     },
     "thinkingTrace": {
       "aria": "خطوات تفكير النموذج",
-      "live": "يفكر…",
-      "liveWithDuration": "يفكر… {seconds}ث",
+      "live": "Exur يفكر…",
+      "liveWithDuration": "Exur يفكر… {seconds}ث",
       "done": "عملية التفكير",
       "doneWithDuration": "فكر لمدة {seconds}ث",
-      "waiting": "يعمل على طلبك…",
-      "usingTool": "يبحث في {tool}…"
+      "waiting": "يجمع سياق طلبك…",
+      "usingTool": "يراجع {tool}…"
     },
     "loadingExur": "جاري تحميل Exur",
     "errors": {
@@ -963,14 +963,11 @@
     "sharedResponse": "تمت مشاركة الرد",
     "noTradeShareTitle": "مشاركة عدم التداول",
     "signalGuidance": {
-      "title": "حدد السوق للإشارة",
-      "description": "تحتاج الإشارة إلى أصل واضح — مثل ETH أو BTC أو الذهب — لتقييم إعداد التداول.",
-      "tipTitle": "كيف تكتبها",
-      "tipBody": "اكتب {trigger} لفتح الأدوات، اختر {signal}، ثم أضف السوق. مثال: {trigger}{signal} ETH",
-      "examplesLabel": "جرّب مثالاً",
-      "exampleHint": "إعداد لـ {asset}",
-      "tryEth": "استخدم /Signal ETH",
-      "gotIt": "حسناً"
+      "title": "اختر سوقًا",
+      "description": "يحتاج Signal إلى رمز سوق.",
+      "pickMarket": "السوق",
+      "useExample": "إدراج المثال",
+      "gotIt": "ليس الآن"
     },
     "chatError": {
       "title": "تعذّر إكمال الرد",

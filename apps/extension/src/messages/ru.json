@@ -444,7 +444,7 @@
     "bitcoin": "Bitcoin",
     "gold": "Золото",
     "primaryNav": "Основное",
-    "composerPlaceholder": "Спросите Exur или введите @ для инструментов…",
+    "composerPlaceholder": "Спросите Exur или введите / для инструментов…",
     "composerMobilePlaceholder": "Спросите Exur",
     "composerAriaLabel": "Сообщение Exur",
     "composerVoiceInput": "Голосовой ввод",
@@ -581,12 +581,12 @@
     },
     "thinkingTrace": {
       "aria": "Шаги рассуждения модели",
-      "live": "Думаю…",
-      "liveWithDuration": "Думаю… {seconds}с",
+      "live": "Exur думает…",
+      "liveWithDuration": "Exur думает… {seconds}с",
       "done": "Ход мыслей",
       "doneWithDuration": "Думал {seconds}с",
-      "waiting": "Работаю над запросом…",
-      "usingTool": "Ищу {tool}…"
+      "waiting": "Собираю контекст вашего запроса…",
+      "usingTool": "Проверяю {tool}…"
     },
     "loadingExur": "Загрузка Exur",
     "errors": {
@@ -640,14 +640,11 @@
     "composerPasteAttachmentUnwrap": "Показать в текстовом поле",
     "composerPasteAttachmentEmptyPrompt": "Просмотрите прикреплённый файл.",
     "signalGuidance": {
-      "title": "Укажите рынок для Signal",
-      "description": "Signal нужен понятный актив — например ETH, BTC или золото — чтобы оценить сетап.",
-      "tipTitle": "Как писать",
-      "tipBody": "Введите {trigger}, выберите {signal} и добавьте рынок. Пример: {trigger}{signal} ETH",
-      "examplesLabel": "Попробуйте пример",
-      "exampleHint": "Сетап для {asset}",
-      "tryEth": "Использовать /Signal ETH",
-      "gotIt": "Понятно"
+      "title": "Выберите рынок",
+      "description": "Signal нужен рыночный символ.",
+      "pickMarket": "Рынок",
+      "useExample": "Вставить пример",
+      "gotIt": "Не сейчас"
     },
     "chatError": {
       "title": "Не удалось завершить ответ",
