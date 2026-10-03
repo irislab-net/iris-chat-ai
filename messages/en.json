@@ -960,11 +960,16 @@
     "loadingExur": "Loading Exur",
     "errors": {
       "recovery": "Something went wrong while receiving the response.",
+      "network": "Couldn't reach Exur. Check your connection and try again.",
+      "server": "Exur's servers hit a problem. Please try again in a moment.",
+      "streamInterrupted": "The response ended unexpectedly. Please try again.",
+      "emptyReply": "Exur returned an empty reply. Please try again.",
       "timeout": "Exur took too long to respond. Check your connection and try again.",
       "credits": "You've used this period's chat credits. Upgrade to continue.",
       "proSessionRefresh": "Your Plus plan is active, but this session needs a refresh. Try again.",
       "auth": "Sign in with Google to get answers from Exur. You can explore prompts and typing first.",
-      "trialExhausted": "To provide deeper analysis and save your market preferences, Exur requires a secured session. Sign in with Google to continue."
+      "trialExhausted": "To provide deeper analysis and save your market preferences, Exur requires a secured session. Sign in with Google to continue.",
+      "signalSymbolRequired": "Signal needs a market — add something like ETH or BTC after /Signal."
     },
     "creditsExhausted": {
       "title": "You're out of credits",
@@ -1035,6 +1040,21 @@
       "editSetup": "Edit profile",
       "editorHint": "Tap a row to choose. Nothing is saved until you tap Save.",
       "save": "Save profile"
+    },
+    "signalGuidance": {
+      "title": "Tell Signal which market",
+      "description": "Signal needs a clear asset — like ETH, BTC, or gold — so it can evaluate a setup.",
+      "tipTitle": "How to write it",
+      "tipBody": "Type {trigger} to open tools, choose {signal}, then add the market. Example: {trigger}{signal} ETH",
+      "examplesLabel": "Try one",
+      "exampleHint": "Setup for {asset}",
+      "tryEth": "Use /Signal ETH",
+      "gotIt": "Got it"
+    },
+    "chatError": {
+      "title": "Couldn't finish that reply",
+      "dismiss": "Dismiss",
+      "retrying": "Trying again…"
     }
   },
   "billingPage": {

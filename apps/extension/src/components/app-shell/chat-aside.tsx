@@ -71,6 +71,8 @@ import { typewriterReveal } from "@/components/app-shell/chat-typing"
 import { useAuth } from "@/components/auth/auth-provider"
 import { GoogleGlyph } from "@/components/auth/google-glyph"
 import { GuestTrialExhaustedDialog } from "@/components/auth/guest-trial-exhausted-dialog"
+import { SignalGuidanceDialog } from "@/components/app-shell/signal-guidance-dialog"
+import { ChatErrorDialog } from "@/components/app-shell/chat-error-dialog"
 import dynamic from "next/dynamic"
 import { useIsDesktop } from "@/hooks/use-media-query"
 import { useNewsSpotlight } from "@/hooks/use-news-spotlight"
@@ -117,7 +119,6 @@ import {
   GuestChatError,
 } from "@/lib/guest-chat"
 import {
-  buildFailedAssistantTurn,
   getRetryUserMessage,
   isAbortError,
   isLowSignalUserMessage,
@@ -127,6 +128,7 @@ import {
   COPILOT_PRO_SESSION_REFRESH_MESSAGE,
   coPilotUserFacingError,
   coPilotFailureAction,
+  isSignalSymbolRequiredError,
   shouldShowGuestSignInPrompt,
   localizeCoPilotErrorText,
 } from "@/lib/co-pilot-recovery"
@@ -443,6 +445,12 @@ function ChatAside({
   const [guestTrial, setGuestTrial] = React.useState<TrialInfo | null>(null)
   const [creditBalance, setCreditBalance] =
     React.useState<ChatCreditBalance | null>(null)
+  const [signalGuidanceOpen, setSignalGuidanceOpen] = React.useState(false)
+  const [chatErrorSheet, setChatErrorSheet] = React.useState<{
+    message: string
+    action: "retry" | "connect"
+    retryUserMessage: string
+  } | null>(null)
   const [guestTrialExhaustedOpen, setGuestTrialExhaustedOpen] =
     React.useState(false)
   const [guestUnavailable, setGuestUnavailable] = React.useState(false)
@@ -1328,28 +1336,69 @@ function ChatAside({
         }
       }
 
-      const failed = buildFailedAssistantTurn({
-        assistantId,
-        partialContent,
-        userMessage,
-        error,
-      })
+      if (isSignalSymbolRequiredError(error)) {
+        setSignalGuidanceOpen(true)
+        setDraft(userMessage)
+        const partial = partialContent.trim()
+        setMessagesAndPersist(
+          (prev) =>
+            partial
+              ? prev.map((m) =>
+                  m.id === assistantId
+                    ? {
+                        ...m,
+                        content: partial,
+                        error: false,
+                        errorText: undefined,
+                        action: undefined,
+                        retryUserMessage: undefined,
+                        thinkingTrace: undefined,
+                      }
+                    : m
+                )
+              : removeEmptyAssistantTurn(prev, assistantId),
+          {
+            id: activeId,
+            history: historySnapshot,
+            ownerId: chatOwnerId,
+          }
+        )
+        queueMicrotask(() => {
+          const el = composerRef.current
+          if (!el) return
+          el.focus()
+          const end = el.value.length
+          el.setSelectionRange(end, end)
+        })
+        return
+      }
 
+      const errorText =
+        coPilotUserFacingError(error, { isProUser }) || t("errors.recovery")
+      const action = coPilotFailureAction(error, { isProUser }) ?? "retry"
+      setChatErrorSheet({
+        message: errorText,
+        action,
+        retryUserMessage: userMessage,
+      })
+      const partial = partialContent.trim()
       setMessagesAndPersist(
         (prev) =>
-          prev.map((m) =>
-            m.id === assistantId
-              ? {
-                  ...m,
-                  content: failed.content || m.content,
-                  error: true as const,
-                  errorText: coPilotUserFacingError(error, { isProUser }),
-                  action: coPilotFailureAction(error, { isProUser }),
-                  retryUserMessage: failed.retryUserMessage,
-                  thinkingTrace: undefined,
-                }
-              : m
-          ),
+          partial
+            ? prev.map((m) =>
+                m.id === assistantId
+                  ? {
+                      ...m,
+                      content: partial,
+                      error: false,
+                      errorText: undefined,
+                      action: undefined,
+                      retryUserMessage: undefined,
+                      thinkingTrace: undefined,
+                    }
+                  : m
+              )
+            : removeEmptyAssistantTurn(prev, assistantId),
         {
           id: activeId,
           history: historySnapshot,
@@ -1361,6 +1410,63 @@ function ChatAside({
       setPendingAssistantId(null)
       setSending(false)
     }
+  }
+
+  async function handleChatErrorRetry(userMessage: string) {
+    if (sending || !userMessage.trim()) return
+
+    let sendOwnerId: string | null = chatOwnerId
+    if (!isAuthenticated) {
+      if (guestUnavailable) return
+      if (guestTrialExhausted) {
+        setGuestTrialExhaustedOpen(true)
+        return
+      }
+      try {
+        const session = await ensureGuestSession()
+        sendOwnerId = session.user_id
+        setGuestOwnerId(session.user_id)
+      } catch {
+        return
+      }
+    } else if (!getStoredAccessToken()) {
+      login({ source: "chat" })
+      return
+    }
+    if (!sendOwnerId) return
+
+    const activeId = await ensureSendableConversationId(sendOwnerId)
+    const historySnapshot = history
+    const priorUser =
+      [...messages]
+        .reverse()
+        .find(
+          (m) =>
+            m.role === "user" && m.content.trim() === userMessage.trim()
+        ) ?? [...messages].reverse().find((m) => m.role === "user")
+    const assistantId = crypto.randomUUID()
+    const optimisticUserId = priorUser?.id ?? crypto.randomUUID()
+    const replyToId =
+      priorUser?.role === "user" ? priorUser.replyToId : undefined
+
+    setMessages((prev) => [
+      ...prev,
+      {
+        id: assistantId,
+        role: "assistant" as const,
+        content: "",
+        createdAt: new Date().toISOString(),
+      },
+    ])
+
+    await runAssistantRequest({
+      userMessage,
+      historySnapshot,
+      assistantId,
+      activeId,
+      optimisticUserId,
+      replyToId,
+    })
   }
 
   function handleEditUserMessage(messageId: string) {
@@ -2201,16 +2307,7 @@ function ChatAside({
                           !message.error
                         const isWaiting =
                           isStreamingAssistant && !message.content
-                        const errorNote = message.error ? (
-                          <span
-                            className={cn(
-                              "block text-destructive",
-                              message.content ? "mt-2" : undefined
-                            )}
-                          >
-                            {localizeCoPilotErrorText(message.errorText, t)}
-                          </span>
-                        ) : null
+                        // Errors surface in sheets/dialogs — never as in-thread copy.
                         const actions = (
                           <>
                             {message.action === "connect" ? (
@@ -2329,7 +2426,6 @@ function ChatAside({
                                 <span className="block min-w-0 wrap-anywhere whitespace-pre-wrap">
                                   {message.content}
                                 </span>
-                                {errorNote}
                               </ChatSystemNote>
                             </div>
                           )
@@ -2437,7 +2533,6 @@ function ChatAside({
                                   className="mt-3"
                                 />
                               ) : null}
-                              {errorNote}
                             </ChatAssistantTurn>
                           </div>
                         )
@@ -2560,6 +2655,39 @@ function ChatAside({
           ) : (
             <ChatNewsMobileSheet open={newsOpen} onOpenChange={setNewsOpen} />
           )}
+          <SignalGuidanceDialog
+            open={signalGuidanceOpen}
+            onOpenChange={setSignalGuidanceOpen}
+            onUseExample={(example) => {
+              setDraft(example)
+              queueMicrotask(() => {
+                const el = composerRef.current
+                if (!el) return
+                el.focus()
+                const end = el.value.length
+                el.setSelectionRange(end, end)
+              })
+            }}
+          />
+          <ChatErrorDialog
+            open={chatErrorSheet !== null}
+            onOpenChange={(open) => {
+              if (!open) setChatErrorSheet(null)
+            }}
+            message={
+              chatErrorSheet
+                ? localizeCoPilotErrorText(chatErrorSheet.message, t)
+                : ""
+            }
+            action={chatErrorSheet?.action}
+            signingIn={loginPending}
+            onSignIn={() => login({ source: "chat" })}
+            onRetry={() => {
+              const retryMessage = chatErrorSheet?.retryUserMessage
+              if (!retryMessage) return
+              void handleChatErrorRetry(retryMessage)
+            }}
+          />
           <GuestTrialExhaustedDialog
             open={guestTrialExhaustedOpen}
             onOpenChange={setGuestTrialExhaustedOpen}

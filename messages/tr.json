@@ -490,7 +490,7 @@
       "btc-signal": {
         "title": "BTC işlem sinyali",
         "description": "Canlı kurulum isteyin: kart yalnızca okuma netse.",
-        "text": "@signal BTC"
+        "text": "/signal BTC"
       },
       "xau-macro": {
         "title": "Altın (XAU) ve enflasyon",
@@ -588,11 +588,16 @@
     "loadingExur": "Exur yükleniyor",
     "errors": {
       "recovery": "Yanıt alınırken bir sorun oluştu.",
+      "network": "Exur'a ulaşılamadı. Bağlantınızı kontrol edip tekrar deneyin.",
+      "server": "Exur sunucularında bir sorun oluştu. Biraz sonra tekrar deneyin.",
+      "streamInterrupted": "Yanıt beklenmedik şekilde sona erdi. Tekrar deneyin.",
+      "emptyReply": "Exur boş bir yanıt döndürdü. Tekrar deneyin.",
       "timeout": "Exur yanıt vermekte gecikti. Bağlantınızı kontrol edip tekrar deneyin.",
       "credits": "Bu dönemin sohbet kredileriniz bitti. Devam etmek için yükseltin.",
       "proSessionRefresh": "Plus planınız aktif, ancak bu oturumun yenilenmesi gerekiyor. Tekrar deneyin.",
       "auth": "Exur'dan yanıt almak için Google ile giriş yapın. Önce istemleri inceleyebilirsiniz.",
-      "trialExhausted": "Daha derin analiz sunmak ve piyasa tercihlerinizi kaydetmek için Exur güvenli bir oturum gerektirir. Devam etmek için Google ile giriş yapın."
+      "trialExhausted": "Daha derin analiz sunmak ve piyasa tercihlerinizi kaydetmek için Exur güvenli bir oturum gerektirir. Devam etmek için Google ile giriş yapın.",
+      "signalSymbolRequired": "Signal için bir piyasa gerekli — /Signal’dan sonra ETH veya BTC gibi bir varlık ekleyin."
     },
     "creditsExhausted": {
       "title": "Krediniz bitti",
@@ -626,6 +631,21 @@
     "shared": "Paylaşıldı",
     "shareResponse": "Yanıtı paylaş",
     "sharedResponse": "Yanıt paylaşıldı",
-    "noTradeShareTitle": "İşlem yok paylaş"
+    "noTradeShareTitle": "İşlem yok paylaş",
+    "signalGuidance": {
+      "title": "Signal için piyasayı belirtin",
+      "description": "Signal’ın bir kurulum değerlendirmesi için ETH, BTC veya altın gibi net bir varlık gerekir.",
+      "tipTitle": "Nasıl yazılır",
+      "tipBody": "Araçları açmak için {trigger} yazın, {signal} seçin ve piyasayı ekleyin. Örnek: {trigger}{signal} ETH",
+      "examplesLabel": "Birini dene",
+      "exampleHint": "{asset} için kurulum",
+      "tryEth": "/Signal ETH kullan",
+      "gotIt": "Anladım"
+    },
+    "chatError": {
+      "title": "Yanıt tamamlanamadı",
+      "dismiss": "Kapat",
+      "retrying": "Yeniden deneniyor…"
+    }
   }
 }

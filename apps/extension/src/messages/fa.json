@@ -891,11 +891,16 @@
     "loadingExur": "در حال بارگذاری Exur",
     "errors": {
       "recovery": "هنگام دریافت پاسخ مشکلی پیش آمد.",
+      "network": "اتصال به Exur برقرار نشد. اتصال اینترنت را بررسی کنید و دوباره تلاش کنید.",
+      "server": "سرورهای Exur مشکل داشتند. کمی بعد دوباره تلاش کنید.",
+      "streamInterrupted": "پاسخ به‌طور غیرمنتظره قطع شد. دوباره تلاش کنید.",
+      "emptyReply": "Exur پاسخ خالی برگرداند. دوباره تلاش کنید.",
       "timeout": "پاسخ Exur طول کشید. اتصال را بررسی کنید و دوباره تلاش کنید.",
       "credits": "اعتبار چت این دوره تمام شده. برای ادامه ارتقا دهید.",
       "proSessionRefresh": "پلن Plus فعال است، اما این نشست نیاز به تازه‌سازی دارد. دوباره تلاش کنید.",
       "auth": "برای دریافت پاسخ از Exur با Google وارد شوید. می‌توانید اول پیشنهادها را ببینید.",
-      "trialExhausted": "برای ارائه تحلیل های عمیق تر و ذخیره ترجیحات بازار شما، اکسور به یک نشست امن نیاز دارد. برای ادامه با گوگل وارد شوید."
+      "trialExhausted": "برای ارائه تحلیل های عمیق تر و ذخیره ترجیحات بازار شما، اکسور به یک نشست امن نیاز دارد. برای ادامه با گوگل وارد شوید.",
+      "signalSymbolRequired": "سیگنال به بازار نیاز دارد — بعد از /سیگنال چیزی مثل ETH یا BTC بنویسید."
     },
     "creditsExhausted": {
       "title": "اعتبارت تمام شده",
@@ -933,7 +938,22 @@
     "composerPasteAttachmentLines": "{count} خط",
     "composerPasteAttachmentRemove": "حذف فایل",
     "composerPasteAttachmentUnwrap": "نمایش در فیلد متن",
-    "composerPasteAttachmentEmptyPrompt": "لطفاً فایل پیوست را بررسی کن."
+    "composerPasteAttachmentEmptyPrompt": "لطفاً فایل پیوست را بررسی کن.",
+    "signalGuidance": {
+      "title": "بازار را برای سیگنال مشخص کنید",
+      "description": "سیگنال به یک دارایی مشخص نیاز دارد — مثل ETH، BTC یا طلا — تا بتواند ستاپ را ارزیابی کند.",
+      "tipTitle": "چطور بنویسید",
+      "tipBody": "با {trigger} ابزارها را باز کنید، {signal} را انتخاب کنید، بعد بازار را بنویسید. مثلاً: {trigger}{signal} ETH",
+      "examplesLabel": "یکی را امتحان کنید",
+      "exampleHint": "ستاپ برای {asset}",
+      "tryEth": "استفاده از /سیگنال ETH",
+      "gotIt": "متوجه شدم"
+    },
+    "chatError": {
+      "title": "پاسخ کامل نشد",
+      "dismiss": "بستن",
+      "retrying": "در حال تلاش مجدد…"
+    }
   },
   "billingPage": {
     "title": "پرداخت",

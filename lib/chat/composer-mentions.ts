@@ -1,6 +1,5 @@
-/** @-mentions and tool tags in the IRIS chat composer. */
+/** Slash-triggered tool mentions in the IRIS chat composer. */
 
-import { isLowSignalUserMessage } from "@/lib/co-pilot-recovery"
 import { stripMarketContextAppendix } from "@/lib/chat/strip-market-context"
 
 export type IrisMentionTool = "signal"
@@ -23,10 +22,23 @@ export type ComposerDraft = {
   text: string
 }
 
-/** Local aliases that open the signal tool chip (typed or from sample prompts). */
-const SIGNAL_TOOL_TAG_RE = /^(?:@signal|سیگنال|إشارة)(?:\s+([\s\S]*))?$/iu
+export type ComposerMentionHighlightPart =
+  | { type: "text"; value: string }
+  | { type: "mention"; value: string }
+
+/** Character that opens the tool suggestion palette. */
+export const COMPOSER_MENTION_TRIGGER = "/"
+
+/** Local aliases for signal tool drafts (typed, sample prompts, or inline mentions). */
+const SIGNAL_TOOL_TAG_RE =
+  /^(?:\/signal|@signal|\/سیگنال|@سیگنال|\/إشارة|@إشارة|سیگنال|إشارة)(?:\s+([\s\S]*))?$/iu
 
 const SIGNAL_SUMMARY_RE = /^(?:Signal|سیگنال|إشارة) · (.+)$/u
+
+/** Committed inline mention token — followed by whitespace or end of string. */
+const SIGNAL_INLINE_MENTION_RE = /[/@](?:signal|سیگنال|إشارة)(?=\s|$)/giu
+
+const SIGNAL_INLINE_ASSET_RE = /[/@](?:signal|سیگنال|إشارة)\s+([^\s/@]+)/iu
 
 export const IRIS_MENTION_OPTIONS: IrisMentionOption[] = [
   {
@@ -46,11 +58,47 @@ function normalizeMentionQuery(query: string): string {
   return query.trim().toLowerCase().replace(/\s+/g, " ")
 }
 
-/** Exact chat payload for a signal request — backend gathers market data. */
+/**
+ * True when the text after `/Signal` looks like a compact market target
+ * (`ETH`, `اتریوم`) rather than free-form prose (`میخوام`).
+ */
+export function isCompactSignalTarget(text: string): boolean {
+  const trimmed = text.trim()
+  if (!trimmed || trimmed.length > 32 || /\n/.test(trimmed)) return false
+  // Intent / filler words — expand these into an explicit wire prompt.
+  if (
+    /(?:میخوام|می‌خوام|ميخوام|بده|بدهید|لطفا|خواهش|please|want|need|give|signal|سیگنال|إشارة|\bfor\b|\bme\b|\ba\b|\bthe\b)/i.test(
+      trimmed
+    )
+  ) {
+    return false
+  }
+  if (!/\s/.test(trimmed)) return true
+  const parts = trimmed.split(/\s+/)
+  if (parts.length > 3) return false
+  return parts.every((part) => /^[\p{L}\p{N}.\-/\$%]+$/u.test(part))
+}
+
+const SIGNAL_WIRE_INSTRUCTIONS = [
+  "Treat this as a trade-signal tool request (/Signal), not general chat.",
+  "Resolve the asset from the user request or conversation context; ask which market if unclear.",
+  "When a setup is clear, call show_trade_signal; otherwise explain why to wait.",
+].join(" ")
+
+/**
+ * Wire payload the model sees. Compact targets stay `@signal ETH`.
+ * Free-form text (e.g. `/Signal میخوام`) gets an explicit signal intent
+ * so the model does not treat `/Signal` as opaque UI chrome.
+ */
 export function formatSignalCommand(asset: string): string {
   const trimmed = asset.trim()
-  if (!trimmed) return "@signal"
-  return `@signal ${trimmed}`
+  if (!trimmed) {
+    return `@signal\n${SIGNAL_WIRE_INSTRUCTIONS}`
+  }
+  if (isCompactSignalTarget(trimmed)) {
+    return `@signal ${trimmed}`
+  }
+  return `@signal ${trimmed}\n${SIGNAL_WIRE_INSTRUCTIONS}`
 }
 
 /** @deprecated Prefer formatSignalCommand — kept as an alias for call sites/tests. */
@@ -58,27 +106,44 @@ export function buildSignalPrompt(asset: string): string {
   return formatSignalCommand(asset)
 }
 
-/** Active @-query at cursor, if any. */
+/**
+ * Inline token inserted when the user picks a tool from the `/` menu.
+ * Uses the localized label when provided (`/سیگنال ` / `/Signal `).
+ */
+export function mentionTokenForTool(
+  tool: IrisMentionTool,
+  label = "Signal"
+): string {
+  if (tool === "signal") {
+    const trimmed = label.trim() || "Signal"
+    return `${COMPOSER_MENTION_TRIGGER}${trimmed} `
+  }
+  return `${COMPOSER_MENTION_TRIGGER}${tool} `
+}
+
+/** Active `/query` at cursor, if any. */
 export function parseMentionPalette(
   text: string,
   cursor: number
 ): MentionPaletteState | null {
   const before = text.slice(0, cursor)
-  const at = before.lastIndexOf("@")
-  if (at < 0) return null
+  const trigger = before.lastIndexOf(COMPOSER_MENTION_TRIGGER)
+  if (trigger < 0) return null
 
-  const fragment = before.slice(at + 1)
-  if (/[\n\r]/.test(fragment)) return null
-  if (fragment.length > 0 && !/^[\w\u0600-\u06FF\s.-]*$/u.test(fragment)) {
+  const fragment = before.slice(trigger + 1)
+  // Whitespace ends the query session (Slack-style) so a committed
+  // `/Signal ETH` caret does not keep the suggestion menu open.
+  if (/[\n\r\s]/.test(fragment)) return null
+  if (fragment.length > 0 && !/^[\w\u0600-\u06FF.-]*$/u.test(fragment)) {
     return null
   }
 
-  const charBefore = at > 0 ? before[at - 1] : " "
-  if (charBefore !== " " && charBefore !== "\n" && at !== 0) return null
+  const charBefore = trigger > 0 ? before[trigger - 1] : " "
+  if (charBefore !== " " && charBefore !== "\n" && trigger !== 0) return null
 
   return {
     query: fragment,
-    replaceStart: at,
+    replaceStart: trigger,
     replaceEnd: cursor,
   }
 }
@@ -103,7 +168,8 @@ export function summarizeSignalUserMessage(
   const trimmed = stripMarketContextAppendix(text)
   const mention = trimmed.match(SIGNAL_TOOL_TAG_RE)
   if (mention) {
-    const asset = (mention[1] ?? "").trim()
+    // Wire prompts may append instruction lines after the user target.
+    const asset = (mention[1] ?? "").trim().split(/\n/, 1)[0]?.trim() ?? ""
     return asset ? `${label} · ${asset}` : label
   }
   // Legacy desk prompts still stored in older threads.
@@ -125,47 +191,83 @@ export function expandSummarizedSignalUserMessage(text: string): string {
 export function expandComposerDraft(input: ComposerDraft): string {
   const body = input.text.trim()
   if (input.tool === "signal") {
-    if (isLowSignalUserMessage(body)) return body
     return formatSignalCommand(body)
   }
   return body
 }
 
-/** Legacy/plain-text expansion for drafts that still contain @signal tokens. */
+/**
+ * Normalize drafts that contain `/signal`, `@signal`, or localized signal
+ * tokens into a model-readable `@signal` wire payload.
+ * Never leave raw `/Signal …` text for the model.
+ */
 export function expandComposerMentions(text: string): string {
   const trimmed = text.trim()
   if (!trimmed) return ""
 
   const tagged = trimmed.match(SIGNAL_TOOL_TAG_RE)
   if (tagged) {
-    const asset = (tagged[1] ?? "").trim()
-    if (isLowSignalUserMessage(asset)) return trimmed
-    return formatSignalCommand(asset)
+    return formatSignalCommand((tagged[1] ?? "").trim())
   }
 
-  const inline = trimmed.match(/@signal\s+([^\s@]+)/u)
+  const inline = trimmed.match(SIGNAL_INLINE_ASSET_RE)
   if (inline) {
-    const asset = inline[1] ?? ""
-    if (isLowSignalUserMessage(asset)) return trimmed
-    return formatSignalCommand(asset)
+    return formatSignalCommand((inline[1] ?? "").trim())
   }
 
   return trimmed
 }
 
+/** Replace the active `/query` range with an inline mention token. */
 export function applyMentionSelection(input: {
   text: string
   replaceStart: number
   replaceEnd: number
+  token: string
 }): { nextText: string; nextCursor: number } {
   const before = input.text.slice(0, input.replaceStart)
   const after = input.text.slice(input.replaceEnd)
-  const nextText = `${before}${after}`
-  const nextCursor = before.length
+  const nextText = `${before}${input.token}${after}`
+  const nextCursor = before.length + input.token.length
   return { nextText, nextCursor }
 }
 
-/** Convert a typed `@signal` / `سیگنال` / `إشارة` draft into chip + continuation text. */
+/**
+ * Split composer text so committed `/Signal` / `/سیگنال` tokens can be
+ * rendered bold in a mirror overlay while the textarea stays editable.
+ */
+export function splitComposerMentionHighlights(
+  text: string
+): ComposerMentionHighlightPart[] {
+  if (!text) return []
+
+  const parts: ComposerMentionHighlightPart[] = []
+  let lastIndex = 0
+  const pattern = new RegExp(
+    SIGNAL_INLINE_MENTION_RE.source,
+    SIGNAL_INLINE_MENTION_RE.flags
+  )
+
+  for (const match of text.matchAll(pattern)) {
+    const index = match.index ?? 0
+    if (index > lastIndex) {
+      parts.push({ type: "text", value: text.slice(lastIndex, index) })
+    }
+    parts.push({ type: "mention", value: match[0] ?? "" })
+    lastIndex = index + (match[0]?.length ?? 0)
+  }
+
+  if (lastIndex < text.length) {
+    parts.push({ type: "text", value: text.slice(lastIndex) })
+  }
+
+  return parts
+}
+
+/**
+ * @deprecated Chip drafts are no longer used — inline `/signal` text stays in
+ * the textarea. Kept for older call sites/tests that still parse tagged prompts.
+ */
 export function parseComposerToolTag(text: string): ComposerDraft | null {
   const match = text.match(SIGNAL_TOOL_TAG_RE)
   if (!match) return null

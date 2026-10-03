@@ -874,11 +874,16 @@
     "loadingExur": "جاري تحميل Exur",
     "errors": {
       "recovery": "حدث خطأ أثناء استلام الرد.",
+      "network": "تعذّر الوصول إلى Exur. تحقق من الاتصال وحاول مجددًا.",
+      "server": "واجهت خوادم Exur مشكلة. حاول مجددًا بعد لحظات.",
+      "streamInterrupted": "انتهى الرد بشكل غير متوقع. حاول مجددًا.",
+      "emptyReply": "أعاد Exur ردًا فارغًا. حاول مجددًا.",
       "timeout": "استغرق Exur وقتًا طويلًا للرد. تحقق من الاتصال وحاول مجددًا.",
       "credits": "لقد استخدمت رصيد الدردشة لهذه الفترة. قم بالترقية للمتابعة.",
       "proSessionRefresh": "خطة Plus نشطة، لكن هذه الجلسة تحتاج إلى تحديث. حاول مجددًا.",
       "auth": "سجّل الدخول عبر Google للحصول على إجابات من Exur. يمكنك استكشاف الاقتراحات أولًا.",
-      "trialExhausted": "لتقديم تحليل أعمق وحفظ تفضيلاتك السوقية، يحتاج Exur إلى جلسة مؤمّنة. سجّل الدخول عبر Google للمتابعة."
+      "trialExhausted": "لتقديم تحليل أعمق وحفظ تفضيلاتك السوقية، يحتاج Exur إلى جلسة مؤمّنة. سجّل الدخول عبر Google للمتابعة.",
+      "signalSymbolRequired": "الإشارة تحتاج سوقًا — أضف شيئًا مثل ETH أو BTC بعد /Signal."
     },
     "creditsExhausted": {
       "title": "نفد رصيدك",
@@ -916,7 +921,22 @@
     "composerPasteAttachmentLines": "{count} أسطر",
     "composerPasteAttachmentRemove": "إزالة الملف",
     "composerPasteAttachmentUnwrap": "إظهار في حقل النص",
-    "composerPasteAttachmentEmptyPrompt": "يرجى مراجعة الملف المرفق."
+    "composerPasteAttachmentEmptyPrompt": "يرجى مراجعة الملف المرفق.",
+    "signalGuidance": {
+      "title": "حدد السوق للإشارة",
+      "description": "تحتاج الإشارة إلى أصل واضح — مثل ETH أو BTC أو الذهب — لتقييم إعداد التداول.",
+      "tipTitle": "كيف تكتبها",
+      "tipBody": "اكتب {trigger} لفتح الأدوات، اختر {signal}، ثم أضف السوق. مثال: {trigger}{signal} ETH",
+      "examplesLabel": "جرّب مثالاً",
+      "exampleHint": "إعداد لـ {asset}",
+      "tryEth": "استخدم /Signal ETH",
+      "gotIt": "حسناً"
+    },
+    "chatError": {
+      "title": "تعذّر إكمال الرد",
+      "dismiss": "إغلاق",
+      "retrying": "إعادة المحاولة…"
+    }
   },
   "billingPage": {
     "title": "الفوترة",

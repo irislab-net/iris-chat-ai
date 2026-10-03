@@ -17,7 +17,6 @@ import {
 import { useLocale, useTranslations } from "next-intl"
 
 import { ActionTooltip } from "@/components/ui/action-tooltip"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
   SelectionCheckBadge,
@@ -38,15 +37,13 @@ import {
 } from "@/lib/chat-effort"
 import {
   applyMentionSelection,
-  expandComposerDraft,
   expandComposerMentions,
   filterMentionOptions,
-  findIrisMentionOption,
   IRIS_MENTION_OPTIONS,
-  parseComposerToolTag,
+  mentionTokenForTool,
   parseMentionPalette,
+  splitComposerMentionHighlights,
   type IrisMentionOption,
-  type IrisMentionTool,
   type MentionPaletteState,
 } from "@/lib/chat/composer-mentions"
 import {
@@ -79,14 +76,10 @@ import {
   chatDesktopComposerSendDisabledClass,
   chatDesktopComposerShellClass,
   chatDesktopComposerTextareaClass,
-  chatDesktopComposerToolChipClass,
-  chatDesktopComposerToolChipCloseClass,
   chatComposerPasteChipClass,
   chatComposerPasteChipIconClass,
   chatComposerPasteChipMetaClass,
   chatComposerPasteChipCloseClass,
-  chatMobileComposerToolChipClass,
-  chatMobileComposerToolChipCloseClass,
   chatMobileComposerShellClass,
   chatMobileToolsMenuClass,
   chatMobileToolsMenuItemClass,
@@ -146,36 +139,29 @@ function ChatComposer({
   /** Ignore ghost taps when chat mounts under the finger (click retargeting). */
   const keyboardUnlockAllowedAtRef = React.useRef(0)
   const [uncontrolled, setUncontrolled] = React.useState("")
-  const [activeTool, setActiveTool] = React.useState<IrisMentionTool | null>(
-    null
-  )
   const [pasteAttachments, setPasteAttachments] = React.useState<
     ComposerPasteAttachment[]
   >([])
   const [mentionIndex, setMentionIndex] = React.useState(0)
   const [cursor, setCursor] = React.useState(0)
   const localRef = React.useRef<HTMLTextAreaElement>(null)
+  const highlightRef = React.useRef<HTMLDivElement>(null)
   /** Stable compact column width — expanded layout is full-width and must not drive collapse. */
   const compactFieldWidthRef = React.useRef(0)
   const isControlled = valueProp !== undefined
   const value = isControlled ? valueProp : uncontrolled
-  const toolTagDraft = React.useMemo(
-    () => (activeTool ? null : parseComposerToolTag(value)),
-    [activeTool, value]
-  )
-  const effectiveActiveTool = activeTool ?? toolTagDraft?.tool ?? null
-  const composerValue = toolTagDraft ? toolTagDraft.text : value
-  const activeToolOption = effectiveActiveTool
-    ? findIrisMentionOption(effectiveActiveTool)
-    : undefined
+  const composerValue = value
   const signalToolLabel = t("composerToolSignalLabel")
   function mentionOptionLabel(option: IrisMentionOption) {
     return option.tool === "signal" ? signalToolLabel : option.label
   }
-  const activeToolLabel =
-    effectiveActiveTool === "signal"
-      ? signalToolLabel
-      : (activeToolOption?.label ?? effectiveActiveTool)
+  const mentionHighlightParts = React.useMemo(
+    () => splitComposerMentionHighlights(composerValue),
+    [composerValue]
+  )
+  const hasMentionHighlight = mentionHighlightParts.some(
+    (part) => part.type === "mention"
+  )
 
   const toolsMenuItems = (
     <DropdownMenuGroup>
@@ -349,10 +335,10 @@ function ChatComposer({
     [textareaRef]
   )
 
-  const mentionPalette = React.useMemo(() => {
-    if (effectiveActiveTool) return null
-    return parseMentionPalette(composerValue, cursor)
-  }, [composerValue, cursor, effectiveActiveTool])
+  const mentionPalette = React.useMemo(
+    () => parseMentionPalette(composerValue, cursor),
+    [composerValue, cursor]
+  )
 
   const mentionOptions = React.useMemo(
     () => (mentionPalette ? filterMentionOptions(mentionPalette.query) : []),
@@ -440,7 +426,6 @@ function ChatComposer({
   }, [deferMobileKeyboard, focusComposer])
 
   function syncMentionIndex(nextValue: string, selectionStart: number) {
-    if (effectiveActiveTool) return
     const nextPalette = parseMentionPalette(nextValue, selectionStart)
     const prevPalette = parseMentionPalette(composerValue, cursor)
     if (nextPalette?.query !== prevPalette?.query) {
@@ -453,27 +438,15 @@ function ChatComposer({
     setCursor(next)
   }
 
+  function syncHighlightScroll() {
+    const el = localRef.current
+    const mirror = highlightRef.current
+    if (!el || !mirror) return
+    mirror.scrollTop = el.scrollTop
+    mirror.scrollLeft = el.scrollLeft
+  }
+
   function setValue(next: string) {
-    const parsedNext = parseComposerToolTag(next)
-    if (parsedNext) {
-      setActiveTool(parsedNext.tool)
-      if (!isControlled) setUncontrolled(parsedNext.text)
-      onValueChange?.(parsedNext.text)
-      return
-    }
-
-    // Sample prompts may set a tagged value (e.g. «سیگنال BTC») while the textarea
-    // shows only the continuation — promote the chip on the first edit.
-    if (!activeTool) {
-      const taggedValue = parseComposerToolTag(value)
-      if (taggedValue) {
-        setActiveTool(taggedValue.tool)
-        if (!isControlled) setUncontrolled(next)
-        onValueChange?.(next)
-        return
-      }
-    }
-
     if (!isControlled) setUncontrolled(next)
     onValueChange?.(next)
   }
@@ -485,17 +458,11 @@ function ChatComposer({
       pasteAttachments,
       t("composerPasteAttachmentEmptyPrompt")
     )
-    const expanded = effectiveActiveTool
-      ? expandComposerDraft({
-          tool: effectiveActiveTool,
-          text: withFiles.trim(),
-        })
-      : expandComposerMentions(withFiles.trim())
+    const expanded = expandComposerMentions(withFiles.trim())
     if (!expanded && pasteAttachments.length === 0) return
     const outbound = expanded || withFiles.trim()
     if (!outbound) return
     onSend?.(outbound)
-    setActiveTool(null)
     setPasteAttachments([])
     if (!isControlled) setUncontrolled("")
     onValueChange?.("")
@@ -544,69 +511,57 @@ function ChatComposer({
     onStop?.()
   }
 
-  function activateTool(
-    tool: IrisMentionTool,
-    palette?: MentionPaletteState | null
-  ) {
-    if (palette) {
-      const { nextText, nextCursor } = applyMentionSelection({
-        text: value,
-        replaceStart: palette.replaceStart,
-        replaceEnd: palette.replaceEnd,
-      })
-      setValue(nextText)
-      queueMicrotask(() => {
-        const el = localRef.current
-        if (!el) return
-        el.setSelectionRange(nextCursor, nextCursor)
-        setCursor(nextCursor)
-        focusComposer()
-      })
-    }
-    setActiveTool(tool)
-    if (isDesktop === true) {
-      queueMicrotask(() => focusComposer())
-    }
+  function placeCaret(nextCursor: number) {
+    queueMicrotask(() => {
+      const el = localRef.current
+      if (!el) return
+      el.setSelectionRange(nextCursor, nextCursor)
+      setCursor(nextCursor)
+      focusComposer()
+      syncHighlightScroll()
+    })
   }
 
-  function clearActiveTool() {
-    const taggedValue = parseComposerToolTag(value)
-    setActiveTool(null)
-    if (taggedValue) {
-      if (!isControlled) setUncontrolled(taggedValue.text)
-      onValueChange?.(taggedValue.text)
+  function commitInlineMention(
+    option: IrisMentionOption,
+    palette?: MentionPaletteState | null
+  ) {
+    const token = mentionTokenForTool(
+      option.tool,
+      mentionOptionLabel(option)
+    )
+    if (palette) {
+      const { nextText, nextCursor } = applyMentionSelection({
+        text: composerValue,
+        replaceStart: palette.replaceStart,
+        replaceEnd: palette.replaceEnd,
+        token,
+      })
+      setValue(nextText)
+      placeCaret(nextCursor)
+      return
     }
-    if (isDesktop === true) focusComposer()
+
+    const end = localRef.current?.selectionEnd ?? cursor
+    const before = composerValue.slice(0, cursor)
+    const after = composerValue.slice(end)
+    const trimmedBefore = before.replace(/\/(?:[\w\u0600-\u06FF.-]*)?$/u, "")
+    const nextText = `${trimmedBefore}${token}${after}`
+    const nextCursor = trimmedBefore.length + token.length
+    setValue(nextText)
+    placeCaret(nextCursor)
   }
 
   function insertMentionToken(option: IrisMentionOption) {
-    const end = localRef.current?.selectionEnd ?? cursor
-    const before = value.slice(0, cursor)
-    const after = value.slice(end)
-    const trimmedBefore = before.replace(/@(?:[\w\u0600-\u06FF\s.-]*)?$/u, "")
-    const nextText = `${trimmedBefore}${after}`
-    if (!isControlled) setUncontrolled(nextText)
-    onValueChange?.(nextText)
-    setActiveTool(option.tool)
+    commitInlineMention(option)
   }
 
   function applyMention(option: IrisMentionOption) {
     if (!mentionPalette) return
-    activateTool(option.tool, mentionPalette)
+    commitInlineMention(option, mentionPalette)
   }
 
   function onKeyDown(event: React.KeyboardEvent<HTMLTextAreaElement>) {
-    if (
-      event.key === "Backspace" &&
-      effectiveActiveTool &&
-      composerValue.length === 0 &&
-      cursor === 0
-    ) {
-      event.preventDefault()
-      clearActiveTool()
-      return
-    }
-
     if (mentionOpen) {
       if (event.key === "ArrowDown") {
         event.preventDefault()
@@ -797,73 +752,83 @@ function ChatComposer({
                   </DropdownMenuContent>
                 </DropdownMenu>
               ) : null}
-              {effectiveActiveTool ? (
-                <Badge
-                  variant="outline"
-                  className={chatMobileComposerToolChipClass}
-                >
-                  {activeToolLabel}
-                  <button
-                    type="button"
-                    aria-label={t("composerRemoveTool")}
-                    className={chatMobileComposerToolChipCloseClass}
-                    onClick={clearActiveTool}
-                  >
-                    <XIcon className="size-2.5 stroke-[2.25]" />
-                  </button>
-                </Badge>
-              ) : null}
             </div>
-            <Textarea
-              ref={textareaNodeRef}
-              value={composerValue}
-              aria-label={t("composerAriaLabel")}
-              onChange={(event) => {
-                const next = event.target.value
-                const start = event.target.selectionStart
-                syncMentionIndex(next, start)
-                setValue(next)
-                setCursor(start)
-                requestAnimationFrame(syncFloatingComposerLayout)
-              }}
-              onPaste={onPaste}
-              onKeyDown={onKeyDown}
-              onKeyUp={syncCursor}
-              onClick={syncCursor}
-              onSelect={syncCursor}
-              placeholder={
-                effectiveActiveTool
-                  ? t("composerToolSignalPlaceholder")
-                  : t("composerMobilePlaceholder")
-              }
-              rows={1}
-              disabled={disabled}
-              readOnly={deferMobileKeyboard && !mobileKeyboardReady}
-              tabIndex={deferMobileKeyboard && !mobileKeyboardReady ? -1 : 0}
-              inputMode={
-                deferMobileKeyboard && !mobileKeyboardReady ? "none" : "text"
-              }
-              enterKeyHint="send"
-              onFocus={(event) => {
-                if (deferMobileKeyboard && !mobileKeyboardReady) {
-                  event.currentTarget.blur()
-                  return
-                }
-                onFloatingFocusChange?.(true)
-                syncFloatingComposerLayout()
-              }}
-              onBlur={() => {
-                onFloatingFocusChange?.(false)
-              }}
-              dir={textDir}
+            <div
               className={cn(
-                chatMobileComposerTextareaClass,
-                "min-w-0 [grid-area:field]",
+                "relative min-w-0 [grid-area:field]",
                 floatingComposerExpanded
                   ? chatMobileComposerTextareaExpandedClass
                   : chatMobileComposerTextareaCompactClass
               )}
-            />
+            >
+              {hasMentionHighlight ? (
+                <div
+                  ref={highlightRef}
+                  aria-hidden
+                  dir={textDir}
+                  className={cn(
+                    chatMobileComposerTextareaClass,
+                    "pointer-events-none absolute inset-0 z-0 overflow-hidden whitespace-pre-wrap break-words text-foreground",
+                    floatingComposerExpanded
+                      ? chatMobileComposerTextareaExpandedClass
+                      : chatMobileComposerTextareaCompactClass
+                  )}
+                >
+                  <ComposerMentionHighlight parts={mentionHighlightParts} />
+                </div>
+              ) : null}
+              <Textarea
+                ref={textareaNodeRef}
+                value={composerValue}
+                aria-label={t("composerAriaLabel")}
+                onChange={(event) => {
+                  const next = event.target.value
+                  const start = event.target.selectionStart
+                  syncMentionIndex(next, start)
+                  setValue(next)
+                  setCursor(start)
+                  requestAnimationFrame(() => {
+                    syncFloatingComposerLayout()
+                    syncHighlightScroll()
+                  })
+                }}
+                onPaste={onPaste}
+                onKeyDown={onKeyDown}
+                onKeyUp={syncCursor}
+                onClick={syncCursor}
+                onSelect={syncCursor}
+                onScroll={syncHighlightScroll}
+                placeholder={t("composerMobilePlaceholder")}
+                rows={1}
+                disabled={disabled}
+                readOnly={deferMobileKeyboard && !mobileKeyboardReady}
+                tabIndex={deferMobileKeyboard && !mobileKeyboardReady ? -1 : 0}
+                inputMode={
+                  deferMobileKeyboard && !mobileKeyboardReady ? "none" : "text"
+                }
+                enterKeyHint="send"
+                onFocus={(event) => {
+                  if (deferMobileKeyboard && !mobileKeyboardReady) {
+                    event.currentTarget.blur()
+                    return
+                  }
+                  onFloatingFocusChange?.(true)
+                  syncFloatingComposerLayout()
+                }}
+                onBlur={() => {
+                  onFloatingFocusChange?.(false)
+                }}
+                dir={textDir}
+                className={cn(
+                  chatMobileComposerTextareaClass,
+                  "relative z-10 min-w-0 caret-foreground",
+                  floatingComposerExpanded
+                    ? chatMobileComposerTextareaExpandedClass
+                    : chatMobileComposerTextareaCompactClass,
+                  hasMentionHighlight && "text-transparent"
+                )}
+              />
+            </div>
             <div className={chatMobileComposerTrailingClass}>
               {showStop ? (
                 <ActionTooltip label={t("composerStopTitle")}>
@@ -899,61 +864,62 @@ function ChatComposer({
             </div>
           </>
         ) : (
-          <div className="flex min-h-11 flex-wrap items-start gap-1.5 px-3.5 pt-3.5 pb-1.5 [grid-area:primary] sm:min-h-10">
-            {effectiveActiveTool ? (
-              <Badge
-                variant="outline"
-                className={chatDesktopComposerToolChipClass}
-              >
-                {activeToolLabel}
-                <button
-                  type="button"
-                  aria-label={t("composerRemoveTool")}
-                  className={chatDesktopComposerToolChipCloseClass}
-                  onClick={clearActiveTool}
+          <div className="flex min-h-11 min-w-0 flex-1 items-start px-3.5 pt-3.5 pb-1.5 [grid-area:primary] sm:min-h-10">
+            <div className="relative min-w-0 flex-1">
+              {hasMentionHighlight ? (
+                <div
+                  ref={highlightRef}
+                  aria-hidden
+                  dir={textDir}
+                  className={cn(
+                    chatDesktopComposerTextareaClass,
+                    "pointer-events-none absolute inset-0 z-0 overflow-hidden whitespace-pre-wrap break-words text-foreground"
+                  )}
                 >
-                  <XIcon className="size-3 stroke-[2.25]" />
-                </button>
-              </Badge>
-            ) : null}
-            <Textarea
-              ref={textareaNodeRef}
-              value={composerValue}
-              aria-label={t("composerAriaLabel")}
-              onChange={(event) => {
-                const next = event.target.value
-                const start = event.target.selectionStart
-                syncMentionIndex(next, start)
-                setValue(next)
-                setCursor(start)
-              }}
-              onPaste={onPaste}
-              onKeyDown={onKeyDown}
-              onKeyUp={syncCursor}
-              onClick={syncCursor}
-              onSelect={syncCursor}
-              placeholder={
-                effectiveActiveTool
-                  ? t("composerToolSignalPlaceholder")
-                  : t("composerPlaceholder")
-              }
-              rows={1}
-              disabled={disabled}
-              readOnly={deferMobileKeyboard && !mobileKeyboardReady}
-              tabIndex={deferMobileKeyboard && !mobileKeyboardReady ? -1 : 0}
-              inputMode={
-                deferMobileKeyboard && !mobileKeyboardReady ? "none" : "text"
-              }
-              enterKeyHint="send"
-              onFocus={(event) => {
-                if (deferMobileKeyboard && !mobileKeyboardReady) {
-                  event.currentTarget.blur()
-                  return
+                  <ComposerMentionHighlight parts={mentionHighlightParts} />
+                </div>
+              ) : null}
+              <Textarea
+                ref={textareaNodeRef}
+                value={composerValue}
+                aria-label={t("composerAriaLabel")}
+                onChange={(event) => {
+                  const next = event.target.value
+                  const start = event.target.selectionStart
+                  syncMentionIndex(next, start)
+                  setValue(next)
+                  setCursor(start)
+                  requestAnimationFrame(syncHighlightScroll)
+                }}
+                onPaste={onPaste}
+                onKeyDown={onKeyDown}
+                onKeyUp={syncCursor}
+                onClick={syncCursor}
+                onSelect={syncCursor}
+                onScroll={syncHighlightScroll}
+                placeholder={t("composerPlaceholder")}
+                rows={1}
+                disabled={disabled}
+                readOnly={deferMobileKeyboard && !mobileKeyboardReady}
+                tabIndex={deferMobileKeyboard && !mobileKeyboardReady ? -1 : 0}
+                inputMode={
+                  deferMobileKeyboard && !mobileKeyboardReady ? "none" : "text"
                 }
-              }}
-              dir={textDir}
-              className={chatDesktopComposerTextareaClass}
-            />
+                enterKeyHint="send"
+                onFocus={(event) => {
+                  if (deferMobileKeyboard && !mobileKeyboardReady) {
+                    event.currentTarget.blur()
+                    return
+                  }
+                }}
+                dir={textDir}
+                className={cn(
+                  chatDesktopComposerTextareaClass,
+                  "relative z-10 caret-foreground",
+                  hasMentionHighlight && "text-transparent"
+                )}
+              />
+            </div>
           </div>
         )}
         {!isFloating ? (
@@ -1084,6 +1050,31 @@ function ChatComposer({
         </p>
       ) : null}
     </form>
+  )
+}
+
+function ComposerMentionHighlight({
+  parts,
+}: {
+  parts: ReturnType<typeof splitComposerMentionHighlights>
+}) {
+  return (
+    <>
+      {parts.map((part, index) =>
+        part.type === "mention" ? (
+          <span
+            key={`mention-${index}`}
+            className="font-semibold text-primary"
+          >
+            {part.value}
+          </span>
+        ) : (
+          <span key={`text-${index}`}>{part.value}</span>
+        )
+      )}
+      {/* Keep trailing newline height in sync with the textarea mirror. */}
+      {"\u200b"}
+    </>
   )
 }
 

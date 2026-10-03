@@ -3,13 +3,18 @@ function compact(text: string): string {
 }
 
 /**
- * Composer `@signal ETH` (and UI label `Signal · ETH`) — chat API + client
- * `show_trade_signal`.
+ * Composer `/signal ETH` or legacy `@signal ETH` (and UI label `Signal · ETH`)
+ * — chat API + client `show_trade_signal`.
  */
 export function isSignalMentionCommand(text: string): boolean {
   const raw = compact(text)
   if (!raw) return false
-  if (/^(?:@signal|سیگنال|إشارة)(?:\s+\S.*)?$/iu.test(raw)) return true
+  if (
+    /^(?:\/signal|@signal|\/سیگنال|@سیگنال|\/إشارة|@إشارة|سیگنال|إشارة)(?:\s+\S.*)?$/iu.test(
+      raw
+    )
+  )
+    return true
   if (/^(?:Signal|سیگنال|إشارة) · .+$/u.test(raw)) return true
   return false
 }

@@ -493,7 +493,7 @@
       "btc-signal": {
         "title": "Sinal de trade BTC",
         "description": "Peça um setup ao vivo. Cartão só quando a leitura estiver clara.",
-        "text": "@signal BTC"
+        "text": "/signal BTC"
       },
       "xau-macro": {
         "title": "Ouro (XAU) vs. inflação",
@@ -591,11 +591,16 @@
     "loadingExur": "Carregando Exur",
     "errors": {
       "recovery": "Algo deu errado ao receber a resposta.",
+      "network": "Não foi possível contactar o Exur. Verifique a conexão e tente de novo.",
+      "server": "Os servidores do Exur tiveram um problema. Tente de novo em breve.",
+      "streamInterrupted": "A resposta terminou de forma inesperada. Tente de novo.",
+      "emptyReply": "O Exur devolveu uma resposta vazia. Tente de novo.",
       "timeout": "O Exur demorou demais. Verifique a conexão e tente de novo.",
       "credits": "Você usou os créditos de chat deste período. Faça upgrade para continuar.",
       "proSessionRefresh": "Seu plano Plus está ativo, mas esta sessão precisa ser atualizada. Tente de novo.",
       "auth": "Entre com o Google para obter respostas do Exur. Você pode explorar prompts primeiro.",
-      "trialExhausted": "Para oferecer análise mais profunda e guardar as suas preferências de mercado, o Exur exige uma sessão segura. Entre com o Google para continuar."
+      "trialExhausted": "Para oferecer análise mais profunda e guardar as suas preferências de mercado, o Exur exige uma sessão segura. Entre com o Google para continuar.",
+      "signalSymbolRequired": "O Signal precisa de um mercado — adicione algo como ETH ou BTC após /Signal."
     },
     "creditsExhausted": {
       "title": "Seus créditos acabaram",
@@ -633,6 +638,21 @@
     "composerPasteAttachmentLines": "{count} linhas",
     "composerPasteAttachmentRemove": "Remover arquivo",
     "composerPasteAttachmentUnwrap": "Mostrar no campo de texto",
-    "composerPasteAttachmentEmptyPrompt": "Revise o arquivo anexado."
+    "composerPasteAttachmentEmptyPrompt": "Revise o arquivo anexado.",
+    "signalGuidance": {
+      "title": "Indique o mercado para o Signal",
+      "description": "O Signal precisa de um ativo claro — como ETH, BTC ou ouro — para avaliar um setup.",
+      "tipTitle": "Como escrever",
+      "tipBody": "Escreva {trigger} para abrir as ferramentas, escolha {signal} e adicione o mercado. Exemplo: {trigger}{signal} ETH",
+      "examplesLabel": "Experimente um",
+      "exampleHint": "Setup para {asset}",
+      "tryEth": "Usar /Signal ETH",
+      "gotIt": "Entendi"
+    },
+    "chatError": {
+      "title": "Não foi possível concluir a resposta",
+      "dismiss": "Fechar",
+      "retrying": "A tentar novamente…"
+    }
   }
 }

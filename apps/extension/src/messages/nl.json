@@ -493,7 +493,7 @@
       "btc-signal": {
         "title": "BTC trade-signaal",
         "description": "Vraag een live setup. Kaart alleen bij een duidelijke lezing.",
-        "text": "@signal BTC"
+        "text": "/signal BTC"
       },
       "xau-macro": {
         "title": "Goud (XAU) vs. inflatie",
@@ -591,11 +591,16 @@
     "loadingExur": "Exur laden",
     "errors": {
       "recovery": "Er ging iets mis bij het ontvangen van het antwoord.",
+      "network": "Kon Exur niet bereiken. Controleer je verbinding en probeer opnieuw.",
+      "server": "De servers van Exur hadden een probleem. Probeer het zo opnieuw.",
+      "streamInterrupted": "Het antwoord eindigde onverwacht. Probeer opnieuw.",
+      "emptyReply": "Exur gaf een leeg antwoord. Probeer opnieuw.",
       "timeout": "Exur deed er te lang over. Controleer je verbinding en probeer opnieuw.",
       "credits": "Je chatcredits voor deze periode zijn op. Upgrade om door te gaan.",
       "proSessionRefresh": "Je Plus-abonnement is actief, maar deze sessie moet worden vernieuwd. Probeer opnieuw.",
       "auth": "Log in met Google voor antwoorden van Exur. Je kunt eerst prompts verkennen.",
-      "trialExhausted": "Voor diepere analyse en het bewaren van je marktvoorkeuren heeft Exur een beveiligde sessie nodig. Log in met Google om door te gaan."
+      "trialExhausted": "Voor diepere analyse en het bewaren van je marktvoorkeuren heeft Exur een beveiligde sessie nodig. Log in met Google om door te gaan.",
+      "signalSymbolRequired": "Signal heeft een markt nodig — voeg iets als ETH of BTC toe na /Signal."
     },
     "creditsExhausted": {
       "title": "Je credits zijn op",
@@ -633,6 +638,21 @@
     "composerPasteAttachmentLines": "{count} regels",
     "composerPasteAttachmentRemove": "Bestand verwijderen",
     "composerPasteAttachmentUnwrap": "Tonen in tekstveld",
-    "composerPasteAttachmentEmptyPrompt": "Bekijk het bijgevoegde bestand."
+    "composerPasteAttachmentEmptyPrompt": "Bekijk het bijgevoegde bestand.",
+    "signalGuidance": {
+      "title": "Geef Signal een markt",
+      "description": "Signal heeft een duidelijk asset nodig — zoals ETH, BTC of goud — om een setup te beoordelen.",
+      "tipTitle": "Zo schrijf je het",
+      "tipBody": "Typ {trigger} om tools te openen, kies {signal} en voeg de markt toe. Voorbeeld: {trigger}{signal} ETH",
+      "examplesLabel": "Probeer er een",
+      "exampleHint": "Setup voor {asset}",
+      "tryEth": "Gebruik /Signal ETH",
+      "gotIt": "Begrepen"
+    },
+    "chatError": {
+      "title": "Antwoord kon niet worden voltooid",
+      "dismiss": "Sluiten",
+      "retrying": "Opnieuw proberen…"
+    }
   }
 }

@@ -3,7 +3,12 @@ import { describe, expect, it } from "vitest"
 import {
   COPILOT_AUTH_MESSAGE,
   COPILOT_CREDIT_MESSAGE,
+  COPILOT_EMPTY_REPLY_MESSAGE,
+  COPILOT_NETWORK_MESSAGE,
   COPILOT_RECOVERY_MESSAGE,
+  COPILOT_SERVER_MESSAGE,
+  COPILOT_SIGNAL_SYMBOL_REQUIRED_MESSAGE,
+  COPILOT_STREAM_INTERRUPTED_MESSAGE,
   COPILOT_TIMEOUT_MESSAGE,
   COPILOT_TRIAL_EXHAUSTED_MESSAGE,
   buildFailedAssistantTurn,
@@ -14,6 +19,7 @@ import {
   isCreditExhaustedError,
   isGuestTrialExhaustedError,
   isLowSignalUserMessage,
+  isSignalSymbolRequiredError,
   prepareMessagesForRetry,
   removeEmptyAssistantTurn,
   shouldShowGuestSignInPrompt,
@@ -34,12 +40,12 @@ describe("co-pilot recovery helpers", () => {
     ).toBe("")
   })
 
-  it("maps transport failures to safe recovery copy (no HTTP codes)", () => {
+  it("maps transport failures to specific reasons (no raw HTTP codes)", () => {
     expect(coPilotUserFacingError(new Error("HTTP 502"))).toBe(
-      COPILOT_RECOVERY_MESSAGE
+      COPILOT_SERVER_MESSAGE
     )
     expect(coPilotUserFacingError(new Error("Failed to fetch"))).toBe(
-      COPILOT_RECOVERY_MESSAGE
+      COPILOT_NETWORK_MESSAGE
     )
     expect(
       coPilotUserFacingError(
@@ -52,8 +58,12 @@ describe("co-pilot recovery helpers", () => {
       coPilotUserFacingError(
         new Error("Exur returned an empty reply. Please try again.")
       )
-    ).toBe(COPILOT_RECOVERY_MESSAGE)
-    expect(COPILOT_RECOVERY_MESSAGE).not.toMatch(/HTTP|502|SSE|FetchError/i)
+    ).toBe(COPILOT_EMPTY_REPLY_MESSAGE)
+    expect(
+      coPilotUserFacingError(new Error("stream closed without done"))
+    ).toBe(COPILOT_STREAM_INTERRUPTED_MESSAGE)
+    expect(COPILOT_SERVER_MESSAGE).not.toMatch(/HTTP|502|SSE|FetchError/i)
+    expect(COPILOT_NETWORK_MESSAGE).not.toMatch(/HTTP|502|SSE|FetchError/i)
   })
 
   it("maps 402 credit exhaustion to upgrade copy for Free and Plus", () => {
@@ -100,9 +110,35 @@ describe("co-pilot recovery helpers", () => {
     ]) {
       const err = Object.assign(new Error(message), { code: "" })
       expect(isCreditExhaustedError(err)).toBe(false)
-      expect(coPilotUserFacingError(err)).toBe(COPILOT_RECOVERY_MESSAGE)
+      expect(coPilotUserFacingError(err)).toBe(
+        message.charAt(0).toUpperCase() + message.slice(1)
+      )
       expect(coPilotFailureAction(err)).toBe("retry")
     }
+  })
+
+  it("surfaces the real API error reason instead of generic recovery copy", () => {
+    expect(
+      coPilotUserFacingError(new Error("agent execution failed"))
+    ).toBe("Agent execution failed")
+    expect(
+      coPilotUserFacingError(
+        Object.assign(new Error("invalid_command"), { code: "invalid_command" })
+      )
+    ).toBe("Invalid command")
+  })
+
+  it("maps @signal symbol-required errors to guidance copy", () => {
+    const err = new Error(
+      "@signal: symbol required (e.g. @signal ETH) or set active_symbol in client context"
+    )
+    expect(isSignalSymbolRequiredError(err)).toBe(true)
+    expect(coPilotUserFacingError(err)).toBe(
+      COPILOT_SIGNAL_SYMBOL_REQUIRED_MESSAGE
+    )
+    expect(COPILOT_SIGNAL_SYMBOL_REQUIRED_MESSAGE).not.toMatch(
+      /active_symbol|client context/i
+    )
   })
 
   it("maps 401 to sign-in copy and connect action for registered users", () => {

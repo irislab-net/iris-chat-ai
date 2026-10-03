@@ -13,6 +13,21 @@ export const COPILOT_RECOVERY_MESSAGE =
 export const COPILOT_TIMEOUT_MESSAGE =
   "Exur took too long to respond. Check your connection and try again."
 
+export const COPILOT_NETWORK_MESSAGE =
+  "Couldn't reach Exur. Check your connection and try again."
+
+export const COPILOT_SERVER_MESSAGE =
+  "Exur's servers hit a problem. Please try again in a moment."
+
+export const COPILOT_STREAM_INTERRUPTED_MESSAGE =
+  "The response ended unexpectedly. Please try again."
+
+export const COPILOT_EMPTY_REPLY_MESSAGE =
+  "Exur returned an empty reply. Please try again."
+
+export const COPILOT_SIGNAL_SYMBOL_REQUIRED_MESSAGE =
+  "Signal needs a market — add something like ETH or BTC after /Signal."
+
 export const COPILOT_CREDIT_MESSAGE =
   "You've used this period's chat credits. Upgrade to continue."
 
@@ -33,6 +48,16 @@ export function localizeCoPilotErrorText(
   switch (text) {
     case COPILOT_TIMEOUT_MESSAGE:
       return t("errors.timeout")
+    case COPILOT_NETWORK_MESSAGE:
+      return t("errors.network")
+    case COPILOT_SERVER_MESSAGE:
+      return t("errors.server")
+    case COPILOT_STREAM_INTERRUPTED_MESSAGE:
+      return t("errors.streamInterrupted")
+    case COPILOT_EMPTY_REPLY_MESSAGE:
+      return t("errors.emptyReply")
+    case COPILOT_SIGNAL_SYMBOL_REQUIRED_MESSAGE:
+      return t("errors.signalSymbolRequired")
     case COPILOT_CREDIT_MESSAGE:
       return t("errors.credits")
     case COPILOT_PRO_SESSION_REFRESH_MESSAGE:
@@ -46,9 +71,67 @@ export function localizeCoPilotErrorText(
     case "":
       return t("errors.recovery")
     default:
+      // API/stream messages (e.g. "agent execution failed") — show as returned.
       return text
   }
 }
+
+/** True when the message is unsafe to surface (HTML, stacks, raw HTTP). */
+function isUnsafeTechnicalErrorMessage(message: string): boolean {
+  if (!message) return true
+  if (/[<>{}]/.test(message)) return true
+  if (/^HTTP\s+\d+/i.test(message)) return true
+  if (/\bHTTP\b/i.test(message) && /\b\d{3}\b/.test(message)) return true
+  if (
+    /\b(?:stack|traceback|TypeError|ReferenceError|ECONN|ENOTFOUND|EAI_AGAIN)\b/i.test(
+      message
+    )
+  ) {
+    return true
+  }
+  if (/\bat\s+\S+:\d+/i.test(message)) return true
+  return false
+}
+
+/** Prefer the backend's human message when it is safe to show. */
+function sanitizeApiErrorMessage(message: string): string | null {
+  const msg = message.trim().replace(/\s+/g, " ")
+  if (!msg || msg.length > 280) return null
+  if (isUnsafeTechnicalErrorMessage(msg)) return null
+  if (/^failed to fetch$/i.test(msg)) return null
+  if (/^networkerror/i.test(msg)) return null
+  if (/streaming response has no body/i.test(msg)) return null
+  if (/^stream closed without done$/i.test(msg)) return null
+  // snake_case codes sometimes arrive as the message body.
+  if (/^[a-z][a-z0-9]+(?:_[a-z0-9]+)+$/i.test(msg)) {
+    const spaced = msg.replace(/_/g, " ")
+    return spaced.charAt(0).toUpperCase() + spaced.slice(1)
+  }
+  // Sentence-case common lowercase API phrases.
+  if (/^[a-z]/.test(msg)) {
+    return msg.charAt(0).toUpperCase() + msg.slice(1)
+  }
+  return msg
+}
+/** Backend rejected @signal / /Signal without a resolvable market symbol. */
+export function isSignalSymbolRequiredError(error: unknown): boolean {
+  const msg =
+    error instanceof Error
+      ? error.message
+      : typeof error === "string"
+        ? error
+        : ""
+  const text = msg.trim()
+  if (!text) return false
+  if (
+    /symbol required/i.test(text) &&
+    /(?:@signal|\/signal|active_symbol)/i.test(text)
+  ) {
+    return true
+  }
+  return /active_symbol in client context/i.test(text)
+}
+
 export function isTimeoutError(error: unknown): boolean {
   if (!error || typeof error !== "object") return false
   const name = (error as { name?: string }).name
@@ -109,6 +192,9 @@ export function coPilotUserFacingError(
 ): string {
   if (isTimeoutError(error)) return COPILOT_TIMEOUT_MESSAGE
   if (isAbortError(error)) return ""
+  if (isSignalSymbolRequiredError(error)) {
+    return COPILOT_SIGNAL_SYMBOL_REQUIRED_MESSAGE
+  }
   const status = (error as { status?: number } | null)?.status
   const code = coPilotErrorCode(error)
   // Guests: sign-in copy for login_required and mis-tagged credit/paywall codes.
@@ -123,33 +209,40 @@ export function coPilotUserFacingError(
   if (isCreditExhaustedError(error)) {
     return COPILOT_CREDIT_MESSAGE
   }
-  // Known empty-completion path uses a friendly Error already — keep if it matches product tone.
+
   if (error instanceof Error) {
     const msg = error.message.trim()
     if (/insufficient credit/i.test(msg) || /usage limit reached/i.test(msg)) {
       return COPILOT_CREDIT_MESSAGE
     }
-    if (msg === "Exur returned an empty reply. Please try again.") {
-      return COPILOT_RECOVERY_MESSAGE
-    }
-    // Drop technical transport messages (HTTP 502, Failed to fetch, etc.)
-    if (/^HTTP\s+\d+/i.test(msg)) return COPILOT_RECOVERY_MESSAGE
-    if (/failed to fetch/i.test(msg)) return COPILOT_RECOVERY_MESSAGE
-    if (/network/i.test(msg)) return COPILOT_RECOVERY_MESSAGE
-    if (/streaming response has no body/i.test(msg))
-      return COPILOT_RECOVERY_MESSAGE
-    if (isChatRetryableFailureMessage(msg)) return COPILOT_RECOVERY_MESSAGE
     if (
-      msg.length > 0 &&
-      msg.length < 160 &&
-      !/[<>{}]/.test(msg) &&
-      !/\bHTTP\b/i.test(msg)
+      msg === COPILOT_EMPTY_REPLY_MESSAGE ||
+      msg === "Exur returned an empty reply. Please try again."
     ) {
-      // Short opaque API `error` strings may be user-safe; still prefer recovery copy
-      // unless we know the backend writes human copy. Default to recovery message.
-      return COPILOT_RECOVERY_MESSAGE
+      return COPILOT_EMPTY_REPLY_MESSAGE
     }
+    if (/failed to fetch/i.test(msg) || /^networkerror/i.test(msg)) {
+      return COPILOT_NETWORK_MESSAGE
+    }
+    if (/network/i.test(msg) && !sanitizeApiErrorMessage(msg)) {
+      return COPILOT_NETWORK_MESSAGE
+    }
+    if (
+      /streaming response has no body/i.test(msg) ||
+      /^stream closed without done$/i.test(msg)
+    ) {
+      return COPILOT_STREAM_INTERRUPTED_MESSAGE
+    }
+    if (/^HTTP\s+\d+/i.test(msg) || (status != null && status >= 500)) {
+      return COPILOT_SERVER_MESSAGE
+    }
+
+    // Prefer the real API/stream reason (agent failed, invalid command, …).
+    const safe = sanitizeApiErrorMessage(msg)
+    if (safe) return safe
   }
+
+  if (status != null && status >= 500) return COPILOT_SERVER_MESSAGE
   return COPILOT_RECOVERY_MESSAGE
 }
 
