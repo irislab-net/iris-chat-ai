@@ -35,6 +35,7 @@ import { ComposerPremiumToolsDialog } from "@/components/app-shell/composer-prem
 import { TermText } from "@/components/app-shell/term-text"
 import { useAuth } from "@/components/auth/auth-provider"
 import { Button } from "@/components/ui/button"
+import { useAppFeatureVisible } from "@/hooks/use-app-feature-prefs"
 import { trackChatSignalWatchlist } from "@/lib/analytics"
 import { signalRewardRiskRatio } from "@/lib/chat/signal-setup"
 import { buildSignalShareText } from "@/lib/chat/signal-share"

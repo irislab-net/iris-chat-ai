@@ -22,6 +22,7 @@ import {
   landingTitleCard,
 } from "@/lib/landing-modern-styles"
 import { LocaleFlag } from "@/components/i18n/locale-flag"
+import { AppFeatureToggles } from "@/components/app-shell/app-feature-toggles"
 import { TradingProfileForm } from "@/components/app-shell/trading-profile-form"
 import {
   SfBookIcon,
@@ -143,6 +144,7 @@ type AccountSheetView =
   | "language"
   | "help"
   | "tradingProfile"
+  | "features"
 
 type ChatAccountSheetProps = {
   open: boolean
@@ -475,7 +477,9 @@ function ChatAccountSheet({
         })
       : view === "tradingProfile"
         ? t("tradingProfile.title")
-        : t("exurSettings")
+        : view === "features"
+          ? t("featuresToolsSection")
+          : t("exurSettings")
 
   const stack = (
         <ChatGsapViewStack
@@ -752,6 +756,12 @@ function ChatAccountSheet({
                   onClick={() => go("tradingProfile")}
                   divider
                 />
+                <SheetRow
+                  icon={<SfSparklesIcon className={sheetIconClass} />}
+                  label={t("featuresToolsSection")}
+                  onClick={() => go("features")}
+                  divider
+                />
               </SheetCard>
 
               <p className={sheetSectionLabelClass}>
@@ -905,6 +915,19 @@ function ChatAccountSheet({
               initialProfile={readTradingProfile()}
               onSaved={goBack}
             />
+          </div>
+
+          {/* —— Features & tools visibility —— */}
+          <div data-view="features" className="flex min-h-0 flex-1 flex-col">
+            <NestedViewChrome
+              title={t("featuresToolsSection")}
+              onDone={goBack}
+            >
+              <p className={cn(sheetSectionLabelClass, "pb-0")}>
+                {t("featuresToolsDescription")}
+              </p>
+              <AppFeatureToggles className="px-0 pt-1" />
+            </NestedViewChrome>
           </div>
         </ChatGsapViewStack>
   )

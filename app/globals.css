@@ -305,6 +305,78 @@
 }
 
 /*
+ * Global scrollbars are hidden; keep a clear thin bar on Streamdown tables so
+ * horizontal overflow is obvious on narrow chat columns. clip-path keeps the
+ * native scrollbar inside the rounded card (it otherwise ignores border-radius).
+ */
+[data-streamdown="table-wrapper"] {
+  overflow: hidden;
+}
+
+/* Apple-style circular toolbar buttons on table cards */
+[data-streamdown="table-wrapper"] > div:first-child {
+  gap: 0.15rem;
+}
+
+[data-streamdown="table-wrapper"] > div:first-child button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.75rem;
+  min-height: 1.75rem;
+  border-radius: 9999px;
+  padding: 0.3rem;
+  color: color-mix(in oklch, var(--foreground) 48%, transparent);
+  transition:
+    color 150ms ease,
+    background-color 150ms ease;
+}
+
+[data-streamdown="table-wrapper"] > div:first-child button:hover {
+  color: var(--foreground);
+  background: color-mix(in oklch, var(--foreground) 7%, transparent);
+}
+
+[data-streamdown="table-wrapper"] > div:first-child button svg {
+  width: 15px;
+  height: 15px;
+}
+
+[data-streamdown="table-wrapper"] > div:last-child {
+  overflow-x: auto;
+  overflow-y: hidden;
+  border-radius: 0.75rem;
+  clip-path: inset(0 round 0.75rem);
+  scrollbar-width: thin;
+  scrollbar-color:
+    color-mix(in oklch, var(--foreground) 35%, transparent)
+    transparent;
+  -ms-overflow-style: auto;
+}
+
+[data-streamdown="table-wrapper"] > div:last-child::-webkit-scrollbar {
+  display: block;
+  width: 8px;
+  height: 10px;
+}
+
+[data-streamdown="table-wrapper"] > div:last-child::-webkit-scrollbar-track {
+  margin-inline: 0.65rem;
+  margin-block: 0.5rem 0.4rem;
+  border-radius: 9999px;
+  background: color-mix(in oklch, var(--muted) 55%, transparent);
+}
+
+[data-streamdown="table-wrapper"] > div:last-child::-webkit-scrollbar-thumb {
+  border-radius: 9999px;
+  background: color-mix(in oklch, var(--foreground) 32%, transparent);
+}
+
+[data-streamdown="table-wrapper"] > div:last-child::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in oklch, var(--foreground) 48%, transparent);
+}
+
+/*
  * Streamdown table/mermaid fullscreen portals render outside our prose wrappers.
  * Restyle them to match Exur glass chrome + soft table cards (desktop + mobile).
  */

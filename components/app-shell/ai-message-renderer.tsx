@@ -5,7 +5,20 @@ import DOMPurify from "isomorphic-dompurify"
 import { marked } from "marked"
 import { Streamdown } from "streamdown"
 import { code } from "@streamdown/code"
-import { CopyIcon, CheckIcon, Maximize2Icon } from "lucide-react"
+import {
+  CheckIcon,
+  CopyIcon,
+  DownloadIcon,
+  ExpandIcon,
+  ExternalLinkIcon,
+  Loader2Icon,
+  Maximize2Icon,
+  RotateCcwIcon,
+  XIcon,
+  ZoomInIcon,
+  ZoomOutIcon,
+  type LucideProps,
+} from "lucide-react"
 import { useTranslations } from "next-intl"
 
 import {
@@ -123,16 +136,17 @@ const proseClassName = cn(
   // Nested Shiki <pre> inside code-block — strip double chrome
   "[&_[data-streamdown=code-block]_pre]:my-0 [&_[data-streamdown=code-block]_pre]:rounded-none [&_[data-streamdown=code-block]_pre]:border-0 [&_[data-streamdown=code-block]_pre]:bg-transparent [&_[data-streamdown=code-block]_pre]:p-0 [&_[data-streamdown=code-block]_pre_code]:rounded-none [&_[data-streamdown=code-block]_pre_code]:border-0 [&_[data-streamdown=code-block]_pre_code]:bg-transparent [&_[data-streamdown=code-block]_pre_code]:p-0",
   // Clean soft tables — rounded shell + responsive horizontal scroll
-  "[&_[data-streamdown=table-wrapper]]:my-3.5 [&_[data-streamdown=table-wrapper]]:gap-1.5 [&_[data-streamdown=table-wrapper]]:overflow-hidden [&_[data-streamdown=table-wrapper]]:rounded-2xl [&_[data-streamdown=table-wrapper]]:border [&_[data-streamdown=table-wrapper]]:border-border/45 [&_[data-streamdown=table-wrapper]]:bg-muted/25 [&_[data-streamdown=table-wrapper]]:p-1.5 [&_[data-streamdown=table-wrapper]]:shadow-none",
+  "[&_[data-streamdown=table-wrapper]]:my-3.5 [&_[data-streamdown=table-wrapper]]:gap-1.5 [&_[data-streamdown=table-wrapper]]:overflow-hidden [&_[data-streamdown=table-wrapper]]:rounded-2xl [&_[data-streamdown=table-wrapper]]:border-0 [&_[data-streamdown=table-wrapper]]:bg-muted/25 [&_[data-streamdown=table-wrapper]]:p-1.5 [&_[data-streamdown=table-wrapper]]:shadow-none",
   "[&_[data-streamdown=table-wrapper]>div:first-child]:min-h-7 [&_[data-streamdown=table-wrapper]>div:first-child]:px-0.5",
-  "[&_[data-streamdown=table-wrapper]>div:last-child]:overflow-x-auto [&_[data-streamdown=table-wrapper]>div:last-child]:rounded-xl [&_[data-streamdown=table-wrapper]>div:last-child]:border [&_[data-streamdown=table-wrapper]>div:last-child]:border-border/40 [&_[data-streamdown=table-wrapper]>div:last-child]:bg-background [&_[data-streamdown=table-wrapper]>div:last-child]:shadow-none",
-  "[&_table]:my-0 [&_table]:w-full [&_table]:min-w-0 [&_table]:border-collapse [&_table]:text-[13px] [&_table]:leading-[1.45] sm:[&_table]:text-[14px]",
-  "[&_[data-streamdown=table]]:my-0",
+  "[&_[data-streamdown=table-wrapper]>div:last-child]:overflow-x-auto [&_[data-streamdown=table-wrapper]>div:last-child]:overflow-y-hidden [&_[data-streamdown=table-wrapper]>div:last-child]:rounded-xl [&_[data-streamdown=table-wrapper]>div:last-child]:border [&_[data-streamdown=table-wrapper]>div:last-child]:border-border/40 [&_[data-streamdown=table-wrapper]>div:last-child]:bg-background [&_[data-streamdown=table-wrapper]>div:last-child]:pb-3 [&_[data-streamdown=table-wrapper]>div:last-child]:shadow-none",
+  // Tables keep natural column width and scroll horizontally instead of crushing cells
+  "[&_table]:my-0 [&_table]:w-max [&_table]:min-w-full [&_table]:border-collapse [&_table]:text-[13px] [&_table]:leading-[1.45] sm:[&_table]:text-[14px]",
+  "[&_[data-streamdown=table]]:my-0 [&_[data-streamdown=table]]:w-max [&_[data-streamdown=table]]:min-w-full",
   "[&_thead]:border-b [&_thead]:border-border/50 [&_thead]:bg-muted/55",
   "[&_tbody]:divide-y [&_tbody]:divide-border/40",
   "[&_tr]:align-top [&_tr]:transition-colors hover:[&_tbody_tr]:bg-muted/25",
-  "[&_th]:px-3 [&_th]:py-2.5 [&_th]:text-start [&_th]:align-middle [&_th]:text-[12px] [&_th]:font-semibold [&_th]:tracking-wide [&_th]:text-muted-foreground [&_th]:break-words [&_th]:wrap-anywhere [&_th]:whitespace-normal sm:[&_th]:px-3.5 sm:[&_th]:py-3 sm:[&_th]:text-[13px]",
-  "[&_td]:px-3 [&_td]:py-2.5 [&_td]:text-start [&_td]:align-middle [&_td]:break-words [&_td]:wrap-anywhere [&_td]:whitespace-normal [&_td]:text-foreground/90 sm:[&_td]:px-3.5 sm:[&_td]:py-3"
+  "[&_th]:px-3 [&_th]:py-2.5 [&_th]:text-start [&_th]:align-middle [&_th]:text-[12px] [&_th]:font-semibold [&_th]:tracking-wide [&_th]:text-muted-foreground [&_th]:whitespace-nowrap [&_th]:break-normal sm:[&_th]:px-3.5 sm:[&_th]:py-3 sm:[&_th]:text-[13px]",
+  "[&_td]:px-3 [&_td]:py-2.5 [&_td]:text-start [&_td]:align-middle [&_td]:whitespace-nowrap [&_td]:break-normal [&_td]:text-foreground/90 sm:[&_td]:px-3.5 sm:[&_td]:py-3"
 )
 
 const treeClassName = cn(
@@ -145,6 +159,38 @@ const treeClassName = cn(
 )
 
 const streamdownPlugins = { code }
+
+/** Thin SF Symbol–like strokes for Streamdown table/code controls. */
+function appleIcon(Icon: React.ComponentType<LucideProps>) {
+  return function AppleStreamdownIcon({
+    size = 15,
+    className,
+    ...props
+  }: LucideProps) {
+    return (
+      <Icon
+        size={size}
+        strokeWidth={1.5}
+        absoluteStrokeWidth
+        className={className}
+        {...props}
+      />
+    )
+  }
+}
+
+const streamdownIcons = {
+  CheckIcon: appleIcon(CheckIcon),
+  CopyIcon: appleIcon(CopyIcon),
+  DownloadIcon: appleIcon(DownloadIcon),
+  ExternalLinkIcon: appleIcon(ExternalLinkIcon),
+  Loader2Icon: appleIcon(Loader2Icon),
+  Maximize2Icon: appleIcon(ExpandIcon),
+  RotateCcwIcon: appleIcon(RotateCcwIcon),
+  XIcon: appleIcon(XIcon),
+  ZoomInIcon: appleIcon(ZoomInIcon),
+  ZoomOutIcon: appleIcon(ZoomOutIcon),
+}
 
 /** Logical CSS (border-s / ps) needs a real direction — plaintext alone keeps LTR. */
 function resolveContentDir(text: string): "ltr" | "rtl" | "auto" {
@@ -184,6 +230,7 @@ function MarkdownBody({
       isAnimating={Boolean(animating)}
       parseIncompleteMarkdown={Boolean(animating)}
       plugins={streamdownPlugins}
+      icons={streamdownIcons}
       linkSafety={{ enabled: true }}
       controls={{
         table: { copy: true, download: true, fullscreen: true },
