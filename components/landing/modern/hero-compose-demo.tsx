@@ -812,7 +812,7 @@ export function HeroComposeDemo() {
               <div
                 data-demo-answer-bubble
                 className={cn(
-                  "w-full px-4 py-2.5 opacity-0 will-change-transform sm:px-5 sm:py-3",
+                  "max-w-full w-fit px-4 py-2.5 opacity-0 will-change-transform sm:px-5 sm:py-3",
                   landingGlassBubbleAi
                 )}
               >

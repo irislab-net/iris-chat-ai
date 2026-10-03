@@ -99,9 +99,13 @@ export const landingCard =
 
 export const landingSurfaceMuted = "bg-muted"
 
-/** Liquid glass surface — shared sheen + depth (no borders). */
+/**
+ * Liquid glass surface — shared sheen + depth (no borders).
+ * `overflow-hidden` keeps `backdrop-blur` clipped to `border-radius`
+ * (WebKit otherwise paints a hard rectangular fringe).
+ */
 export const landingGlassSurface =
-  "relative isolate overflow-visible bg-white/38 backdrop-blur-2xl shadow-[0_16px_48px_rgba(15,23,42,0.08),inset_0_1px_1px_rgba(255,255,255,0.92),inset_0_-1px_2px_rgba(255,255,255,0.28)] dark:bg-white/8 dark:shadow-[0_16px_48px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.12),inset_0_-1px_2px_rgba(255,255,255,0.04)]"
+  "relative isolate overflow-hidden bg-white/38 backdrop-blur-2xl shadow-[0_16px_48px_rgba(15,23,42,0.08),inset_0_1px_1px_rgba(255,255,255,0.92),inset_0_-1px_2px_rgba(255,255,255,0.28)] dark:bg-white/8 dark:shadow-[0_16px_48px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.12),inset_0_-1px_2px_rgba(255,255,255,0.04)]"
 
 /** Frosted glass pill — hero composer */
 export const landingGlassPill = `${landingGlassSurface} rounded-full bg-white/44 shadow-[0_20px_56px_rgba(15,23,42,0.09),inset_0_1px_1px_rgba(255,255,255,0.96),inset_0_-1px_2px_rgba(255,255,255,0.3)] dark:bg-white/10 dark:shadow-[0_20px_56px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.14),inset_0_-1px_2px_rgba(255,255,255,0.04)]`
@@ -111,7 +115,7 @@ export const landingGlassSheen =
 
 /** Desktop nav link group — frosted pill */
 export const landingNavPill =
-  "flex items-center gap-0.5 rounded-full bg-white/42 p-1 shadow-[0_8px_28px_rgba(15,23,42,0.05),inset_0_1px_1px_rgba(255,255,255,0.85)] backdrop-blur-xl dark:bg-white/8 dark:shadow-[0_8px_28px_rgba(0,0,0,0.28),inset_0_1px_1px_rgba(255,255,255,0.1)]"
+  "flex items-center gap-0.5 overflow-hidden rounded-full bg-white/42 p-1 shadow-[0_8px_28px_rgba(15,23,42,0.05),inset_0_1px_1px_rgba(255,255,255,0.85)] backdrop-blur-xl dark:bg-white/8 dark:shadow-[0_8px_28px_rgba(0,0,0,0.28),inset_0_1px_1px_rgba(255,255,255,0.1)]"
 
 export const landingNavLinkActive =
   "bg-white font-semibold text-foreground shadow-[0_2px_10px_rgba(15,23,42,0.07)] dark:bg-white/12 dark:shadow-[0_2px_10px_rgba(0,0,0,0.3)]"

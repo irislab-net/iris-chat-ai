@@ -12,9 +12,12 @@ const chatPressFillClass =
 const chatActiveFillClass =
   "bg-[rgba(120,120,128,0.14)] dark:bg-[rgba(120,120,128,0.28)]"
 
-/** iOS 26 liquid glass — translucent frost + hairline rim + specular depth (Apple Tahoe). */
+/**
+ * iOS 26 liquid glass — translucent frost + hairline rim + specular depth (Apple Tahoe).
+ * `overflow-hidden` clips `backdrop-blur` to the element radius (WebKit fringe).
+ */
 const chatMobileGlassSurfaceClass =
-  "chat-ios26-liquid-glass relative isolate border border-white/35 bg-white/[0.18] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.72),inset_0_0_0_0.5px_rgba(255,255,255,0.35),inset_0_-10px_18px_-12px_rgba(0,0,0,0.14),0_1px_2px_rgba(0,0,0,0.04),0_10px_28px_-12px_rgba(0,0,0,0.14)] backdrop-blur-[22px] backdrop-saturate-[190%] supports-[backdrop-filter]:bg-white/[0.12] dark:border-white/16 dark:bg-white/[0.10] dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.28),inset_0_0_0_0.5px_rgba(255,255,255,0.12),inset_0_-12px_22px_-12px_rgba(0,0,0,0.5),0_8px_28px_-12px_rgba(0,0,0,0.42)] dark:supports-[backdrop-filter]:bg-white/[0.07]"
+  "chat-ios26-liquid-glass relative isolate overflow-hidden border border-white/35 bg-white/[0.18] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.72),inset_0_0_0_0.5px_rgba(255,255,255,0.35),inset_0_-10px_18px_-12px_rgba(0,0,0,0.14),0_1px_2px_rgba(0,0,0,0.04),0_10px_28px_-12px_rgba(0,0,0,0.14)] backdrop-blur-[22px] backdrop-saturate-[190%] supports-[backdrop-filter]:bg-white/[0.12] dark:border-white/16 dark:bg-white/[0.10] dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.28),inset_0_0_0_0.5px_rgba(255,255,255,0.12),inset_0_-12px_22px_-12px_rgba(0,0,0,0.5),0_8px_28px_-12px_rgba(0,0,0,0.42)] dark:supports-[backdrop-filter]:bg-white/[0.07]"
 
 /**
  * Composer shell — iOS 26 `.regular` Liquid Glass (same family as search bar).
@@ -24,7 +27,7 @@ const chatMobileGlassSurfaceClass =
  * Soft blue outer glow — brand tint, very low opacity lift under the capsule.
  */
 const chatMobileComposerGlassClass =
-  "chat-ios26-liquid-glass relative isolate border border-white/35 bg-white/[0.22] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.75),inset_0_0_0_0.5px_rgba(255,255,255,0.4),inset_0_-8px_16px_-12px_rgba(0,0,0,0.12),0_1px_2px_rgba(0,0,0,0.03),0_-6px_20px_-6px_rgba(37,99,235,0.12),0_-14px_40px_-12px_rgba(37,99,235,0.10),0_4px_14px_-10px_rgba(37,99,235,0.05)] backdrop-blur-[22px] backdrop-saturate-[190%] supports-[backdrop-filter]:bg-white/[0.14] dark:border-white/16 dark:bg-white/[0.12] dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.28),inset_0_0_0_0.5px_rgba(255,255,255,0.12),inset_0_-10px_20px_-12px_rgba(0,0,0,0.45),0_1px_2px_rgba(0,0,0,0.2),0_-8px_24px_-6px_rgba(37,99,235,0.16),0_-18px_44px_-14px_rgba(37,99,235,0.12),0_4px_16px_-12px_rgba(37,99,235,0.06)] dark:supports-[backdrop-filter]:bg-white/[0.08]"
+  "chat-ios26-liquid-glass relative isolate overflow-hidden border border-white/35 bg-white/[0.22] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.75),inset_0_0_0_0.5px_rgba(255,255,255,0.4),inset_0_-8px_16px_-12px_rgba(0,0,0,0.12),0_1px_2px_rgba(0,0,0,0.03),0_-6px_20px_-6px_rgba(37,99,235,0.12),0_-14px_40px_-12px_rgba(37,99,235,0.10),0_4px_14px_-10px_rgba(37,99,235,0.05)] backdrop-blur-[22px] backdrop-saturate-[190%] supports-[backdrop-filter]:bg-white/[0.14] dark:border-white/16 dark:bg-white/[0.12] dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.28),inset_0_0_0_0.5px_rgba(255,255,255,0.12),inset_0_-10px_20px_-12px_rgba(0,0,0,0.45),0_1px_2px_rgba(0,0,0,0.2),0_-8px_24px_-6px_rgba(37,99,235,0.16),0_-18px_44px_-14px_rgba(37,99,235,0.12),0_4px_16px_-12px_rgba(37,99,235,0.06)] dark:supports-[backdrop-filter]:bg-white/[0.08]"
 
 const chatMobileComposerGlassFocusClass =
   "focus-within:border-white/50 focus-within:bg-white/[0.36] focus-within:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.88),inset_0_0_0_0.5px_rgba(255,255,255,0.5),inset_0_-8px_16px_-12px_rgba(0,0,0,0.1),0_2px_6px_rgba(0,0,0,0.04),0_-8px_24px_-6px_rgba(37,99,235,0.16),0_-18px_48px_-12px_rgba(37,99,235,0.12),0_4px_14px_-10px_rgba(37,99,235,0.06)] supports-[backdrop-filter]:focus-within:bg-white/[0.22] dark:focus-within:border-white/24 dark:focus-within:bg-white/[0.18] dark:focus-within:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.35),inset_0_0_0_0.5px_rgba(255,255,255,0.18),inset_0_-10px_20px_-12px_rgba(0,0,0,0.4),0_2px_8px_rgba(0,0,0,0.22),0_-10px_28px_-6px_rgba(37,99,235,0.2),0_-20px_52px_-14px_rgba(37,99,235,0.14),0_4px_16px_-12px_rgba(37,99,235,0.07)] dark:supports-[backdrop-filter]:focus-within:bg-white/[0.12]"

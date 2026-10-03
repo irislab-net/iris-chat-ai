@@ -61,13 +61,11 @@ function IrisMark({
   }
 
   // Hero: current mark path + black gradient on liquid glass (no baked white disc).
+  // Outer shell stays overflow-visible for the soft halo; frost lives on a clipped layer.
   return (
     <span
       className={cn(
-        "chat-empty-hero-mark relative inline-flex size-14 shrink-0 items-center justify-center rounded-full p-0.75",
-        "border-0 bg-white/55 shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_88%,transparent),inset_0_0_0_1px_color-mix(in_oklch,var(--foreground)_8%,transparent),0_1px_2px_color-mix(in_oklch,var(--foreground)_4%,transparent),0_14px_36px_-14px_color-mix(in_oklch,var(--foreground)_14%,transparent)]",
-        "backdrop-blur-2xl backdrop-saturate-180 supports-backdrop-filter:bg-white/40",
-        "dark:bg-[oklch(0.22_0_0_/0.88)] dark:shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_10%,transparent),0_14px_40px_-16px_color-mix(in_oklch,black_55%,transparent)] dark:supports-backdrop-filter:bg-[oklch(0.2_0_0_/0.72)]",
+        "chat-empty-hero-mark relative inline-flex size-14 shrink-0 items-center justify-center p-0.75",
         className
       )}
     >
@@ -77,7 +75,16 @@ function IrisMark({
       />
       <span
         aria-hidden
-        className="pointer-events-none absolute inset-0 rounded-full bg-linear-to-br from-white/90 via-white/25 to-transparent dark:from-white/12 dark:via-white/3 dark:to-transparent"
+        className={cn(
+          "pointer-events-none absolute inset-0 overflow-hidden rounded-full",
+          "border-0 bg-white/55 shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_88%,transparent),inset_0_0_0_1px_color-mix(in_oklch,var(--foreground)_8%,transparent),0_1px_2px_color-mix(in_oklch,var(--foreground)_4%,transparent),0_14px_36px_-14px_color-mix(in_oklch,var(--foreground)_14%,transparent)]",
+          "backdrop-blur-2xl backdrop-saturate-180 supports-backdrop-filter:bg-white/40",
+          "dark:bg-[oklch(0.22_0_0_/0.88)] dark:shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_10%,transparent),0_14px_40px_-16px_color-mix(in_oklch,black_55%,transparent)] dark:supports-backdrop-filter:bg-[oklch(0.2_0_0_/0.72)]"
+        )}
+      />
+      <span
+        aria-hidden
+        className="pointer-events-none absolute inset-0 overflow-hidden rounded-full bg-linear-to-br from-white/90 via-white/25 to-transparent dark:from-white/12 dark:via-white/3 dark:to-transparent"
       />
       <span
         className={cn(

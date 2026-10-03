@@ -130,7 +130,7 @@ function PlanCard({
     <article
       className={cn(
         landingGlassSurface,
-        "relative flex h-full flex-col overflow-visible rounded-[1.75rem]",
+        "relative flex h-full flex-col overflow-hidden rounded-[1.75rem]",
         featured
           ? "bg-white/55 shadow-[0_28px_80px_rgba(37,99,235,0.1),inset_0_1px_1px_rgba(255,255,255,0.95)] ring-1 ring-[#2563EB]/10 lg:-my-1 dark:bg-white/10 dark:shadow-[0_28px_80px_rgba(37,99,235,0.16),inset_0_1px_1px_rgba(255,255,255,0.12)]"
           : "bg-white/42 dark:bg-white/8"

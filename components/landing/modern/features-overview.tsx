@@ -338,7 +338,7 @@ export function FeaturesOverview() {
                   <article
                     className={cn(
                       landingGlassSurface,
-                      "group relative flex h-full flex-col items-start overflow-visible rounded-[1.75rem] bg-white/42 px-5 py-7 dark:bg-white/8 sm:px-6"
+                      "group relative flex h-full flex-col items-start overflow-hidden rounded-[1.75rem] bg-white/42 px-5 py-7 dark:bg-white/8 sm:px-6"
                     )}
                   >
                     <GlassSheen className="rounded-[1.75rem]" />
@@ -542,7 +542,7 @@ export function FeaturesOverview() {
                   <article
                     className={cn(
                       landingGlassSurface,
-                      "relative flex h-full flex-col overflow-visible rounded-[1.75rem] bg-white/42 px-5 py-6 dark:bg-white/8"
+                      "relative flex h-full flex-col overflow-hidden rounded-[1.75rem] bg-white/42 px-5 py-6 dark:bg-white/8"
                     )}
                   >
                     <GlassSheen className="rounded-[1.75rem]" />

@@ -19,7 +19,6 @@ import { LANDING_MOTION, useReducedMotion } from "@/lib/landing-motion"
 import {
   landingDisplay,
   landingGlassNavIcon,
-  landingGlassPill,
   landingGlassSheen,
   landingGlassSurface,
   landingTitleQuote,
@@ -574,23 +573,6 @@ export function AboutExperience() {
           )}
         />
 
-        {phase === "idle" ? (
-          <div
-            className={cn(
-              landingGlassPill,
-              "pointer-events-none absolute inset-s-3.5 top-3.5 z-20 inline-flex items-center gap-2 px-3 py-1.5 sm:inset-s-4 sm:top-4"
-            )}
-          >
-            <span
-              aria-hidden
-              className="size-1.5 shrink-0 rounded-full bg-[#2563EB] shadow-[0_0_0_3px_rgba(37,99,235,0.16)]"
-            />
-            <span className="text-[11px] font-medium tracking-wide text-muted-foreground">
-              {t("listenLabel")}
-            </span>
-          </div>
-        ) : null}
-
         <div
           ref={orbLiftRef}
           className={cn(
@@ -699,15 +681,25 @@ export function AboutExperience() {
                     "bg-[#2563EB]/16 blur-2xl dark:bg-[#2563EB]/22"
                   )}
                 />
-                <div
-                  className={cn(
-                    landingGlassSurface,
-                    "relative overflow-visible rounded-full bg-white/55 p-1 dark:bg-white/10"
-                  )}
-                >
+                {/*
+                  Thumb sticks past the track end — keep the outer shell
+                  overflow-visible, but never put backdrop-blur on it (WebKit
+                  paints a rectangular fringe). Frost sits on a clipped layer.
+                */}
+                <div className="relative overflow-visible rounded-full p-1">
                   <span
                     aria-hidden
-                    className={cn(landingGlassSheen, "rounded-full")}
+                    className={cn(
+                      landingGlassSurface,
+                      "pointer-events-none absolute inset-0 rounded-full bg-white/55 dark:bg-white/10"
+                    )}
+                  />
+                  <span
+                    aria-hidden
+                    className={cn(
+                      landingGlassSheen,
+                      "pointer-events-none absolute inset-0 rounded-full"
+                    )}
                   />
                   <div className="relative h-1 overflow-visible rounded-full bg-foreground/6 dark:bg-white/10">
                     <div
@@ -715,7 +707,7 @@ export function AboutExperience() {
                       className="about-narration-progress relative h-full w-0 min-w-0 will-change-[width]"
                       style={{ width: "0%" }}
                     >
-                      <span className="absolute inset-0 rounded-full bg-[#2563EB]" />
+                      <span className="absolute inset-0 overflow-hidden rounded-full bg-[#2563EB]" />
                       <span className="about-narration-progress-sheen absolute inset-y-0 inset-s-0 w-1/3 rounded-full bg-linear-to-r from-transparent via-white/70 to-transparent" />
                       <span
                         className={cn(

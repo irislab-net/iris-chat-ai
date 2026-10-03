@@ -92,12 +92,9 @@ export function CryptoPaySection() {
             )}
           >
             <div className="text-center sm:text-start">
-              <p className="text-[11px] font-medium tracking-[0.18em] text-muted-foreground uppercase">
-                {t("eyebrow")}
-              </p>
               <h2
                 id="crypto-pay-heading"
-                className={cn(landingTitleSection, "mt-3")}
+                className={landingTitleSection}
               >
                 {t("title")}
               </h2>
@@ -105,9 +102,9 @@ export function CryptoPaySection() {
                 {t("subtitle")}
               </p>
 
-              <ul className="mt-8 m-0 flex list-none flex-col gap-3.5 p-0 text-start">
+              <ul className="mt-8 m-0 flex list-none flex-col items-center gap-3.5 p-0 text-center sm:items-start sm:text-start">
                 {PERKS.map((key) => (
-                  <li key={key} className="flex items-start gap-3">
+                  <li key={key} className="flex items-start justify-center gap-3 sm:justify-start">
                     <span
                       className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-[#2563EB]/12 text-[#1D4ED8] dark:bg-[#2563EB]/22 dark:text-[#93C5FD]"
                       aria-hidden

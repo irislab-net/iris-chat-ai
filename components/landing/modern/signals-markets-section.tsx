@@ -114,7 +114,7 @@ function LiveMarketCard({
     <article
       className={cn(
         landingGlassSurface,
-        "group relative flex h-full flex-col items-center overflow-visible rounded-[1.75rem] bg-white/42 px-5 py-8 text-center sm:px-6 sm:py-9 dark:bg-white/8"
+        "group relative flex h-full flex-col items-center overflow-hidden rounded-[1.75rem] bg-white/42 px-5 py-8 text-center sm:px-6 sm:py-9 dark:bg-white/8"
       )}
     >
       <span

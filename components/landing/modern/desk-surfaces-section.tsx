@@ -423,7 +423,7 @@ export function DeskSurfacesSection() {
           ref={articleRef}
           className={cn(
             landingGlassSurface,
-            "relative overflow-visible rounded-[1.75rem] bg-white/42 dark:bg-white/8"
+            "relative overflow-hidden rounded-[1.75rem] bg-white/42 dark:bg-white/8"
           )}
         >
           <span
