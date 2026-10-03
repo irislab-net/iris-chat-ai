@@ -81,6 +81,7 @@ import { useIsDesktop } from "@/hooks/use-media-query"
 import { useNewsSpotlight } from "@/hooks/use-news-spotlight"
 import { useShellSidebarLayout } from "@/hooks/use-shell-sidebar-layout"
 import { useChatClientContext } from "@/hooks/use-chat-client-context"
+import { ActionTooltip } from "@/components/ui/action-tooltip"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { executeChatClientActions } from "@/lib/api/chat"
@@ -261,19 +262,20 @@ function ChatHeaderIconButton({
   children: React.ReactNode
 }) {
   return (
-    <Button
-      type="button"
-      variant="ghost"
-      size="icon"
-      className={headerIconClass}
-      aria-label={label}
-      title={label}
-      aria-pressed={pressed}
-      onClick={onClick}
-      disabled={disabled}
-    >
-      {children}
-    </Button>
+    <ActionTooltip label={label}>
+      <Button
+        type="button"
+        variant="ghost"
+        size="icon"
+        className={headerIconClass}
+        aria-label={label}
+        aria-pressed={pressed}
+        onClick={onClick}
+        disabled={disabled}
+      >
+        {children}
+      </Button>
+    </ActionTooltip>
   )
 }
 
@@ -2518,21 +2520,22 @@ function ChatAside({
                   />
                 ) : null}
                 {showScrollDown ? (
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="icon-sm"
-                    className={cn(
-                      isMobileOverlay
-                        ? chatMobileScrollDownClass
-                        : "absolute bottom-3 left-1/2 z-10 size-8 -translate-x-1/2 rounded-full border-border/70 bg-background/95 shadow-md backdrop-blur-sm hover:bg-background"
-                    )}
-                    aria-label={t("scrollToLatest")}
-                    title={t("scrollToLatest")}
-                    onClick={() => scrollToChatBottom("smooth")}
-                  >
-                    <ChevronDownIcon className="size-4" />
-                  </Button>
+                  <ActionTooltip label={t("scrollToLatest")}>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon-sm"
+                      className={cn(
+                        isMobileOverlay
+                          ? chatMobileScrollDownClass
+                          : "absolute bottom-3 left-1/2 z-10 size-8 -translate-x-1/2 rounded-full border-border/70 bg-background/95 shadow-md backdrop-blur-sm hover:bg-background"
+                      )}
+                      aria-label={t("scrollToLatest")}
+                      onClick={() => scrollToChatBottom("smooth")}
+                    >
+                      <ChevronDownIcon className="size-4" />
+                    </Button>
+                  </ActionTooltip>
                 ) : null}
               </div>
             ) : (

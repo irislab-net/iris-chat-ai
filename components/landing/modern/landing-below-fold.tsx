@@ -64,6 +64,13 @@ const FaqSection = dynamic(
     import("@/components/landing/modern/faq-section").then((m) => m.FaqSection),
   { ssr: true }
 )
+const CryptoPaySection = dynamic(
+  () =>
+    import("@/components/landing/modern/crypto-pay-section").then(
+      (m) => m.CryptoPaySection
+    ),
+  { ssr: true }
+)
 const PricingSection = dynamic(
   () =>
     import("@/components/landing/modern/pricing-section").then(
@@ -86,6 +93,7 @@ export function LandingBelowFold() {
           lib/landing-modern-data.ts. Re-enable together with the "Reviews"
           entries in NAV_LINKS and LANDING_SCROLL_SECTIONS. */}
       <GuestTrialSection />
+      <CryptoPaySection />
       <PricingSection />
       <FaqSection />
       <CtaSection />

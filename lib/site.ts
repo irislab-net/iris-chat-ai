@@ -101,6 +101,7 @@ export const PUBLIC_INDEXABLE_PATHS = [
   APP_PATH,
   "/what-is-exur",
   "/about",
+  "/features",
   "/ai-trading-signals",
   "/privacy",
   "/security",

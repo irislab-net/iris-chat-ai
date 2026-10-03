@@ -6,8 +6,7 @@ import {
   PauseCircleIcon,
   ShieldCheckIcon,
 } from "lucide-react"
-import { toBlob } from "html-to-image"
-import { useTranslations } from "next-intl"
+import { useLocale, useTranslations } from "next-intl"
 import { toast } from "sonner"
 
 import {
@@ -20,7 +19,6 @@ import {
   chatMobileSheetSecondaryButtonClass,
   chatMobileSheetTitleClass,
 } from "@/components/app-shell/chat-mobile-gemini-styles"
-import { ExurLogo } from "@/components/brand/exur-logo"
 import { IosShareIcon } from "@/components/icons/ios-share-icon"
 import { Button } from "@/components/ui/button"
 import {
@@ -38,6 +36,13 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet"
 import { useIsDesktop } from "@/hooks/use-media-query"
+import {
+  captureShareNodeToBlob,
+  formatSignalShareDate,
+  shareImageWithCaption,
+  SIGNAL_SHARE_CARD_BG,
+  signalShareBrandLogoSrc,
+} from "@/lib/chat/signal-share-capture"
 import {
   buildNoTradeShareText,
   noTradeShareFileName,
@@ -102,24 +107,27 @@ function ActionRow({
 
 function SharePreviewCard({
   reason,
+  shareDate,
   captureRef,
 }: {
   reason: string
+  shareDate: string
   captureRef: React.RefObject<HTMLDivElement | null>
 }) {
   const t = useTranslations("workspace")
   const text = reason.trim()
+  const logoSrc = signalShareBrandLogoSrc()
 
   return (
     <div
       ref={captureRef}
-      className={cn(
-        "relative isolate mx-auto w-full max-w-[22rem] overflow-hidden rounded-[1.35rem] bg-[#f7f8fa] text-[#0f172a]",
-        "shadow-[0_12px_40px_-18px_rgba(15,23,42,0.28)]",
-        "before:pointer-events-none before:absolute before:inset-0 before:-z-10 before:rounded-[inherit] before:content-['']",
-        "before:bg-[radial-gradient(120%_80%_at_0%_0%,rgba(245,158,11,0.18),transparent_55%),radial-gradient(90%_60%_at_100%_0%,rgba(37,99,235,0.1),transparent_50%)]"
-      )}
-      style={{ colorScheme: "light" }}
+      className="relative mx-auto w-full max-w-[22rem] overflow-hidden rounded-[1.35rem] text-[#0f172a] shadow-[0_12px_40px_-18px_rgba(15,23,42,0.28)]"
+      style={{
+        colorScheme: "light",
+        backgroundColor: SIGNAL_SHARE_CARD_BG,
+        backgroundImage:
+          "radial-gradient(120% 80% at 0% 0%, rgba(245,158,11,0.18), transparent 55%), radial-gradient(90% 60% at 100% 0%, rgba(37,99,235,0.1), transparent 50%)",
+      }}
     >
       <header className="px-4 pt-4 pb-3">
         <div className="flex items-start justify-between gap-3">
@@ -142,7 +150,7 @@ function SharePreviewCard({
       </header>
 
       <div className="px-4 pb-4">
-        <div className="rounded-2xl bg-white/90 px-3.5 py-3 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.9)]">
+        <div className="rounded-2xl bg-white px-3.5 py-3">
           <p className="text-[10px] font-medium tracking-[0.08em] text-black/45 uppercase">
             {t("noTradeReasonHeading")}
           </p>
@@ -152,53 +160,30 @@ function SharePreviewCard({
         </div>
       </div>
 
-      <footer className="flex items-center justify-between gap-3 border-t border-black/6 bg-white/80 px-4 py-3">
-        <div className="flex items-center gap-2">
-          <ExurLogo decorative variant="brand" className="size-7" size={28} />
+      <footer className="flex items-center justify-between gap-3 border-t border-black/6 bg-white px-4 py-3">
+        <div className="flex min-w-0 items-center gap-2">
+          {/* eslint-disable-next-line @next/next/no-img-element -- capture-safe raster logo */}
+          <img
+            src={logoSrc}
+            alt=""
+            width={28}
+            height={28}
+            decoding="sync"
+            className="size-7 shrink-0 rounded-full"
+          />
           <span className="text-[13px] font-semibold tracking-tight">Exur</span>
         </div>
-        <span className="text-[12px] font-medium tracking-tight text-black/45">
-          {SIGNAL_SHARE_SITE}
-        </span>
+        <div className="shrink-0 text-end">
+          <p className="text-[11px] font-medium tracking-tight text-black/50">
+            {shareDate}
+          </p>
+          <p className="text-[12px] font-medium tracking-tight text-black/45">
+            {SIGNAL_SHARE_SITE}
+          </p>
+        </div>
       </footer>
     </div>
   )
-}
-
-async function copyImageBlob(blob: Blob) {
-  if (
-    typeof ClipboardItem !== "undefined" &&
-    navigator.clipboard?.write
-  ) {
-    await navigator.clipboard.write([
-      new ClipboardItem({ [blob.type || "image/png"]: blob }),
-    ])
-    return
-  }
-  throw new Error("image-clipboard-unsupported")
-}
-
-async function shareImageBlob(input: {
-  blob: Blob
-  title: string
-  text: string
-}) {
-  const file = new File([input.blob], noTradeShareFileName(), {
-    type: input.blob.type || "image/png",
-  })
-  if (navigator.canShare?.({ files: [file] })) {
-    await navigator.share({
-      files: [file],
-      title: input.title,
-      text: input.text,
-    })
-    return
-  }
-  if (typeof navigator.share === "function") {
-    await navigator.share({ title: input.title, text: input.text })
-    return
-  }
-  throw new Error("share-unsupported")
 }
 
 function ChatNoTradeShareDialog({
@@ -207,21 +192,31 @@ function ChatNoTradeShareDialog({
   reason,
 }: ChatNoTradeShareDialogProps) {
   const t = useTranslations("workspace")
+  const locale = useLocale()
   const isDesktop = useIsDesktop()
   const [busy, setBusy] = React.useState(false)
   const [copied, setCopied] = React.useState(false)
   const captureRef = React.useRef<HTMLDivElement | null>(null)
   const copiedTimerRef = React.useRef(0)
 
+  const shareDate = React.useMemo(
+    () => formatSignalShareDate(locale),
+    [locale]
+  )
+
   const shareText = React.useMemo(
     () =>
-      buildNoTradeShareText(reason, {
-        title: t("noTradeTitle"),
-        badge: t("noTradeBadge"),
-        capitalProtected: t("noTradeCapitalProtected"),
-        reasonHeading: t("noTradeReasonHeading"),
-      }),
-    [reason, t]
+      buildNoTradeShareText(
+        reason,
+        {
+          title: t("noTradeTitle"),
+          badge: t("noTradeBadge"),
+          capitalProtected: t("noTradeCapitalProtected"),
+          reasonHeading: t("noTradeReasonHeading"),
+        },
+        { date: shareDate }
+      ),
+    [reason, shareDate, t]
   )
 
   const shareTitle = `${t("noTradeTitle")} · Exur`
@@ -247,18 +242,6 @@ function ChatNoTradeShareDialog({
     copiedTimerRef.current = window.setTimeout(() => setCopied(false), 1_600)
   }
 
-  async function capturePreviewBlob() {
-    const node = captureRef.current
-    if (!node) throw new Error("preview-missing")
-    const blob = await toBlob(node, {
-      cacheBust: true,
-      pixelRatio: 2,
-      backgroundColor: "#f7f8fa",
-    })
-    if (!blob) throw new Error("preview-empty")
-    return blob
-  }
-
   async function onCopyText() {
     if (busy) return
     setBusy(true)
@@ -276,19 +259,24 @@ function ChatNoTradeShareDialog({
     if (busy) return
     setBusy(true)
     try {
-      const blob = await capturePreviewBlob()
+      const node = captureRef.current
+      if (!node) throw new Error("preview-missing")
+      const blob = await captureShareNodeToBlob(node)
       try {
-        await shareImageBlob({
+        const result = await shareImageWithCaption({
           blob,
+          fileName: noTradeShareFileName(),
           title: shareTitle,
           text: shareText,
         })
+        if (result.kind !== "shared") {
+          flashCopied()
+        }
       } catch (error) {
         if (error instanceof DOMException && error.name === "AbortError") {
           return
         }
-        await copyImageBlob(blob)
-        flashCopied()
+        throw error
       }
     } catch (error) {
       if (error instanceof DOMException && error.name === "AbortError") return
@@ -330,7 +318,11 @@ function ChatNoTradeShareDialog({
 
   const preview = (
     <div className="rounded-[1.5rem] bg-foreground/[0.03] p-3 dark:bg-white/[0.04]">
-      <SharePreviewCard reason={reason} captureRef={captureRef} />
+      <SharePreviewCard
+        reason={reason}
+        shareDate={shareDate}
+        captureRef={captureRef}
+      />
     </div>
   )
 

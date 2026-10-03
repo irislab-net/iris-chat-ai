@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client"
 
 import { AuthProvider } from "@/components/auth/auth-provider"
 import { ChatAside } from "@/components/app-shell/chat-aside"
+import { TooltipProvider } from "@/components/ui/tooltip"
 import { NextIntlClientProvider } from "next-intl"
 import type { AppLocale } from "@/i18n/routing"
 import {
@@ -45,13 +46,15 @@ function SidePanelRoot() {
     <NextIntlClientProvider locale={locale}>
       <ThemeProvider>
         <AuthProvider>
-          <div className="relative flex h-full min-h-0 flex-col">
-            <ChatAside
-              className="h-full min-h-0"
-              onClose={() => {}}
-              isPrimaryContent
-            />
-          </div>
+          <TooltipProvider>
+            <div className="relative flex h-full min-h-0 flex-col">
+              <ChatAside
+                className="h-full min-h-0"
+                onClose={() => {}}
+                isPrimaryContent
+              />
+            </div>
+          </TooltipProvider>
         </AuthProvider>
       </ThemeProvider>
     </NextIntlClientProvider>

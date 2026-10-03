@@ -25,6 +25,7 @@ import {
 } from "@/components/app-shell/chat-mobile-gemini-styles"
 import { ExurLogo } from "@/components/brand/exur-logo"
 import { SfCheckIcon } from "@/components/icons/sf-menu-icons"
+import { SelectionCheckBadge } from "@/components/ui/selection-check-badge"
 import {
   getCountryOptions,
   matchCountryCode,
@@ -436,16 +437,9 @@ function OptionRow({
       </span>
       <span className="min-w-0 flex-1 text-foreground">{label}</span>
       {selected ? (
-        <span
-          className={cn(
-            chatAccentSecondaryFillClass,
-            "flex size-6 shrink-0 items-center justify-center rounded-full"
-          )}
-        >
-          <SfCheckIcon className="size-3.5" strokeWidth={2.6} aria-hidden />
-        </span>
+        <SelectionCheckBadge />
       ) : (
-        <span className="size-6 shrink-0" aria-hidden />
+        <span className="size-5 shrink-0" aria-hidden />
       )}
     </button>
   )

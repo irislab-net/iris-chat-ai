@@ -171,6 +171,12 @@ export const INDEXABLE_ROUTES = [
     images: [] as const,
   },
   {
+    path: "/features",
+    changeFrequency: "monthly" as const,
+    priority: 0.85,
+    images: [] as const,
+  },
+  {
     path: AI_SIGNALS_PATH,
     changeFrequency: "weekly" as const,
     priority: 0.9,

@@ -1,6 +1,6 @@
 "use client"
 
-import { CheckIcon, ChevronDownIcon } from "lucide-react"
+import { ChevronDownIcon } from "lucide-react"
 import { useTranslations } from "next-intl"
 
 import { PaymentMethodMark } from "@/components/billing/payment-token-logo"
@@ -12,6 +12,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import {
+  SelectionCheckBadge,
+  SelectionCheckSpacer,
+} from "@/components/ui/selection-check-badge"
 import { PAYMENT_NETWORK, PAYMENT_TOKENS } from "@/lib/billing/payment-options"
 import type { PaymentCurrency } from "@/lib/billing/invoice-types"
 import {
@@ -114,17 +118,9 @@ export function PaymentMethodPicker({
                   </span>
                 </span>
                 {active ? (
-                  <span
-                    className="flex size-5 shrink-0 items-center justify-center rounded-full bg-[#2563EB] text-white shadow-[0_2px_8px_rgba(37,99,235,0.35)]"
-                    aria-hidden
-                  >
-                    <CheckIcon className="size-3 stroke-[2.5]" />
-                  </span>
+                  <SelectionCheckBadge />
                 ) : (
-                  <span
-                    className="size-5 shrink-0 rounded-full ring-1 ring-foreground/12 dark:ring-white/15"
-                    aria-hidden
-                  />
+                  <SelectionCheckSpacer className="rounded-full ring-1 ring-foreground/12 dark:ring-white/15" />
                 )}
               </DropdownMenuItem>
             )

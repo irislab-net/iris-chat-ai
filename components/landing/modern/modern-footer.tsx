@@ -126,6 +126,7 @@ export function ModernFooter() {
       links: [
         { label: t("faq"), section: "faq" },
         { label: t("whatIsExur"), href: "/what-is-exur" },
+        { label: t("featuresOverview"), href: "/features" },
         { label: t("about"), href: "/about" },
         { label: t("signals"), href: "/ai-trading-signals" },
       ],

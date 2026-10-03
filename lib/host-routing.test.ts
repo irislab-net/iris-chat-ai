@@ -158,6 +158,18 @@ describe("resolveHostRouting", () => {
     expect(
       resolveHostRouting({
         hostname: "chat.exur.ai",
+        pathname: "/features",
+        search: "",
+      })
+    ).toEqual({
+      type: "redirect",
+      location: "https://exur.ai/features",
+      status: 308,
+    })
+
+    expect(
+      resolveHostRouting({
+        hostname: "chat.exur.ai",
         pathname: "/",
         search: "?tab=news",
       })

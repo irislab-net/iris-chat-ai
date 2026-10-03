@@ -1,6 +1,5 @@
 "use client"
 
-import { CheckIcon } from "lucide-react"
 import { useLocale, useTranslations } from "next-intl"
 
 import { LocaleFlag } from "@/components/i18n/locale-flag"
@@ -11,6 +10,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import {
+  SelectionCheckBadge,
+  SelectionCheckSpacer,
+} from "@/components/ui/selection-check-badge"
 import { getPathname, usePathname } from "@/i18n/navigation"
 import { routing, type AppLocale } from "@/i18n/routing"
 import { localeLabelKey, persistLocaleChoice } from "@/lib/i18n/locale"
@@ -109,11 +112,7 @@ export function LocaleSwitcher({
               <span className="flex-1 text-[13px] tracking-[-0.01em]">
                 {label}
               </span>
-              {active ? (
-                <CheckIcon className="size-3.5 text-[#2563EB]" />
-              ) : (
-                <span className="size-3.5 shrink-0" aria-hidden />
-              )}
+              {active ? <SelectionCheckBadge /> : <SelectionCheckSpacer />}
             </DropdownMenuItem>
           )
         })}

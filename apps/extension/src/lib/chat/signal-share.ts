@@ -9,6 +9,9 @@ export function buildSignalShareText(
     entry: string
     stopLoss: string
     target: string
+  },
+  options?: {
+    date?: string
   }
 ): string {
   return [
@@ -16,8 +19,11 @@ export function buildSignalShareText(
     `${labels.entry}: ${formatTradePrice(ticket.markPrice)}`,
     `${labels.stopLoss}: ${formatTradePrice(ticket.stopLoss)}`,
     `${labels.target}: ${formatTradePrice(ticket.takeProfit)}`,
+    options?.date?.trim() || null,
     SIGNAL_SHARE_SITE,
-  ].join("\n")
+  ]
+    .filter(Boolean)
+    .join("\n")
 }
 
 export function signalShareFileName(ticket: PaperTradeTicket): string {
@@ -31,6 +37,9 @@ export function buildNoTradeShareText(
     badge: string
     capitalProtected: string
     reasonHeading: string
+  },
+  options?: {
+    date?: string
   }
 ): string {
   const body = reason.trim()
@@ -39,6 +48,7 @@ export function buildNoTradeShareText(
     `${labels.badge} · ${labels.capitalProtected}`,
     `${labels.reasonHeading}:`,
     body,
+    options?.date?.trim() || null,
     SIGNAL_SHARE_SITE,
   ]
     .filter(Boolean)

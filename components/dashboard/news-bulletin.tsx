@@ -13,6 +13,7 @@ import {
 } from "lucide-react"
 import { useTranslations } from "next-intl"
 
+import { ActionTooltip } from "@/components/ui/action-tooltip"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -707,24 +708,25 @@ function NewsCopyButton({
   }
 
   return (
-    <Button
-      type="button"
-      variant="ghost"
-      size="icon-sm"
-      aria-label={copied ? t("copied") : t("copyArticle")}
-      title={copied ? t("copied") : t("copyArticle")}
-      className={newsFooterActionButtonClass(glass)}
-      onClick={onCopy}
-    >
-      {copied ? (
-        <CheckIcon
-          className="size-4 text-emerald-600 dark:text-emerald-400"
-          aria-hidden
-        />
-      ) : (
-        <CopyIcon className="size-4" aria-hidden />
-      )}
-    </Button>
+    <ActionTooltip label={copied ? t("copied") : t("copyArticle")}>
+      <Button
+        type="button"
+        variant="ghost"
+        size="icon-sm"
+        aria-label={copied ? t("copied") : t("copyArticle")}
+        className={newsFooterActionButtonClass(glass)}
+        onClick={onCopy}
+      >
+        {copied ? (
+          <CheckIcon
+            className="size-4 text-emerald-600 dark:text-emerald-400"
+            aria-hidden
+          />
+        ) : (
+          <CopyIcon className="size-4" aria-hidden />
+        )}
+      </Button>
+    </ActionTooltip>
   )
 }
 
@@ -740,21 +742,22 @@ function NewsAnalyzeButton({
   const t = useTranslations("dashboard")
 
   return (
-    <Button
-      type="button"
-      variant="ghost"
-      size="icon-sm"
-      aria-label={t("analyzeArticle")}
-      title={t("analyzeArticle")}
-      className={newsFooterActionButtonClass(glass)}
-      onClick={(event) => {
-        event.preventDefault()
-        event.stopPropagation()
-        onAnalyze(item)
-      }}
-    >
-      <SparklesIcon className="size-4" aria-hidden />
-    </Button>
+    <ActionTooltip label={t("analyzeArticle")}>
+      <Button
+        type="button"
+        variant="ghost"
+        size="icon-sm"
+        aria-label={t("analyzeArticle")}
+        className={newsFooterActionButtonClass(glass)}
+        onClick={(event) => {
+          event.preventDefault()
+          event.stopPropagation()
+          onAnalyze(item)
+        }}
+      >
+        <SparklesIcon className="size-4" aria-hidden />
+      </Button>
+    </ActionTooltip>
   )
 }
 

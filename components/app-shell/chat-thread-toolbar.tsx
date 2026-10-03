@@ -28,6 +28,7 @@ import {
   chatThreadUpgradeClass,
 } from "@/components/app-shell/chat-mobile-gemini-styles"
 import { ChatRenameDialog } from "@/components/app-shell/chat-rename-dialog"
+import { ActionTooltip } from "@/components/ui/action-tooltip"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -210,17 +211,19 @@ function ChatThreadNewChatButton({
   const t = useTranslations("workspace")
 
   return (
-    <Button
-      type="button"
-      variant="ghost"
-      size="icon-sm"
-      className={cn(chatThreadHeaderIconButtonClass, className)}
-      aria-label={t("newChat")}
-      disabled={disabled}
-      onClick={onNewChat}
-    >
-      <ChatGeminiNewChatIcon className="h-4" />
-    </Button>
+    <ActionTooltip label={t("newChat")}>
+      <Button
+        type="button"
+        variant="ghost"
+        size="icon-sm"
+        className={cn(chatThreadHeaderIconButtonClass, className)}
+        aria-label={t("newChat")}
+        disabled={disabled}
+        onClick={onNewChat}
+      >
+        <ChatGeminiNewChatIcon className="h-4" />
+      </Button>
+    </ActionTooltip>
   )
 }
 

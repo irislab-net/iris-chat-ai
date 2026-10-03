@@ -2,7 +2,6 @@
 
 import { gsap } from "gsap"
 import {
-  CheckIcon,
   MonitorIcon,
   MoonIcon,
   SunIcon,
@@ -30,10 +29,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { SelectionCheckBadge } from "@/components/ui/selection-check-badge"
 import {
   Sheet,
   SheetClose,
   SheetContent,
+  SheetFooter,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
@@ -43,18 +44,55 @@ import { displayPlanName } from "@/lib/billing/catalog"
 import { NAV_LINKS } from "@/lib/landing-modern-data"
 import { LANDING_MOTION, scrollToSection } from "@/lib/landing-motion"
 import {
+  landingGlassLight,
   landingGlassNavIcon,
-  landingTitleBrand,
   landingGlassSheen,
+  landingGlassSurface,
   landingInner,
   landingNavLinkActive,
   landingNavLinkInactive,
   landingNavPill,
+  landingTitleBrand,
 } from "@/lib/landing-modern-styles"
 import { getLaunchAppHref, getMarketingHomePath } from "@/lib/site"
 import { localeDirection } from "@/lib/i18n/locale"
 import { userAccountLabel, userAccountSubline } from "@/lib/user-profile"
 import { cn } from "@/lib/utils"
+
+function isLandingNavActive(
+  link: (typeof NAV_LINKS)[number],
+  {
+    pathname,
+    onLanding,
+    activeSectionId,
+  }: {
+    pathname: string
+    onLanding: boolean
+    activeSectionId: string
+  }
+) {
+  const href = "href" in link ? link.href : undefined
+  if (href) {
+    return pathname === href || pathname.endsWith(href)
+  }
+  if (!onLanding) return false
+  if (activeSectionId === link.id) return true
+  // #pay sits just above pricing; keep Pricing lit while that band is in view.
+  return link.id === "pricing" && activeSectionId === "pay"
+}
+
+const landingSheetGoogleCtaClass = cn(
+  landingGlassSurface,
+  "relative h-12 w-full justify-center gap-2.5 rounded-full border-0 bg-white/55 px-4 text-[15px] font-semibold shadow-none hover:bg-white/70 dark:bg-white/10 dark:hover:bg-white/14"
+)
+
+const landingSheetNavItemClass =
+  "h-11 w-full justify-start rounded-2xl px-3.5 text-[15px] tracking-[-0.01em] transition-colors duration-150"
+
+const landingSheetLocaleClass = cn(
+  landingGlassSurface,
+  "h-11 w-full justify-center gap-2 rounded-full border-0 bg-white/55 px-3 text-[13px] font-medium text-foreground shadow-none hover:bg-white/70 dark:bg-white/10 dark:hover:bg-white/14"
+)
 
 const ChatAccountMenu = dynamic(
   () =>
@@ -142,7 +180,7 @@ function LandingThemeToggle() {
             <Icon className="size-4" strokeWidth={1.75} />
             {t(labelKey)}
             {active === value ? (
-              <CheckIcon className="ms-auto size-4 opacity-70" aria-hidden />
+              <SelectionCheckBadge className="ms-auto" />
             ) : null}
           </DropdownMenuItem>
         ))}
@@ -202,47 +240,39 @@ function LandingNavAccount() {
   )
 }
 
-/** Mobile sheet: first item — Continue with Google, or signed-in account row. */
-function LandingSheetAccount({ onDone }: { onDone?: () => void }) {
-  const t = useTranslations("workspace")
-  const { user, loading, login, loginPending } = useAuth()
+/** Mobile sheet: signed-in account row (guest Google CTA lives in the footer). */
+function LandingSheetAccount() {
+  const { user, loading } = useAuth()
 
   if (loading) {
     return (
-      <div className="flex h-12 items-center gap-3 rounded-2xl bg-muted/50 px-4">
+      <div
+        className={cn(
+          landingGlassSurface,
+          "flex h-12 items-center gap-3 rounded-2xl bg-white/45 px-4 dark:bg-white/8"
+        )}
+      >
         <span className="size-8 animate-pulse rounded-full bg-muted" />
         <span className="h-3 w-28 animate-pulse rounded bg-muted" />
       </div>
     )
   }
 
-  if (!user) {
-    return (
-      <Button
-        type="button"
-        variant="outline"
-        className="h-12 w-full justify-start gap-3 rounded-2xl border-border/60 bg-background px-4 text-[15px] font-medium shadow-none"
-        disabled={loginPending}
-        onClick={() => {
-          onDone?.()
-          login({ source: "toolbar" })
-        }}
-      >
-        <GoogleGlyph className="size-5 shrink-0" />
-        <span className="truncate">
-          {loginPending ? t("connecting") : t("continueWithGoogle")}
-        </span>
-      </Button>
-    )
-  }
+  if (!user) return null
 
   return (
-    <div className="flex items-center gap-3 rounded-2xl bg-muted/50 px-3 py-2.5">
+    <div
+      className={cn(
+        landingGlassSurface,
+        "relative flex items-center gap-3 overflow-hidden rounded-2xl bg-white/55 px-3 py-2.5 dark:bg-white/10"
+      )}
+    >
+      <span aria-hidden className={cn(landingGlassSheen, "rounded-2xl")} />
       <ChatAccountMenu
         variant="desktop"
-        className="h-auto shrink-0 rounded-full p-0.5 hover:bg-transparent"
+        className="relative z-10 h-auto shrink-0 rounded-full p-0.5 hover:bg-transparent"
       />
-      <div className="min-w-0 flex-1">
+      <div className="relative z-10 min-w-0 flex-1">
         <p className="truncate text-[15px] leading-tight font-medium text-foreground">
           {userAccountLabel(user)}
         </p>
@@ -254,6 +284,30 @@ function LandingSheetAccount({ onDone }: { onDone?: () => void }) {
   )
 }
 
+function LandingSheetGoogleCta({ onDone }: { onDone?: () => void }) {
+  const t = useTranslations("workspace")
+  const { login, loginPending } = useAuth()
+
+  return (
+    <Button
+      type="button"
+      variant="ghost"
+      className={landingSheetGoogleCtaClass}
+      disabled={loginPending}
+      onClick={() => {
+        onDone?.()
+        login({ source: "toolbar" })
+      }}
+    >
+      <span aria-hidden className={cn(landingGlassSheen, "rounded-full")} />
+      <GoogleGlyph className="relative z-10 size-5 shrink-0" />
+      <span className="relative z-10 truncate">
+        {loginPending ? t("connecting") : t("continueWithGoogle")}
+      </span>
+    </Button>
+  )
+}
+
 export function LandingNav() {
   const tNav = useTranslations("modern.nav")
   const tAria = useTranslations("nav")
@@ -261,13 +315,14 @@ export function LandingNav() {
   const pathname = usePathname()
   const router = useRouter()
   const isRtl = localeDirection(locale) === "rtl"
-  const sheetSide = isRtl ? "left" : "right"
   const [open, setOpen] = useState(false)
   const [stuck, setStuck] = useState(false)
   const { activeSectionId } = useLandingActiveSection()
+  const { user, loading: authLoading } = useAuth()
   const homePath = getMarketingHomePath()
   const onLanding =
     pathname === "/home" || pathname === "/" || pathname === homePath
+  const showGuestCtas = !authLoading && !user
 
   function goToSection(id: string) {
     if (onLanding) {
@@ -344,21 +399,41 @@ export function LandingNav() {
           )}
         >
           {NAV_LINKS.map((link) => {
-            const isActive = onLanding && activeSectionId === link.id
+            const href = "href" in link ? link.href : undefined
+            const isActive = isLandingNavActive(link, {
+              pathname,
+              onLanding,
+              activeSectionId,
+            })
+            const className = cn(
+              "h-8 rounded-full px-3 py-0 text-[13px] tracking-[-0.01em] transition-all duration-200",
+              isActive ? landingNavLinkActive : landingNavLinkInactive
+            )
+
             return (
               <li key={link.id}>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  onClick={() => goToSection(link.id)}
-                  aria-current={isActive ? "true" : undefined}
-                  className={cn(
-                    "h-8 rounded-full px-3 py-0 text-[13px] tracking-[-0.01em] transition-all duration-200",
-                    isActive ? landingNavLinkActive : landingNavLinkInactive
-                  )}
-                >
-                  {tNav(link.id)}
-                </Button>
+                {href ? (
+                  <Link
+                    href={href}
+                    aria-current={isActive ? "page" : undefined}
+                    className={cn(
+                      "inline-flex items-center justify-center",
+                      className
+                    )}
+                  >
+                    {tNav(link.id)}
+                  </Link>
+                ) : (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    onClick={() => goToSection(link.id)}
+                    aria-current={isActive ? "true" : undefined}
+                    className={className}
+                  >
+                    {tNav(link.id)}
+                  </Button>
+                )}
               </li>
             )
           })}
@@ -399,28 +474,36 @@ export function LandingNav() {
               }
             />
             <SheetContent
-              side={sheetSide}
+              side="bottom"
               dir={isRtl ? "rtl" : "ltr"}
               showCloseButton={false}
               className={cn(
-                "gap-0 border-0 bg-card p-0 text-foreground shadow-[0_24px_80px_rgba(15,23,42,0.14)]",
-                "dark:shadow-[0_24px_80px_rgba(0,0,0,0.45)]",
-                "top-3 bottom-3 h-auto w-[min(calc(100vw-1.5rem),20rem)] rounded-[1.75rem]",
-                "inset-s-auto inset-e-3 right-auto left-auto",
-                "data-[side=left]:inset-s-auto data-[side=left]:inset-e-3 data-[side=left]:top-3 data-[side=left]:right-auto data-[side=left]:bottom-3 data-[side=left]:left-auto data-[side=left]:h-auto data-[side=left]:w-[min(calc(100vw-1.5rem),20rem)] data-[side=left]:sm:max-w-none",
-                "data-[side=right]:inset-s-auto data-[side=right]:inset-e-3 data-[side=right]:top-3 data-[side=right]:right-auto data-[side=right]:bottom-3 data-[side=right]:left-auto data-[side=right]:h-auto data-[side=right]:w-[min(calc(100vw-1.5rem),20rem)] data-[side=right]:sm:max-w-none"
+                landingGlassLight,
+                "gap-0 border-0 p-0 text-foreground",
+                "max-h-[min(92dvh,720px)] w-full rounded-t-[28px] rounded-b-none",
+                "data-[side=bottom]:inset-x-0 data-[side=bottom]:bottom-0 data-[side=bottom]:h-auto data-[side=bottom]:max-h-[min(92dvh,720px)]"
               )}
             >
-              <SheetHeader className="flex-row items-center justify-between gap-3 p-5 pb-3 text-start">
+              <div
+                aria-hidden
+                className="mx-auto mt-2 mb-1 h-1 w-10 shrink-0 rounded-full bg-foreground/15 dark:bg-white/20"
+              />
+
+              <SheetHeader className="flex-row items-center justify-between gap-3 px-5 pt-1 pb-2 text-start">
                 <SheetTitle
                   className={cn(landingTitleBrand, "flex items-center gap-2.5")}
                 >
-                  <ExurLogo
-                    decorative
-                    size={36}
-                    variant="auto"
-                    className="size-9 overflow-hidden rounded-full bg-card shadow-[0_6px_18px_rgba(15,23,42,0.06)] dark:bg-white/10"
-                  />
+                  <span
+                    className="flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-card p-1 shadow-[0_6px_18px_rgba(15,23,42,0.06)] dark:bg-white/10 dark:shadow-[0_6px_18px_rgba(0,0,0,0.28)]"
+                    aria-hidden
+                  >
+                    <ExurLogo
+                      decorative
+                      size={32}
+                      variant="auto"
+                      className="size-8"
+                    />
+                  </span>
                   Exur
                 </SheetTitle>
                 <SheetClose
@@ -445,58 +528,90 @@ export function LandingNav() {
               </SheetHeader>
 
               <nav
-                className="flex flex-1 flex-col gap-1 px-3 pt-2"
+                className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto overscroll-contain px-4 pt-1"
                 aria-label={tNav("mobileNav")}
               >
-                <div className="mb-2">
-                  <LandingSheetAccount onDone={() => setOpen(false)} />
-                </div>
-                <ul className="flex list-none flex-col gap-1">
+                <LandingSheetAccount />
+
+                <ul
+                  className={cn(
+                    landingNavPill,
+                    "flex list-none flex-col gap-0.5 rounded-[1.35rem] p-1.5"
+                  )}
+                >
                   {NAV_LINKS.map((link) => {
-                    const isActive = onLanding && activeSectionId === link.id
+                    const href = "href" in link ? link.href : undefined
+                    const isActive = isLandingNavActive(link, {
+                      pathname,
+                      onLanding,
+                      activeSectionId,
+                    })
+                    const className = cn(
+                      landingSheetNavItemClass,
+                      isActive
+                        ? landingNavLinkActive
+                        : landingNavLinkInactive
+                    )
+
                     return (
-                      <li key={link.id}>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          onClick={() =>
-                            scrollAndClose(
-                              link.id,
-                              () => setOpen(false),
-                              goToSection
-                            )
-                          }
-                          aria-current={isActive ? "true" : undefined}
-                          className={cn(
-                            "h-12 w-full justify-start rounded-2xl px-4 text-[15px] tracking-[-0.01em]",
-                            isActive
-                              ? "bg-muted font-semibold text-foreground hover:bg-muted hover:text-foreground"
-                              : "font-medium text-muted-foreground hover:bg-muted/60 hover:text-foreground"
-                          )}
-                        >
-                          {tNav(link.id)}
-                        </Button>
+                      <li key={link.id} className="w-full">
+                        {href ? (
+                          <Link
+                            href={href}
+                            onClick={() => setOpen(false)}
+                            aria-current={isActive ? "page" : undefined}
+                            className={cn(
+                              "inline-flex items-center",
+                              className
+                            )}
+                          >
+                            {tNav(link.id)}
+                          </Link>
+                        ) : (
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            onClick={() =>
+                              scrollAndClose(
+                                link.id,
+                                () => setOpen(false),
+                                goToSection
+                              )
+                            }
+                            aria-current={isActive ? "true" : undefined}
+                            className={className}
+                          >
+                            {tNav(link.id)}
+                          </Button>
+                        )}
                       </li>
                     )
                   })}
                 </ul>
               </nav>
 
-              <div className="mt-auto flex flex-col gap-3 p-5 pt-4 pb-[max(1.25rem,env(safe-area-inset-bottom))]">
-                <SphereCta
-                  href={getLaunchAppHref()}
-                  variant="glass"
-                  className="w-full"
-                >
-                  {tNav("application")}
-                </SphereCta>
-                <ThemeModeControl />
-                <LocaleSwitcher
-                  variant="chip"
-                  className="w-full"
-                  buttonClassName="h-10 w-full justify-center rounded-full bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground"
-                />
-              </div>
+              <SheetFooter className="mt-auto gap-0 border-0 px-5 pt-3 pb-[max(1.5rem,calc(env(safe-area-inset-bottom)+0.75rem))]">
+                <div className="mb-6 flex w-full flex-col gap-2">
+                  {showGuestCtas ? (
+                    <LandingSheetGoogleCta onDone={() => setOpen(false)} />
+                  ) : null}
+                  <SphereCta
+                    href={getLaunchAppHref()}
+                    variant="glass"
+                    size="md"
+                    className="w-full"
+                  >
+                    {tNav("application")}
+                  </SphereCta>
+                </div>
+                <div className="grid grid-cols-[1fr_auto] items-center gap-2">
+                  <ThemeModeControl className="min-w-0 bg-white/45 shadow-[inset_0_1px_1px_rgba(255,255,255,0.85)] dark:bg-white/8" />
+                  <LocaleSwitcher
+                    variant="chip"
+                    buttonClassName={landingSheetLocaleClass}
+                  />
+                </div>
+              </SheetFooter>
             </SheetContent>
           </Sheet>
         </div>

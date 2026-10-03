@@ -4,7 +4,6 @@ import * as React from "react"
 import {
   ArrowUpIcon,
   BarChart3Icon,
-  CheckIcon,
   ChevronDownIcon,
   PlusIcon,
   SquareIcon,
@@ -13,8 +12,13 @@ import {
 } from "lucide-react"
 import { useLocale, useTranslations } from "next-intl"
 
+import { ActionTooltip } from "@/components/ui/action-tooltip"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import {
+  SelectionCheckBadge,
+  SelectionCheckSpacer,
+} from "@/components/ui/selection-check-badge"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -635,25 +639,26 @@ function ChatComposer({
             <div className={chatMobileComposerLeadingClass}>
               {SHOW_COMPOSER_TOOLS_MENU ? (
                 <DropdownMenu modal={false}>
-                  <DropdownMenuTrigger
-                    render={
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon-sm"
-                        aria-label={t("composerToolsMenu")}
-                        title={t("composerToolsMenu")}
-                        disabled={disabled}
-                        className={
-                          floatingComposerExpanded
-                            ? chatMobileComposerIconButtonClass
-                            : chatMobileComposerIconButtonCompactClass
-                        }
-                      />
-                    }
-                  >
-                    <PlusIcon className="size-5" />
-                  </DropdownMenuTrigger>
+                  <ActionTooltip label={t("composerToolsMenu")}>
+                    <DropdownMenuTrigger
+                      render={
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon-sm"
+                          aria-label={t("composerToolsMenu")}
+                          disabled={disabled}
+                          className={
+                            floatingComposerExpanded
+                              ? chatMobileComposerIconButtonClass
+                              : chatMobileComposerIconButtonCompactClass
+                          }
+                        />
+                      }
+                    >
+                      <PlusIcon className="size-5" />
+                    </DropdownMenuTrigger>
+                  </ActionTooltip>
                   <DropdownMenuContent
                     align="start"
                     side="top"
@@ -734,33 +739,35 @@ function ChatComposer({
             />
             <div className={chatMobileComposerTrailingClass}>
               {showStop ? (
-                <Button
-                  type="button"
-                  size="icon-sm"
-                  variant="ghost"
-                  aria-label={t("composerStop")}
-                  title={t("composerStopTitle")}
-                  onClick={stop}
-                  className={chatMobileComposerSendClass}
-                >
-                  <SquareIcon className="size-3.5 fill-current" />
-                </Button>
+                <ActionTooltip label={t("composerStopTitle")}>
+                  <Button
+                    type="button"
+                    size="icon-sm"
+                    variant="ghost"
+                    aria-label={t("composerStop")}
+                    onClick={stop}
+                    className={chatMobileComposerSendClass}
+                  >
+                    <SquareIcon className="size-3.5 fill-current" />
+                  </Button>
+                </ActionTooltip>
               ) : (
-                <Button
-                  type="submit"
-                  size="icon-sm"
-                  variant="ghost"
-                  aria-label={t("composerSend")}
-                  title={t("composerSendTitle")}
-                  disabled={!canSend}
-                  className={
-                    canSend
-                      ? chatMobileComposerSendClass
-                      : chatMobileComposerSendIdleClass
-                  }
-                >
-                  <ArrowUpIcon className="size-4.5" />
-                </Button>
+                <ActionTooltip label={t("composerSendTitle")}>
+                  <Button
+                    type="submit"
+                    size="icon-sm"
+                    variant="ghost"
+                    aria-label={t("composerSend")}
+                    disabled={!canSend}
+                    className={
+                      canSend
+                        ? chatMobileComposerSendClass
+                        : chatMobileComposerSendIdleClass
+                    }
+                  >
+                    <ArrowUpIcon className="size-4.5" />
+                  </Button>
+                </ActionTooltip>
               )}
             </div>
           </>
@@ -825,21 +832,22 @@ function ChatComposer({
           <div className="flex items-center gap-1.5 px-0.5 pb-0.5 [grid-area:leading]">
             {SHOW_COMPOSER_TOOLS_MENU ? (
               <DropdownMenu modal={isMobile ? false : undefined}>
-                <DropdownMenuTrigger
-                  render={
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon-sm"
-                      aria-label={t("composerToolsMenu")}
-                      title={t("composerToolsMenu")}
-                      disabled={disabled}
-                      className={chatDesktopComposerIconButtonClass}
-                    />
-                  }
-                >
-                  <PlusIcon className="size-4" />
-                </DropdownMenuTrigger>
+                <ActionTooltip label={t("composerToolsMenu")}>
+                  <DropdownMenuTrigger
+                    render={
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon-sm"
+                        aria-label={t("composerToolsMenu")}
+                        disabled={disabled}
+                        className={chatDesktopComposerIconButtonClass}
+                      />
+                    }
+                  >
+                    <PlusIcon className="size-4" />
+                  </DropdownMenuTrigger>
+                </ActionTooltip>
                 <DropdownMenuContent
                   align="start"
                   side="top"
@@ -894,14 +902,9 @@ function ChatComposer({
                           </span>
                         </span>
                         {effort === item.value ? (
-                          <span
-                            className="flex size-5 shrink-0 items-center justify-center rounded-full bg-[#2563EB] text-white shadow-[0_1px_4px_rgba(37,99,235,0.4)]"
-                            aria-hidden
-                          >
-                            <CheckIcon className="size-3 stroke-[2.75]" />
-                          </span>
+                          <SelectionCheckBadge />
                         ) : (
-                          <span className="size-5 shrink-0" aria-hidden />
+                          <SelectionCheckSpacer />
                         )}
                       </DropdownMenuItem>
                     ))}
@@ -914,33 +917,35 @@ function ChatComposer({
         {!isFloating ? (
           <div className="flex items-center justify-end px-1 pb-0.5 [grid-area:trailing]">
             {showStop ? (
-              <Button
-                type="button"
-                size="icon"
-                variant="ghost"
-                aria-label={t("composerStop")}
-                title={t("composerStopTitle")}
-                onClick={stop}
-                className={chatDesktopComposerSendClass}
-              >
-                <SquareIcon className="size-3.5 fill-current" />
-              </Button>
+              <ActionTooltip label={t("composerStopTitle")}>
+                <Button
+                  type="button"
+                  size="icon"
+                  variant="ghost"
+                  aria-label={t("composerStop")}
+                  onClick={stop}
+                  className={chatDesktopComposerSendClass}
+                >
+                  <SquareIcon className="size-3.5 fill-current" />
+                </Button>
+              </ActionTooltip>
             ) : (
-              <Button
-                type="submit"
-                size="icon"
-                variant="ghost"
-                aria-label={t("composerSend")}
-                title={t("composerSendTitle")}
-                disabled={!canSend}
-                className={
-                  canSend
-                    ? chatDesktopComposerSendClass
-                    : chatDesktopComposerSendDisabledClass
-                }
-              >
-                <ArrowUpIcon />
-              </Button>
+              <ActionTooltip label={t("composerSendTitle")}>
+                <Button
+                  type="submit"
+                  size="icon"
+                  variant="ghost"
+                  aria-label={t("composerSend")}
+                  disabled={!canSend}
+                  className={
+                    canSend
+                      ? chatDesktopComposerSendClass
+                      : chatDesktopComposerSendDisabledClass
+                  }
+                >
+                  <ArrowUpIcon />
+                </Button>
+              </ActionTooltip>
             )}
           </div>
         ) : null}

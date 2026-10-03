@@ -16,14 +16,6 @@ const termTriggerClassName = cn(
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500/35 focus-visible:ring-offset-1"
 )
 
-const termTooltipClassName = cn(
-  "max-w-[16.5rem] flex-col items-start gap-0.5 rounded-lg border-0 px-3 py-2 text-[12px] leading-snug font-normal tracking-normal",
-  "bg-foreground/92 text-background shadow-[0_12px_32px_-16px_color-mix(in_oklch,var(--foreground)_45%,transparent)]",
-  "backdrop-blur-xl supports-[backdrop-filter]:bg-foreground/80",
-  "dark:bg-white/14 dark:text-foreground dark:shadow-[0_12px_32px_-16px_color-mix(in_oklch,black_55%,transparent)]",
-  "dark:supports-[backdrop-filter]:bg-white/12"
-)
-
 type TermTextProps = {
   text: string
   className?: string
@@ -67,12 +59,10 @@ function TermText({ text, className }: TermTextProps) {
             <TooltipContent
               side="top"
               sideOffset={6}
-              className={termTooltipClassName}
+              className="max-w-[16.5rem] flex-col items-start gap-0.5 py-2"
             >
               <span className="font-medium">{segment.term}</span>
-              <span className="mt-0.5 block opacity-90">
-                {segment.definition}
-              </span>
+              <span className="opacity-90">{segment.definition}</span>
             </TooltipContent>
           </Tooltip>
         )

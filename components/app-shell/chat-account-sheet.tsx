@@ -38,6 +38,7 @@ import {
   SfSunIcon,
   SfSwitchAccountIcon,
 } from "@/components/icons/sf-menu-icons"
+import { SelectionCheckBadge } from "@/components/ui/selection-check-badge"
 import { openCookieSettings } from "@/components/privacy/cookie-consent-banner"
 import { Button } from "@/components/ui/button"
 import {
@@ -734,12 +735,7 @@ function ChatAccountSheet({
                     chevron={false}
                     divider={index > 0}
                     value={
-                      activeTheme === id ? (
-                        <SfCheckIcon
-                          className="size-5 text-[#1A73E8] dark:text-[#8AB4F8]"
-                          aria-hidden
-                        />
-                      ) : null
+                      activeTheme === id ? <SelectionCheckBadge /> : null
                     }
                     onClick={() => setTheme(id)}
                   />
@@ -772,14 +768,7 @@ function ChatAccountSheet({
                       label={label}
                       chevron={false}
                       divider={index > 0}
-                      value={
-                        active ? (
-                          <SfCheckIcon
-                            className="size-5 text-[#1A73E8] dark:text-[#8AB4F8]"
-                            aria-hidden
-                          />
-                        ) : null
-                      }
+                      value={active ? <SelectionCheckBadge /> : null}
                       onClick={() => switchLocale(code)}
                     />
                   )

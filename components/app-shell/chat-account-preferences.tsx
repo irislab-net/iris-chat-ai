@@ -10,13 +10,16 @@ import {
 } from "@/components/app-shell/chat-context-menu-styles"
 import { LocaleFlag } from "@/components/i18n/locale-flag"
 import {
-  SfCheckIcon,
   SfCookieIcon,
   SfDesktopIcon,
   SfGlobeIcon,
   SfMoonIcon,
   SfSunIcon,
 } from "@/components/icons/sf-menu-icons"
+import {
+  SelectionCheckBadge,
+  SelectionCheckSpacer,
+} from "@/components/ui/selection-check-badge"
 import { openCookieSettings } from "@/components/privacy/cookie-consent-banner"
 import {
   DropdownMenuGroup,
@@ -94,12 +97,9 @@ function AccountThemeItems() {
             <Icon className={chatContextMenuIconClass} />
             <span className="flex-1">{label}</span>
             {active === id ? (
-              <SfCheckIcon
-                className="size-4 shrink-0 text-muted-foreground"
-                aria-hidden
-              />
+              <SelectionCheckBadge />
             ) : (
-              <span className="size-4 shrink-0" aria-hidden />
+              <SelectionCheckSpacer />
             )}
           </DropdownMenuItem>
         ))}
@@ -143,14 +143,7 @@ function AccountLanguageItems() {
                 className="size-5"
               />
               <span className="flex-1">{label}</span>
-              {active ? (
-                <SfCheckIcon
-                  className="size-4 shrink-0 text-muted-foreground"
-                  aria-hidden
-                />
-              ) : (
-                <span className="size-4 shrink-0" aria-hidden />
-              )}
+              {active ? <SelectionCheckBadge /> : <SelectionCheckSpacer />}
             </DropdownMenuItem>
           )
         })}

@@ -6,8 +6,7 @@ import {
   TrendingDownIcon,
   TrendingUpIcon,
 } from "lucide-react"
-import { toBlob } from "html-to-image"
-import { useTranslations } from "next-intl"
+import { useLocale, useTranslations } from "next-intl"
 import { toast } from "sonner"
 
 import {
@@ -20,7 +19,6 @@ import {
   chatMobileSheetSecondaryButtonClass,
   chatMobileSheetTitleClass,
 } from "@/components/app-shell/chat-mobile-gemini-styles"
-import { ExurLogo } from "@/components/brand/exur-logo"
 import { IosShareIcon } from "@/components/icons/ios-share-icon"
 import { Button } from "@/components/ui/button"
 import {
@@ -39,10 +37,18 @@ import {
 } from "@/components/ui/sheet"
 import { useIsDesktop } from "@/hooks/use-media-query"
 import {
+  captureShareNodeToBlob,
+  formatSignalShareDate,
+  shareImageWithCaption,
+  SIGNAL_SHARE_CARD_BG,
+  signalShareBrandLogoSrc,
+} from "@/lib/chat/signal-share-capture"
+import {
   buildSignalShareText,
   SIGNAL_SHARE_SITE,
   signalShareFileName,
 } from "@/lib/chat/signal-share"
+import { signalRewardRiskRatio } from "@/lib/chat/signal-setup"
 import { formatTradePrice } from "@/lib/chat/trade-signal"
 import type { PaperTradeTicket } from "@/lib/chat/signal-ticket"
 import { cn } from "@/lib/utils"
@@ -104,28 +110,80 @@ function ActionRow({
 
 function SharePreviewCard({
   ticket,
+  shareDate,
   captureRef,
 }: {
   ticket: PaperTradeTicket
+  shareDate: string
   captureRef: React.RefObject<HTMLDivElement | null>
 }) {
   const t = useTranslations("workspace")
   const isLong = ticket.side === "LONG"
   const SideIcon = isLong ? TrendingUpIcon : TrendingDownIcon
+  const rewardRisk = signalRewardRiskRatio(ticket)
+  const setup = ticket.setup.trim()
+  const thesis = ticket.thesis.trim()
+  const timeHorizon = ticket.timeHorizon?.trim() ?? ""
+  const stopLossReason = ticket.stopLossReason?.trim() ?? ""
+  const entryReason = ticket.entryReason?.trim() ?? ""
+  const takeProfitReason = ticket.takeProfitReason?.trim() ?? ""
+  const hasLeverage = ticket.leverage > 0
+  const hasSize = ticket.quantity > 0
+  const logoSrc = signalShareBrandLogoSrc()
+
+  const priceItems = [
+    {
+      label: t("signalCardStopLoss"),
+      value: formatTradePrice(ticket.stopLoss),
+      reason: stopLossReason,
+    },
+    {
+      label: t("signalCardEntry"),
+      value: formatTradePrice(ticket.markPrice),
+      reason: entryReason,
+      emphasis: true,
+    },
+    {
+      label: t("signalShareTarget"),
+      value: formatTradePrice(ticket.takeProfit),
+      reason: takeProfitReason,
+    },
+  ]
+
+  const metaItems = [
+    hasLeverage
+      ? { label: t("signalCardLeverage"), value: `${ticket.leverage}x` }
+      : null,
+    hasSize
+      ? {
+          label: t("signalCardSize"),
+          value: ticket.quantity.toLocaleString(undefined, {
+            maximumFractionDigits: 4,
+          }),
+        }
+      : null,
+    rewardRisk != null
+      ? {
+          label: t("signalCardRewardRisk"),
+          value: `1 : ${rewardRisk.toFixed(2)}`,
+        }
+      : null,
+    timeHorizon
+      ? { label: t("signalCardTimeHorizon"), value: timeHorizon }
+      : null,
+  ].filter(Boolean) as { label: string; value: string }[]
 
   return (
     <div
       ref={captureRef}
-      className={cn(
-        "relative isolate mx-auto w-full max-w-[22rem] overflow-hidden rounded-[1.35rem] bg-[#f7f8fa] text-[#0f172a]",
-        "shadow-[0_12px_40px_-18px_rgba(15,23,42,0.28)]",
-        "before:pointer-events-none before:absolute before:inset-0 before:-z-10 before:rounded-[inherit] before:content-['']",
-        isLong
-          ? "before:bg-[radial-gradient(120%_80%_at_0%_0%,rgba(16,185,129,0.16),transparent_55%),radial-gradient(90%_60%_at_100%_0%,rgba(37,99,235,0.1),transparent_50%)]"
-          : "before:bg-[radial-gradient(120%_80%_at_0%_0%,rgba(244,63,94,0.14),transparent_55%),radial-gradient(90%_60%_at_100%_0%,rgba(37,99,235,0.08),transparent_50%)]"
-      )}
-      // Keep capture colors stable regardless of app theme.
-      style={{ colorScheme: "light" }}
+      className="relative mx-auto w-full max-w-[22rem] overflow-hidden rounded-[1.35rem] text-[#0f172a] shadow-[0_12px_40px_-18px_rgba(15,23,42,0.28)]"
+      style={{
+        colorScheme: "light",
+        backgroundColor: SIGNAL_SHARE_CARD_BG,
+        backgroundImage: isLong
+          ? "radial-gradient(120% 80% at 0% 0%, rgba(16,185,129,0.16), transparent 55%), radial-gradient(90% 60% at 100% 0%, rgba(37,99,235,0.1), transparent 50%)"
+          : "radial-gradient(120% 80% at 0% 0%, rgba(244,63,94,0.14), transparent 55%), radial-gradient(90% 60% at 100% 0%, rgba(37,99,235,0.08), transparent 50%)",
+      }}
     >
       <header className="px-4 pt-4 pb-3">
         <div className="flex items-center justify-between gap-3">
@@ -149,99 +207,98 @@ function SharePreviewCard({
             {t("signalCardTitle")}
           </span>
         </div>
-        {ticket.setup.trim() ? (
+        {setup ? (
           <p className="mt-2.5 text-[13px] leading-relaxed text-black/55">
-            {ticket.setup.trim()}
+            {setup}
           </p>
         ) : null}
       </header>
 
-      <div className="grid grid-cols-3 gap-2 px-4 pb-4">
-        {[
-          {
-            label: t("signalCardStopLoss"),
-            value: formatTradePrice(ticket.stopLoss),
-          },
-          {
-            label: t("signalCardEntry"),
-            value: formatTradePrice(ticket.markPrice),
-            emphasis: true,
-          },
-          {
-            label: t("signalShareTarget"),
-            value: formatTradePrice(ticket.takeProfit),
-          },
-        ].map((item) => (
-          <div
-            key={item.label}
-            className={cn(
-              "rounded-2xl bg-white/90 px-2.5 py-3 text-center shadow-[inset_0_1px_0_0_rgba(255,255,255,0.9)]",
-              item.emphasis && "ring-1 ring-sky-500/20"
-            )}
-          >
-            <p className="text-[10px] font-medium tracking-[0.07em] text-black/45 uppercase">
-              {item.label}
-            </p>
-            <p
+      <div className="space-y-3 px-4 pb-4">
+        <div className="grid grid-cols-3 gap-2">
+          {priceItems.map((item) => (
+            <div
+              key={item.label}
               className={cn(
-                "mt-1.5 font-semibold tracking-tight tabular-nums",
-                item.emphasis ? "text-[1.1rem]" : "text-[15px]"
+                "rounded-2xl bg-white px-2.5 py-3 text-center",
+                item.emphasis && "ring-1 ring-sky-500/25"
               )}
             >
-              {item.value}
+              <p className="text-[10px] font-medium tracking-[0.07em] text-black/45 uppercase">
+                {item.label}
+              </p>
+              <p
+                className={cn(
+                  "mt-1.5 font-semibold tracking-tight tabular-nums",
+                  item.emphasis ? "text-[1.1rem]" : "text-[15px]"
+                )}
+              >
+                {item.value}
+              </p>
+              {item.reason ? (
+                <p className="mt-2 text-[10px] leading-snug text-black/50">
+                  {item.reason}
+                </p>
+              ) : null}
+            </div>
+          ))}
+        </div>
+
+        {metaItems.length > 0 ? (
+          <div className="grid grid-cols-2 gap-x-3 gap-y-2.5 rounded-2xl bg-white px-3.5 py-3">
+            {metaItems.map((item) => (
+              <div key={item.label} className="min-w-0">
+                <p className="text-[10px] font-medium tracking-[0.06em] text-black/45 uppercase">
+                  {item.label}
+                </p>
+                <p className="mt-1 text-[13px] font-medium tabular-nums">
+                  {item.value}
+                </p>
+              </div>
+            ))}
+          </div>
+        ) : null}
+
+        {thesis ? (
+          <div className="rounded-2xl bg-white px-3.5 py-3">
+            <p className="text-[10px] font-medium tracking-[0.08em] text-black/45 uppercase">
+              {t("signalCardThesisHeading")}
+            </p>
+            <p className="mt-2 text-[13px] leading-relaxed text-black/75">
+              {thesis}
             </p>
           </div>
-        ))}
+        ) : null}
+
+        <p className="text-center text-[9px] tracking-[0.06em] text-black/40 uppercase">
+          {t("signalCardDisclaimer")}
+        </p>
       </div>
 
-      <footer className="flex items-center justify-between gap-3 border-t border-black/6 bg-white/80 px-4 py-3">
-        <div className="flex items-center gap-2">
-          <ExurLogo decorative variant="brand" className="size-7" size={28} />
+      <footer className="flex items-center justify-between gap-3 border-t border-black/6 bg-white px-4 py-3">
+        <div className="flex min-w-0 items-center gap-2">
+          {/* eslint-disable-next-line @next/next/no-img-element -- capture-safe raster logo */}
+          <img
+            src={logoSrc}
+            alt=""
+            width={28}
+            height={28}
+            decoding="sync"
+            className="size-7 shrink-0 rounded-full"
+          />
           <span className="text-[13px] font-semibold tracking-tight">Exur</span>
         </div>
-        <span className="text-[12px] font-medium tracking-tight text-black/45">
-          {SIGNAL_SHARE_SITE}
-        </span>
+        <div className="shrink-0 text-end">
+          <p className="text-[11px] font-medium tracking-tight text-black/50">
+            {shareDate}
+          </p>
+          <p className="text-[12px] font-medium tracking-tight text-black/45">
+            {SIGNAL_SHARE_SITE}
+          </p>
+        </div>
       </footer>
     </div>
   )
-}
-
-async function copyImageBlob(blob: Blob) {
-  if (
-    typeof ClipboardItem !== "undefined" &&
-    navigator.clipboard?.write
-  ) {
-    await navigator.clipboard.write([
-      new ClipboardItem({ [blob.type || "image/png"]: blob }),
-    ])
-    return
-  }
-  throw new Error("image-clipboard-unsupported")
-}
-
-async function shareImageBlob(input: {
-  blob: Blob
-  ticket: PaperTradeTicket
-  title: string
-  text: string
-}) {
-  const file = new File([input.blob], signalShareFileName(input.ticket), {
-    type: input.blob.type || "image/png",
-  })
-  if (navigator.canShare?.({ files: [file] })) {
-    await navigator.share({
-      files: [file],
-      title: input.title,
-      text: input.text,
-    })
-    return
-  }
-  if (typeof navigator.share === "function") {
-    await navigator.share({ title: input.title, text: input.text })
-    return
-  }
-  throw new Error("share-unsupported")
 }
 
 function ChatSignalShareDialog({
@@ -250,20 +307,30 @@ function ChatSignalShareDialog({
   ticket,
 }: ChatSignalShareDialogProps) {
   const t = useTranslations("workspace")
+  const locale = useLocale()
   const isDesktop = useIsDesktop()
   const [busy, setBusy] = React.useState(false)
   const [copied, setCopied] = React.useState(false)
   const captureRef = React.useRef<HTMLDivElement | null>(null)
   const copiedTimerRef = React.useRef(0)
 
+  const shareDate = React.useMemo(
+    () => formatSignalShareDate(locale),
+    [locale]
+  )
+
   const shareText = React.useMemo(
     () =>
-      buildSignalShareText(ticket, {
-        entry: t("signalCardEntry"),
-        stopLoss: t("signalCardStopLoss"),
-        target: t("signalShareTarget"),
-      }),
-    [t, ticket]
+      buildSignalShareText(
+        ticket,
+        {
+          entry: t("signalCardEntry"),
+          stopLoss: t("signalCardStopLoss"),
+          target: t("signalShareTarget"),
+        },
+        { date: shareDate }
+      ),
+    [shareDate, t, ticket]
   )
 
   const shareTitle = `${ticket.symbol} ${ticket.side} · Exur`
@@ -289,18 +356,6 @@ function ChatSignalShareDialog({
     copiedTimerRef.current = window.setTimeout(() => setCopied(false), 1_600)
   }
 
-  async function capturePreviewBlob() {
-    const node = captureRef.current
-    if (!node) throw new Error("preview-missing")
-    const blob = await toBlob(node, {
-      cacheBust: true,
-      pixelRatio: 2,
-      backgroundColor: "#f7f8fa",
-    })
-    if (!blob) throw new Error("preview-empty")
-    return blob
-  }
-
   async function onCopyText() {
     if (busy) return
     setBusy(true)
@@ -318,20 +373,24 @@ function ChatSignalShareDialog({
     if (busy) return
     setBusy(true)
     try {
-      const blob = await capturePreviewBlob()
+      const node = captureRef.current
+      if (!node) throw new Error("preview-missing")
+      const blob = await captureShareNodeToBlob(node)
       try {
-        await shareImageBlob({
+        const result = await shareImageWithCaption({
           blob,
-          ticket,
+          fileName: signalShareFileName(ticket),
           title: shareTitle,
           text: shareText,
         })
+        if (result.kind !== "shared") {
+          flashCopied()
+        }
       } catch (error) {
         if (error instanceof DOMException && error.name === "AbortError") {
           return
         }
-        await copyImageBlob(blob)
-        flashCopied()
+        throw error
       }
     } catch (error) {
       if (error instanceof DOMException && error.name === "AbortError") return
@@ -373,7 +432,11 @@ function ChatSignalShareDialog({
 
   const preview = (
     <div className="rounded-[1.5rem] bg-foreground/[0.03] p-3 dark:bg-white/[0.04]">
-      <SharePreviewCard ticket={ticket} captureRef={captureRef} />
+      <SharePreviewCard
+        ticket={ticket}
+        shareDate={shareDate}
+        captureRef={captureRef}
+      />
     </div>
   )
 

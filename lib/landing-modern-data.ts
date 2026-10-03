@@ -10,9 +10,12 @@ import {
   Zap,
 } from "lucide-react"
 
-/** Nav destinations — labels live in `modern.nav`. Order matches page sections. */
+/**
+ * Nav destinations — labels live in `modern.nav`.
+ * Section ids scroll on the landing; `href` items open a route.
+ */
 export const NAV_LINKS = [
-  { id: "features" },
+  { id: "features", href: "/features" },
   { id: "how-it-works" },
   { id: "desk" },
   { id: "signals" },
@@ -21,6 +24,8 @@ export const NAV_LINKS = [
 ] as const
 
 export type NavLinkId = (typeof NAV_LINKS)[number]["id"]
+
+export type NavLink = (typeof NAV_LINKS)[number]
 
 /**
  * Scroll-spy targets, in document order.
@@ -40,6 +45,7 @@ export const LANDING_SCROLL_SECTIONS = [
   { id: "signals" },
   { id: "about" },
   { id: "try" },
+  { id: "pay" },
   { id: "pricing" },
   { id: "faq" },
   { id: "get-started" },

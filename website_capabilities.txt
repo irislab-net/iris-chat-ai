@@ -30,6 +30,7 @@ Exur is a live market desk + plain-language co-pilot for Bitcoin, Ethereum, and 
 - https://chat.exur.ai — live desk (news + chat)
 - https://chat.exur.ai/upgrade — plans
 - https://chat.exur.ai/billing — billing / credits
+- https://exur.ai/features — full features overview (desk, composer tools, Plus)
 - https://exur.ai/ai-trading-signals — product page
 - https://exur.ai/what-is-exur — citation page
 - https://exur.ai/llms.txt — generated llms.txt

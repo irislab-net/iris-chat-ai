@@ -1,4 +1,4 @@
-/** Feature overview page keys — copy lives in `featuresPage` i18n. */
+/** Feature overview page keys. Copy lives in `featuresPage` i18n. */
 
 export const FEATURES_PATH = "/features"
 

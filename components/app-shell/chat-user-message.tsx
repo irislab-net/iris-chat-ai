@@ -24,6 +24,7 @@ import {
   chatUserBubbleInlineActionClass,
   chatUserTurnActionsRevealClass,
 } from "@/components/app-shell/chat-turn-actions"
+import { ActionTooltip } from "@/components/ui/action-tooltip"
 import { Button } from "@/components/ui/button"
 import {
   ContextMenu,
@@ -125,44 +126,47 @@ function ChatUserTurn({
   const actionButtons = (
     <div className={cn(chatTurnActionsClass, "shrink-0")}>
       {onReply ? (
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon-sm"
-          className={chatUserBubbleInlineActionClass}
-          aria-label={t("replyToMessage")}
-          title={t("reply")}
-          disabled={disabled}
-          onClick={onReply}
-        >
-          <ReplyIcon />
-        </Button>
+        <ActionTooltip label={t("reply")}>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon-sm"
+            className={chatUserBubbleInlineActionClass}
+            aria-label={t("replyToMessage")}
+            disabled={disabled}
+            onClick={onReply}
+          >
+            <ReplyIcon />
+          </Button>
+        </ActionTooltip>
       ) : null}
-      <Button
-        type="button"
-        variant="ghost"
-        size="icon-sm"
-        className={chatUserBubbleInlineActionClass}
-        aria-label={copied ? t("copiedMessage") : t("copyMessage")}
-        title={copied ? t("copied") : t("copy")}
-        disabled={disabled || !trimmed}
-        onClick={() => void copyMessage()}
-      >
-        {copied ? <CheckIcon /> : <CopyIcon />}
-      </Button>
-      {onEdit ? (
+      <ActionTooltip label={copied ? t("copied") : t("copy")}>
         <Button
           type="button"
           variant="ghost"
           size="icon-sm"
           className={chatUserBubbleInlineActionClass}
-          aria-label={t("editMessage")}
-          title={t("edit")}
-          disabled={disabled}
-          onClick={onEdit}
+          aria-label={copied ? t("copiedMessage") : t("copyMessage")}
+          disabled={disabled || !trimmed}
+          onClick={() => void copyMessage()}
         >
-          <PencilIcon />
+          {copied ? <CheckIcon /> : <CopyIcon />}
         </Button>
+      </ActionTooltip>
+      {onEdit ? (
+        <ActionTooltip label={t("edit")}>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon-sm"
+            className={chatUserBubbleInlineActionClass}
+            aria-label={t("editMessage")}
+            disabled={disabled}
+            onClick={onEdit}
+          >
+            <PencilIcon />
+          </Button>
+        </ActionTooltip>
       ) : null}
     </div>
   )

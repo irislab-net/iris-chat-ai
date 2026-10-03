@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { CheckIcon, ChevronDownIcon } from "lucide-react"
+import { ChevronDownIcon } from "lucide-react"
 import { AnimatePresence, motion, useReducedMotion } from "motion/react"
 import { useTranslations } from "next-intl"
 
@@ -26,6 +26,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import {
+  SelectionCheckBadge,
+  SelectionCheckSpacer,
+} from "@/components/ui/selection-check-badge"
 import { CHAT_EFFORT_OPTIONS, type ChatEffort } from "@/lib/chat-effort"
 import { cn } from "@/lib/utils"
 
@@ -136,14 +140,9 @@ function ChatMobileHeader({
                     </span>
                   </span>
                   {effortValue === item.value ? (
-                    <span
-                      className="flex size-5 shrink-0 items-center justify-center rounded-full bg-[#2563EB] text-white shadow-[0_1px_4px_rgba(37,99,235,0.4)]"
-                      aria-hidden
-                    >
-                      <CheckIcon className="size-3 stroke-[2.75]" />
-                    </span>
+                    <SelectionCheckBadge />
                   ) : (
-                    <span className="size-5 shrink-0" aria-hidden />
+                    <SelectionCheckSpacer />
                   )}
                 </DropdownMenuItem>
               ))}

@@ -15,6 +15,7 @@ import {
   chatTurnActionButtonClass,
   chatTurnActionsClass,
 } from "@/components/app-shell/chat-turn-actions"
+import { ActionTooltip } from "@/components/ui/action-tooltip"
 import { Button } from "@/components/ui/button"
 import {
   trackChatMessageCopied,
@@ -143,92 +144,97 @@ function ChatMessageActions({
   return (
     <div className={cn(chatTurnActionsClass, "justify-start", className)}>
       {onReply ? (
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon-sm"
-          className={buttonClass}
-          aria-label={t("replyToMessage")}
-          title={t("reply")}
-          disabled={disabled}
-          onClick={onReply}
-        >
-          <ReplyIcon className={isGemini ? "size-4.5" : undefined} />
-        </Button>
+        <ActionTooltip label={t("reply")}>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon-sm"
+            className={buttonClass}
+            aria-label={t("replyToMessage")}
+            disabled={disabled}
+            onClick={onReply}
+          >
+            <ReplyIcon className={isGemini ? "size-4.5" : undefined} />
+          </Button>
+        </ActionTooltip>
       ) : null}
       {canShareCard ? (
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon-sm"
-          className={buttonClass}
-          aria-label={t("signalCardShare")}
-          title={t("share")}
-          disabled={disabled}
-          onClick={() => void onShareCard()}
-        >
-          {shared ? (
-            <CheckIcon className={isGemini ? "size-4.5" : undefined} />
-          ) : (
-            <Share2Icon className={isGemini ? "size-4.5" : undefined} />
-          )}
-        </Button>
+        <ActionTooltip label={t("share")}>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon-sm"
+            className={buttonClass}
+            aria-label={t("signalCardShare")}
+            disabled={disabled}
+            onClick={() => void onShareCard()}
+          >
+            {shared ? (
+              <CheckIcon className={isGemini ? "size-4.5" : undefined} />
+            ) : (
+              <Share2Icon className={isGemini ? "size-4.5" : undefined} />
+            )}
+          </Button>
+        </ActionTooltip>
       ) : (
+        <ActionTooltip label={copied ? t("copied") : t("copy")}>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon-sm"
+            className={buttonClass}
+            aria-label={copied ? t("copiedResponse") : t("copyResponse")}
+            disabled={disabled || !canCopy}
+            onClick={() => void onCopy()}
+          >
+            {copied ? (
+              <CheckIcon className={isGemini ? "size-4.5" : undefined} />
+            ) : (
+              <CopyIcon className={isGemini ? "size-4.5" : undefined} />
+            )}
+          </Button>
+        </ActionTooltip>
+      )}
+      <ActionTooltip label={t("helpful")}>
         <Button
           type="button"
           variant="ghost"
           size="icon-sm"
           className={buttonClass}
-          aria-label={copied ? t("copiedResponse") : t("copyResponse")}
-          title={copied ? t("copied") : t("copy")}
-          disabled={disabled || !canCopy}
-          onClick={() => void onCopy()}
+          aria-label={t("helpfulResponse")}
+          aria-pressed={feedback === "up"}
+          disabled={disabled}
+          onClick={() => onReaction("up")}
         >
-          {copied ? (
-            <CheckIcon className={isGemini ? "size-4.5" : undefined} />
-          ) : (
-            <CopyIcon className={isGemini ? "size-4.5" : undefined} />
-          )}
+          <ThumbsUpIcon
+            className={cn(
+              isGemini && "size-4.5",
+              feedback === "up" ? "text-foreground" : undefined
+            )}
+            fill={feedback === "up" ? "currentColor" : "none"}
+          />
         </Button>
-      )}
-      <Button
-        type="button"
-        variant="ghost"
-        size="icon-sm"
-        className={buttonClass}
-        aria-label={t("helpfulResponse")}
-        title={t("helpful")}
-        aria-pressed={feedback === "up"}
-        disabled={disabled}
-        onClick={() => onReaction("up")}
-      >
-        <ThumbsUpIcon
-          className={cn(
-            isGemini && "size-4.5",
-            feedback === "up" ? "text-foreground" : undefined
-          )}
-          fill={feedback === "up" ? "currentColor" : "none"}
-        />
-      </Button>
-      <Button
-        type="button"
-        variant="ghost"
-        size="icon-sm"
-        className={buttonClass}
-        aria-label={t("unhelpfulResponse")}
-        title={t("notHelpful")}
-        aria-pressed={feedback === "down"}
-        disabled={disabled}
-        onClick={() => onReaction("down")}
-      >
-        <ThumbsDownIcon
-          className={cn(
-            isGemini && "size-4.5",
-            feedback === "down" ? "text-foreground" : undefined
-          )}
-          fill={feedback === "down" ? "currentColor" : "none"}
-        />
-      </Button>
+      </ActionTooltip>
+      <ActionTooltip label={t("notHelpful")}>
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon-sm"
+          className={buttonClass}
+          aria-label={t("unhelpfulResponse")}
+          aria-pressed={feedback === "down"}
+          disabled={disabled}
+          onClick={() => onReaction("down")}
+        >
+          <ThumbsDownIcon
+            className={cn(
+              isGemini && "size-4.5",
+              feedback === "down" ? "text-foreground" : undefined
+            )}
+            fill={feedback === "down" ? "currentColor" : "none"}
+          />
+        </Button>
+      </ActionTooltip>
     </div>
   )
 }

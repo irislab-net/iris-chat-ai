@@ -331,7 +331,7 @@
   },
   "modern": {
     "nav": {
-      "features": "Why Exur",
+      "features": "Features",
       "how-it-works": "How it works",
       "desk": "Desk",
       "signals": "Signals",
@@ -543,6 +543,41 @@
       "cta": "Open the desk",
       "note": "No wallet. No card. Just the market."
     },
+    "cryptoPay": {
+      "eyebrow": "Checkout",
+      "title": "Easy crypto payment.",
+      "subtitle": "Upgrade to Plus with USDT or USDC on Ethereum. Send from any wallet; access unlocks when the transfer confirms.",
+      "cardTitle": "Pay with stablecoins",
+      "cardBody": "Pick a coin, send the exact amount, and Plus opens automatically.",
+      "network": "Ethereum network",
+      "cta": "See Plus plans",
+      "note": "No bank card needed for Plus",
+      "invoiceLabel": "Sample Plus invoice",
+      "invoiceBadge": "Auto unlock",
+      "amountLabel": "You send",
+      "amountValue": "Exact USDT",
+      "tokenLabel": "Token",
+      "perksTitle": "Why it feels easy",
+      "perks": {
+        "stable": "Pay in USDT or USDC, not a bank card",
+        "wallet": "Send from any wallet you already use",
+        "auto": "Plus unlocks when the transfer confirms"
+      },
+      "steps": {
+        "choose": {
+          "title": "Choose USDT or USDC",
+          "body": "Pick the stablecoin you already hold."
+        },
+        "send": {
+          "title": "Send the exact amount",
+          "body": "From any wallet, on Ethereum only."
+        },
+        "unlock": {
+          "title": "Plus unlocks",
+          "body": "Access opens when the transfer confirms."
+        }
+      }
+    },
     "faq": {
       "title": "Frequently asked questions.",
       "subtitle": "What Exur is and what it isn’t.",
@@ -640,6 +675,7 @@
       "faq": "FAQ",
       "about": "About Exur",
       "whatIsExur": "What is Exur?",
+      "featuresOverview": "Features",
       "signals": "AI trading signals",
       "onX": "Exur on X",
       "onTelegram": "Exur on Telegram",
@@ -1154,6 +1190,119 @@
       "networkOnly": "Use {currency} on {network} only.",
       "tokenAria": "Payment token: {token} on {network}",
       "networkLabel": "Network"
+    }
+  },
+  "featuresPage": {
+    "metaTitle": "Features",
+    "metaDescription": "Scored news, co-pilot chat, setup cards, composer tools, and crypto checkout for Plus. What Exur ships today.",
+    "eyebrow": "Product",
+    "title": "Everything on the desk.",
+    "intro": "Scored news, a plain-language co-pilot, and a clear outcome: setup or wait.",
+    "ctaUpgrade": "See Plus plans",
+    "heroNote": "Information only. Not brokerage. Not financial advice.",
+    "heroFlowLabel": "One ask, one outcome",
+    "jump": {
+      "aria": "On this page",
+      "desk": "Desk",
+      "composer": "Composer",
+      "advantages": "Advantages",
+      "boundaries": "Limits"
+    },
+    "desk": {
+      "eyebrow": "The desk",
+      "title": "Read, ask, decide.",
+      "subtitle": "From ranked headlines to a focused answer. One desk. No endless chat.",
+      "items": {
+        "news": {
+          "title": "Impact-ranked news",
+          "body": "Browse without an account. The lead story is scored; the rest stays quiet."
+        },
+        "copilot": {
+          "title": "Plain-language co-pilot",
+          "body": "Ask about a headline or the wider tape. Answers follow your language and stay short."
+        },
+        "setup": {
+          "title": "Setup cards",
+          "body": "When there is an edge: direction, levels, leverage, thesis, and a re-check horizon."
+        },
+        "wait": {
+          "title": "Explicit wait",
+          "body": "When there is no edge, Exur says wait. Sitting out is a real answer."
+        }
+      }
+    },
+    "composer": {
+      "eyebrow": "Composer tools",
+      "title": "Tools behind +.",
+      "subtitle": "Pick a tool, name an asset, send. Signal is live; deeper tools open with Plus.",
+      "mockPrompt": "ETH setup from here?",
+      "mockUser": "Give me a setup for ETH",
+      "you": "You",
+      "items": {
+        "signal": {
+          "title": "Signal",
+          "badge": "Live",
+          "body": "Ask for a setup on BTC, ETH, gold, or another asset. You get a card, or a clear wait. Information only, not an order."
+        },
+        "correlation": {
+          "title": "Asset Correlation",
+          "badge": "Plus · soon",
+          "body": "See how assets move together before you size risk. On the Plus roadmap."
+        },
+        "volatility": {
+          "title": "Volatility Forecast",
+          "badge": "Plus · soon",
+          "body": "Expected move size when you need to choose: trade or wait. Coming with Plus."
+        }
+      }
+    },
+    "advantages": {
+      "eyebrow": "Why it feels different",
+      "title": "Clarity over noise.",
+      "subtitle": "Live desks, guest access, your language, and crypto checkout. No profit promises.",
+      "items": {
+        "markets": {
+          "title": "Live desks",
+          "body": "BTC, ETH, and gold are live. Names marked soon are roadmap, not coverage."
+        },
+        "languages": {
+          "title": "Your language",
+          "body": "UI and replies follow you, including English and Persian."
+        },
+        "guest": {
+          "title": "Try free",
+          "body": "Three guest messages a week. No card. No wallet to start."
+        },
+        "google": {
+          "title": "Google sign-in",
+          "body": "Higher limits and sync. Guest threads can merge when you connect."
+        },
+        "crypto": {
+          "title": "Pay with crypto",
+          "body": "Plus via USDT or USDC on Ethereum. Send from any wallet; access opens on confirm."
+        },
+        "honest": {
+          "title": "Honest outcomes",
+          "body": "Setup or wait. No fake win rates. No guaranteed returns."
+        }
+      }
+    },
+    "boundaries": {
+      "eyebrow": "Clear limits",
+      "title": "What Exur does not do",
+      "body": "A market desk and co-pilot. It helps you read and decide. It does not move money or place orders.",
+      "items": {
+        "0": "No order execution, brokerage, or custody",
+        "1": "No paper-trading desk or open-in-trade buttons",
+        "2": "No promised returns, win rates, or portfolio management"
+      }
+    },
+    "cta": {
+      "title": "Open the desk.",
+      "subtitle": "Read scored news free. Ask once. See setup or wait.",
+      "openDesk": "Open desk",
+      "readNews": "Browse news",
+      "note": "Guest chat available. Plus via USDT or USDC."
     }
   },
   "about": {
