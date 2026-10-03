@@ -10,6 +10,11 @@ export async function sha256Hex(text: string): Promise<string> {
     .join("")
 }
 
+/** Backend session_id format — rejects legacy UUIDs before history/feedback calls. */
+export function isApiWebSessionIdFormat(sessionId: string): boolean {
+  return /^[0-9a-f]{40}$/.test(sessionId)
+}
+
 export async function newWebSessionId(userId: string): Promise<string> {
   const prefix = (await sha256Hex(userId + WEB_SESSION_SALT)).slice(0, 32)
   const bytes = crypto.getRandomValues(new Uint8Array(4))

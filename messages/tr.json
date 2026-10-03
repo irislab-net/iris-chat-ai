@@ -462,6 +462,8 @@
     "composerToolUploadLabel": "Dosya yükle",
     "composerToolUploadDesc": "Yakında",
     "composerToolUploadComingSoonBody": "Dosya yükleme yol haritasında. Hazır olduğunda burada açacağız.",
+    "composerToolWatchlistBody": "İzleme listeleri bir Plus özelliğidir. Kurulumları kaydetmek ve uyarı almak için yükseltin.",
+    "composerToolWatchlistComingSoonBody": "İzleme listeleri Plus yol haritasında. Hazır olduğunda burada açacağız.",
     "composerPasteAttachmentLines": "{count} satır",
     "composerPasteAttachmentRemove": "Dosyayı kaldır",
     "composerPasteAttachmentUnwrap": "Metin alanında göster",

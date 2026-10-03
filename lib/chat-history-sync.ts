@@ -23,6 +23,7 @@ import {
   upsertConversation,
   writeChatStore,
 } from "@/lib/chat-storage"
+import { isApiWebSessionIdFormat } from "@/lib/web-session-id"
 
 function messageMatchKey(message: Pick<ChatUiMessage, "role" | "content">) {
   const content =
@@ -313,6 +314,8 @@ export async function refreshSessionInStore(
 ): Promise<ChatStore> {
   const local = readChatStore(ownerId)
   if (isConversationDeleted(local, sessionId)) return local
+  // Legacy UUID conversation ids are rejected by the API — keep local copy.
+  if (!isApiWebSessionIdFormat(sessionId)) return local
 
   const items = await fetchAllCoPilotHistory({ sessionId, signal })
   const localConversation = local.conversations.find((c) => c.id === sessionId)

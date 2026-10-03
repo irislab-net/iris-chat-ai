@@ -462,6 +462,8 @@
     "composerToolUploadLabel": "Загрузить файл",
     "composerToolUploadDesc": "Скоро",
     "composerToolUploadComingSoonBody": "Загрузка файлов в дорожной карте. Откроем её здесь, когда будет готова.",
+    "composerToolWatchlistBody": "Списки наблюдения — функция Plus. Обновитесь, чтобы сохранять сетапы и получать алерты.",
+    "composerToolWatchlistComingSoonBody": "Списки наблюдения в дорожной карте Plus. Откроем их здесь, когда будут готовы.",
     "composerPasteAttachmentLines": "{count} строк",
     "composerPasteAttachmentRemove": "Удалить файл",
     "composerPasteAttachmentUnwrap": "Показать в текстовом поле",

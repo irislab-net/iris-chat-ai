@@ -748,6 +748,8 @@
     "composerToolUploadLabel": "رفع ملف",
     "composerToolUploadDesc": "قريبًا",
     "composerToolUploadComingSoonBody": "رفع الملفات على خارطة الطريق. سنفعّله هنا عندما يكون جاهزًا.",
+    "composerToolWatchlistBody": "قوائم المراقبة ميزة Plus. رقِّ لحفظ الإعدادات وتلقي تنبيهات عند تحرّك المستويات.",
+    "composerToolWatchlistComingSoonBody": "قوائم المراقبة على خارطة طريق Plus. سنفتحها هنا عند الجاهزية.",
     "composerPasteAttachmentLines": "{count} أسطر",
     "composerPasteAttachmentRemove": "إزالة الملف",
     "composerPasteAttachmentUnwrap": "إظهار في حقل النص",

@@ -462,6 +462,8 @@
     "composerToolUploadLabel": "Bestand uploaden",
     "composerToolUploadDesc": "Binnenkort",
     "composerToolUploadComingSoonBody": "Bestandsuploads staan op de roadmap. We ontgrendelen ze hier zodra ze klaar zijn.",
+    "composerToolWatchlistBody": "Volglijsten zijn een Plus-functie. Upgrade om setups op te slaan en alerts te krijgen.",
+    "composerToolWatchlistComingSoonBody": "Volglijsten staan op de Plus-roadmap. We ontgrendelen ze hier zodra ze klaar zijn.",
     "composerPasteAttachmentLines": "{count} regels",
     "composerPasteAttachmentRemove": "Bestand verwijderen",
     "composerPasteAttachmentUnwrap": "Tonen in tekstveld",

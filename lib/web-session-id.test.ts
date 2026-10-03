@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest"
 
 import {
+  isApiWebSessionIdFormat,
   isValidWebSessionId,
   newWebSessionId,
   reboundWebSessionId,
@@ -36,6 +37,14 @@ describe("web session id", () => {
         "11111111-1111-4111-8111-111111111111"
       )
     ).toBe(false)
+  })
+
+  it("accepts only 40-char lowercase hex for API session format", () => {
+    expect(isApiWebSessionIdFormat(`${ANON_PREFIX}ab12cd34`)).toBe(true)
+    expect(
+      isApiWebSessionIdFormat("11111111-1111-4111-8111-111111111111")
+    ).toBe(false)
+    expect(isApiWebSessionIdFormat(`${ANON_PREFIX}AB12CD34`)).toBe(false)
   })
 
   it("rejects a correct prefix with an uppercase or non-hex suffix", async () => {

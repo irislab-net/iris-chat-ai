@@ -462,6 +462,8 @@
     "composerToolUploadLabel": "Enviar arquivo",
     "composerToolUploadDesc": "Em breve",
     "composerToolUploadComingSoonBody": "O envio de arquivos está no roadmap. Vamos liberar aqui quando estiver pronto.",
+    "composerToolWatchlistBody": "Watchlists são um recurso Plus. Faça upgrade para salvar setups e receber alertas.",
+    "composerToolWatchlistComingSoonBody": "Watchlists estão no roadmap Plus. Liberaremos aqui quando estiverem prontas.",
     "composerPasteAttachmentLines": "{count} linhas",
     "composerPasteAttachmentRemove": "Remover arquivo",
     "composerPasteAttachmentUnwrap": "Mostrar no campo de texto",

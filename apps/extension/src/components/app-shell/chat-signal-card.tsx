@@ -3,7 +3,6 @@
 import * as React from "react"
 import {
   BookmarkIcon,
-  CheckIcon,
   ClockIcon,
   CrosshairIcon,
   FlagIcon,
@@ -29,6 +28,8 @@ import {
   chatSignalCardInsetClass,
   chatSignalCardMetricTileClass,
 } from "@/components/app-shell/chat-mobile-gemini-styles"
+import { ComposerPremiumToolsDialog } from "@/components/app-shell/composer-premium-tools-dialog"
+import { useAuth } from "@/components/auth/auth-provider"
 import { Button } from "@/components/ui/button"
 import { trackChatSignalWatchlist } from "@/lib/analytics"
 import { signalRewardRiskRatio } from "@/lib/chat/signal-setup"
@@ -159,12 +160,8 @@ function ChatSignalCard({
   tone?: "accent" | "neutral"
 }) {
   const t = useTranslations("workspace")
-  const ticketKey = `${ticket.symbol}:${ticket.side}`
-  const [watchlistAddedFor, setWatchlistAddedFor] = React.useState<
-    string | null
-  >(null)
-  const watchlistAdded = watchlistAddedFor === ticketKey
-  const watchlistTimerRef = React.useRef(0)
+  const { isProUser } = useAuth()
+  const [premiumOpen, setPremiumOpen] = React.useState(false)
   const isLong = ticket.side === "LONG"
   const isNeutral = tone === "neutral"
   const SideIcon = isLong ? TrendingUpIcon : TrendingDownIcon
@@ -182,26 +179,12 @@ function ChatSignalCard({
     ? ""
     : (ticket.takeProfitReason?.trim() ?? "")
 
-  React.useEffect(() => {
-    return () => window.clearTimeout(watchlistTimerRef.current)
-  }, [])
-
-  React.useEffect(() => {
-    window.clearTimeout(watchlistTimerRef.current)
-  }, [ticketKey])
-
   function onAddToWatchlist() {
-    if (watchlistAdded) return
     trackChatSignalWatchlist({
       symbol: ticket.symbol,
       side: ticket.side,
     })
-    setWatchlistAddedFor(ticketKey)
-    window.clearTimeout(watchlistTimerRef.current)
-    watchlistTimerRef.current = window.setTimeout(
-      () => setWatchlistAddedFor(null),
-      2_000
-    )
+    setPremiumOpen(true)
   }
 
   const priceColumns: PriceColumn[] = [
@@ -368,21 +351,11 @@ function ChatSignalCard({
               variant="ghost"
               size="sm"
               className="h-7 gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground"
-              aria-label={
-                watchlistAdded
-                  ? t("signalCardWatchlistAdded")
-                  : t("signalCardWatchlist")
-              }
+              aria-label={t("signalCardWatchlist")}
               onClick={onAddToWatchlist}
             >
-              {watchlistAdded ? (
-                <CheckIcon className="size-3.5 text-emerald-600 dark:text-emerald-400" />
-              ) : (
-                <BookmarkIcon className="size-3.5" />
-              )}
-              {watchlistAdded
-                ? t("signalCardWatchlistAdded")
-                : t("signalCardWatchlist")}
+              <BookmarkIcon className="size-3.5" />
+              {t("signalCardWatchlist")}
             </Button>
           </div>
         ) : null}
@@ -391,6 +364,13 @@ function ChatSignalCard({
           {t("signalCardDisclaimer")}
         </p>
       </div>
+
+      <ComposerPremiumToolsDialog
+        open={premiumOpen}
+        onOpenChange={setPremiumOpen}
+        isProUser={isProUser}
+        feature="watchlist"
+      />
     </article>
   )
 }

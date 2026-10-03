@@ -6,6 +6,7 @@ import {
   discardLegacyGlobalChatStore,
   getChatStorageKey,
   readChatStore,
+  resolvePersistedConversationTitle,
   sortConversations,
   upsertConversation,
   writeChatStore,
@@ -255,5 +256,34 @@ describe("upsertConversation active + pin", () => {
       activeId: null,
     }
     expect(resolveActiveConversation(store)?.id).toBe("new")
+  })
+
+  it("resolvePersistedConversationTitle keeps a manual rename", () => {
+    const existing = {
+      ...sampleConversation("c1", "My renamed chat"),
+      messages: [
+        { id: "m1", role: "user" as const, content: "Should I long ETH?" },
+        { id: "m2", role: "assistant" as const, content: "Stand aside." },
+      ],
+    }
+    const nextMessages = [
+      ...existing.messages,
+      { id: "m3", role: "user" as const, content: "What about BTC?" },
+    ]
+    expect(resolvePersistedConversationTitle(existing, nextMessages)).toBe(
+      "My renamed chat"
+    )
+  })
+
+  it("resolvePersistedConversationTitle tracks auto titles from the first user message", () => {
+    const existing = sampleConversation("c1", "Should I long ETH?")
+    const nextMessages = [
+      { id: "m1", role: "user" as const, content: "Should I long ETH?" },
+      { id: "m2", role: "assistant" as const, content: "Stand aside." },
+      { id: "m3", role: "user" as const, content: "And BTC?" },
+    ]
+    expect(resolvePersistedConversationTitle(existing, nextMessages)).toBe(
+      "Should I long ETH?"
+    )
   })
 })

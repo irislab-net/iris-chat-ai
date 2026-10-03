@@ -799,6 +799,8 @@
     "composerToolUploadLabel": "آپلود فایل",
     "composerToolUploadDesc": "به‌زودی",
     "composerToolUploadComingSoonBody": "آپلود فایل در نقشه راه است. وقتی آماده شد همین‌جا باز می‌شود.",
+    "composerToolWatchlistBody": "فهرست پیگیری یک قابلیت Plus است. ارتقا بده تا ستاپ‌ها را ذخیره کنی و با حرکت سطوح هشدار بگیری.",
+    "composerToolWatchlistComingSoonBody": "فهرست پیگیری در نقشهٔ راه Plus است. وقتی آماده شود همین‌جا باز می‌شود.",
     "composerPasteAttachmentLines": "{count} خط",
     "composerPasteAttachmentRemove": "حذف فایل",
     "composerPasteAttachmentUnwrap": "نمایش در فیلد متن",

@@ -136,6 +136,7 @@ import {
   hasUserMessages,
   NEW_CHAT_TITLE,
   readChatStore,
+  resolvePersistedConversationTitle,
   restoreMessages,
   sanitizeMessages,
   resolveActiveConversation,
@@ -589,7 +590,7 @@ function ChatAside({
 
       const saved: StoredConversation = {
         id: next.id,
-        title: conversationTitleFromMessages(cleaned),
+        title: resolvePersistedConversationTitle(existing, cleaned),
         createdAt: existing?.createdAt ?? now,
         updatedAt: now,
         messages: cleaned,

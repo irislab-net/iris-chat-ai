@@ -799,6 +799,8 @@
     "composerToolUploadLabel": "Upload file",
     "composerToolUploadDesc": "Coming soon",
     "composerToolUploadComingSoonBody": "File uploads are on the roadmap. We’ll unlock them here when they’re ready.",
+    "composerToolWatchlistBody": "Watchlists are a Plus feature. Upgrade to save setups and get alerts when levels move.",
+    "composerToolWatchlistComingSoonBody": "Watchlists are on the Plus roadmap. We’ll unlock them here when they’re ready.",
     "composerPasteAttachmentLines": "{count} lines",
     "composerPasteAttachmentRemove": "Remove file",
     "composerPasteAttachmentUnwrap": "Show in text field",

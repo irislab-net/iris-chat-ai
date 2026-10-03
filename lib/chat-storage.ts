@@ -216,6 +216,22 @@ export function conversationTitleFromMessages(messages: ChatUiMessage[]) {
   return text.length > 48 ? `${text.slice(0, 48)}…` : text
 }
 
+/**
+ * Keep a manually renamed title across message persists; otherwise track the
+ * first user message like before.
+ */
+export function resolvePersistedConversationTitle(
+  existing: StoredConversation | undefined,
+  messages: ChatUiMessage[]
+): string {
+  const autoTitle = conversationTitleFromMessages(messages)
+  const existingTitle = existing?.title?.trim()
+  if (!existingTitle || existingTitle === NEW_CHAT_TITLE) return autoTitle
+  const previousAuto = conversationTitleFromMessages(existing.messages)
+  if (existingTitle === previousAuto) return autoTitle
+  return existingTitle
+}
+
 export function hasUserMessages(messages: ChatUiMessage[]) {
   return messages.some((m) => m.role === "user" && m.content.trim())
 }

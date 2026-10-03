@@ -462,6 +462,8 @@
     "composerToolUploadLabel": "Subir archivo",
     "composerToolUploadDesc": "Próximamente",
     "composerToolUploadComingSoonBody": "La subida de archivos está en la hoja de ruta. La desbloquearemos aquí cuando esté lista.",
+    "composerToolWatchlistBody": "Las listas de seguimiento son una función Plus. Mejora para guardar setups y recibir alertas.",
+    "composerToolWatchlistComingSoonBody": "Las listas de seguimiento están en la hoja de ruta Plus. Las desbloquearemos aquí cuando estén listas.",
     "composerPasteAttachmentLines": "{count} líneas",
     "composerPasteAttachmentRemove": "Quitar archivo",
     "composerPasteAttachmentUnwrap": "Mostrar en el campo de texto",
