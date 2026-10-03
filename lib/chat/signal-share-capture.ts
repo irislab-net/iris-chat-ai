@@ -91,8 +91,12 @@ export type ShareImageWithCaptionResult =
   | { kind: "copied-text" }
 
 /**
- * Share a PNG with `text` as the social caption (WhatsApp / Telegram).
- * Never falls back to text-only Web Share when a blob exists.
+ * Share the captured PNG via the system sheet.
+ *
+ * Intentionally omits `text` / `title` from `navigator.share`: Telegram (and
+ * some other targets) treat file+text as two separate messages instead of an
+ * image caption. The card already carries the full copy; keep `text` for
+ * clipboard fallbacks only.
  */
 export async function shareImageWithCaption(input: {
   blob: Blob
@@ -108,11 +112,7 @@ export async function shareImageWithCaption(input: {
     typeof navigator.canShare === "function" &&
     navigator.canShare({ files: [file] })
   ) {
-    await navigator.share({
-      files: [file],
-      title: input.title,
-      text: input.text,
-    })
+    await navigator.share({ files: [file] })
     return { kind: "shared" }
   }
 

@@ -12,8 +12,15 @@ import { toast } from "sonner"
 
 import {
   chatDesktopDialogClass,
+  chatMobileSheetBodyClass,
+  chatMobileSheetContentClass,
+  chatMobileSheetFooterBarClass,
+  chatMobileSheetFooterClass,
+  chatMobileSheetHandleClass,
+  chatMobileSheetHeaderClass,
   chatMobileSheetPrimaryButtonClass,
   chatMobileSheetSecondaryButtonClass,
+  chatMobileSheetTitleClass,
 } from "@/components/app-shell/chat-mobile-gemini-styles"
 import { IosShareIcon } from "@/components/icons/ios-share-icon"
 import { Button } from "@/components/ui/button"
@@ -24,6 +31,15 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet"
+import { useIsDesktop } from "@/hooks/use-media-query"
 import {
   captureShareNodeToBlob,
   formatSignalShareDate,
@@ -185,6 +201,7 @@ function ChatNoTradeShareDialog({
 }: ChatNoTradeShareDialogProps) {
   const t = useTranslations("workspace")
   const locale = useLocale()
+  const isDesktop = useIsDesktop()
   const { resolvedTheme } = useTheme()
   const isDark = resolvedTheme === "dark"
   const [busy, setBusy] = React.useState(false)
@@ -281,48 +298,91 @@ function ChatNoTradeShareDialog({
 
   const shareHeading = t("share")
 
+  if (isDesktop === null) return null
+
+  const preview = (
+    <SharePreviewCard
+      reason={reason}
+      shareDate={shareDate}
+      captureRef={captureRef}
+      isDark={isDark}
+    />
+  )
+
+  const actions = (
+    <ActionRow
+      busy={busy}
+      copied={copied}
+      onCopyText={onCopyText}
+      onShareImage={onShareImage}
+      copyLabel={t("signalShareCopyText")}
+      shareLabel={t("signalShareShareImage")}
+      copiedLabel={t("signalShareCopied")}
+    />
+  )
+
+  if (isDesktop) {
+    return (
+      <Dialog open={open} onOpenChange={handleOpenChange}>
+        <DialogContent
+          className={cn(
+            chatDesktopDialogClass,
+            "flex h-auto max-h-none w-full flex-col gap-0 overflow-visible sm:max-w-[26rem]"
+          )}
+          showCloseButton
+          gsapMotion
+          open={open}
+        >
+          <DialogHeader className="shrink-0 gap-0 space-y-0 px-5 pt-5 pb-3 text-start">
+            <DialogTitle className="font-heading text-[1.35rem] font-normal tracking-tight text-foreground">
+              {shareHeading}
+            </DialogTitle>
+            <DialogDescription className="sr-only">
+              {shareHeading}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="px-5">{preview}</div>
+          <div className="bg-transparent px-5 pt-3 pb-5">{actions}</div>
+        </DialogContent>
+      </Dialog>
+    )
+  }
+
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent
-        className={cn(
-          chatDesktopDialogClass,
-          "flex h-auto max-h-none w-full flex-col gap-0 overflow-visible sm:max-w-[26rem]"
-        )}
+    <Sheet open={open} onOpenChange={handleOpenChange}>
+      <SheetContent
+        side="bottom"
         showCloseButton
-        gsapMotion
-        open={open}
+        className={cn(
+          chatMobileSheetContentClass,
+          "flex flex-col gap-0 overflow-hidden border-0"
+        )}
       >
-        <DialogHeader className="shrink-0 gap-0 space-y-0 px-5 pt-5 pb-3 text-start">
-          <DialogTitle className="font-heading text-[1.35rem] font-normal tracking-tight text-foreground">
+        <div
+          aria-hidden
+          className={cn(chatMobileSheetHandleClass, "shrink-0")}
+        />
+        <SheetHeader className={cn(chatMobileSheetHeaderClass, "shrink-0 gap-0")}>
+          <SheetTitle className={chatMobileSheetTitleClass}>
             {shareHeading}
-          </DialogTitle>
-          <DialogDescription className="sr-only">
-            {shareHeading}
-          </DialogDescription>
-        </DialogHeader>
-        <div className="px-5">
-          <div className="rounded-[1.5rem] bg-foreground/[0.03] p-3 dark:bg-white/[0.04]">
-            <SharePreviewCard
-              reason={reason}
-              shareDate={shareDate}
-              captureRef={captureRef}
-              isDark={isDark}
-            />
+          </SheetTitle>
+          <SheetDescription className="sr-only">{shareHeading}</SheetDescription>
+        </SheetHeader>
+        <div
+          className={cn(
+            chatMobileSheetBodyClass,
+            "min-h-0 flex-1 overflow-y-auto pt-1"
+          )}
+        >
+          {preview}
+        </div>
+        <SheetFooter className={cn(chatMobileSheetFooterClass, "shrink-0")}>
+          <div className={cn(chatMobileSheetFooterBarClass, "pt-4")}>
+            {actions}
           </div>
-        </div>
-        <div className="bg-transparent px-5 pt-3 pb-5">
-          <ActionRow
-            busy={busy}
-            copied={copied}
-            onCopyText={onCopyText}
-            onShareImage={onShareImage}
-            copyLabel={t("signalShareCopyText")}
-            shareLabel={t("signalShareShareImage")}
-            copiedLabel={t("signalShareCopied")}
-          />
-        </div>
-      </DialogContent>
-    </Dialog>
+        </SheetFooter>
+      </SheetContent>
+    </Sheet>
   )
 }
 
