@@ -398,11 +398,18 @@ const chatLiquidSheetSurfaceClass = [
 const chatMobileSheetOverlayClass =
   "overscroll-none bg-black/20 supports-backdrop-filter:bg-black/10 supports-backdrop-filter:backdrop-blur-sm dark:bg-black/40 dark:supports-backdrop-filter:bg-black/28"
 
+/**
+ * Standard bottom-sheet floor — short content (e.g. one tool row) still reads
+ * as a proper sheet instead of a thin strip.
+ */
+const chatMobileSheetMinHeightClass = "min-h-[min(38dvh,20rem)]"
+
 /** Shared mobile bottom sheets — guide, privacy, rename, premium, share, …
  * Cap height to the visible app viewport so sheets stay above the soft keyboard
  * (SheetContent already offsets with --keyboard-inset-bottom). */
 const chatMobileSheetContentClass = [
   chatLiquidSheetSurfaceClass,
+  chatMobileSheetMinHeightClass,
   "max-h-[min(92dvh,720px,calc(var(--app-height,100dvh)-0.5rem))] rounded-t-[28px] pb-0",
 ].join(" ")
 
@@ -415,6 +422,7 @@ const chatMobileSheetHandleClass =
  */
 const chatComposerLiquidSheetClass = [
   chatLiquidSheetSurfaceClass,
+  chatMobileSheetMinHeightClass,
   "max-h-[min(72dvh,30rem)] rounded-t-[28px]",
 ].join(" ")
 

@@ -7,14 +7,38 @@ import manifest from "./manifest.config"
 
 const src = resolve(__dirname, "src")
 
+const FEATURE_ENV_KEYS = [
+  "NEXT_PUBLIC_FEATURE_SIGNAL",
+  "NEXT_PUBLIC_FEATURE_CORRELATION",
+  "NEXT_PUBLIC_FEATURE_VOLATILITY",
+  "NEXT_PUBLIC_FEATURE_WATCHLIST",
+  "NEXT_PUBLIC_FEATURE_VOICE",
+] as const
+
+function resolvePublicEnv(
+  env: Record<string, string>,
+  key: string
+): string {
+  return env[key] || process.env[key] || ""
+}
+
 export default defineConfig(({ mode }) => {
-  const env = loadEnv(mode, __dirname, "")
+  const rootEnv = loadEnv(mode, resolve(__dirname, "../.."), "")
+  const localEnv = loadEnv(mode, __dirname, "")
+  const env = { ...rootEnv, ...localEnv }
   const googleClientId =
     env.VITE_GOOGLE_CLIENT_ID ||
     env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ||
     process.env.VITE_GOOGLE_CLIENT_ID ||
     process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ||
     ""
+
+  const featureDefines = Object.fromEntries(
+    FEATURE_ENV_KEYS.map((key) => [
+      `process.env.${key}`,
+      JSON.stringify(resolvePublicEnv(env, key)),
+    ])
+  )
 
   return {
     plugins: [react(), tailwindcss(), crx({ manifest })],
@@ -38,6 +62,7 @@ export default defineConfig(({ mode }) => {
       "import.meta.env.VITE_GOOGLE_CLIENT_ID": JSON.stringify(googleClientId),
       "process.env.NEXT_PUBLIC_APP_URL": JSON.stringify("https://chat.exur.ai"),
       "process.env.NEXT_PUBLIC_ENABLE_GOOGLE_ONE_TAP_DEV": JSON.stringify(""),
+      ...featureDefines,
     },
     envPrefix: ["VITE_"],
     server: {

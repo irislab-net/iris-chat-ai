@@ -34,6 +34,7 @@ import {
 import { ComposerPremiumToolsDialog } from "@/components/app-shell/composer-premium-tools-dialog"
 import { useAuth } from "@/components/auth/auth-provider"
 import { Button } from "@/components/ui/button"
+import { useAppFeatureVisible } from "@/hooks/use-app-feature-prefs"
 import { trackChatSignalWatchlist } from "@/lib/analytics"
 import { buildSignalShareText } from "@/lib/chat/signal-share"
 import { signalRewardRiskRatio } from "@/lib/chat/signal-setup"
@@ -165,6 +166,7 @@ function ChatSignalCard({
 }) {
   const t = useTranslations("workspace")
   const { isProUser } = useAuth()
+  const showWatchlist = useAppFeatureVisible("watchlist")
   const [premiumOpen, setPremiumOpen] = React.useState(false)
   const [levelsCopied, setLevelsCopied] = React.useState(false)
   const levelsCopyTimerRef = React.useRef(0)
@@ -396,17 +398,19 @@ function ChatSignalCard({
                 ? t("signalShareCopied")
                 : t("signalCardCopyLevels")}
             </Button>
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              className="h-7 gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground"
-              aria-label={t("signalCardWatchlist")}
-              onClick={onAddToWatchlist}
-            >
-              <BookmarkIcon className="size-3.5" />
-              {t("signalCardWatchlist")}
-            </Button>
+            {showWatchlist ? (
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className="h-7 gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground"
+                aria-label={t("signalCardWatchlist")}
+                onClick={onAddToWatchlist}
+              >
+                <BookmarkIcon className="size-3.5" />
+                {t("signalCardWatchlist")}
+              </Button>
+            ) : null}
           </div>
         ) : null}
 
@@ -415,12 +419,14 @@ function ChatSignalCard({
         </p>
       </div>
 
-      <ComposerPremiumToolsDialog
-        open={premiumOpen}
-        onOpenChange={setPremiumOpen}
-        isProUser={isProUser}
-        feature="watchlist"
-      />
+      {showWatchlist ? (
+        <ComposerPremiumToolsDialog
+          open={premiumOpen}
+          onOpenChange={setPremiumOpen}
+          isProUser={isProUser}
+          feature="watchlist"
+        />
+      ) : null}
     </article>
   )
 }

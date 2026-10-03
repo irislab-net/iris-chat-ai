@@ -1,49 +1,81 @@
-import { afterEach, describe, expect, it } from "vitest"
+import { describe, expect, it } from "vitest"
 
 import {
-  APP_FEATURE_PREFS_STORAGE_KEY,
+  createAppFeaturePrefsFromEnv,
+  parseAppFeatureEnvFlag,
+} from "@/lib/app-features"
+import {
   getAppFeaturePrefsSnapshot,
   isAppFeatureVisible,
-  parseAppFeaturePrefs,
-  resetAppFeaturePrefsCache,
-  setAppFeatureVisible,
-  writeAppFeaturePrefs,
 } from "@/lib/app-feature-prefs"
 
-describe("app feature prefs", () => {
-  afterEach(() => {
-    localStorage.removeItem(APP_FEATURE_PREFS_STORAGE_KEY)
-    resetAppFeaturePrefsCache()
+describe("parseAppFeatureEnvFlag", () => {
+  it("treats unset and empty as off", () => {
+    expect(parseAppFeatureEnvFlag(undefined)).toBe(false)
+    expect(parseAppFeatureEnvFlag(null)).toBe(false)
+    expect(parseAppFeatureEnvFlag("")).toBe(false)
+    expect(parseAppFeatureEnvFlag("   ")).toBe(false)
   })
 
-  it("defaults every feature to visible", () => {
-    expect(parseAppFeaturePrefs(null)).toEqual({
-      signal: true,
-      correlation: true,
-      volatility: true,
-      watchlist: true,
-      voice: true,
-    })
-    expect(isAppFeatureVisible("correlation")).toBe(true)
+  it("accepts true / 1 / yes case-insensitively", () => {
+    expect(parseAppFeatureEnvFlag("true")).toBe(true)
+    expect(parseAppFeatureEnvFlag("TRUE")).toBe(true)
+    expect(parseAppFeatureEnvFlag("1")).toBe(true)
+    expect(parseAppFeatureEnvFlag("yes")).toBe(true)
+    expect(parseAppFeatureEnvFlag(" Yes ")).toBe(true)
   })
 
-  it("merges partial stored prefs over defaults", () => {
-    expect(parseAppFeaturePrefs({ correlation: false, voice: false })).toEqual({
-      signal: true,
+  it("rejects other values as off", () => {
+    expect(parseAppFeatureEnvFlag("false")).toBe(false)
+    expect(parseAppFeatureEnvFlag("0")).toBe(false)
+    expect(parseAppFeatureEnvFlag("on")).toBe(false)
+    expect(parseAppFeatureEnvFlag("enabled")).toBe(false)
+  })
+})
+
+describe("createAppFeaturePrefsFromEnv", () => {
+  it("defaults every feature to off when env is empty", () => {
+    expect(createAppFeaturePrefsFromEnv({})).toEqual({
+      signal: false,
       correlation: false,
-      volatility: true,
-      watchlist: true,
+      volatility: false,
+      watchlist: false,
       voice: false,
     })
   })
 
-  it("persists toggles and updates the snapshot", () => {
-    setAppFeatureVisible("watchlist", false)
-    writeAppFeaturePrefs({ volatility: false })
-    expect(getAppFeaturePrefsSnapshot()).toMatchObject({
-      watchlist: false,
-      volatility: false,
+  it("enables only flags set to true-like values", () => {
+    expect(
+      createAppFeaturePrefsFromEnv({
+        NEXT_PUBLIC_FEATURE_SIGNAL: "true",
+        NEXT_PUBLIC_FEATURE_CORRELATION: "false",
+        NEXT_PUBLIC_FEATURE_VOLATILITY: "1",
+        NEXT_PUBLIC_FEATURE_WATCHLIST: "no",
+        NEXT_PUBLIC_FEATURE_VOICE: "yes",
+      })
+    ).toEqual({
       signal: true,
+      correlation: false,
+      volatility: true,
+      watchlist: false,
+      voice: true,
     })
+  })
+})
+
+describe("app feature prefs snapshot", () => {
+  it("exposes a stable env-derived snapshot", () => {
+    const snapshot = getAppFeaturePrefsSnapshot()
+    expect(Object.keys(snapshot).sort()).toEqual([
+      "correlation",
+      "signal",
+      "voice",
+      "volatility",
+      "watchlist",
+    ])
+    for (const id of Object.keys(snapshot) as Array<keyof typeof snapshot>) {
+      expect(typeof snapshot[id]).toBe("boolean")
+      expect(isAppFeatureVisible(id)).toBe(snapshot[id])
+    }
   })
 })

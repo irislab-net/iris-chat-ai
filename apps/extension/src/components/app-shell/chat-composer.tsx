@@ -117,11 +117,9 @@ import {
   chatMobileToolsMenuItemTitleClass,
   chatMobileToolsMenuLabelClass,
 } from "@/components/app-shell/chat-mobile-gemini-styles"
+import { useAppFeaturePrefs } from "@/hooks/use-app-feature-prefs"
 import { useIsDesktop } from "@/hooks/use-media-query"
 import { cn } from "@/lib/utils"
-
-/** Composer "+" tools menu (signal). */
-const SHOW_COMPOSER_TOOLS_MENU = true
 
 /**
  * Typing `/` mention — full-bleed liquid sheet behind the composer pill.
@@ -176,6 +174,13 @@ function ChatComposer({
   const textDir = localeDirection(locale)
   const isDesktop = useIsDesktop()
   const isMobile = isDesktop === false
+  const { prefs: featurePrefs, isVisible: isFeatureVisible } =
+    useAppFeaturePrefs()
+  const showComposerToolsMenu =
+    featurePrefs.signal ||
+    featurePrefs.correlation ||
+    featurePrefs.volatility
+  const showVoiceInput = featurePrefs.voice
   const isFloating = layout === "floating"
   const deferMobileKeyboard = isFloating && isDesktop !== true
   const [userUnlockedKeyboard, setUserUnlockedKeyboard] = React.useState(false)
@@ -235,9 +240,13 @@ function ChatComposer({
     insertMentionToken(option)
   }
 
+  const visibleMentionOptions = IRIS_MENTION_OPTIONS.filter((option) =>
+    isFeatureVisible(option.tool)
+  )
+
   const toolsRows = (
     <div className="flex flex-col gap-1 px-3 pb-[max(1rem,env(safe-area-inset-bottom,0px))] pt-1">
-      {IRIS_MENTION_OPTIONS.map((option) => (
+      {visibleMentionOptions.map((option) => (
         <button
           key={option.id}
           type="button"
@@ -259,48 +268,52 @@ function ChatComposer({
           </span>
         </button>
       ))}
-      <button
-        type="button"
-        className={chatComposerLiquidSheetRowClass}
-        onClick={openPremiumTools}
-      >
-        <span className={chatComposerLiquidSheetRowIconClass}>
-          <LineChartIcon className="size-4" aria-hidden />
-        </span>
-        <span className="min-w-0 flex-1 text-start">
-          <span className={chatMobileToolsMenuItemTitleClass}>
-            {t("composerToolCorrelationLabel")}
+      {isFeatureVisible("correlation") ? (
+        <button
+          type="button"
+          className={chatComposerLiquidSheetRowClass}
+          onClick={openPremiumTools}
+        >
+          <span className={chatComposerLiquidSheetRowIconClass}>
+            <LineChartIcon className="size-4" aria-hidden />
           </span>
-        </span>
-        <LockIcon
-          className="size-4 shrink-0 text-muted-foreground/70"
-          aria-hidden
-        />
-      </button>
-      <button
-        type="button"
-        className={chatComposerLiquidSheetRowClass}
-        onClick={openPremiumTools}
-      >
-        <span className={chatComposerLiquidSheetRowIconClass}>
-          <ActivityIcon className="size-4" aria-hidden />
-        </span>
-        <span className="min-w-0 flex-1 text-start">
-          <span className={chatMobileToolsMenuItemTitleClass}>
-            {t("composerToolVolatilityLabel")}
+          <span className="min-w-0 flex-1 text-start">
+            <span className={chatMobileToolsMenuItemTitleClass}>
+              {t("composerToolCorrelationLabel")}
+            </span>
           </span>
-        </span>
-        <LockIcon
-          className="size-4 shrink-0 text-muted-foreground/70"
-          aria-hidden
-        />
-      </button>
+          <LockIcon
+            className="size-4 shrink-0 text-muted-foreground/70"
+            aria-hidden
+          />
+        </button>
+      ) : null}
+      {isFeatureVisible("volatility") ? (
+        <button
+          type="button"
+          className={chatComposerLiquidSheetRowClass}
+          onClick={openPremiumTools}
+        >
+          <span className={chatComposerLiquidSheetRowIconClass}>
+            <ActivityIcon className="size-4" aria-hidden />
+          </span>
+          <span className="min-w-0 flex-1 text-start">
+            <span className={chatMobileToolsMenuItemTitleClass}>
+              {t("composerToolVolatilityLabel")}
+            </span>
+          </span>
+          <LockIcon
+            className="size-4 shrink-0 text-muted-foreground/70"
+            aria-hidden
+          />
+        </button>
+      ) : null}
     </div>
   )
 
   const toolsMenuItems = (
     <DropdownMenuGroup>
-      {IRIS_MENTION_OPTIONS.map((option) => (
+      {visibleMentionOptions.map((option) => (
         <DropdownMenuItem
           key={option.id}
           className={cn(
@@ -324,46 +337,50 @@ function ChatComposer({
           </span>
         </DropdownMenuItem>
       ))}
-      <DropdownMenuItem
-        className={cn(
-          chatMobileToolsMenuItemClass,
-          "flex-row items-center gap-3 py-2.5"
-        )}
-        onClick={openPremiumTools}
-      >
-        <span className="flex size-9 shrink-0 items-center justify-center rounded-2xl bg-foreground/5 text-foreground dark:bg-white/8">
-          <LineChartIcon className="size-4" aria-hidden />
-        </span>
-        <span className="flex min-w-0 flex-1 items-center gap-2 text-start">
-          <span className={chatMobileToolsMenuItemTitleClass}>
-            {t("composerToolCorrelationLabel")}
+      {isFeatureVisible("correlation") ? (
+        <DropdownMenuItem
+          className={cn(
+            chatMobileToolsMenuItemClass,
+            "flex-row items-center gap-3 py-2.5"
+          )}
+          onClick={openPremiumTools}
+        >
+          <span className="flex size-9 shrink-0 items-center justify-center rounded-2xl bg-foreground/5 text-foreground dark:bg-white/8">
+            <LineChartIcon className="size-4" aria-hidden />
           </span>
-          <LockIcon
-            className="ms-auto size-3.5 shrink-0 text-muted-foreground/70"
-            aria-hidden
-          />
-        </span>
-      </DropdownMenuItem>
-      <DropdownMenuItem
-        className={cn(
-          chatMobileToolsMenuItemClass,
-          "flex-row items-center gap-3 py-2.5"
-        )}
-        onClick={openPremiumTools}
-      >
-        <span className="flex size-9 shrink-0 items-center justify-center rounded-2xl bg-foreground/5 text-foreground dark:bg-white/8">
-          <ActivityIcon className="size-4" aria-hidden />
-        </span>
-        <span className="flex min-w-0 flex-1 items-center gap-2 text-start">
-          <span className={chatMobileToolsMenuItemTitleClass}>
-            {t("composerToolVolatilityLabel")}
+          <span className="flex min-w-0 flex-1 items-center gap-2 text-start">
+            <span className={chatMobileToolsMenuItemTitleClass}>
+              {t("composerToolCorrelationLabel")}
+            </span>
+            <LockIcon
+              className="ms-auto size-3.5 shrink-0 text-muted-foreground/70"
+              aria-hidden
+            />
           </span>
-          <LockIcon
-            className="ms-auto size-3.5 shrink-0 text-muted-foreground/70"
-            aria-hidden
-          />
-        </span>
-      </DropdownMenuItem>
+        </DropdownMenuItem>
+      ) : null}
+      {isFeatureVisible("volatility") ? (
+        <DropdownMenuItem
+          className={cn(
+            chatMobileToolsMenuItemClass,
+            "flex-row items-center gap-3 py-2.5"
+          )}
+          onClick={openPremiumTools}
+        >
+          <span className="flex size-9 shrink-0 items-center justify-center rounded-2xl bg-foreground/5 text-foreground dark:bg-white/8">
+            <ActivityIcon className="size-4" aria-hidden />
+          </span>
+          <span className="flex min-w-0 flex-1 items-center gap-2 text-start">
+            <span className={chatMobileToolsMenuItemTitleClass}>
+              {t("composerToolVolatilityLabel")}
+            </span>
+            <LockIcon
+              className="ms-auto size-3.5 shrink-0 text-muted-foreground/70"
+              aria-hidden
+            />
+          </span>
+        </DropdownMenuItem>
+      ) : null}
     </DropdownMenuGroup>
   )
   const [floatingPastSingleLine, setFloatingPastSingleLine] =
@@ -484,13 +501,13 @@ function ChatComposer({
     [t]
   )
 
-  const paletteTools = React.useMemo(
-    () =>
-      mentionPalette
-        ? filterComposerPaletteTools(mentionPalette.query, paletteLabels)
-        : [],
-    [mentionPalette, paletteLabels]
-  )
+  const paletteTools = React.useMemo(() => {
+    if (!mentionPalette) return []
+    return filterComposerPaletteTools(
+      mentionPalette.query,
+      paletteLabels
+    ).filter((tool) => featurePrefs[tool.id])
+  }, [mentionPalette, paletteLabels, featurePrefs])
 
   const mentionOpen = Boolean(
     mentionPalette && paletteTools.length > 0 && !mentionSuppressed
@@ -1265,7 +1282,7 @@ function ChatComposer({
         {isFloating ? (
           <>
             <div className={chatMobileComposerLeadingClass}>
-              {SHOW_COMPOSER_TOOLS_MENU ? (
+              {showComposerToolsMenu ? (
                 <ActionTooltip label={t("composerToolsMenu")}>
                   <Button
                     type="button"
@@ -1374,7 +1391,7 @@ function ChatComposer({
               />
             </div>
             <div className={chatMobileComposerTrailingClass}>
-              {speechSupported && !showStop ? (
+              {showVoiceInput && speechSupported && !showStop ? (
                 <ActionTooltip
                   label={
                     listening
@@ -1507,7 +1524,7 @@ function ChatComposer({
         )}
         {!isFloating ? (
           <div className="flex items-center gap-1.5 px-0.5 pb-0.5 [grid-area:leading]">
-            {SHOW_COMPOSER_TOOLS_MENU ? (
+            {showComposerToolsMenu ? (
               <DropdownMenu modal={isMobile ? false : undefined}>
                 <ActionTooltip label={t("composerToolsMenu")}>
                   <DropdownMenuTrigger
@@ -1599,7 +1616,7 @@ function ChatComposer({
         ) : null}
         {!isFloating ? (
           <div className="flex items-center justify-end gap-1 px-1 pb-0.5 [grid-area:trailing]">
-            {speechSupported && !showStop ? (
+            {showVoiceInput && speechSupported && !showStop ? (
               <ActionTooltip
                 label={
                   listening
