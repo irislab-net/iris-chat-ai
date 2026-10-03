@@ -28,7 +28,7 @@ export function HeroLiquidGlassBg({
         The outer hero shell already blurs; stacking another blur + 1px rim
         was painting hard fringes and “cut” corners on mobile.
       */}
-      <div className="absolute inset-0 bg-white/14 dark:bg-black/14" />
+      <div className="absolute inset-0 bg-white/8 dark:bg-black/12" />
     </div>
   )
 }

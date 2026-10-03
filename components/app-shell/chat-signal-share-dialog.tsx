@@ -181,8 +181,8 @@ function SharePreviewCard({
         colorScheme: "light",
         backgroundColor: SIGNAL_SHARE_CARD_BG,
         backgroundImage: isLong
-          ? "radial-gradient(120% 80% at 0% 0%, rgba(16,185,129,0.14), transparent 55%), radial-gradient(80% 50% at 100% 0%, rgba(15,23,42,0.04), transparent 52%)"
-          : "radial-gradient(120% 80% at 0% 0%, rgba(244,63,94,0.12), transparent 55%), radial-gradient(80% 50% at 100% 0%, rgba(15,23,42,0.04), transparent 52%)",
+          ? "radial-gradient(120% 80% at 0% 0%, rgba(16,185,129,0.16), transparent 55%), radial-gradient(90% 60% at 100% 0%, rgba(37,99,235,0.1), transparent 50%)"
+          : "radial-gradient(120% 80% at 0% 0%, rgba(244,63,94,0.14), transparent 55%), radial-gradient(90% 60% at 100% 0%, rgba(37,99,235,0.08), transparent 50%)",
       }}
     >
       <header className="px-4 pt-4 pb-3">
