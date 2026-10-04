@@ -79,6 +79,8 @@ type ChatThinkingTraceProps = {
   writing?: boolean
   /** Frozen wall-clock seconds for completed turns (ChatGPT-style receipt). */
   durationSec?: number
+  /** Open the accordion on mount (e.g. marketing demos). */
+  defaultOpen?: boolean
   className?: string
 }
 
@@ -88,6 +90,7 @@ function ChatThinkingTrace({
   live = false,
   writing = false,
   durationSec,
+  defaultOpen = false,
   className,
 }: ChatThinkingTraceProps) {
   const t = useTranslations("workspace.thinkingTrace")
@@ -162,7 +165,7 @@ function ChatThinkingTrace({
   return (
     <Accordion
       key={live ? "thinking-live" : "thinking-done"}
-      defaultValue={live ? ["thinking"] : []}
+      defaultValue={live || defaultOpen ? ["thinking"] : []}
       className={cn(chatThinkingShellClass, className)}
       data-chat-thinking=""
       data-live={live ? "" : undefined}

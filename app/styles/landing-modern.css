@@ -237,6 +237,143 @@
   animation: landing-skeleton-shimmer 1.25s ease-in-out 1;
 }
 
+/* Signal/wait demo — restyle ChatSignalCard internals as liquid glass. */
+.landing-modern .landing-signal-glass article {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border: 0;
+  border-radius: 1.35rem;
+  background: rgb(255 255 255 / 0.42);
+  box-shadow:
+    0 16px 48px rgb(15 23 42 / 0.08),
+    inset 0 1px 1px rgb(255 255 255 / 0.92),
+    inset 0 -1px 2px rgb(255 255 255 / 0.28);
+  backdrop-filter: blur(40px);
+}
+
+.landing-modern .landing-signal-glass article::before {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    145deg,
+    rgb(255 255 255 / 0.72) 0%,
+    rgb(255 255 255 / 0.18) 38%,
+    rgb(255 255 255 / 0.04) 62%,
+    rgb(255 255 255 / 0) 100%
+  );
+}
+
+.landing-modern .landing-signal-glass article > * {
+  position: relative;
+  z-index: 10;
+}
+
+.landing-modern .landing-signal-glass article header h3 {
+  font-size: 1.15rem;
+}
+
+.landing-modern .landing-signal-glass article header span.inline-flex {
+  background: rgb(255 255 255 / 0.55);
+  box-shadow:
+    0 8px 20px rgb(15 23 42 / 0.06),
+    inset 0 1px 1px rgb(255 255 255 / 0.95);
+  backdrop-filter: blur(12px);
+}
+
+.landing-modern .landing-signal-glass .grid.grid-cols-3 {
+  gap: 0.5rem;
+}
+
+.landing-modern .landing-signal-glass .grid.grid-cols-3 > div {
+  border-radius: 1rem;
+  background: rgb(255 255 255 / 0.48);
+  padding: 0.625rem 0.5rem;
+  box-shadow:
+    0 10px 28px rgb(15 23 42 / 0.06),
+    inset 0 1px 1px rgb(255 255 255 / 0.95),
+    inset 0 -1px 2px rgb(255 255 255 / 0.28);
+  backdrop-filter: blur(24px);
+}
+
+.landing-modern .landing-signal-glass .grid.grid-cols-3 p.tabular-nums {
+  font-size: 1.15rem;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+.landing-modern .landing-signal-glass .space-y-4 > .rounded-2xl {
+  background: rgb(255 255 255 / 0.4);
+  box-shadow:
+    0 10px 28px rgb(15 23 42 / 0.05),
+    inset 0 1px 1px rgb(255 255 255 / 0.9);
+  backdrop-filter: blur(24px);
+}
+
+.landing-modern .landing-signal-glass .size-7.rounded-full {
+  background: rgb(255 255 255 / 0.6);
+  box-shadow:
+    0 6px 16px rgb(15 23 42 / 0.06),
+    inset 0 1px 1px rgb(255 255 255 / 0.95);
+  backdrop-filter: blur(8px);
+}
+
+.dark .landing-modern .landing-signal-glass article {
+  background: rgb(255 255 255 / 0.08);
+  box-shadow:
+    0 16px 48px rgb(0 0 0 / 0.4),
+    inset 0 1px 1px rgb(255 255 255 / 0.12),
+    inset 0 -1px 2px rgb(255 255 255 / 0.04);
+}
+
+.dark .landing-modern .landing-signal-glass article::before {
+  background: linear-gradient(
+    145deg,
+    rgb(255 255 255 / 0.16) 0%,
+    rgb(255 255 255 / 0.05) 38%,
+    rgb(255 255 255 / 0.02) 62%,
+    transparent 100%
+  );
+}
+
+.dark .landing-modern .landing-signal-glass article header span.inline-flex,
+.dark .landing-modern .landing-signal-glass .grid.grid-cols-3 > div,
+.dark .landing-modern .landing-signal-glass .space-y-4 > .rounded-2xl,
+.dark .landing-modern .landing-signal-glass .size-7.rounded-full {
+  background: rgb(255 255 255 / 0.1);
+  box-shadow:
+    0 10px 28px rgb(0 0 0 / 0.35),
+    inset 0 1px 1px rgb(255 255 255 / 0.12),
+    inset 0 -1px 2px rgb(255 255 255 / 0.04);
+}
+
+@media (min-width: 640px) {
+  .landing-modern .landing-signal-glass article {
+    border-radius: 1.5rem;
+  }
+
+  .landing-modern .landing-signal-glass article header h3 {
+    font-size: 1.35rem;
+  }
+
+  .landing-modern .landing-signal-glass .grid.grid-cols-3 {
+    gap: 0.625rem;
+  }
+
+  .landing-modern .landing-signal-glass .grid.grid-cols-3 > div {
+    padding: 0.75rem;
+  }
+
+  .landing-modern .landing-signal-glass .grid.grid-cols-3 p.tabular-nums {
+    font-size: 1.45rem;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .landing-modern .hero-fluid-wave,
   .landing-modern .hero-fluid-glow,

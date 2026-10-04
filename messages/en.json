@@ -1250,103 +1250,76 @@
   },
   "featuresPage": {
     "metaTitle": "Features",
-    "metaDescription": "Scored news, co-pilot chat, setup cards, composer tools, and crypto checkout for Plus. What Exur ships today.",
-    "eyebrow": "Product",
-    "title": "Everything on the desk.",
-    "intro": "Scored news, a plain-language co-pilot, and a clear outcome: setup or wait.",
+    "metaDescription": "Gold analysis, signal tools, impact news, live-market AI, Chrome extension, and calm mobile or desktop — real Exur UI with desk data.",
+    "title": "Built for the candle in front of you.",
+    "intro": "Gold structure. Honest tools. Scored news. Answers grounded in live markets — not generic chat.",
     "ctaUpgrade": "See Plus plans",
     "heroNote": "Information only. Not brokerage. Not financial advice.",
-    "heroFlowLabel": "One ask, one outcome",
     "jump": {
       "aria": "On this page",
-      "desk": "Desk",
-      "composer": "Composer",
-      "advantages": "Advantages",
-      "boundaries": "Limits"
+      "gold": "Gold",
+      "tools": "Tools",
+      "news": "News",
+      "quality": "Live data",
+      "extension": "Extension",
+      "clients": "Clients"
     },
-    "desk": {
-      "eyebrow": "The desk",
-      "title": "Read, ask, decide.",
-      "subtitle": "From ranked headlines to a focused answer. One desk. No endless chat.",
-      "items": {
-        "news": {
-          "title": "Impact-ranked news",
-          "body": "Browse without an account. The lead story is scored; the rest stays quiet."
-        },
-        "copilot": {
-          "title": "Plain-language co-pilot",
-          "body": "Ask about a headline or the wider tape. Answers follow your language and stay short."
-        },
-        "setup": {
-          "title": "Setup cards",
-          "body": "When there is an edge: direction, levels, leverage, thesis, and a re-check horizon."
-        },
-        "wait": {
-          "title": "Explicit wait",
-          "body": "When there is no edge, Exur says wait. Sitting out is a real answer."
-        }
-      }
+    "gold": {
+      "title": "Gold analysis with real levels",
+      "subtitle": "Ask about XAU structure. Get a setup card — or a clear sit-out — with the same UI as chat.",
+      "liveLabel": "Live mid",
+      "setupLabel": "When there’s an edge",
+      "waitLabel": "When there isn’t",
+      "askCta": "Ask about gold"
     },
-    "composer": {
-      "eyebrow": "Composer tools",
-      "title": "Tools behind +.",
-      "subtitle": "Pick a tool, name an asset, send. Signal is live; deeper tools open with Plus.",
-      "mockPrompt": "ETH setup from here?",
-      "mockUser": "Give me a setup for ETH",
-      "you": "You",
-      "items": {
-        "signal": {
-          "title": "Signal",
-          "badge": "Live",
-          "body": "Ask for a setup on BTC, ETH, gold, or another asset. You get a card, or a clear wait. Information only, not an order."
-        },
-        "correlation": {
-          "title": "Asset Correlation",
-          "badge": "Plus · soon",
-          "body": "See how assets move together before you size risk. On the Plus roadmap."
-        },
-        "volatility": {
-          "title": "Volatility Forecast",
-          "badge": "Plus · soon",
-          "body": "Expected move size when you need to choose: trade or wait. Coming with Plus."
-        }
-      }
+    "tools": {
+      "title": "One tool that stays honest",
+      "subtitle": "Slash Signal. Pick BTC, ETH, or gold. Setup when there’s an edge — wait when there isn’t.",
+      "signalLabel": "Signal",
+      "pickLabel": "Pick a market",
+      "askCta": "Ask for a setup",
+      "draftHint": "Ready draft"
     },
-    "advantages": {
-      "eyebrow": "Why it feels different",
-      "title": "Clarity over noise.",
-      "subtitle": "Live desks, guest access, your language, and crypto checkout. No profit promises.",
-      "items": {
-        "markets": {
-          "title": "Live desks",
-          "body": "BTC, ETH, and gold are live. Names marked soon are roadmap, not coverage."
-        },
-        "languages": {
-          "title": "Your language",
-          "body": "UI and replies follow you, including English and Persian."
-        },
-        "guest": {
-          "title": "Try free",
-          "body": "Three guest messages a week. No card. No wallet to start."
-        },
-        "google": {
-          "title": "Google sign-in",
-          "body": "Higher limits and sync. Guest threads can merge when you connect."
-        },
-        "crypto": {
-          "title": "Pay with crypto",
-          "body": "Plus via USDT or USDC on Ethereum. Send from any wallet; access opens on confirm."
-        },
-        "honest": {
-          "title": "Honest outcomes",
-          "body": "Setup or wait. No fake win rates. No guaranteed returns."
-        }
-      }
+    "news": {
+      "title": "Impact-ranked news",
+      "subtitle": "Three stories that matter. Live from the desk. No account required."
+    },
+    "quality": {
+      "title": "Not another generic AI",
+      "subtitle": "Before it answers, Exur pulls market state, model context, and scored news — real financial data, not a web guess.",
+      "traceLabel": "What it checked",
+      "outcomeLabel": "Then the call"
+    },
+    "extension": {
+      "title": "Chrome side panel",
+      "subtitle": "Same chat and news desk beside your browser — no extra tab juggling.",
+      "cta": "Get the extension",
+      "comingSoon": "Coming to Chrome",
+      "chromeLabel": "Chrome · side panel",
+      "point0": "Chat and news in one panel",
+      "point1": "Opens beside any tab",
+      "point2": "Same account as the web desk"
+    },
+    "clients": {
+      "title": "Room to think — phone or desk",
+      "subtitle": "Floating composer on mobile. Docked panels on desktop. Calm space either way.",
+      "desktopLabel": "Desktop",
+      "mobileLabel": "Mobile",
+      "composerPlaceholder": "Ask the desk…"
+    },
+    "access": {
+      "title": "Start light. Go further.",
+      "subtitle": "Guest messages, your language, crypto for Plus.",
+      "guestBody": "Three guest messages a week. No card. No wallet to start.",
+      "payBody": "Plus with USDT or USDC on Ethereum. Access opens on confirm."
+    },
+    "language": {
+      "title": "Your language",
+      "body": "UI and replies follow you — English, Persian, and more."
     },
     "boundaries": {
-      "eyebrow": "Clear limits",
       "title": "What Exur does not do",
-      "body": "A market desk and co-pilot. It helps you read and decide. It does not move money or place orders.",
+      "body": "A desk and co-pilot. Not a broker.",
       "items": {
         "0": "No order execution, brokerage, or custody",
         "1": "No paper-trading desk or open-in-trade buttons",
@@ -1354,7 +1327,7 @@
       }
     },
     "cta": {
-      "title": "Open the desk.",
+      "title": "Open the desk",
       "subtitle": "Read scored news free. Ask once. See setup or wait.",
       "openDesk": "Open desk",
       "readNews": "Browse news",

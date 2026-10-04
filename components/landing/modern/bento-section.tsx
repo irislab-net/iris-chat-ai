@@ -28,7 +28,7 @@ function HowItWorksStepIcon({ index }: { index: number }) {
     <AnimatedSvgIcon
       replayOnHover
       scrollTrigger
-      className="relative z-10 mb-6 size-26 text-foreground/70 lg:size-32"
+      className="relative z-10 mb-5 size-20 text-foreground/70 lg:size-24"
     >
       <Mark />
     </AnimatedSvgIcon>
@@ -59,7 +59,7 @@ export function BentoSection() {
                 className={cn(
                   landingGlassSurface,
                   "group relative flex h-full flex-col items-center overflow-hidden rounded-[1.75rem] bg-white/42 text-center dark:bg-white/8",
-                  "px-6 py-8 sm:px-7 sm:py-9"
+                  "px-5 py-6 sm:px-6 sm:py-7"
                 )}
               >
                 <span
@@ -73,7 +73,7 @@ export function BentoSection() {
                 <h3 className={cn("relative z-10", landingTitleCard)}>
                   {tSteps(`${key}.headline`)}
                 </h3>
-                <p className="relative z-10 mt-2 text-sm leading-relaxed text-muted-foreground">
+                <p className="relative z-10 mt-2 max-w-[18rem] text-sm leading-relaxed text-muted-foreground">
                   {tSteps(`${key}.desc`)}
                 </p>
               </article>

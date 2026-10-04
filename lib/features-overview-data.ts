@@ -2,28 +2,13 @@
 
 export const FEATURES_PATH = "/features"
 
-export const FEATURES_DESK_KEYS = [
-  "news",
-  "copilot",
-  "setup",
-  "wait",
+export const FEATURES_JUMP_LINKS = [
+  { href: "#gold", key: "gold" },
+  { href: "#tools", key: "tools" },
+  { href: "#news", key: "news" },
+  { href: "#quality", key: "quality" },
+  { href: "#extension", key: "extension" },
+  { href: "#clients", key: "clients" },
 ] as const
 
-export const FEATURES_COMPOSER_KEYS = [
-  "signal",
-  "correlation",
-  "volatility",
-] as const
-
-export const FEATURES_ADVANTAGE_KEYS = [
-  "markets",
-  "languages",
-  "guest",
-  "google",
-  "crypto",
-  "honest",
-] as const
-
-export type FeaturesDeskKey = (typeof FEATURES_DESK_KEYS)[number]
-export type FeaturesComposerKey = (typeof FEATURES_COMPOSER_KEYS)[number]
-export type FeaturesAdvantageKey = (typeof FEATURES_ADVANTAGE_KEYS)[number]
+export type FeaturesJumpKey = (typeof FEATURES_JUMP_LINKS)[number]["key"]

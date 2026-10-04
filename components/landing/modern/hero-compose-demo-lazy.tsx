@@ -10,11 +10,9 @@ const HeroComposeDemo = dynamic(
     ),
   {
     ssr: false,
+    // Height reserve only — no painted surface (avoids a gray flash before the chunk mounts).
     loading: () => (
-      <div
-        className="mx-auto h-55 w-full max-w-xl rounded-2xl bg-foreground/4"
-        aria-hidden
-      />
+      <div className="mx-auto h-55 w-full max-w-xl" aria-hidden />
     ),
   }
 )

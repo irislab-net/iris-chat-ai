@@ -93,6 +93,16 @@ export function isAppDeskPath(pathname: string | null | undefined): boolean {
 /** Full-screen plan picker → crypto invoice checkout. */
 export const UPGRADE_PATH = "/upgrade"
 
+/**
+ * Chrome Web Store listing for the Exur side-panel extension.
+ * Null until the listing is live — Features page shows “Coming to Chrome”.
+ */
+export const CHROME_WEB_STORE_URL: string | null = null
+
+/** Marketing asset for Features extension frame. */
+export const FEATURES_EXTENSION_SCREENSHOT =
+  "/landing/extension-side-panel.png"
+
 /** Account billing status, invoices, and payment history. */
 export const BILLING_PATH = "/billing"
 

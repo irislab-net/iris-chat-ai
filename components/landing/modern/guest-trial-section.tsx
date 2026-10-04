@@ -26,7 +26,7 @@ export function GuestTrialSection() {
       className={cn(
         landingSection,
         landingSectionBody,
-        "overflow-hidden bg-white/40 shadow-[0_28px_80px_rgba(15,23,42,0.07)] backdrop-blur-2xl dark:bg-white/6 dark:shadow-[0_28px_80px_rgba(0,0,0,0.45)]"
+        "overflow-hidden bg-white/35 shadow-[0_20px_60px_rgba(15,23,42,0.05)] backdrop-blur-2xl dark:bg-white/5 dark:shadow-[0_20px_60px_rgba(0,0,0,0.35)]"
       )}
     >
       <HeroLiquidGlassBg tone="blue" />
@@ -45,7 +45,7 @@ export function GuestTrialSection() {
             <p
               className={cn(
                 landingDisplay,
-                "text-[5.5rem] leading-none tracking-[-0.06em] text-foreground sm:text-[6.5rem]"
+                "text-[4.75rem] leading-none tracking-[-0.06em] text-foreground sm:text-[5.75rem]"
               )}
             >
               {GUEST_TRIAL_STAT}
@@ -55,13 +55,13 @@ export function GuestTrialSection() {
             </p>
           </div>
 
-          <div className="mt-8 flex justify-center sm:mt-10">
+          <div className="mt-7 flex justify-center sm:mt-8">
             <SphereCta href={getLaunchAppHref()} variant="glass">
               {t("cta")}
             </SphereCta>
           </div>
 
-          <p className="mt-5 text-center text-xs text-muted-foreground">
+          <p className="mt-4 text-center text-xs text-muted-foreground">
             {t("note")}
           </p>
         </ScrollRevealGroup>

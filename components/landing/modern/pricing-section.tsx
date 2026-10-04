@@ -54,7 +54,7 @@ function PlanCta({
   const href = planHref(planKey)
   const className = cn(
     landingCta(featured ? "primary" : "light"),
-    "mt-8 w-full"
+    "mt-6 w-full"
   )
   const external = /^https?:\/\//i.test(href) || href.startsWith("mailto:")
 
@@ -83,18 +83,17 @@ function PlanCta({
 
 function PlanFeatures({ features }: { features: string[] }) {
   return (
-    <ul className="space-y-3.5">
+    <ul className="space-y-2.5">
       {features.map((feature) => (
         <li
           key={feature}
-          className="flex items-start gap-3 text-sm leading-relaxed text-muted-foreground"
+          className="flex items-start gap-2.5 text-sm leading-relaxed text-muted-foreground"
         >
-          <span
-            className="mt-0.5 flex size-4 shrink-0 items-center justify-center rounded-full bg-white/70 text-muted-foreground shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] dark:bg-white/10 dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.12)]"
+          <CheckIcon
+            className="mt-0.5 size-3.5 shrink-0 text-muted-foreground/55"
+            strokeWidth={2}
             aria-hidden
-          >
-            <CheckIcon className="size-2.5" strokeWidth={2} />
-          </span>
+          />
           {feature}
         </li>
       ))}
@@ -153,7 +152,7 @@ function PlanCard({
         )}
       />
 
-      <div className="relative z-10 flex h-full flex-col p-8 sm:p-9">
+      <div className="relative z-10 flex h-full flex-col p-7 sm:p-8">
         <div className="flex items-start justify-between gap-3">
           <h3 className={landingTitlePlan}>{t(`plans.${planKey}.name`)}</h3>
           {badge ? (
@@ -163,11 +162,11 @@ function PlanCard({
           ) : null}
         </div>
 
-        <div className="mt-5">
+        <div className="mt-4">
           <p
             className={cn(
               landingTitlePrice,
-              "flex flex-wrap items-baseline gap-x-2.5"
+              "flex flex-wrap items-baseline gap-x-2.5 text-[2.75rem] sm:text-5xl"
             )}
           >
             <span>
@@ -190,7 +189,7 @@ function PlanCard({
           label={t(`plans.${planKey}.cta`)}
         />
 
-        <div className="mt-8 flex-1 border-t border-white/55 pt-8 dark:border-white/10">
+        <div className="mt-6 flex-1 border-t border-white/55 pt-6 dark:border-white/10">
           <PlanFeatures features={features} />
         </div>
       </div>

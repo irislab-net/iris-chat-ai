@@ -2,7 +2,13 @@
 
 import { ArrowUpIcon } from "lucide-react"
 import { useLocale, useTranslations } from "next-intl"
-import { useLayoutEffect, useMemo, useRef, useState } from "react"
+import {
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+} from "react"
 
 import { ChatSignalCard } from "@/components/app-shell/chat-signal-card"
 import { HeroLiquidGlassBg } from "@/components/landing/modern/hero-liquid-glass-bg"
@@ -16,11 +22,13 @@ import {
   landingAfterHeader,
   landingCardRadius,
   landingDisplay,
+  landingGlassBlueSheen,
   landingGlassBubbleAi,
   landingGlassBubbleUser,
   landingGlassOrb,
   landingGlassPill,
   landingGlassSheen,
+  landingGlassSurface,
   landingSection,
   landingSignalWaitComposeGrid,
 } from "@/lib/landing-modern-styles"
@@ -29,6 +37,47 @@ import {
   type SignalWaitScenario,
 } from "@/lib/signal-wait-story-engine"
 import { cn } from "@/lib/utils"
+
+function GlassSheen({ className }: { className?: string }) {
+  return <span aria-hidden className={cn(landingGlassSheen, className)} />
+}
+
+/** Dual-layer liquid-glass avatar (matches hero compose). */
+function GlassAvatar({
+  children,
+  className,
+}: {
+  children: ReactNode
+  className?: string
+}) {
+  return (
+    <span
+      aria-hidden
+      className={cn(
+        landingGlassPill,
+        "inline-flex size-8 shrink-0 items-center justify-center rounded-full p-0.5",
+        "shadow-[0_10px_28px_rgba(15,23,42,0.1),inset_0_1px_1px_rgba(255,255,255,0.98),inset_0_-1px_2px_rgba(255,255,255,0.35)]",
+        "dark:shadow-[0_10px_28px_rgba(0,0,0,0.45),inset_0_1px_1px_rgba(255,255,255,0.16),inset_0_-1px_2px_rgba(255,255,255,0.05)]",
+        className
+      )}
+    >
+      <GlassSheen className="rounded-full" />
+      <span
+        aria-hidden
+        className={cn(landingGlassBlueSheen, "rounded-full opacity-70")}
+      />
+      <span
+        className={cn(
+          landingGlassOrb,
+          "relative z-10 flex size-full items-center justify-center overflow-hidden rounded-full bg-white/55 text-[9px] font-semibold tracking-wide text-muted-foreground dark:bg-white/12"
+        )}
+      >
+        <GlassSheen className="rounded-full" />
+        <span className="relative z-10">{children}</span>
+      </span>
+    </span>
+  )
+}
 
 function UserBubble({
   children,
@@ -45,16 +94,12 @@ function UserBubble({
           "max-w-[min(100%,20rem)] px-3.5 py-2.5 text-start text-[13px] leading-snug text-foreground sm:max-w-md sm:px-4 sm:py-3 sm:text-sm"
         )}
       >
-        {children}
+        <GlassSheen />
+        <span className="relative z-10">{children}</span>
       </div>
-      <span
-        className={cn(
-          landingGlassOrb,
-          "size-8 shrink-0 text-[10px] font-medium text-muted-foreground"
-        )}
-      >
+      <GlassAvatar className="text-[10px] font-medium tracking-wide">
         {youLabel}
-      </span>
+      </GlassAvatar>
     </div>
   )
 }
@@ -68,27 +113,23 @@ function AiBubble({
 }) {
   return (
     <div className="flex h-full items-start gap-2.5">
-      <span
-        className={cn(
-          landingGlassOrb,
-          "mt-0.5 size-8 shrink-0 text-[9px] font-semibold tracking-wide text-muted-foreground"
-        )}
-      >
-        EX
-      </span>
+      <GlassAvatar className="mt-0.5">EX</GlassAvatar>
       <div
         className={cn(
           landingGlassBubbleAi,
           "line-clamp-3 max-w-[min(100%,20rem)] px-3.5 py-2.5 text-start text-[13px] leading-snug text-foreground/90 sm:max-w-md sm:px-4 sm:py-3 sm:text-sm"
         )}
       >
-        {children}
-        {typing ? (
-          <span
-            className="ms-0.5 inline-block h-[1.1em] w-0.5 translate-y-0.5 animate-pulse bg-muted-foreground align-[-2px]"
-            aria-hidden
-          />
-        ) : null}
+        <GlassSheen />
+        <span className="relative z-10">
+          {children}
+          {typing ? (
+            <span
+              className="ms-0.5 inline-block h-[1.1em] w-0.5 translate-y-0.5 animate-pulse bg-muted-foreground align-[-2px]"
+              aria-hidden
+            />
+          ) : null}
+        </span>
       </div>
     </div>
   )
@@ -107,19 +148,7 @@ function SignalResult({
   }
 }) {
   return (
-    <div
-      className={cn(
-        "relative flex h-full min-h-0 w-full origin-top items-start justify-center overflow-visible",
-        "[&_article_header_h3]:text-[1.2rem] sm:[&_article_header_h3]:text-[1.5rem]",
-        "[&_.grid.grid-cols-3_p.tabular-nums]:text-[1.25rem] sm:[&_.grid.grid-cols-3_p.tabular-nums]:text-[1.7rem]",
-        "[&_.grid.grid-cols-3_p.tabular-nums]:leading-none [&_.grid.grid-cols-3_p.tabular-nums]:font-bold",
-        "[&_.grid.grid-cols-3_p.tabular-nums]:tracking-[-0.04em]",
-        "[&_.grid.grid-cols-3>div]:px-2 [&_.grid.grid-cols-3>div]:py-3 sm:[&_.grid.grid-cols-3>div]:px-3 sm:[&_.grid.grid-cols-3>div]:py-4",
-        "[&_.grid.grid-cols-3]:gap-2 sm:[&_.grid.grid-cols-3]:gap-3",
-        "[&_.grid.grid-cols-2_p.tabular-nums]:text-sm [&_.grid.grid-cols-2_p.tabular-nums]:font-semibold sm:[&_.grid.grid-cols-2_p.tabular-nums]:text-base",
-        "[&_article]:rounded-[1.25rem] [&_article]:bg-white/70 [&_article]:shadow-none sm:[&_article]:rounded-[1.35rem] dark:[&_article]:bg-white/8"
-      )}
-    >
+    <div className="landing-signal-glass relative flex h-full min-h-0 w-full origin-top items-start justify-center overflow-visible">
       <ChatSignalCard ticket={ticket} className="mt-0 w-full" tone="neutral" />
     </div>
   )
@@ -127,18 +156,26 @@ function SignalResult({
 
 function HoldResult({ label, reason }: { label: string; reason: string }) {
   return (
-    <div className="flex h-full flex-col items-center justify-center px-2 text-center">
-      <p
+    <div className="flex h-full items-center justify-center px-2">
+      <div
         className={cn(
-          landingDisplay,
-          "text-[2rem] leading-none tracking-[-0.04em] text-foreground/90 sm:text-4xl"
+          landingGlassSurface,
+          "w-full max-w-sm rounded-[1.5rem] bg-white/42 px-6 py-8 text-center dark:bg-white/8"
         )}
       >
-        {label}.
-      </p>
-      <p className="mt-3 max-w-sm text-sm leading-relaxed text-muted-foreground sm:text-[15px]">
-        {reason}
-      </p>
+        <GlassSheen className="rounded-[1.5rem]" />
+        <p
+          className={cn(
+            landingDisplay,
+            "relative z-10 text-[2rem] leading-none tracking-[-0.04em] text-foreground/90 sm:text-4xl"
+          )}
+        >
+          {label}.
+        </p>
+        <p className="relative z-10 mt-3 text-sm leading-relaxed text-muted-foreground sm:text-[15px]">
+          {reason}
+        </p>
+      </div>
     </div>
   )
 }
@@ -167,15 +204,16 @@ export function SignalWaitSection() {
   const [replyText, setReplyText] = useState<string | null>(null)
   const [scenario, setScenario] = useState<SignalWaitScenario>("trade")
 
+  // Landing demo keeps levels + setup; drop per-level reasons so the card stays light.
   const ticket = useMemo(
     () => ({
       ...SIGNAL_WAIT_TICKET,
       setup: t("ticket.setup"),
       thesis: t("ticket.thesis"),
       timeHorizon: t("ticket.timeHorizon"),
-      entryReason: t("ticket.entryReason"),
-      stopLossReason: t("ticket.stopLossReason"),
-      takeProfitReason: t("ticket.takeProfitReason"),
+      entryReason: "",
+      stopLossReason: "",
+      takeProfitReason: "",
     }),
     [t]
   )
@@ -234,7 +272,7 @@ export function SignalWaitSection() {
             "relative isolate overflow-hidden",
             landingCardRadius,
             // Fixed shell: ChatSignalCard + chat row + composer must fit without clipping.
-            "flex h-152 flex-col bg-white/40 text-foreground shadow-[0_28px_80px_rgba(15,23,42,0.07)] backdrop-blur-2xl sm:h-164 lg:h-172 dark:bg-white/6 dark:shadow-[0_28px_80px_rgba(0,0,0,0.45)]"
+            "flex h-136 flex-col bg-white/40 text-foreground shadow-[0_20px_60px_rgba(15,23,42,0.05)] backdrop-blur-2xl sm:h-148 lg:h-156 dark:bg-white/6 dark:shadow-[0_20px_60px_rgba(0,0,0,0.35)]"
           )}
         >
           <HeroLiquidGlassBg tone="blue" />
@@ -300,9 +338,10 @@ export function SignalWaitSection() {
                 landingGlassPill
               )}
             >
+              <GlassSheen className="rounded-full" />
               <span
                 aria-hidden
-                className={cn(landingGlassSheen, "rounded-full")}
+                className={cn(landingGlassBlueSheen, "rounded-full opacity-50")}
               />
               <Input
                 type="text"
@@ -316,10 +355,19 @@ export function SignalWaitSection() {
               />
               <span
                 ref={sendRef}
-                className="relative z-10 inline-flex size-10 shrink-0 items-center justify-center rounded-full bg-[#2563EB] text-white shadow-[0_8px_24px_rgba(37,99,235,0.32)]"
+                className={cn(
+                  "relative z-10 inline-flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-full",
+                  "bg-[#2563EB]/90 text-white",
+                  "shadow-[0_12px_40px_rgba(37,99,235,0.34),inset_0_1px_1px_rgba(255,255,255,0.38),inset_0_-1px_2px_rgba(29,78,216,0.28)]",
+                  "backdrop-blur-2xl"
+                )}
                 aria-hidden
               >
-                <ArrowUpIcon className="size-4" />
+                <span
+                  aria-hidden
+                  className={cn(landingGlassBlueSheen, "rounded-full opacity-80")}
+                />
+                <ArrowUpIcon className="relative z-10 size-4" />
               </span>
             </div>
           </div>

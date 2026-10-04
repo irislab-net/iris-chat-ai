@@ -4,10 +4,7 @@ import { useEffect, useState } from "react"
 import { useTranslations } from "next-intl"
 
 import { AnimatedSvgIcon } from "@/components/landing/modern/animated-svg-icon"
-import {
-  SIGNALS_LIVE_MARKS,
-  SIGNALS_SOON_MARKS,
-} from "@/components/landing/modern/signals-market-marks"
+import { SIGNALS_LIVE_MARKS } from "@/components/landing/modern/signals-market-marks"
 import {
   ScrollReveal,
   ScrollRevealGroup,
@@ -114,7 +111,7 @@ function LiveMarketCard({
     <article
       className={cn(
         landingGlassSurface,
-        "group relative flex h-full flex-col items-center overflow-hidden rounded-[1.75rem] bg-white/42 px-5 py-8 text-center sm:px-6 sm:py-9 dark:bg-white/8"
+        "group relative flex h-full flex-col items-center overflow-hidden rounded-[1.75rem] bg-white/42 px-5 py-6 text-center sm:px-6 sm:py-7 dark:bg-white/8"
       )}
     >
       <span
@@ -125,7 +122,7 @@ function LiveMarketCard({
       <AnimatedSvgIcon
         replayOnHover
         scrollTrigger
-        className="relative z-10 mb-6 size-26 text-foreground/70 lg:size-32"
+        className="relative z-10 mb-5 size-20 text-foreground/70 lg:size-24"
       >
         <Mark />
       </AnimatedSvgIcon>
@@ -143,39 +140,11 @@ function LiveMarketCard({
         href={href}
         variant="glass"
         size="sm"
-        className="relative z-10 mt-6"
+        className="relative z-10 mt-5"
       >
         {t("cardAction")}
       </SphereCta>
     </article>
-  )
-}
-
-function SoonMarketChip({ id, symbol }: (typeof SIGNALS_SOON_MARKETS)[number]) {
-  const t = useTranslations("modern.signals")
-  const Mark = SIGNALS_SOON_MARKS[id]
-
-  return (
-    <li
-      className={cn(
-        "flex flex-col items-center gap-2 opacity-[0.38]",
-        "transition-opacity duration-300 hover:opacity-55"
-      )}
-    >
-      <AnimatedSvgIcon
-        replayOnHover
-        scrollTrigger
-        className="size-14 text-foreground/70 sm:size-16"
-      >
-        <Mark />
-      </AnimatedSvgIcon>
-      <span className="text-[0.6875rem] font-medium tracking-wide text-muted-foreground uppercase">
-        {symbol}
-      </span>
-      <span className="sr-only">
-        {t(`markets.${id}`)}, {t("soonLabel")}
-      </span>
-    </li>
   )
 }
 
@@ -207,15 +176,23 @@ export function SignalsMarketsSection() {
 
       <ScrollReveal
         delay={0.12}
-        className={cn(landingContent, landingAfterHeader)}
+        className={cn(landingContent, "mt-8 sm:mt-10")}
       >
-        <div className="text-center">
-          <p className="text-sm font-medium text-muted-foreground">
+        <div className="px-3.5 text-center">
+          <p className="text-sm text-muted-foreground">
             {t("soonHint")}
+            <span className="mx-2 text-muted-foreground/35" aria-hidden>
+              ·
+            </span>
+            <span className="font-(family-name:--font-mono-modern) text-[0.8125rem] tracking-[0.08em] text-muted-foreground/55 uppercase">
+              {SIGNALS_SOON_MARKETS.map((market) => market.symbol).join(" · ")}
+            </span>
           </p>
-          <ul className="mt-6 flex flex-wrap items-start justify-center gap-x-5 gap-y-6 sm:gap-x-7">
+          <ul className="sr-only">
             {SIGNALS_SOON_MARKETS.map((market) => (
-              <SoonMarketChip key={market.id} {...market} />
+              <li key={market.id}>
+                {t(`markets.${market.id}`)}, {t("soonLabel")}
+              </li>
             ))}
           </ul>
         </div>
