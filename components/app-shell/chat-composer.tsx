@@ -21,7 +21,7 @@ import {
   dismissAppToast,
   showAppErrorToast,
   showAppToast,
-} from "@/components/ui/app-toast"
+} from "@/lib/app-toast"
 
 import {
   chatContextMenuContentClass,
@@ -830,7 +830,7 @@ function ChatComposer({
         id: VOICE_LISTENING_TOAST_ID,
         title: t("composerVoiceListeningTitle"),
         description: t("composerVoiceListening"),
-        icon: "mic",
+        icon: "mic" as const,
         duration: Number.POSITIVE_INFINITY,
       })
     } catch {
@@ -1049,7 +1049,7 @@ function ChatComposer({
         description: t("composerPasteAttachmentMax", {
           count: PASTE_ATTACHMENT_MAX,
         }),
-        icon: "info",
+        icon: "info" as const,
       })
       return
     }
@@ -1389,7 +1389,7 @@ function ChatComposer({
             )}
             onClick={(event) => event.stopPropagation()}
           >
-            <div className="flex flex-nowrap gap-1.5 overflow-x-auto overscroll-x-contain [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+            <div className="flex flex-nowrap gap-1.5 overflow-x-auto overscroll-x-contain scrollbar-none [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
               {pasteAttachments.map((attachment) => (
                 <ComposerPasteAttachmentChip
                   key={attachment.id}
@@ -1457,7 +1457,7 @@ function ChatComposer({
                   dir={inputDir}
                   className={cn(
                     chatMobileComposerTextareaClass,
-                    "pointer-events-none absolute inset-0 z-0 overflow-hidden break-words text-foreground",
+                    "pointer-events-none absolute inset-0 z-0 overflow-hidden wrap-break-word text-foreground",
                     floatingComposerExpanded
                       ? chatMobileComposerTextareaExpandedClass
                       : chatMobileComposerTextareaCompactClass
@@ -1602,7 +1602,7 @@ function ChatComposer({
                   dir={inputDir}
                   className={cn(
                     chatDesktopComposerTextareaClass,
-                    "pointer-events-none absolute inset-0 z-0 overflow-hidden whitespace-pre-wrap break-words text-foreground"
+                    "pointer-events-none absolute inset-0 z-0 overflow-hidden whitespace-pre-wrap wrap-break-word text-foreground"
                   )}
                 >
                   <ComposerMentionHighlight parts={mentionHighlightParts} />
@@ -1676,7 +1676,7 @@ function ChatComposer({
                   side="top"
                   sideOffset={18}
                   showBackdrop
-                  backdropClassName="bg-black/8 supports-backdrop-filter:bg-black/[0.04] supports-backdrop-filter:backdrop-blur-xs dark:bg-black/30 dark:supports-backdrop-filter:bg-black/20"
+                  backdropClassName="bg-black/8 supports-backdrop-filter:bg-black/4 supports-backdrop-filter:backdrop-blur-xs dark:bg-black/30 dark:supports-backdrop-filter:bg-black/20"
                   className={cn(
                       chatMobileToolsMenuClass,
                       "z-60"
@@ -1709,7 +1709,7 @@ function ChatComposer({
                   side={isMobile ? "bottom" : "top"}
                   sideOffset={8}
                   showBackdrop
-                  backdropClassName="bg-black/8 supports-backdrop-filter:bg-black/[0.04] supports-backdrop-filter:backdrop-blur-xs dark:bg-black/30 dark:supports-backdrop-filter:bg-black/20"
+                  backdropClassName="bg-black/8 supports-backdrop-filter:bg-black/4 supports-backdrop-filter:backdrop-blur-xs dark:bg-black/30 dark:supports-backdrop-filter:bg-black/20"
                   className={cn(chatContextMenuContentClass, "min-w-48")}
                 >
                   <DropdownMenuGroup>

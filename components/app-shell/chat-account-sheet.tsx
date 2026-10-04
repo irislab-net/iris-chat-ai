@@ -917,7 +917,7 @@ function ChatAccountSheet({
           open={open}
           className={cn(
             sheetCanvasClass,
-            "flex h-[min(85dvh,640px)] max-h-[min(85dvh,640px)] min-h-0 w-full flex-col overflow-hidden rounded-3xl p-0 pt-3 pb-4 sm:max-w-[26rem]"
+            "flex h-[min(85dvh,640px)] max-h-[min(85dvh,640px)] min-h-0 w-full flex-col overflow-hidden rounded-3xl p-0 pt-3 pb-4 sm:max-w-104"
           )}
         >
           <DialogHeader className="sr-only">

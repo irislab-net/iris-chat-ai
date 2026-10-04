@@ -98,7 +98,7 @@ function ChatMobileEmptyHeroSkeleton() {
           <Bone stagger={1} className="size-14 shrink-0 rounded-full" />
           <Bone
             stagger={2}
-            className="h-7 w-[min(18rem,78%)] max-w-[18rem] rounded-full"
+            className="h-7 w-[min(18rem,78%)] max-w-72 rounded-full"
           />
           <div className={chatEmptyHeroPromptsClass}>
             <Bone
@@ -172,7 +172,7 @@ function ChatPromptsSkeleton() {
     <div className="chat-empty-hero-shell flex min-h-0 flex-1 flex-col items-center justify-center px-4 py-10">
       <div className="mx-auto flex w-full max-w-3xl flex-col items-center gap-5 text-center">
         <Bone className="size-14 shrink-0 rounded-full" />
-        <Bone className="h-7 w-[min(20rem,88%)] max-w-[20rem] rounded-full" />
+        <Bone className="h-7 w-[min(20rem,88%)] max-w-xs rounded-full" />
         <div className={chatEmptyHeroPromptsClass}>
           <Bone className="h-2.5 w-12 self-center rounded-full" />
           <div className="mx-auto grid w-full max-w-md grid-cols-1 gap-2">

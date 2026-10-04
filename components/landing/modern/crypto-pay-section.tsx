@@ -130,7 +130,7 @@ export function CryptoPaySection() {
               <p className={cn(landingTitleCard, "mt-6 text-xl")}>
                 {t("cardTitle")}
               </p>
-              <p className="mt-2 max-w-[18rem] text-sm leading-relaxed text-muted-foreground">
+              <p className="mt-2 max-w-72 text-sm leading-relaxed text-muted-foreground">
                 {t("cardBody")}
               </p>
               <p className="mt-3 font-(family-name:--font-mono-modern) text-[11px] tracking-[0.14em] text-muted-foreground uppercase">

@@ -30,7 +30,7 @@ function ChatReplyChip({
     <div
       className={cn(
         "mb-2 flex items-start gap-2 rounded-2xl border-s-2 border-s-foreground/18 bg-[rgba(118,118,128,0.08)] px-3.5 py-2.5",
-        "dark:border-s-white/22 dark:bg-white/[0.06]",
+        "dark:border-s-white/22 dark:bg-white/6",
         className
       )}
     >

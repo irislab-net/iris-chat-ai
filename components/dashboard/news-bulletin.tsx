@@ -97,23 +97,23 @@ const ASSET_LABELS: Record<(typeof TAPE_ASSETS)[number], string> = {
 function toneSurfaceClass(tone: SentimentTone | null, featured = false) {
   if (tone === "Positive") {
     return featured
-      ? "bg-emerald-500/[0.08] dark:bg-emerald-400/[0.06]"
-      : "bg-emerald-500/[0.045] dark:bg-emerald-400/[0.04]"
+      ? "bg-emerald-500/8 dark:bg-emerald-400/6"
+      : "bg-emerald-500/4.5 dark:bg-emerald-400/4"
   }
   if (tone === "Negative") {
     return featured
-      ? "bg-red-500/[0.08] dark:bg-red-400/[0.06]"
-      : "bg-red-500/[0.045] dark:bg-red-400/[0.04]"
+      ? "bg-red-500/8 dark:bg-red-400/6"
+      : "bg-red-500/4.5 dark:bg-red-400/4"
   }
   return featured ? "bg-muted/30" : "bg-muted/18"
 }
 
 function toneTileClass(tone: SentimentTone) {
   if (tone === "Positive") {
-    return "bg-emerald-500/[0.07] dark:bg-emerald-400/[0.05]"
+    return "bg-emerald-500/7 dark:bg-emerald-400/5"
   }
   if (tone === "Negative") {
-    return "bg-red-500/[0.07] dark:bg-red-400/[0.05]"
+    return "bg-red-500/7 dark:bg-red-400/5"
   }
   return "bg-muted/22"
 }
@@ -127,7 +127,7 @@ function newsToneWashClass(tone: SentimentTone | null) {
 
 function newsToneChipClass(tone: SentimentTone | null) {
   if (!tone) {
-    return "inline-flex items-center gap-1 rounded-full border-0 bg-foreground/[0.08] px-2.5 py-1 text-[11px] font-medium tracking-[0.03em] text-muted-foreground shadow-none dark:bg-white/[0.12]"
+    return "inline-flex items-center gap-1 rounded-full border-0 bg-foreground/8 px-2.5 py-1 text-[11px] font-medium tracking-[0.03em] text-muted-foreground shadow-none dark:bg-white/12"
   }
   return newsToneFilledChipClass(tone)
 }
@@ -148,7 +148,7 @@ function toneGlassFillClass(tone: SentimentTone | null, featured = false) {
       ? "bg-red-500/18 supports-[backdrop-filter]:bg-red-500/14 dark:bg-red-400/16 dark:supports-[backdrop-filter]:bg-red-400/12"
       : "bg-red-500/14 supports-[backdrop-filter]:bg-red-500/11 dark:bg-red-400/13 dark:supports-[backdrop-filter]:bg-red-400/10"
   }
-  return "bg-foreground/[0.035] supports-[backdrop-filter]:bg-foreground/[0.028] dark:bg-white/[0.06] dark:supports-[backdrop-filter]:bg-white/[0.045]"
+  return "bg-foreground/3.5 supports-[backdrop-filter]:bg-foreground/2.8 dark:bg-white/6 dark:supports-[backdrop-filter]:bg-white/4.5"
 }
 
 const newsGlassTileShellClass =
@@ -161,7 +161,7 @@ function newsToneFilledChipClass(tone: SentimentTone) {
   if (tone === "Negative") {
     return "inline-flex items-center gap-1 rounded-full border-0 bg-rose-500/16 px-2.5 py-1 text-[11px] font-medium tracking-[0.03em] text-rose-700 shadow-none dark:bg-rose-400/18 dark:text-rose-300"
   }
-  return "inline-flex items-center gap-1 rounded-full border-0 bg-foreground/[0.08] px-2.5 py-1 text-[11px] font-medium tracking-[0.03em] text-muted-foreground shadow-none dark:bg-white/[0.12]"
+  return "inline-flex items-center gap-1 rounded-full border-0 bg-foreground/8 px-2.5 py-1 text-[11px] font-medium tracking-[0.03em] text-muted-foreground shadow-none dark:bg-white/12"
 }
 
 function toneChipLabel(tone: SentimentTone) {

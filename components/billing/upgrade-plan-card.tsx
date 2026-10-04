@@ -64,7 +64,7 @@ export function UpgradePlanCard({
         "bg-white/38 shadow-[0_16px_48px_rgba(15,23,42,0.08),inset_0_1px_1px_rgba(255,255,255,0.92),inset_0_-1px_2px_rgba(255,255,255,0.28)] backdrop-blur-2xl dark:bg-white/8 dark:shadow-[0_16px_48px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.12),inset_0_-1px_2px_rgba(255,255,255,0.04)]",
         featured && !selected && "bg-white/48 dark:bg-white/10",
         selected &&
-          "bg-white/72 shadow-[0_24px_64px_rgba(15,23,42,0.12),inset_0_1px_1px_rgba(255,255,255,0.98),inset_0_-1px_2px_rgba(255,255,255,0.4)] dark:bg-white/[0.14] dark:shadow-[0_24px_64px_rgba(0,0,0,0.45),inset_0_1px_1px_rgba(255,255,255,0.16),inset_0_-1px_2px_rgba(255,255,255,0.06)]"
+          "bg-white/72 shadow-[0_24px_64px_rgba(15,23,42,0.12),inset_0_1px_1px_rgba(255,255,255,0.98),inset_0_-1px_2px_rgba(255,255,255,0.4)] dark:bg-white/14 dark:shadow-[0_24px_64px_rgba(0,0,0,0.45),inset_0_1px_1px_rgba(255,255,255,0.16),inset_0_-1px_2px_rgba(255,255,255,0.06)]"
       )}
     >
       <span

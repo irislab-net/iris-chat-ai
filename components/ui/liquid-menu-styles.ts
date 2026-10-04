@@ -3,7 +3,7 @@
  * Radius: shell rounded-[28px]; nested rows rounded-2xl.
  */
 const liquidMenuContentClass = [
-  "z-50 max-h-(--available-height) w-auto min-w-[13.5rem] max-w-[min(100vw-1.5rem,18rem)]",
+  "z-50 max-h-(--available-height) w-auto min-w-54 max-w-[min(100vw-1.5rem,18rem)]",
   "flex flex-col gap-1 overflow-x-hidden overflow-y-auto rounded-[28px] border-0 p-2.5",
   "bg-white/55 text-foreground shadow-none ring-0 ring-transparent outline-none",
   "shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_90%,transparent),inset_0_0_0_1px_color-mix(in_oklch,var(--foreground)_7%,transparent),0_18px_52px_-18px_color-mix(in_oklch,var(--foreground)_20%,transparent)]",

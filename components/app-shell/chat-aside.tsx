@@ -2602,7 +2602,7 @@ function ChatAside({
                             className={cn(
                               isMobileOverlay
                                 ? chatMobileEmptyHeroTitleClass
-                                : "max-w-[20rem] text-[28px] leading-8.5 font-light tracking-[0.01em] text-balance text-foreground"
+                                : "max-w-xs text-[28px] leading-8.5 font-light tracking-[0.01em] text-balance text-foreground"
                             )}
                           >
                             {mobileGreeting}

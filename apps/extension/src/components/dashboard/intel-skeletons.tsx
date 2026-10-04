@@ -73,7 +73,7 @@ function NewsBulletinSkeleton({
           {Array.from({ length: 4 }, (_, index) => (
             <Bone
               key={index}
-              className="h-14 w-[4.75rem] shrink-0 rounded-2xl"
+              className="h-14 w-19 shrink-0 rounded-2xl"
             />
           ))}
         </div>

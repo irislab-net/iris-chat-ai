@@ -129,7 +129,7 @@ function SharePreviewCard({
     <div
       ref={captureRef}
       className={cn(
-        "relative mx-auto w-full max-w-[22rem] overflow-hidden rounded-[1.35rem] bg-[#f7f8fa] text-[#0f172a] shadow-[0_12px_40px_-18px_rgba(15,23,42,0.28)]",
+        "relative mx-auto w-full max-w-88 overflow-hidden rounded-[1.35rem] bg-[#f7f8fa] text-[#0f172a] shadow-[0_12px_40px_-18px_rgba(15,23,42,0.28)]",
         "dark:bg-[#2a2a2a] dark:text-[#f8fafc] dark:shadow-[0_12px_40px_-18px_rgba(0,0,0,0.55)]"
       )}
       style={{
@@ -159,7 +159,7 @@ function SharePreviewCard({
       </header>
 
       <div className="px-4 pb-4">
-        <div className="rounded-2xl bg-white px-3.5 py-3 dark:bg-white/[0.08]">
+        <div className="rounded-2xl bg-white px-3.5 py-3 dark:bg-white/8">
           <p className="text-[10px] font-medium tracking-[0.08em] text-black/45 uppercase dark:text-white/45">
             {t("noTradeReasonHeading")}
           </p>
@@ -169,7 +169,7 @@ function SharePreviewCard({
         </div>
       </div>
 
-      <footer className="flex items-center justify-between gap-3 border-t border-black/6 bg-white px-4 py-3 dark:border-white/8 dark:bg-white/[0.08]">
+      <footer className="flex items-center justify-between gap-3 border-t border-black/6 bg-white px-4 py-3 dark:border-white/8 dark:bg-white/8">
         <div className="flex min-w-0 items-center gap-2">
           {/* eslint-disable-next-line @next/next/no-img-element -- capture-safe raster logo */}
           <img
@@ -328,7 +328,7 @@ function ChatNoTradeShareDialog({
         <DialogContent
           className={cn(
             chatDesktopDialogClass,
-            "flex h-auto max-h-none w-full flex-col gap-0 overflow-visible sm:max-w-[26rem]"
+            "flex h-auto max-h-none w-full flex-col gap-0 overflow-visible sm:max-w-104"
           )}
           showCloseButton
           gsapMotion

@@ -59,7 +59,7 @@ function TermText({ text, className }: TermTextProps) {
             <TooltipContent
               side="top"
               sideOffset={6}
-              className="max-w-[16.5rem] flex-col items-start gap-0.5 py-2"
+              className="max-w-66 flex-col items-start gap-0.5 py-2"
             >
               <span className="font-medium">{segment.term}</span>
               <span className="opacity-90">{segment.definition}</span>

@@ -76,10 +76,10 @@ function IrisMark({
       />
       <span
         className={cn(
-          "relative z-10 flex size-full items-center justify-center overflow-hidden rounded-full p-[3px]",
+          "relative z-10 flex size-full items-center justify-center overflow-hidden rounded-full p-0.75",
           "border-0 bg-white/44 shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_88%,transparent),inset_0_0_0_1px_color-mix(in_oklch,var(--foreground)_8%,transparent),0_1px_2px_color-mix(in_oklch,var(--foreground)_4%,transparent),0_14px_36px_-14px_color-mix(in_oklch,var(--foreground)_14%,transparent)]",
           "backdrop-blur-2xl backdrop-saturate-180 supports-backdrop-filter:bg-white/28",
-          "dark:bg-white/10 dark:shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_16%,transparent),0_14px_40px_-16px_color-mix(in_oklch,black_55%,transparent)] dark:supports-backdrop-filter:bg-white/[0.07]"
+          "dark:bg-white/10 dark:shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_16%,transparent),0_14px_40px_-16px_color-mix(in_oklch,black_55%,transparent)] dark:supports-backdrop-filter:bg-white/7"
         )}
       >
         <span

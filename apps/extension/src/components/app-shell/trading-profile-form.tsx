@@ -202,7 +202,7 @@ function TradingProfileForm({
         <p className="mt-5 text-[17px] font-semibold tracking-tight text-foreground">
           {t("introTitle")}
         </p>
-        <p className="mx-auto mt-2 max-w-[20rem] text-[14px] leading-relaxed text-muted-foreground">
+        <p className="mx-auto mt-2 max-w-xs text-[14px] leading-relaxed text-muted-foreground">
           {t("introBody")}
         </p>
       </div>
@@ -385,7 +385,7 @@ function IntroIllustration() {
       <span className="pointer-events-none absolute inset-x-8 top-1/2 h-16 -translate-y-1/2 rounded-full bg-[#2563EB]/18 blur-2xl dark:bg-[#2563EB]/28" />
       <span
         className={cn(
-          "relative inline-flex size-[4.75rem] items-center justify-center overflow-hidden rounded-full",
+          "relative inline-flex size-19 items-center justify-center overflow-hidden rounded-full",
           "border-0 bg-white/70 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.9),inset_0_0_0_1px_rgba(15,23,42,0.06),0_1px_2px_rgba(15,23,42,0.04),0_18px_40px_-16px_rgba(37,99,235,0.45)]",
           "backdrop-blur-2xl backdrop-saturate-150 supports-backdrop-filter:bg-white/45",
           "dark:bg-[oklch(0.24_0_0_/0.9)] dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.12),0_18px_44px_-18px_rgba(0,0,0,0.55)] dark:supports-backdrop-filter:bg-[oklch(0.22_0_0_/0.78)]"

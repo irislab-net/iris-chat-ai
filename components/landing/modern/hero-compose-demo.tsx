@@ -130,7 +130,7 @@ function HeroGlassAvatar({
       aria-hidden
       className={cn(
         landingGlassPill,
-        "inline-flex size-12 shrink-0 items-center justify-center rounded-full p-[3px] sm:size-[3.25rem]",
+        "inline-flex size-12 shrink-0 items-center justify-center rounded-full p-0.75 sm:size-13",
         "shadow-[0_14px_40px_rgba(15,23,42,0.1),inset_0_1px_1px_rgba(255,255,255,0.98),inset_0_-1px_2px_rgba(255,255,255,0.35)]",
         "dark:shadow-[0_14px_40px_rgba(0,0,0,0.45),inset_0_1px_1px_rgba(255,255,255,0.16),inset_0_-1px_2px_rgba(255,255,255,0.05)]",
         className

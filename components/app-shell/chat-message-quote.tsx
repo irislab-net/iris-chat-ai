@@ -24,7 +24,7 @@ function ChatMessageQuote({
       className={cn(
         "mb-2 w-full rounded-2xl border-s-2 border-s-foreground/18 bg-[rgba(118,118,128,0.08)] px-3.5 py-2.5 text-start transition-[background-color,transform] duration-150",
         "hover:bg-[rgba(118,118,128,0.12)] active:scale-[0.995]",
-        "dark:border-s-white/22 dark:bg-white/[0.06] dark:hover:bg-white/[0.1]",
+        "dark:border-s-white/22 dark:bg-white/6 dark:hover:bg-white/10",
         className
       )}
       onClick={() => {

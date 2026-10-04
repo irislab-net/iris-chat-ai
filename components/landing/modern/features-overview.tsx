@@ -195,7 +195,7 @@ function HeroFlowPreview({
     <ol className="relative m-0 flex list-none flex-col gap-0 p-0">
       <span
         aria-hidden
-        className="absolute start-5 top-6 bottom-6 w-px bg-foreground/10"
+        className="absolute inset-s-5 top-6 bottom-6 w-px bg-foreground/10"
       />
       {labels.map(({ key, title }) => {
         const Mark = FEATURES_DESK_MARKS[key]

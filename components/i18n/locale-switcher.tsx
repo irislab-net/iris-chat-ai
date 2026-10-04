@@ -83,7 +83,7 @@ export function LocaleSwitcher({
         sideOffset={10}
         className={cn(
           landingGlassSurface,
-          "w-auto min-w-[13rem] rounded-2xl border-0 bg-white/78 p-1.5 ring-0",
+          "w-auto min-w-52 rounded-2xl border-0 bg-white/78 p-1.5 ring-0",
           "shadow-[0_22px_60px_rgba(15,23,42,0.12),inset_0_1px_1px_rgba(255,255,255,0.95),inset_0_-1px_2px_rgba(255,255,255,0.28)]",
           "dark:bg-background/82 dark:shadow-[0_22px_60px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.12),inset_0_-1px_2px_rgba(255,255,255,0.04)]"
         )}

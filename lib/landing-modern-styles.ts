@@ -144,7 +144,7 @@ export const landingGlassBubbleThinking = `${landingGlassSurface} rounded-3xl ro
  * instead of leaving a hard rectangular fringe on mobile WebKit.
  */
 export const landingHeroGlass =
-  "relative flex min-h-[30rem] flex-col overflow-hidden bg-white/40 text-foreground shadow-[0_28px_80px_rgba(15,23,42,0.07)] backdrop-blur-2xl dark:bg-white/6 dark:shadow-[0_28px_80px_rgba(0,0,0,0.45)] sm:min-h-[32rem] lg:min-h-[36rem]"
+  "relative flex min-h-120 flex-col overflow-hidden bg-white/40 text-foreground shadow-[0_28px_80px_rgba(15,23,42,0.07)] backdrop-blur-2xl dark:bg-white/6 dark:shadow-[0_28px_80px_rgba(0,0,0,0.45)] sm:min-h-128 lg:min-h-144"
 
 /**
  * Compose block — fixed rows + gaps (no layout shift).

@@ -19,6 +19,10 @@ export type AppFeatureId = (typeof APP_FEATURE_IDS)[number]
 
 export type AppFeaturePrefs = Record<AppFeatureId, boolean>
 
+/** Settings-sheet row order (tools, then surfaces). */
+export const APP_FEATURE_SETTINGS_ORDER: readonly AppFeatureId[] =
+  APP_FEATURE_IDS
+
 /** Public env keys for each feature (Vercel / .env.local). */
 export const APP_FEATURE_ENV_KEYS: Record<AppFeatureId, string> = {
   signal: "NEXT_PUBLIC_FEATURE_SIGNAL",
