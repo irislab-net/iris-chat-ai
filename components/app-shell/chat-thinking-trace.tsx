@@ -107,6 +107,13 @@ function ChatThinkingTrace({
     durationSec && durationSec > 0 ? durationSec : null
   )
 
+  // Stable identity — Base UI warns if `defaultValue` gets a fresh [] each render.
+  const accordionDefaultValue = React.useMemo(
+    () => (live || defaultOpen ? ["thinking"] : []),
+    [live, defaultOpen]
+  )
+
+  // Adjust local freeze when the parent passes a completed duration (render-time sync).
   if (durationSec && durationSec > 0 && frozenSec !== durationSec) {
     setFrozenSec(durationSec)
   }
@@ -164,8 +171,8 @@ function ChatThinkingTrace({
 
   return (
     <Accordion
-      key={live ? "thinking-live" : "thinking-done"}
-      defaultValue={live || defaultOpen ? ["thinking"] : []}
+      key={live ? "thinking-live" : defaultOpen ? "thinking-open" : "thinking-done"}
+      defaultValue={accordionDefaultValue}
       className={cn(chatThinkingShellClass, className)}
       data-chat-thinking=""
       data-live={live ? "" : undefined}

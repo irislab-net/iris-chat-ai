@@ -19,6 +19,7 @@ export function SkipToContent({ className }: { className?: string }) {
         "focus:ring-3 focus:ring-ring/50 focus:outline-none",
         className
       )}
+      suppressHydrationWarning
     >
       {t("skipToContent")}
     </a>

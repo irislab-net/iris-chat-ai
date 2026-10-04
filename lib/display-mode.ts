@@ -1,20 +1,25 @@
+type StandaloneWindow = Window & {
+  navigator: Navigator & { standalone?: boolean }
+}
+
 /** True when the app is running as an installed Home Screen / standalone PWA. */
-export function isStandaloneDisplay(
-  win: Window & { navigator: Navigator & { standalone?: boolean } } = window
-): boolean {
-  if (typeof win === "undefined") return false
+export function isStandaloneDisplay(win?: StandaloneWindow): boolean {
+  if (typeof window === "undefined") return false
+  const target = win ?? (window as StandaloneWindow)
   try {
-    if (win.document.documentElement.classList.contains("display-standalone")) {
+    if (
+      target.document.documentElement.classList.contains("display-standalone")
+    ) {
       return true
     }
   } catch {
     // ignore
   }
   try {
-    if (win.matchMedia("(display-mode: standalone)").matches) return true
-    if (win.matchMedia("(display-mode: fullscreen)").matches) return true
+    if (target.matchMedia("(display-mode: standalone)").matches) return true
+    if (target.matchMedia("(display-mode: fullscreen)").matches) return true
   } catch {
     // ignore
   }
-  return win.navigator.standalone === true
+  return target.navigator.standalone === true
 }

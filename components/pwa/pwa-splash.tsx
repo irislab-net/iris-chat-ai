@@ -91,10 +91,13 @@ export function PwaSplash() {
       role="status"
       aria-live="polite"
       aria-label={t("loadingExur")}
+      // Chrome-init may toggle standalone classes before React hydrates; ignore
+      // attribute drift on this shell so the splash can stay SSR’d for PWA.
+      suppressHydrationWarning
     >
-      <div className="pwa-splash-inner">
+      <div className="pwa-splash-inner" suppressHydrationWarning>
         <IrisMark variant="hero" className="pwa-splash-mark size-16" />
-        <p className="pwa-splash-title">
+        <p className="pwa-splash-title" suppressHydrationWarning>
           <span className="pwa-splash-name">{SITE_NAME}</span>
         </p>
         <div className="pwa-splash-dots" aria-hidden>
