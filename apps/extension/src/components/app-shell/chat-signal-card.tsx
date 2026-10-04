@@ -3,9 +3,7 @@
 import * as React from "react"
 import {
   BookmarkIcon,
-  CheckIcon,
   ClockIcon,
-  CopyIcon,
   CrosshairIcon,
   FlagIcon,
   HexagonIcon,
@@ -17,7 +15,6 @@ import {
   type LucideIcon,
 } from "lucide-react"
 import { useTranslations } from "next-intl"
-import { showAppErrorToast } from "@/components/ui/app-toast"
 
 import {
   chatSignalCardChipClass,
@@ -38,7 +35,6 @@ import { Button } from "@/components/ui/button"
 import { useAppFeatureVisible } from "@/hooks/use-app-feature-prefs"
 import { trackChatSignalWatchlist } from "@/lib/analytics"
 import { signalRewardRiskRatio } from "@/lib/chat/signal-setup"
-import { buildSignalShareText } from "@/lib/chat/signal-share"
 import { formatTradePrice } from "@/lib/chat/trade-signal"
 import type { PaperTradeTicket } from "@/lib/chat/signal-ticket"
 import { cn } from "@/lib/utils"
@@ -169,12 +165,6 @@ function ChatSignalCard({
   const { isProUser } = useAuth()
   const showWatchlist = useAppFeatureVisible("watchlist")
   const [premiumOpen, setPremiumOpen] = React.useState(false)
-  const [levelsCopied, setLevelsCopied] = React.useState(false)
-  const levelsCopyTimerRef = React.useRef(0)
-
-  React.useEffect(() => {
-    return () => window.clearTimeout(levelsCopyTimerRef.current)
-  }, [])
   const isLong = ticket.side === "LONG"
   const isNeutral = tone === "neutral"
   const SideIcon = isLong ? TrendingUpIcon : TrendingDownIcon
@@ -198,25 +188,6 @@ function ChatSignalCard({
       side: ticket.side,
     })
     setPremiumOpen(true)
-  }
-
-  async function onCopyLevels() {
-    const text = buildSignalShareText(ticket, {
-      entry: t("signalCardEntry"),
-      stopLoss: t("signalCardStopLoss"),
-      target: t("signalCardTakeProfit"),
-    })
-    try {
-      await navigator.clipboard.writeText(text)
-      setLevelsCopied(true)
-      window.clearTimeout(levelsCopyTimerRef.current)
-      levelsCopyTimerRef.current = window.setTimeout(
-        () => setLevelsCopied(false),
-        1600
-      )
-    } catch {
-      showAppErrorToast({ title: t("signalShareCopyFailed") })
-    }
   }
 
   const priceColumns: PriceColumn[] = [
@@ -376,48 +347,21 @@ function ChatSignalCard({
           </div>
         ) : null}
 
-        {!proseSkeleton ? (
+        {!proseSkeleton && showWatchlist ? (
           <div className="flex flex-wrap items-center justify-center gap-1">
             <Button
               type="button"
               variant="ghost"
               size="sm"
               className="h-7 gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground"
-              aria-label={
-                levelsCopied
-                  ? t("signalShareCopied")
-                  : t("signalCardCopyLevels")
-              }
-              onClick={() => void onCopyLevels()}
+              aria-label={t("signalCardWatchlist")}
+              onClick={onAddToWatchlist}
             >
-              {levelsCopied ? (
-                <CheckIcon className="size-3.5" />
-              ) : (
-                <CopyIcon className="size-3.5" />
-              )}
-              {levelsCopied
-                ? t("signalShareCopied")
-                : t("signalCardCopyLevels")}
+              <BookmarkIcon className="size-3.5" />
+              {t("signalCardWatchlist")}
             </Button>
-            {showWatchlist ? (
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                className="h-7 gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground"
-                aria-label={t("signalCardWatchlist")}
-                onClick={onAddToWatchlist}
-              >
-                <BookmarkIcon className="size-3.5" />
-                {t("signalCardWatchlist")}
-              </Button>
-            ) : null}
           </div>
         ) : null}
-
-        <p className="text-center text-[9px] tracking-[0.08em] text-muted-foreground/70 uppercase">
-          {t("signalCardDisclaimer")}
-        </p>
       </div>
 
       {showWatchlist ? (

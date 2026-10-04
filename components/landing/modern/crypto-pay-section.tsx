@@ -124,7 +124,7 @@ export function CryptoPaySection() {
                 <ShimmerToken currency="USDT" className="relative z-10 scale-125" />
                 <ShimmerToken
                   currency="USDC"
-                  className="relative z-0 -ms-4 scale-125"
+                  className="relative z-0 -ms-2 scale-125"
                 />
               </div>
               <p className={cn(landingTitleCard, "mt-6 text-xl")}>
