@@ -1415,3 +1415,26 @@ html.display-standalone[data-app-shell="true"] [data-slot="sheet-content"] .app-
   }
 }
 
+/*
+ * Account / settings view-stack push: freeze live backdrop-filter and paint
+ * opaque panel fills while panels translate. Transform + blur on the same
+ * sheet was muddy (sibling bleed) and expensive (Safari re-blurs each frame).
+ */
+[data-slot="sheet-surface"].chat-sheet-glass[data-view-transitioning] {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  background: color-mix(in oklch, white 94%, transparent) !important;
+}
+
+:is(.dark) [data-slot="sheet-surface"].chat-sheet-glass[data-view-transitioning] {
+  background: oklch(0.22 0 0 / 0.98) !important;
+}
+
+[data-slot="chat-gsap-view-stack"][data-transitioning] > [data-view] {
+  background: color-mix(in oklch, white 96%, transparent);
+}
+
+:is(.dark) [data-slot="chat-gsap-view-stack"][data-transitioning] > [data-view] {
+  background: oklch(0.22 0 0);
+}
+

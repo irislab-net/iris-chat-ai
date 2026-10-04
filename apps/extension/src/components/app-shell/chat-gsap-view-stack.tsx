@@ -4,6 +4,7 @@ import * as React from "react"
 
 import { transitionChatViews } from "@/lib/chat-gsap-transitions"
 import {
+  getChatGsapSync,
   loadChatGsap,
   prefersChatReducedMotion,
 } from "@/lib/chat-motion"
@@ -60,13 +61,19 @@ function ChatGsapViewStack({
     []
   )
 
+  // Warm GSAP so the first push can start sync in useLayoutEffect.
+  React.useEffect(() => {
+    void loadChatGsap()
+  }, [])
+
   // Initial paint only — transitions own visibility after that.
   React.useLayoutEffect(() => {
     if (!skipFirstRef.current) return
     syncVisibility(active, { hideOthers: true })
   }, [active, syncVisibility])
 
-  React.useEffect(() => {
+  // Layout effect: park + start timeline before browser paint (avoids stacked flash).
+  React.useLayoutEffect(() => {
     const root = rootRef.current
     if (!root) return
 
@@ -104,23 +111,77 @@ function ChatGsapViewStack({
       return
     }
 
+    const enterFrom = enterFromSign * 100
+    const syncGsap = getChatGsapSync()
+    const sheetSurface = root.closest<HTMLElement>("[data-slot='sheet-surface']")
+
+    // Freeze live backdrop-filter + fill panels opaque while sliding so
+    // transparent glass views don't bleed into each other (muddy "lag" look).
+    const beginTransitionPaint = () => {
+      root.setAttribute("data-transitioning", "")
+      sheetSurface?.setAttribute("data-view-transitioning", "")
+    }
+    const endTransitionPaint = () => {
+      root.removeAttribute("data-transitioning")
+      sheetSurface?.removeAttribute("data-view-transitioning")
+    }
+    beginTransitionPaint()
+
+    // Park via GSAP when available — CSS translate + GSAP xPercent was
+    // composing to ~200% offscreen.
+    if (syncGsap) {
+      syncGsap.set(currentView, {
+        xPercent: 0,
+        opacity: 1,
+        scale: 1,
+        force3D: true,
+      })
+      syncGsap.set(nextView, {
+        xPercent: enterFrom,
+        opacity: 1,
+        scale: 1,
+        force3D: true,
+      })
+    } else {
+      nextView.style.transform = `translate3d(${enterFrom}%, 0, 0)`
+      nextView.style.opacity = "1"
+      currentView.style.transform = "translate3d(0, 0, 0)"
+      currentView.style.opacity = "1"
+    }
+
     let cancelled = false
-    void loadChatGsap().then((gsap) => {
+    const startTimeline = (
+      gsap: NonNullable<ReturnType<typeof getChatGsapSync>>,
+      viaSync: boolean
+    ) => {
       if (cancelled) return
+      // Drop CSS park before GSAP owns transforms (cold-load path only).
+      if (!viaSync) {
+        nextView.style.transform = ""
+        currentView.style.transform = ""
+      }
       tlRef.current?.kill()
       tlRef.current = transitionChatViews(gsap, {
         currentView,
         nextView,
         enterFromSign,
         onComplete: () => {
+          endTransitionPaint()
           if (cancelled) return
           syncVisibility(active, { hideOthers: true })
         },
       })
-    })
+    }
+
+    if (syncGsap) {
+      startTimeline(syncGsap, true)
+    } else {
+      void loadChatGsap().then((gsap) => startTimeline(gsap, false))
+    }
 
     return () => {
       cancelled = true
+      endTransitionPaint()
       tlRef.current?.kill()
       tlRef.current = null
     }

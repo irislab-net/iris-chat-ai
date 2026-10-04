@@ -670,22 +670,22 @@ function ChatAccountSheet({
                     }}
                   />
                 ) : null}
+
+                {user ? (
+                  <SheetPill
+                    icon={<SfLogoutIcon className="size-5.5 shrink-0" />}
+                    label={t("logOut")}
+                    destructive
+                    onClick={() => {
+                      closeSheet()
+                      void onLogout?.()
+                    }}
+                  />
+                ) : null}
               </div>
             </div>
 
-            {user ? (
-              <div className="mt-auto shrink-0 px-4 pb-2 pt-1">
-                <SheetPill
-                  icon={<SfLogoutIcon className="size-5.5 shrink-0" />}
-                  label={t("logOut")}
-                  destructive
-                  onClick={() => {
-                    closeSheet()
-                    void onLogout?.()
-                  }}
-                />
-              </div>
-            ) : (
+            {!user ? (
               <div className="mt-auto shrink-0 px-4 pb-2 pt-1">
                 <Button
                   type="button"
@@ -700,7 +700,7 @@ function ChatAccountSheet({
                   {loginPending ? t("connecting") : t("signIn")}
                 </Button>
               </div>
-            )}
+            ) : null}
 
             <footer className="flex shrink-0 items-center justify-center gap-2 px-4 pt-2 pb-[max(1rem,env(safe-area-inset-bottom,0px))] text-[12px] text-foreground/55">
               <a

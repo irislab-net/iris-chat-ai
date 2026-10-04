@@ -152,7 +152,7 @@ describe("chat gsap transition builders", () => {
     )
   })
 
-  it("transitionChatViews runs current + next in parallel", () => {
+  it("transitionChatViews runs a parallel full-width push", () => {
     const gsap = createMockGsap()
     const currentView = el()
     const nextView = el()
@@ -162,15 +162,20 @@ describe("chat gsap transition builders", () => {
     expect(gsap._timeline.to).toHaveBeenCalledWith(
       currentView,
       expect.objectContaining({
-        scale: CHAT_MOTION.viewRecedeScale,
-        opacity: CHAT_MOTION.viewRecedeOpacity,
+        xPercent: -CHAT_MOTION.viewXPercent,
+        duration: CHAT_MOTION.viewDuration,
+        ease: CHAT_MOTION.viewEase,
       }),
       0
     )
     expect(gsap._timeline.fromTo).toHaveBeenCalledWith(
       nextView,
       expect.objectContaining({ xPercent: 100 }),
-      expect.objectContaining({ xPercent: 0 }),
+      expect.objectContaining({
+        xPercent: 0,
+        duration: CHAT_MOTION.viewDuration,
+        ease: CHAT_MOTION.viewEase,
+      }),
       0
     )
   })

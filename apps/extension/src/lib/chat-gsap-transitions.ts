@@ -40,7 +40,10 @@ export type ChatViewTransitionOpts = {
 
 function killInlineTransform(gsap: GsapCore, el: HTMLElement | null | undefined) {
   if (!el) return
-  gsap.set(el, { clearProps: "transform,translate,x,y,xPercent,yPercent,scale,opacity" })
+  gsap.set(el, {
+    clearProps:
+      "transform,translate,x,y,xPercent,yPercent,scale,opacity,zIndex",
+  })
 }
 
 /** Open drawer: scrim fade + panel slide in (shared start time). */
@@ -283,19 +286,20 @@ export function transitionChatViews(
 
   if (reducedMotion) {
     gsap.set(currentView, { autoAlpha: 0 })
-    gsap.set(nextView, { display: "block", autoAlpha: 1, xPercent: 0 })
+    gsap.set(nextView, { autoAlpha: 1, xPercent: 0 })
     tl.set({}, {}, 0)
     return tl
   }
 
   const enterFrom = enterFromSign * CHAT_MOTION.viewXPercent
 
+  // Parallel push. Callers freeze sheet backdrop-filter + paint opaque panel
+  // fills while moving (see ChatGsapViewStack) so glass doesn't mud/jank.
+  // Do not tween `display` — keep flex.
   tl.to(
     currentView,
     {
-      xPercent: -enterFromSign * CHAT_MOTION.viewRecedeXPercent,
-      opacity: CHAT_MOTION.viewRecedeOpacity,
-      scale: CHAT_MOTION.viewRecedeScale,
+      xPercent: -enterFrom,
       duration: CHAT_MOTION.viewDuration,
       ease: CHAT_MOTION.viewEase,
       force3D: true,
@@ -304,15 +308,13 @@ export function transitionChatViews(
   ).fromTo(
     nextView,
     {
-      display: "block",
       xPercent: enterFrom,
-      opacity: 1,
       force3D: true,
     },
     {
       xPercent: 0,
-      duration: CHAT_MOTION.viewDuration + 0.05,
-      ease: CHAT_MOTION.ease,
+      duration: CHAT_MOTION.viewDuration,
+      ease: CHAT_MOTION.viewEase,
     },
     0
   )

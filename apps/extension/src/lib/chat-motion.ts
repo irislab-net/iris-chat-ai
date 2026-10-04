@@ -28,13 +28,13 @@ export const CHAT_MOTION = {
   popupFromScale: 0.8,
   popupToScale: 0.9,
   popupEase: "back.out(1.7)",
-  /** Chat → settings (or similar) push transition. */
-  viewDuration: 0.3,
-  viewEase: "power2.inOut",
+  /** Chat → settings push: full-width parallel slide (opaque panels while moving). */
+  viewDuration: 0.28,
+  viewEase: "power3.out",
   viewXPercent: 100,
-  viewRecedeXPercent: 30,
-  viewRecedeOpacity: 0.5,
-  viewRecedeScale: 0.95,
+  viewRecedeXPercent: 100,
+  viewRecedeOpacity: 1,
+  viewRecedeScale: 1,
 } as const
 
 const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)"
@@ -64,11 +64,20 @@ export function useChatReducedMotion(): boolean {
 type GsapCore = typeof import("gsap").gsap
 
 let gsapPromise: Promise<GsapCore> | null = null
+let gsapCached: GsapCore | null = null
+
+/** Sync handle after the first successful `loadChatGsap()` (null until then). */
+export function getChatGsapSync(): GsapCore | null {
+  return gsapCached
+}
 
 /** Lazy-load gsap so it stays out of the static chat graph. */
 export function loadChatGsap(): Promise<GsapCore> {
   if (!gsapPromise) {
-    gsapPromise = import("gsap").then((mod) => mod.gsap)
+    gsapPromise = import("gsap").then((mod) => {
+      gsapCached = mod.gsap
+      return mod.gsap
+    })
   }
   return gsapPromise
 }
