@@ -1162,8 +1162,13 @@ function ChatComposer({
       }
     }
 
-    // Enter = newline. Shift+Enter = send (floating + desktop).
-    if (event.key === "Enter" && event.shiftKey) {
+    // Desktop: Enter = send, Shift+Enter = newline.
+    // Mobile: Enter = newline (soft keyboard); never send on Enter.
+    if (
+      event.key === "Enter" &&
+      !event.shiftKey &&
+      isDesktop === true
+    ) {
       event.preventDefault()
       send()
     }
