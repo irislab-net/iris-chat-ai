@@ -273,6 +273,11 @@
 /* iOS Safari: stacked backdrop-filter on many table/code cards OOMs WebKit
  * when loading long history. Opaque fills keep the surface without blur cost. */
 @media (max-width: 639px) {
+  [data-streamdown] {
+    content-visibility: visible !important;
+    contain-intrinsic-size: none !important;
+  }
+
   [data-streamdown="table-wrapper"],
   [data-streamdown="code-block"] {
     background: color-mix(in oklch, var(--background) 92%, white) !important;

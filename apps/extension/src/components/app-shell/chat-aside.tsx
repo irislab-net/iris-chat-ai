@@ -2035,7 +2035,11 @@ function ChatAside({
       raf = window.requestAnimationFrame(() => {
         raf = 0
         if (scrollFollowRafRef.current != null) {
-          setShowScrollDown(false)
+          setShowScrollDown((prev) => (prev ? false : prev))
+          return
+        }
+        if (forcePinRef.current) {
+          setShowScrollDown((prev) => (prev ? false : prev))
           return
         }
         syncScrollDown("scroll")
@@ -2443,6 +2447,7 @@ function ChatAside({
                 <ScrollArea
                   viewportRef={scrollViewportRef}
                   className="h-full min-h-0"
+                  native={isMobileOverlay}
                 >
                   {isMobileOverlay && messages.length > 0 ? (
                     <div

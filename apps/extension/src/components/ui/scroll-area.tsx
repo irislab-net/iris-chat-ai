@@ -9,10 +9,34 @@ function ScrollArea({
   className,
   children,
   viewportRef,
+  native = false,
   ...props
 }: ScrollAreaPrimitive.Root.Props & {
   viewportRef?: React.Ref<HTMLDivElement>
+  /**
+   * Native overflow scroller — skips Base UI thumb/overflow-edge work that
+   * re-renders on every scroll frame. Prefer on long mobile chat threads
+   * (iOS WebKit crashes under that load).
+   */
+  native?: boolean
 }) {
+  if (native) {
+    return (
+      <div
+        data-slot="scroll-area"
+        className={cn("relative", className)}
+      >
+        <div
+          ref={viewportRef}
+          data-slot="scroll-area-viewport"
+          className="size-full overflow-y-auto overscroll-y-contain outline-none scrollbar-none [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+        >
+          {children}
+        </div>
+      </div>
+    )
+  }
+
   return (
     <ScrollAreaPrimitive.Root
       data-slot="scroll-area"

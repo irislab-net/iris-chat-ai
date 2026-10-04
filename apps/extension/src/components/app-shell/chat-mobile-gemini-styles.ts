@@ -118,9 +118,13 @@ const chatMobileThreadFirstTurnClass = "mt-4 sm:mt-5"
 const chatMobileThreadBottomSpacerClass =
   "h-[calc(8.75rem+env(safe-area-inset-bottom,0px))] shrink-0"
 
-/** Bottom blur + fade overlay — strip behind floating composer. */
+/**
+ * Bottom fade behind floating composer.
+ * Gradient only — no backdrop-filter / mask-image. Those crash iOS WebKit
+ * when content scrolls underneath fixed compositor layers.
+ */
 const chatMobileThreadBottomFadeClass =
-  "pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-28 bg-gradient-to-t from-background/80 from-0% via-background/35 via-40% to-transparent to-100% backdrop-blur-[6px] backdrop-saturate-150 [mask-image:linear-gradient(to_top,black_0%,black_28%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_top,black_0%,black_28%,transparent_100%)] supports-[backdrop-filter]:from-background/55 supports-[backdrop-filter]:via-background/15 supports-[backdrop-filter]:to-transparent"
+  "pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-28 bg-gradient-to-t from-background from-0% via-background/55 via-40% to-transparent to-100% dark:from-background dark:via-background/60"
 
 /**
  * Header overlay shell — floats over the thread (Gemini absolute chrome).
@@ -129,11 +133,11 @@ const chatMobileThreadBottomFadeClass =
 const chatMobileHeaderShellClass = "absolute inset-x-0 top-0 z-20"
 
 /**
- * Soft header fade — mostly transparent so thread text ghosts under the
- * glass controls (Gemini), solid only near the very top edge.
+ * Soft header fade — gradient only (no blur/mask) so scrolling the thread
+ * under chrome does not OOM iOS Safari's Web Content process.
  */
 const chatMobileHeaderScrimClass =
-  "pointer-events-none absolute inset-x-0 top-0 -bottom-12 z-0 bg-gradient-to-b from-background/70 from-0% via-background/25 via-45% to-transparent to-100% backdrop-blur-md backdrop-saturate-150 [mask-image:linear-gradient(to_bottom,black_0%,black_42%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_bottom,black_0%,black_42%,transparent_100%)] supports-[backdrop-filter]:from-background/45 supports-[backdrop-filter]:via-background/12 supports-[backdrop-filter]:to-transparent dark:from-background/75 dark:via-background/30 dark:supports-[backdrop-filter]:from-background/55 dark:supports-[backdrop-filter]:via-background/18"
+  "pointer-events-none absolute inset-x-0 top-0 -bottom-12 z-0 bg-gradient-to-b from-background from-0% via-background/50 via-45% to-transparent to-100% dark:from-background dark:via-background/55"
 
 /** Floating composer dock — absolute over the thread bottom. */
 const chatMobileComposerDockClass =
@@ -317,7 +321,7 @@ const chatComposerPasteChipCloseClass =
   "flex size-5 shrink-0 items-center justify-center rounded-full text-muted-foreground/60 transition-[color,background-color,transform] duration-150 hover:bg-foreground/8 hover:text-foreground active:scale-95"
 
 const chatMobileScrollDownClass =
-  `absolute bottom-[calc(4.875rem+env(safe-area-inset-bottom,0px))] left-1/2 z-10 size-9 -translate-x-1/2 rounded-full border border-white/35 bg-white/[0.18] text-foreground backdrop-blur-[22px] backdrop-saturate-[190%] supports-[backdrop-filter]:bg-white/[0.12] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.72),0_2px_10px_-3px_rgba(0,0,0,0.06),0_8px_24px_-10px_rgba(0,0,0,0.1)] transition-[transform,background-color,box-shadow,border-color] duration-150 ease-out hover:border-white/55 hover:bg-white/[0.32] active:scale-[0.96] dark:border-white/16 dark:bg-white/[0.10] dark:supports-[backdrop-filter]:bg-white/[0.07] dark:hover:border-white/28 dark:hover:bg-white/[0.18]`
+  `absolute bottom-[calc(4.875rem+env(safe-area-inset-bottom,0px))] left-1/2 z-10 size-9 -translate-x-1/2 rounded-full border border-border/50 bg-background/95 text-foreground shadow-[0_2px_10px_-3px_rgba(0,0,0,0.08),0_8px_24px_-10px_rgba(0,0,0,0.12)] transition-[transform,background-color,box-shadow,border-color] duration-150 ease-out hover:border-border hover:bg-background active:scale-[0.96] dark:border-white/16 dark:bg-background/92 dark:hover:border-white/28 dark:hover:bg-background`
 
 const chatMobileDrawerSurfaceClass = "bg-background text-foreground"
 

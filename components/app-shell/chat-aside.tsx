@@ -2150,7 +2150,12 @@ function ChatAside({
         raf = 0
         // Ignore scroll events produced by our soft-follow RAF.
         if (scrollFollowRafRef.current != null) {
-          setShowScrollDown(false)
+          setShowScrollDown((prev) => (prev ? false : prev))
+          return
+        }
+        // Session pin ticker owns bottom-locking; user scroll only updates UI.
+        if (forcePinRef.current) {
+          setShowScrollDown((prev) => (prev ? false : prev))
           return
         }
         syncScrollDown("scroll")
@@ -2550,6 +2555,7 @@ function ChatAside({
                 <ScrollArea
                   viewportRef={scrollViewportRef}
                   className="h-full min-h-0"
+                  native={isMobileOverlay}
                 >
                   {isMobileOverlay && messages.length > 0 ? (
                     <div
