@@ -17,7 +17,11 @@ import {
 } from "lucide-react"
 // Paperclip/upload stays out of the + menu until real file attach ships.
 import { useLocale, useTranslations } from "next-intl"
-import { dismissAppToast, showAppErrorToast, showAppToast } from "@/components/ui/app-toast"
+import {
+  dismissAppToast,
+  showAppErrorToast,
+  showAppToast,
+} from "@/components/ui/app-toast"
 
 import {
   chatContextMenuContentClass,
@@ -45,7 +49,6 @@ import {
 } from "@/lib/chat-effort"
 import {
   applyMentionSelection,
-  composerHasMixedBidiScripts,
   composerInputDirection,
   expandComposerMentions,
   filterComposerPaletteTools,
@@ -231,10 +234,10 @@ function ChatComposer({
     () => splitComposerMentionHighlights(composerValue),
     [composerValue]
   )
-  const hasMentionHighlight =
-    mentionHighlightParts.some((part) => part.type === "mention") &&
-    // Mixed FA+EN: skip mirror chips so the native caret stays glued to glyphs.
-    !composerHasMixedBidiScripts(composerValue)
+  // Keep chip while typing Persian after `/Signal` — that is the normal FA flow.
+  const hasMentionHighlight = mentionHighlightParts.some(
+    (part) => part.type === "mention"
+  )
 
   function selectToolsMention(option: IrisMentionOption) {
     closeToolsSheet()
@@ -525,6 +528,7 @@ function ChatComposer({
     measureFloatingComposerLines,
   ])
 
+  // Smooth compact ↔ expanded height morph (grid areas still swap; height eases).
   React.useLayoutEffect(() => {
     if (!isFloating) {
       composerFlipPrevExpandedRef.current = floatingComposerExpanded
@@ -538,6 +542,7 @@ function ChatComposer({
     const reduceMotion =
       typeof window !== "undefined" &&
       window.matchMedia?.("(prefers-reduced-motion: reduce)").matches
+    // If sync missed capture (e.g. attachment-only), fall back to compact min height.
     const from = composerFlipFromHeightRef.current ?? (prev ? null : 64)
     composerFlipFromHeightRef.current = null
     if (reduceMotion || from == null) return
@@ -559,6 +564,8 @@ function ChatComposer({
       cleanup()
     }
 
+    // Animate from locked px → auto (interpolate-size) so field-sizing can
+    // settle without a second snap at the end of the transition.
     el.style.setProperty("interpolate-size", "allow-keywords")
     el.style.height = `${from}px`
     el.style.overflow = "hidden"
@@ -569,6 +576,7 @@ function ChatComposer({
       el.style.transition =
         "height 320ms cubic-bezier(0.22, 1, 0.36, 1), border-radius 320ms cubic-bezier(0.22, 1, 0.36, 1)"
       el.style.height = "auto"
+
       el.addEventListener("transitionend", onEnd)
       fallback = window.setTimeout(cleanup, 400)
     })
@@ -578,7 +586,6 @@ function ChatComposer({
       cleanup()
     }
   }, [floatingComposerExpanded, isFloating])
-
   const textareaNodeRef = React.useMemo(
     () => mergeRefs(localRef, textareaRef),
     [textareaRef]
@@ -1180,7 +1187,6 @@ function ChatComposer({
     }
   }
 
-  /** `/` typing on mobile: sheet behind composer. `+` menu: modal sheet on top. */
   /** `/` typing or `+` tools — same liquid listbox behind the composer pill. */
   const floatingToolsBehind = isFloating && toolsSheetOpen
   const floatingMentionBehind = isFloating && mentionOpen && !toolsSheetOpen

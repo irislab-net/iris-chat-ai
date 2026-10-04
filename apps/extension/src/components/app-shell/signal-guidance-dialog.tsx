@@ -46,6 +46,7 @@ import {
 } from "@/components/ui/sheet"
 import { useIsDesktop } from "@/hooks/use-media-query"
 import { mentionTokenForTool } from "@/lib/chat/composer-mentions"
+import { landingCta } from "@/lib/landing-modern-styles"
 import { cn } from "@/lib/utils"
 
 const SIGNAL_EXAMPLE_ASSETS = [
@@ -192,8 +193,9 @@ function SignalGuidanceDialog({
       <Button
         type="button"
         className={cn(
-          chatMobileSheetPrimaryButtonClass,
-          isDesktop && "h-10! min-h-10"
+          isDesktop
+            ? cn(landingCta("primary", "sm"), "rounded-full")
+            : chatMobileSheetPrimaryButtonClass
         )}
         onClick={confirmExample}
       >
@@ -202,8 +204,9 @@ function SignalGuidanceDialog({
       <Button
         type="button"
         className={cn(
-          chatMobileSheetSecondaryButtonClass,
-          isDesktop && "h-10! min-h-10"
+          isDesktop
+            ? cn(landingCta("secondary", "sm"), "rounded-full")
+            : chatMobileSheetSecondaryButtonClass
         )}
         onClick={() => onOpenChange(false)}
       >

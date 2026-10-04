@@ -7,11 +7,13 @@ import {
   EyeIcon,
   FlameIcon,
   NewspaperIcon,
+  SparklesIcon,
   SquareIcon,
   Volume2Icon,
 } from "lucide-react"
 import { useTranslations } from "next-intl"
 
+import { ActionTooltip } from "@/components/ui/action-tooltip"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -706,23 +708,56 @@ function NewsCopyButton({
   }
 
   return (
-    <Button
-      type="button"
-      variant="ghost"
-      size="icon-sm"
-      aria-label={copied ? t("copied") : t("copyArticle")}
-      className={newsFooterActionButtonClass(glass)}
-      onClick={onCopy}
-    >
-      {copied ? (
-        <CheckIcon
-          className="size-4 text-emerald-600 dark:text-emerald-400"
-          aria-hidden
-        />
-      ) : (
-        <CopyIcon className="size-4" aria-hidden />
-      )}
-    </Button>
+    <ActionTooltip label={copied ? t("copied") : t("copyArticle")}>
+      <Button
+        type="button"
+        variant="ghost"
+        size="icon-sm"
+        aria-label={copied ? t("copied") : t("copyArticle")}
+        className={newsFooterActionButtonClass(glass)}
+        onClick={onCopy}
+      >
+        {copied ? (
+          <CheckIcon
+            className="size-4 text-emerald-600 dark:text-emerald-400"
+            aria-hidden
+          />
+        ) : (
+          <CopyIcon className="size-4" aria-hidden />
+        )}
+      </Button>
+    </ActionTooltip>
+  )
+}
+
+function NewsAnalyzeButton({
+  item,
+  glass = false,
+  onAnalyze,
+}: {
+  item: NewsItem
+  glass?: boolean
+  onAnalyze: (item: NewsItem) => void
+}) {
+  const t = useTranslations("dashboard")
+
+  return (
+    <ActionTooltip label={t("analyzeArticle")}>
+      <Button
+        type="button"
+        variant="ghost"
+        size="icon-sm"
+        aria-label={t("analyzeArticle")}
+        className={newsFooterActionButtonClass(glass)}
+        onClick={(event) => {
+          event.preventDefault()
+          event.stopPropagation()
+          onAnalyze(item)
+        }}
+      >
+        <SparklesIcon className="size-4" aria-hidden />
+      </Button>
+    </ActionTooltip>
   )
 }
 
@@ -770,12 +805,14 @@ function NewsCardFooter({
   showTone = true,
   hideMeta = false,
   className,
+  onAnalyzeNews,
 }: {
   item: NewsItem
   glass?: boolean
   showTone?: boolean
   hideMeta?: boolean
   className?: string
+  onAnalyzeNews?: (item: NewsItem) => void
 }) {
   const published = newsPublishedLabel(item.published_at)
   const source = item.source?.trim() || hostFromUrl(item.url)
@@ -812,6 +849,13 @@ function NewsCardFooter({
         </div>
       )}
       <div className="flex shrink-0 items-center gap-0.5">
+        {onAnalyzeNews ? (
+          <NewsAnalyzeButton
+            item={item}
+            glass={glass}
+            onAnalyze={onAnalyzeNews}
+          />
+        ) : null}
         <NewsCopyButton item={item} glass={glass} />
         <NewsSourceButton item={item} glass={glass} />
         <NewsSpeakButton item={item} glass={glass} />
@@ -1104,6 +1148,7 @@ function NewsCard({
   mobile = false,
   sidebar = false,
   className,
+  onAnalyzeNews,
 }: {
   item: NewsItem
   featured?: boolean
@@ -1111,6 +1156,7 @@ function NewsCard({
   /** Chat news sidebar — selectable body copy, title stays the link. */
   sidebar?: boolean
   className?: string
+  onAnalyzeNews?: (item: NewsItem) => void
 }) {
   const summary = item.summary?.trim()
   const tone = newsTone(item)
@@ -1191,6 +1237,7 @@ function NewsCard({
             glass={glass}
             showTone={false}
             className={summary ? "mt-3" : "mt-0"}
+            onAnalyzeNews={onAnalyzeNews}
           />
         </div>
       </article>
@@ -1253,7 +1300,11 @@ function NewsCard({
             {summaryDesktop}
           </p>
         ) : null}
-        <NewsCardFooter item={item} glass={glass} />
+        <NewsCardFooter
+          item={item}
+          glass={glass}
+          onAnalyzeNews={onAnalyzeNews}
+        />
       </article>
     )
   }
@@ -1325,12 +1376,14 @@ function NewsHeadlineList({
   loading = false,
   mobile = false,
   sidebar = false,
+  onAnalyzeNews,
 }: {
   news: NewsItem[]
   analytics: NewsAnalytics | null
   loading?: boolean
   mobile?: boolean
   sidebar?: boolean
+  onAnalyzeNews?: (item: NewsItem) => void
 }) {
   const t = useTranslations("dashboard")
 
@@ -1373,6 +1426,7 @@ function NewsHeadlineList({
         featured
         mobile={mobile || sidebar}
         sidebar={sidebar}
+        onAnalyzeNews={onAnalyzeNews}
       />
       {rest.length > 0 ? (
         glass ? (
@@ -1385,6 +1439,7 @@ function NewsHeadlineList({
                   item={item}
                   mobile={mobile || sidebar}
                   sidebar={sidebar}
+                  onAnalyzeNews={onAnalyzeNews}
                 />
               ))}
             </div>
@@ -1399,7 +1454,12 @@ function NewsHeadlineList({
             </div>
             <div className="flex flex-col gap-2">
               {rest.map((item) => (
-                <NewsCard key={item.id} item={item} sidebar={sidebar} />
+                <NewsCard
+                  key={item.id}
+                  item={item}
+                  sidebar={sidebar}
+                  onAnalyzeNews={onAnalyzeNews}
+                />
               ))}
             </div>
           </div>
@@ -1419,6 +1479,7 @@ function NewsBulletin({
   active = true,
   mobile = false,
   sidebar = false,
+  onAnalyzeNews,
 }: {
   analytics: NewsAnalytics | null
   news: NewsItem[]
@@ -1433,6 +1494,8 @@ function NewsBulletin({
   /** False when the News panel is hidden — stop read-aloud. */
   active?: boolean
   mobile?: boolean
+  /** Chat desk: sparkle control that pre-fills + sends an analyze prompt. */
+  onAnalyzeNews?: (item: NewsItem) => void
 }) {
   const primaryNews = news.slice(0, PRIMARY_NEWS_LIMIT)
 
@@ -1454,6 +1517,7 @@ function NewsBulletin({
         loading={loading}
         mobile={mobile}
         sidebar={sidebar}
+        onAnalyzeNews={onAnalyzeNews}
       />
     </div>
   )

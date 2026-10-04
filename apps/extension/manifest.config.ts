@@ -6,18 +6,20 @@ export default defineManifest({
   short_name: "Exur",
   description:
     "AI co-pilot in your Chrome side panel — chat, market news, and trade context.",
-  version: "0.0.3",
+  version: "0.0.4",
   homepage_url: "https://chat.exur.ai",
   // Stable ID for local/unpacked OAuth only. Stripped by `pnpm extension:pack`.
   key: "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4RIebkDmay2Q7vd0yxk+6snozvfWOeGRvGf41BrUvpC12lflX3PN7tbjv7HQCricJxNUzRG2NjJ5ixYvVQlvSjIL+Z7nJUbDdzg6o8LjyF+1iYVdYo2OWSxqOmV5eAMRXAsbGvxOfncoRNgclgAOerMWSUKDIdQX+ulP6Iwz1cRKBIxjoIjBhJ3jGr4z+KLUvDY6URbaI1iH+y9PXECppVQXB8JaizFvcArUdbo0xQd7Hc7tPUpW3laIZccQ7vINd7v8xPY1qigdm6bk0+zw8Cs2+STwtvzLTc/aBjCUHHcDAYozSQfAz8o2D9acbf3K3mE/4Jvr8WZS4LnwMPHgwQIDAQAB",
+  // sidePanel: primary UI
+  // storage: access/refresh tokens + UI prefs (MV3 side panel has no API cookies)
   // cookies: read HttpOnly refresh_token after Google OAuth lands on callback.html
-  // identity: optional legacy Google OIDC helper (launchWebAuthFlow)
-  permissions: ["sidePanel", "storage", "identity", "cookies"],
+  // Do NOT request unused APIs (CWS Purple Potassium) — no chrome.identity; logos are <img>.
+  permissions: ["sidePanel", "storage", "cookies"],
   host_permissions: [
+    // API fetch + chrome.cookies.get for refresh_token (Domain=.exur.ai / api host)
     "https://api.exur.ai/*",
+    // Cookie fallback URLs in readApiRefreshCookie (same Domain=.exur.ai cookie)
     "https://chat.exur.ai/*",
-    "https://assets.coingecko.com/*",
-    "https://s3-symbol-logo.tradingview.com/*",
   ],
   content_security_policy: {
     extension_pages:

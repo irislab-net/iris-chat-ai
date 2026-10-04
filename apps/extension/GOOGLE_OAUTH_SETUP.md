@@ -1,40 +1,42 @@
-# Fix Google Error 400: redirect_uri_mismatch
+# Extension Google login (API PKCE — no chrome.identity)
 
-Google rejected the sign-in because the redirect URI from the extension
-is **not** listed on your OAuth client.
+Store builds do **not** use `chrome.identity` or `https://*.chromiumapp.org/` redirects.  
+Sign-in is a normal browser tab to `api.exur.ai`, then back to the extension callback page.
 
-## Exact URI to add (stable — from extension `key` in manifest)
+## Flow
+
+1. Extension opens `login.html` → user accepts Terms/Privacy.
+2. Navigate to  
+   `https://api.exur.ai/v1/auth/google/login?app=chromimum_extension&destination=chrome-extension://<EXT_ID>/callback.html&…`
+3. Backend runs the same Google OAuth + PKCE path as the web app, sets HttpOnly `refresh_token`, redirects to `callback.html`.
+4. Extension reads the cookie with `chrome.cookies` and mints Bearer tokens into `chrome.storage.local`.
+
+## What to configure
+
+### Backend / API
+
+- Honor `app=chromimum_extension` and the `destination` query (must allow `chrome-extension://…/callback.html`).
+- CORS for `chrome-extension://<LOCAL_OR_STORE_ID>` on refresh / me / chat (see [`STORE_CHECKLIST.md`](./STORE_CHECKLIST.md)).
+
+### Google Cloud (web OAuth client used by `api.exur.ai`)
+
+Configure the **API / website** redirect URIs that `api.exur.ai` already uses for web Google login.  
+You do **not** need `chromiumapp.org` URIs for the store extension build.
+
+## Local unpacked ID
+
+`manifest.key` pins the local unpacked ID to `adnehcimnmfchnaoegcomjpknpgfgnpj` so CORS can allow:
 
 ```
-https://adnehcimnmfchnaoegcomjpknpgfgnpj.chromiumapp.org/
+chrome-extension://adnehcimnmfchnaoegcomjpknpgfgnpj
 ```
 
-## Steps
+Store packs strip `key` — add CORS for the CWS-assigned ID after first upload.
 
-1. Open [Google Cloud Console → Credentials](https://console.cloud.google.com/apis/credentials)
-2. Open the **OAuth 2.0 Client ID** that matches `NEXT_PUBLIC_GOOGLE_CLIENT_ID` / `VITE_GOOGLE_CLIENT_ID` (Web application)
-3. Under **Authorized redirect URIs** → **Add URI** → paste the URI above (keep the trailing `/`)
-4. Save
-5. Rebuild + reload the extension:
-   ```bash
-   pnpm extension:build
-   ```
-   Then in `chrome://extensions` → Remove the old unpacked Exur Chat → **Load unpacked** → `apps/extension/dist`  
-   (The `key` in the manifest pins the extension ID so this URI stays valid.)
+## Rebuild
 
-## Verify
-
-In the extension service worker console (`chrome://extensions` → Service worker):
-
-```js
-chrome.identity.getRedirectURL()
+```bash
+pnpm extension:build
+# or for store zip:
+pnpm extension:pack
 ```
-
-It must print **exactly** the same string you added in Google Cloud (including trailing slash).
-
-## Notes
-
-- Do **not** use `http://localhost` or `https://chat.exur.ai/...` as the extension redirect.
-- JavaScript origins are for GIS/One Tap on the website; this flow needs the **redirect URI**.
-- If mismatch persists, wait 1–2 minutes after saving in Google Cloud and try again.
-- **Store builds:** `pnpm extension:pack` removes `manifest.key`, so the live extension ID differs from the local ID above. Always add `https://<STORE_EXTENSION_ID>.chromiumapp.org/` as well — see [`STORE_CHECKLIST.md`](./STORE_CHECKLIST.md).

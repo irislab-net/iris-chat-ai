@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { Link } from "@/i18n/navigation"
 import { useTranslations } from "next-intl"
 
 import { ChatAccountAvatar } from "@/components/app-shell/chat-account-avatar"
@@ -20,6 +21,7 @@ import {
   SfLogoutIcon,
   SfMailIcon,
   SfNewspaperIcon,
+  SfPersonCircleIcon,
   SfQuestionCircleIcon,
   SfShieldIcon,
   SfSparklesIcon,
@@ -66,6 +68,7 @@ function AccountPlanBadge({
     </Badge>
   )
 }
+
 
 function AccountHelpGroup() {
   const t = useTranslations("workspace")
@@ -154,6 +157,7 @@ type AccountSignedInMenuSectionsProps = {
   avatarUrl: string | null
   onLogout: () => void | Promise<void>
   onOpenNews?: () => void
+  onOpenTradingProfile?: () => void
   showHeaderPlanBadge?: boolean
 }
 
@@ -164,6 +168,7 @@ function AccountSignedInMenuSections({
   avatarUrl,
   onLogout,
   onOpenNews,
+  onOpenTradingProfile,
   showHeaderPlanBadge = true,
 }: AccountSignedInMenuSectionsProps) {
   const t = useTranslations("workspace")
@@ -206,9 +211,7 @@ function AccountSignedInMenuSections({
           <DropdownMenuItem
             className={chatContextMenuItemClass}
             nativeButton={false}
-            render={
-              <a href={UPGRADE_PATH} target="_blank" rel="noopener noreferrer" />
-            }
+            render={<Link href={UPGRADE_PATH} />}
           >
             <SfSparklesIcon className={chatContextMenuIconClass} />
             {t("upgradeToPlus")}
@@ -217,9 +220,7 @@ function AccountSignedInMenuSections({
         <DropdownMenuItem
           className={chatContextMenuItemClass}
           nativeButton={false}
-          render={
-            <a href={BILLING_PATH} target="_blank" rel="noopener noreferrer" />
-          }
+          render={<Link href={BILLING_PATH} />}
         >
           <SfCreditCardIcon className={chatContextMenuIconClass} />
           {t("billing")}
@@ -231,6 +232,15 @@ function AccountSignedInMenuSections({
           >
             <SfNewspaperIcon className={chatContextMenuIconClass} />
             {t("news")}
+          </DropdownMenuItem>
+        ) : null}
+        {onOpenTradingProfile ? (
+          <DropdownMenuItem
+            className={chatContextMenuItemClass}
+            onClick={onOpenTradingProfile}
+          >
+            <SfPersonCircleIcon className={chatContextMenuIconClass} />
+            {t("tradingProfile.menuLabel")}
           </DropdownMenuItem>
         ) : null}
       </DropdownMenuGroup>
@@ -253,15 +263,26 @@ function AccountSignedInMenuSections({
 function AccountGuestMenuSections({
   loginPending,
   onLogin,
+  onOpenTradingProfile,
 }: {
   loginPending: boolean
   onLogin: () => void
+  onOpenTradingProfile?: () => void
 }) {
   const t = useTranslations("workspace")
 
   return (
     <>
       <AccountPreferencesGroup />
+      {onOpenTradingProfile ? (
+        <DropdownMenuItem
+          className={chatContextMenuItemClass}
+          onClick={onOpenTradingProfile}
+        >
+          <SfPersonCircleIcon className={chatContextMenuIconClass} />
+          {t("tradingProfile.menuLabel")}
+        </DropdownMenuItem>
+      ) : null}
       <AccountHelpGroup />
       <DropdownMenuItem
         className={chatContextMenuItemClass}

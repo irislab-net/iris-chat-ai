@@ -21,4 +21,4 @@
 
 **Port (chat + chat news):** composer, messages, thinking/SSE, history, signal cards, chat styles, account extras needed for chat, **chat news panel** (`chat-news-panel` + `news-bulletin` / intel helpers used by it).
 
-**Do not port:** full desk/dashboard workspace, marketing/landing pages, website toolbar, Google One Tap (use extension OAuth instead), web cookie-consent banner, PWA install, billing checkout pages (link out to `https://chat.exur.ai`).
+**Do not port:** full desk/dashboard workspace, marketing/landing pages, website toolbar, Google One Tap / `chrome.identity` (extension uses API PKCE tab login), web cookie-consent banner, PWA install, billing checkout pages (link out to `https://chat.exur.ai`).

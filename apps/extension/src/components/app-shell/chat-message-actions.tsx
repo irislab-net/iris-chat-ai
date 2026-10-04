@@ -6,7 +6,6 @@ import {
   CopyIcon,
   RefreshCwIcon,
   ReplyIcon,
-  Share2Icon,
   ThumbsDownIcon,
   ThumbsUpIcon,
 } from "lucide-react"
@@ -16,18 +15,16 @@ import {
   chatTurnActionButtonClass,
   chatTurnActionsClass,
 } from "@/components/app-shell/chat-turn-actions"
+import { ChatNoTradeShareDialog } from "@/components/app-shell/chat-no-trade-share-dialog"
+import { ChatSignalShareDialog } from "@/components/app-shell/chat-signal-share-dialog"
+import { IosShareIcon } from "@/components/icons/ios-share-icon"
 import { ActionTooltip } from "@/components/ui/action-tooltip"
 import { Button } from "@/components/ui/button"
 import {
   trackChatMessageCopied,
   trackChatMessageFeedback,
 } from "@/lib/analytics"
-import {
-  buildNoTradeShareText,
-  buildSignalShareText,
-} from "@/lib/chat/signal-share"
 import type { PaperTradeTicket } from "@/lib/chat/signal-ticket"
-import { shareTextOrCopy } from "@/lib/chat/transcript"
 import type { ChatMessageFeedback } from "@/lib/chat-storage"
 import { cn } from "@/lib/utils"
 
@@ -35,7 +32,9 @@ type ChatMessageActionsProps = {
   messageId: string
   conversationId: string
   content: string
+  /** When set, Share opens the same image/text sheet as the signal card. */
   shareTicket?: PaperTradeTicket
+  /** When set (and no ticket), Share opens the no-trade share sheet. */
   shareNoTradeReason?: string
   feedback?: ChatMessageFeedback
   onFeedbackChange: (feedback: ChatMessageFeedback | undefined) => void
@@ -62,8 +61,8 @@ function ChatMessageActions({
 }: ChatMessageActionsProps) {
   const t = useTranslations("workspace")
   const [copied, setCopied] = React.useState(false)
-  const [shared, setShared] = React.useState(false)
-  const flashTimerRef = React.useRef(0)
+  const [shareOpen, setShareOpen] = React.useState(false)
+  const copyTimerRef = React.useRef(0)
   const isGemini = variant === "gemini"
   const canCopy = Boolean(content.trim())
   const noTradeReason = shareNoTradeReason?.trim() ?? ""
@@ -72,59 +71,24 @@ function ChatMessageActions({
   const canShareCard = canShareSignal || canShareNoTrade
 
   React.useEffect(() => {
-    return () => window.clearTimeout(flashTimerRef.current)
+    return () => window.clearTimeout(copyTimerRef.current)
   }, [])
-
-  function flash(kind: "copied" | "shared") {
-    if (kind === "copied") setCopied(true)
-    else setShared(true)
-    window.clearTimeout(flashTimerRef.current)
-    flashTimerRef.current = window.setTimeout(() => {
-      setCopied(false)
-      setShared(false)
-    }, 1_600)
-  }
 
   async function onCopy() {
     const text = content.trim()
     if (!text || disabled) return
     try {
       await navigator.clipboard.writeText(text)
-      flash("copied")
+      setCopied(true)
       trackChatMessageCopied({
         conversation_id: conversationId,
         message_id: messageId,
       })
+      window.clearTimeout(copyTimerRef.current)
+      copyTimerRef.current = window.setTimeout(() => setCopied(false), 1_600)
     } catch {
       setCopied(false)
     }
-  }
-
-  async function onShareCard() {
-    if (disabled) return
-    let text = ""
-    if (shareTicket) {
-      text = buildSignalShareText(shareTicket, {
-        entry: t("signalCardEntry"),
-        stopLoss: t("signalCardStopLoss"),
-        target: t("signalShareTarget"),
-      })
-    } else if (noTradeReason) {
-      text = buildNoTradeShareText(noTradeReason, {
-        title: t("noTradeTitle"),
-        badge: t("noTradeBadge"),
-        capitalProtected: t("noTradeCapitalProtected"),
-        reasonHeading: t("noTradeReasonHeading"),
-      })
-    }
-    if (!text) return
-    const result = await shareTextOrCopy(text)
-    if (!result) return
-    flash("shared")
-    trackChatMessageCopied({
-      conversation_id: conversationId,
-      message_id: messageId,
-    })
   }
 
   function onReaction(next: ChatMessageFeedback) {
@@ -179,7 +143,7 @@ function ChatMessageActions({
         </Button>
       </ActionTooltip>
       {canShareCard ? (
-        <ActionTooltip label={shared ? t("signalShareCopied") : t("share")}>
+        <ActionTooltip label={t("share")}>
           <Button
             type="button"
             variant="ghost"
@@ -187,13 +151,9 @@ function ChatMessageActions({
             className={buttonClass}
             aria-label={t("signalCardShare")}
             disabled={disabled}
-            onClick={() => void onShareCard()}
+            onClick={() => setShareOpen(true)}
           >
-            {shared ? (
-              <CheckIcon className={isGemini ? "size-4.5" : undefined} />
-            ) : (
-              <Share2Icon className={isGemini ? "size-4.5" : undefined} />
-            )}
+            <IosShareIcon className={isGemini ? "size-4.5" : "size-4"} />
           </Button>
         </ActionTooltip>
       ) : null}
@@ -252,6 +212,20 @@ function ChatMessageActions({
           />
         </Button>
       </ActionTooltip>
+      {shareTicket ? (
+        <ChatSignalShareDialog
+          open={shareOpen}
+          onOpenChange={setShareOpen}
+          ticket={shareTicket}
+        />
+      ) : null}
+      {canShareNoTrade ? (
+        <ChatNoTradeShareDialog
+          open={shareOpen}
+          onOpenChange={setShareOpen}
+          reason={noTradeReason}
+        />
+      ) : null}
     </div>
   )
 }

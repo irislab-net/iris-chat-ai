@@ -978,7 +978,62 @@
     "composerVoicePermissionDeniedTitle": "میکروفون مسدود است",
     "composerVoiceMicMissingTitle": "میکروفون پیدا نشد",
     "composerVoiceNetworkErrorTitle": "قطع ارتباط",
-    "composerPasteAttachmentMaxTitle": "حد پیوست"
+    "composerPasteAttachmentMaxTitle": "حد پیوست",
+    "analyzeNewsInstruction": "تأثیر این خبر را روی ساختار فعلی بازار تحلیل کن.",
+    "analyzeNewsBusy": "صبر کن پاسخ فعلی تمام شود، بعد دوباره تحلیل کن.",
+    "tradingProfile": {
+      "menuLabel": "شخصی‌سازی",
+      "title": "شخصی‌سازی",
+      "description": "روی این دستگاه ذخیره می‌شود. Exur برای شخصی‌سازی پاسخ‌ها بی‌صدا از آن استفاده می‌کند. در تاریخچهٔ چت دیده نمی‌شود.",
+      "experienceLabel": "سطح تجربه",
+      "experience": {
+        "beginner": "مبتدی",
+        "intermediate": "متوسط",
+        "advanced": "حرفه‌ای",
+        "not_sure": "مطمئن نیستم"
+      },
+      "experienceHint": {
+        "beginner": "تازه‌وارد بازارها هستی.",
+        "intermediate": "با ثبت و مدیریت معامله راحت هستی.",
+        "advanced": "در ستاپ و ریسک تجربه داری.",
+        "not_sure": "فعلاً رد کن. Exur پاسخ‌ها را کلی نگه می‌دارد."
+      },
+      "targetMarketLabel": "بازار هدف",
+      "targetMarket": {
+        "crypto": "کریپتو",
+        "forex": "فارکس",
+        "commodities": "کالاها",
+        "multi": "چند دارایی",
+        "not_sure": "مطمئن نیستم"
+      },
+      "riskLabel": "تحمل ریسک",
+      "risk": {
+        "low": "کم",
+        "medium": "متوسط",
+        "high": "زیاد",
+        "not_sure": "مطمئن نیستم"
+      },
+      "countryLabel": "کشور",
+      "countryPlaceholder": "انتخاب کشور",
+      "notSure": "مطمئن نیستم",
+      "introTitle": "پاسخ‌ها را شخصی کن",
+      "introBody": "به Exur بگو چطور معامله می‌کنی تا پاسخ‌ها با تجربه، بازار و ریسک تو جور شود، بدون اینکه در تاریخچهٔ چت دیده شود.",
+      "setup": "راه‌اندازی",
+      "editSetup": "ویرایش پروفایل",
+      "editorHint": "روی هر ردیف بزن و انتخاب کن. برای ذخیره و برگشت، تیک را بزن.",
+      "save": "ذخیرهٔ پروفایل"
+    },
+    "signalCardShare": "اشتراک‌گذاری",
+    "signalShareTitle": "اشتراک سیگنال",
+    "signalShareTabImage": "تصویر",
+    "signalShareTabText": "متن",
+    "signalShareCopy": "کپی",
+    "signalShareCopyText": "کپی متن",
+    "signalShareShare": "اشتراک",
+    "signalShareShareImage": "اشتراک تصویر",
+    "signalShareCopied": "کپی شد",
+    "signalShareCopyFailed": "کپی نشد",
+    "signalShareShareFailed": "اشتراک‌گذاری نشد"
   },
   "billingPage": {
     "title": "پرداخت",

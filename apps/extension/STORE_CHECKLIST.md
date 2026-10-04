@@ -1,6 +1,9 @@
 # Chrome Web Store — production checklist
 
-Prior rejection (Red Potassium): reviewers hit **login error** and could not chat.  
+Prior rejections:
+- **Red Potassium / login:** reviewers hit login error and could not chat.
+- **Purple Potassium (0.0.3):** unused `identity` permission — never request unused APIs.
+
 Use this before every upload of `exur-chat-extension.zip`.
 
 ## Code / pack
@@ -12,9 +15,9 @@ pnpm extension:pack
 ```
 
 - [ ] Zip built with `pnpm extension:pack` (not raw `dist/` — pack strips `manifest.key`)
-- [ ] `VITE_GOOGLE_CLIENT_ID` present in `apps/extension/.env` (Google Cloud / legacy helper; PKCE login does not bake it into JS)
 - [ ] Pack confirms `app=chromimum_extension` is in the built JS
-- [ ] Version bumped in `manifest.config.ts` + `package.json` (currently **0.0.3**)
+- [ ] Pack fails if `identity` / `chrome.identity` / unexpected host_permissions appear
+- [ ] Version bumped in `manifest.config.ts` + `package.json` (currently **0.0.4**)
 - [ ] Smoke on the **packed** build (load zip contents or keyless staging): sign-in → chat → news → Upgrade opens `https://chat.exur.ai/upgrade`
 
 ## Manifest readiness (shipped)
@@ -26,22 +29,17 @@ pnpm extension:pack
 | Icons 16 / 32 / 48 / 128 (+ action.default_icon) | ✅ |
 | `homepage_url` → chat.exur.ai | ✅ |
 | No remote JS / no `eval` (CSP `script-src 'self'`) | ✅ |
-| Host permissions scoped (no `*.exur.ai` wildcard) | ✅ |
-| Permissions: `sidePanel`, `storage`, `cookies`, `identity` | ✅ justify in CWS |
+| Host permissions only `api.exur.ai` + `chat.exur.ai` (no logo CDNs) | ✅ |
+| Permissions: `sidePanel`, `storage`, `cookies` only — **no `identity`** | ✅ |
 
 ## Google Cloud Console (manual)
 
-OAuth **Web** client = same ID as `VITE_GOOGLE_CLIENT_ID`.
+Sign-in is **API PKCE only** (`api.exur.ai` → Google → `callback.html`).  
+Do **not** rely on `chromiumapp.org` / `chrome.identity` redirects for the store build.
 
-1. Primary store sign-in is **API PKCE** (`api.exur.ai` → Google → `callback.html`), not `chromiumapp.org`.  
-   Still keep these Authorized redirect URIs if you use / keep the legacy `chrome.identity` helper:
-   ```
-   https://adnehcimnmfchnaoegcomjpknpgfgnpj.chromiumapp.org/
-   https://<STORE_EXTENSION_ID>.chromiumapp.org/
-   ```
-2. OAuth consent screen → **In production** (or add every reviewer Google account as a test user).
-3. Authorized JavaScript origins for the web client may still list `https://chat.exur.ai` (website); extension uses redirect / cookies on `api.exur.ai`.
-
+1. OAuth consent screen → **In production** (or add every reviewer Google account as a test user).
+2. Authorized JavaScript origins for the web client may still list `https://chat.exur.ai` (website); extension uses redirect / cookies on `api.exur.ai`.
+3. Backend must allow `destination=chrome-extension://<STORE_ID>/callback.html`.
 ## `api.exur.ai` CORS (manual)
 
 Allow origin `chrome-extension://<STORE_EXTENSION_ID>` (and local unpacked ID) on:
@@ -108,16 +106,15 @@ Side-panel AI chat co-pilot for market questions, news, and conversation history
 | `sidePanel` | Primary UI — open Exur Chat beside the current tab |
 | `storage` | Persist access/refresh tokens and UI prefs in `chrome.storage.local` (MV3 has no API cookies in the side panel) |
 | `cookies` | After Google OAuth, `api.exur.ai` sets an HttpOnly `refresh_token` cookie; the extension callback page reads it once to mint tokens into `chrome.storage`, then uses Bearer auth |
-| `identity` | Optional/legacy Google OIDC helper (`launchWebAuthFlow`); primary sign-in is the API PKCE tab flow |
+
+**Not requested (and must stay out):** `identity` (unused — sign-in is API PKCE), `tabs`/`activeTab` (we only `chrome.tabs.create`/`query` which do not need the `tabs` permission), logo CDN host permissions (images load via CSP `img-src https:`).
 
 **Host permissions:**
 
 | Host | Justification |
 |---|---|
-| `https://api.exur.ai/*` | Auth, chat SSE, news/credits APIs |
-| `https://chat.exur.ai/*` | Open upgrade/billing/account pages in a normal tab |
-| `https://assets.coingecko.com/*` | Market asset logos in news/chat UI |
-| `https://s3-symbol-logo.tradingview.com/*` | Symbol logos (e.g. metals/FX) in news/chat UI |
+| `https://api.exur.ai/*` | Auth, chat SSE, news/credits APIs + `chrome.cookies.get` for `refresh_token` |
+| `https://chat.exur.ai/*` | Cookie fallback URL for the same Domain=.exur.ai `refresh_token` during OAuth callback |
 
 **Data use (disclose):** Personally identifiable information (account email/profile from Google via our API), authentication credentials (tokens in extension storage), user activity (chat messages sent to our API). Certify Limited Use.
 

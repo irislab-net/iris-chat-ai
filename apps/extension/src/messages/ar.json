@@ -961,7 +961,49 @@
     "composerVoicePermissionDeniedTitle": "الميكروفون محظور",
     "composerVoiceMicMissingTitle": "لا ميكروفون",
     "composerVoiceNetworkErrorTitle": "انقطع الاتصال",
-    "composerPasteAttachmentMaxTitle": "حد المرفقات"
+    "composerPasteAttachmentMaxTitle": "حد المرفقات",
+    "analyzeNewsInstruction": "حلّل أثر هذا الخبر على هيكل السوق الحالي.",
+    "analyzeNewsBusy": "انتظر انتهاء الرد الحالي ثم حلّل مجددًا.",
+    "tradingProfile": {
+      "menuLabel": "ملف التداول",
+      "title": "ملف التداول",
+      "description": "يُحفظ على هذا الجهاز. يستخدمه Exur بصمت لتخصيص الإجابات، ولا يظهر في سجل المحادثة.",
+      "experienceLabel": "الخبرة",
+      "experience": {
+        "beginner": "مبتدئ",
+        "intermediate": "متوسط",
+        "advanced": "متقدم"
+      },
+      "targetMarketLabel": "السوق المستهدف",
+      "targetMarket": {
+        "crypto": "كريبتو",
+        "forex": "فوركس",
+        "commodities": "سلع",
+        "multi": "متعدد الأصول"
+      },
+      "riskLabel": "تحمّل المخاطر",
+      "risk": {
+        "low": "منخفض",
+        "medium": "متوسط",
+        "high": "مرتفع"
+      },
+      "countryLabel": "البلد (اختياري)",
+      "countryPlaceholder": "مثال: الإمارات",
+      "save": "حفظ الملف"
+    },
+    "composerPremiumToolsPaymentNote": "Pay with USDT or USDC.",
+    "signalCardShare": "Share",
+    "signalShareTitle": "Share signal",
+    "signalShareTabImage": "Image",
+    "signalShareTabText": "Text",
+    "signalShareTarget": "Target",
+    "signalShareCopy": "Copy",
+    "signalShareCopyText": "Copy text",
+    "signalShareShare": "Share",
+    "signalShareShareImage": "Share image",
+    "signalShareCopied": "Copied",
+    "signalShareCopyFailed": "Could not copy",
+    "signalShareShareFailed": "Could not share"
   },
   "billingPage": {
     "title": "الفوترة",

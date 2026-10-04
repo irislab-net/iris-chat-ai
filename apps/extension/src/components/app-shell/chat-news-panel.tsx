@@ -28,7 +28,7 @@ import {
   chatNewsPanelShellMobileClass,
 } from "@/components/app-shell/chat-mobile-gemini-styles"
 import { fetchNewsHome, fetchNewsLatest } from "@/lib/api/data"
-import type { NewsHome } from "@/lib/api/types"
+import type { NewsHome, NewsItem } from "@/lib/api/types"
 import { hasUsableNews, mergeNewsHome } from "@/lib/dashboard/intel-load"
 import {
   NEWS_REFRESH_INTERVAL_MS,
@@ -125,6 +125,7 @@ type ChatNewsPanelBodyProps = {
   className?: string
   headerClassName?: string
   mobile?: boolean
+  onAnalyzeNews?: (item: NewsItem) => void
 }
 
 function ChatNewsPanelBody({
@@ -132,6 +133,7 @@ function ChatNewsPanelBody({
   className,
   headerClassName,
   mobile = false,
+  onAnalyzeNews,
 }: ChatNewsPanelBodyProps) {
   const t = useTranslations("workspace")
   const { analytics, news, freshnessLabel, freshnessAge, loading } =
@@ -238,6 +240,7 @@ function ChatNewsPanelBody({
               active
               mobile={mobile}
               className="select-text"
+              onAnalyzeNews={onAnalyzeNews}
             />
           )}
         </div>
@@ -249,9 +252,14 @@ function ChatNewsPanelBody({
 type ChatNewsSidePanelProps = {
   open: boolean
   onOpenChange: (open: boolean) => void
+  onAnalyzeNews?: (item: NewsItem) => void
 }
 
-function ChatNewsSidePanel({ open, onOpenChange }: ChatNewsSidePanelProps) {
+function ChatNewsSidePanel({
+  open,
+  onOpenChange,
+  onAnalyzeNews,
+}: ChatNewsSidePanelProps) {
   const t = useTranslations("workspace")
   const dir = localeDirection(useLocale())
   if (!open) return null
@@ -266,7 +274,10 @@ function ChatNewsSidePanel({ open, onOpenChange }: ChatNewsSidePanelProps) {
       )}
       aria-label={t("news")}
     >
-      <ChatNewsPanelBody onClose={() => onOpenChange(false)} />
+      <ChatNewsPanelBody
+        onClose={() => onOpenChange(false)}
+        onAnalyzeNews={onAnalyzeNews}
+      />
     </aside>
   )
 }
@@ -274,9 +285,14 @@ function ChatNewsSidePanel({ open, onOpenChange }: ChatNewsSidePanelProps) {
 type ChatNewsMobileSheetProps = {
   open: boolean
   onOpenChange: (open: boolean) => void
+  onAnalyzeNews?: (item: NewsItem) => void
 }
 
-function ChatNewsMobileSheet({ open, onOpenChange }: ChatNewsMobileSheetProps) {
+function ChatNewsMobileSheet({
+  open,
+  onOpenChange,
+  onAnalyzeNews,
+}: ChatNewsMobileSheetProps) {
   const t = useTranslations("workspace")
   const dir = localeDirection(useLocale())
 
@@ -292,6 +308,7 @@ function ChatNewsMobileSheet({ open, onOpenChange }: ChatNewsMobileSheetProps) {
         <ChatNewsPanelBody
           mobile
           onClose={() => onOpenChange(false)}
+          onAnalyzeNews={onAnalyzeNews}
           className="h-full"
         />
       </div>

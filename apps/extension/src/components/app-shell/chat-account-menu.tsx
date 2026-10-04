@@ -69,12 +69,23 @@ function ChatAccountMenu({
   const [sheetOpenUncontrolled, setSheetOpenUncontrolled] = React.useState(false)
   const sheetOpen = sheetOpenProp ?? sheetOpenUncontrolled
   const setSheetOpen = onSheetOpenChange ?? setSheetOpenUncontrolled
+  const [activeSheetView, setActiveSheetView] =
+    React.useState<AccountSheetView>(sheetInitialView)
+
+  function openSheet(view: AccountSheetView = "root") {
+    setActiveSheetView(view)
+    setSheetOpen(true)
+  }
+
+  function openTradingProfile() {
+    openSheet("tradingProfile")
+  }
 
   const sheet = (
     <ChatAccountSheet
       open={sheetOpen}
       onOpenChange={setSheetOpen}
-      initialView={sheetInitialView}
+      initialView={activeSheetView}
       user={user}
       isProUser={isProUser}
       planName={planName}
@@ -98,7 +109,7 @@ function ChatAccountMenu({
         className={cn(chatMobileHeaderAvatarButtonClass, className)}
         aria-label={t("signIn")}
         aria-expanded={sheetOpen}
-        onClick={() => setSheetOpen(true)}
+        onClick={() => openSheet(sheetInitialView)}
       >
         <ChatGuestAvatar
           avatarClassName={chatMobileHeaderAvatarClass}
@@ -114,7 +125,7 @@ function ChatAccountMenu({
           name: userAccountLabel(user),
         })}
         aria-expanded={sheetOpen}
-        onClick={() => setSheetOpen(true)}
+        onClick={() => openSheet(sheetInitialView)}
       >
         <ChatAccountAvatar
           user={user}
@@ -140,7 +151,7 @@ function ChatAccountMenu({
       return React.cloneElement(trigger, {
         onClick: (event: React.MouseEvent) => {
           previousOnClick?.(event)
-          if (!event.defaultPrevented) setSheetOpen(true)
+          if (!event.defaultPrevented) openSheet(sheetInitialView)
         },
       })
     })()
@@ -155,79 +166,87 @@ function ChatAccountMenu({
 
   if (!user) {
     return (
+      <>
+        <DropdownMenu>
+          <DropdownMenuTrigger
+            render={
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className={cn("h-8 shrink-0 gap-2 px-2.5", className)}
+                aria-label={t("signIn")}
+              />
+            }
+          >
+            <GoogleGlyph className="size-3.5 shrink-0" />
+            <span className="hidden sm:inline">
+              {loginPending ? t("connecting") : t("signIn")}
+            </span>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            align="end"
+            sideOffset={10}
+            className={cn(chatContextMenuContentClass, "min-w-64")}
+          >
+            <AccountGuestMenuSections
+              loginPending={loginPending}
+              onLogin={() => login({ source: "chat" })}
+              onOpenTradingProfile={openTradingProfile}
+            />
+          </DropdownMenuContent>
+        </DropdownMenu>
+        {sheet}
+      </>
+    )
+  }
+
+  return (
+    <>
       <DropdownMenu>
         <DropdownMenuTrigger
           render={
             <Button
               type="button"
-              variant="outline"
-              size="sm"
-              className={cn("h-8 shrink-0 gap-2 px-2.5", className)}
-              aria-label={t("signIn")}
+              variant="ghost"
+              className={cn(
+                "h-8 shrink-0 gap-2 px-1.5 hover:bg-muted/50",
+                className
+              )}
+              aria-label={t("accountMenuFor", {
+                name: userAccountLabel(user),
+              })}
             />
           }
         >
-          <GoogleGlyph className="size-3.5 shrink-0" />
-          <span className="hidden sm:inline">
-            {loginPending ? t("connecting") : t("signIn")}
-          </span>
+          <ChatAccountAvatar
+            user={user}
+            avatarUrl={avatarUrl}
+            isProUser={isProUser}
+            planName={planName}
+            compact
+            showPlanBadge={false}
+            avatarClassName="size-7"
+          />
         </DropdownMenuTrigger>
         <DropdownMenuContent
           align="end"
           sideOffset={10}
           className={cn(chatContextMenuContentClass, "min-w-64")}
         >
-          <AccountGuestMenuSections
-            loginPending={loginPending}
-            onLogin={() => login({ source: "chat" })}
+          <AccountSignedInMenuSections
+            user={user}
+            isProUser={isProUser}
+            planName={planName}
+            avatarUrl={avatarUrl ?? null}
+            onLogout={logout}
+            onOpenNews={onOpenNews}
+            onOpenTradingProfile={openTradingProfile}
           />
         </DropdownMenuContent>
       </DropdownMenu>
-    )
-  }
-
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger
-        render={
-          <Button
-            type="button"
-            variant="ghost"
-            className={cn(
-              "h-8 shrink-0 gap-2 px-1.5 hover:bg-muted/50",
-              className
-            )}
-            aria-label={t("accountMenuFor", {
-              name: userAccountLabel(user),
-            })}
-          />
-        }
-      >
-        <ChatAccountAvatar
-          user={user}
-          avatarUrl={avatarUrl}
-          isProUser={isProUser}
-          planName={planName}
-          compact
-          showPlanBadge={false}
-          avatarClassName="size-7"
-        />
-      </DropdownMenuTrigger>
-      <DropdownMenuContent
-        align="end"
-        sideOffset={10}
-        className={cn(chatContextMenuContentClass, "min-w-64")}
-      >
-        <AccountSignedInMenuSections
-          user={user}
-          isProUser={isProUser}
-          planName={planName}
-          avatarUrl={avatarUrl ?? null}
-          onLogout={logout}
-          onOpenNews={onOpenNews}
-        />
-      </DropdownMenuContent>
-    </DropdownMenu>
+      {sheet}
+    </>
   )
 }
 

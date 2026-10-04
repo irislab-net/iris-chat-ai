@@ -1,12 +1,14 @@
 "use client"
 
 import * as React from "react"
-import { RefreshCwIcon } from "lucide-react"
+import { Link } from "@/i18n/navigation"
 import { useTranslations } from "next-intl"
 
 import {
   chatDesktopDialogClass,
   chatDesktopDialogFooterClass,
+  chatMobileSheetBodyClass,
+  chatMobileSheetCardClass,
   chatMobileSheetContentClass,
   chatMobileSheetDescriptionClass,
   chatMobileSheetFooterBarClass,
@@ -17,7 +19,7 @@ import {
   chatMobileSheetSecondaryButtonClass,
   chatMobileSheetTitleClass,
 } from "@/components/app-shell/chat-mobile-gemini-styles"
-import { GoogleGlyph } from "@/components/auth/google-glyph"
+import { PaymentTokenLogo } from "@/components/billing/payment-token-logo"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -36,78 +38,70 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet"
 import { useIsDesktop } from "@/hooks/use-media-query"
+import { PAYMENT_TOKENS } from "@/lib/billing/payment-options"
 import { landingCta } from "@/lib/landing-modern-styles"
+import { BILLING_PATH, UPGRADE_PATH } from "@/lib/site"
 import { cn } from "@/lib/utils"
 
-export type ChatErrorDialogAction = "retry" | "connect"
-
-type ChatErrorDialogProps = {
+type CreditsExhaustedDialogProps = {
   open: boolean
   onOpenChange: (open: boolean) => void
-  /** Localized / sanitized reason shown to the user. */
-  message: string
-  action?: ChatErrorDialogAction
-  retrying?: boolean
-  signingIn?: boolean
-  onRetry?: () => void
-  onSignIn?: () => void
+  isProUser?: boolean
 }
 
-function ChatErrorDialog({
+function CreditsExhaustedBody() {
+  const t = useTranslations("workspace.creditsExhausted")
+
+  return (
+    <div className={cn(chatMobileSheetCardClass, "flex items-center gap-3")}>
+      <div className="flex -space-x-1.5">
+        {PAYMENT_TOKENS.map((token) => (
+          <PaymentTokenLogo
+            key={token.id}
+            currency={token.id}
+            size="sm"
+            className="ring-2 ring-background"
+          />
+        ))}
+      </div>
+      <p className="min-w-0 text-[13px] leading-snug text-muted-foreground">
+        {t("payWithCrypto")}
+      </p>
+    </div>
+  )
+}
+
+function CreditsExhaustedDialog({
   open,
   onOpenChange,
-  message,
-  action = "retry",
-  retrying = false,
-  signingIn = false,
-  onRetry,
-  onSignIn,
-}: ChatErrorDialogProps) {
-  const t = useTranslations("workspace.chatError")
+  isProUser = false,
+}: CreditsExhaustedDialogProps) {
+  const t = useTranslations("workspace.creditsExhausted")
   const tw = useTranslations("workspace")
   const isDesktop = useIsDesktop()
 
   if (isDesktop === null) return null
 
-  const busy = retrying || signingIn
+  const description = isProUser ? t("descriptionPro") : t("description")
+  const primaryHref = isProUser ? BILLING_PATH : UPGRADE_PATH
+  const primaryLabel = isProUser ? t("viewBilling") : tw("upgradeToPlus")
+  const showBody = !isProUser
 
   const actions = (
     <>
-      {action === "connect" ? (
-        <Button
-          type="button"
-          className={cn(
-            isDesktop
-              ? cn(landingCta("primary", "sm"), "rounded-full gap-2")
-              : cn(chatMobileSheetPrimaryButtonClass, "gap-2")
-          )}
-          disabled={busy}
-          onClick={() => {
-            onOpenChange(false)
-            onSignIn?.()
-          }}
-        >
-          <GoogleGlyph className="size-4 shrink-0" />
-          {signingIn ? tw("connecting") : tw("continueWithGoogle")}
-        </Button>
-      ) : (
-        <Button
-          type="button"
-          className={cn(
-            isDesktop
-              ? cn(landingCta("primary", "sm"), "rounded-full gap-2")
-              : cn(chatMobileSheetPrimaryButtonClass, "gap-2")
-          )}
-          disabled={busy || !onRetry}
-          onClick={() => {
-            onOpenChange(false)
-            onRetry?.()
-          }}
-        >
-          <RefreshCwIcon className="size-4 shrink-0" aria-hidden />
-          {retrying ? t("retrying") : tw("tryAgain")}
-        </Button>
-      )}
+      <Button
+        type="button"
+        className={cn(
+          isDesktop
+            ? cn(landingCta("primary", "sm"), "rounded-full")
+            : chatMobileSheetPrimaryButtonClass
+        )}
+        nativeButton={false}
+        render={<Link href={primaryHref} />}
+        onClick={() => onOpenChange(false)}
+      >
+        {primaryLabel}
+      </Button>
       <Button
         type="button"
         className={cn(
@@ -115,10 +109,9 @@ function ChatErrorDialog({
             ? cn(landingCta("secondary", "sm"), "rounded-full")
             : chatMobileSheetSecondaryButtonClass
         )}
-        disabled={busy}
         onClick={() => onOpenChange(false)}
       >
-        {t("dismiss")}
+        {t("notNow")}
       </Button>
     </>
   )
@@ -133,9 +126,10 @@ function ChatErrorDialog({
                 {t("title")}
               </DialogTitle>
               <DialogDescription className="text-[13px] leading-relaxed text-pretty text-muted-foreground">
-                {message}
+                {description}
               </DialogDescription>
             </DialogHeader>
+            {showBody ? <CreditsExhaustedBody /> : null}
           </div>
           <DialogFooter
             className={cn(
@@ -163,9 +157,14 @@ function ChatErrorDialog({
             {t("title")}
           </SheetTitle>
           <SheetDescription className={chatMobileSheetDescriptionClass}>
-            {message}
+            {description}
           </SheetDescription>
         </SheetHeader>
+        {showBody ? (
+          <div className={cn(chatMobileSheetBodyClass, "pt-1 pb-5")}>
+            <CreditsExhaustedBody />
+          </div>
+        ) : null}
         <SheetFooter className={chatMobileSheetFooterClass}>
           <div className={cn(chatMobileSheetFooterBarClass, "space-y-2 pt-4")}>
             {actions}
@@ -176,4 +175,4 @@ function ChatErrorDialog({
   )
 }
 
-export { ChatErrorDialog }
+export { CreditsExhaustedDialog }

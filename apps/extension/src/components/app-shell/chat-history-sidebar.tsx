@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { Link } from "@/i18n/navigation"
 import {
   MessageSquareIcon,
   NewspaperIcon,
@@ -271,13 +272,7 @@ function HistoryHomeNav({
               className={historyRailGlassIconButtonClass}
               aria-label={t("home")}
               nativeButton={false}
-              render={
-                <a
-                  href={landingHref}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                />
-              }
+              render={<a href={landingHref} target="_blank" rel="noopener noreferrer" />}
             >
               <HouseIcon className="size-4.5" />
             </Button>
@@ -299,9 +294,7 @@ function HistoryHomeNav({
           : chatHistoryRailNavItemClass
       }
       nativeButton={false}
-      render={
-        <a href={landingHref} target="_blank" rel="noopener noreferrer" />
-      }
+      render={<a href={landingHref} target="_blank" rel="noopener noreferrer" />}
     >
       <HouseIcon
         className={cn(
@@ -409,9 +402,7 @@ function MobileHistoryDrawerFooter({
             size="sm"
             className={chatMobileDrawerUpgradeClass}
             nativeButton={false}
-            render={
-              <a href={UPGRADE_PATH} target="_blank" rel="noopener noreferrer" />
-            }
+            render={<Link href={UPGRADE_PATH} />}
           >
             {t("upgrade")}
           </Button>

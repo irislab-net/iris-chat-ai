@@ -678,6 +678,62 @@
     "composerVoicePermissionDeniedTitle": "Mikrofon engellendi",
     "composerVoiceMicMissingTitle": "Mikrofon yok",
     "composerVoiceNetworkErrorTitle": "Bağlantı kesildi",
-    "composerPasteAttachmentMaxTitle": "Attachment limit"
+    "composerPasteAttachmentMaxTitle": "Attachment limit",
+    "analyzeNewsInstruction": "Analyze the impact of this news on the current market structure.",
+    "analyzeNewsBusy": "Wait for the current reply to finish, then analyze again.",
+    "tradingProfile": {
+      "menuLabel": "Personalization",
+      "title": "Personalization",
+      "description": "Saved on this device. Exur uses it silently to tailor answers. It never appears in your chat history.",
+      "experienceLabel": "Experience",
+      "experience": {
+        "beginner": "Beginner",
+        "intermediate": "Intermediate",
+        "advanced": "Advanced",
+        "not_sure": "Not sure"
+      },
+      "experienceHint": {
+        "beginner": "Just getting started with markets.",
+        "intermediate": "Comfortable placing and managing trades.",
+        "advanced": "Experienced across setups and risk.",
+        "not_sure": "Skip for now. Exur will keep answers general."
+      },
+      "targetMarketLabel": "Target market",
+      "targetMarket": {
+        "crypto": "Crypto",
+        "forex": "Forex",
+        "commodities": "Commodities",
+        "multi": "Multi-asset",
+        "not_sure": "Not sure"
+      },
+      "riskLabel": "Risk tolerance",
+      "risk": {
+        "low": "Low",
+        "medium": "Medium",
+        "high": "High",
+        "not_sure": "Not sure"
+      },
+      "countryLabel": "Country",
+      "countryPlaceholder": "Select country",
+      "notSure": "Not sure",
+      "introTitle": "Personalize your answers",
+      "introBody": "Tell Exur how you trade so answers fit your experience, markets, and risk, without showing this in chat history.",
+      "setup": "Setup",
+      "editSetup": "Edit profile",
+      "editorHint": "Tap a row to choose. Tap the check to save and go back.",
+      "save": "Save profile"
+    },
+    "signalCardShare": "Share",
+    "signalShareTitle": "Share signal",
+    "signalShareTabImage": "Image",
+    "signalShareTabText": "Text",
+    "signalShareTarget": "Target",
+    "signalShareCopy": "Copy",
+    "signalShareCopyText": "Copy text",
+    "signalShareShare": "Share",
+    "signalShareShareImage": "Share image",
+    "signalShareCopied": "Copied",
+    "signalShareCopyFailed": "Could not copy",
+    "signalShareShareFailed": "Could not share"
   }
 }

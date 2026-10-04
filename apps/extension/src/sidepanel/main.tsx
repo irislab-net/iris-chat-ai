@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client"
 
 import { AuthProvider } from "@/components/auth/auth-provider"
 import { ChatAside } from "@/components/app-shell/chat-aside"
+import { Toaster } from "@/components/ui/sonner"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { NextIntlClientProvider } from "next-intl"
 import type { AppLocale } from "@/i18n/routing"
@@ -53,6 +54,7 @@ function SidePanelRoot() {
                 onClose={() => {}}
                 isPrimaryContent
               />
+              <Toaster position="top-center" />
             </div>
           </TooltipProvider>
         </AuthProvider>

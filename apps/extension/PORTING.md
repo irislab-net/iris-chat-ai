@@ -33,7 +33,7 @@ When chat UI changes on the web and you want the same quality in the extension, 
 - Full desk / dashboard workspace (beyond chat news)
 - Marketing landing / cookie consent / PWA install
 - Website toolbar
-- Google One Tap (use `chrome.identity` OAuth — see `AUTH.md`)
+- Google One Tap / `chrome.identity` (extension uses API PKCE tab login — see `AUTH.md`)
 - Full billing checkout (link out to `https://chat.exur.ai`)
 
 ## Ownership reminder

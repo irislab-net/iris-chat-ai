@@ -1,15 +1,12 @@
 /**
- * Extension Google sign-in.
+ * Extension Google sign-in (API PKCE tab flow only — no chrome.identity).
  *
- * Primary (login tab): full-page redirect to
+ * Login tab: full-page redirect to
  *   GET /v1/auth/google/login?app=chromimum_extension&destination=<callback.html>&terms&privacy_notice
  * so api.exur.ai can set PKCE + HttpOnly refresh_token cookies (same as web).
  * Backend 303s to chrome-extension://…/callback.html (usually without tokens in the URL).
  * Callback reads the refresh_token cookie via chrome.cookies, exchanges it for
  * access + refresh in chrome.storage, then notifies the side panel.
- *
- * Legacy helper `loginWithGoogle()`: chrome.identity → id_token → one-tap
- * (kept for tooling / fallback).
  */
 
 import {
@@ -54,12 +51,6 @@ export function getExtensionGoogleLoginUrl(): string {
   url.searchParams.set("terms", TERMS_ACCEPTED)
   url.searchParams.set("privacy_notice", PRIVACY_ACCEPTED)
   return url.toString()
-}
-
-function getGoogleClientId(): string {
-  const fromVite = import.meta.env.VITE_GOOGLE_CLIENT_ID as string | undefined
-  const fromDefine = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID
-  return (fromVite || fromDefine || "").trim()
 }
 
 export function createExtensionApiConfig(
@@ -166,115 +157,6 @@ export async function establishSessionFromApiCookies() {
   return pair
 }
 
-function randomNonce() {
-  const bytes = new Uint8Array(16)
-  crypto.getRandomValues(bytes)
-  return Array.from(bytes, (b) => b.toString(16).padStart(2, "0")).join("")
-}
-
-/** Google OIDC id_token via chrome.identity. */
-async function fetchGoogleIdToken(): Promise<string> {
-  const clientId = getGoogleClientId()
-  if (!clientId) {
-    console.error(
-      "[exur-auth] Missing VITE_GOOGLE_CLIENT_ID / NEXT_PUBLIC_GOOGLE_CLIENT_ID in this build"
-    )
-    throw new Error("Google sign-in failed")
-  }
-
-  const redirectUrl = chrome.identity.getRedirectURL()
-  const nonce = randomNonce()
-  const authUrl = new URL("https://accounts.google.com/o/oauth2/v2/auth")
-  authUrl.searchParams.set("client_id", clientId)
-  authUrl.searchParams.set("response_type", "id_token")
-  authUrl.searchParams.set("redirect_uri", redirectUrl)
-  authUrl.searchParams.set("scope", "openid email profile")
-  authUrl.searchParams.set("nonce", nonce)
-  authUrl.searchParams.set("prompt", "select_account")
-
-  let responseUrl: string | undefined
-  try {
-    responseUrl = await chrome.identity.launchWebAuthFlow({
-      url: authUrl.toString(),
-      interactive: true,
-    })
-  } catch (err) {
-    const message = err instanceof Error ? err.message : String(err)
-    if (/canceled|cancelled|user cancelled/i.test(message)) {
-      throw new Error("Sign-in cancelled")
-    }
-    console.error("[exur-auth] launchWebAuthFlow failed", message, {
-      redirectUrl,
-    })
-    throw new Error("Google sign-in failed")
-  }
-
-  if (!responseUrl) throw new Error("Sign-in cancelled")
-
-  const parsed = new URL(responseUrl)
-  const hash = new URLSearchParams(parsed.hash.replace(/^#/, ""))
-  const idToken =
-    hash.get("id_token") ?? parsed.searchParams.get("id_token")
-  if (!idToken) {
-    console.error("[exur-auth] missing id_token after redirect", {
-      responseUrl,
-      redirectUrl,
-    })
-    throw new Error("Google sign-in failed")
-  }
-  return idToken
-}
-
-async function exchangeIdToken(credential: string) {
-  const url = resolveApiUrl(API_ORIGIN, "/v1/auth/google/one-tap")
-  const res = await fetch(url, {
-    method: "POST",
-    credentials: "omit",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      credential,
-      app: "chat",
-      terms: TERMS_ACCEPTED,
-      privacy_notice: PRIVACY_ACCEPTED,
-    }),
-  })
-  const payload = await res.json().catch(() => ({}))
-  if (!res.ok) {
-    throw Object.assign(
-      new Error(
-        typeof payload.error === "string"
-          ? payload.error
-          : `Google sign-in failed (${res.status})`
-      ),
-      { status: res.status, body: payload }
-    )
-  }
-
-  if (
-    payload &&
-    typeof payload === "object" &&
-    "access_token" in payload &&
-    typeof (payload as { access_token?: unknown }).access_token === "string"
-  ) {
-    return parseTokenPair(payload)
-  }
-
-  if (payload?.data) {
-    return parseTokenPair(payload.data)
-  }
-
-  throw new Error(
-    "API did not return access_token from one-tap. Check CORS on api.exur.ai for chrome-extension origins."
-  )
-}
-
-export async function loginWithGoogle(): Promise<void> {
-  const idToken = await fetchGoogleIdToken()
-  const pair = await exchangeIdToken(idToken)
-  await storeAuthTokens(pair)
-  await chromeTokenStore.clearGuestToken?.()
-}
-
 export async function logout() {
   await chromeTokenStore.clearAccessToken()
   await chromeTokenStore.clearGuestToken?.()
@@ -287,12 +169,4 @@ export async function ensureGuestSession() {
 
 export async function isLoggedIn() {
   return Boolean(await chromeTokenStore.getAccessToken())
-}
-
-export function getExtensionOAuthRedirectUrl() {
-  try {
-    return chrome.identity.getRedirectURL()
-  } catch {
-    return ""
-  }
 }

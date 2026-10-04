@@ -17,7 +17,7 @@ import {
   type LucideIcon,
 } from "lucide-react"
 import { useTranslations } from "next-intl"
-import { toast } from "sonner"
+import { showAppErrorToast } from "@/components/ui/app-toast"
 
 import {
   chatSignalCardChipClass,
@@ -32,12 +32,13 @@ import {
   chatSignalCardMetricTileClass,
 } from "@/components/app-shell/chat-mobile-gemini-styles"
 import { ComposerPremiumToolsDialog } from "@/components/app-shell/composer-premium-tools-dialog"
+import { TermText } from "@/components/app-shell/term-text"
 import { useAuth } from "@/components/auth/auth-provider"
 import { Button } from "@/components/ui/button"
 import { useAppFeatureVisible } from "@/hooks/use-app-feature-prefs"
 import { trackChatSignalWatchlist } from "@/lib/analytics"
-import { buildSignalShareText } from "@/lib/chat/signal-share"
 import { signalRewardRiskRatio } from "@/lib/chat/signal-setup"
+import { buildSignalShareText } from "@/lib/chat/signal-share"
 import { formatTradePrice } from "@/lib/chat/trade-signal"
 import type { PaperTradeTicket } from "@/lib/chat/signal-ticket"
 import { cn } from "@/lib/utils"
@@ -98,7 +99,7 @@ function PriceTile({
         />
       ) : column.reason ? (
         <p className="mt-2.5 w-full wrap-break-word text-[11px] leading-snug text-foreground/65">
-          {column.reason}
+          <TermText text={column.reason} />
         </p>
       ) : null}
     </div>
@@ -214,7 +215,7 @@ function ChatSignalCard({
         1600
       )
     } catch {
-      toast.message(t("signalShareCopyFailed"))
+      showAppErrorToast({ title: t("signalShareCopyFailed") })
     }
   }
 
@@ -338,7 +339,7 @@ function ChatSignalCard({
           />
         ) : setup ? (
           <p className="mt-2.5 max-w-md text-[13px] leading-relaxed text-muted-foreground">
-            {setup}
+            <TermText text={setup} />
           </p>
         ) : null}
       </header>
@@ -370,7 +371,7 @@ function ChatSignalCard({
               {t("signalCardThesisHeading")}
             </p>
             <p className="mt-2 text-[13px] leading-relaxed text-foreground/85">
-              {thesis}
+              <TermText text={thesis} />
             </p>
           </div>
         ) : null}

@@ -12,12 +12,17 @@ import { ChatGsapViewStack } from "@/components/app-shell/chat-gsap-view-stack"
 import {
   chatComposerLiquidSheetRowClass,
   chatComposerLiquidSheetRowIconClass,
-  chatMobileGlassSurfaceClass,
   chatMobilePrimaryButtonClass,
   chatMobileSheetPrimaryButtonClass,
   chatUpgradePillClass,
 } from "@/components/app-shell/chat-mobile-gemini-styles"
+import {
+  landingGlassSheen,
+  landingGlassSurface,
+  landingTitleCard,
+} from "@/lib/landing-modern-styles"
 import { LocaleFlag } from "@/components/i18n/locale-flag"
+import { TradingProfileForm } from "@/components/app-shell/trading-profile-form"
 import {
   SfBookIcon,
   SfCheckIcon,
@@ -32,20 +37,29 @@ import {
   SfMailIcon,
   SfMoonIcon,
   SfNewspaperIcon,
+  SfPersonCircleIcon,
   SfQuestionCircleIcon,
   SfShieldIcon,
   SfSparklesIcon,
   SfSunIcon,
   SfSwitchAccountIcon,
 } from "@/components/icons/sf-menu-icons"
-import { Button } from "@/components/ui/button"
 import { SelectionCheckBadge } from "@/components/ui/selection-check-badge"
+import { Button } from "@/components/ui/button"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 import {
   Sheet,
   SheetContent,
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet"
+import { useIsDesktop } from "@/hooks/use-media-query"
+import { Link } from "@/i18n/navigation"
 import { routing, type AppLocale } from "@/i18n/routing"
 import type { User } from "@/lib/api/types"
 import {
@@ -60,6 +74,7 @@ import {
   getMarketingPageHref,
   UPGRADE_PATH,
 } from "@/lib/site"
+import { readTradingProfile } from "@/lib/trading-profile"
 import { userAccountLabel, userAccountSubline } from "@/lib/user-profile"
 import { cn } from "@/lib/utils"
 
@@ -81,10 +96,10 @@ const sheetCanvasClass = [
 const sheetHandleClass =
   "mx-auto mb-3 h-1 w-10 shrink-0 rounded-full bg-foreground/15 dark:bg-white/20"
 
-/** Profile / grouped cards — chat liquid glass (same family as site chrome). */
+/** Profile / grouped cards — landing liquid glass (same family as site chrome). */
 const sheetCardClass = cn(
-  chatMobileGlassSurfaceClass,
-  "rounded-3xl border-0 bg-white/48 dark:bg-white/10"
+  landingGlassSurface,
+  "rounded-3xl bg-white/48 dark:bg-white/10"
 )
 
 /**
@@ -123,6 +138,7 @@ type AccountSheetView =
   | "theme"
   | "language"
   | "help"
+  | "tradingProfile"
 
 type ChatAccountSheetProps = {
   open: boolean
@@ -163,6 +179,7 @@ function SheetRow({
   value,
   onClick,
   href,
+  external,
   chevron = true,
   destructive,
   divider,
@@ -172,6 +189,7 @@ function SheetRow({
   value?: React.ReactNode
   onClick?: () => void
   href?: string
+  external?: boolean
   chevron?: boolean
   destructive?: boolean
   divider?: boolean
@@ -201,7 +219,7 @@ function SheetRow({
       ) : null}
       {chevron ? (
         <SfChevronRightIcon
-          className="size-4.5 shrink-0 text-foreground/25 rtl:rotate-180"
+          className="size-4 shrink-0 text-muted-foreground/50 rtl:rotate-180"
           aria-hidden
         />
       ) : null}
@@ -209,16 +227,23 @@ function SheetRow({
   )
 
   if (href) {
+    if (external) {
+      return (
+        <a
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={className}
+          onClick={onClick}
+        >
+          {body}
+        </a>
+      )
+    }
     return (
-      <a
-        href={href}
-        target="_blank"
-        rel="noopener noreferrer"
-        className={className}
-        onClick={onClick}
-      >
+      <Link href={href} className={className} onClick={onClick}>
         {body}
-      </a>
+      </Link>
     )
   }
 
@@ -250,12 +275,14 @@ function SheetPill({
   label,
   onClick,
   href,
+  external,
   destructive,
 }: {
   icon: React.ReactNode
   label: React.ReactNode
   onClick?: () => void
   href?: string
+  external?: boolean
   destructive?: boolean
 }) {
   const className = cn(
@@ -278,16 +305,23 @@ function SheetPill({
   )
 
   if (href) {
+    if (external) {
+      return (
+        <a
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={className}
+          onClick={onClick}
+        >
+          {body}
+        </a>
+      )
+    }
     return (
-      <a
-        href={href}
-        target="_blank"
-        rel="noopener noreferrer"
-        className={className}
-        onClick={onClick}
-      >
+      <Link href={href} className={className} onClick={onClick}>
         {body}
-      </a>
+      </Link>
     )
   }
 
@@ -310,7 +344,12 @@ function NestedViewChrome({
   return (
     <div className="flex min-h-0 flex-1 flex-col overflow-hidden px-4 pb-6">
       <div className="flex shrink-0 items-center gap-2 pb-3 pt-1">
-        <h2 className="min-w-0 flex-1 truncate text-start text-[22px] font-normal tracking-tight text-foreground">
+        <h2
+          className={cn(
+            landingTitleCard,
+            "min-w-0 flex-1 truncate text-start text-[22px]"
+          )}
+        >
           {title}
         </h2>
         <SheetDoneCheck onClick={onDone} />
@@ -323,8 +362,8 @@ function NestedViewChrome({
 }
 
 /**
- * Mobile profile / settings bottom sheet — Gemini-style cards, pills, and
- * grouped settings with GSAP push navigation.
+ * Profile / settings surface — bottom sheet on mobile, centered dialog on
+ * desktop (incl. Windows). Gemini-style cards with GSAP push navigation.
  */
 function ChatAccountSheet({
   open,
@@ -342,6 +381,7 @@ function ChatAccountSheet({
 }: ChatAccountSheetProps) {
   const t = useTranslations("workspace")
   const common = useTranslations("common")
+  const isDesktop = useIsDesktop()
   const dir = localeDirection(useLocale())
   const pushSign: 1 | -1 = dir === "rtl" ? -1 : 1
   const popSign: 1 | -1 = dir === "rtl" ? 1 : -1
@@ -405,6 +445,7 @@ function ChatAccountSheet({
   function switchLocale(next: AppLocale) {
     if (next === locale) return
     persistLocaleChoice(next)
+    // Side panel has no locale-prefixed routes — reload to remount providers.
     window.location.reload()
   }
 
@@ -415,28 +456,18 @@ function ChatAccountSheet({
 
   const email = user?.email?.trim() || (user ? userAccountSubline(user) : "")
 
-  return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent
-        side="bottom"
-        showCloseButton={false}
-        className={cn(
-          sheetCanvasClass,
-          // Fixed canvas height required — inner stack is flex-1 and collapses without it.
-          "flex h-[min(90dvh,720px)] min-h-0 flex-col overflow-hidden rounded-t-[28px] pt-2 pb-[max(1rem,env(safe-area-inset-bottom,0px))] data-[side=bottom]:h-[min(90dvh,720px)]"
-        )}
-      >
-        <div aria-hidden className={sheetHandleClass} />
-        <SheetHeader className="sr-only">
-          <SheetTitle>
-            {view === "root"
-              ? t("accountMenuFor", {
-                  name: user ? userAccountLabel(user) : t("signIn"),
-                })
-              : t("exurSettings")}
-          </SheetTitle>
-        </SheetHeader>
+  if (isDesktop === null) return null
 
+  const a11yTitle =
+    view === "root"
+      ? t("accountMenuFor", {
+          name: user ? userAccountLabel(user) : t("signIn"),
+        })
+      : view === "tradingProfile"
+        ? t("tradingProfile.title")
+        : t("exurSettings")
+
+  const stack = (
         <ChatGsapViewStack
           active={view}
           enterFromSign={enterFromSign}
@@ -448,7 +479,12 @@ function ChatAccountSheet({
             className="flex min-h-0 flex-1 flex-col overflow-hidden"
           >
             <div className="flex shrink-0 items-center justify-between gap-3 px-5 pb-2 pt-0.5">
-              <h2 className="min-w-0 flex-1 truncate text-start text-[22px] font-normal tracking-tight text-foreground">
+              <h2
+                className={cn(
+                  landingTitleCard,
+                  "min-w-0 flex-1 truncate text-start text-[22px]"
+                )}
+              >
                 {t("accountSection")}
               </h2>
               <SheetDoneCheck onClick={closeSheet} />
@@ -458,11 +494,15 @@ function ChatAccountSheet({
               {user ? (
                 /* Signed-in profile card — Switch account expands inside card */
                 <div className={cn(sheetCardClass, "overflow-hidden")}>
+                  <span
+                    aria-hidden
+                    className={cn(landingGlassSheen, "rounded-3xl")}
+                  />
                   <button
                     type="button"
                     aria-expanded={accountExpanded}
                     onClick={() => setAccountExpanded((v) => !v)}
-                    className="flex w-full items-start gap-3.5 p-3.5 text-start transition-colors active:bg-black/2 dark:active:bg-white/4"
+                    className="relative z-10 flex w-full items-start gap-3.5 p-3.5 text-start transition-colors active:bg-black/2 dark:active:bg-white/4"
                   >
                     <ChatAccountAvatar
                       user={user}
@@ -490,10 +530,8 @@ function ChatAccountSheet({
                         ) : null}
                       </div>
                       {!isProUser ? (
-                        <a
+                        <Link
                           href={UPGRADE_PATH}
-                          target="_blank"
-                          rel="noopener noreferrer"
                           onClick={(event) => {
                             event.stopPropagation()
                             closeSheet()
@@ -502,17 +540,18 @@ function ChatAccountSheet({
                         >
                           <SfSparklesIcon className="size-3.5" aria-hidden />
                           {t("upgrade")}
-                        </a>
+                        </Link>
                       ) : null}
                     </div>
                     <span
                       className={cn(
-                        "mt-1 flex size-8 shrink-0 items-center justify-center rounded-full bg-foreground/6 transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] dark:bg-white/10",
+                        chatComposerLiquidSheetRowIconClass,
+                        "mt-1 size-8 transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]",
                         accountExpanded && "rotate-180"
                       )}
                     >
                       <SfChevronDownIcon
-                        className="size-4 text-foreground/55"
+                        className="size-3.5 text-foreground/55"
                         aria-hidden
                       />
                     </span>
@@ -520,7 +559,7 @@ function ChatAccountSheet({
 
                   <div
                     className={cn(
-                      "grid transition-[grid-template-rows] duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]",
+                      "relative z-10 grid transition-[grid-template-rows] duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]",
                       accountExpanded ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
                     )}
                   >
@@ -532,13 +571,13 @@ function ChatAccountSheet({
                           void onSwitchAccount?.()
                         }}
                         className={cn(
-                          "flex min-h-12 w-full items-center gap-3.5 border-t border-foreground/8 px-4 py-3 text-start text-[16px] font-medium tracking-[-0.01em] transition-[opacity,transform,background-color] duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] active:bg-black/3 dark:border-white/10 dark:active:bg-white/6",
+                          "flex min-h-12 w-full items-center gap-3 border-t border-foreground/8 px-3.5 py-3 text-start text-[15px] font-medium tracking-[-0.016em] transition-[opacity,transform,background-color] duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] active:bg-black/3 dark:border-white/10 dark:active:bg-white/6",
                           accountExpanded
                             ? "translate-y-0 opacity-100"
                             : "-translate-y-1 opacity-0"
                         )}
                       >
-                        <span className="flex size-6 shrink-0 items-center justify-center">
+                        <span className={chatComposerLiquidSheetRowIconClass}>
                           <SfSwitchAccountIcon className={sheetIconClass} />
                         </span>
                         <span className="min-w-0 flex-1">
@@ -555,11 +594,15 @@ function ChatAccountSheet({
                     "relative flex items-center gap-3.5 overflow-hidden p-3.5"
                   )}
                 >
+                  <span
+                    aria-hidden
+                    className={cn(landingGlassSheen, "rounded-3xl")}
+                  />
                   <ChatGuestAvatar
-                    avatarClassName="size-14"
+                    avatarClassName="relative z-10 size-14"
                     showBadge={false}
                   />
-                  <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+                  <div className="relative z-10 flex min-w-0 flex-1 flex-col gap-0.5">
                     <p className="truncate text-[17px] font-semibold tracking-tight text-foreground">
                       {t("guest")}
                     </p>
@@ -570,7 +613,7 @@ function ChatAccountSheet({
                 </div>
               )}
 
-              {/* Primary actions — no Sign in / Switch / Upgrade duplicates */}
+              {/* Primary actions — liquid rows (same family as Exur tools) */}
               <div className="flex flex-col gap-1.5 pt-1">
                 {user ? (
                   <SheetPill
@@ -585,6 +628,12 @@ function ChatAccountSheet({
                   icon={<SfGearIcon className={sheetIconClass} />}
                   label={common("settings")}
                   onClick={() => go("settings")}
+                />
+
+                <SheetPill
+                  icon={<SfPersonCircleIcon className={sheetIconClass} />}
+                  label={t("tradingProfile.menuLabel")}
+                  onClick={() => go("tradingProfile")}
                 />
 
                 {onOpenNews ? (
@@ -673,6 +722,11 @@ function ChatAccountSheet({
                   onClick={() => go("language")}
                   divider
                 />
+                <SheetRow
+                  icon={<SfPersonCircleIcon className={sheetIconClass} />}
+                  label={t("tradingProfile.menuLabel")}
+                  onClick={() => go("tradingProfile")}
+                />
               </SheetCard>
 
               <p className={sheetSectionLabelClass}>
@@ -683,7 +737,9 @@ function ChatAccountSheet({
                   icon={<SfShieldIcon className={sheetIconClass} />}
                   label={t("helpPrivacy")}
                   href={privacyHref}
+                  external
                   onClick={closeSheet}
+                  divider
                 />
               </SheetCard>
 
@@ -768,12 +824,14 @@ function ChatAccountSheet({
                   icon={<SfQuestionCircleIcon className={sheetIconClass} />}
                   label={t("helpFaq")}
                   href={faqHref}
+                  external
                   onClick={closeSheet}
                 />
                 <SheetRow
                   icon={<SfBookIcon className={sheetIconClass} />}
                   label={t("helpWhatIsExur")}
                   href={whatIsHref}
+                  external
                   onClick={closeSheet}
                   divider
                 />
@@ -781,6 +839,7 @@ function ChatAccountSheet({
                   icon={<SfDocTextIcon className={sheetIconClass} />}
                   label={t("helpTerms")}
                   href={termsHref}
+                  external
                   onClick={closeSheet}
                   divider
                 />
@@ -788,13 +847,71 @@ function ChatAccountSheet({
                   icon={<SfMailIcon className={sheetIconClass} />}
                   label={t("helpContact")}
                   href={`mailto:${CONTACT_EMAIL}`}
+                  external
                   onClick={closeSheet}
                   divider
                 />
               </SheetCard>
             </NestedViewChrome>
           </div>
+
+          {/* —— Trading profile (silent client_context prefs) —— */}
+          <div
+            data-view="tradingProfile"
+            className="flex min-h-0 flex-1 flex-col overflow-hidden"
+          >
+            <TradingProfileForm
+              key={
+                view === "tradingProfile"
+                  ? "trading-profile-active"
+                  : "trading-profile-idle"
+              }
+              title={t("tradingProfile.title")}
+              onDone={goBack}
+              initialProfile={readTradingProfile()}
+              onSaved={goBack}
+            />
+          </div>
         </ChatGsapViewStack>
+  )
+
+  if (isDesktop) {
+    return (
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent
+          showCloseButton={false}
+          gsapMotion
+          open={open}
+          className={cn(
+            sheetCanvasClass,
+            "flex h-[min(85dvh,640px)] max-h-[min(85dvh,640px)] min-h-0 w-full flex-col overflow-hidden rounded-3xl p-0 pt-3 pb-4 sm:max-w-[26rem]"
+          )}
+        >
+          <DialogHeader className="sr-only">
+            <DialogTitle>{a11yTitle}</DialogTitle>
+          </DialogHeader>
+          {stack}
+        </DialogContent>
+      </Dialog>
+    )
+  }
+
+  return (
+    <Sheet open={open} onOpenChange={onOpenChange}>
+      <SheetContent
+        side="bottom"
+        showCloseButton={false}
+        className={cn(
+          sheetCanvasClass,
+          // Fixed canvas height required — inner stack is flex-1 and collapses without it.
+          "flex h-[min(90dvh,720px)] min-h-0 flex-col overflow-hidden rounded-t-[28px] pt-2 pb-[max(1rem,env(safe-area-inset-bottom,0px))] data-[side=bottom]:h-[min(90dvh,720px)]"
+        )}
+      >
+        <div aria-hidden className={sheetHandleClass} />
+        <SheetHeader className="sr-only">
+          <SheetTitle>{a11yTitle}</SheetTitle>
+        </SheetHeader>
+        {stack}
       </SheetContent>
     </Sheet>
   )

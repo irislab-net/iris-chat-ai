@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { Link } from "@/i18n/navigation"
 import {
   CheckIcon,
   CopyIcon,
@@ -70,9 +71,7 @@ function ChatThreadUpgradeButton({ className }: { className?: string }) {
       size="sm"
       className={cn(chatThreadUpgradeClass, className)}
       nativeButton={false}
-      render={
-        <a href={UPGRADE_PATH} target="_blank" rel="noopener noreferrer" />
-      }
+      render={<Link href={UPGRADE_PATH} />}
     >
       <SparklesIcon className="size-3.5" />
       {t("upgrade")}

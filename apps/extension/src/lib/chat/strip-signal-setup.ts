@@ -1,6 +1,6 @@
 import { SIGNAL_SETUP_HEADER } from "@/lib/chat/signal-setup-constants"
 
-/** Remove an appended IRIS paper-setup block from a regular co-pilot reply. */
+/** Remove an appended IRIS signal-setup block from a regular co-pilot reply. */
 export function stripUnrequestedIrisSetupFromReply(text: string): string {
   const trimmed = text.trim()
   if (!trimmed) return trimmed

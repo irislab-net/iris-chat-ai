@@ -1,0 +1,219 @@
+import { z } from "zod"
+
+export const TRADING_PROFILE_STORAGE_KEY = "exur_trading_profile"
+export const TRADING_PROFILE_CHANGED_EVENT = "exur:trading-profile-changed"
+
+export const EXPERIENCE_LEVELS = [
+  "beginner",
+  "intermediate",
+  "advanced",
+  "not_sure",
+] as const
+
+export const TARGET_MARKETS = [
+  "crypto",
+  "forex",
+  "commodities",
+  "multi",
+  "not_sure",
+] as const
+
+export const RISK_TOLERANCES = ["low", "medium", "high", "not_sure"] as const
+
+export const tradingProfileSchema = z.object({
+  experience_level: z.enum(EXPERIENCE_LEVELS),
+  country: z
+    .string()
+    .trim()
+    .max(80)
+    .optional()
+    .transform((value) => (value ? value : undefined)),
+  target_market: z.enum(TARGET_MARKETS),
+  risk_tolerance: z.enum(RISK_TOLERANCES),
+})
+
+export type TradingProfile = z.infer<typeof tradingProfileSchema>
+export type ExperienceLevel = (typeof EXPERIENCE_LEVELS)[number]
+export type TargetMarket = (typeof TARGET_MARKETS)[number]
+export type RiskTolerance = (typeof RISK_TOLERANCES)[number]
+
+export type TradingProfileDraft = {
+  experience_level: ExperienceLevel
+  country: string
+  target_market: TargetMarket
+  risk_tolerance: RiskTolerance
+}
+
+export const DEFAULT_TRADING_PROFILE_DRAFT: TradingProfileDraft = {
+  experience_level: "not_sure",
+  country: "",
+  target_market: "not_sure",
+  risk_tolerance: "not_sure",
+}
+
+/** Concrete prefs only — omit when any required field is still "not sure". */
+export function tradingProfileForClientContext(
+  profile: TradingProfile | null | undefined
+):
+  | {
+      experience_level: Exclude<ExperienceLevel, "not_sure">
+      country?: string
+      target_market: Exclude<TargetMarket, "not_sure">
+      risk_tolerance: Exclude<RiskTolerance, "not_sure">
+    }
+  | undefined {
+  if (!profile) return undefined
+  if (
+    profile.experience_level === "not_sure" ||
+    profile.target_market === "not_sure" ||
+    profile.risk_tolerance === "not_sure"
+  ) {
+    return undefined
+  }
+  return {
+    experience_level: profile.experience_level,
+    target_market: profile.target_market,
+    risk_tolerance: profile.risk_tolerance,
+    ...(profile.country ? { country: profile.country } : {}),
+  }
+}
+
+let profileVersion = 0
+
+/**
+ * Cached for useSyncExternalStore — getSnapshot must return a stable
+ * reference or React will infinite-loop after the first save.
+ */
+let cachedSnapshot: TradingProfile | null | undefined
+let cachedRaw: string | null | undefined
+
+function canUseLocalStorage() {
+  return typeof window !== "undefined" && typeof localStorage !== "undefined"
+}
+
+function readRawTradingProfile(): string | null {
+  if (!canUseLocalStorage()) return null
+  try {
+    return localStorage.getItem(TRADING_PROFILE_STORAGE_KEY)
+  } catch {
+    return null
+  }
+}
+
+function notifyTradingProfileChanged() {
+  profileVersion += 1
+  if (typeof window === "undefined") return
+  window.dispatchEvent(new Event(TRADING_PROFILE_CHANGED_EVENT))
+}
+
+export function getTradingProfileVersion() {
+  return profileVersion
+}
+
+export function subscribeTradingProfile(onStoreChange: () => void) {
+  if (typeof window === "undefined") return () => {}
+  const onStorage = (event: StorageEvent) => {
+    if (event.key === TRADING_PROFILE_STORAGE_KEY || event.key === null) {
+      resetTradingProfileCache()
+      onStoreChange()
+    }
+  }
+  const onChanged = () => onStoreChange()
+  window.addEventListener("storage", onStorage)
+  window.addEventListener(TRADING_PROFILE_CHANGED_EVENT, onChanged)
+  return () => {
+    window.removeEventListener("storage", onStorage)
+    window.removeEventListener(TRADING_PROFILE_CHANGED_EVENT, onChanged)
+  }
+}
+
+/** Parse + validate a stored profile. Returns `null` when missing or invalid. */
+export function parseTradingProfile(raw: unknown): TradingProfile | null {
+  const parsed = tradingProfileSchema.safeParse(raw)
+  if (!parsed.success) return null
+  return parsed.data
+}
+
+/**
+ * Synchronize the in-memory snapshot with localStorage (stable identity).
+ * Safe for `useSyncExternalStore` getSnapshot.
+ */
+export function getTradingProfileSnapshot(): TradingProfile | null {
+  const raw = readRawTradingProfile()
+  if (raw === cachedRaw) {
+    return cachedSnapshot ?? null
+  }
+  cachedRaw = raw
+  if (!raw) {
+    cachedSnapshot = null
+    return null
+  }
+  try {
+    cachedSnapshot = parseTradingProfile(JSON.parse(raw) as unknown)
+  } catch {
+    cachedSnapshot = null
+  }
+  return cachedSnapshot
+}
+
+export function readTradingProfile(): TradingProfile | null {
+  return getTradingProfileSnapshot()
+}
+
+/** Invalidate snapshot cache (tests + external storage writes). */
+export function resetTradingProfileCache() {
+  cachedRaw = undefined
+  cachedSnapshot = undefined
+}
+
+export function tradingProfileToDraft(
+  profile: TradingProfile | null
+): TradingProfileDraft {
+  if (!profile) return { ...DEFAULT_TRADING_PROFILE_DRAFT }
+  return {
+    experience_level: profile.experience_level,
+    country: profile.country ?? "",
+    target_market: profile.target_market,
+    risk_tolerance: profile.risk_tolerance,
+  }
+}
+
+export function writeTradingProfile(
+  draft: TradingProfileDraft
+): TradingProfile | null {
+  const parsed = parseTradingProfile({
+    experience_level: draft.experience_level,
+    country: draft.country.trim() || undefined,
+    target_market: draft.target_market,
+    risk_tolerance: draft.risk_tolerance,
+  })
+  if (!parsed) return null
+
+  const raw = JSON.stringify(parsed)
+  if (canUseLocalStorage()) {
+    try {
+      localStorage.setItem(TRADING_PROFILE_STORAGE_KEY, raw)
+    } catch {
+      // Private mode / quota — still notify so in-memory readers refresh.
+    }
+  }
+
+  // Cache before notify so getSnapshot returns a stable object reference.
+  cachedRaw = raw
+  cachedSnapshot = parsed
+  notifyTradingProfileChanged()
+  return parsed
+}
+
+export function clearTradingProfile() {
+  if (canUseLocalStorage()) {
+    try {
+      localStorage.removeItem(TRADING_PROFILE_STORAGE_KEY)
+    } catch {
+      // ignore
+    }
+  }
+  cachedRaw = null
+  cachedSnapshot = null
+  notifyTradingProfileChanged()
+}

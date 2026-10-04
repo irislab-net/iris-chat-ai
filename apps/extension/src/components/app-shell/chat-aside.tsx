@@ -9,7 +9,6 @@ import {
   Maximize2Icon,
   RefreshCwIcon,
 } from "lucide-react"
-
 import { ChatAccountFooter } from "@/components/app-shell/chat-account-footer"
 import { ChatAccountMenu } from "@/components/app-shell/chat-account-menu"
 import { ExurLogo } from "@/components/brand/exur-logo"
@@ -37,6 +36,7 @@ import { ChatMobileSlidePanel } from "@/components/app-shell/chat-mobile-slide-p
 import { ChatGeminiNewChatIcon } from "@/components/app-shell/chat-gemini-new-chat-icon"
 import { ChatComposer } from "@/components/app-shell/chat-composer"
 import { ChatMessageActions } from "@/components/app-shell/chat-message-actions"
+import { showAppToast } from "@/components/ui/app-toast"
 import {
   ChatAssistantTurn,
   ChatSystemNote,
@@ -70,6 +70,7 @@ import { typewriterReveal } from "@/components/app-shell/chat-typing"
 import { useAuth } from "@/components/auth/auth-provider"
 import { GoogleGlyph } from "@/components/auth/google-glyph"
 import { GuestTrialExhaustedDialog } from "@/components/auth/guest-trial-exhausted-dialog"
+import { CreditsExhaustedDialog } from "@/components/billing/credits-exhausted-dialog"
 import { SignalGuidanceDialog } from "@/components/app-shell/signal-guidance-dialog"
 import { ChatErrorDialog } from "@/components/app-shell/chat-error-dialog"
 import dynamic from "next/dynamic"
@@ -112,6 +113,7 @@ import { resolveUserDisplayName } from "@/lib/user-profile"
 import type {
   CoPilotHistoryMessage,
   ChatCreditBalance,
+  NewsItem,
   TrialInfo,
 } from "@/lib/api/types"
 import { formatCreditUsageCompact } from "@/lib/api/credit-usage"
@@ -136,6 +138,7 @@ import {
   COPILOT_PRO_SESSION_REFRESH_MESSAGE,
   coPilotUserFacingError,
   coPilotFailureAction,
+  isCreditExhaustedError,
   isSignalSymbolRequiredError,
   shouldShowGuestSignInPrompt,
   localizeCoPilotErrorText,
@@ -461,6 +464,7 @@ function ChatAside({
   const [creditBalance, setCreditBalance] =
     React.useState<ChatCreditBalance | null>(null)
   const [signalGuidanceOpen, setSignalGuidanceOpen] = React.useState(false)
+  const [creditsExhaustedOpen, setCreditsExhaustedOpen] = React.useState(false)
   const [chatErrorSheet, setChatErrorSheet] = React.useState<{
     message: string
     action: "retry" | "connect"
@@ -1394,6 +1398,40 @@ function ChatAside({
           })
           return
         }
+      } else if (isCreditExhaustedError(error)) {
+        // HTTP 402 / credit codes only — not SSE agent/store failures (status 500).
+        // Applies to Free and Plus (daily/weekly caps). Paywall is modal/sheet only.
+        setCreditsExhaustedOpen(true)
+        void fetchCoPilotUsage()
+          .then((mapped) => {
+            setCreditBalance(mapped.credit_balance ?? null)
+          })
+          .catch(() => undefined)
+        const partial = partialContent.trim()
+        setMessagesAndPersist(
+          (prev) =>
+            partial
+              ? prev.map((m) =>
+                  m.id === assistantId
+                    ? {
+                        ...m,
+                        content: partial,
+                        error: false,
+                        errorText: undefined,
+                        action: undefined,
+                        retryUserMessage: undefined,
+                        thinkingTrace: undefined,
+                      }
+                    : m
+                )
+              : removeEmptyAssistantTurn(prev, assistantId),
+          {
+            id: activeId,
+            history: historySnapshot,
+            ownerId: chatOwnerId,
+          }
+        )
+        return
       }
 
       if (isSignalSymbolRequiredError(error)) {
@@ -1786,6 +1824,24 @@ function ChatAside({
       replyToId,
     })
   }
+
+  const handleSendRef = React.useRef(handleSend)
+  handleSendRef.current = handleSend
+
+  const onAnalyzeNews = React.useEffectEvent((item: NewsItem) => {
+    const title = item.title?.trim()
+    if (!title) return
+    if (sendingRef.current) {
+      showAppToast({
+        title: t("analyzeNewsBusy"),
+        icon: "info",
+      })
+      return
+    }
+    const prompt = `"${title}"\n\n${t("analyzeNewsInstruction")}`
+    setNewsOpen(false)
+    void handleSendRef.current(prompt)
+  })
 
   async function handleRetry(assistantId: string) {
     if (sending || authLoading) return
@@ -2876,15 +2932,29 @@ function ChatAside({
                     isMobileOverlay ? setMobileComposerFocused : undefined
                   }
                   className={isMobileOverlay ? undefined : "px-3 sm:px-4"}
+                  isProUser={isProUser}
                 />
               </div>
             ) : null}
           </div>
           {!isMobileOverlay ? (
-            <ChatNewsSidePanel open={newsOpen} onOpenChange={setNewsOpen} />
+            <ChatNewsSidePanel
+              open={newsOpen}
+              onOpenChange={setNewsOpen}
+              onAnalyzeNews={onAnalyzeNews}
+            />
           ) : (
-            <ChatNewsMobileSheet open={newsOpen} onOpenChange={setNewsOpen} />
+            <ChatNewsMobileSheet
+              open={newsOpen}
+              onOpenChange={setNewsOpen}
+              onAnalyzeNews={onAnalyzeNews}
+            />
           )}
+          <CreditsExhaustedDialog
+            open={creditsExhaustedOpen}
+            onOpenChange={setCreditsExhaustedOpen}
+            isProUser={isProUser}
+          />
           <SignalGuidanceDialog
             open={signalGuidanceOpen}
             onOpenChange={setSignalGuidanceOpen}
