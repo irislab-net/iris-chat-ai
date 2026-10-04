@@ -316,6 +316,7 @@ export function summarizeSignalUserMessage(
   label = "Signal"
 ): string {
   const trimmed = stripMarketContextAppendix(text)
+  if (SIGNAL_SUMMARY_RE.test(trimmed)) return trimmed
   const mention = trimmed.match(SIGNAL_TOOL_TAG_RE)
   if (mention) {
     // Wire prompts may append instruction lines after the user target.

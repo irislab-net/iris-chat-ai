@@ -61,7 +61,7 @@ function ChatThinkingTerminal({ className }: ChatThinkingTerminalProps) {
   const orderRef = React.useRef<ThinkingTerminalLineKey[]>([])
   const orderAtRef = React.useRef(0)
   const tweenRef = React.useRef<{ kill: () => void } | null>(null)
-  const startedAtRef = React.useRef(Date.now())
+  const startedAtRef = React.useRef(0)
   const [activeKey, setActiveKey] = React.useState<ThinkingTerminalLineKey>(
     THINKING_TERMINAL_LINE_KEYS[0]
   )
@@ -74,7 +74,6 @@ function ChatThinkingTerminal({ className }: ChatThinkingTerminalProps) {
 
   React.useEffect(() => {
     startedAtRef.current = Date.now()
-    setElapsedSec(1)
     const id = window.setInterval(() => {
       setElapsedSec(
         Math.max(1, Math.round((Date.now() - startedAtRef.current) / 1000))

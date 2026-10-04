@@ -231,6 +231,7 @@ describe("composer mentions", () => {
   })
 
   it("summarizes signal commands for history", () => {
+    expect(summarizeSignalUserMessage("Signal · eth")).toBe("Signal · eth")
     expect(summarizeSignalUserMessage("@signal ETH")).toBe("Signal · ETH")
     expect(summarizeSignalUserMessage("/signal ETH")).toBe("Signal · ETH")
     expect(

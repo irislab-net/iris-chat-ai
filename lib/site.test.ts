@@ -52,6 +52,7 @@ describe("public SEO site policy (S1/S2)", () => {
       "/",
       "/what-is-exur",
       "/about",
+      "/features",
       "/ai-trading-signals",
       "/privacy",
       "/security",

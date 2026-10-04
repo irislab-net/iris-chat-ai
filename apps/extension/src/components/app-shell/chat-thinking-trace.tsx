@@ -104,11 +104,9 @@ function ChatThinkingTrace({
     durationSec && durationSec > 0 ? durationSec : null
   )
 
-  React.useEffect(() => {
-    if (durationSec && durationSec > 0) {
-      setFrozenSec(durationSec)
-    }
-  }, [durationSec])
+  if (durationSec && durationSec > 0 && frozenSec !== durationSec) {
+    setFrozenSec(durationSec)
+  }
 
   React.useEffect(() => {
     if (live) {

@@ -174,10 +174,11 @@ function SignalGuidanceDialog({
   const isDesktop = useIsDesktop()
   const signalLabel = tw("composerToolSignalLabel")
   const [selectedAsset, setSelectedAsset] = React.useState<SignalAsset>("ETH")
-
-  React.useEffect(() => {
+  const [assetResetForOpen, setAssetResetForOpen] = React.useState(open)
+  if (open !== assetResetForOpen) {
+    setAssetResetForOpen(open)
     if (open) setSelectedAsset("ETH")
-  }, [open])
+  }
 
   if (isDesktop === null) return null
 

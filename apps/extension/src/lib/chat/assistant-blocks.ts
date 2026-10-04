@@ -85,7 +85,7 @@ export function segmentAssistantBlocks(
   now = Date.now()
 ): SegmentResult {
   const normalized = normalizeAssistantContent(input, now)
-  let text = normalized.text
+  const text = normalized.text
 
   if (normalized.residualBoxDrawing) {
     // Keep prose; isolate leftover box-drawing lines instead of nuking the turn.

@@ -196,6 +196,7 @@ function ChatComposer({
     ComposerPasteAttachment[]
   >([])
   const [mentionIndex, setMentionIndex] = React.useState(0)
+  const [mentionPaletteSeenKey, setMentionPaletteSeenKey] = React.useState("")
 
   function openPremiumTools() {
     setToolsSheetOpen(false)
@@ -219,7 +220,9 @@ function ChatComposer({
   const value = isControlled ? valueProp : uncontrolled
   const composerValue = value
   const composerValueRef = React.useRef(composerValue)
-  composerValueRef.current = composerValue
+  React.useEffect(() => {
+    composerValueRef.current = composerValue
+  })
   /**
    * Textarea + mention mirror must share one dir. Use first-strong (like
    * `dir="auto"`) — ChatGPT/Gemini avoid this class of bug by putting chips
@@ -598,11 +601,11 @@ function ChatComposer({
   const mentionPaletteKey = mentionPalette
     ? `${mentionPalette.replaceStart}:${mentionPalette.query}`
     : ""
-
-  React.useEffect(() => {
+  if (mentionPaletteKey !== mentionPaletteSeenKey) {
+    setMentionPaletteSeenKey(mentionPaletteKey)
     setMentionSuppressed(false)
     setMentionIndex(0)
-  }, [mentionPaletteKey])
+  }
 
   const paletteLabels = React.useMemo(
     () => ({
@@ -624,17 +627,17 @@ function ChatComposer({
   const mentionOpen = Boolean(
     mentionPalette && paletteTools.length > 0 && !mentionSuppressed
   )
+  if (mentionOpen && toolsSheetOpen) {
+    setToolsSheetOpen(false)
+  }
   const safeMentionIndex =
     paletteTools.length === 0
       ? 0
       : Math.min(mentionIndex, paletteTools.length - 1)
   const activeMentionOptionId = paletteTools[safeMentionIndex]?.id
-
-  React.useEffect(() => {
-    if (mentionIndex !== safeMentionIndex) {
-      setMentionIndex(safeMentionIndex)
-    }
-  }, [mentionIndex, safeMentionIndex])
+  if (mentionPaletteKey === mentionPaletteSeenKey && mentionIndex !== safeMentionIndex) {
+    setMentionIndex(safeMentionIndex)
+  }
 
   function selectPaletteTool(tool: ComposerPaletteTool) {
     if (tool.locked || !tool.mention) {
@@ -874,17 +877,19 @@ function ChatComposer({
 
   React.useEffect(() => {
     if (!toolsSheetOpen) return
-    stopVoiceInput()
+    let cancelled = false
+    queueMicrotask(() => {
+      if (!cancelled) stopVoiceInput()
+    })
     function onKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") closeToolsSheet()
     }
     window.addEventListener("keydown", onKeyDown)
-    return () => window.removeEventListener("keydown", onKeyDown)
+    return () => {
+      cancelled = true
+      window.removeEventListener("keydown", onKeyDown)
+    }
   }, [toolsSheetOpen])
-
-  React.useEffect(() => {
-    if (mentionOpen) closeToolsSheet()
-  }, [mentionOpen])
 
   React.useEffect(() => {
     if (!isFloating) return

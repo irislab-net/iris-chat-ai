@@ -454,7 +454,7 @@ function ChatAside({
   )
   const [effort, setEffort] = React.useState<ChatEffort>(DEFAULT_CHAT_EFFORT)
   React.useEffect(() => {
-    setEffort(readChatEffort())
+    queueMicrotask(() => setEffort(readChatEffort()))
   }, [])
   const abortRef = React.useRef<AbortController | null>(null)
   const persistTimer = React.useRef(0)
@@ -479,13 +479,7 @@ function ChatAside({
   const [guestOwnerId, setGuestOwnerId] = React.useState<string | null>(null)
 
   React.useEffect(() => {
-    if (authLoading || isAuthenticated) {
-      setGuestTrial(null)
-      setGuestUnavailable(false)
-      setGuestTrialExhaustedOpen(false)
-      if (isAuthenticated) setGuestOwnerId(null)
-      return
-    }
+    if (authLoading || isAuthenticated) return
 
     let cancelled = false
     void ensureGuestSession()
@@ -519,6 +513,14 @@ function ChatAside({
       cancelled = true
     }
   }, [authLoading, isAuthenticated, t])
+
+  const guestTrialForUi =
+    authLoading || isAuthenticated ? null : guestTrial
+  const guestUnavailableForUi =
+    authLoading || isAuthenticated ? false : guestUnavailable
+  const guestTrialExhaustedOpenForUi =
+    authLoading || isAuthenticated ? false : guestTrialExhaustedOpen
+  const guestOwnerIdForUi = isAuthenticated ? null : guestOwnerId
 
   React.useEffect(() => {
     let cancelled = false
@@ -818,7 +820,7 @@ function ChatAside({
   React.useEffect(() => {
     if (!hydrated || authLoading) return
     if (hasUserMessages(messages)) return
-    const ownerId = chatOwnerId ?? guestOwnerId
+    const ownerId = chatOwnerId ?? guestOwnerIdForUi
     if (!ownerId) return
     const storageOwnerId = chatOwnerId
     let cancelled = false
@@ -837,7 +839,7 @@ function ChatAside({
     return () => {
       cancelled = true
     }
-  }, [authLoading, chatOwnerId, guestOwnerId, hydrated, messages, session])
+  }, [authLoading, chatOwnerId, guestOwnerIdForUi, hydrated, messages, session])
 
   React.useEffect(() => {
     function onSessionReset() {
@@ -1388,9 +1390,9 @@ function ChatAside({
       setPendingAssistantId(null)
       if (!isAuthenticated) {
         const trial = await trialFromChatError(error)
-        if (shouldShowGuestSignInPrompt(error, trial ?? guestTrial)) {
+        if (shouldShowGuestSignInPrompt(error, trial ?? guestTrialForUi)) {
           promptGuestTrialExhausted({
-            trial: trial ?? guestTrial,
+            trial: trial ?? guestTrialForUi,
             assistantId,
             activeId,
             historySnapshot,
@@ -1515,7 +1517,7 @@ function ChatAside({
 
     let sendOwnerId: string | null = chatOwnerId
     if (!isAuthenticated) {
-      if (guestUnavailable) return
+      if (guestUnavailableForUi) return
       if (guestTrialExhausted) {
         setGuestTrialExhaustedOpen(true)
         return
@@ -1715,7 +1717,7 @@ function ChatAside({
 
     if (!isAuthenticated && guestTrialExhausted) {
       setDraft(userMessage)
-      promptGuestTrialExhausted({ trial: guestTrial })
+      promptGuestTrialExhausted({ trial: guestTrialForUi })
       return
     }
 
@@ -1847,7 +1849,7 @@ function ChatAside({
     if (sending || authLoading) return
 
     if (!isAuthenticated) {
-      if (guestUnavailable) return
+      if (guestUnavailableForUi) return
       if (guestTrialExhausted) {
         setGuestTrialExhaustedOpen(true)
         return
@@ -1897,7 +1899,7 @@ function ChatAside({
 
     let sendOwnerId: string | null = chatOwnerId
     if (!isAuthenticated) {
-      if (guestUnavailable) return
+      if (guestUnavailableForUi) return
       if (guestTrialExhausted) {
         setGuestTrialExhaustedOpen(true)
         return
@@ -1969,6 +1971,9 @@ function ChatAside({
     !isFocusedLayout &&
     displayMode === "docked"
   const showThread = !showHistoryPanel
+  if (!showThread && showScrollDown) {
+    setShowScrollDown(false)
+  }
   const activeConversation = conversations.find(
     (chat) => chat.id === conversationId
   )
@@ -1993,7 +1998,6 @@ function ChatAside({
     if (!hydrated || !showThread || !conversationId) return
     forcePinRef.current = true
     stickToBottomRef.current = true
-    setShowScrollDown(false)
     let cancelled = false
     let tries = 0
     let lastHeight = -1
@@ -2022,6 +2026,8 @@ function ChatAside({
     }
 
     const outer = window.requestAnimationFrame(() => {
+      if (cancelled) return
+      setShowScrollDown(false)
       window.requestAnimationFrame(tick)
     })
     return () => {
@@ -2029,15 +2035,12 @@ function ChatAside({
       window.cancelAnimationFrame(outer)
       if (settleTimer) clearTimeout(settleTimer)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- session open only
+    // messages.length intentionally omitted — only re-pin on session switch.
   }, [conversationId, hydrated, showThread, pinViewportToBottom])
 
   React.useEffect(() => {
     const viewport = scrollViewportRef.current
-    if (!viewport || !showThread) {
-      setShowScrollDown(false)
-      return
-    }
+    if (!viewport || !showThread) return
 
     function syncScrollDown(source: "scroll" | "resize" | "init") {
       const el = scrollViewportRef.current
@@ -2194,34 +2197,27 @@ function ChatAside({
   const mobileGeminiBackgroundActive =
     isMobileGeminiBackgroundActive(mobileGeminiPhase)
 
-  React.useEffect(() => {
-    if (isMobileOverlay && messages.length === 0) {
-      setMobileHeroIntro(true)
-    }
-  }, [conversationId, isMobileOverlay, messages.length])
+  if (isMobileOverlay && messages.length === 0 && !mobileHeroIntro) {
+    setMobileHeroIntro(true)
+  }
+  if (messages.length === 0) {
+    if (!showMobileEmptyHero) setShowMobileEmptyHero(true)
+  } else if (!isMobileOverlay && showMobileEmptyHero) {
+    setShowMobileEmptyHero(false)
+  }
+  if (displayMode === "focused" && isAuthenticated && !historyOpen) {
+    setHistoryOpen(true)
+  }
 
   React.useEffect(() => {
-    if (messages.length === 0) {
-      setShowMobileEmptyHero(true)
-      return
-    }
-    if (!isMobileOverlay) {
-      setShowMobileEmptyHero(false)
-      return
-    }
+    if (messages.length === 0 || !isMobileOverlay) return
     const timer = window.setTimeout(() => setShowMobileEmptyHero(false), 360)
     return () => window.clearTimeout(timer)
   }, [isMobileOverlay, messages.length])
 
   React.useEffect(() => {
-    setHistoryRailCollapsed(readHistoryRailCollapsed())
+    queueMicrotask(() => setHistoryRailCollapsed(readHistoryRailCollapsed()))
   }, [])
-
-  React.useEffect(() => {
-    if (displayMode === "focused" && isAuthenticated) {
-      setHistoryOpen(true)
-    }
-  }, [displayMode, isAuthenticated])
 
   function toggleHistoryRailCollapsed() {
     setHistoryRailCollapsed((prev) => {
@@ -2399,10 +2395,10 @@ function ChatAside({
                 {isAuthenticated
                   ? (formatCreditUsageCompact(creditBalance) ??
                     displayPlanName(user?.tier))
-                  : guestUnavailable
+                  : guestUnavailableForUi
                     ? t("copilotGuestUnavailable")
-                    : guestTrial
-                      ? formatGuestTrialLabel(guestTrial)
+                    : guestTrialForUi
+                      ? formatGuestTrialLabel(guestTrialForUi)
                       : t("copilotGuestTry")}
               </span>
             </div>
@@ -3019,7 +3015,7 @@ function ChatAside({
             </DialogContent>
           </Dialog>
           <GuestTrialExhaustedDialog
-            open={guestTrialExhaustedOpen}
+            open={guestTrialExhaustedOpenForUi}
             onOpenChange={setGuestTrialExhaustedOpen}
             signingIn={loginPending}
             onSignIn={() => login({ source: "chat" })}
