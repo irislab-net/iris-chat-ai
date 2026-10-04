@@ -32,4 +32,4 @@ Copy `.env.example` to `.env.local` (or configure Cloudflare `.dev.vars`) before
 | `pnpm test` | Vitest unit tests |
 | `pnpm audit --prod` | Production dependency vulnerability scan |
 
-The web app manifest supports installability. Offline service workers are intentionally not used (online-only product).
+Standalone PWA install is `chat.exur.ai` only (`id` `https://chat.exur.ai/`). Marketing (`exur.ai`) serves `display: browser`. Offline service workers are intentionally not used (online-only product).

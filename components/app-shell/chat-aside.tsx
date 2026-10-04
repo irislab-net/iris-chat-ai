@@ -2294,18 +2294,31 @@ function ChatAside({
   const showMobileSkeleton = Boolean(onClose) && (authLoading || !hydrated)
 
   if (showDeskSkeleton || showMobileSkeleton) {
-    return (
+    const skeleton = (
       <ChatAsideSkeleton
-        className={className}
+        className={isPrimaryContent ? "h-full min-h-0 w-full" : className}
         variant={onClose ? "mobile" : "docked"}
         sidebarWidth={shellSidebars.chat.minSize}
         isAuthenticated={isAuthenticated}
       />
     )
+    if (!isPrimaryContent) return skeleton
+    return (
+      <main
+        id={MAIN_CONTENT_ID}
+        tabIndex={-1}
+        data-slot="chat-aside"
+        className={cn("min-h-0 outline-none", className)}
+      >
+        {skeleton}
+      </main>
+    )
   }
 
+  const ChatRoot = isPrimaryContent ? "main" : "aside"
+
   return (
-    <aside
+    <ChatRoot
       id={isPrimaryContent ? MAIN_CONTENT_ID : undefined}
       tabIndex={isPrimaryContent ? -1 : undefined}
       data-slot="chat-aside"
@@ -3058,7 +3071,7 @@ function ChatAside({
           />
         </div>
       </div>
-    </aside>
+    </ChatRoot>
   )
 }
 

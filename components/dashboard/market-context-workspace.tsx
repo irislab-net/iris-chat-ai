@@ -46,9 +46,9 @@ function MarketContextWorkspaceInner({
               <p className="text-[11px] font-medium tracking-[0.16em] text-muted-foreground uppercase">
                 Exur
               </p>
-              <h1 className="mt-1 text-xl font-semibold tracking-tight">
+              <h2 className="mt-1 text-xl font-semibold tracking-tight">
                 {t("newsTitle")}
-              </h1>
+              </h2>
               <p className="mt-1 max-w-xl text-sm text-muted-foreground">
                 {t("newsSubtitle")}
               </p>

@@ -79,6 +79,23 @@ test.describe("critical paths", () => {
     await expect(page.locator("#main-content")).toHaveCount(1)
   })
 
+  test("chat desk first paint exposes h1 and main", async ({ page }) => {
+    await page.addInitScript(() => {
+      localStorage.setItem(
+        "exur-cookie-consent",
+        JSON.stringify({
+          version: "v1",
+          analytics: false,
+          advertising: false,
+          timestamp: Date.now(),
+        })
+      )
+    })
+    await page.goto("/", gotoOpts)
+    await expect(page.getByRole("heading", { level: 1 })).toHaveCount(1)
+    await expect(page.locator("main#main-content")).toHaveCount(1)
+  })
+
   test("upgrade page loads checkout CTA", async ({ page }) => {
     await page.addInitScript(() => {
       localStorage.setItem(

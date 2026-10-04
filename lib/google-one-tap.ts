@@ -61,6 +61,20 @@ export function loadGoogleIdentityScript(): Promise<void> {
   return scriptPromise
 }
 
+/** GIS/FedCM leftover UI sits in a top-layer iframe and can steal the next tap. */
+function hideGoogleOneTapDom() {
+  if (typeof document === "undefined") return
+  document.getElementById("credential_picker_container")?.remove()
+  document.querySelectorAll("iframe[src*='accounts.google.com/gsi/']").forEach((node) => {
+    node.remove()
+  })
+}
+
 export function cancelGoogleOneTap() {
-  window.google?.accounts?.id?.cancel()
+  try {
+    window.google?.accounts?.id?.cancel()
+  } catch {
+    // FedCM cancel can throw AbortError when nothing is showing.
+  }
+  hideGoogleOneTapDom()
 }

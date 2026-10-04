@@ -6,7 +6,10 @@ import { useSearchParams } from "next/navigation"
 
 import "@/app/styles/chat-gemini.css"
 
-import { SkipToContent } from "@/components/landing/modern/skip-to-content"
+import {
+  MAIN_CONTENT_ID,
+  SkipToContent,
+} from "@/components/landing/modern/skip-to-content"
 import { ChatAsideSkeleton } from "@/components/app-shell/shell-skeletons"
 import { AppViewportSync } from "@/components/app-shell/app-viewport-sync"
 import { useIsDesktop } from "@/hooks/use-media-query"
@@ -223,16 +226,22 @@ function AppShellInner({
     return (
       <>
         <AppViewportSync />
-        <div
+        <SkipToContent />
+        <main
+          id={MAIN_CONTENT_ID}
+          tabIndex={-1}
           data-slot="app-shell"
-          className={cn("flex h-app overflow-hidden bg-background", className)}
+          className={cn(
+            "flex h-app overflow-hidden bg-background outline-none",
+            className
+          )}
         >
           <ChatAsideSkeleton
             variant="responsive"
             className="min-h-0 flex-1 rounded-none"
             sidebarWidth={shellSidebars.chat.minSize}
           />
-        </div>
+        </main>
       </>
     )
   }

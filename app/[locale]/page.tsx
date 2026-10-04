@@ -19,9 +19,13 @@ const AppShell = dynamic(
   () => import("@/components/app-shell/app-shell").then((m) => m.AppShell),
   {
     loading: () => (
-      <div className="flex h-app overflow-hidden bg-background">
+      <main
+        id="main-content"
+        tabIndex={-1}
+        className="flex h-app overflow-hidden bg-background outline-none"
+      >
         <DashboardSkeleton />
-      </div>
+      </main>
     ),
   }
 )
@@ -96,6 +100,7 @@ export default async function RootPage({ params }: PageProps) {
   return (
     <>
       <header className="sr-only">
+        <h1>{SITE_TITLE}</h1>
         <p>{SITE_DESCRIPTION}</p>
         <nav aria-label="Primary">
           <ul>

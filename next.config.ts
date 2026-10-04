@@ -208,6 +208,16 @@ const nextConfig: NextConfig = {
         ],
       },
       {
+        source: "/manifest.webmanifest",
+        headers: [
+          { key: "Vary", value: "Host" },
+          {
+            key: "Cache-Control",
+            value: "public, max-age=300, must-revalidate",
+          },
+        ],
+      },
+      {
         source: "/home",
         headers: [
           {

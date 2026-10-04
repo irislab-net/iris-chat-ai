@@ -21,6 +21,7 @@ import {
 } from "@/lib/api/auth"
 import { hasAuthPwaPending } from "@/lib/auth-pwa"
 import { isStandaloneDisplay } from "@/lib/display-mode"
+import { useIsDesktop } from "@/hooks/use-media-query"
 
 const LoginConsentDialog = dynamic(
   () =>
@@ -29,7 +30,10 @@ const LoginConsentDialog = dynamic(
     ),
   { ssr: false }
 )
-import { clearGoogleOneTapDismissed } from "@/lib/google-one-tap"
+import {
+  cancelGoogleOneTap,
+  clearGoogleOneTapDismissed,
+} from "@/lib/google-one-tap"
 import { setChatRegisteredUserId } from "@/lib/chat-auth-session"
 import {
   readChatStore,
@@ -161,10 +165,12 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
   )
   const [loginPending, setLoginPending] = React.useState(false)
   const [consentOpen, setConsentOpen] = React.useState(false)
+  const isDesktop = useIsDesktop()
   const loginAttemptInFlight = React.useRef<Promise<void> | null>(null)
   const loginSourceRef = React.useRef<LoginSource | undefined>(undefined)
   const pendingLoginRef = React.useRef<LoginOptions | undefined>(undefined)
   const pendingCredentialRef = React.useRef<string | null>(null)
+  const consentBusyRef = React.useRef(false)
 
   const applySession = React.useCallback((session: { user: User | null }) => {
     setUser(session.user)
@@ -422,11 +428,12 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [completeLoginAttempt])
 
   const confirmLegalAndLogin = React.useCallback(() => {
+    cancelGoogleOneTap()
+    consentBusyRef.current = true
     const options = pendingLoginRef.current
     const credential = pendingCredentialRef.current
     pendingLoginRef.current = undefined
     pendingCredentialRef.current = null
-    setConsentOpen(false)
     recordLegalAcceptance()
 
     loginSourceRef.current = options?.source
@@ -441,22 +448,29 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
             legalAccepted: true,
           })
           clearGoogleOneTapDismissed()
+          setConsentOpen(false)
+          consentBusyRef.current = false
           await completeLoginAttempt()
         } catch (error) {
           trackLoginFail(
             error instanceof Error ? error.message : "one_tap_exchange_failed",
             options?.source
           )
+          setConsentOpen(false)
+          consentBusyRef.current = false
           startLoginWithGoogle({
             ref: options?.ref,
             legalAccepted: true,
             returnTo: APP_PATH,
+            forceRedirect: true,
           })
         }
       })()
       return
     }
 
+    setConsentOpen(false)
+    consentBusyRef.current = false
     startLoginWithGoogle({
       ref: options?.ref,
       legalAccepted: true,
@@ -466,7 +480,8 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = React.useCallback(
     (options?: LoginOptions) => {
-      if (loginPending) return
+      if (loginPending || consentBusyRef.current) return
+      cancelGoogleOneTap()
       pendingCredentialRef.current = null
       pendingLoginRef.current = options
       if (hasAcceptedCurrentLegal()) {
@@ -480,7 +495,8 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const handleOneTapCredential = React.useCallback(
     (credential: string) => {
-      if (loginPending || user) return
+      if (loginPending || consentBusyRef.current || user) return
+      cancelGoogleOneTap()
       pendingCredentialRef.current = credential
       pendingLoginRef.current = { source: "one_tap" }
       if (hasAcceptedCurrentLegal()) {
@@ -493,11 +509,12 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
   )
   const onConsentOpenChange = React.useCallback(
     (open: boolean) => {
-      if (loginPending) return
+      if (loginPending || consentBusyRef.current) return
       setConsentOpen(open)
       if (!open) {
         pendingLoginRef.current = undefined
         pendingCredentialRef.current = null
+        cancelGoogleOneTap()
       }
     },
     [loginPending]
@@ -510,6 +527,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     loginSourceRef.current = undefined
     pendingLoginRef.current = undefined
     pendingCredentialRef.current = null
+    consentBusyRef.current = false
     setConsentOpen(false)
     await logoutRemote()
     resetClientSessionOnLogout({ userId })
@@ -518,11 +536,17 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     setLoginPending(false)
   }, [user?.id])
 
+  React.useLayoutEffect(() => {
+    if (!consentOpen && !loginPending) return
+    cancelGoogleOneTap()
+  }, [consentOpen, loginPending])
+
   const oneTapEnabled =
     !loading &&
     !user &&
     !loginPending &&
     !consentOpen &&
+    isDesktop === true &&
     !isAuthSuccessRoute &&
     !isOAuthPopupCallback &&
     // FedCM / One Tap is unreliable in installed PWAs (esp. iOS Safari).

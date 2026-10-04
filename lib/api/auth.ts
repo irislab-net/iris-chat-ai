@@ -230,6 +230,8 @@ export function startLoginWithGoogle(options?: {
   legalAccepted?: boolean
   app?: string
   returnTo?: string
+  /** After an async One Tap miss, skip window.open — the user gesture is gone. */
+  forceRedirect?: boolean
 }) {
   if (typeof window !== "undefined" && options?.returnTo) {
     persistAuthReturnTo(options.returnTo)
@@ -248,7 +250,7 @@ export function startLoginWithGoogle(options?: {
 
   // Installed PWA / chat app: always full-page redirect. iOS standalone cannot
   // return OAuth via window.open + postMessage (opens Safari, loses opener).
-  if (app || standalone) {
+  if (app || standalone || options?.forceRedirect) {
     markAuthPwaPending()
     window.location.assign(url)
     return
