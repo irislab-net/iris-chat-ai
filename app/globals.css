@@ -337,6 +337,22 @@
   overflow: auto !important;
 }
 
+/* iOS Safari: stacked backdrop-filter on many table/code cards OOMs WebKit
+ * when loading long history. Opaque fills keep the surface without blur cost. */
+@media (max-width: 639px) {
+  [data-streamdown="table-wrapper"],
+  [data-streamdown="code-block"] {
+    background: color-mix(in oklch, var(--background) 92%, white) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  :is(.dark) [data-streamdown="table-wrapper"],
+  :is(.dark) [data-streamdown="code-block"] {
+    background: color-mix(in oklch, var(--background) 88%, white) !important;
+  }
+}
+
 @media (min-width: 640px) {
   [data-streamdown="table-wrapper"],
   [data-streamdown="code-block"] {

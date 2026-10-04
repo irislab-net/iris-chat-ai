@@ -118,10 +118,6 @@ const chatMobileThreadFirstTurnClass = "mt-4 sm:mt-5"
 const chatMobileThreadBottomSpacerClass =
   "h-[calc(8.75rem+env(safe-area-inset-bottom,0px))] shrink-0"
 
-/** Soft scroll fades — content dissolves under absolute header + composer. */
-const chatMobileThreadScrollMaskClass =
-  "[&_[data-slot=scroll-area-viewport]]:mask-[linear-gradient(to_bottom,transparent_0%,rgba(0,0,0,0.45)_3%,rgba(0,0,0,0.85)_7%,black_12%,black_78%,rgba(0,0,0,0.8)_88%,rgba(0,0,0,0.4)_95%,transparent_100%)] [&_[data-slot=scroll-area-viewport]]:[-webkit-mask-image:linear-gradient(to_bottom,transparent_0%,rgba(0,0,0,0.45)_3%,rgba(0,0,0,0.85)_7%,black_12%,black_78%,rgba(0,0,0,0.8)_88%,rgba(0,0,0,0.4)_95%,transparent_100%)]"
-
 /** Bottom blur + fade overlay — strip behind floating composer. */
 const chatMobileThreadBottomFadeClass =
   "pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-28 bg-gradient-to-t from-background/80 from-0% via-background/35 via-40% to-transparent to-100% backdrop-blur-[6px] backdrop-saturate-150 [mask-image:linear-gradient(to_top,black_0%,black_28%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_top,black_0%,black_28%,transparent_100%)] supports-[backdrop-filter]:from-background/55 supports-[backdrop-filter]:via-background/15 supports-[backdrop-filter]:to-transparent"
@@ -829,7 +825,6 @@ export {
   chatMobileThreadTopSpacerClass,
   chatMobileThreadBottomSpacerClass,
   chatMobileThreadBottomFadeClass,
-  chatMobileThreadScrollMaskClass,
   chatMobileToolsMenuClass,
   chatMobileToolsMenuItemClass,
   chatMobileToolsMenuItemDescClass,

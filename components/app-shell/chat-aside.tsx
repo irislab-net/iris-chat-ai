@@ -24,7 +24,6 @@ import {
   chatMobileThreadBottomSpacerClass,
   chatMobileThreadClass,
   chatMobileThreadFirstTurnClass,
-  chatMobileThreadScrollMaskClass,
   chatMobileThreadTopSpacerClass,
   chatMobileComposerDockClass,
   chatMobileEmptyHeroContentClass,
@@ -737,7 +736,7 @@ function ChatAside({
     }
     const viewport = scrollViewportRef.current
     stickToBottomRef.current = true
-    setShowScrollDown(false)
+    setShowScrollDown((prev) => (prev ? false : prev))
     if (!viewport) return 0
     // Direct scrollTop is more reliable than scrollTo() on Base UI's viewport
     // while markdown/images are still settling scrollHeight.
@@ -779,7 +778,12 @@ function ChatAside({
    */
   const followChatBottom = React.useCallback(() => {
     const liveReply = pendingAssistantIdRef.current != null
-    if (liveReply || forcePinRef.current) {
+    // Session-open pin ticker owns scrollTop; only keep the stick flag hot.
+    if (forcePinRef.current) {
+      stickToBottomRef.current = true
+      return
+    }
+    if (liveReply) {
       stickToBottomRef.current = true
     }
     if (!stickToBottomRef.current) return
@@ -791,7 +795,11 @@ function ChatAside({
 
     scrollFollowRafRef.current = window.requestAnimationFrame(() => {
       scrollFollowRafRef.current = null
-      const live = pendingAssistantIdRef.current != null || forcePinRef.current
+      if (forcePinRef.current) {
+        stickToBottomRef.current = true
+        return
+      }
+      const live = pendingAssistantIdRef.current != null
       if (live) stickToBottomRef.current = true
       if (!stickToBottomRef.current) return
       const viewport = scrollViewportRef.current
@@ -2091,29 +2099,42 @@ function ChatAside({
       const distanceFromBottom =
         el.scrollHeight - el.scrollTop - el.clientHeight
       const liveReply = pendingAssistantIdRef.current != null
-      const forcePin = forcePinRef.current || liveReply
+      const sessionForcePin = forcePinRef.current
       const nearBottom = distanceFromBottom < CHAT_SCROLL_BOTTOM_THRESHOLD
       const prevStick = stickToBottomRef.current
       const rafBusy = scrollFollowRafRef.current != null
 
-      // Session open + entire live reply: always pin. Small scrolls during
-      // typing must not detach follow while the answer is still growing.
-      if (forcePin) {
+      // Session-open pin ticker owns scrollTop writes. ResizeObserver must not
+      // also write scrollTop or soft-follow — that feedback loop crashes iOS
+      // WebKit while Streamdown/markdown height is still settling.
+      if (sessionForcePin) {
+        stickToBottomRef.current = true
+        setShowScrollDown((prev) => (prev ? false : prev))
+        return
+      }
+
+      // Live reply: always pin. Small scrolls during typing must not detach
+      // follow while the answer is still growing.
+      if (liveReply) {
         stickToBottomRef.current = true
         if (distanceFromBottom > 0.5) {
           el.scrollTop = Math.max(0, el.scrollHeight - el.clientHeight)
         }
-        setShowScrollDown(false)
+        setShowScrollDown((prev) => (prev ? false : prev))
         return
       }
 
       // Soft follow / content resize: keep pin while stuck-to-bottom.
-      if (rafBusy || (prevStick && !nearBottom && source !== "scroll")) {
+      // Skip re-entry when already within the bottom threshold.
+      if (
+        rafBusy ||
+        (prevStick && !nearBottom && source !== "scroll" && distanceFromBottom > 0.5)
+      ) {
         if (prevStick) {
           stickToBottomRef.current = true
-          if (distanceFromBottom > 0.5) followChatBottom()
+          followChatBottom()
         }
-        setShowScrollDown(false)
+        setShowScrollDown((prev) => (prev ? false : prev))
         return
       }
 
@@ -2524,16 +2545,11 @@ function ChatAside({
             {showThread ? (
               <div
                 ref={threadTransitionRef}
-                className="relative min-h-0 flex-1 overflow-hidden will-change-transform"
+                className="relative min-h-0 flex-1 overflow-hidden"
               >
                 <ScrollArea
                   viewportRef={scrollViewportRef}
-                  className={cn(
-                    "h-full min-h-0",
-                    isMobileOverlay &&
-                      messages.length > 0 &&
-                      chatMobileThreadScrollMaskClass
-                  )}
+                  className="h-full min-h-0"
                 >
                   {isMobileOverlay && messages.length > 0 ? (
                     <div
