@@ -580,6 +580,8 @@
       "aria": "Denkstappen van het model",
       "live": "Exur denkt na…",
       "liveWithDuration": "Exur denkt na… {seconds}s",
+      "writing": "Antwoord schrijven…",
+      "writingWithDuration": "Antwoord schrijven… {seconds}s",
       "done": "Denkproces",
       "doneWithDuration": "Nagedacht gedurende {seconds}s",
       "waiting": "Context voor je verzoek verzamelen…",

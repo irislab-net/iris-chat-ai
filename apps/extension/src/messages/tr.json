@@ -583,6 +583,8 @@
       "aria": "Model düşünme adımları",
       "live": "Exur düşünüyor…",
       "liveWithDuration": "Exur düşünüyor… {seconds}sn",
+      "writing": "Yanıt yazılıyor…",
+      "writingWithDuration": "Yanıt yazılıyor… {seconds} sn",
       "done": "Düşünme süreci",
       "doneWithDuration": "{seconds} sn düşündü",
       "waiting": "İsteğin için bağlam toplanıyor…",

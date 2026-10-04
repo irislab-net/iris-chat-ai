@@ -43,15 +43,19 @@ function ScrollBar({
       data-orientation={orientation}
       orientation={orientation}
       className={cn(
-        "flex touch-none p-px transition-colors select-none data-horizontal:h-2.5 data-horizontal:flex-col data-horizontal:border-t data-horizontal:border-t-transparent data-vertical:h-full data-vertical:w-2.5 data-vertical:border-l data-vertical:border-l-transparent",
-        "pointer-events-none opacity-0",
+        // Overlay bar: Base UI positions this absolutely, so opacity changes
+        // never reserve gutter space or shift chat content.
+        "flex touch-none select-none data-horizontal:h-1.5 data-horizontal:flex-col data-vertical:h-full data-vertical:w-1.5",
+        "pointer-events-none opacity-0 transition-opacity duration-300 ease-out",
+        "data-scrolling:pointer-events-auto data-scrolling:opacity-100 data-scrolling:duration-0",
+        "hover:pointer-events-auto hover:opacity-100",
         className
       )}
       {...props}
     >
       <ScrollAreaPrimitive.Thumb
         data-slot="scroll-area-thumb"
-        className="relative flex-1 rounded-full bg-border"
+        className="relative flex-1 rounded-full bg-foreground/20 transition-colors hover:bg-foreground/35"
       />
     </ScrollAreaPrimitive.Scrollbar>
   )

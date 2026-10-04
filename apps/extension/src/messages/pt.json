@@ -583,6 +583,8 @@
       "aria": "Etapas de raciocínio do modelo",
       "live": "Exur está pensando…",
       "liveWithDuration": "Exur está pensando… {seconds}s",
+      "writing": "Escrevendo a resposta…",
+      "writingWithDuration": "Escrevendo a resposta… {seconds}s",
       "done": "Processo de pensamento",
       "doneWithDuration": "Pensou por {seconds}s",
       "waiting": "Coletando contexto da sua solicitação…",

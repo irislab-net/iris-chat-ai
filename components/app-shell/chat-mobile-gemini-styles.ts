@@ -161,12 +161,15 @@ const chatMobileAssistantClass =
 const chatMobileComposerShellClass =
   "relative shrink-0 bg-transparent px-6 pt-1.5 pb-[max(0.375rem,env(safe-area-inset-bottom,0px))]"
 
-/** Floating composer — pill when single-line. */
-const chatMobileComposerPillClass = `grid rounded-full text-foreground transition-[box-shadow,background-color,border-color] duration-200 ease-out ${chatMobileComposerGlassClass} ${chatMobileComposerGlassFocusClass}`
+/**
+ * Floating composer shell. Radius/padding/gap interpolate so compact↔expanded
+ * does not hard-cut; height morph is driven by a FLIP in chat-composer.
+ */
+const chatMobileComposerPillClass = `grid text-foreground transition-[box-shadow,background-color,border-color,border-radius,padding,gap,min-height] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none ${chatMobileComposerGlassClass} ${chatMobileComposerGlassFocusClass}`
 
-/** Compact — taller bar → larger circular ends (rounder pill). */
+/** Compact — pill ends (~half of min-h-16) without 9999px so radius can ease. */
 const chatMobileComposerPillCompactClass =
-  "min-h-16 w-full grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-2 px-4 py-2 [grid-template-areas:'leading_field_trailing']"
+  "min-h-16 w-full rounded-[2rem] grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-2 px-4 py-2 [grid-template-areas:'leading_field_trailing']"
 
 /** Multiline — soft card radius. */
 const chatMobileComposerPillExpandedClass =
@@ -184,10 +187,20 @@ const chatMobileComposerTextareaClass =
   "chat-bidi block w-full min-w-0 flex-1 field-sizing-content resize-none rounded-none border-0 bg-transparent px-2.5 text-[16px]! font-normal leading-[1.4] tracking-normal break-words whitespace-pre-wrap text-foreground shadow-none placeholder:text-muted-foreground/45 focus-visible:border-transparent focus-visible:ring-0 disabled:cursor-not-allowed disabled:bg-transparent disabled:opacity-100 md:text-[16px]! dark:bg-transparent dark:disabled:bg-transparent dark:placeholder:text-muted-foreground/40"
 
 const chatMobileComposerTextareaCompactClass =
-  "h-11 min-h-11 max-h-11 w-full self-center py-0 overflow-hidden leading-11 [field-sizing:fixed]"
+  "h-11 min-h-11 max-h-11 w-full self-center py-0 overflow-hidden leading-11 [field-sizing:fixed] transition-[min-height,padding,line-height] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
 
 const chatMobileComposerTextareaExpandedClass =
-  "min-h-10 max-h-40 py-2.5 overflow-y-auto"
+  "min-h-10 max-h-40 py-2.5 overflow-y-auto transition-[min-height,padding,line-height] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
+
+/**
+ * Field wrapper sizing only — no padding. Padding on this node desyncs the
+ * absolute mention mirror (`inset-0`) from the in-flow textarea (caret).
+ */
+const chatMobileComposerFieldCompactClass =
+  "h-11 min-h-11 max-h-11 w-full self-center overflow-hidden transition-[min-height,height] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
+
+const chatMobileComposerFieldExpandedClass =
+  "min-h-10 max-h-40 overflow-y-auto transition-[min-height,height] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
 
 /** Desktop/web composer — liquid glass rim lives in the composer glass shadows. */
 const chatDesktopComposerGlassBorderClass = "ring-0"
@@ -294,18 +307,18 @@ const chatMobileComposerToolChipCloseClass = `${chatComposerToolChipCloseClass} 
 
 const chatDesktopComposerToolChipCloseClass = `${chatComposerToolChipCloseClass} size-3.5`
 
-/** Pasted long-text file chip — ChatGPT / Gemini attachment card in composer. */
+/** Pasted long-text file chip — compact two-line pill in composer. */
 const chatComposerPasteChipClass =
-  "group relative flex max-w-full min-w-0 items-center gap-2.5 rounded-2xl border-0 bg-[rgba(118,118,128,0.10)] px-2.5 py-2 text-start shadow-none transition-[background-color,transform] duration-150 hover:bg-[rgba(118,118,128,0.14)] dark:bg-white/[0.10] dark:hover:bg-white/[0.14]"
+  "group relative flex h-10 w-[9.75rem] shrink-0 items-center gap-1.5 rounded-2xl border-0 bg-[rgba(118,118,128,0.10)] py-0 pe-1 ps-1.5 text-start shadow-none transition-[background-color,transform] duration-150 hover:bg-[rgba(118,118,128,0.14)] dark:bg-white/[0.10] dark:hover:bg-white/[0.14]"
 
 const chatComposerPasteChipIconClass =
-  "flex size-9 shrink-0 items-center justify-center rounded-xl bg-white/70 text-foreground shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_80%,transparent)] dark:bg-white/10"
+  "flex size-5 shrink-0 items-center justify-center rounded-full text-muted-foreground"
 
 const chatComposerPasteChipMetaClass =
-  "text-[11px] leading-3.5 tracking-[-0.006em] text-muted-foreground"
+  "block truncate text-[10px] font-normal leading-none tracking-[-0.006em] text-muted-foreground/75"
 
 const chatComposerPasteChipCloseClass =
-  "flex size-6 shrink-0 items-center justify-center rounded-full text-muted-foreground/70 transition-[color,background-color,transform] duration-150 hover:bg-foreground/8 hover:text-foreground active:scale-95"
+  "flex size-5 shrink-0 items-center justify-center rounded-full text-muted-foreground/60 transition-[color,background-color,transform] duration-150 hover:bg-foreground/8 hover:text-foreground active:scale-95"
 
 const chatMobileScrollDownClass =
   `absolute bottom-[calc(4.875rem+env(safe-area-inset-bottom,0px))] left-1/2 z-10 size-9 -translate-x-1/2 rounded-full border border-white/35 bg-white/[0.18] text-foreground backdrop-blur-[22px] backdrop-saturate-[190%] supports-[backdrop-filter]:bg-white/[0.12] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.72),0_2px_10px_-3px_rgba(0,0,0,0.06),0_8px_24px_-10px_rgba(0,0,0,0.1)] transition-[transform,background-color,box-shadow,border-color] duration-150 ease-out hover:border-white/55 hover:bg-white/[0.32] active:scale-[0.96] dark:border-white/16 dark:bg-white/[0.10] dark:supports-[backdrop-filter]:bg-white/[0.07] dark:hover:border-white/28 dark:hover:bg-white/[0.18]`
@@ -678,6 +691,8 @@ export {
   chatMobileComposerTextareaClass,
   chatMobileComposerTextareaCompactClass,
   chatMobileComposerTextareaExpandedClass,
+  chatMobileComposerFieldCompactClass,
+  chatMobileComposerFieldExpandedClass,
   chatMobileComposerSendClass,
   chatMobileComposerSendIdleClass,
   chatDesktopCanvasClass,

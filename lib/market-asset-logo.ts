@@ -2,6 +2,7 @@
 export const MARKET_ASSET_LOGOS = {
   BTC: "https://assets.coingecko.com/coins/images/1/small/bitcoin.png",
   ETH: "https://assets.coingecko.com/coins/images/279/small/ethereum.png",
+  SOL: "https://assets.coingecko.com/coins/images/4128/small/solana.png",
   // XAUUSD--big.svg and DXY--big.svg return 403 on TradingView's CDN.
   XAU: "https://s3-symbol-logo.tradingview.com/metal/gold--big.svg",
   DXY: "https://s3-symbol-logo.tradingview.com/currency/USD--big.svg",

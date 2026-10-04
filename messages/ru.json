@@ -580,6 +580,8 @@
       "aria": "Шаги рассуждения модели",
       "live": "Exur думает…",
       "liveWithDuration": "Exur думает… {seconds}с",
+      "writing": "Пишет ответ…",
+      "writingWithDuration": "Пишет ответ… {seconds}с",
       "done": "Ход мыслей",
       "doneWithDuration": "Думал {seconds}с",
       "waiting": "Собираю контекст вашего запроса…",

@@ -866,6 +866,8 @@
       "aria": "خطوات تفكير النموذج",
       "live": "Exur يفكر…",
       "liveWithDuration": "Exur يفكر… {seconds}ث",
+      "writing": "جارٍ كتابة الرد…",
+      "writingWithDuration": "جارٍ كتابة الرد… {seconds}ث",
       "done": "عملية التفكير",
       "doneWithDuration": "فكر لمدة {seconds}ث",
       "waiting": "يجمع سياق طلبك…",

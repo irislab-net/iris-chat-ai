@@ -894,6 +894,8 @@
       "aria": "Model thinking steps",
       "live": "Exur is thinking…",
       "liveWithDuration": "Exur is thinking… {seconds}s",
+      "writing": "Writing the reply…",
+      "writingWithDuration": "Writing the reply… {seconds}s",
       "done": "Thought process",
       "doneWithDuration": "Thought for {seconds}s",
       "waiting": "Gathering context for your request…",

@@ -124,20 +124,21 @@ const proseClassName = cn(
   "[&_strong]:font-semibold [&_strong]:text-foreground",
   "[&_em]:italic",
   "[&_code]:rounded-md [&_code]:bg-foreground/6 [&_code]:px-1 [&_code]:py-0.5 [&_code]:font-mono [&_code]:text-[0.92em]",
-  // Fallback bare <pre> (non–code-block) — same soft shell as tables
-  "[&_pre]:my-3.5 [&_pre]:overflow-x-auto [&_pre]:rounded-2xl [&_pre]:border [&_pre]:border-border/45 [&_pre]:bg-muted/25 [&_pre]:p-1.5 [&_pre]:font-mono [&_pre]:text-[13px] [&_pre]:leading-[1.5] [&_pre]:whitespace-pre-wrap [&_pre]:shadow-none sm:[&_pre]:text-[14px] [&_pre:last-child]:mb-0",
+  // Fallback bare <pre> — same glass shell as tables / code-blocks
+  "[&_pre]:my-3.5 [&_pre]:overflow-x-auto [&_pre]:rounded-2xl [&_pre]:border-0 [&_pre]:bg-white/70 [&_pre]:p-3 [&_pre]:font-mono [&_pre]:text-[13px] [&_pre]:leading-[1.5] [&_pre]:whitespace-pre-wrap [&_pre]:shadow-none [&_pre]:backdrop-blur-xl [&_pre]:backdrop-saturate-150 dark:[&_pre]:bg-white/10 sm:[&_pre]:p-3.5 sm:[&_pre]:text-[14px] [&_pre:last-child]:mb-0",
   "[&_pre_code]:block [&_pre_code]:rounded-xl [&_pre_code]:border [&_pre_code]:border-border/40 [&_pre_code]:bg-background [&_pre_code]:p-3.5 [&_pre_code]:font-inherit [&_pre_code]:text-inherit [&_pre_code]:leading-inherit",
-  // Streamdown code blocks — match table-wrapper: soft outer + clean inner
-  "[&_[data-streamdown=code-block]]:my-3.5 [&_[data-streamdown=code-block]]:gap-1.5 [&_[data-streamdown=code-block]]:overflow-hidden [&_[data-streamdown=code-block]]:rounded-2xl [&_[data-streamdown=code-block]]:border [&_[data-streamdown=code-block]]:border-border/45 [&_[data-streamdown=code-block]]:bg-muted/25 [&_[data-streamdown=code-block]]:p-1.5 [&_[data-streamdown=code-block]]:shadow-none",
-  "[&_[data-streamdown=code-block-header]]:h-7 [&_[data-streamdown=code-block-header]]:min-h-7 [&_[data-streamdown=code-block-header]]:px-0.5 [&_[data-streamdown=code-block-header]]:text-[12px] [&_[data-streamdown=code-block-header]]:font-medium [&_[data-streamdown=code-block-header]]:tracking-wide [&_[data-streamdown=code-block-header]]:text-muted-foreground",
+  // Streamdown code blocks — match table glass shell (no border, radius inset padding)
+  "[&_[data-streamdown=code-block]]:my-3.5 [&_[data-streamdown=code-block]]:gap-2 [&_[data-streamdown=code-block]]:overflow-hidden [&_[data-streamdown=code-block]]:rounded-2xl [&_[data-streamdown=code-block]]:border-0 [&_[data-streamdown=code-block]]:bg-white/70 [&_[data-streamdown=code-block]]:p-3 [&_[data-streamdown=code-block]]:shadow-none [&_[data-streamdown=code-block]]:backdrop-blur-xl [&_[data-streamdown=code-block]]:backdrop-saturate-150 dark:[&_[data-streamdown=code-block]]:bg-white/10 sm:[&_[data-streamdown=code-block]]:p-3.5",
+  "[&_[data-streamdown=code-block-header]]:h-7 [&_[data-streamdown=code-block-header]]:min-h-7 [&_[data-streamdown=code-block-header]]:px-1 [&_[data-streamdown=code-block-header]]:text-[12px] [&_[data-streamdown=code-block-header]]:font-medium [&_[data-streamdown=code-block-header]]:tracking-wide [&_[data-streamdown=code-block-header]]:text-muted-foreground",
   "[&_[data-streamdown=code-block-header]_span]:ms-0.5 [&_[data-streamdown=code-block-header]_span]:ml-0 [&_[data-streamdown=code-block-header]_span]:font-medium [&_[data-streamdown=code-block-header]_span]:normal-case",
   "[&_[data-streamdown=code-block-actions]]:gap-0.5 [&_[data-streamdown=code-block-actions]]:rounded-lg [&_[data-streamdown=code-block-actions]]:border [&_[data-streamdown=code-block-actions]]:border-border/40 [&_[data-streamdown=code-block-actions]]:bg-background/90 [&_[data-streamdown=code-block-actions]]:px-1 [&_[data-streamdown=code-block-actions]]:py-0.5 [&_[data-streamdown=code-block-actions]]:shadow-none [&_[data-streamdown=code-block-actions]]:backdrop-blur-sm",
   "[&_[data-streamdown=code-block-body]]:rounded-xl [&_[data-streamdown=code-block-body]]:border [&_[data-streamdown=code-block-body]]:border-border/40 [&_[data-streamdown=code-block-body]]:bg-background [&_[data-streamdown=code-block-body]]:p-3.5 [&_[data-streamdown=code-block-body]]:text-[13px] [&_[data-streamdown=code-block-body]]:leading-[1.5] [&_[data-streamdown=code-block-body]]:shadow-none sm:[&_[data-streamdown=code-block-body]]:text-[14px]",
   // Nested Shiki <pre> inside code-block — strip double chrome
   "[&_[data-streamdown=code-block]_pre]:my-0 [&_[data-streamdown=code-block]_pre]:rounded-none [&_[data-streamdown=code-block]_pre]:border-0 [&_[data-streamdown=code-block]_pre]:bg-transparent [&_[data-streamdown=code-block]_pre]:p-0 [&_[data-streamdown=code-block]_pre_code]:rounded-none [&_[data-streamdown=code-block]_pre_code]:border-0 [&_[data-streamdown=code-block]_pre_code]:bg-transparent [&_[data-streamdown=code-block]_pre_code]:p-0",
   // Clean soft tables — rounded shell + responsive horizontal scroll
-  "[&_[data-streamdown=table-wrapper]]:my-3.5 [&_[data-streamdown=table-wrapper]]:gap-1.5 [&_[data-streamdown=table-wrapper]]:overflow-hidden [&_[data-streamdown=table-wrapper]]:rounded-2xl [&_[data-streamdown=table-wrapper]]:border-0 [&_[data-streamdown=table-wrapper]]:bg-muted/25 [&_[data-streamdown=table-wrapper]]:p-1.5 [&_[data-streamdown=table-wrapper]]:shadow-none",
-  "[&_[data-streamdown=table-wrapper]>div:first-child]:min-h-7 [&_[data-streamdown=table-wrapper]>div:first-child]:px-0.5",
+  // Soft glass shell (no border) — padding matches rounded-2xl inset.
+  "[&_[data-streamdown=table-wrapper]]:my-3.5 [&_[data-streamdown=table-wrapper]]:gap-2 [&_[data-streamdown=table-wrapper]]:overflow-hidden [&_[data-streamdown=table-wrapper]]:rounded-2xl [&_[data-streamdown=table-wrapper]]:border-0 [&_[data-streamdown=table-wrapper]]:bg-white/70 [&_[data-streamdown=table-wrapper]]:p-3 [&_[data-streamdown=table-wrapper]]:shadow-none [&_[data-streamdown=table-wrapper]]:backdrop-blur-xl [&_[data-streamdown=table-wrapper]]:backdrop-saturate-150 dark:[&_[data-streamdown=table-wrapper]]:bg-white/10 sm:[&_[data-streamdown=table-wrapper]]:p-3.5",
+  "[&_[data-streamdown=table-wrapper]>div:first-child]:min-h-7 [&_[data-streamdown=table-wrapper]>div:first-child]:px-1",
   "[&_[data-streamdown=table-wrapper]>div:last-child]:overflow-x-auto [&_[data-streamdown=table-wrapper]>div:last-child]:overflow-y-hidden [&_[data-streamdown=table-wrapper]>div:last-child]:rounded-xl [&_[data-streamdown=table-wrapper]>div:last-child]:border [&_[data-streamdown=table-wrapper]>div:last-child]:border-border/40 [&_[data-streamdown=table-wrapper]>div:last-child]:bg-background [&_[data-streamdown=table-wrapper]>div:last-child]:pb-3 [&_[data-streamdown=table-wrapper]>div:last-child]:shadow-none",
   // Tables keep natural column width and scroll horizontally instead of crushing cells
   "[&_table]:my-0 [&_table]:w-max [&_table]:min-w-full [&_table]:border-collapse [&_table]:text-[13px] [&_table]:leading-[1.45] sm:[&_table]:text-[14px]",
@@ -237,6 +238,7 @@ function MarkdownBody({
         code: true,
       }}
       tableMaxHeight={0}
+      codeBlockMaxHeight={0}
       lineNumbers={false}
     >
       {text}

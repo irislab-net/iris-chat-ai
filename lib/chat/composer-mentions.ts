@@ -31,14 +31,16 @@ export const COMPOSER_MENTION_TRIGGER = "/"
 
 /** Local aliases for signal tool drafts (typed, sample prompts, or inline mentions). */
 const SIGNAL_TOOL_TAG_RE =
-  /^(?:\/signal|@signal|\/سیگنال|@سیگنال|\/إشارة|@إشارة|سیگنال|إشارة)(?:\s+([\s\S]*))?$/iu
+  /^(?:\/signal|@signal|signal|\/سیگنال|@سیگنال|سیگنال|\/إشارة|@إشارة|إشارة)(?:\s+([\s\S]*))?$/iu
 
 const SIGNAL_SUMMARY_RE = /^(?:Signal|سیگنال|إشارة) · (.+)$/u
 
-/** Committed inline mention token — followed by whitespace or end of string. */
-const SIGNAL_INLINE_MENTION_RE = /[/@](?:signal|سیگنال|إشارة)(?=\s|$)/giu
-
-const SIGNAL_INLINE_ASSET_RE = /[/@](?:signal|سیگنال|إشارة)\s+([^\s/@]+)/iu
+/**
+ * Committed inline mention token — followed by whitespace or end of string.
+ * Slash/`@` forms stay supported for typed/legacy text; menu insert is bare.
+ */
+const SIGNAL_INLINE_MENTION_RE =
+  /(?:[/@](?:signal|سیگنال|إشارة)|(?<![/@\p{L}\p{N}_])(?:signal|سیگنال|إشارة))(?=\s|$)/giu
 
 export const IRIS_MENTION_OPTIONS: IrisMentionOption[] = [
   {
@@ -132,7 +134,8 @@ export function buildSignalPrompt(asset: string): string {
 
 /**
  * Inline token inserted when the user picks a tool from the `/` menu.
- * Uses the localized label when provided (`/سیگنال ` / `/Signal `).
+ * Slash opens the palette; the committed token is bare label text
+ * (`سیگنال ` / `Signal `) so `/` is not shown after selection.
  */
 export function mentionTokenForTool(
   tool: IrisMentionTool,
@@ -140,9 +143,64 @@ export function mentionTokenForTool(
 ): string {
   if (tool === "signal") {
     const trimmed = label.trim() || "Signal"
-    return `${COMPOSER_MENTION_TRIGGER}${trimmed} `
+    return `${trimmed} `
   }
-  return `${COMPOSER_MENTION_TRIGGER}${tool} `
+  return `${tool} `
+}
+
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
+}
+
+/**
+ * Rewrite pasted/typed `/signal btc`, `@Signal ETH`, `/سیگنال …` into the
+ * bare UI mention (`Signal BTC`) so the slash trigger is not left visible.
+ * Does not rewrite an in-progress `/sig…` query (needs trailing whitespace,
+ * or a whole-string bare token with no following text).
+ */
+export function normalizeComposerSignalMentions(
+  text: string,
+  label = "Signal"
+): string {
+  if (!text) return text
+  const nextLabel = label.trim() || "Signal"
+
+  let next = text
+    // `/signal …` / `@سیگنال …` → bare label (keep the following text)
+    .replace(
+      /(^|[\s])[/@](signal|سیگنال|إشارة)(?=\s)/giu,
+      `$1${nextLabel}`
+    )
+    // Whole-string `/signal` / `@signal` with no asset yet
+    .replace(/^[/@](signal|سیگنال|إشارة)$/iu, nextLabel)
+
+  // Uppercase compact Latin tickers right after the committed label.
+  const tickerRe = new RegExp(
+    `(^|[\\s])(${escapeRegExp(nextLabel)})(\\s+)([a-z0-9][a-z0-9.-]{0,15})(?=\\s|$)`,
+    "g"
+  )
+  next = next.replace(tickerRe, (full, pre, lbl, ws, asset: string) => {
+    if (!/^[a-z0-9.-]+$/i.test(asset)) return full
+    if (asset === asset.toUpperCase()) return full
+    return `${pre}${lbl}${ws}${asset.toUpperCase()}`
+  })
+
+  return next
+}
+
+/** Map a caret index through {@link normalizeComposerSignalMentions}. */
+export function mapCursorThroughSignalNormalize(
+  text: string,
+  cursor: number,
+  label = "Signal"
+): number {
+  const safeCursor = Math.max(0, Math.min(cursor, text.length))
+  const normalizedPrefix = normalizeComposerSignalMentions(
+    text.slice(0, safeCursor),
+    label
+  )
+  const normalized = normalizeComposerSignalMentions(text, label)
+  return Math.min(normalizedPrefix.length, normalized.length)
 }
 
 /** Active `/query` at cursor, if any. */
@@ -289,9 +347,11 @@ export function expandComposerDraft(input: ComposerDraft): string {
 }
 
 /**
- * Normalize drafts that contain `/signal`, `@signal`, or localized signal
- * tokens into a model-readable `@signal` wire payload.
- * Never leave raw `/Signal …` text for the model.
+ * Normalize tool-first drafts (`/signal ETH`, `@signal`, bare UI `Signal ETH`,
+ * localized `سیگنال` / `إشارة`) into a model-readable `@signal` wire payload.
+ *
+ * Casual chat that merely mentions “signal” / «سیگنال» mid-sentence is left
+ * alone — only an intentional tool tag at the start of the message expands.
  */
 export function expandComposerMentions(text: string): string {
   const trimmed = text.trim()
@@ -300,11 +360,6 @@ export function expandComposerMentions(text: string): string {
   const tagged = trimmed.match(SIGNAL_TOOL_TAG_RE)
   if (tagged) {
     return formatSignalCommand((tagged[1] ?? "").trim())
-  }
-
-  const inline = trimmed.match(SIGNAL_INLINE_ASSET_RE)
-  if (inline) {
-    return formatSignalCommand((inline[1] ?? "").trim())
   }
 
   return trimmed
@@ -325,8 +380,8 @@ export function applyMentionSelection(input: {
 }
 
 /**
- * Split composer text so committed `/Signal` / `/سیگنال` tokens can be
- * rendered bold in a mirror overlay while the textarea stays editable.
+ * Split composer text so committed `Signal` / `سیگنال` tokens (and legacy
+ * `/Signal`) can be rendered in a mirror overlay while the textarea stays editable.
  */
 export function splitComposerMentionHighlights(
   text: string

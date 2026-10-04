@@ -61,14 +61,27 @@ function ChatThinkingTerminal({ className }: ChatThinkingTerminalProps) {
   const orderRef = React.useRef<ThinkingTerminalLineKey[]>([])
   const orderAtRef = React.useRef(0)
   const tweenRef = React.useRef<{ kill: () => void } | null>(null)
+  const startedAtRef = React.useRef(Date.now())
   const [activeKey, setActiveKey] = React.useState<ThinkingTerminalLineKey>(
     THINKING_TERMINAL_LINE_KEYS[0]
   )
+  const [elapsedSec, setElapsedSec] = React.useState(1)
 
   const labelFor = React.useCallback(
     (key: ThinkingTerminalLineKey) => t(`lines.${key}`),
     [t]
   )
+
+  React.useEffect(() => {
+    startedAtRef.current = Date.now()
+    setElapsedSec(1)
+    const id = window.setInterval(() => {
+      setElapsedSec(
+        Math.max(1, Math.round((Date.now() - startedAtRef.current) / 1000))
+      )
+    }, 250)
+    return () => window.clearInterval(id)
+  }, [])
 
   React.useEffect(() => {
     orderRef.current = shuffleLineKeys()
@@ -236,6 +249,12 @@ function ChatThinkingTerminal({ className }: ChatThinkingTerminalProps) {
           <span className={cn(chatThinkingLabelClass, "invisible")} aria-hidden>
             {labelFor(activeKey)}
           </span>
+        </span>
+        <span
+          className="shrink-0 tabular-nums text-[12px] text-muted-foreground/70"
+          aria-hidden
+        >
+          {elapsedSec}s
         </span>
       </div>
     </div>

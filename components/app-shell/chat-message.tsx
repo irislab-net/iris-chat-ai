@@ -214,16 +214,22 @@ function ChatAssistantTurn({
 }) {
   const locale = useLocale()
   const isGemini = variant === "gemini"
-  const deferredContent = React.useDeferredValue(content)
-  const renderContent = streaming ? deferredContent : content
+  // Never defer live typewriter/stream text — deferred updates lag behind
+  // scroll/layout work and the answer looks blank until a sudden paint.
+  const renderContent = content
+  const hasVisibleAnswer = Boolean(renderContent?.trim())
+  // Keep live status until the answer is actually on screen.
+  const statusLive =
+    Boolean(waiting) || (Boolean(streaming) && !hasVisibleAnswer)
   const serverId = messageId ? parseServerMessageId(messageId) : null
   const anchorId = serverId != null ? `msg-${serverId}` : undefined
   const hasThinking =
     Boolean(thinkingTrace?.length) || Boolean(reasoning?.trim())
   const hasBody =
     waiting ||
+    statusLive ||
     hasThinking ||
-    Boolean(content?.trim()) ||
+    hasVisibleAnswer ||
     Boolean(children) ||
     Boolean(replyTo)
   const timestamp = createdAt ? (
@@ -252,17 +258,18 @@ function ChatAssistantTurn({
           )}
           data-chat-assistant-bubble=""
         >
-          {waiting && !hasThinking ? <ChatThinkingTerminal /> : null}
+          {statusLive && !hasThinking ? <ChatThinkingTerminal /> : null}
           {hasThinking ? (
             <ChatThinkingTrace
               steps={thinkingTrace}
               reasoning={reasoning}
-              live={Boolean(waiting)}
+              live={statusLive}
+              writing={Boolean(streaming) && !waiting && !hasVisibleAnswer}
               durationSec={thinkingDurationSec}
             />
           ) : null}
           {replyTo ? <ChatMessageQuote quote={replyTo} /> : null}
-          {renderContent?.trim() ? (
+          {hasVisibleAnswer && renderContent ? (
             <AIMessageRenderer
               content={renderContent}
               streaming={streaming}

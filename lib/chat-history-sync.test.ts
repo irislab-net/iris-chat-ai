@@ -659,4 +659,49 @@ describe("chat history sync", () => {
     expect(merged.activeId).toBe(blankId)
     expect(resolveActiveConversation(merged)).toBeNull()
   })
+
+  it("does not append orphan local assistants that only have suggestedPrompts", () => {
+    const built = buildStoredConversationFromHistory(
+      sessionA,
+      [
+        historyItem(1, sessionA, "user", "table of btc", "2026-01-02T09:59:00Z"),
+        historyItem(
+          2,
+          sessionA,
+          "assistant",
+          "Here is a BTC table.",
+          "2026-01-02T10:00:00Z"
+        ),
+      ],
+      {
+        id: sessionA,
+        title: "BTC",
+        createdAt: "2026-01-02T09:59:00Z",
+        updatedAt: "2026-01-02T10:00:00Z",
+        messages: [
+          { id: "u-local", role: "user", content: "table of btc" },
+          {
+            id: "a-local",
+            role: "assistant",
+            content: "Here is a BTC table.",
+            suggestedPrompts: ["Show ETH next"],
+          },
+          {
+            id: "orphan-local",
+            role: "assistant",
+            content: "### بررسی تداوم واگرایی منفی در جفت ETH/BTC",
+            suggestedPrompts: ["دامیننس بیت‌کوین چطوره؟"],
+          },
+        ],
+        history: [],
+      }
+    )
+
+    expect(built?.messages).toHaveLength(2)
+    expect(built?.messages.map((m) => m.content)).toEqual([
+      "table of btc",
+      "Here is a BTC table.",
+    ])
+    expect(built?.messages[1]?.suggestedPrompts).toEqual(["Show ETH next"])
+  })
 })

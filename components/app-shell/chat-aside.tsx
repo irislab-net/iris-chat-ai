@@ -447,9 +447,13 @@ function ChatAside({
   const [pendingAssistantId, setPendingAssistantId] = React.useState<
     string | null
   >(null)
+  const pendingAssistantIdRef = React.useRef<string | null>(null)
+  pendingAssistantIdRef.current = pendingAssistantId
   const bottomRef = React.useRef<HTMLDivElement>(null)
   const scrollViewportRef = React.useRef<HTMLDivElement>(null)
   const stickToBottomRef = React.useRef(true)
+  /** While true, keep forcing the viewport to the bottom across late layout. */
+  const forcePinRef = React.useRef(false)
   const scrollFollowRafRef = React.useRef<number | null>(null)
   const [showScrollDown, setShowScrollDown] = React.useState(false)
   const composerRef = React.useRef<HTMLTextAreaElement>(null)
@@ -726,24 +730,58 @@ function ChatAside({
     session,
   ])
 
+  const pinViewportToBottom = React.useCallback(() => {
+    if (scrollFollowRafRef.current != null) {
+      window.cancelAnimationFrame(scrollFollowRafRef.current)
+      scrollFollowRafRef.current = null
+    }
+    const viewport = scrollViewportRef.current
+    stickToBottomRef.current = true
+    setShowScrollDown(false)
+    if (!viewport) return 0
+    // Direct scrollTop is more reliable than scrollTo() on Base UI's viewport
+    // while markdown/images are still settling scrollHeight.
+    viewport.scrollTop = Math.max(
+      0,
+      viewport.scrollHeight - viewport.clientHeight
+    )
+    return viewport.scrollHeight - viewport.scrollTop - viewport.clientHeight
+  }, [])
+
   const scrollToChatBottom = React.useCallback(
     (behavior: ScrollBehavior = "smooth") => {
-      if (scrollFollowRafRef.current != null) {
-        window.cancelAnimationFrame(scrollFollowRafRef.current)
-        scrollFollowRafRef.current = null
+      if (behavior === "smooth") {
+        if (scrollFollowRafRef.current != null) {
+          window.cancelAnimationFrame(scrollFollowRafRef.current)
+          scrollFollowRafRef.current = null
+        }
+        const viewport = scrollViewportRef.current
+        stickToBottomRef.current = true
+        setShowScrollDown(false)
+        if (viewport) {
+          viewport.scrollTo({
+            top: Math.max(0, viewport.scrollHeight - viewport.clientHeight),
+            behavior: "smooth",
+          })
+        }
+        return
       }
-      const viewport = scrollViewportRef.current
-      if (viewport) {
-        viewport.scrollTo({ top: viewport.scrollHeight, behavior })
-      }
-      stickToBottomRef.current = true
-      setShowScrollDown(false)
+      forcePinRef.current = true
+      pinViewportToBottom()
     },
-    []
+    [pinViewportToBottom]
   )
 
-  /** Soft exponential follow while typewriter grows — no per-chunk snap. */
+  /**
+   * Keep the thread pinned while the reply grows.
+   * One rAF step per trigger (no recursive catch-up loop) so typewriter /
+   * markdown paint is not starved by a scroll RAF storm.
+   */
   const followChatBottom = React.useCallback(() => {
+    const liveReply = pendingAssistantIdRef.current != null
+    if (liveReply || forcePinRef.current) {
+      stickToBottomRef.current = true
+    }
     if (!stickToBottomRef.current) return
     if (scrollFollowRafRef.current != null) return
 
@@ -751,32 +789,31 @@ function ChatAside({
       typeof window !== "undefined" &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches
 
-    const step = () => {
+    scrollFollowRafRef.current = window.requestAnimationFrame(() => {
       scrollFollowRafRef.current = null
+      const live = pendingAssistantIdRef.current != null || forcePinRef.current
+      if (live) stickToBottomRef.current = true
       if (!stickToBottomRef.current) return
       const viewport = scrollViewportRef.current
       if (!viewport) return
 
-      const target = viewport.scrollHeight - viewport.clientHeight
+      const target = Math.max(0, viewport.scrollHeight - viewport.clientHeight)
       const current = viewport.scrollTop
       const gap = target - current
-
       if (gap <= 0.5) {
         if (gap > 0) viewport.scrollTop = target
         return
       }
 
-      // Large jumps (new turn) snap; typing growth tracks tightly.
-      if (reducedMotion || gap > 180) {
+      // Live reply / large jumps / reduced motion: pin in one frame.
+      // Idle soft follow: one eased step; next content/resize triggers again.
+      if (live || reducedMotion || gap > 180) {
         viewport.scrollTop = target
         return
       }
 
       viewport.scrollTop = current + Math.max(1.5, gap * 0.55)
-      scrollFollowRafRef.current = window.requestAnimationFrame(step)
-    }
-
-    scrollFollowRafRef.current = window.requestAnimationFrame(step)
+    })
   }, [])
 
   React.useEffect(() => {
@@ -933,6 +970,7 @@ function ChatAside({
       conversations.find((chat) => chat.id === id)
     if (!target) return
 
+    stickToBottomRef.current = true
     applyStoredConversation(target)
     setConversations(store.conversations)
     setDraft(draftsByConversationRef.current[target.id] ?? "")
@@ -1692,6 +1730,8 @@ function ChatAside({
 
     closeHistoryPanelIfNeeded()
     stickToBottomRef.current = true
+    // Live reply keeps force-pin via pendingAssistantId; just snap now.
+    pinViewportToBottom()
 
     if (authLoading) return
 
@@ -1992,6 +2032,52 @@ function ChatAside({
       ? t("newChat")
       : threadTitleRaw
 
+  // Opening / restoring a session should land on the latest message, and stay
+  // pinned until scrollHeight stops growing (late markdown/images).
+  React.useEffect(() => {
+    if (!hydrated || !showThread || !conversationId) return
+    forcePinRef.current = true
+    stickToBottomRef.current = true
+    setShowScrollDown(false)
+    let cancelled = false
+    let tries = 0
+    let lastHeight = -1
+    let stableFrames = 0
+    let settleTimer: ReturnType<typeof setTimeout> | undefined
+
+    const tick = () => {
+      if (cancelled) return
+      const viewport = scrollViewportRef.current
+      const height = viewport?.scrollHeight ?? 0
+      const distance = pinViewportToBottom()
+      tries += 1
+      if (height === lastHeight && distance < CHAT_SCROLL_BOTTOM_THRESHOLD) {
+        stableFrames += 1
+      } else {
+        stableFrames = 0
+        lastHeight = height
+      }
+      if (stableFrames >= 10 || tries >= 120) {
+        settleTimer = setTimeout(() => {
+          if (!cancelled) forcePinRef.current = false
+        }, 300)
+        return
+      }
+      window.requestAnimationFrame(tick)
+    }
+
+    const outer = window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(tick)
+    })
+    return () => {
+      cancelled = true
+      window.cancelAnimationFrame(outer)
+      if (settleTimer) clearTimeout(settleTimer)
+    }
+    // messages.length intentionally omitted — only re-pin on session switch.
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- session open only
+  }, [conversationId, hydrated, showThread, pinViewportToBottom])
+
   React.useEffect(() => {
     const viewport = scrollViewportRef.current
     if (!viewport || !showThread) {
@@ -1999,12 +2085,38 @@ function ChatAside({
       return
     }
 
-    function syncScrollDown() {
+    function syncScrollDown(source: "scroll" | "resize" | "init") {
       const el = scrollViewportRef.current
       if (!el) return
-      const nearBottom =
-        el.scrollHeight - el.scrollTop - el.clientHeight <
-        CHAT_SCROLL_BOTTOM_THRESHOLD
+      const distanceFromBottom =
+        el.scrollHeight - el.scrollTop - el.clientHeight
+      const liveReply = pendingAssistantIdRef.current != null
+      const forcePin = forcePinRef.current || liveReply
+      const nearBottom = distanceFromBottom < CHAT_SCROLL_BOTTOM_THRESHOLD
+      const prevStick = stickToBottomRef.current
+      const rafBusy = scrollFollowRafRef.current != null
+
+      // Session open + entire live reply: always pin. Small scrolls during
+      // typing must not detach follow while the answer is still growing.
+      if (forcePin) {
+        stickToBottomRef.current = true
+        if (distanceFromBottom > 0.5) {
+          el.scrollTop = Math.max(0, el.scrollHeight - el.clientHeight)
+        }
+        setShowScrollDown(false)
+        return
+      }
+
+      // Soft follow / content resize: keep pin while stuck-to-bottom.
+      if (rafBusy || (prevStick && !nearBottom && source !== "scroll")) {
+        if (prevStick) {
+          stickToBottomRef.current = true
+          if (distanceFromBottom > 0.5) followChatBottom()
+        }
+        setShowScrollDown(false)
+        return
+      }
+
       stickToBottomRef.current = nearBottom
       const next = !nearBottom && el.scrollHeight > el.clientHeight
       setShowScrollDown((prev) => (prev === next ? prev : next))
@@ -2015,17 +2127,26 @@ function ChatAside({
       if (raf) return
       raf = window.requestAnimationFrame(() => {
         raf = 0
-        syncScrollDown()
+        // Ignore scroll events produced by our soft-follow RAF.
+        if (scrollFollowRafRef.current != null) {
+          setShowScrollDown(false)
+          return
+        }
+        syncScrollDown("scroll")
       })
     }
 
-    syncScrollDown()
+    function onResize() {
+      syncScrollDown("resize")
+    }
+
+    syncScrollDown("init")
     viewport.addEventListener("scroll", onScroll, { passive: true })
 
     const content = viewport.firstElementChild
     const resizeObserver =
       content && typeof ResizeObserver !== "undefined"
-        ? new ResizeObserver(onScroll)
+        ? new ResizeObserver(onResize)
         : null
     if (content && resizeObserver) resizeObserver.observe(content)
 
@@ -2034,7 +2155,7 @@ function ChatAside({
       viewport.removeEventListener("scroll", onScroll)
       resizeObserver?.disconnect()
     }
-  }, [showThread, conversationId, messages.length])
+  }, [showThread, conversationId, messages.length, followChatBottom, pendingAssistantId])
 
   async function shareCurrentConversation() {
     const title =
@@ -2608,7 +2729,7 @@ function ChatAside({
                         const assistantReplyTarget =
                           replyTargetFromMessage(message)
                         const showMessageActions =
-                          !isWaiting &&
+                          !isStreamingAssistant &&
                           (Boolean(message.content?.trim()) ||
                             Boolean(signalParts?.ticket) ||
                             Boolean(message.paperTicket) ||

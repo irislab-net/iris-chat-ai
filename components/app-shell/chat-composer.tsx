@@ -59,7 +59,9 @@ import {
   expandComposerMentions,
   filterComposerPaletteTools,
   IRIS_MENTION_OPTIONS,
+  mapCursorThroughSignalNormalize,
   mentionTokenForTool,
+  normalizeComposerSignalMentions,
   parseMentionPalette,
   splitComposerMentionHighlights,
   type ComposerPaletteTool,
@@ -95,6 +97,8 @@ import {
   chatMobileComposerTextareaClass,
   chatMobileComposerTextareaCompactClass,
   chatMobileComposerTextareaExpandedClass,
+  chatMobileComposerFieldCompactClass,
+  chatMobileComposerFieldExpandedClass,
   chatDesktopComposerBodyClass,
   chatDesktopComposerEffortButtonClass,
   chatDesktopComposerIconButtonClass,
@@ -211,6 +215,9 @@ function ChatComposer({
   }
   const [cursor, setCursor] = React.useState(0)
   const localRef = React.useRef<HTMLTextAreaElement>(null)
+  const composerBodyRef = React.useRef<HTMLDivElement>(null)
+  const composerFlipFromHeightRef = React.useRef<number | null>(null)
+  const composerFlipPrevExpandedRef = React.useRef(false)
   const highlightRef = React.useRef<HTMLDivElement>(null)
   /** Stable compact column width — expanded layout is full-width and must not drive collapse. */
   const compactFieldWidthRef = React.useRef(0)
@@ -406,41 +413,64 @@ function ChatComposer({
       if (!text) return 1
       if (text.includes("\n")) return text.split("\n").length
 
-      const lineHeight = 32
-      const paddingY = 8
       const style = window.getComputedStyle(el)
-      const mirror = document.createElement("textarea")
-      mirror.value = text
-      mirror.readOnly = true
-      mirror.tabIndex = -1
-      mirror.setAttribute("aria-hidden", "true")
-      Object.assign(mirror.style, {
-        position: "absolute",
-        visibility: "hidden",
-        pointerEvents: "none",
-        height: "auto",
-        maxHeight: "none",
-        width: `${width}px`,
-        overflow: "hidden",
-        border: "0",
-        padding: "4px 10px",
-        font: style.font,
-        letterSpacing: style.letterSpacing,
-        lineHeight: "32px",
-        whiteSpace: "pre-wrap",
-        wordWrap: "break-word",
-        boxSizing: "border-box",
-      })
-      el.parentElement?.appendChild(mirror)
-      const lineCount = Math.max(
-        1,
-        Math.round((mirror.scrollHeight - paddingY) / lineHeight)
+      const lineHeight =
+        Number.parseFloat(style.lineHeight) ||
+        Number.parseFloat(style.fontSize) * 1.4 ||
+        22.4
+
+      const measureScrollHeight = (value: string) => {
+        const mirror = document.createElement("textarea")
+        mirror.value = value
+        mirror.rows = 1
+        mirror.readOnly = true
+        mirror.tabIndex = -1
+        mirror.setAttribute("aria-hidden", "true")
+        Object.assign(mirror.style, {
+          position: "absolute",
+          visibility: "hidden",
+          pointerEvents: "none",
+          height: "auto",
+          maxHeight: "none",
+          width: `${width}px`,
+          overflow: "hidden",
+          border: "0",
+          // Match the live field metrics — hardcoded 32px/4px was reporting
+          // 2 lines for every non-empty value (scrollHeight≈72).
+          padding: style.padding,
+          font: style.font,
+          fontSize: style.fontSize,
+          fontFamily: style.fontFamily,
+          fontWeight: style.fontWeight,
+          letterSpacing: style.letterSpacing,
+          lineHeight: style.lineHeight,
+          whiteSpace: "pre-wrap",
+          wordWrap: "break-word",
+          boxSizing: style.boxSizing,
+        })
+        el.parentElement?.appendChild(mirror)
+        const height = mirror.scrollHeight
+        mirror.remove()
+        return height
+      }
+
+      const singleLineHeight = measureScrollHeight("M")
+      const textHeight = measureScrollHeight(text)
+      if (textHeight <= singleLineHeight + 2) return 1
+
+      return Math.max(
+        2,
+        Math.round(textHeight / Math.max(lineHeight, 1))
       )
-      mirror.remove()
-      return lineCount
     },
     []
   )
+
+  const captureComposerBodyHeightForFlip = React.useCallback(() => {
+    const body = composerBodyRef.current
+    if (!body) return
+    composerFlipFromHeightRef.current = body.getBoundingClientRect().height
+  }, [])
 
   const syncFloatingComposerLayout = React.useCallback(() => {
     if (!isFloating) return
@@ -462,6 +492,7 @@ function ChatComposer({
       composerValue.length > 0 &&
       el.scrollWidth > el.clientWidth + 2
     ) {
+      captureComposerBodyHeightForFlip()
       setFloatingPastSingleLine(true)
       return
     }
@@ -472,11 +503,76 @@ function ChatComposer({
       measureWidth
     )
 
-    setFloatingPastSingleLine(() => {
-      if (composerValue.trim() === "") return false
-      return lineCount >= 2
+    setFloatingPastSingleLine((prev) => {
+      const next = composerValue.trim() !== "" && lineCount >= 2
+      if (next !== prev) captureComposerBodyHeightForFlip()
+      return next
     })
-  }, [composerValue, isFloating, measureFloatingComposerLines])
+  }, [
+    captureComposerBodyHeightForFlip,
+    composerValue,
+    isFloating,
+    measureFloatingComposerLines,
+  ])
+
+  // Smooth compact ↔ expanded height morph (grid areas still swap; height eases).
+  React.useLayoutEffect(() => {
+    if (!isFloating) {
+      composerFlipPrevExpandedRef.current = floatingComposerExpanded
+      return
+    }
+    const el = composerBodyRef.current
+    const prev = composerFlipPrevExpandedRef.current
+    if (!el || prev === floatingComposerExpanded) return
+    composerFlipPrevExpandedRef.current = floatingComposerExpanded
+
+    const reduceMotion =
+      typeof window !== "undefined" &&
+      window.matchMedia?.("(prefers-reduced-motion: reduce)").matches
+    // If sync missed capture (e.g. attachment-only), fall back to compact min height.
+    const from = composerFlipFromHeightRef.current ?? (prev ? null : 64)
+    composerFlipFromHeightRef.current = null
+    if (reduceMotion || from == null) return
+
+    let cleaned = false
+    let fallback = 0
+    const cleanup = () => {
+      if (cleaned) return
+      cleaned = true
+      el.style.height = ""
+      el.style.overflow = ""
+      el.style.transition = ""
+      el.style.removeProperty("interpolate-size")
+      el.removeEventListener("transitionend", onEnd)
+      window.clearTimeout(fallback)
+    }
+    const onEnd = (event: TransitionEvent) => {
+      if (event.target !== el || event.propertyName !== "height") return
+      cleanup()
+    }
+
+    // Animate from locked px → auto (interpolate-size) so field-sizing can
+    // settle without a second snap at the end of the transition.
+    el.style.setProperty("interpolate-size", "allow-keywords")
+    el.style.height = `${from}px`
+    el.style.overflow = "hidden"
+    void el.getBoundingClientRect()
+
+    const raf0 = requestAnimationFrame(() => {
+      if (cleaned) return
+      el.style.transition =
+        "height 320ms cubic-bezier(0.22, 1, 0.36, 1), border-radius 320ms cubic-bezier(0.22, 1, 0.36, 1)"
+      el.style.height = "auto"
+
+      el.addEventListener("transitionend", onEnd)
+      fallback = window.setTimeout(cleanup, 400)
+    })
+
+    return () => {
+      cancelAnimationFrame(raf0)
+      cleanup()
+    }
+  }, [floatingComposerExpanded, isFloating])
   const textareaNodeRef = React.useMemo(
     () => mergeRefs(localRef, textareaRef),
     [textareaRef]
@@ -881,6 +977,26 @@ function ChatComposer({
     onValueChange?.(next)
   }
 
+  /** Normalize `/signal btc` → `Signal BTC` and keep the caret in sync. */
+  function commitComposerText(raw: string, selectionStart: number) {
+    const next = normalizeComposerSignalMentions(raw, signalToolLabel)
+    const nextCursor = mapCursorThroughSignalNormalize(
+      raw,
+      selectionStart,
+      signalToolLabel
+    )
+    syncMentionIndex(next, nextCursor)
+    setValue(next)
+    setCursor(nextCursor)
+    if (next !== raw) {
+      queueMicrotask(() => {
+        const el = localRef.current
+        if (!el) return
+        el.setSelectionRange(nextCursor, nextCursor)
+      })
+    }
+  }
+
   function send() {
     if (disabled || sending) return
     const withFiles = buildMessageWithPasteAttachments(
@@ -920,11 +1036,13 @@ function ChatComposer({
       return
     }
     event.preventDefault()
+    captureComposerBodyHeightForFlip()
     setPasteAttachments((prev) => [...prev, createPasteAttachment(text, prev)])
     requestAnimationFrame(syncFloatingComposerLayout)
   }
 
   function removePasteAttachment(id: string) {
+    captureComposerBodyHeightForFlip()
     setPasteAttachments((prev) => prev.filter((item) => item.id !== id))
     requestAnimationFrame(syncFloatingComposerLayout)
   }
@@ -1018,7 +1136,7 @@ function ChatComposer({
         )
         return
       }
-      if (event.key === "Enter" || event.key === "Tab") {
+      if ((event.key === "Enter" && !event.shiftKey) || event.key === "Tab") {
         event.preventDefault()
         const tool = paletteTools[safeMentionIndex]
         if (tool) selectPaletteTool(tool)
@@ -1031,7 +1149,8 @@ function ChatComposer({
       }
     }
 
-    if (event.key === "Enter" && !event.shiftKey) {
+    // Enter = newline. Shift+Enter = send (floating + desktop).
+    if (event.key === "Enter" && event.shiftKey) {
       event.preventDefault()
       send()
     }
@@ -1236,11 +1355,12 @@ function ChatComposer({
       ) : null}
 
       <div
+        ref={composerBodyRef}
         data-composer-body=""
         data-composer-expanded={floatingComposerExpanded ? "" : undefined}
         data-composer-multiline={floatingPastSingleLine ? "" : undefined}
         className={cn(
-          "relative z-10 cursor-text transition-[background-color,box-shadow,border-color]",
+          "relative z-10 cursor-text",
           isFloating
             ? cn(
                 chatMobileComposerPillClass,
@@ -1262,24 +1382,26 @@ function ChatComposer({
         {pasteAttachments.length > 0 ? (
           <div
             className={cn(
-              "flex flex-wrap gap-1.5 [grid-area:attachments]",
+              "min-w-0 [grid-area:attachments]",
               isFloating ? "px-1.5 pt-0.5" : "px-3.5 pt-3"
             )}
             onClick={(event) => event.stopPropagation()}
           >
-            {pasteAttachments.map((attachment) => (
-              <ComposerPasteAttachmentChip
-                key={attachment.id}
-                attachment={attachment}
-                onRemove={() => removePasteAttachment(attachment.id)}
-                onUnwrap={() => unwrapPasteAttachment(attachment.id)}
-                removeLabel={t("composerPasteAttachmentRemove")}
-                unwrapLabel={t("composerPasteAttachmentUnwrap")}
-                linesLabel={t("composerPasteAttachmentLines", {
-                  count: attachment.lineCount,
-                })}
-              />
-            ))}
+            <div className="flex flex-nowrap gap-1.5 overflow-x-auto overscroll-x-contain [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+              {pasteAttachments.map((attachment) => (
+                <ComposerPasteAttachmentChip
+                  key={attachment.id}
+                  attachment={attachment}
+                  onRemove={() => removePasteAttachment(attachment.id)}
+                  onUnwrap={() => unwrapPasteAttachment(attachment.id)}
+                  removeLabel={t("composerPasteAttachmentRemove")}
+                  unwrapLabel={t("composerPasteAttachmentUnwrap")}
+                  linesLabel={t("composerPasteAttachmentLines", {
+                    count: attachment.lineCount,
+                  })}
+                />
+              ))}
+            </div>
           </div>
         ) : null}
         {isFloating ? (
@@ -1318,8 +1440,8 @@ function ChatComposer({
               className={cn(
                 "relative min-w-0 [grid-area:field]",
                 floatingComposerExpanded
-                  ? chatMobileComposerTextareaExpandedClass
-                  : chatMobileComposerTextareaCompactClass
+                  ? chatMobileComposerFieldExpandedClass
+                  : chatMobileComposerFieldCompactClass
               )}
             >
               {hasMentionHighlight ? (
@@ -1343,11 +1465,10 @@ function ChatComposer({
                 value={composerValue}
                 aria-label={t("composerAriaLabel")}
                 onChange={(event) => {
-                  const next = event.target.value
-                  const start = event.target.selectionStart
-                  syncMentionIndex(next, start)
-                  setValue(next)
-                  setCursor(start)
+                  commitComposerText(
+                    event.target.value,
+                    event.target.selectionStart
+                  )
                   requestAnimationFrame(() => {
                     syncFloatingComposerLayout()
                     syncHighlightScroll()
@@ -1367,7 +1488,7 @@ function ChatComposer({
                 inputMode={
                   deferMobileKeyboard && !mobileKeyboardReady ? "none" : "text"
                 }
-                enterKeyHint="send"
+                enterKeyHint="enter"
                 onFocus={(event) => {
                   if (deferMobileKeyboard && !mobileKeyboardReady) {
                     event.currentTarget.blur()
@@ -1486,11 +1607,10 @@ function ChatComposer({
                 value={composerValue}
                 aria-label={t("composerAriaLabel")}
                 onChange={(event) => {
-                  const next = event.target.value
-                  const start = event.target.selectionStart
-                  syncMentionIndex(next, start)
-                  setValue(next)
-                  setCursor(start)
+                  commitComposerText(
+                    event.target.value,
+                    event.target.selectionStart
+                  )
                   requestAnimationFrame(syncHighlightScroll)
                 }}
                 onPaste={onPaste}
@@ -1507,7 +1627,7 @@ function ChatComposer({
                 inputMode={
                   deferMobileKeyboard && !mobileKeyboardReady ? "none" : "text"
                 }
-                enterKeyHint="send"
+                enterKeyHint="enter"
                 onFocus={(event) => {
                   if (deferMobileKeyboard && !mobileKeyboardReady) {
                     event.currentTarget.blur()
@@ -1717,14 +1837,10 @@ function ComposerMentionHighlight({
     <>
       {parts.map((part, index) =>
         part.type === "mention" ? (
-          // Keep font-weight/padding identical to the textarea so the caret
-          // stays aligned with the mirror. Do not use `text-primary` — in this
-          // theme primary is near-black and the mention disappears.
+          // Blue + bold text only — no chip background.
           <span
             key={`mention-${index}`}
-            // Color/background only — never unicode-bidi/padding. The caret
-            // lives in the transparent textarea; any bidi isolate here desyncs it.
-            className="rounded-[0.3em] bg-[#2563EB]/14 font-normal text-[#2563EB] [box-decoration-break:clone] box-decoration-clone dark:bg-[#60A5FA]/20 dark:text-[#93C5FD]"
+            className="font-semibold text-[#2563EB] dark:text-[#93C5FD]"
           >
             {part.value}
           </span>
@@ -1762,18 +1878,18 @@ function ComposerPasteAttachmentChip({
     <div
       className={chatComposerPasteChipClass}
       role="group"
-      aria-label={attachment.name}
+      aria-label={`${attachment.name}, ${formatPasteAttachmentSize(attachment.charCount)}, ${linesLabel}`}
     >
       <span className={chatComposerPasteChipIconClass} aria-hidden>
-        <Icon className="size-4" strokeWidth={1.75} />
+        <Icon className="size-3.5" strokeWidth={1.75} />
       </span>
       <button
         type="button"
-        className="min-w-0 flex-1 text-start"
+        className="min-w-0 flex-1 space-y-0.5 text-start"
         onClick={onUnwrap}
         title={unwrapLabel}
       >
-        <span className="block truncate text-[13px] font-medium leading-4 tracking-[-0.01em] text-foreground">
+        <span className="block truncate text-[12px] font-medium leading-none tracking-[-0.01em] text-foreground">
           {attachment.name}
         </span>
         <span className={chatComposerPasteChipMetaClass}>
@@ -1786,7 +1902,7 @@ function ComposerPasteAttachmentChip({
         className={chatComposerPasteChipCloseClass}
         onClick={onRemove}
       >
-        <XIcon className="size-3.5 stroke-[2.25]" />
+        <XIcon className="size-3 stroke-[2.25]" />
       </button>
     </div>
   )

@@ -153,12 +153,14 @@ function overlayLocalMessageFields(
   const serverKeys = new Set(serverMessages.map(messageMatchKey))
   for (const message of localMessages) {
     if (usedLocalIds.has(message.id)) continue
+    // Keep recoverable UI chrome only. Never re-append full assistant answers
+    // just because they carry suggestedPrompts / a paper ticket — that was
+    // gluing orphan local replies onto the active thread after refresh/sync.
     const isUiOnly =
       message.error ||
       message.action === "retry" ||
       message.action === "connect" ||
-      Boolean(message.suggestedPrompts?.length) ||
-      Boolean(message.paperTicket)
+      (Boolean(message.paperTicket) && !message.content.trim())
     if (!isUiOnly) continue
     if (
       !message.content.trim() &&

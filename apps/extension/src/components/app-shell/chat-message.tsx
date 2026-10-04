@@ -94,47 +94,47 @@ function IrisMark({
             "dark:bg-[oklch(0.18_0_0_/0.92)] dark:shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_8%,transparent),0_6px_18px_-10px_color-mix(in_oklch,black_50%,transparent)] dark:supports-backdrop-filter:bg-[oklch(0.16_0_0_/0.78)]"
           )}
         >
-          <svg
-            viewBox={EXUR_LOGO_VIEWBOX}
-            className={cn("relative z-0 size-full overflow-visible", imageClassName)}
-            fill="none"
-            aria-hidden
-          >
-            <defs>
-              <linearGradient
-                id={`exur-mark-black-${gradientId}`}
-                x1="33.15"
-                y1="7"
-                x2="33.15"
-                y2="63"
-                gradientUnits="userSpaceOnUse"
-              >
-                <stop stopColor="#000000" />
-                <stop offset="1" stopColor="#3F3F3F" />
-              </linearGradient>
-              <linearGradient
-                id={`exur-mark-white-${gradientId}`}
-                x1="33.15"
-                y1="7"
-                x2="33.15"
-                y2="63"
-                gradientUnits="userSpaceOnUse"
-              >
-                <stop stopColor="#FFFFFF" />
-                <stop offset="1" stopColor="#D4D4D4" />
-              </linearGradient>
-            </defs>
-            <path
-              className="dark:hidden"
-              d={EXUR_LOGO_MARK_PATH}
-              fill={`url(#exur-mark-black-${gradientId})`}
-            />
-            <path
-              className="hidden dark:block"
-              d={EXUR_LOGO_MARK_PATH}
-              fill={`url(#exur-mark-white-${gradientId})`}
-            />
-          </svg>
+        <svg
+          viewBox={EXUR_LOGO_VIEWBOX}
+          className={cn("relative z-0 size-full overflow-visible", imageClassName)}
+          fill="none"
+          aria-hidden
+        >
+          <defs>
+            <linearGradient
+              id={`exur-mark-black-${gradientId}`}
+              x1="33.15"
+              y1="7"
+              x2="33.15"
+              y2="63"
+              gradientUnits="userSpaceOnUse"
+            >
+              <stop stopColor="#000000" />
+              <stop offset="1" stopColor="#3F3F3F" />
+            </linearGradient>
+            <linearGradient
+              id={`exur-mark-white-${gradientId}`}
+              x1="33.15"
+              y1="7"
+              x2="33.15"
+              y2="63"
+              gradientUnits="userSpaceOnUse"
+            >
+              <stop stopColor="#FFFFFF" />
+              <stop offset="1" stopColor="#D4D4D4" />
+            </linearGradient>
+          </defs>
+          <path
+            className="dark:hidden"
+            d={EXUR_LOGO_MARK_PATH}
+            fill={`url(#exur-mark-black-${gradientId})`}
+          />
+          <path
+            className="hidden dark:block"
+            d={EXUR_LOGO_MARK_PATH}
+            fill={`url(#exur-mark-white-${gradientId})`}
+          />
+        </svg>
           <span
             aria-hidden
             className="pointer-events-none absolute inset-0 z-10 overflow-hidden rounded-[inherit]"
@@ -214,16 +214,22 @@ function ChatAssistantTurn({
 }) {
   const locale = useLocale()
   const isGemini = variant === "gemini"
-  const deferredContent = React.useDeferredValue(content)
-  const renderContent = streaming ? deferredContent : content
+  // Never defer live typewriter/stream text — deferred updates lag behind
+  // scroll/layout work and the answer looks blank until a sudden paint.
+  const renderContent = content
+  const hasVisibleAnswer = Boolean(renderContent?.trim())
+  // Keep live status until the answer is actually on screen.
+  const statusLive =
+    Boolean(waiting) || (Boolean(streaming) && !hasVisibleAnswer)
   const serverId = messageId ? parseServerMessageId(messageId) : null
   const anchorId = serverId != null ? `msg-${serverId}` : undefined
   const hasThinking =
     Boolean(thinkingTrace?.length) || Boolean(reasoning?.trim())
   const hasBody =
     waiting ||
+    statusLive ||
     hasThinking ||
-    Boolean(content?.trim()) ||
+    hasVisibleAnswer ||
     Boolean(children) ||
     Boolean(replyTo)
   const timestamp = createdAt ? (
@@ -252,17 +258,18 @@ function ChatAssistantTurn({
           )}
           data-chat-assistant-bubble=""
         >
-          {waiting && !hasThinking ? <ChatThinkingTerminal /> : null}
+          {statusLive && !hasThinking ? <ChatThinkingTerminal /> : null}
           {hasThinking ? (
             <ChatThinkingTrace
               steps={thinkingTrace}
               reasoning={reasoning}
-              live={Boolean(waiting)}
+              live={statusLive}
+              writing={Boolean(streaming) && !waiting && !hasVisibleAnswer}
               durationSec={thinkingDurationSec}
             />
           ) : null}
           {replyTo ? <ChatMessageQuote quote={replyTo} /> : null}
-          {renderContent?.trim() ? (
+          {hasVisibleAnswer && renderContent ? (
             <AIMessageRenderer
               content={renderContent}
               streaming={streaming}

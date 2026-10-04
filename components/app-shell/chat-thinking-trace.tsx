@@ -75,6 +75,8 @@ type ChatThinkingTraceProps = {
   steps?: ChatThinkingStep[]
   reasoning?: string
   live?: boolean
+  /** True while the answer is being painted after thinking finished. */
+  writing?: boolean
   /** Frozen wall-clock seconds for completed turns (ChatGPT-style receipt). */
   durationSec?: number
   className?: string
@@ -84,6 +86,7 @@ function ChatThinkingTrace({
   steps,
   reasoning,
   live = false,
+  writing = false,
   durationSec,
   className,
 }: ChatThinkingTraceProps) {
@@ -147,9 +150,13 @@ function ChatThinkingTrace({
   const summary = live
     ? latestTool
       ? t("usingTool", { tool: formatToolName(latestTool.name) })
-      : liveElapsedSec != null
-        ? t("liveWithDuration", { seconds: liveElapsedSec })
-        : t("live")
+      : writing
+        ? liveElapsedSec != null
+          ? t("writingWithDuration", { seconds: liveElapsedSec })
+          : t("writing")
+        : liveElapsedSec != null
+          ? t("liveWithDuration", { seconds: liveElapsedSec })
+          : t("live")
     : receiptSec != null && receiptSec > 0
       ? t("doneWithDuration", { seconds: receiptSec })
       : t("done")

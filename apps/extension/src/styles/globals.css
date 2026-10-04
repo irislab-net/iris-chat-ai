@@ -242,16 +242,135 @@
  * on narrow chat columns. clip-path keeps the native scrollbar inside the
  * rounded card (it otherwise ignores border-radius).
  */
-[data-streamdown="table-wrapper"] {
+[data-streamdown="table-wrapper"],
+[data-streamdown="code-block"] {
   overflow: hidden;
+  /* Soft glass — no border; beat Streamdown bg-sidebar on chat chrome. */
+  border: 0 !important;
+  padding: 0.75rem !important;
+  gap: 0.5rem !important;
+  background: color-mix(in oklch, white 72%, transparent) !important;
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  box-shadow: inset 0 1px 0 0 color-mix(in oklch, white 70%, transparent);
 }
 
-/* Apple-style circular toolbar buttons on table cards */
+/* Streamdown sets content-visibility + contain-intrinsic-size: 200px which
+ * leaves tall code blocks the wrong height until scroll. Size to content. */
+[data-streamdown="code-block"] {
+  content-visibility: visible !important;
+  contain-intrinsic-size: none !important;
+  height: auto !important;
+  max-height: none !important;
+}
+
+[data-streamdown="code-block-body"] {
+  max-height: none !important;
+  height: auto !important;
+  overflow: auto !important;
+}
+
+@media (min-width: 640px) {
+  [data-streamdown="table-wrapper"],
+  [data-streamdown="code-block"] {
+    padding: 0.875rem !important;
+  }
+}
+
+:is(.dark) [data-streamdown="table-wrapper"],
+:is(.dark) [data-streamdown="code-block"] {
+  background: color-mix(in oklch, white 10%, transparent) !important;
+  box-shadow: inset 0 1px 0 0 color-mix(in oklch, white 12%, transparent);
+}
+
+/* Apple-style circular toolbar buttons on table cards.
+ * Keep the toolbar LTR even inside RTL chat so Streamdown's
+ * `right-0` copy/download menus stay inside the card. */
 [data-streamdown="table-wrapper"] > div:first-child {
+  direction: ltr;
   gap: 0.15rem;
+  overflow: visible;
 }
 
-[data-streamdown="table-wrapper"] > div:first-child button {
+/*
+ * Match site liquid-glass menus (`liquid-menu-styles`) for CSV / Markdown.
+ * !important beats Streamdown's utility classes (rounded-md / border / shadow-lg).
+ */
+[data-streamdown="table-wrapper"] > div:first-child .relative > div.absolute {
+  top: calc(100% + 0.25rem) !important;
+  right: 0 !important;
+  left: auto !important;
+  inset-inline: auto 0 !important;
+  z-index: 30 !important;
+  display: flex !important;
+  min-width: 10.5rem !important;
+  flex-direction: column !important;
+  gap: 0.25rem !important;
+  margin-top: 0 !important;
+  overflow: hidden !important;
+  border: 0 !important;
+  border-radius: 28px !important;
+  /* Solid enough to stay readable over table text; light glass, not see-through. */
+  background: color-mix(in oklch, white 92%, transparent) !important;
+  padding: 0.625rem !important;
+  box-shadow:
+    inset 0 1px 0 0 color-mix(in oklch, white 90%, transparent),
+    inset 0 0 0 1px color-mix(in oklch, var(--foreground) 8%, transparent),
+    0 18px 52px -18px color-mix(in oklch, var(--foreground) 22%, transparent) !important;
+  backdrop-filter: blur(28px) saturate(160%) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(160%) !important;
+}
+
+@supports (backdrop-filter: blur(1px)) {
+  [data-streamdown="table-wrapper"] > div:first-child .relative > div.absolute {
+    background: color-mix(in oklch, white 88%, transparent) !important;
+  }
+}
+
+:is(.dark) [data-streamdown="table-wrapper"] > div:first-child .relative > div.absolute {
+  background: oklch(0.22 0 0 / 0.94) !important;
+  box-shadow:
+    inset 0 1px 0 0 color-mix(in oklch, white 12%, transparent),
+    inset 0 0 0 1px color-mix(in oklch, white 10%, transparent),
+    0 20px 56px -18px color-mix(in oklch, black 55%, transparent) !important;
+}
+
+@supports (backdrop-filter: blur(1px)) {
+  :is(.dark) [data-streamdown="table-wrapper"] > div:first-child .relative > div.absolute {
+    background: oklch(0.2 0 0 / 0.9) !important;
+  }
+}
+
+[data-streamdown="table-wrapper"] > div:first-child .relative > div.absolute > button {
+  display: flex !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 2.75rem !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  border-radius: 1rem !important;
+  padding: 0.7rem 0.875rem !important;
+  font-size: 15px !important;
+  font-weight: 500 !important;
+  letter-spacing: -0.016em !important;
+  line-height: 1.25 !important;
+  color: var(--foreground) !important;
+  text-align: start !important;
+  background: transparent !important;
+  transition: background-color 150ms ease, color 150ms ease !important;
+}
+
+[data-streamdown="table-wrapper"] > div:first-child .relative > div.absolute > button:hover {
+  background: rgba(118, 118, 128, 0.12) !important;
+  color: var(--foreground) !important;
+}
+
+:is(.dark) [data-streamdown="table-wrapper"] > div:first-child .relative > div.absolute > button:hover {
+  background: rgba(118, 118, 128, 0.24) !important;
+}
+
+/* Only the icon triggers — not the menu rows */
+[data-streamdown="table-wrapper"] > div:first-child > .relative > button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -265,12 +384,12 @@
     background-color 150ms ease;
 }
 
-[data-streamdown="table-wrapper"] > div:first-child button:hover {
+[data-streamdown="table-wrapper"] > div:first-child > .relative > button:hover {
   color: var(--foreground);
   background: color-mix(in oklch, var(--foreground) 7%, transparent);
 }
 
-[data-streamdown="table-wrapper"] > div:first-child button svg {
+[data-streamdown="table-wrapper"] > div:first-child > .relative > button svg {
   width: 15px;
   height: 15px;
 }
@@ -335,7 +454,7 @@
   border-bottom: 0;
 }
 
-[data-streamdown="table-fullscreen"] > [data-streamdown="table-wrapper"] > div:first-child button {
+[data-streamdown="table-fullscreen"] > [data-streamdown="table-wrapper"] > div:first-child > .relative > button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -349,7 +468,7 @@
     background-color 150ms ease;
 }
 
-[data-streamdown="table-fullscreen"] > [data-streamdown="table-wrapper"] > div:first-child button:hover {
+[data-streamdown="table-fullscreen"] > [data-streamdown="table-wrapper"] > div:first-child > .relative > button:hover {
   color: var(--foreground);
   background: color-mix(in oklch, var(--foreground) 7%, transparent);
 }

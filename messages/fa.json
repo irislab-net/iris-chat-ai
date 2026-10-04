@@ -952,6 +952,8 @@
       "aria": "مراحل فکر کردن مدل",
       "live": "Exur در حال فکر کردن است…",
       "liveWithDuration": "Exur در حال فکر کردن است… {seconds}ث",
+      "writing": "در حال نوشتن پاسخ…",
+      "writingWithDuration": "در حال نوشتن پاسخ… {seconds}ث",
       "done": "فرآیند فکر",
       "doneWithDuration": "فکر کرد به مدت {seconds}ثانیه",
       "waiting": "در حال جمع‌آوری زمینهٔ درخواستت…",
