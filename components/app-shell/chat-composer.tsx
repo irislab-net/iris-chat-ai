@@ -41,12 +41,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetTitle,
-} from "@/components/ui/sheet"
 import { Textarea } from "@/components/ui/textarea"
 import {
   CHAT_EFFORT_OPTIONS,
@@ -111,7 +105,7 @@ import {
   chatComposerPasteChipMetaClass,
   chatComposerPasteChipCloseClass,
   chatComposerLiquidDockCardClass,
-  chatComposerLiquidSheetClass,
+  chatComposerLiquidMentionSheetClass,
   chatComposerLiquidSheetOverlayClass,
   chatComposerLiquidSheetRowActiveClass,
   chatComposerLiquidSheetRowClass,
@@ -133,7 +127,7 @@ import { cn } from "@/lib/utils"
  * Must stay inside the composer stacking context so the pill (z-10) paints above.
  */
 const composerMentionBackdropSheetClass = cn(
-  chatComposerLiquidSheetClass,
+  chatComposerLiquidMentionSheetClass,
   "pointer-events-auto fixed inset-x-0 bottom-(--keyboard-inset-bottom,0px) z-1 flex flex-col"
 )
 
@@ -254,71 +248,90 @@ function ChatComposer({
     isFeatureVisible(option.tool)
   )
 
+  /** Behind-composer tools list — same row chrome as `/` mention listbox. */
   const toolsRows = (
-    <div className="flex flex-col gap-1 px-3 pb-[max(1rem,env(safe-area-inset-bottom,0px))] pt-1">
+    <ul className="flex flex-col gap-0.5 px-3 pb-2 pt-0.5">
       {visibleMentionOptions.map((option) => (
-        <button
-          key={option.id}
-          type="button"
-          className={chatComposerLiquidSheetRowClass}
-          onClick={() => selectToolsMention(option)}
-        >
-          <span className={chatComposerLiquidSheetRowIconClass}>
-            <TrendingUpIcon className="size-4" aria-hidden />
-          </span>
-          <span className="flex min-w-0 flex-1 flex-col gap-0.5 text-start">
-            <span className={chatMobileToolsMenuItemTitleClass}>
+        <li key={option.id}>
+          <button
+            type="button"
+            className={cn(chatComposerLiquidSheetRowClass, "py-2.5")}
+            onMouseDown={(event) => {
+              event.preventDefault()
+              selectToolsMention(option)
+            }}
+          >
+            <span
+              className={cn(
+                chatComposerLiquidSheetRowIconClass,
+                "size-8 [&_svg]:size-3.5"
+              )}
+            >
+              <TrendingUpIcon className="size-3.5" aria-hidden />
+            </span>
+            <span className="min-w-0 flex-1 truncate text-[15px] font-medium tracking-[-0.016em] text-foreground">
               {mentionOptionLabel(option)}
             </span>
-            <span
-              className={cn(chatMobileToolsMenuItemDescClass, "line-clamp-2")}
-            >
-              {t("composerToolSignalDesc")}
-            </span>
-          </span>
-        </button>
+          </button>
+        </li>
       ))}
       {isFeatureVisible("correlation") ? (
-        <button
-          type="button"
-          className={chatComposerLiquidSheetRowClass}
-          onClick={openPremiumTools}
-        >
-          <span className={chatComposerLiquidSheetRowIconClass}>
-            <LineChartIcon className="size-4" aria-hidden />
-          </span>
-          <span className="min-w-0 flex-1 text-start">
-            <span className={chatMobileToolsMenuItemTitleClass}>
+        <li>
+          <button
+            type="button"
+            className={cn(chatComposerLiquidSheetRowClass, "py-2.5")}
+            onMouseDown={(event) => {
+              event.preventDefault()
+              openPremiumTools()
+            }}
+          >
+            <span
+              className={cn(
+                chatComposerLiquidSheetRowIconClass,
+                "size-8 [&_svg]:size-3.5"
+              )}
+            >
+              <LineChartIcon className="size-3.5" aria-hidden />
+            </span>
+            <span className="min-w-0 flex-1 truncate text-[15px] font-medium tracking-[-0.016em] text-foreground">
               {t("composerToolCorrelationLabel")}
             </span>
-          </span>
-          <LockIcon
-            className="size-4 shrink-0 text-muted-foreground/70"
-            aria-hidden
-          />
-        </button>
+            <LockIcon
+              className="size-3.5 shrink-0 text-muted-foreground/65"
+              aria-hidden
+            />
+          </button>
+        </li>
       ) : null}
       {isFeatureVisible("volatility") ? (
-        <button
-          type="button"
-          className={chatComposerLiquidSheetRowClass}
-          onClick={openPremiumTools}
-        >
-          <span className={chatComposerLiquidSheetRowIconClass}>
-            <ActivityIcon className="size-4" aria-hidden />
-          </span>
-          <span className="min-w-0 flex-1 text-start">
-            <span className={chatMobileToolsMenuItemTitleClass}>
+        <li>
+          <button
+            type="button"
+            className={cn(chatComposerLiquidSheetRowClass, "py-2.5")}
+            onMouseDown={(event) => {
+              event.preventDefault()
+              openPremiumTools()
+            }}
+          >
+            <span
+              className={cn(
+                chatComposerLiquidSheetRowIconClass,
+                "size-8 [&_svg]:size-3.5"
+              )}
+            >
+              <ActivityIcon className="size-3.5" aria-hidden />
+            </span>
+            <span className="min-w-0 flex-1 truncate text-[15px] font-medium tracking-[-0.016em] text-foreground">
               {t("composerToolVolatilityLabel")}
             </span>
-          </span>
-          <LockIcon
-            className="size-4 shrink-0 text-muted-foreground/70"
-            aria-hidden
-          />
-        </button>
+            <LockIcon
+              className="size-3.5 shrink-0 text-muted-foreground/65"
+              aria-hidden
+            />
+          </button>
+        </li>
       ) : null}
-    </div>
+    </ul>
   )
 
   const toolsMenuItems = (
@@ -1169,8 +1182,10 @@ function ChatComposer({
     }
   }
 
-  /** `/` typing on mobile: sheet behind composer. `+` menu: modal sheet on top. */
+  /** `/` typing or `+` tools — same liquid listbox behind the composer pill. */
+  const floatingToolsBehind = isFloating && toolsSheetOpen
   const floatingMentionBehind = isFloating && mentionOpen && !toolsSheetOpen
+  const floatingDockBehind = floatingToolsBehind || floatingMentionBehind
   const formRef = React.useRef<HTMLFormElement>(null)
   const [composerDockHeight, setComposerDockHeight] = React.useState(96)
 
@@ -1180,7 +1195,7 @@ function ChatComposer({
   }
 
   React.useLayoutEffect(() => {
-    if (!floatingMentionBehind) return
+    if (!floatingDockBehind) return
     const el = formRef.current
     if (!el) return
     const sync = () => {
@@ -1191,7 +1206,7 @@ function ChatComposer({
     observer.observe(el)
     return () => observer.disconnect()
   }, [
-    floatingMentionBehind,
+    floatingDockBehind,
     floatingComposerExpanded,
     pasteAttachments.length,
     composerValue,
@@ -1259,8 +1274,8 @@ function ChatComposer({
         isFloating
           ? chatMobileComposerShellClass
           : chatDesktopComposerShellClass,
-        // Isolate so the mention sheet (z-1) stays under the pill (z-10).
-        floatingMentionBehind && "z-30",
+        // Isolate so the dock sheet (z-1) stays under the pill (z-10).
+        floatingDockBehind && "z-30",
         className
       )}
       onSubmit={(event) => {
@@ -1272,36 +1287,7 @@ function ChatComposer({
         send()
       }}
     >
-      {isFloating ? (
-        <Sheet
-          open={toolsSheetOpen}
-          onOpenChange={(open) => {
-            if (!open) {
-              closeToolsSheet()
-              queueMicrotask(() => focusComposer({ force: true }))
-            }
-          }}
-        >
-          <SheetContent
-            side="bottom"
-            showCloseButton={false}
-            overlayClassName={chatComposerLiquidSheetOverlayClass}
-            className={chatComposerLiquidSheetClass}
-          >
-            <SheetTitle className="sr-only">{t("composerToolsMenu")}</SheetTitle>
-            <SheetDescription className="sr-only">
-              {t("composerToolsMenu")}
-            </SheetDescription>
-            <div className={chatMobileSheetHandleClass} aria-hidden />
-            <p className={cn(chatMobileToolsMenuLabelClass, "px-5")}>
-              {t("composerToolsMenu")}
-            </p>
-            {toolsRows}
-          </SheetContent>
-        </Sheet>
-      ) : null}
-
-      {floatingMentionBehind ? (
+      {floatingDockBehind ? (
         <>
           <div
             role="presentation"
@@ -1314,9 +1300,13 @@ function ChatComposer({
           <div
             id="composer-mention-listbox"
             role="listbox"
-            aria-label={t("composerMentionMenu")}
+            aria-label={
+              floatingToolsBehind
+                ? t("composerToolsMenu")
+                : t("composerMentionMenu")
+            }
             aria-activedescendant={
-              activeMentionOptionId
+              floatingMentionBehind && activeMentionOptionId
                 ? `composer-mention-${activeMentionOptionId}`
                 : undefined
             }
@@ -1325,9 +1315,11 @@ function ChatComposer({
           >
             <div className={chatMobileSheetHandleClass} aria-hidden />
             <p className={cn(chatMobileToolsMenuLabelClass, "px-5")}>
-              {t("composerMentionMenu")}
+              {floatingToolsBehind
+                ? t("composerToolsMenu")
+                : t("composerMentionMenu")}
             </p>
-            {floatingMentionList}
+            {floatingToolsBehind ? toolsRows : floatingMentionList}
           </div>
         </>
       ) : null}
@@ -1415,11 +1407,15 @@ function ChatComposer({
                     size="icon-sm"
                     aria-label={t("composerToolsMenu")}
                     aria-expanded={toolsSheetOpen}
-                    aria-haspopup="dialog"
+                    aria-haspopup="listbox"
+                    aria-controls={
+                      floatingToolsBehind ? "composer-mention-listbox" : undefined
+                    }
                     disabled={disabled}
                     onClick={(event) => {
                       event.stopPropagation()
                       setToolsSheetOpen((open) => !open)
+                      queueMicrotask(() => focusComposer({ force: true }))
                     }}
                     className={
                       floatingComposerExpanded

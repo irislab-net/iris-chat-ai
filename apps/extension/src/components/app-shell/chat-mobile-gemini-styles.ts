@@ -430,14 +430,16 @@ const chatMobileSheetHandleClass =
   "mx-auto mb-4 h-1 w-10 shrink-0 rounded-full bg-foreground/15 dark:bg-white/20"
 
 /**
- * Composer tools / mention bottom sheets — same liquid family, shorter cap.
- * Slightly denser than chrome chips so list text stays readable over the thread.
+ * Composer tools / `/` mention bottom sheets — liquid family, shorter cap.
+ * Hug content (no floor height); short lists stay compact over the composer.
  */
 const chatComposerLiquidSheetClass = [
   chatLiquidSheetSurfaceClass,
-  chatMobileSheetMinHeightClass,
   "max-h-[min(72dvh,30rem)] rounded-t-[28px]",
 ].join(" ")
+
+/** Alias — same hug surface as tools (kept for mention-specific call sites). */
+const chatComposerLiquidMentionSheetClass = chatComposerLiquidSheetClass
 
 const chatComposerLiquidSheetOverlayClass = chatMobileSheetOverlayClass
 
@@ -801,6 +803,7 @@ export {
   chatMobileSheetConsentCheckedClass,
   chatMobileSheetConsentUncheckedClass,
   chatComposerLiquidDockCardClass,
+  chatComposerLiquidMentionSheetClass,
   chatComposerLiquidSheetClass,
   chatComposerLiquidSheetOverlayClass,
   chatComposerLiquidSheetRowActiveClass,
