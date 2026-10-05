@@ -29,7 +29,11 @@ export function FeaturesExtensionSection() {
   return (
     <section
       id="extension"
-      className={cn(landingSection, landingSectionBody, "scroll-mt-28")}
+      className={cn(
+        landingSection,
+        landingSectionBody,
+        "scroll-mt-24 py-12 sm:scroll-mt-28 sm:py-20 lg:py-24"
+      )}
       aria-labelledby="features-extension-heading"
     >
       <ScrollReveal>
@@ -42,9 +46,9 @@ export function FeaturesExtensionSection() {
       </ScrollReveal>
 
       <ScrollReveal className={cn(landingContentWide, landingAfterHeader)}>
-        <FeaturesDemoStage contentClassName="px-4 py-6 sm:px-6 sm:py-7 lg:px-8 lg:py-8">
-          <div className="grid items-center gap-8 lg:grid-cols-12 lg:gap-10">
-            <div className="min-w-0 space-y-5 px-3.5 lg:col-span-5">
+        <FeaturesDemoStage contentClassName="px-3 py-5 sm:px-6 sm:py-7 lg:px-8 lg:py-8">
+          <div className="grid items-center gap-6 sm:gap-8 lg:grid-cols-12 lg:gap-10">
+            <div className="min-w-0 space-y-5 px-1.5 sm:px-3.5 lg:col-span-5">
               <h3 className={landingTitleCard}>{t("chromeLabel")}</h3>
               <ul className="list-none space-y-3 p-0">
                 {(["0", "1", "2"] as const).map((key) => (

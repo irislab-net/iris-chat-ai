@@ -347,14 +347,21 @@ export function LandingNav() {
   }, [])
 
   return (
-    <header className="sticky top-0 z-50 pt-3 sm:pt-4 lg:pt-5">
+    <header
+      className={cn(
+        "sticky top-0 z-50 pt-3 sm:pt-4 lg:pt-5",
+        // Opaque wash over the sticky top inset + rounded-nav corner cutouts
+        // so scrolled content cannot peek through on iPhone-class viewports.
+        stuck && "bg-background"
+      )}
+    >
       <nav
         className={cn(
           landingInner,
-          "grid grid-cols-[1fr_auto] items-center gap-3 sm:gap-4 lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]",
+          "grid grid-cols-[1fr_auto] items-center gap-2.5 sm:gap-4 lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]",
           "rounded-[28px] transition-[background-color,box-shadow,backdrop-filter,padding] duration-300 ease-out",
           stuck
-            ? "bg-white/72 py-2 shadow-[0_10px_40px_rgba(15,23,42,0.08),inset_0_1px_1px_rgba(255,255,255,0.9)] backdrop-blur-2xl dark:bg-background/72 dark:shadow-[0_10px_40px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.08)]"
+            ? "bg-white/95 py-2 shadow-[0_10px_40px_rgba(15,23,42,0.08),inset_0_1px_1px_rgba(255,255,255,0.9)] backdrop-blur-2xl dark:bg-background/90 dark:shadow-[0_10px_40px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.08)]"
             : "bg-transparent py-0 shadow-none"
         )}
         aria-label={tAria("aria")}
@@ -439,7 +446,7 @@ export function LandingNav() {
           })}
         </ul>
 
-        <div className="flex shrink-0 items-center justify-end gap-1.5 justify-self-end sm:gap-2 lg:col-start-3 lg:row-start-1">
+        <div className="flex shrink-0 items-center justify-end gap-2 justify-self-end sm:gap-2 lg:col-start-3 lg:row-start-1">
           <div className="hidden items-center gap-1.5 lg:flex">
             <LandingThemeToggle />
             <LocaleSwitcher

@@ -46,7 +46,9 @@ export function FeaturesDemoStage({
       <GlassSheen className={landingCardRadius} />
       <div
         className={cn(
-          "relative z-10 px-4 py-6 sm:px-8 sm:py-8 lg:px-10 lg:py-9",
+          // Tighter mobile inset so demo cards (signal / wait) keep readable
+          // measure inside a 390px frame after page + card padding.
+          "relative z-10 px-2.5 py-5 sm:px-8 sm:py-8 lg:px-10 lg:py-9",
           contentClassName
         )}
       >

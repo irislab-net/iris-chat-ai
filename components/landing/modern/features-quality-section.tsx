@@ -26,7 +26,11 @@ export function FeaturesQualitySection() {
   return (
     <section
       id="quality"
-      className={cn(landingSection, landingSectionBody, "scroll-mt-28")}
+      className={cn(
+        landingSection,
+        landingSectionBody,
+        "scroll-mt-24 py-12 sm:scroll-mt-28 sm:py-20 lg:py-24"
+      )}
       aria-labelledby="features-quality-heading"
     >
       <ScrollReveal>

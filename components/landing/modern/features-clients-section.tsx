@@ -26,7 +26,11 @@ export function FeaturesClientsSection() {
   return (
     <section
       id="clients"
-      className={cn(landingSection, landingSectionBody, "scroll-mt-28")}
+      className={cn(
+        landingSection,
+        landingSectionBody,
+        "scroll-mt-24 py-12 sm:scroll-mt-28 sm:py-20 lg:py-24"
+      )}
       aria-labelledby="features-clients-heading"
     >
       <ScrollReveal>
@@ -46,11 +50,11 @@ export function FeaturesClientsSection() {
         )}
       >
         <div className="min-w-0 lg:col-span-7">
-          <p className="mb-3 px-3.5 text-[11px] font-medium tracking-[0.12em] text-muted-foreground uppercase">
+          <p className="mb-3 px-1.5 text-[11px] font-medium tracking-[0.12em] text-muted-foreground uppercase sm:px-3.5">
             {t("desktopLabel")}
           </p>
-          <FeaturesDemoStage contentClassName="px-4 py-4 sm:px-5 sm:py-5">
-            <div className="mb-3 flex items-center gap-1.5 px-3.5">
+          <FeaturesDemoStage contentClassName="px-2.5 py-3.5 sm:px-5 sm:py-5">
+            <div className="mb-3 flex items-center gap-1.5 px-1.5 sm:px-3.5">
               <span className="size-2 rounded-full bg-foreground/12" />
               <span className="size-2 rounded-full bg-foreground/12" />
               <span className="size-2 rounded-full bg-foreground/12" />
@@ -63,12 +67,12 @@ export function FeaturesClientsSection() {
         </div>
 
         <div className="mx-auto w-full max-w-80 min-w-0 lg:col-span-5 lg:mx-0 lg:max-w-none">
-          <p className="mb-3 px-3.5 text-[11px] font-medium tracking-[0.12em] text-muted-foreground uppercase">
+          <p className="mb-3 px-1.5 text-[11px] font-medium tracking-[0.12em] text-muted-foreground uppercase sm:px-3.5">
             {t("mobileLabel")}
           </p>
           <FeaturesDemoStage
-            contentClassName="px-3.5 py-4"
-            className="rounded-[2rem]"
+            contentClassName="px-2.5 py-3.5 sm:px-3.5 sm:py-4"
+            className="rounded-[1.75rem] sm:rounded-[2rem]"
           >
             <div className="mx-auto mb-4 h-1.5 w-16 rounded-full bg-foreground/10" />
             <ChatNoTradeCard

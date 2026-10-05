@@ -62,7 +62,7 @@ function PriceTile({
   return (
     <div
       className={cn(
-        "flex min-w-0 flex-col px-2.5 py-3 sm:px-3 sm:py-3.5",
+        "flex min-w-0 flex-col px-1.5 py-2.5 sm:px-3 sm:py-3.5",
         hasReason ? "items-start text-start" : "items-center text-center",
         column.emphasis
           ? chatSignalCardEntryShellClass
@@ -82,8 +82,8 @@ function PriceTile({
         className={cn(
           "mt-1.5 font-semibold tracking-tight text-foreground tabular-nums",
           column.emphasis
-            ? "text-[1.15rem] leading-none sm:text-[1.25rem]"
-            : "text-[15px] leading-none sm:text-base"
+            ? "text-[1.05rem] leading-none sm:text-[1.25rem]"
+            : "text-[14px] leading-none sm:text-base"
         )}
       >
         {column.value}
@@ -94,7 +94,7 @@ function PriceTile({
           className="chat-skeleton-shimmer mt-2.5 h-3 w-[88%] rounded-sm"
         />
       ) : column.reason ? (
-        <p className="mt-2.5 w-full wrap-break-word text-[11px] leading-snug text-foreground/65">
+        <p className="mt-2 w-full wrap-break-word text-[11px] leading-snug text-foreground/65 line-clamp-3 sm:mt-2.5 sm:line-clamp-none">
           <TermText text={column.reason} />
         </p>
       ) : null}
@@ -110,7 +110,7 @@ function PriceBand({
   reasonSkeleton?: boolean
 }) {
   return (
-    <div className="grid grid-cols-3 gap-2 sm:gap-2.5">
+    <div className="grid grid-cols-3 gap-1.5 sm:gap-2.5">
       {columns.map((column) => (
         <PriceTile
           key={column.label}
