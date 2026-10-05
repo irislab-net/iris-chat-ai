@@ -14,15 +14,18 @@ import { ChatNoTradeCard } from "@/components/app-shell/chat-no-trade-card"
 import { ChatSignalCard } from "@/components/app-shell/chat-signal-card"
 import { PaymentTokenLogo } from "@/components/billing/payment-token-logo"
 import { MarketAssetLogo } from "@/components/dashboard/market-asset-logo"
-import { FeaturesClientsSection } from "@/components/landing/modern/features-clients-section"
-import { FeaturesExtensionSection } from "@/components/landing/modern/features-extension-section"
-import { FeaturesNewsShowcase } from "@/components/landing/modern/features-news-showcase"
-import { FeaturesQualitySection } from "@/components/landing/modern/features-quality-section"
 import {
   FeaturesDemoStage,
   FeaturesGlassSheen,
 } from "@/components/landing/modern/features-stage"
-import { HeroLiquidGlassBg } from "@/components/landing/modern/hero-liquid-glass-bg"
+import {
+  FeaturesViewportGlassBg,
+  useFeaturesLiteGlass,
+} from "@/components/landing/modern/features-glass-wash"
+import { FeaturesNewsShowcase } from "@/components/landing/modern/features-news-showcase"
+import { FeaturesQualitySection } from "@/components/landing/modern/features-quality-section"
+import { FeaturesClientsSection } from "@/components/landing/modern/features-clients-section"
+import { FeaturesExtensionSection } from "@/components/landing/modern/features-extension-section"
 import {
   ScrollReveal,
   ScrollRevealGroup,
@@ -109,7 +112,13 @@ function useLiveXauPrice() {
   return price
 }
 
-function JumpNav({ labelFor }: { labelFor: (key: string) => string }) {
+function JumpNav({
+  labelFor,
+  liteGlass,
+}: {
+  labelFor: (key: string) => string
+  liteGlass: boolean
+}) {
   return (
     <div className="relative sm:static">
       <nav
@@ -121,11 +130,17 @@ function JumpNav({ labelFor }: { labelFor: (key: string) => string }) {
             key={link.href}
             href={link.href}
             className={cn(
-              landingGlassPill,
-              "relative shrink-0 px-3.5 py-1.5 text-[12px] font-medium text-muted-foreground transition-colors hover:text-foreground"
+              liteGlass
+                ? "relative isolate shrink-0 overflow-hidden rounded-full bg-white/92 px-3.5 py-1.5 text-[12px] font-medium text-muted-foreground shadow-[0_8px_24px_rgba(15,23,42,0.06),inset_0_1px_1px_rgba(255,255,255,0.95)] transition-colors hover:text-foreground dark:bg-white/12"
+                : cn(
+                    landingGlassPill,
+                    "relative shrink-0 px-3.5 py-1.5 text-[12px] font-medium text-muted-foreground transition-colors hover:text-foreground"
+                  )
             )}
           >
-            <FeaturesGlassSheen className="rounded-full" />
+            {!liteGlass ? (
+              <FeaturesGlassSheen className="rounded-full" />
+            ) : null}
             <span className="relative z-10">{labelFor(link.key)}</span>
           </a>
         ))}
@@ -146,6 +161,7 @@ export function FeaturesOverview() {
   const common = useTranslations("common")
   const xauPrice = useLiveXauPrice()
   const [toolAsset, setToolAsset] = useState<FeaturesToolSymbol>("ETH")
+  const liteGlass = useFeaturesLiteGlass()
 
   const launchHref = getLaunchAppHref()
   const launchExternal = /^https?:\/\//i.test(launchHref)
@@ -158,11 +174,27 @@ export function FeaturesOverview() {
   const signalLabel = t("tools.signalLabel")
   const signalToken = mentionTokenForTool("signal", signalLabel).trimEnd()
 
+  const featuresSurface = liteGlass
+    ? "relative isolate overflow-hidden bg-white/95 shadow-[0_16px_48px_rgba(15,23,42,0.08),inset_0_1px_1px_rgba(255,255,255,0.92)] dark:bg-white/10 dark:shadow-[0_16px_48px_rgba(0,0,0,0.4)]"
+    : landingGlassSurface
+
   return (
-    <div className={landingMainStack}>
+    <div
+      className={cn(
+        landingMainStack,
+        liteGlass && "features-lite-glass"
+      )}
+    >
       {/* Hero — brand first, no ScrollReveal, no jump clutter */}
-      <article className="relative overflow-hidden rounded-[1.75rem] bg-white/42 shadow-[0_28px_80px_rgba(15,23,42,0.07)] backdrop-blur-2xl dark:bg-white/6 dark:shadow-[0_28px_80px_rgba(0,0,0,0.45)] sm:rounded-[2.5rem]">
-        <HeroLiquidGlassBg tone="blue" />
+      <article
+        className={cn(
+          "relative overflow-hidden rounded-[1.75rem] shadow-[0_28px_80px_rgba(15,23,42,0.07)] dark:shadow-[0_28px_80px_rgba(0,0,0,0.45)] sm:rounded-[2.5rem]",
+          liteGlass
+            ? "bg-white/95 dark:bg-white/10"
+            : "bg-white/42 backdrop-blur-2xl dark:bg-white/6"
+        )}
+      >
+        <FeaturesViewportGlassBg tone="blue" />
         <div
           className={cn(landingInner, "relative z-10 py-12 sm:py-16 lg:py-20")}
         >
@@ -206,7 +238,10 @@ export function FeaturesOverview() {
 
       {/* Quiet jump strip — outside hero */}
       <ScrollReveal>
-        <JumpNav labelFor={(key) => t(`jump.${key}`)} />
+        <JumpNav
+          labelFor={(key) => t(`jump.${key}`)}
+          liteGlass={liteGlass}
+        />
       </ScrollReveal>
 
       {/* Gold — setup + wait */}
@@ -463,11 +498,12 @@ export function FeaturesOverview() {
         >
             <article
             className={cn(
-              landingGlassSurface,
-              "relative overflow-hidden rounded-[1.5rem] bg-white/48 px-5 py-7 text-center dark:bg-white/8 sm:rounded-[1.75rem] sm:px-8 sm:py-8 lg:col-span-5"
+              featuresSurface,
+              "relative overflow-hidden rounded-[1.5rem] px-5 py-7 text-center sm:rounded-[1.75rem] sm:px-8 sm:py-8 lg:col-span-5",
+              !liteGlass && "bg-white/48 dark:bg-white/8"
             )}
           >
-            <HeroLiquidGlassBg tone="blue" />
+            <FeaturesViewportGlassBg tone="blue" />
             <FeaturesGlassSheen className="rounded-[1.75rem]" />
             <div className="relative z-10">
               <p
@@ -495,8 +531,9 @@ export function FeaturesOverview() {
           <div className="flex flex-col gap-4 lg:col-span-7">
             <article
               className={cn(
-                landingGlassSurface,
-                "relative flex flex-1 flex-col justify-between overflow-hidden rounded-[1.75rem] bg-white/48 px-6 py-6 dark:bg-white/8 sm:flex-row sm:items-center sm:gap-6 sm:px-7"
+                featuresSurface,
+                "relative flex flex-1 flex-col justify-between overflow-hidden rounded-[1.75rem] px-6 py-6 sm:flex-row sm:items-center sm:gap-6 sm:px-7",
+                !liteGlass && "bg-white/48 dark:bg-white/8"
               )}
             >
               <FeaturesGlassSheen className="rounded-[1.75rem]" />
@@ -513,8 +550,9 @@ export function FeaturesOverview() {
 
             <article
               className={cn(
-                landingGlassSurface,
-                "relative flex flex-1 flex-col justify-between overflow-hidden rounded-[1.75rem] bg-white/48 px-6 py-6 dark:bg-white/8 sm:flex-row sm:items-center sm:gap-6 sm:px-7"
+                featuresSurface,
+                "relative flex flex-1 flex-col justify-between overflow-hidden rounded-[1.75rem] px-6 py-6 sm:flex-row sm:items-center sm:gap-6 sm:px-7",
+                !liteGlass && "bg-white/48 dark:bg-white/8"
               )}
             >
               <FeaturesGlassSheen className="rounded-[1.75rem]" />
@@ -587,11 +625,14 @@ export function FeaturesOverview() {
         id="get-started"
         className={cn(
           landingSection,
-          "relative overflow-hidden rounded-[1.75rem] bg-white/42 py-12 shadow-[0_28px_80px_rgba(15,23,42,0.07)] backdrop-blur-2xl dark:bg-white/6 dark:shadow-[0_28px_80px_rgba(0,0,0,0.45)] sm:rounded-[2.5rem] sm:py-20"
+          "relative overflow-hidden rounded-[1.75rem] py-12 shadow-[0_28px_80px_rgba(15,23,42,0.07)] dark:shadow-[0_28px_80px_rgba(0,0,0,0.45)] sm:rounded-[2.5rem] sm:py-20",
+          liteGlass
+            ? "bg-white/95 dark:bg-white/10"
+            : "bg-white/42 backdrop-blur-2xl dark:bg-white/6"
         )}
         aria-labelledby="features-cta-heading"
       >
-        <HeroLiquidGlassBg tone="blue" />
+        <FeaturesViewportGlassBg tone="blue" />
         <div className={cn(landingInner, "relative z-10")}>
           <ScrollReveal>
             <div className="mx-auto max-w-xl text-center">

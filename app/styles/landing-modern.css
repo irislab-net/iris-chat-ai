@@ -374,6 +374,29 @@
   }
 }
 
+/**
+ * Features page — phone scroll stability.
+ * Stacked live backdrop-filter (signal cards, glass CTAs, demo stages) plus
+ * animated Gemini orbs was tripping Chrome/WebKit
+ * “A problem repeatedly occurred” while scrolling chat.exur.ai/features.
+ * Below `md`, kill backdrop-filter inside the Features tree.
+ */
+@media (max-width: 767px) {
+  .landing-modern .features-lite-glass,
+  .landing-modern .features-lite-glass * {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+
+  .landing-modern .features-lite-glass .chat-gemini-orb,
+  .landing-modern .features-lite-glass .chat-gemini-dots,
+  .landing-modern .features-lite-glass .chat-gemini-glass-sheen,
+  .landing-modern .features-lite-glass .chat-gemini-glass-plate {
+    animation: none !important;
+    filter: none !important;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .landing-modern .hero-fluid-wave,
   .landing-modern .hero-fluid-glow,
