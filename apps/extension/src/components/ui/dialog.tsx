@@ -89,7 +89,9 @@ const DialogContent = React.forwardRef<
         data-slot="dialog-content"
         data-gsap-motion={gsapMotion ? "true" : undefined}
         className={cn(
-          "fixed top-1/2 left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-4 rounded-xl bg-popover p-4 text-sm text-popover-foreground ring-1 ring-foreground/10 outline-none sm:max-w-sm",
+          // z-51 above the z-50 scrim so iOS hit-testing reaches the dialog
+          // (same-z full-screen overlays steal taps — see Sheet stacking).
+          "fixed top-1/2 left-1/2 z-51 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-4 rounded-xl bg-popover p-4 text-sm text-popover-foreground ring-1 ring-foreground/10 outline-none sm:max-w-sm",
           gsapMotion
             ? "duration-100 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95"
             : "duration-100 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",

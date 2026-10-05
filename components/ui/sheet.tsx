@@ -23,6 +23,18 @@ function SheetPortal({ ...props }: SheetPrimitive.Portal.Props) {
   return <SheetPrimitive.Portal data-slot="sheet-portal" {...props} />
 }
 
+/**
+ * Interactive shell must sit *above* the scrim — never the same z-index.
+ * Same-z full-screen overlays steal taps on iOS WebKit even when paint order
+ * looks correct (Base UI #2940 / shadcn pointer-events guidance). Content is
+ * always scrim + 1 for the stacking tokens we use (50 / 60 / 70).
+ */
+function sheetContentStackClass(overlayClassName?: string) {
+  if (overlayClassName && /\bz-70\b/.test(overlayClassName)) return "z-71"
+  if (overlayClassName && /\bz-60\b/.test(overlayClassName)) return "z-61"
+  return "z-51"
+}
+
 function SheetOverlay({ className, ...props }: SheetPrimitive.Backdrop.Props) {
   return (
     <SheetPrimitive.Backdrop
@@ -70,14 +82,9 @@ function SheetContent({
         data-slot="sheet-content"
         data-side={side}
         className={cn(
-          "fixed z-50 flex flex-col text-sm transition duration-200 ease-in-out data-ending-style:opacity-0 data-starting-style:opacity-0",
-          /**
-           * Elevated overlays (cookie `z-60` / manage `z-70`) must raise this
-           * fixed shell too. Bottom sheets put `className` on the inner frost
-           * surface only — without mirroring `overlayClassName` here, the
-           * blurred scrim stacked above the sheet on iOS Safari + Android Chrome.
-           */
-          overlayClassName,
+          "fixed flex flex-col text-sm transition duration-200 ease-in-out data-ending-style:opacity-0 data-starting-style:opacity-0",
+          // Always scrim+1 — never mirror overlayClassName at the same z.
+          sheetContentStackClass(overlayClassName),
           /**
            * Bottom sheets: transparent shell only.
            * Safari drops `backdrop-filter` when it shares a node with
@@ -102,7 +109,9 @@ function SheetContent({
             data-side={side}
             className={cn(
               // WebKit: overflow clips backdrop-blur to rounded corners.
-              "chat-sheet-glass relative flex w-full flex-col overflow-hidden",
+              // `pointer-events-auto`: Base UI docs use a transparent Popup shell
+              // with an interactive inner surface so the scrim keeps outside taps.
+              "chat-sheet-glass relative flex w-full flex-col overflow-hidden pointer-events-auto",
               className
             )}
           >

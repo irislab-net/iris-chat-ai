@@ -387,7 +387,7 @@ function CookieConsentBanner() {
             side="bottom"
             showCloseButton={false}
             overlayClassName="z-60"
-            className={cn(chatMobileSheetContentClass, "z-60 gap-0 border-0")}
+            className={cn(chatMobileSheetContentClass, "gap-0 border-0")}
           >
             <div aria-hidden className={chatMobileSheetHandleClass} />
             <div className={cn(chatMobileSheetBodyClass, "gap-4 pb-5")}>
@@ -429,7 +429,7 @@ function CookieConsentBanner() {
             side="bottom"
             showCloseButton
             overlayClassName="z-70"
-            className={cn(chatMobileSheetContentClass, "z-70 gap-0 border-0")}
+            className={cn(chatMobileSheetContentClass, "gap-0 border-0")}
           >
             <div aria-hidden className={chatMobileSheetHandleClass} />
             <div className={cn(chatMobileSheetBodyClass, "gap-4 pb-5")}>
