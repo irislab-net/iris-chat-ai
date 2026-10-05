@@ -361,7 +361,7 @@ export function LandingNav() {
           "grid grid-cols-[1fr_auto] items-center gap-2.5 sm:gap-4 lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]",
           "rounded-[28px] transition-[background-color,box-shadow,backdrop-filter,padding] duration-300 ease-out",
           stuck
-            ? "bg-white/95 py-2 shadow-[0_10px_40px_rgba(15,23,42,0.08),inset_0_1px_1px_rgba(255,255,255,0.9)] backdrop-blur-2xl dark:bg-background/90 dark:shadow-[0_10px_40px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.08)]"
+            ? "bg-white py-2 shadow-[0_10px_40px_rgba(15,23,42,0.08),inset_0_1px_1px_rgba(255,255,255,0.9)] dark:bg-background dark:shadow-[0_10px_40px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.08)]"
             : "bg-transparent py-0 shadow-none"
         )}
         aria-label={tAria("aria")}

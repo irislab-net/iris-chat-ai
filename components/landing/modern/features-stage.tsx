@@ -1,10 +1,14 @@
+"use client"
+
 import type { ReactNode } from "react"
 
-import { HeroLiquidGlassBg } from "@/components/landing/modern/hero-liquid-glass-bg"
+import {
+  FeaturesViewportGlassBg,
+  useFeaturesLiteGlass,
+} from "@/components/landing/modern/features-glass-wash"
 import {
   landingCardRadius,
   landingGlassSheen,
-  landingGlassSurface,
 } from "@/lib/landing-modern-styles"
 import { cn } from "@/lib/utils"
 
@@ -21,7 +25,13 @@ function GlassSheen({ className }: { className?: string }) {
   )
 }
 
-/** Full-bleed glass demo stage — same language as signal-wait / desk. */
+/**
+ * Full-bleed glass demo stage — same language as signal-wait / desk.
+ *
+ * On phone-class viewports we skip live `backdrop-filter` + animated Gemini
+ * mesh (both stack hard during scroll and trip Chrome/WebKit
+ * “A problem repeatedly occurred” when many stages share a long page).
+ */
 export function FeaturesDemoStage({
   children,
   className,
@@ -33,16 +43,20 @@ export function FeaturesDemoStage({
   contentClassName?: string
   tone?: "blue" | "neutral"
 }) {
+  const lite = useFeaturesLiteGlass()
+
   return (
     <div
       className={cn(
-        landingGlassSurface,
         landingCardRadius,
-        "relative isolate overflow-hidden bg-white/40 dark:bg-white/6",
+        "relative isolate overflow-hidden",
+        lite
+          ? "bg-white/95 shadow-[0_16px_48px_rgba(15,23,42,0.08),inset_0_1px_1px_rgba(255,255,255,0.92),inset_0_-1px_2px_rgba(255,255,255,0.28)] dark:bg-white/10 dark:shadow-[0_16px_48px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.12)]"
+          : "bg-white/40 shadow-[0_16px_48px_rgba(15,23,42,0.08),inset_0_1px_1px_rgba(255,255,255,0.92),inset_0_-1px_2px_rgba(255,255,255,0.28)] backdrop-blur-2xl dark:bg-white/6 dark:shadow-[0_16px_48px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.12),inset_0_-1px_2px_rgba(255,255,255,0.04)]",
         className
       )}
     >
-      {tone === "blue" ? <HeroLiquidGlassBg tone="blue" /> : null}
+      {tone === "blue" ? <FeaturesViewportGlassBg tone="blue" /> : null}
       <GlassSheen className={landingCardRadius} />
       <div
         className={cn(

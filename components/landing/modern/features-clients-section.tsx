@@ -4,17 +4,13 @@ import { useTranslations } from "next-intl"
 
 import { ChatNoTradeCard } from "@/components/app-shell/chat-no-trade-card"
 import { DeskNewsBoardPreview } from "@/components/landing/modern/desk-news-board"
-import {
-  FeaturesDemoStage,
-  FeaturesGlassSheen,
-} from "@/components/landing/modern/features-stage"
+import { FeaturesDemoStage } from "@/components/landing/modern/features-stage"
 import { ScrollReveal } from "@/components/landing/modern/scroll-reveal"
 import { SectionHeader } from "@/components/landing/modern/sphere-ui"
 import { FEATURES_QUALITY_WAIT_REASON } from "@/lib/features-showcase-fixtures"
 import {
   landingAfterHeader,
   landingContentWide,
-  landingGlassPill,
   landingSection,
   landingSectionBody,
 } from "@/lib/landing-modern-styles"
@@ -79,13 +75,7 @@ export function FeaturesClientsSection() {
               reason={FEATURES_QUALITY_WAIT_REASON}
               className="mt-0 pointer-events-none"
             />
-            <div
-              className={cn(
-                landingGlassPill,
-                "relative mt-4 flex items-center gap-2 px-3.5 py-3"
-              )}
-            >
-              <FeaturesGlassSheen className="rounded-full" />
+            <div className="relative mt-4 flex items-center gap-2 rounded-full bg-white/92 px-3.5 py-3 shadow-[0_8px_24px_rgba(15,23,42,0.06),inset_0_1px_1px_rgba(255,255,255,0.95)] dark:bg-white/12 md:bg-white/44 md:shadow-[0_20px_56px_rgba(15,23,42,0.09),inset_0_1px_1px_rgba(255,255,255,0.96)] md:backdrop-blur-2xl dark:md:bg-white/10">
               <span className="relative z-10 flex-1 truncate text-start text-xs text-muted-foreground/70">
                 {t("composerPlaceholder")}
               </span>
