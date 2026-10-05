@@ -1431,42 +1431,54 @@ html.display-standalone[data-app-shell="true"] [data-slot="sheet-content"] .app-
 }
 
 /*
- * Android Chrome / Custom Tabs / WebView (html.ua-android from chrome-init).
- * Large backdrop-filter on sheet/dialog hosts can smear a ~40px blur across
- * descendant copy + CTAs (reported on Samsung S23 Ultra in-app browser).
- * `supports-[backdrop-filter]:bg-*/72` still matches when we zero the filter,
- * so force near-opaque fills — frost is cosmetic; readability is not.
+ * Phone sheets / overlays — no live backdrop-filter.
+ *
+ * Reported on Samsung S23 Ultra (Custom Tabs) and iPhone X (Safari):
+ * `backdrop-filter: blur(40px)` on `.chat-sheet-glass` can composite onto
+ * descendant copy so cookie/login sheets smear across most of the viewport
+ * (Accept CTA unreadable; only bottom ghost actions stay sharp).
+ *
+ * `supports-[backdrop-filter]:bg-*/72` still matches when the filter is
+ * zeroed, so force opaque fills. Frost is cosmetic; readability is not.
+ * Matches the Features mobile glass kill (`max-width: 767px`).
  */
-html.ua-android .chat-sheet-glass,
-html.ua-android [data-slot="sheet-surface"],
-html.ua-android [data-slot="dialog-content"],
-html.ua-android [data-slot="sheet-overlay"],
-html.ua-android [data-slot="dialog-overlay"],
-html.ua-android .chat-gemini-glass-plate {
-  -webkit-backdrop-filter: none !important;
-  backdrop-filter: none !important;
-}
+@media (max-width: 767px) {
+  .chat-sheet-glass,
+  [data-slot="sheet-surface"],
+  [data-slot="dialog-content"],
+  [data-slot="sheet-overlay"],
+  [data-slot="dialog-overlay"],
+  .chat-gemini-glass-plate {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
 
-html.ua-android .chat-sheet-glass,
-html.ua-android [data-slot="sheet-surface"],
-html.ua-android [data-slot="dialog-content"] {
-  background: #ffffff !important;
-}
+  .chat-sheet-glass,
+  [data-slot="sheet-surface"],
+  [data-slot="dialog-content"] {
+    background: #ffffff !important;
+  }
 
-html.ua-android [data-slot="sheet-overlay"],
-html.ua-android [data-slot="dialog-overlay"] {
-  background: rgb(0 0 0 / 0.36) !important;
-}
+  [data-slot="sheet-overlay"],
+  [data-slot="dialog-overlay"] {
+    background: rgb(0 0 0 / 0.36) !important;
+  }
 
-html.dark.ua-android .chat-sheet-glass,
-html.dark.ua-android [data-slot="sheet-surface"],
-html.dark.ua-android [data-slot="dialog-content"] {
-  background: oklch(0.22 0 0) !important;
-}
+  :is(.dark) .chat-sheet-glass,
+  :is(.dark) [data-slot="sheet-surface"],
+  :is(.dark) [data-slot="dialog-content"],
+  .dark .chat-sheet-glass,
+  .dark [data-slot="sheet-surface"],
+  .dark [data-slot="dialog-content"] {
+    background: oklch(0.22 0 0) !important;
+  }
 
-html.dark.ua-android [data-slot="sheet-overlay"],
-html.dark.ua-android [data-slot="dialog-overlay"] {
-  background: rgb(0 0 0 / 0.52) !important;
+  :is(.dark) [data-slot="sheet-overlay"],
+  :is(.dark) [data-slot="dialog-overlay"],
+  .dark [data-slot="sheet-overlay"],
+  .dark [data-slot="dialog-overlay"] {
+    background: rgb(0 0 0 / 0.52) !important;
+  }
 }
 
 [data-slot="chat-gsap-view-stack"][data-transitioning] > [data-view] {

@@ -62,11 +62,14 @@
       root.classList.add("pwa-splash-done")
     }
 
-    // Android Chrome / Custom Tabs / WebView: mark early so CSS can disable
-    // full-sheet backdrop-filter (S23 Ultra+ reported descendant text smear).
+    // Phone UA markers (optional hooks). Sheet blur kill is CSS @media
+    // max-width 767px — covers iPhone X Safari + Android Custom Tabs.
     var ua = (window.navigator && window.navigator.userAgent) || ""
     if (/Android/i.test(ua)) {
       root.classList.add("ua-android")
+    }
+    if (/iPhone|iPad|iPod/i.test(ua)) {
+      root.classList.add("ua-ios")
     }
   } catch (_e) {}
 })()

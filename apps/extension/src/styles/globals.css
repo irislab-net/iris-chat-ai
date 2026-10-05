@@ -634,39 +634,46 @@
 }
 
 /*
- * Android Chrome / Custom Tabs / WebView — see app/globals.css.
- * Large sheet/dialog backdrop-filter can smear descendant text.
+ * Phone sheets / overlays — see app/globals.css.
+ * iPhone X Safari + Android Custom Tabs: sheet backdrop-filter smears copy.
  */
-html.ua-android .chat-sheet-glass,
-html.ua-android [data-slot="sheet-surface"],
-html.ua-android [data-slot="dialog-content"],
-html.ua-android [data-slot="sheet-overlay"],
-html.ua-android [data-slot="dialog-overlay"],
-html.ua-android .chat-gemini-glass-plate {
-  -webkit-backdrop-filter: none !important;
-  backdrop-filter: none !important;
-}
+@media (max-width: 767px) {
+  .chat-sheet-glass,
+  [data-slot="sheet-surface"],
+  [data-slot="dialog-content"],
+  [data-slot="sheet-overlay"],
+  [data-slot="dialog-overlay"],
+  .chat-gemini-glass-plate {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
 
-html.ua-android .chat-sheet-glass,
-html.ua-android [data-slot="sheet-surface"],
-html.ua-android [data-slot="dialog-content"] {
-  background: #ffffff !important;
-}
+  .chat-sheet-glass,
+  [data-slot="sheet-surface"],
+  [data-slot="dialog-content"] {
+    background: #ffffff !important;
+  }
 
-html.ua-android [data-slot="sheet-overlay"],
-html.ua-android [data-slot="dialog-overlay"] {
-  background: rgb(0 0 0 / 0.36) !important;
-}
+  [data-slot="sheet-overlay"],
+  [data-slot="dialog-overlay"] {
+    background: rgb(0 0 0 / 0.36) !important;
+  }
 
-html.dark.ua-android .chat-sheet-glass,
-html.dark.ua-android [data-slot="sheet-surface"],
-html.dark.ua-android [data-slot="dialog-content"] {
-  background: oklch(0.22 0 0) !important;
-}
+  :is(.dark) .chat-sheet-glass,
+  :is(.dark) [data-slot="sheet-surface"],
+  :is(.dark) [data-slot="dialog-content"],
+  .dark .chat-sheet-glass,
+  .dark [data-slot="sheet-surface"],
+  .dark [data-slot="dialog-content"] {
+    background: oklch(0.22 0 0) !important;
+  }
 
-html.dark.ua-android [data-slot="sheet-overlay"],
-html.dark.ua-android [data-slot="dialog-overlay"] {
-  background: rgb(0 0 0 / 0.52) !important;
+  :is(.dark) [data-slot="sheet-overlay"],
+  :is(.dark) [data-slot="dialog-overlay"],
+  .dark [data-slot="sheet-overlay"],
+  .dark [data-slot="dialog-overlay"] {
+    background: rgb(0 0 0 / 0.52) !important;
+  }
 }
 
 [data-slot="chat-gsap-view-stack"][data-transitioning] > [data-view] {

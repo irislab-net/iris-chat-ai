@@ -16,8 +16,10 @@ describe("browser chrome colors", () => {
     expect(browserChromeColor("dark")).toBe(BROWSER_CHROME_COLORS.dark)
   })
 
-  it("marks Android UA for sheet backdrop-filter kill", () => {
+  it("marks Android and iOS UA hooks for mobile sheet blur workarounds", () => {
     expect(BROWSER_CHROME_INIT_SCRIPT).toContain("ua-android")
+    expect(BROWSER_CHROME_INIT_SCRIPT).toContain("ua-ios")
     expect(BROWSER_CHROME_INIT_SCRIPT).toMatch(/Android/i)
+    expect(BROWSER_CHROME_INIT_SCRIPT).toMatch(/iPhone\|iPad\|iPod/)
   })
 })
