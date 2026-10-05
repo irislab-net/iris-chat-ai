@@ -528,36 +528,44 @@ export function FeaturesOverview() {
             </div>
           </article>
 
-          <div className="flex flex-col gap-4 lg:col-span-7">
+          <div className="flex flex-col gap-3 lg:col-span-7 lg:gap-4">
             <article
               className={cn(
                 featuresSurface,
-                "relative flex flex-1 flex-col justify-between overflow-hidden rounded-[1.75rem] px-6 py-6 sm:flex-row sm:items-center sm:gap-6 sm:px-7",
+                "relative flex flex-col gap-4 overflow-hidden rounded-[1.5rem] px-5 py-5 sm:flex-row sm:items-center sm:gap-6 sm:rounded-[1.75rem] sm:px-7 sm:py-6",
                 !liteGlass && "bg-white/48 dark:bg-white/8"
               )}
             >
               <FeaturesGlassSheen className="rounded-[1.75rem]" />
-              <div className="relative z-10 min-w-0 text-center sm:text-start">
+              <div className="relative z-10 min-w-0 flex-1 text-start">
                 <h3 className={landingTitleCard}>{t("language.title")}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                <p className="mt-1.5 max-w-md text-sm leading-relaxed text-muted-foreground">
                   {t("language.body")}
                 </p>
               </div>
-              <div className="relative z-10 mt-5 flex justify-center sm:mt-0 sm:shrink-0">
-                <LocaleSwitcher variant="chip" />
+              <div className="relative z-10 flex shrink-0 items-center self-start sm:self-center">
+                <LocaleSwitcher
+                  variant="chip"
+                  buttonClassName={cn(
+                    "h-11 gap-2 rounded-full px-3.5 text-foreground shadow-[0_8px_24px_rgba(15,23,42,0.06),inset_0_1px_1px_rgba(255,255,255,0.95)] hover:bg-white/90 dark:shadow-[0_8px_24px_rgba(0,0,0,0.28)] dark:hover:bg-white/14",
+                    liteGlass
+                      ? "bg-white/92 dark:bg-white/12"
+                      : "bg-white/60 backdrop-blur-xl dark:bg-white/10"
+                  )}
+                />
               </div>
             </article>
 
             <article
               className={cn(
                 featuresSurface,
-                "relative flex flex-1 flex-col justify-between overflow-hidden rounded-[1.75rem] px-6 py-6 sm:flex-row sm:items-center sm:gap-6 sm:px-7",
+                "relative flex flex-col gap-4 overflow-hidden rounded-[1.5rem] px-5 py-5 sm:flex-row sm:items-center sm:gap-6 sm:rounded-[1.75rem] sm:px-7 sm:py-6",
                 !liteGlass && "bg-white/48 dark:bg-white/8"
               )}
             >
               <FeaturesGlassSheen className="rounded-[1.75rem]" />
-              <div className="relative z-10 min-w-0 text-center sm:text-start">
-                <div className="mb-3 flex items-center justify-center gap-0 sm:justify-start">
+              <div className="relative z-10 flex min-w-0 flex-1 items-start gap-3.5 text-start">
+                <div className="flex shrink-0 items-center pt-0.5">
                   {(["USDT", "USDC"] as const).map((currency, i) => (
                     <span
                       key={currency}
@@ -568,19 +576,26 @@ export function FeaturesOverview() {
                     >
                       <PaymentTokenLogo
                         currency={currency}
-                        size="lg"
+                        size="md"
                         className="ring-2 ring-white/80 dark:ring-white/20"
                       />
                     </span>
                   ))}
                 </div>
-                <h3 className={landingTitleCard}>{tPay("title")}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                  {t("access.payBody")}
-                </p>
+                <div className="min-w-0 flex-1">
+                  <h3 className={landingTitleCard}>{tPay("title")}</h3>
+                  <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
+                    {t("access.payBody")}
+                  </p>
+                </div>
               </div>
-              <div className="relative z-10 mt-5 flex justify-center sm:mt-0 sm:shrink-0">
-                <SphereCta href={UPGRADE_PATH} variant="glass" size="sm">
+              <div className="relative z-10 flex w-full shrink-0 sm:w-auto sm:self-center">
+                <SphereCta
+                  href={UPGRADE_PATH}
+                  variant="glass"
+                  size="sm"
+                  className="w-full justify-center sm:w-auto"
+                >
                   {tPay("cta")}
                 </SphereCta>
               </div>
