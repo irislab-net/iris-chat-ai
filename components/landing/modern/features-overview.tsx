@@ -111,24 +111,30 @@ function useLiveXauPrice() {
 
 function JumpNav({ labelFor }: { labelFor: (key: string) => string }) {
   return (
-    <nav
-      aria-label={labelFor("aria")}
-      className="-mx-1 flex items-center gap-1.5 overflow-x-auto px-1 pb-0.5 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:justify-center sm:overflow-visible sm:px-0 sm:pb-0 [&::-webkit-scrollbar]:hidden"
-    >
-      {FEATURES_JUMP_LINKS.map((link) => (
-        <a
-          key={link.href}
-          href={link.href}
-          className={cn(
-            landingGlassPill,
-            "relative shrink-0 px-3.5 py-1.5 text-[12px] font-medium text-muted-foreground transition-colors hover:text-foreground"
-          )}
-        >
-          <FeaturesGlassSheen className="rounded-full" />
-          <span className="relative z-10">{labelFor(link.key)}</span>
-        </a>
-      ))}
-    </nav>
+    <div className="relative sm:static">
+      <nav
+        aria-label={labelFor("aria")}
+        className="-mx-1 flex items-center gap-1.5 overflow-x-auto px-1 pb-0.5 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:justify-center sm:overflow-visible sm:px-0 sm:pb-0 [&::-webkit-scrollbar]:hidden"
+      >
+        {FEATURES_JUMP_LINKS.map((link) => (
+          <a
+            key={link.href}
+            href={link.href}
+            className={cn(
+              landingGlassPill,
+              "relative shrink-0 px-3.5 py-1.5 text-[12px] font-medium text-muted-foreground transition-colors hover:text-foreground"
+            )}
+          >
+            <FeaturesGlassSheen className="rounded-full" />
+            <span className="relative z-10">{labelFor(link.key)}</span>
+          </a>
+        ))}
+      </nav>
+      <span
+        aria-hidden
+        className="pointer-events-none absolute inset-y-0 end-0 w-8 bg-linear-to-l from-background to-transparent sm:hidden"
+      />
+    </div>
   )
 }
 
