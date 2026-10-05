@@ -33,6 +33,7 @@ import {
   chatSamplePromptButtonClass,
   chatThreadConnectButtonClass,
   chatThreadUpgradeClass,
+  chatUpgradePillClass,
 } from "@/components/app-shell/chat-mobile-gemini-styles"
 import { ChatMobileHeader } from "@/components/app-shell/chat-mobile-header"
 import { ChatMobileSlidePanel } from "@/components/app-shell/chat-mobile-slide-panel"
@@ -2924,21 +2925,25 @@ function ChatAside({
                 )}
               >
                 {guestSendError ? (
-                  <div className="flex items-start justify-between gap-2 border-b border-border/50 px-3 py-2 sm:px-4">
-                    <p className="text-xs leading-snug text-muted-foreground">
-                      {guestSendError}
-                    </p>
-                    {!isAuthenticated ? (
-                      <Button
-                        type="button"
-                        size="xs"
-                        variant="outline"
-                        className="shrink-0"
-                        onClick={() => login({ source: "chat" })}
-                      >
-                        {t("signIn")}
-                      </Button>
-                    ) : null}
+                  <div className="px-3 sm:px-4">
+                    <div className="mb-2 flex items-start justify-between gap-3 rounded-2xl bg-white/60 px-3.5 py-2.5 dark:bg-white/8">
+                      <p className="min-w-0 flex-1 text-[13px] leading-4.5 tracking-[-0.006em] text-foreground/85">
+                        {guestSendError}
+                      </p>
+                      {!isAuthenticated ? (
+                        <Button
+                          type="button"
+                          size="xs"
+                          className={cn(
+                            chatUpgradePillClass,
+                            "h-7 shrink-0 px-3 text-[12px]"
+                          )}
+                          onClick={() => login({ source: "chat" })}
+                        >
+                          {t("signIn")}
+                        </Button>
+                      ) : null}
+                    </div>
                   </div>
                 ) : null}
                 {replyTarget ? (

@@ -444,7 +444,7 @@ const chatComposerLiquidMentionSheetClass = chatComposerLiquidSheetClass
 const chatComposerLiquidSheetOverlayClass = chatMobileSheetOverlayClass
 
 const chatComposerLiquidSheetRowClass =
-  "flex w-full flex-row items-center gap-3 rounded-2xl px-3 py-3 text-start transition-colors duration-150 bg-white/40 hover:bg-white/58 active:bg-white/65 dark:bg-white/8 dark:hover:bg-white/12 dark:active:bg-white/16"
+  "flex w-full flex-row items-center gap-3 rounded-2xl px-3 py-3 text-start transition-colors duration-150 bg-white/60 hover:bg-white/78 active:bg-white/85 dark:bg-white/8 dark:hover:bg-white/12 dark:active:bg-white/16"
 
 const chatComposerLiquidSheetRowActiveClass =
   "bg-white/75 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.85)] dark:bg-white/14 dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.12)]"
