@@ -40,7 +40,7 @@ function ChatNoTradeCard({
         className
       )}
     >
-      <header className="flex items-start justify-between gap-3 px-4 pt-4 pb-3">
+      <header className="flex flex-wrap items-start justify-between gap-x-3 gap-y-2.5 px-4 pt-4 pb-3">
         <div className="flex min-w-0 items-center gap-2.5">
           <span
             className={cn(
@@ -59,7 +59,7 @@ function ChatNoTradeCard({
             </h3>
           </div>
         </div>
-        <div className="flex shrink-0 flex-col items-end gap-1.5">
+        <div className="flex max-w-full shrink-0 flex-wrap items-center justify-end gap-1.5">
           <span className={capitalProtectedChipClass}>
             <ShieldCheckIcon className="size-3 shrink-0 opacity-80" aria-hidden />
             {t("noTradeCapitalProtected")}

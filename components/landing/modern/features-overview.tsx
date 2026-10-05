@@ -113,7 +113,7 @@ function JumpNav({ labelFor }: { labelFor: (key: string) => string }) {
   return (
     <nav
       aria-label={labelFor("aria")}
-      className="flex flex-wrap items-center justify-center gap-1.5"
+      className="-mx-1 flex items-center gap-1.5 overflow-x-auto px-1 pb-0.5 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:justify-center sm:overflow-visible sm:px-0 sm:pb-0 [&::-webkit-scrollbar]:hidden"
     >
       {FEATURES_JUMP_LINKS.map((link) => (
         <a
@@ -121,7 +121,7 @@ function JumpNav({ labelFor }: { labelFor: (key: string) => string }) {
           href={link.href}
           className={cn(
             landingGlassPill,
-            "relative px-3.5 py-1.5 text-[12px] font-medium text-muted-foreground transition-colors hover:text-foreground"
+            "relative shrink-0 px-3.5 py-1.5 text-[12px] font-medium text-muted-foreground transition-colors hover:text-foreground"
           )}
         >
           <FeaturesGlassSheen className="rounded-full" />
@@ -155,10 +155,10 @@ export function FeaturesOverview() {
   return (
     <div className={landingMainStack}>
       {/* Hero — brand first, no ScrollReveal, no jump clutter */}
-      <article className="relative overflow-hidden rounded-[2.5rem] bg-white/42 shadow-[0_28px_80px_rgba(15,23,42,0.07)] backdrop-blur-2xl dark:bg-white/6 dark:shadow-[0_28px_80px_rgba(0,0,0,0.45)]">
+      <article className="relative overflow-hidden rounded-[1.75rem] bg-white/42 shadow-[0_28px_80px_rgba(15,23,42,0.07)] backdrop-blur-2xl dark:bg-white/6 dark:shadow-[0_28px_80px_rgba(0,0,0,0.45)] sm:rounded-[2.5rem]">
         <HeroLiquidGlassBg tone="blue" />
         <div
-          className={cn(landingInner, "relative z-10 py-14 sm:py-16 lg:py-20")}
+          className={cn(landingInner, "relative z-10 py-12 sm:py-16 lg:py-20")}
         >
           <div className="mx-auto max-w-3xl text-center">
             <p className={cn(landingTitleBrand, "text-foreground/80")}>
@@ -167,7 +167,7 @@ export function FeaturesOverview() {
             <h1
               className={cn(
                 landingTitleSection,
-                "mt-4 text-[2.5rem] leading-[1.05] sm:text-5xl lg:text-[3.35rem]"
+                "mt-4 text-[2.15rem] leading-[1.08] text-balance sm:text-5xl sm:leading-[1.05] lg:text-[3.35rem]"
               )}
             >
               {t("title")}
@@ -175,16 +175,16 @@ export function FeaturesOverview() {
             <p className="mx-auto mt-5 max-w-lg text-base leading-relaxed text-pretty text-muted-foreground sm:text-lg">
               {t("intro")}
             </p>
-            <div className="mt-9 flex flex-wrap items-center justify-center gap-2.5">
+            <div className="mt-8 flex flex-col items-stretch justify-center gap-2.5 sm:mt-9 sm:flex-row sm:items-center">
               <Button
-                className={landingCta("primary", "md")}
+                className={cn(landingCta("primary", "md"), "w-full sm:w-auto")}
                 nativeButton={false}
                 render={launchRender}
               >
                 {common("launchApp")}
               </Button>
               <Button
-                className={landingCta("light", "md")}
+                className={cn(landingCta("light", "md"), "w-full sm:w-auto")}
                 nativeButton={false}
                 render={<Link href={UPGRADE_PATH} />}
               >
@@ -206,7 +206,11 @@ export function FeaturesOverview() {
       {/* Gold — setup + wait */}
       <section
         id="gold"
-        className={cn(landingSection, landingSectionBody, "scroll-mt-28")}
+        className={cn(
+          landingSection,
+          landingSectionBody,
+          "scroll-mt-24 py-12 sm:scroll-mt-28 sm:py-20 lg:py-24"
+        )}
         aria-labelledby="features-gold-heading"
       >
         <ScrollReveal>
@@ -219,12 +223,12 @@ export function FeaturesOverview() {
         </ScrollReveal>
         <ScrollReveal className={cn(landingContentWide, landingAfterHeader)}>
           <FeaturesDemoStage>
-            <div className="mb-5 flex items-center justify-between gap-3 px-3.5">
+            <div className="mb-5 flex items-center justify-between gap-3 px-1.5 sm:px-3.5">
               <span className="font-(family-name:--font-mono-modern) text-[11px] font-medium tracking-[0.14em] text-muted-foreground uppercase">
                 XAU
               </span>
-              <span className="inline-flex items-center gap-2 font-(family-name:--font-mono-modern) text-sm tabular-nums text-foreground">
-                <span className="text-[10px] tracking-widest text-muted-foreground uppercase">
+              <span className="inline-flex min-w-0 items-center gap-1.5 font-(family-name:--font-mono-modern) text-sm tabular-nums text-foreground sm:gap-2">
+                <span className="shrink-0 text-[10px] tracking-widest text-muted-foreground uppercase">
                   {t("gold.liveLabel")}
                 </span>
                 {xauPrice === undefined ? (
@@ -233,7 +237,7 @@ export function FeaturesOverview() {
                     className="chat-skeleton-shimmer inline-block h-4 w-16 rounded-md"
                   />
                 ) : typeof xauPrice === "number" && xauPrice > 0 ? (
-                  <span>${formatTradePrice(xauPrice)}</span>
+                  <span className="truncate">${formatTradePrice(xauPrice)}</span>
                 ) : (
                   <span className="text-muted-foreground/50">—</span>
                 )}
@@ -241,7 +245,7 @@ export function FeaturesOverview() {
             </div>
             <div className="grid gap-5 lg:grid-cols-2 lg:gap-6">
               <div className="min-w-0">
-                <p className="mb-3 px-3.5 text-[11px] font-medium tracking-[0.12em] text-muted-foreground uppercase">
+                <p className="mb-3 px-1.5 text-[11px] font-medium tracking-[0.12em] text-muted-foreground uppercase sm:px-3.5">
                   {t("gold.setupLabel")}
                 </p>
                 <ChatSignalCard
@@ -251,7 +255,7 @@ export function FeaturesOverview() {
                 />
               </div>
               <div className="min-w-0">
-                <p className="mb-3 px-3.5 text-[11px] font-medium tracking-[0.12em] text-muted-foreground uppercase">
+                <p className="mb-3 px-1.5 text-[11px] font-medium tracking-[0.12em] text-muted-foreground uppercase sm:px-3.5">
                   {t("gold.waitLabel")}
                 </p>
                 <ChatNoTradeCard
@@ -260,7 +264,7 @@ export function FeaturesOverview() {
                 />
               </div>
             </div>
-            <div className="mt-7 flex justify-center px-3.5">
+            <div className="mt-7 flex justify-center px-1.5 sm:px-3.5">
               <SphereCta
                 href={buildLandingChatHref(FEATURES_GOLD_ASK)}
                 variant="glass"
@@ -276,7 +280,11 @@ export function FeaturesOverview() {
       {/* Tools — real guidance picker */}
       <section
         id="tools"
-        className={cn(landingSection, landingSectionBody, "scroll-mt-28")}
+        className={cn(
+          landingSection,
+          landingSectionBody,
+          "scroll-mt-24 py-12 sm:scroll-mt-28 sm:py-20 lg:py-24"
+        )}
         aria-labelledby="features-tools-heading"
       >
         <ScrollReveal>
@@ -397,7 +405,11 @@ export function FeaturesOverview() {
       {/* News */}
       <section
         id="news"
-        className={cn(landingSection, landingSectionBody, "scroll-mt-28")}
+        className={cn(
+          landingSection,
+          landingSectionBody,
+          "scroll-mt-24 py-12 sm:scroll-mt-28 sm:py-20 lg:py-24"
+        )}
         aria-labelledby="features-news-heading"
       >
         <ScrollReveal>
@@ -420,7 +432,11 @@ export function FeaturesOverview() {
       {/* Access */}
       <section
         id="access"
-        className={cn(landingSection, landingSectionBody, "scroll-mt-28")}
+        className={cn(
+          landingSection,
+          landingSectionBody,
+          "scroll-mt-24 py-12 sm:scroll-mt-28 sm:py-20 lg:py-24"
+        )}
         aria-labelledby="features-access-heading"
       >
         <ScrollReveal>
@@ -439,10 +455,10 @@ export function FeaturesOverview() {
             "grid gap-4 lg:grid-cols-12"
           )}
         >
-          <article
+            <article
             className={cn(
               landingGlassSurface,
-              "relative overflow-hidden rounded-[1.75rem] bg-white/48 px-6 py-8 text-center dark:bg-white/8 sm:px-8 lg:col-span-5"
+              "relative overflow-hidden rounded-[1.5rem] bg-white/48 px-5 py-7 text-center dark:bg-white/8 sm:rounded-[1.75rem] sm:px-8 sm:py-8 lg:col-span-5"
             )}
           >
             <HeroLiquidGlassBg tone="blue" />
@@ -532,7 +548,7 @@ export function FeaturesOverview() {
       {/* Boundaries */}
       <section
         id="limits"
-        className={cn(landingSection, "scroll-mt-28")}
+        className={cn(landingSection, "scroll-mt-24 sm:scroll-mt-28")}
         aria-labelledby="features-limits-heading"
       >
         <ScrollReveal>
@@ -565,7 +581,7 @@ export function FeaturesOverview() {
         id="get-started"
         className={cn(
           landingSection,
-          "relative overflow-hidden rounded-[2.5rem] bg-white/42 py-16 shadow-[0_28px_80px_rgba(15,23,42,0.07)] backdrop-blur-2xl dark:bg-white/6 dark:shadow-[0_28px_80px_rgba(0,0,0,0.45)] sm:py-20"
+          "relative overflow-hidden rounded-[1.75rem] bg-white/42 py-12 shadow-[0_28px_80px_rgba(15,23,42,0.07)] backdrop-blur-2xl dark:bg-white/6 dark:shadow-[0_28px_80px_rgba(0,0,0,0.45)] sm:rounded-[2.5rem] sm:py-20"
         )}
         aria-labelledby="features-cta-heading"
       >
@@ -579,12 +595,16 @@ export function FeaturesOverview() {
               <p className="mt-4 text-base leading-relaxed text-muted-foreground sm:text-lg">
                 {t("cta.subtitle")}
               </p>
-              <div className="mt-9 flex flex-wrap items-center justify-center gap-2.5">
-                <SphereCta href={launchHref} variant="glass">
+              <div className="mt-8 flex flex-col items-stretch justify-center gap-2.5 sm:mt-9 sm:flex-row sm:items-center">
+                <SphereCta
+                  href={launchHref}
+                  variant="glass"
+                  className="w-full justify-center sm:w-auto"
+                >
                   {t("cta.openDesk")}
                 </SphereCta>
                 <Button
-                  className={landingCta("light", "md")}
+                  className={cn(landingCta("light", "md"), "w-full sm:w-auto")}
                   nativeButton={false}
                   render={<Link href={APP_NEWS_PATH} />}
                 >
