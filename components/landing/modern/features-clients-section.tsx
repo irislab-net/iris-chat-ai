@@ -1,5 +1,6 @@
 "use client"
 
+import { ArrowUpIcon } from "lucide-react"
 import { useTranslations } from "next-intl"
 
 import { ChatNoTradeCard } from "@/components/app-shell/chat-no-trade-card"
@@ -81,8 +82,10 @@ export function FeaturesClientsSection() {
               </span>
               <span
                 aria-hidden
-                className="relative z-10 size-7 shrink-0 rounded-full bg-foreground/90"
-              />
+                className="relative z-10 inline-flex size-7 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#2563EB] text-white shadow-[inset_0_1px_1px_rgba(255,255,255,0.45),inset_0_-1px_1px_rgba(29,78,216,0.22),0_1px_2px_rgba(37,99,235,0.18)]"
+              >
+                <ArrowUpIcon className="size-3.5 stroke-[2.25]" />
+              </span>
             </div>
           </FeaturesDemoStage>
         </div>

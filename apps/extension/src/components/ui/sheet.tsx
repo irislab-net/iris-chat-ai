@@ -28,7 +28,12 @@ function SheetOverlay({ className, ...props }: SheetPrimitive.Backdrop.Props) {
     <SheetPrimitive.Backdrop
       data-slot="sheet-overlay"
       className={cn(
-        "fixed inset-0 z-50 bg-black/10 transition-opacity duration-150 data-ending-style:opacity-0 data-starting-style:opacity-0 supports-backdrop-filter:backdrop-blur-xs",
+        // Scrim dim on the node; live blur on ::before (z -1). Putting
+        // backdrop-filter on the overlay itself makes it a backdrop root —
+        // nested sheet glass + mobile compositing then paint the blur over
+        // the sheet (Bootstrap #37085 / Chromium nested-backdrop guidance).
+        // `isolate` matches DialogOverlay.
+        "fixed inset-0 isolate z-50 bg-black/10 transition-opacity duration-150 data-ending-style:opacity-0 data-starting-style:opacity-0 supports-backdrop-filter:before:pointer-events-none supports-backdrop-filter:before:absolute supports-backdrop-filter:before:inset-0 supports-backdrop-filter:before:-z-10 supports-backdrop-filter:before:backdrop-blur-xs supports-backdrop-filter:before:content-['']",
         className
       )}
       {...props}
@@ -57,7 +62,7 @@ function SheetContent({
         className={cn(
           // Bottom sheets share the soft liquid scrim (composer tools / mention).
           isBottom &&
-            "overscroll-none bg-black/20 supports-backdrop-filter:bg-black/10 supports-backdrop-filter:backdrop-blur-sm dark:bg-black/40 dark:supports-backdrop-filter:bg-black/28",
+            "overscroll-none bg-black/20 supports-backdrop-filter:bg-black/10 supports-backdrop-filter:before:backdrop-blur-sm dark:bg-black/40 dark:supports-backdrop-filter:bg-black/28",
           overlayClassName
         )}
       />
@@ -66,6 +71,13 @@ function SheetContent({
         data-side={side}
         className={cn(
           "fixed z-50 flex flex-col text-sm transition duration-200 ease-in-out data-ending-style:opacity-0 data-starting-style:opacity-0",
+          /**
+           * Elevated overlays (cookie `z-60` / manage `z-70`) must raise this
+           * fixed shell too. Bottom sheets put `className` on the inner frost
+           * surface only — without mirroring `overlayClassName` here, the
+           * blurred scrim stacked above the sheet on iOS Safari + Android Chrome.
+           */
+          overlayClassName,
           /**
            * Bottom sheets: transparent shell only.
            * Safari drops `backdrop-filter` when it shares a node with
