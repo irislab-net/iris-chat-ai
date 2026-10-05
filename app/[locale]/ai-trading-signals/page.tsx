@@ -27,8 +27,8 @@ export const metadata: Metadata = {
   description: AI_SIGNALS_DESCRIPTION,
   keywords: [
     "AI financial assistant",
-    "personal finance AI",
-    "money assistant",
+    "market news AI",
+    "price action assistant",
     SITE_NAME,
   ],
   robots: ROOT_ROBOTS,
@@ -60,9 +60,10 @@ function AiTradingSignalsPage() {
         intro={
           <>
             <LegalP>
-              Exur is an AI financial assistant. Ask about spending, savings,
-              and what’s next, in your own words. This is decision support, not
-              brokerage, and not a promise of profit. Prefer the official{" "}
+              Exur is an AI financial assistant. Ask about news and price
+              action in your own words, and get a clear setup — or a reason to
+              sit out. This is decision support, not brokerage, and not a
+              promise of profit. Prefer the official{" "}
               <Link href="/what-is-exur" className={legalLinkClass}>
                 What is Exur?
               </Link>{" "}
@@ -74,9 +75,9 @@ function AiTradingSignalsPage() {
       >
         <LegalSection id="signals-what" title="What Exur is">
           <LegalP>
-            Exur helps you see where your money is going, spot what actually
-            matters, and ask for a next step in plain language. Not a raw feed.
-            Not an automated order.
+            Exur helps you read scored headlines and price action, spot what
+            actually matters, and ask for a clear setup — or a reason to sit
+            out. Not a raw feed. Not an automated order.
           </LegalP>
           <LegalList>
             {PRODUCT_FEATURE_LIST.map((feature) => (
@@ -87,9 +88,9 @@ function AiTradingSignalsPage() {
 
         <LegalSection id="signals-who" title="Who it is for">
           <LegalP>
-            Anyone who wants a clear read on their money: spending, savings, and
-            tradeoffs, without another chart-heavy app. Sign in when you want a
-            co-pilot that remembers you.
+            Anyone who wants a clearer read on the market: scored headlines,
+            price action, and a co-pilot, without another noisy feed. Sign in
+            when you want a desk that remembers you.
           </LegalP>
         </LegalSection>
 

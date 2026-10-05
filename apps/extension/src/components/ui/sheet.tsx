@@ -3,12 +3,40 @@
 import * as React from "react"
 import { Dialog as SheetPrimitive } from "@base-ui/react/dialog"
 
+import {
+  createTouchSafeInitialFocus,
+  useGuardedOverlayOpenChange,
+  useOverlayOpenSignal,
+} from "@/hooks/use-overlay-open"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { XIcon } from "lucide-react"
 
-function Sheet({ ...props }: SheetPrimitive.Root.Props) {
-  return <SheetPrimitive.Root data-slot="sheet" {...props} />
+function Sheet({
+  open: openProp,
+  defaultOpen = false,
+  onOpenChange,
+  ...props
+}: SheetPrimitive.Root.Props) {
+  const [uncontrolledOpen, setUncontrolledOpen] = React.useState(defaultOpen)
+  const isControlled = openProp !== undefined
+  const open = isControlled ? Boolean(openProp) : uncontrolledOpen
+
+  useOverlayOpenSignal(open)
+
+  const handleOpenChange = useGuardedOverlayOpenChange(
+    onOpenChange,
+    isControlled ? undefined : setUncontrolledOpen
+  )
+
+  return (
+    <SheetPrimitive.Root
+      data-slot="sheet"
+      {...props}
+      open={open}
+      onOpenChange={handleOpenChange}
+    />
+  )
 }
 
 function SheetTrigger({ ...props }: SheetPrimitive.Trigger.Props) {
@@ -76,6 +104,8 @@ function SheetContent({
   side = "right",
   showCloseButton = true,
   overlayClassName,
+  initialFocus: initialFocusProp,
+  ref: refProp,
   ...props
 }: SheetPrimitive.Popup.Props & {
   side?: "top" | "right" | "bottom" | "left"
@@ -84,6 +114,20 @@ function SheetContent({
   overlayClassName?: string
 }) {
   const isBottom = side === "bottom"
+  const popupRef = React.useRef<HTMLDivElement | null>(null)
+  const touchSafeInitialFocus = React.useMemo(
+    () => createTouchSafeInitialFocus(popupRef),
+    []
+  )
+
+  const setPopupRef = React.useCallback(
+    (node: HTMLDivElement | null) => {
+      popupRef.current = node
+      if (typeof refProp === "function") refProp(node)
+      else if (refProp) refProp.current = node
+    },
+    [refProp]
+  )
 
   return (
     <SheetPortal>
@@ -98,6 +142,8 @@ function SheetContent({
       <SheetPrimitive.Popup
         data-slot="sheet-content"
         data-side={side}
+        ref={setPopupRef}
+        initialFocus={initialFocusProp ?? touchSafeInitialFocus}
         className={cn(
           "fixed flex flex-col text-sm transition duration-200 ease-in-out data-ending-style:opacity-0 data-starting-style:opacity-0",
           // Always scrim+1 — never mirror overlayClassName at the same z.

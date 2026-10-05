@@ -652,13 +652,13 @@
       "companiesHouse": "Companies House record"
     },
     "context": {
-      "description": "Exur is your AI financial assistant. See where your money is going, ask in plain language, and get a clear next step, not another feed."
+      "description": "Exur is your AI financial assistant. Ask about news and price action in plain language. Get a clear setup, or a reason to sit out — not another feed."
     }
   },
   "metadata": {
     "homeTitle": "Exur: AI Financial Assistant",
-    "homeDescription": "Exur is your AI financial assistant. See where your money is going, ask in plain language, and get a clear next step.",
-    "homeOg": "Your money, handled. Ask Exur in plain language."
+    "homeDescription": "Exur is your AI financial assistant. Ask about news and price action. Get a clear setup, or a reason to sit out.",
+    "homeOg": "Your smart financial assistant. Ask about news and price action."
   },
   "notFound": {
     "title": "This page isn’t here",

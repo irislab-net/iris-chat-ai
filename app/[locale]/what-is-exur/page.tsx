@@ -35,8 +35,8 @@ export const metadata: Metadata = {
     "What is Exur",
     "Exur",
     "AI financial assistant",
-    "personal finance AI",
-    "money assistant",
+    "market news AI",
+    "price action assistant",
   ],
   robots: ROOT_ROBOTS,
   alternates: {

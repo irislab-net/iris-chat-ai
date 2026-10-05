@@ -92,7 +92,7 @@ const CONTACT_EMAIL = "hello@exur.ai"
 const sheetCanvasClass = [
   "gap-0 border-0 bg-white/90 text-foreground",
   "shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_92%,transparent),inset_0_0_0_1px_color-mix(in_oklch,white_40%,transparent),0_-18px_52px_-18px_color-mix(in_oklch,var(--foreground)_18%,transparent)]",
-  "backdrop-blur-2xl backdrop-saturate-[180%] supports-[backdrop-filter]:bg-white/72",
+  "supports-[backdrop-filter]:bg-white/72",
   "dark:bg-[oklch(0.22_0_0_/0.92)] dark:supports-[backdrop-filter]:bg-[oklch(0.2_0_0_/0.72)]",
   "dark:shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_14%,transparent),inset_0_0_0_1px_color-mix(in_oklch,white_8%,transparent),0_-18px_52px_-18px_color-mix(in_oklch,black_55%,transparent)]",
 ].join(" ")

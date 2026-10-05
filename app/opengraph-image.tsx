@@ -21,7 +21,7 @@ export default async function OpenGraphImage() {
         justifyContent: "space-between",
         padding: "64px 72px",
         background:
-          "linear-gradient(145deg, #141414 0%, #252525 55%, #1a1a1a 100%)",
+          "radial-gradient(ellipse at 70% 20%, rgba(37,99,235,0.22) 0%, transparent 55%), linear-gradient(145deg, #0a0a0a 0%, #171717 55%, #0f0f0f 100%)",
         color: "#f5f5f5",
         fontFamily: "ui-sans-serif, system-ui, sans-serif",
       }}
@@ -54,24 +54,24 @@ export default async function OpenGraphImage() {
       <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
         <div
           style={{
-            fontSize: 64,
+            fontSize: 56,
             fontWeight: 700,
             letterSpacing: "-0.04em",
             lineHeight: 1.1,
-            maxWidth: 900,
+            maxWidth: 980,
           }}
         >
-          Your money, handled.
+          Your smart financial assistant.
         </div>
         <div
           style={{
             fontSize: 28,
             color: "#a3a3a3",
-            maxWidth: 820,
+            maxWidth: 900,
             lineHeight: 1.35,
           }}
         >
-          AI financial assistant. Ask in plain language.
+          Ask about news and price action. Clear setup — or sit out.
         </div>
       </div>
 
@@ -86,7 +86,7 @@ export default async function OpenGraphImage() {
       >
         <span>exur.ai</span>
         <span style={{ letterSpacing: "0.12em", textTransform: "uppercase" }}>
-          Ask · Decide · Act
+          Read · Ask · Act
         </span>
       </div>
     </div>,

@@ -56,7 +56,7 @@ export async function generateLandingMetadata({
       description,
       images: [
         {
-          url: "/opengraph-image",
+          url: "/opengraph-image?v=smart-assistant",
           width: 1200,
           height: 630,
           alt: title,
@@ -67,7 +67,7 @@ export async function generateLandingMetadata({
       card: "summary_large_image",
       title: og,
       description,
-      images: ["/twitter-image"],
+      images: ["/twitter-image?v=smart-assistant"],
     },
   }
 }

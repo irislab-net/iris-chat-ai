@@ -1431,6 +1431,30 @@ html.display-standalone[data-app-shell="true"] [data-slot="sheet-content"] .app-
 }
 
 /*
+ * Mobile overlay open: freeze live backdrop-filter under portals so stacked
+ * glass (scrim ::before + sheet surface + page chrome) does not re-composite
+ * every frame. Denser fills keep the frosted look without GPU blur cost.
+ * Set by Sheet/Dialog via html[data-overlay-open] (see use-overlay-open).
+ */
+@media (hover: none), (max-width: 768px) {
+  html[data-overlay-open] [data-slot="sheet-overlay"]::before,
+  html[data-overlay-open] [data-slot="dialog-overlay"]::before {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  html[data-overlay-open] [data-slot="sheet-surface"].chat-sheet-glass {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background: color-mix(in oklch, white 94%, transparent) !important;
+  }
+
+  :is(.dark) html[data-overlay-open] [data-slot="sheet-surface"].chat-sheet-glass {
+    background: oklch(0.22 0 0 / 0.98) !important;
+  }
+}
+
+/*
  * Base UI Dialog mounts an unstyled InternalBackdrop (`position:fixed; inset:0`)
  * for pointer modality *before* our styled overlay/popup. On iOS Safari and
  * Android Chrome that layer can steal taps from the sheet even when paint order

@@ -1222,3 +1222,20 @@ html.display-standalone[data-keyboard-open="true"]
     transition: none !important;
   }
 }
+
+/*
+ * Overlay open (Sheet/Dialog): pause mesh blur + orb drift so the compositor
+ * is not re-blurring moving blobs under the portal on mobile.
+ */
+html[data-overlay-open] .chat-gemini-mesh,
+html[data-overlay-open] .chat-gemini-bg-blue .chat-gemini-mesh {
+  animation: none !important;
+  filter: none !important;
+  will-change: auto !important;
+}
+
+html[data-overlay-open] .chat-gemini-orb,
+html[data-overlay-open] .chat-gemini-dots,
+html[data-overlay-open] .chat-gemini-glass-sheen {
+  animation: none !important;
+}

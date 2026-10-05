@@ -135,6 +135,7 @@ function ChatMobileSlidePanel({
 
   React.useEffect(() => {
     if (!mounted || !open) return
+    if (document.documentElement.dataset.overlayOpen === "true") return
     panelRef.current?.focus({ preventScroll: true })
   }, [mounted, open])
 

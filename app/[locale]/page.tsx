@@ -52,10 +52,24 @@ const newsMetadata: Metadata = {
     canonical: PRODUCTION_ORIGIN,
   },
   openGraph: {
-    title: `${SITE_TITLE} · News`,
+    title: SITE_TITLE,
     description: SITE_DESCRIPTION,
     url: PRODUCTION_ORIGIN,
     type: "website",
+    images: [
+      {
+        url: "/opengraph-image?v=smart-assistant",
+        width: 1200,
+        height: 630,
+        alt: SITE_TITLE,
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    images: ["/twitter-image?v=smart-assistant"],
   },
 }
 

@@ -101,7 +101,7 @@ export const metadata: Metadata = {
     description: SITE_DESCRIPTION,
     images: [
       {
-        url: "/opengraph-image",
+        url: "/opengraph-image?v=smart-assistant",
         width: 1200,
         height: 630,
         alt: SITE_TITLE,
@@ -114,7 +114,7 @@ export const metadata: Metadata = {
     description: SITE_DESCRIPTION,
     creator: "@exur_ai",
     site: "@exur_ai",
-    images: ["/twitter-image"],
+    images: ["/twitter-image?v=smart-assistant"],
   },
   formatDetection: {
     email: false,

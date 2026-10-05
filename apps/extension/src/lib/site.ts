@@ -15,10 +15,10 @@ export function getSiteOrigin(): string {
 export const SITE_NAME = "Exur"
 
 export const SITE_DESCRIPTION =
-  "Exur is your AI financial assistant. See where your money is going, ask in plain language, and get a clear next step, not another feed."
+  "Exur is your AI financial assistant. Ask about news and price action in plain language. Get a clear setup, or a reason to sit out — not another feed."
 
 export const ABOUT_DESCRIPTION =
-  "Exur is an AI financial assistant. Ask about spending, savings, and what’s next, in your own words."
+  "Exur is an AI financial assistant. Ask about news and price action in your own words, and get a clear setup — or a reason to sit out."
 
 export const PRIVACY_DESCRIPTION =
   "How Exur collects, uses, and protects personal data. Privacy Policy and GDPR Notice."

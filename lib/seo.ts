@@ -25,25 +25,25 @@ export const SITE_TITLE = "Exur: AI Financial Assistant"
 export const SITE_TITLE_TEMPLATE = "%s · Exur"
 
 export const SITE_DESCRIPTION =
-  "Exur is your AI financial assistant. See where your money is going, ask in plain language, and get a clear next step, not another feed."
+  "Exur is your AI financial assistant. Ask about news and price action in plain language. Get a clear setup, or a reason to sit out — not another feed."
 
 export const AI_SIGNALS_PATH = "/ai-trading-signals"
 export const AI_SIGNALS_TITLE = "Your AI financial assistant"
 export const AI_SIGNALS_DESCRIPTION =
-  "Exur helps you see spending, savings, and tradeoffs in one place. Ask questions grounded in your money. Decision support, not a broker, not a promise of profit."
+  "Exur helps you read scored headlines and price action in one place. Ask questions grounded in the market you are looking at. Decision support, not a broker, not a promise of profit."
 
 /** Canonical citation page for AI search / answer engines (GEO). */
 export const WHAT_IS_EXUR_PATH = "/what-is-exur"
 export const WHAT_IS_EXUR_TITLE = "What is Exur?"
 export const WHAT_IS_EXUR_DESCRIPTION =
-  "Exur is an AI financial assistant. Ask about spending, savings, and what’s next in plain language. Decision support — not a broker, not a trading bot, not a promise of profit."
+  "Exur is an AI financial assistant. Ask about news and price action in plain language. Get a clear setup — or a reason to sit out. Decision support — not a broker, not a trading bot, not a promise of profit."
 
 /** One-sentence definition models can quote verbatim. */
 export const EXUR_DEFINITION =
-  "Exur is an AI financial assistant that helps you see where your money is going, understand tradeoffs, and ask for a clear next step in plain language."
+  "Exur is an AI financial assistant that helps you read market news and price action, ask in plain language, and get a clear setup — or a reason to sit out."
 
 export const EXUR_IS = [
-  "An AI financial assistant for spending, savings, and money decisions",
+  "An AI financial assistant for news, price action, and market decisions",
   "A co-pilot you can ask in your own words",
   "Decision support grounded in context you are looking at",
   "A product you can try without paying, then connect an account for memory and higher limits",
@@ -58,17 +58,17 @@ export const EXUR_IS_NOT = [
 ] as const
 
 export const EXUR_WHO_FOR =
-  "Anyone who wants a clearer read on their money — spending, savings, and tradeoffs — without another chart-heavy feed. Sign in when you want a co-pilot that remembers you."
+  "Anyone who wants a clearer read on the market — scored headlines, price action, and a co-pilot — without another noisy feed. Sign in when you want a desk that remembers you."
 
 export const SITE_KEYWORDS = [
   "Exur",
   "AI financial assistant",
-  "personal finance AI",
-  "money assistant",
-  "spending insights",
-  "savings plan",
+  "market news AI",
+  "price action assistant",
   "financial co-pilot",
-  "ask about your money",
+  "scored headlines",
+  "ask about the market",
+  "AI market advisor",
   "what is Exur",
 ] as const
 
@@ -105,22 +105,22 @@ export const AI_CRAWLER_USER_AGENTS = [
 
 export const PRODUCT_FEATURE_LIST = [
   "AI financial assistant in plain language",
-  "See where your money is going",
-  "Spending, savings, and goals in one view",
+  "Scored market headlines on one desk",
+  "Ask about news and price action",
   "Exur co-pilot chat for signed-in users",
-  "Clear next steps, not another feed",
+  "Clear setup or sit-out — not another feed",
 ] as const
 
 export const AI_SIGNALS_FAQS = [
   {
     question: "What is Exur?",
     answer:
-      "Exur is an AI financial assistant. Ask about spending, savings, and what’s next, in your own words.",
+      "Exur is an AI financial assistant. Ask about news and price action in your own words, and get a clear setup — or a reason to sit out.",
   },
   {
     question: "Is Exur a trading-signal tool?",
     answer:
-      "No. Exur is built to help you understand your money and the tradeoffs in front of you. It is decision support, not a broker.",
+      "No. Exur is built to help you understand the market and the tradeoffs in front of you. It is decision support, not a broker.",
   },
   {
     question: "Does Exur move my money?",
@@ -263,9 +263,9 @@ export function organizationJsonLd() {
     sameAs: [SOCIAL_LINKS.x, SOCIAL_LINKS.telegram],
     knowsAbout: [
       "AI financial assistant",
-      "personal finance",
-      "spending insights",
-      "savings goals",
+      "market news",
+      "price action",
+      "scored headlines",
       "SOC 2",
       "ISO 27001",
       "application security",

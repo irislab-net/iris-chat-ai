@@ -4,12 +4,40 @@ import * as React from "react"
 import { Dialog as DialogPrimitive } from "@base-ui/react/dialog"
 
 import { useChatGsapPopup } from "@/hooks/use-chat-gsap-popup"
+import {
+  createTouchSafeInitialFocus,
+  useGuardedOverlayOpenChange,
+  useOverlayOpenSignal,
+} from "@/hooks/use-overlay-open"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { XIcon } from "lucide-react"
 
-function Dialog({ ...props }: DialogPrimitive.Root.Props) {
-  return <DialogPrimitive.Root data-slot="dialog" {...props} />
+function Dialog({
+  open: openProp,
+  defaultOpen = false,
+  onOpenChange,
+  ...props
+}: DialogPrimitive.Root.Props) {
+  const [uncontrolledOpen, setUncontrolledOpen] = React.useState(defaultOpen)
+  const isControlled = openProp !== undefined
+  const open = isControlled ? Boolean(openProp) : uncontrolledOpen
+
+  useOverlayOpenSignal(open)
+
+  const handleOpenChange = useGuardedOverlayOpenChange(
+    onOpenChange,
+    isControlled ? undefined : setUncontrolledOpen
+  )
+
+  return (
+    <DialogPrimitive.Root
+      data-slot="dialog"
+      {...props}
+      open={open}
+      onOpenChange={handleOpenChange}
+    />
+  )
 }
 
 function DialogTrigger({ ...props }: DialogPrimitive.Trigger.Props) {
@@ -75,6 +103,7 @@ const DialogContent = React.forwardRef<
     showCloseButton = true,
     gsapMotion = false,
     open = true,
+    initialFocus: initialFocusProp,
     ...props
   },
   ref
@@ -86,10 +115,16 @@ const DialogContent = React.forwardRef<
     // Base UI owns exit presence; GSAP only handles the enter spring.
     phase: "open-only",
   })
+  const popupRef = React.useRef<HTMLDivElement | null>(null)
+  const touchSafeInitialFocus = React.useMemo(
+    () => createTouchSafeInitialFocus(popupRef),
+    []
+  )
 
   const setRefs = React.useCallback(
     (node: HTMLDivElement | null) => {
       gsapRef.current = node
+      popupRef.current = node
       if (typeof ref === "function") ref(node)
       else if (ref) ref.current = node
     },
@@ -103,6 +138,7 @@ const DialogContent = React.forwardRef<
         ref={setRefs}
         data-slot="dialog-content"
         data-gsap-motion={gsapMotion ? "true" : undefined}
+        initialFocus={initialFocusProp ?? touchSafeInitialFocus}
         className={cn(
           // z-51 above the z-50 scrim so iOS hit-testing reaches the dialog
           // (same-z full-screen overlays steal taps — see Sheet stacking).
