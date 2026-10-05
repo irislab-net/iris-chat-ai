@@ -16,9 +16,9 @@ import {
 import { useIdleReady } from "@/hooks/use-idle-ready"
 import {
   cancelGoogleOneTap,
+  handleGoogleOneTapPromptMoment,
   isGoogleOneTapDismissed,
   loadGoogleIdentityScript,
-  markGoogleOneTapDismissed,
 } from "@/lib/google-one-tap"
 
 type GoogleOneTapProps = {
@@ -41,35 +41,6 @@ function resolveGoogleOneTapColorScheme(
   }
   if (resolvedTheme === "dark") return "dark"
   return "light"
-}
-
-function handlePromptMoment(notification: GooglePromptMomentNotification) {
-  // Prefer not to re-prompt after hard FedCM/GIS failures (NetworkError, bad origin).
-  if (notification.isNotDisplayed?.()) {
-    const reason = notification.getNotDisplayedReason?.()
-    if (
-      reason === "unregistered_origin" ||
-      reason === "invalid_client" ||
-      reason === "suppressed_by_user" ||
-      reason === "opt_out_or_no_session"
-    ) {
-      markGoogleOneTapDismissed()
-    }
-    return
-  }
-  if (notification.isSkippedMoment?.()) {
-    if (notification.getSkippedReason?.() === "issuing_failed") {
-      markGoogleOneTapDismissed()
-    }
-    return
-  }
-  // FedCM often omits skip reasons; only mark dismiss on explicit user close.
-  if (notification.isDismissedMoment()) {
-    const reason = notification.getDismissedReason()
-    if (reason === "credential_returned") return
-    if (reason === "cancel_called") return
-    markGoogleOneTapDismissed()
-  }
 }
 
 function runGoogleOneTapPrompt(
@@ -97,7 +68,7 @@ function runGoogleOneTapPrompt(
     use_fedcm_for_prompt: true,
   })
 
-  window.google.accounts.id.prompt(handlePromptMoment)
+  window.google.accounts.id.prompt(handleGoogleOneTapPromptMoment)
 }
 
 export function GoogleOneTap({ enabled, onCredential }: GoogleOneTapProps) {

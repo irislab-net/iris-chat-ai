@@ -28,16 +28,31 @@ function DialogOverlay({
   className,
   ...props
 }: DialogPrimitive.Backdrop.Props) {
+  const disableInternalBackdropPointers = React.useCallback(
+    (node: HTMLDivElement | null) => {
+      const internal = node?.previousElementSibling
+      if (
+        internal instanceof HTMLElement &&
+        internal.hasAttribute("data-base-ui-inert") &&
+        internal.getAttribute("role") === "presentation" &&
+        !internal.hasAttribute("data-slot")
+      ) {
+        internal.style.pointerEvents = "none"
+      }
+    },
+    []
+  )
+
   return (
     <DialogPrimitive.Backdrop
       data-slot="dialog-overlay"
       className={cn(
-        // Blur on ::before so the overlay is not a backdrop root that can
-        // composite over the dialog sibling on mobile WebKit/Blink.
-        "fixed inset-0 isolate z-50 bg-black/10 duration-100 supports-backdrop-filter:before:pointer-events-none supports-backdrop-filter:before:absolute supports-backdrop-filter:before:inset-0 supports-backdrop-filter:before:-z-10 supports-backdrop-filter:before:backdrop-blur-xs supports-backdrop-filter:before:content-[''] data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0",
+        // Blur on ::before; no isolate — see SheetOverlay / Base UI #2940.
+        "fixed inset-0 z-50 bg-black/10 duration-100 supports-backdrop-filter:before:pointer-events-none supports-backdrop-filter:before:absolute supports-backdrop-filter:before:inset-0 supports-backdrop-filter:before:-z-10 supports-backdrop-filter:before:backdrop-blur-xs supports-backdrop-filter:before:content-[''] data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0",
         className
       )}
       {...props}
+      ref={disableInternalBackdropPointers}
     />
   )
 }

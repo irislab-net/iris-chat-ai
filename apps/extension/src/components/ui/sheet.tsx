@@ -36,19 +36,36 @@ function sheetContentStackClass(overlayClassName?: string) {
 }
 
 function SheetOverlay({ className, ...props }: SheetPrimitive.Backdrop.Props) {
+  // Base UI inserts InternalBackdrop as the previous sibling of this node.
+  // Disable its pointer events so iOS/Android taps reach the sheet (Base UI #2940).
+  const disableInternalBackdropPointers = React.useCallback(
+    (node: HTMLDivElement | null) => {
+      const internal = node?.previousElementSibling
+      if (
+        internal instanceof HTMLElement &&
+        internal.hasAttribute("data-base-ui-inert") &&
+        internal.getAttribute("role") === "presentation" &&
+        !internal.hasAttribute("data-slot")
+      ) {
+        internal.style.pointerEvents = "none"
+      }
+    },
+    []
+  )
+
   return (
     <SheetPrimitive.Backdrop
       data-slot="sheet-overlay"
       className={cn(
-        // Scrim dim on the node; live blur on ::before (z -1). Putting
-        // backdrop-filter on the overlay itself makes it a backdrop root —
-        // nested sheet glass + mobile compositing then paint the blur over
-        // the sheet (Bootstrap #37085 / Chromium nested-backdrop guidance).
-        // `isolate` matches DialogOverlay.
-        "fixed inset-0 isolate z-50 bg-black/10 transition-opacity duration-150 data-ending-style:opacity-0 data-starting-style:opacity-0 supports-backdrop-filter:before:pointer-events-none supports-backdrop-filter:before:absolute supports-backdrop-filter:before:inset-0 supports-backdrop-filter:before:-z-10 supports-backdrop-filter:before:backdrop-blur-xs supports-backdrop-filter:before:content-['']",
+        // Scrim dim on the node; live blur on ::before (z -1). Avoid
+        // backdrop-filter on this node (backdrop root / mobile compositing).
+        // No `isolate` here — with InternalBackdrop it contributed to iOS
+        // touch targeting bugs over the sheet sibling.
+        "fixed inset-0 z-50 bg-black/10 transition-opacity duration-150 data-ending-style:opacity-0 data-starting-style:opacity-0 supports-backdrop-filter:before:pointer-events-none supports-backdrop-filter:before:absolute supports-backdrop-filter:before:inset-0 supports-backdrop-filter:before:-z-10 supports-backdrop-filter:before:backdrop-blur-xs supports-backdrop-filter:before:content-['']",
         className
       )}
       {...props}
+      ref={disableInternalBackdropPointers}
     />
   )
 }
@@ -90,9 +107,14 @@ function SheetContent({
            * Safari drops `backdrop-filter` when it shares a node with
            * `translateY` enter/exit — the working mention listbox never
            * transforms. Animate opacity here; frost lives on the inner surface.
+           *
+           * `pointer-events-none` on the shell + `pointer-events-auto` on the
+           * frost surface is the Base UI Dialog pattern so outside taps still
+           * hit the scrim while sheet controls stay tappable.
            */
           isBottom &&
-            "inset-x-0 bottom-(--keyboard-inset-bottom,0px) h-auto gap-0 border-0 bg-transparent p-0 shadow-none",
+            "pointer-events-none inset-x-0 bottom-(--keyboard-inset-bottom,0px) h-auto gap-0 border-0 bg-transparent p-0 shadow-none",
+          !isBottom && "pointer-events-auto",
           side === "right" &&
             "inset-y-0 right-0 h-full w-3/4 gap-4 border-l bg-popover bg-clip-padding p-0 text-popover-foreground shadow-lg data-ending-style:translate-x-10 data-starting-style:translate-x-10 sm:max-w-sm",
           side === "left" &&
@@ -109,8 +131,7 @@ function SheetContent({
             data-side={side}
             className={cn(
               // WebKit: overflow clips backdrop-blur to rounded corners.
-              // `pointer-events-auto`: Base UI docs use a transparent Popup shell
-              // with an interactive inner surface so the scrim keeps outside taps.
+              // Interactive hole in the pointer-events-none Popup shell.
               "chat-sheet-glass relative flex w-full flex-col overflow-hidden pointer-events-auto",
               className
             )}

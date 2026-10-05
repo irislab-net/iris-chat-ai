@@ -1430,6 +1430,17 @@ html.display-standalone[data-app-shell="true"] [data-slot="sheet-content"] .app-
   background: oklch(0.22 0 0 / 0.98) !important;
 }
 
+/*
+ * Base UI Dialog mounts an unstyled InternalBackdrop (`position:fixed; inset:0`)
+ * for pointer modality *before* our styled overlay/popup. On iOS Safari and
+ * Android Chrome that layer can steal taps from the sheet even when paint order
+ * puts the sheet on top (mui/base-ui#2940). Outside-press still hits our
+ * `[data-slot=*-overlay]` sibling. Keep focus-guards / marked content alone.
+ */
+[data-base-ui-portal] > [data-base-ui-inert][role="presentation"]:not([data-slot]) {
+  pointer-events: none !important;
+}
+
 [data-slot="chat-gsap-view-stack"][data-transitioning] > [data-view] {
   background: color-mix(in oklch, white 96%, transparent);
 }

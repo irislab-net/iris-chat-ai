@@ -633,6 +633,14 @@
   background: oklch(0.22 0 0 / 0.98) !important;
 }
 
+/*
+ * Base UI InternalBackdrop can steal mobile taps from sheets/dialogs
+ * (mui/base-ui#2940). Outside-press still hits [data-slot=*-overlay].
+ */
+[data-base-ui-portal] > [data-base-ui-inert][role="presentation"]:not([data-slot]) {
+  pointer-events: none !important;
+}
+
 [data-slot="chat-gsap-view-stack"][data-transitioning] > [data-view] {
   background: color-mix(in oklch, white 96%, transparent);
 }

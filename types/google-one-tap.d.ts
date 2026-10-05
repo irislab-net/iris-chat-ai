@@ -4,11 +4,21 @@ type GoogleCredentialResponse = {
   client_id?: string
 }
 
+/**
+ * Prompt moment notifications under FedCM.
+ * Display/skip reason methods are removed by GIS when FedCM is enabled;
+ * only dismissed-moment APIs remain reliable.
+ * @see https://developers.google.com/identity/gsi/web/guides/fedcm-migration
+ */
 type GooglePromptMomentNotification = {
-  isDisplayMoment: () => boolean
-  isDisplayed: () => boolean
-  isNotDisplayed: () => boolean
-  getNotDisplayedReason: () =>
+  /** @deprecated Not returned under FedCM. */
+  isDisplayMoment?: () => boolean
+  /** @deprecated Not returned under FedCM. */
+  isDisplayed?: () => boolean
+  /** @deprecated Not returned under FedCM. */
+  isNotDisplayed?: () => boolean
+  /** @deprecated Not returned under FedCM. */
+  getNotDisplayedReason?: () =>
     | "browser_not_supported"
     | "invalid_client"
     | "missing_client_id"
@@ -17,14 +27,19 @@ type GooglePromptMomentNotification = {
     | "suppressed_by_user"
     | "unregistered_origin"
     | "unknown_reason"
-  isSkippedMoment: () => boolean
-  getSkippedReason: () =>
+  /** May still fire under FedCM, but without a detailed reason. */
+  isSkippedMoment?: () => boolean
+  /** @deprecated Detailed skip reasons are not provided under FedCM. */
+  getSkippedReason?: () =>
     | "auto_cancel"
     | "user_cancel"
     | "tap_outside"
     | "issuing_failed"
-  isDismissedMoment: () => boolean
-  getDismissedReason: () => "credential_returned" | "cancel_called" | "flow_restarted"
+  isDismissedMoment?: () => boolean
+  getDismissedReason?: () =>
+    | "credential_returned"
+    | "cancel_called"
+    | "flow_restarted"
 }
 
 type GoogleIdConfiguration = {

@@ -1,6 +1,35 @@
-import { afterEach, describe, expect, it, vi } from "vitest"
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
-import { cancelGoogleOneTap } from "@/lib/google-one-tap"
+import {
+  cancelGoogleOneTap,
+  clearGoogleOneTapDismissed,
+  GOOGLE_ONE_TAP_DISMISSED_KEY,
+  handleGoogleOneTapPromptMoment,
+  isGoogleOneTapDismissed,
+} from "@/lib/google-one-tap"
+
+function dismissedNotification(
+  reason: "credential_returned" | "cancel_called" | "flow_restarted"
+): GooglePromptMomentNotification {
+  return {
+    isDismissedMoment: () => true,
+    getDismissedReason: () => reason,
+  }
+}
+
+function stubBrowserSession() {
+  const store = new Map<string, string>()
+  vi.stubGlobal("window", {})
+  vi.stubGlobal("sessionStorage", {
+    getItem: (key: string) => store.get(key) ?? null,
+    setItem: (key: string, value: string) => {
+      store.set(key, value)
+    },
+    removeItem: (key: string) => {
+      store.delete(key)
+    },
+  })
+}
 
 describe("cancelGoogleOneTap", () => {
   afterEach(() => {
@@ -38,5 +67,43 @@ describe("cancelGoogleOneTap", () => {
     expect(cancelled).toBe(true)
     expect(picker.remove).toHaveBeenCalledOnce()
     expect(frame.remove).toHaveBeenCalledOnce()
+  })
+})
+
+describe("handleGoogleOneTapPromptMoment", () => {
+  beforeEach(() => {
+    stubBrowserSession()
+    clearGoogleOneTapDismissed()
+  })
+
+  afterEach(() => {
+    clearGoogleOneTapDismissed()
+    vi.unstubAllGlobals()
+  })
+
+  it("ignores non-dismissed moments (FedCM no longer exposes display/skip reasons)", () => {
+    handleGoogleOneTapPromptMoment({
+      isNotDisplayed: () => true,
+      getNotDisplayedReason: () => "unregistered_origin",
+      isSkippedMoment: () => true,
+      getSkippedReason: () => "issuing_failed",
+      isDismissedMoment: () => false,
+    })
+
+    expect(isGoogleOneTapDismissed()).toBe(false)
+    expect(sessionStorage.getItem(GOOGLE_ONE_TAP_DISMISSED_KEY)).toBeNull()
+  })
+
+  it("does not suppress after credential handoff or programmatic cancel", () => {
+    handleGoogleOneTapPromptMoment(dismissedNotification("credential_returned"))
+    expect(isGoogleOneTapDismissed()).toBe(false)
+
+    handleGoogleOneTapPromptMoment(dismissedNotification("cancel_called"))
+    expect(isGoogleOneTapDismissed()).toBe(false)
+  })
+
+  it("suppresses re-prompt after an explicit user dismiss", () => {
+    handleGoogleOneTapPromptMoment(dismissedNotification("flow_restarted"))
+    expect(isGoogleOneTapDismissed()).toBe(true)
   })
 })

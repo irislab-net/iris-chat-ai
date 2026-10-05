@@ -78,3 +78,18 @@ export function cancelGoogleOneTap() {
   }
   hideGoogleOneTapDom()
 }
+
+/**
+ * FedCM removes display/skip reason APIs from the prompt callback.
+ * Only dismissed moments remain reliable for suppress/re-prompt decisions.
+ * @see https://developers.google.com/identity/gsi/web/guides/fedcm-migration
+ */
+export function handleGoogleOneTapPromptMoment(
+  notification: GooglePromptMomentNotification
+) {
+  if (!notification.isDismissedMoment?.()) return
+  const reason = notification.getDismissedReason?.()
+  // Successful credential handoff, or our own cancel() during navigation/unmount.
+  if (reason === "credential_returned" || reason === "cancel_called") return
+  markGoogleOneTapDismissed()
+}
