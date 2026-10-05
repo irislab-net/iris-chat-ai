@@ -633,6 +633,42 @@
   background: oklch(0.22 0 0 / 0.98) !important;
 }
 
+/*
+ * Android Chrome / Custom Tabs / WebView — see app/globals.css.
+ * Large sheet/dialog backdrop-filter can smear descendant text.
+ */
+html.ua-android .chat-sheet-glass,
+html.ua-android [data-slot="sheet-surface"],
+html.ua-android [data-slot="dialog-content"],
+html.ua-android [data-slot="sheet-overlay"],
+html.ua-android [data-slot="dialog-overlay"],
+html.ua-android .chat-gemini-glass-plate {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+html.ua-android .chat-sheet-glass,
+html.ua-android [data-slot="sheet-surface"],
+html.ua-android [data-slot="dialog-content"] {
+  background: #ffffff !important;
+}
+
+html.ua-android [data-slot="sheet-overlay"],
+html.ua-android [data-slot="dialog-overlay"] {
+  background: rgb(0 0 0 / 0.36) !important;
+}
+
+html.dark.ua-android .chat-sheet-glass,
+html.dark.ua-android [data-slot="sheet-surface"],
+html.dark.ua-android [data-slot="dialog-content"] {
+  background: oklch(0.22 0 0) !important;
+}
+
+html.dark.ua-android [data-slot="sheet-overlay"],
+html.dark.ua-android [data-slot="dialog-overlay"] {
+  background: rgb(0 0 0 / 0.52) !important;
+}
+
 [data-slot="chat-gsap-view-stack"][data-transitioning] > [data-view] {
   background: color-mix(in oklch, white 96%, transparent);
 }

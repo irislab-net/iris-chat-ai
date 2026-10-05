@@ -420,6 +420,10 @@
  * Bottom-sheet frost — explicit -webkit prefix + no transform on this node.
  * Mention listbox works because it never shares a node with translateY;
  * Sheet popups animate opacity on the shell and put blur here instead.
+ *
+ * Android (`html.ua-android`): kill this blur in globals.css — Chrome Custom
+ * Tabs / WebView on Samsung can composite backdrop-filter onto descendant
+ * text so the whole sheet reads as a smear (cookie / login / install sheets).
  */
 .chat-sheet-glass {
   -webkit-backdrop-filter: blur(40px) saturate(180%);
