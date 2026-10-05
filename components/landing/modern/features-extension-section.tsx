@@ -11,7 +11,6 @@ import {
   landingAfterHeader,
   landingContentWide,
   landingCta,
-  landingGlassSurface,
   landingSection,
   landingSectionBody,
   landingTitleCard,
@@ -86,8 +85,8 @@ export function FeaturesExtensionSection() {
             <div className="min-w-0 lg:col-span-7">
               <div
                 className={cn(
-                  landingGlassSurface,
-                  "mx-auto max-w-md overflow-hidden rounded-[1.25rem] bg-white/55 shadow-[0_20px_56px_rgba(15,23,42,0.12)] dark:bg-white/10 lg:ms-auto lg:me-0 lg:max-w-lg"
+                  "mx-auto max-w-md overflow-hidden rounded-[1.25rem] bg-white/90 shadow-[0_20px_56px_rgba(15,23,42,0.12)] dark:bg-white/12 lg:ms-auto lg:me-0 lg:max-w-lg",
+                  "md:bg-white/55 md:backdrop-blur-2xl dark:md:bg-white/10"
                 )}
               >
                 <div className="flex items-center gap-1.5 border-b border-foreground/6 px-3.5 py-2.5">
