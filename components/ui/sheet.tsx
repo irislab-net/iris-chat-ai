@@ -4,9 +4,9 @@ import * as React from "react"
 import { Dialog as SheetPrimitive } from "@base-ui/react/dialog"
 
 import {
-  createTouchSafeInitialFocus,
   useGuardedOverlayOpenChange,
   useOverlayOpenSignal,
+  useTouchSafeInitialFocus,
 } from "@/hooks/use-overlay-open"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -115,10 +115,7 @@ function SheetContent({
 }) {
   const isBottom = side === "bottom"
   const popupRef = React.useRef<HTMLDivElement | null>(null)
-  const touchSafeInitialFocus = React.useMemo(
-    () => createTouchSafeInitialFocus(popupRef),
-    []
-  )
+  const touchSafeInitialFocus = useTouchSafeInitialFocus(popupRef)
 
   const setPopupRef = React.useCallback(
     (node: HTMLDivElement | null) => {
