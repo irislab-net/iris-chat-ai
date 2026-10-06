@@ -548,7 +548,8 @@ export function CryptoPaymentSheet({
           "**:data-[slot=sheet-close]:z-20",
           isDesktop
             ? "sm:max-w-95"
-            : "data-[side=bottom]:inset-x-0 data-[side=bottom]:bottom-(--keyboard-inset-bottom,0px) data-[side=bottom]:h-auto data-[side=bottom]:max-h-[min(90dvh,calc(var(--app-height,100dvh)-0.75rem))]"
+            : // sheet-surface gets the opaque mobile fill — radius must be here, not only on the inner glass.
+              "rounded-t-[28px] data-[side=bottom]:inset-x-0 data-[side=bottom]:bottom-(--keyboard-inset-bottom,0px) data-[side=bottom]:h-auto data-[side=bottom]:max-h-[min(90dvh,calc(var(--app-height,100dvh)-0.75rem))]"
         )}
       >
         <div
@@ -557,7 +558,7 @@ export function CryptoPaymentSheet({
             "flex max-h-[inherit] min-h-0 flex-col overflow-hidden bg-white/78 dark:bg-white/10",
             isDesktop
               ? "h-full rounded-none rounded-s-[1.75rem]"
-              : "rounded-t-[1.75rem] rounded-b-none"
+              : "rounded-t-[28px] rounded-b-none"
           )}
         >
           <span
@@ -566,7 +567,7 @@ export function CryptoPaymentSheet({
               landingGlassSheen,
               isDesktop
                 ? "rounded-s-[1.75rem]"
-                : "rounded-t-[1.75rem] rounded-b-none"
+                : "rounded-t-[28px] rounded-b-none"
             )}
           />
 

@@ -5,9 +5,9 @@ import { Dialog as DialogPrimitive } from "@base-ui/react/dialog"
 
 import { useChatGsapPopup } from "@/hooks/use-chat-gsap-popup"
 import {
-  createTouchSafeInitialFocus,
   useGuardedOverlayOpenChange,
   useOverlayOpenSignal,
+  useTouchSafeInitialFocus,
 } from "@/hooks/use-overlay-open"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -116,10 +116,7 @@ const DialogContent = React.forwardRef<
     phase: "open-only",
   })
   const popupRef = React.useRef<HTMLDivElement | null>(null)
-  const touchSafeInitialFocus = React.useMemo(
-    () => createTouchSafeInitialFocus(popupRef),
-    []
-  )
+  const touchSafeInitialFocus = useTouchSafeInitialFocus(popupRef)
 
   const setRefs = React.useCallback(
     (node: HTMLDivElement | null) => {

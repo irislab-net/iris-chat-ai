@@ -96,14 +96,16 @@ export function useGuardedOverlayOpenChange<T extends ChangeDetails>(
 /**
  * Focus the popup container for touch / pen / empty interaction (controlled
  * opens leave openMethod empty). Keyboard and mouse keep first-tabbable.
+ *
+ * Hook form avoids passing a ref into a render-time factory (react-hooks/refs).
  */
-export function createTouchSafeInitialFocus(
+export function useTouchSafeInitialFocus(
   popupRef: React.RefObject<HTMLElement | null>
 ): (openType: InteractionType) => boolean | HTMLElement | null {
-  return (openType) => {
+  return React.useCallback((openType: InteractionType) => {
     if (openType === "keyboard" || openType === "mouse") {
       return true
     }
     return popupRef.current
-  }
+  }, [popupRef])
 }
