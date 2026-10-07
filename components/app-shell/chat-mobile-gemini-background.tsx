@@ -48,6 +48,7 @@ function ChatMobileGeminiBackground({
               intro && "chat-gemini-horizon-intro"
             )}
           >
+            {/* Soft full-bleed wash — no circular dome rim / seam. */}
             <div className="chat-gemini-horizon-dome" />
             <div className="chat-gemini-horizon-glow" />
             <div className="chat-gemini-horizon-sheen" />
@@ -108,7 +109,6 @@ function ChatMobileGeminiBackground({
         <>
           <div className="chat-gemini-glass-plate absolute inset-0" />
           <div className="chat-gemini-glass-sheen absolute inset-y-0 left-[-20%] w-[55%]" />
-          <div className="chat-gemini-glass-rim absolute inset-x-[12%] top-0 h-px" />
         </>
       ) : null}
       <div
