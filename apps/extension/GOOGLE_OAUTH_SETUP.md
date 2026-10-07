@@ -11,6 +11,8 @@ Sign-in is a normal browser tab to `api.exur.ai`, then back to the extension cal
 3. Backend runs the same Google OAuth + PKCE path as the web app, sets HttpOnly `refresh_token`, redirects to `callback.html`.
 4. Extension reads the cookie with `chrome.cookies` and mints Bearer tokens into `chrome.storage.local`.
 
+`callback.html` **must** be listed under `web_accessible_resources` in the manifest. Otherwise Chrome blocks the web → extension redirect with `ERR_FAILED` / unsafe redirect (this is what breaks production sign-in).
+
 ## What to configure
 
 ### Backend / API
@@ -31,7 +33,13 @@ You do **not** need `chromiumapp.org` URIs for the store extension build.
 chrome-extension://adnehcimnmfchnaoegcomjpknpgfgnpj
 ```
 
-Store packs strip `key` — add CORS for the CWS-assigned ID after first upload.
+Store packs strip `key`. Production CWS ID is:
+
+```
+chrome-extension://icbhmedhckhkbmjkpigfdkejldlohhcm
+```
+
+Add that origin to `api.exur.ai` CORS, and make sure OAuth `destination` redirects to that ID’s `callback.html` (never the local unpacked ID).
 
 ## Rebuild
 

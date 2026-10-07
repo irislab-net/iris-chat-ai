@@ -16,6 +16,7 @@ pnpm extension:pack
 
 - [ ] Zip built with `pnpm extension:pack` (not raw `dist/` — pack strips `manifest.key`)
 - [ ] Pack confirms `app=chromimum_extension` is in the built JS
+- [ ] Pack confirms `callback.html` is in `web_accessible_resources` (OAuth redirect)
 - [ ] Pack fails if `identity` / `chrome.identity` / unexpected host_permissions appear
 - [ ] Version bumped in `manifest.config.ts` + `package.json` (currently **0.0.4**)
 - [ ] Smoke on the **packed** build (load zip contents or keyless staging): sign-in → chat → news → Upgrade opens `https://chat.exur.ai/upgrade`
@@ -39,10 +40,10 @@ Do **not** rely on `chromiumapp.org` / `chrome.identity` redirects for the store
 
 1. OAuth consent screen → **In production** (or add every reviewer Google account as a test user).
 2. Authorized JavaScript origins for the web client may still list `https://chat.exur.ai` (website); extension uses redirect / cookies on `api.exur.ai`.
-3. Backend must allow `destination=chrome-extension://<STORE_ID>/callback.html`.
+3. Backend must allow `destination=chrome-extension://icbhmedhckhkbmjkpigfdkejldlohhcm/callback.html` (and honor that URL after Google OAuth — do **not** hardcode the local unpacked ID).
 ## `api.exur.ai` CORS (manual)
 
-Allow origin `chrome-extension://<STORE_EXTENSION_ID>` (and local unpacked ID) on:
+Allow origin `chrome-extension://icbhmedhckhkbmjkpigfdkejldlohhcm` (and local unpacked `adnehcimnmfchnaoegcomjpknpgfgnpj`) on:
 
 - `POST /v1/auth/refresh`
 - `GET /v1/me`

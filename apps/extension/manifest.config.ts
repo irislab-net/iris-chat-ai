@@ -48,4 +48,15 @@ export default defineManifest({
     "128": "icon-128.png",
     "192": "icon-192.png",
   },
+  // Required so api.exur.ai (and Google) can 303 into the extension after OAuth.
+  // Without this, Chrome shows ERR_FAILED on chrome-extension://…/callback.html.
+  web_accessible_resources: [
+    {
+      resources: ["callback.html"],
+      matches: [
+        "https://api.exur.ai/*",
+        "https://accounts.google.com/*",
+      ],
+    },
+  ],
 })

@@ -35,6 +35,18 @@ if (!existsSync(join(dist, "manifest.json"))) {
   process.exit(1)
 }
 
+// OAuth return + consent pages are rollup inputs (not in the CRX manifest).
+// A truncated/interrupted build can ship without them → Chrome ERR_FAILED on
+// chrome-extension://…/callback.html after Google login.
+for (const page of ["callback.html", "login.html", "sidepanel.html"]) {
+  if (!existsSync(join(dist, page))) {
+    console.error(
+      `dist/${page} missing after build — OAuth/sign-in will fail. Re-run build.`
+    )
+    process.exit(1)
+  }
+}
+
 const assetsDir = join(dist, "assets")
 const assetFiles = existsSync(assetsDir)
   ? readdirSync(assetsDir).filter((name) => name.endsWith(".js"))
@@ -94,6 +106,15 @@ const unexpectedHosts = hosts.filter((h) => !allowedHosts.has(h))
 if (unexpectedHosts.length) {
   console.error(
     `Unexpected host_permissions (justify or remove): ${unexpectedHosts.join(", ")}`
+  )
+  process.exit(1)
+}
+
+const war = manifest.web_accessible_resources ?? []
+const warResources = war.flatMap((entry) => entry.resources ?? [])
+if (!warResources.includes("callback.html")) {
+  console.error(
+    "manifest.web_accessible_resources must include callback.html — without it Chrome ERR_FAILED on OAuth redirect from api.exur.ai."
   )
   process.exit(1)
 }

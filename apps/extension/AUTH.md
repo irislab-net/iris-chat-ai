@@ -10,6 +10,8 @@
 4. `callback.html` reads that cookie via `chrome.cookies`, calls `POST /v1/auth/refresh` with the refresh token in the body, stores access + refresh in `chrome.storage.local`, sends `exur:auth-success`, shows success, and closes the tab.
 5. Side panel refreshes via `GET https://api.exur.ai/v1/me` and chat on `https://api.exur.ai/v1/chat/*`.
 
+`callback.html` is declared in `web_accessible_resources` so the HTTP 303 from `api.exur.ai` is allowed. Missing that entry → Chrome `ERR_FAILED` on the callback URL in production.
+
 If the API ever puts tokens in the hash/query instead, the callback still accepts them as a fallback.
 
 Failures show a visible banner in the side panel (not screen-reader-only).
@@ -33,10 +35,12 @@ Primary store sign-in is API PKCE and does **not** need a Google client ID baked
 `api.exur.ai` must allow **both**:
 
 - `chrome-extension://adnehcimnmfchnaoegcomjpknpgfgnpj` (local unpacked with `manifest.key`)
-- `chrome-extension://<STORE_EXTENSION_ID>` (store)
+- `chrome-extension://icbhmedhckhkbmjkpigfdkejldlohhcm` (Chrome Web Store)
 
 on `/v1/auth/refresh`, `/v1/me`, and `/v1/chat/*`.  
 (Google login itself is a top-level navigation to `api.exur.ai`, not a CORS call.)
+
+**Critical:** for `app=chromimum_extension`, the API must 303 to the `destination` query as-is (store ID), not a hardcoded local extension ID. Redirecting to `adnehcim…` while the installed store build is `icbhmed…` → Chrome `ERR_FAILED`.
 
 ## Token refresh
 

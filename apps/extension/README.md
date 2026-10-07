@@ -36,13 +36,13 @@ Upload `apps/extension/exur-chat-extension.zip` (not the raw `dist/` folder).
 
 **Before reviewers test again**, complete [`STORE_CHECKLIST.md`](./STORE_CHECKLIST.md):
 
-1. Add store redirect URI on the Google OAuth **Web** client:
-   `https://<STORE_EXTENSION_ID>.chromiumapp.org/`
-2. Allow `chrome-extension://<STORE_EXTENSION_ID>` on `api.exur.ai` CORS
+1. Allow CORS origin `chrome-extension://icbhmedhckhkbmjkpigfdkejldlohhcm` on `api.exur.ai`
+2. Honor OAuth `destination=chrome-extension://icbhmedhckhkbmjkpigfdkejldlohhcm/callback.html` (do not hardcode the local unpacked ID)
 3. OAuth consent **In production** (or add reviewer test users)
 4. Paste reviewer notes from the checklist into the CWS dashboard
 
 Local unpacked builds keep `key` so the ID stays `adnehcimnmfchnaoegcomjpknpgfgnpj`.
+Store ID is `icbhmedhckhkbmjkpigfdkejldlohhcm`.
 
 ## Docs
 
