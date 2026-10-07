@@ -113,7 +113,6 @@ import {
 import { displayPlanName } from "@/lib/billing/catalog"
 import { LANDING_CHAT_QUERY_PARAM } from "@/lib/landing-chat-handoff"
 import { isAppDeskPath, UPGRADE_PATH } from "@/lib/site"
-import { resolveUserDisplayName } from "@/lib/user-profile"
 import type {
   CoPilotHistoryMessage,
   ChatCreditBalance,
@@ -2254,17 +2253,8 @@ function ChatAside({
     }, 0)
   }
 
-  const mobileGreetingName = resolveUserDisplayName(user)
-  const mobileGreetingFirstName =
-    mobileGreetingName?.split(/\s+/)[0] ?? mobileGreetingName
-  const mobileGreeting = mobileGreetingFirstName
-    ? t.rich("mobileGreeting", {
-        name: mobileGreetingFirstName,
-        highlight: (chunks) => (
-          <span className="chat-empty-hero-name">{chunks}</span>
-        ),
-      })
-    : t("mobileGreetingGuest")
+  // Match Gemini empty state — generic prompt, never personalize with a name.
+  const mobileGreeting = t("mobileGreetingGuest")
   const [mobileComposerFocused, setMobileComposerFocused] =
     React.useState(false)
   const [mobileHeroIntro, setMobileHeroIntro] = React.useState(true)

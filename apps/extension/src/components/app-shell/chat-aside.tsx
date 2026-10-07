@@ -109,7 +109,6 @@ import {
 } from "@/lib/chat-history-sync"
 import { displayPlanName } from "@/lib/billing/catalog"
 import { PRODUCTION_ORIGIN, UPGRADE_PATH } from "@/lib/site"
-import { resolveUserDisplayName } from "@/lib/user-profile"
 import type {
   CoPilotHistoryMessage,
   ChatCreditBalance,
@@ -2166,17 +2165,8 @@ function ChatAside({
     }, 0)
   }
 
-  const mobileGreetingName = resolveUserDisplayName(user)
-  const mobileGreetingFirstName =
-    mobileGreetingName?.split(/\s+/)[0] ?? mobileGreetingName
-  const mobileGreeting = mobileGreetingFirstName
-    ? t.rich("mobileGreeting", {
-        name: mobileGreetingFirstName,
-        highlight: (chunks) => (
-          <span className="chat-empty-hero-name">{chunks}</span>
-        ),
-      })
-    : t("mobileGreetingGuest")
+  // Match Gemini empty state — generic prompt, never personalize with a name.
+  const mobileGreeting = t("mobileGreetingGuest")
   const [mobileComposerFocused, setMobileComposerFocused] =
     React.useState(false)
   const [mobileHeroIntro, setMobileHeroIntro] = React.useState(true)

@@ -96,8 +96,9 @@ const chatMobileEmptyHeroContentClass =
 
 const chatMobileEmptyHeroMarkClass = "chat-empty-hero-mark"
 
+/** Empty-state title — Gemini: ~28px medium, no name personalization. */
 const chatMobileEmptyHeroTitleClass =
-  "chat-empty-hero-title max-w-xs text-balance text-[28px] font-light leading-8.5 tracking-[0.01em] text-foreground"
+  "chat-empty-hero-title max-w-68 text-balance text-[28px] font-medium leading-[1.25] tracking-[-0.015em] text-foreground"
 
 const chatMobileThreadClass = "px-6 pt-6 pb-6"
 
@@ -159,7 +160,7 @@ const chatMobileAssistantClass =
   "text-[16px] font-normal leading-[1.55] tracking-normal text-foreground [&_p]:mb-3 [&_p:last-child]:mb-0"
 
 const chatMobileComposerShellClass =
-  "relative shrink-0 bg-transparent px-6 pt-1.5 pb-[max(0.375rem,env(safe-area-inset-bottom,0px))]"
+  "relative shrink-0 bg-transparent px-4 pt-1.5 pb-[max(0.375rem,env(safe-area-inset-bottom,0px))]"
 
 /**
  * Floating composer shell. Radius/padding/gap interpolate so compact↔expanded
@@ -167,9 +168,12 @@ const chatMobileComposerShellClass =
  */
 const chatMobileComposerPillClass = `grid text-foreground transition-[box-shadow,background-color,border-color,border-radius,padding,gap,min-height] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none ${chatMobileComposerGlassClass} ${chatMobileComposerGlassFocusClass}`
 
-/** Compact — pill ends (~half of min-h-16) without 9999px so radius can ease. */
+/**
+ * Compact — Gemini capsule: 56pt tall, fully rounded ends, 16pt side inset
+ * on the shell so the bar reads ~90% width.
+ */
 const chatMobileComposerPillCompactClass =
-  "min-h-16 w-full rounded-[2rem] grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-2 px-4 py-2 [grid-template-areas:'leading_field_trailing']"
+  "min-h-14 w-full rounded-full grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-1.5 px-3 py-1.5 [grid-template-areas:'leading_field_trailing']"
 
 /** Multiline — soft card radius. */
 const chatMobileComposerPillExpandedClass =
@@ -321,7 +325,7 @@ const chatComposerPasteChipCloseClass =
   "flex size-5 shrink-0 items-center justify-center rounded-full text-muted-foreground/60 transition-[color,background-color,transform] duration-150 hover:bg-foreground/8 hover:text-foreground active:scale-95"
 
 const chatMobileScrollDownClass =
-  `absolute bottom-[calc(4.875rem+env(safe-area-inset-bottom,0px))] left-1/2 z-10 size-9 -translate-x-1/2 rounded-full border border-border/50 bg-background/95 text-foreground shadow-[0_2px_10px_-3px_rgba(0,0,0,0.08),0_8px_24px_-10px_rgba(0,0,0,0.12)] transition-[transform,background-color,box-shadow,border-color] duration-150 ease-out hover:border-border hover:bg-background active:scale-[0.96] dark:border-white/16 dark:bg-background/92 dark:hover:border-white/28 dark:hover:bg-background`
+  `absolute bottom-[calc(4.5rem+env(safe-area-inset-bottom,0px))] left-1/2 z-10 size-9 -translate-x-1/2 rounded-full border border-border/50 bg-background/95 text-foreground shadow-[0_2px_10px_-3px_rgba(0,0,0,0.08),0_8px_24px_-10px_rgba(0,0,0,0.12)] transition-[transform,background-color,box-shadow,border-color] duration-150 ease-out hover:border-border hover:bg-background active:scale-[0.96] dark:border-white/16 dark:bg-background/92 dark:hover:border-white/28 dark:hover:bg-background`
 
 const chatMobileDrawerSurfaceClass = "bg-background text-foreground"
 
