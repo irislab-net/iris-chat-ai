@@ -487,25 +487,25 @@
     "samplePromptsLabel": "Empezar",
     "samplePrompts": {
       "usePrompt": "Usar prompt: {title}",
-      "btc-signal": {
-        "title": "Señal de trading BTC",
-        "description": "Pide un setup en vivo. Tarjeta solo con lectura clara.",
-        "text": "/signal BTC"
+      "btc-setup": {
+        "title": "Evaluación de setup BTC",
+        "description": "Revisa entradas en vivo y la relación recompensa/riesgo.",
+        "text": "Evalúa el tape en vivo de Bitcoin (BTC) para encontrar un setup viable. Si hay ventaja de mercado, da niveles de entrada e invalidación. Si no, aconseja esperar."
+      },
+      "news-impact": {
+        "title": "Filtro de noticias macro",
+        "description": "Revisa cómo impactan los titulares clave de hoy.",
+        "text": "¿Cuáles son los titulares en vivo más críticos hoy y cómo están impactando exactamente la liquidez y el sentimiento del mercado? Analiza solo noticias de alto impacto."
       },
       "xau-macro": {
-        "title": "Oro (XAU) vs. inflación",
-        "description": "Comprueba si el oro es una entrada segura ahora.",
-        "text": "Analiza la estructura en vivo del oro (XAU). Con el momentum actual y los niveles clave, ¿es estructuralmente seguro entrar ahora para proteger capital, o debo esperar una mejor zona de entrada?"
+        "title": "Estructura macro del oro (XAU)",
+        "description": "Analiza tendencias del oro para proteger capital.",
+        "text": "Analiza la estructura en vivo del oro (XAU). Con el momentum actual, ¿es estructuralmente seguro entrar ahora para proteger capital, o debería esperar un pullback?"
       },
-      "market-pulse": {
-        "title": "Pulso del mercado",
-        "description": "Stance, sesgo del modelo y noticias. Solo análisis.",
-        "text": "¿Cuál es la stance y el sesgo del modelo de Exur sobre BTC ahora, y qué dice el pulso de noticias? Sé factual y conciso. Solo análisis: sin tarjeta de trade."
-      },
-      "key-levels": {
-        "title": "Niveles clave",
-        "description": "Soporte y resistencia más cercanos que importan ahora.",
-        "text": "Mapea el soporte y la resistencia de BTC con la estructura reciente y el precio en vivo. Señala los niveles más cercanos y si el precio presiona, rechaza o está a mitad de rango. Solo análisis: sin tarjeta de trade."
+      "eth-liquidity": {
+        "title": "Mapa de liquidez ETH",
+        "description": "Identifica soporte y resistencia estructurales clave.",
+        "text": "Mapea los niveles clave de soporte y resistencia estructurales de Ethereum (ETH) según el precio en vivo. ¿Dónde descansa ahora la liquidez principal?"
       }
     },
     "emptySignedIn": "Empieza con un prompt o pregunta en lenguaje natural.",
@@ -671,6 +671,45 @@
     "composerVoicePermissionDeniedTitle": "Micrófono bloqueado",
     "composerVoiceMicMissingTitle": "Sin micrófono",
     "composerVoiceNetworkErrorTitle": "Conexión perdida",
-    "composerPasteAttachmentMaxTitle": "Attachment limit"
+    "composerPasteAttachmentMaxTitle": "Attachment limit",
+    "thinkingTerminal": {
+      "aria": "Exur está preparando un análisis",
+      "lines": {
+        "orderBooks": "Obteniendo libros de órdenes en vivo…",
+        "headlines": "Escaneando el impacto de los titulares…",
+        "atr": "Calculando bandas ATR…",
+        "rewardRisk": "Evaluando recompensa frente a riesgo…"
+      }
+    },
+    "composerToolCorrelationLabel": "Correlación de activos",
+    "composerToolVolatilityLabel": "Pronóstico de volatilidad"
+  },
+  "dashboard": {
+    "loadingNews": "Cargando noticias",
+    "noHeadlinesYet": "Aún no hay titulares",
+    "noHeadlinesHint": "La cinta se actualiza con el próximo ciclo de mercado.",
+    "marketNews": "Noticias del mercado",
+    "newsTitle": "Noticias",
+    "newsSubtitle": "Titulares puntuados y cinta, no un cable en bruto.",
+    "latest": "Últimas",
+    "leadStory": "Principal",
+    "assetSentiment": "Sentimiento del activo",
+    "headlineTape": "Cinta de titulares",
+    "brief": "Brief",
+    "briefTitles": {
+      "eth": "Brief ETH",
+      "btc": "Brief BTC",
+      "macro": "Brief macro",
+      "dxy": "Brief DXY",
+      "xau": "Brief oro"
+    },
+    "stopReadingAloud": "Dejar de leer en voz alta",
+    "listenToArticle": "Escuchar artículo",
+    "copied": "Copiado",
+    "copyArticle": "Copiar artículo",
+    "analyzeArticle": "Analizar",
+    "openOriginalArticle": "Abrir artículo original",
+    "stop": "Detener",
+    "readAll": "Leer todo"
   }
 }

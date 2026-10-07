@@ -486,26 +486,26 @@
     "signalCardDisclaimer": "Exur yalnızca piyasa bilgisi verir, finansal tavsiye değil.",
     "samplePromptsLabel": "Başlangıçlar",
     "samplePrompts": {
-      "usePrompt": "İstemi kullan: {title}",
-      "btc-signal": {
-        "title": "BTC işlem sinyali",
-        "description": "Canlı kurulum isteyin: kart yalnızca okuma netse.",
-        "text": "/signal BTC"
+      "usePrompt": "Promptu kullan: {title}",
+      "btc-setup": {
+        "title": "BTC kurulum değerlendirmesi",
+        "description": "Canlı giriş noktalarını ve ödül/risk oranını kontrol et.",
+        "text": "Bitcoin (BTC) için canlı bandı değerlendirerek uygulanabilir bir kurulum bul. Piyasa avantajı varsa giriş ve geçersiz kılma seviyelerini ver. Yoksa beklemeyi öner."
+      },
+      "news-impact": {
+        "title": "Makro haber filtresi",
+        "description": "Bugünün öne çıkan manşetlerinin piyasaya etkisini kontrol et.",
+        "text": "Bugünün en kritik canlı manşetleri neler ve piyasa likiditesi ile duyarlılığı tam olarak nasıl etkiliyor? Yalnızca yüksek etkili haberleri analiz et."
       },
       "xau-macro": {
-        "title": "Altın (XAU) ve enflasyon",
-        "description": "Altına girişin şu an güvenli olup olmadığını kontrol edin.",
-        "text": "Altının (XAU) canlı yapısını analiz edin. Mevcut momentum ve kritik seviyelere göre, sermaye koruması için şimdi girmek yapısal olarak güvenli mi, yoksa daha iyi bir giriş bölgesini mi beklemeliyim?"
+        "title": "Altın (XAU) makro yapısı",
+        "description": "Sermaye koruması için altın trendlerini analiz et.",
+        "text": "Altının (XAU) canlı yapısını analiz et. Mevcut momentum göz önüne alındığında, sermayeyi korumak için şimdi girmek yapısal olarak güvenli mi, yoksa bir geri çekilmeyi mi beklemeliyim?"
       },
-      "market-pulse": {
-        "title": "Piyasa nabzı",
-        "description": "Stance, model yanlılığı ve haberler. Yalnızca analiz.",
-        "text": "Exur’un BTC’deki stance ve model yanlılığı şu an nedir, haber nabzı ne diyor? Gerçekçi ve kısa tutun. Yalnızca analiz: işlem kartı yok."
-      },
-      "key-levels": {
-        "title": "Kritik seviyeler",
-        "description": "Şu an önemli en yakın destek ve direnç.",
-        "text": "BTC’nin destek ve direncini son yapı ve canlı fiyattan haritalayın. En yakın seviyeleri ve fiyatın baskılayıp baskılamadığını, red mi yoksa aralık ortası mı olduğunu söyleyin. Yalnızca analiz: işlem kartı yok."
+      "eth-liquidity": {
+        "title": "ETH likidite haritası",
+        "description": "Ana yapısal destek ve direnci belirle.",
+        "text": "Ethereum (ETH) için canlı fiyata göre ana yapısal destek ve direnç seviyelerini haritala. Birincil likidite şu an nerede duruyor?"
       }
     },
     "emptySignedIn": "Bir istemle başlayın veya sade dilde sorun.",
@@ -671,6 +671,45 @@
     "composerVoicePermissionDeniedTitle": "Mikrofon engellendi",
     "composerVoiceMicMissingTitle": "Mikrofon yok",
     "composerVoiceNetworkErrorTitle": "Bağlantı kesildi",
-    "composerPasteAttachmentMaxTitle": "Attachment limit"
+    "composerPasteAttachmentMaxTitle": "Attachment limit",
+    "thinkingTerminal": {
+      "aria": "Exur bir analiz hazırlıyor",
+      "lines": {
+        "orderBooks": "Canlı emir defterleri alınıyor…",
+        "headlines": "Manşet etkisi taranıyor…",
+        "atr": "ATR bantları hesaplanıyor…",
+        "rewardRisk": "Ödül/risk değerlendiriliyor…"
+      }
+    },
+    "composerToolCorrelationLabel": "Varlık korelasyonu",
+    "composerToolVolatilityLabel": "Volatilite tahmini"
+  },
+  "dashboard": {
+    "loadingNews": "Haberler yükleniyor",
+    "noHeadlinesYet": "Henüz manşet yok",
+    "noHeadlinesHint": "Şerit bir sonraki piyasa döngüsünde güncellenir.",
+    "marketNews": "Piyasa haberleri",
+    "newsTitle": "Haberler",
+    "newsSubtitle": "Puanlanmış manşetler ve şerit; ham akış değil.",
+    "latest": "En son",
+    "leadStory": "Öne çıkan",
+    "assetSentiment": "Varlık duyarlılığı",
+    "headlineTape": "Manşet şeridi",
+    "brief": "Özet",
+    "briefTitles": {
+      "eth": "ETH özeti",
+      "btc": "BTC özeti",
+      "macro": "Makro özet",
+      "dxy": "DXY özeti",
+      "xau": "Altın özeti"
+    },
+    "stopReadingAloud": "Sesli okumayı durdur",
+    "listenToArticle": "Makaleyi dinle",
+    "copied": "Kopyalandı",
+    "copyArticle": "Makaleyi kopyala",
+    "analyzeArticle": "Analiz et",
+    "openOriginalArticle": "Orijinal makaleyi aç",
+    "stop": "Durdur",
+    "readAll": "Tümünü oku"
   }
 }

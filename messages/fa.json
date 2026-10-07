@@ -1333,5 +1333,33 @@
       "readNews": "مرور خبر",
       "note": "چت مهمان هست. Plus با USDT یا USDC."
     }
+  },
+  "dashboard": {
+    "loadingNews": "در حال بارگذاری اخبار",
+    "noHeadlinesYet": "هنوز تیتری نیست",
+    "noHeadlinesHint": "نوار خبر با چرخهٔ بعدی بازار به‌روز می‌شود.",
+    "marketNews": "اخبار بازار",
+    "newsTitle": "اخبار",
+    "newsSubtitle": "تیترهای امتیازدهی‌شده و نوار خبر، نه فید خام.",
+    "latest": "تازه‌ها",
+    "leadStory": "سرتیتر",
+    "assetSentiment": "احساسات دارایی",
+    "headlineTape": "نوار تیترها",
+    "brief": "خلاصه",
+    "briefTitles": {
+      "eth": "خلاصه ETH",
+      "btc": "خلاصه BTC",
+      "macro": "خلاصه کلان",
+      "dxy": "خلاصه DXY",
+      "xau": "خلاصه طلا"
+    },
+    "stopReadingAloud": "توقف خواندن با صدا",
+    "listenToArticle": "گوش دادن به مطلب",
+    "copied": "کپی شد",
+    "copyArticle": "کپی مطلب",
+    "analyzeArticle": "تحلیل",
+    "openOriginalArticle": "باز کردن مطلب اصلی",
+    "stop": "توقف",
+    "readAll": "خواندن همه"
   }
 }

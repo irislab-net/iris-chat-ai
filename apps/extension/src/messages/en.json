@@ -801,25 +801,25 @@
     "samplePromptsLabel": "Starters",
     "samplePrompts": {
       "usePrompt": "Use prompt: {title}",
-      "btc-signal": {
-        "title": "BTC trade signal",
-        "description": "Ask for a live setup. Card only when the model has a clear read.",
-        "text": "/signal BTC"
+      "btc-setup": {
+        "title": "BTC Setup Evaluation",
+        "description": "Check live entry points and reward to risk ratio.",
+        "text": "Evaluate the live tape for Bitcoin (BTC) to find a viable setup. If there is a market edge, provide the entry and invalidation levels. Otherwise, advise to wait."
+      },
+      "news-impact": {
+        "title": "Macro News Filter",
+        "description": "Check how today's top headlines impact the market.",
+        "text": "What are the most critical live headlines today, and exactly how are they impacting market liquidity and sentiment? Only analyze high impact news."
       },
       "xau-macro": {
-        "title": "Gold (XAU) vs. Inflation",
-        "description": "Check if gold is a safe entry right now.",
-        "text": "Analyze the live structure of Gold (XAU). Given the current momentum and key levels, is it structurally safe to enter now for capital protection, or should I wait for a better entry zone?"
+        "title": "Gold (XAU) Macro Structure",
+        "description": "Analyze gold trends for capital protection.",
+        "text": "Analyze the live structure of Gold (XAU). Given the current momentum, is it structurally safe to enter now to protect capital, or should I wait for a pullback?"
       },
-      "market-pulse": {
-        "title": "Market pulse",
-        "description": "Stance, model bias, and news. Analysis only.",
-        "text": "What is Exur's stance and model bias on BTC right now, and what does the news pulse say? Keep it factual and concise. Analysis only: no trade card."
-      },
-      "key-levels": {
-        "title": "Key levels",
-        "description": "Nearest support and resistance that matter now.",
-        "text": "Map BTC's key support and resistance from recent structure and live price. Call out the nearest levels and whether price is pressing, rejecting, or mid-range. Analysis only: no trade card."
+      "eth-liquidity": {
+        "title": "ETH Liquidity Map",
+        "description": "Identify key structural support and resistance.",
+        "text": "Map the key structural support and resistance levels for Ethereum (ETH) based on live price. Where is the primary liquidity resting right now?"
       }
     },
     "emptySignedIn": "Start from a prompt or ask in plain language.",
@@ -1033,7 +1033,24 @@
       "editSetup": "Edit profile",
       "editorHint": "Tap a row to choose. Tap the check to save and go back.",
       "save": "Save profile"
-    }
+    },
+    "thinkingTerminal": {
+      "aria": "Exur is preparing an analysis",
+      "lines": {
+        "orderBooks": "Fetching live order books…",
+        "headlines": "Scanning headline impact…",
+        "atr": "Calculating ATR bands…",
+        "rewardRisk": "Evaluating reward-to-risk…"
+      }
+    },
+    "composerToolCorrelationLabel": "Asset Correlation",
+    "composerToolVolatilityLabel": "Volatility Forecast",
+    "authCallbackConnecting": "Connecting your account…",
+    "authCallbackSuccessTitle": "You're signed in",
+    "authCallbackSuccess": "You can close this tab and return to Exur.",
+    "authCallbackErrorTitle": "Sign-in failed",
+    "authCallbackError": "Something went wrong while signing in. Please try again.",
+    "authCallbackClose": "Close"
   },
   "billingPage": {
     "title": "Billing",
@@ -1241,6 +1258,7 @@
     "listenToArticle": "Listen to article",
     "copied": "Copied",
     "copyArticle": "Copy article",
+    "analyzeArticle": "Analyze",
     "openOriginalArticle": "Open original article",
     "stop": "Stop",
     "readAll": "Read all"

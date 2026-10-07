@@ -457,20 +457,20 @@
     "composerToolSignalLabel": "Sinyal",
     "composerToolSignalDesc": "Her varlık için işlem kurulumu alın",
     "composerToolSignalPlaceholder": "ETH, BTC, SOL…",
-    "composerToolAnalyticsLabel": "Analytics Charts",
-    "composerToolAnalyticsDesc": "Coming soon",
+    "composerToolAnalyticsLabel": "Analiz grafikleri",
+    "composerToolAnalyticsDesc": "Yakında",
     "composerToolUploadLabel": "Dosya yükle",
     "composerToolUploadDesc": "Yakında",
     "composerToolUploadComingSoonBody": "Dosya yükleme yol haritasında. Hazır olduğunda burada açacağız.",
     "composerToolWatchlistBody": "İzleme listeleri bir Plus özelliğidir. Kurulumları kaydetmek ve uyarı almak için yükseltin.",
     "composerToolWatchlistComingSoonBody": "İzleme listeleri Plus yol haritasında. Hazır olduğunda burada açacağız.",
-    "composerPremiumToolsTitle": "Premium Tools",
-    "composerPremiumToolsBody": "Deep analysis models are locked. Upgrade to Plus to unlock market correlation and volatility forecasting.",
-    "composerPremiumToolsPaymentNote": "Pay with USDT or USDC.",
-    "composerPremiumToolsCta": "View Plans",
-    "composerPremiumToolsComingSoonTitle": "Coming soon",
-    "composerPremiumToolsComingSoonBody": "Correlation and volatility forecasting are on the Plus roadmap. We’ll unlock them here when they’re ready.",
-    "composerPremiumToolsDismiss": "Got it",
+    "composerPremiumToolsTitle": "Premium araçlar",
+    "composerPremiumToolsBody": "Derin analiz modelleri kilitli. Piyasa korelasyonu ve volatilite tahminini açmak için Plus’a yükselt.",
+    "composerPremiumToolsPaymentNote": "USDT veya USDC ile öde.",
+    "composerPremiumToolsCta": "Planları gör",
+    "composerPremiumToolsComingSoonTitle": "Yakında",
+    "composerPremiumToolsComingSoonBody": "Korelasyon ve volatilite tahmini Plus yol haritasında. Hazır olunca burada açacağız.",
+    "composerPremiumToolsDismiss": "Anladım",
     "composerRemoveTool": "Aracı kaldır",
     "composerHint": "Exur yalnızca piyasa bilgisi verir, finansal tavsiye değil",
     "lowSignalUserReply": "Tam anlayamadım. ETH veya BTC, piyasa haberleri sorun ya da Exur’un kontrol etmesini istediğiniz kurulumu anlatın.",
@@ -489,26 +489,26 @@
     "signalCardDisclaimer": "Exur yalnızca piyasa bilgisi verir, finansal tavsiye değil.",
     "samplePromptsLabel": "Başlangıçlar",
     "samplePrompts": {
-      "usePrompt": "İstemi kullan: {title}",
-      "btc-signal": {
-        "title": "BTC işlem sinyali",
-        "description": "Canlı kurulum isteyin: kart yalnızca okuma netse.",
-        "text": "/signal BTC"
+      "usePrompt": "Promptu kullan: {title}",
+      "btc-setup": {
+        "title": "BTC kurulum değerlendirmesi",
+        "description": "Canlı giriş noktalarını ve ödül/risk oranını kontrol et.",
+        "text": "Bitcoin (BTC) için canlı bandı değerlendirerek uygulanabilir bir kurulum bul. Piyasa avantajı varsa giriş ve geçersiz kılma seviyelerini ver. Yoksa beklemeyi öner."
+      },
+      "news-impact": {
+        "title": "Makro haber filtresi",
+        "description": "Bugünün öne çıkan manşetlerinin piyasaya etkisini kontrol et.",
+        "text": "Bugünün en kritik canlı manşetleri neler ve piyasa likiditesi ile duyarlılığı tam olarak nasıl etkiliyor? Yalnızca yüksek etkili haberleri analiz et."
       },
       "xau-macro": {
-        "title": "Altın (XAU) ve enflasyon",
-        "description": "Altına girişin şu an güvenli olup olmadığını kontrol edin.",
-        "text": "Altının (XAU) canlı yapısını analiz edin. Mevcut momentum ve kritik seviyelere göre, sermaye koruması için şimdi girmek yapısal olarak güvenli mi, yoksa daha iyi bir giriş bölgesini mi beklemeliyim?"
+        "title": "Altın (XAU) makro yapısı",
+        "description": "Sermaye koruması için altın trendlerini analiz et.",
+        "text": "Altının (XAU) canlı yapısını analiz et. Mevcut momentum göz önüne alındığında, sermayeyi korumak için şimdi girmek yapısal olarak güvenli mi, yoksa bir geri çekilmeyi mi beklemeliyim?"
       },
-      "market-pulse": {
-        "title": "Piyasa nabzı",
-        "description": "Stance, model yanlılığı ve haberler. Yalnızca analiz.",
-        "text": "Exur’un BTC’deki stance ve model yanlılığı şu an nedir, haber nabzı ne diyor? Gerçekçi ve kısa tutun. Yalnızca analiz: işlem kartı yok."
-      },
-      "key-levels": {
-        "title": "Kritik seviyeler",
-        "description": "Şu an önemli en yakın destek ve direnç.",
-        "text": "BTC’nin destek ve direncini son yapı ve canlı fiyattan haritalayın. En yakın seviyeleri ve fiyatın baskılayıp baskılamadığını, red mi yoksa aralık ortası mı olduğunu söyleyin. Yalnızca analiz: işlem kartı yok."
+      "eth-liquidity": {
+        "title": "ETH likidite haritası",
+        "description": "Ana yapısal destek ve direnci belirle.",
+        "text": "Ethereum (ETH) için canlı fiyata göre ana yapısal destek ve direnç seviyelerini haritala. Birincil likidite şu an nerede duruyor?"
       }
     },
     "emptySignedIn": "Bir istemle başlayın veya sade dilde sorun.",
@@ -653,18 +653,18 @@
       "dismiss": "Kapat",
       "retrying": "Yeniden deneniyor…"
     },
-    "regenerate": "Regenerate",
-    "regenerateResponse": "Regenerate response",
-    "editConfirmTitle": "Edit this message?",
-    "editConfirmBody": "Later messages in this chat will be removed so Exur can reply from your edited prompt.",
-    "editConfirmAction": "Edit and continue",
+    "regenerate": "Yeniden üret",
+    "regenerateResponse": "Yanıtı yeniden üret",
+    "editConfirmTitle": "Bu mesaj düzenlensin mi?",
+    "editConfirmBody": "Bu sohbetteki sonraki mesajlar kaldırılacak; böylece Exur düzenlediğin prompttan yanıt verebilir.",
+    "editConfirmAction": "Düzenle ve devam et",
     "assistantRawContent": "Raw content",
     "assistantTablePreview": "Table preview",
     "assistantLevelsPreview": "Levels preview",
     "assistantFullView": "Full view",
     "assistantCopied": "Copied",
     "signalCardCopyLevels": "Copy levels",
-    "composerPasteAttachmentMax": "You can attach up to {count} pasted files.",
+    "composerPasteAttachmentMax": "En fazla {count} yapıştırılmış dosya ekleyebilirsin.",
     "composerVoiceUnavailable": "Ses girişi bu tarayıcıda kullanılamıyor.",
     "composerVoiceStop": "Durdurmak için bırakın",
     "composerVoiceListening": "Durdurmak için bırakın",
@@ -678,9 +678,9 @@
     "composerVoicePermissionDeniedTitle": "Mikrofon engellendi",
     "composerVoiceMicMissingTitle": "Mikrofon yok",
     "composerVoiceNetworkErrorTitle": "Bağlantı kesildi",
-    "composerPasteAttachmentMaxTitle": "Attachment limit",
-    "analyzeNewsInstruction": "Analyze the impact of this news on the current market structure.",
-    "analyzeNewsBusy": "Wait for the current reply to finish, then analyze again.",
+    "composerPasteAttachmentMaxTitle": "Ek limiti",
+    "analyzeNewsInstruction": "Bu haberin mevcut piyasa yapısına etkisini analiz et.",
+    "analyzeNewsBusy": "Mevcut yanıt bitsin, sonra tekrar analiz et.",
     "tradingProfile": {
       "menuLabel": "Personalization",
       "title": "Personalization",
@@ -734,6 +734,51 @@
     "signalShareShareImage": "Share image",
     "signalShareCopied": "Copied",
     "signalShareCopyFailed": "Could not copy",
-    "signalShareShareFailed": "Could not share"
+    "signalShareShareFailed": "Could not share",
+    "thinkingTerminal": {
+      "aria": "Exur bir analiz hazırlıyor",
+      "lines": {
+        "orderBooks": "Canlı emir defterleri alınıyor…",
+        "headlines": "Manşet etkisi taranıyor…",
+        "atr": "ATR bantları hesaplanıyor…",
+        "rewardRisk": "Ödül/risk değerlendiriliyor…"
+      }
+    },
+    "composerToolCorrelationLabel": "Varlık korelasyonu",
+    "composerToolVolatilityLabel": "Volatilite tahmini",
+    "authCallbackConnecting": "Hesabın bağlanıyor…",
+    "authCallbackSuccessTitle": "Giriş yapıldı",
+    "authCallbackSuccess": "Bu sekmeyi kapatıp Exur’a dönebilirsin.",
+    "authCallbackErrorTitle": "Giriş başarısız",
+    "authCallbackError": "Giriş sırasında bir sorun oluştu. Lütfen tekrar dene.",
+    "authCallbackClose": "Kapat"
+  },
+  "dashboard": {
+    "loadingNews": "Haberler yükleniyor",
+    "noHeadlinesYet": "Henüz manşet yok",
+    "noHeadlinesHint": "Şerit bir sonraki piyasa döngüsünde güncellenir.",
+    "marketNews": "Piyasa haberleri",
+    "newsTitle": "Haberler",
+    "newsSubtitle": "Puanlanmış manşetler ve şerit; ham akış değil.",
+    "latest": "En son",
+    "leadStory": "Öne çıkan",
+    "assetSentiment": "Varlık duyarlılığı",
+    "headlineTape": "Manşet şeridi",
+    "brief": "Özet",
+    "briefTitles": {
+      "eth": "ETH özeti",
+      "btc": "BTC özeti",
+      "macro": "Makro özet",
+      "dxy": "DXY özeti",
+      "xau": "Altın özeti"
+    },
+    "stopReadingAloud": "Sesli okumayı durdur",
+    "listenToArticle": "Makaleyi dinle",
+    "copied": "Kopyalandı",
+    "copyArticle": "Makaleyi kopyala",
+    "analyzeArticle": "Analiz et",
+    "openOriginalArticle": "Orijinal makaleyi aç",
+    "stop": "Durdur",
+    "readAll": "Tümünü oku"
   }
 }

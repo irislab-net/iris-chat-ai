@@ -457,20 +457,20 @@
     "composerToolSignalLabel": "Señal",
     "composerToolSignalDesc": "Obtén un setup de trading para cualquier activo",
     "composerToolSignalPlaceholder": "ETH, BTC, SOL…",
-    "composerToolAnalyticsLabel": "Analytics Charts",
-    "composerToolAnalyticsDesc": "Coming soon",
+    "composerToolAnalyticsLabel": "Gráficos de análisis",
+    "composerToolAnalyticsDesc": "Próximamente",
     "composerToolUploadLabel": "Subir archivo",
     "composerToolUploadDesc": "Próximamente",
     "composerToolUploadComingSoonBody": "La subida de archivos está en la hoja de ruta. La desbloquearemos aquí cuando esté lista.",
     "composerToolWatchlistBody": "Las listas de seguimiento son una función Plus. Mejora para guardar setups y recibir alertas.",
     "composerToolWatchlistComingSoonBody": "Las listas de seguimiento están en la hoja de ruta Plus. Las desbloquearemos aquí cuando estén listas.",
-    "composerPremiumToolsTitle": "Premium Tools",
-    "composerPremiumToolsBody": "Deep analysis models are locked. Upgrade to Plus to unlock market correlation and volatility forecasting.",
-    "composerPremiumToolsPaymentNote": "Pay with USDT or USDC.",
-    "composerPremiumToolsCta": "View Plans",
-    "composerPremiumToolsComingSoonTitle": "Coming soon",
-    "composerPremiumToolsComingSoonBody": "Correlation and volatility forecasting are on the Plus roadmap. We’ll unlock them here when they’re ready.",
-    "composerPremiumToolsDismiss": "Got it",
+    "composerPremiumToolsTitle": "Herramientas Premium",
+    "composerPremiumToolsBody": "Los modelos de análisis profundo están bloqueados. Mejora a Plus para desbloquear correlación de mercado y previsión de volatilidad.",
+    "composerPremiumToolsPaymentNote": "Paga con USDT o USDC.",
+    "composerPremiumToolsCta": "Ver planes",
+    "composerPremiumToolsComingSoonTitle": "Próximamente",
+    "composerPremiumToolsComingSoonBody": "La correlación y la previsión de volatilidad están en la hoja de ruta de Plus. Las desbloquearemos aquí cuando estén listas.",
+    "composerPremiumToolsDismiss": "Entendido",
     "composerRemoveTool": "Quitar herramienta",
     "composerHint": "Exur solo ofrece información de mercado, no asesoramiento financiero",
     "lowSignalUserReply": "No lo entendí del todo. Pregunta por ETH o BTC, noticias del mercado, o describe el setup que Exur debe revisar.",
@@ -490,25 +490,25 @@
     "samplePromptsLabel": "Empezar",
     "samplePrompts": {
       "usePrompt": "Usar prompt: {title}",
-      "btc-signal": {
-        "title": "Señal de trading BTC",
-        "description": "Pide un setup en vivo. Tarjeta solo con lectura clara.",
-        "text": "/signal BTC"
+      "btc-setup": {
+        "title": "Evaluación de setup BTC",
+        "description": "Revisa entradas en vivo y la relación recompensa/riesgo.",
+        "text": "Evalúa el tape en vivo de Bitcoin (BTC) para encontrar un setup viable. Si hay ventaja de mercado, da niveles de entrada e invalidación. Si no, aconseja esperar."
+      },
+      "news-impact": {
+        "title": "Filtro de noticias macro",
+        "description": "Revisa cómo impactan los titulares clave de hoy.",
+        "text": "¿Cuáles son los titulares en vivo más críticos hoy y cómo están impactando exactamente la liquidez y el sentimiento del mercado? Analiza solo noticias de alto impacto."
       },
       "xau-macro": {
-        "title": "Oro (XAU) vs. inflación",
-        "description": "Comprueba si el oro es una entrada segura ahora.",
-        "text": "Analiza la estructura en vivo del oro (XAU). Con el momentum actual y los niveles clave, ¿es estructuralmente seguro entrar ahora para proteger capital, o debo esperar una mejor zona de entrada?"
+        "title": "Estructura macro del oro (XAU)",
+        "description": "Analiza tendencias del oro para proteger capital.",
+        "text": "Analiza la estructura en vivo del oro (XAU). Con el momentum actual, ¿es estructuralmente seguro entrar ahora para proteger capital, o debería esperar un pullback?"
       },
-      "market-pulse": {
-        "title": "Pulso del mercado",
-        "description": "Stance, sesgo del modelo y noticias. Solo análisis.",
-        "text": "¿Cuál es la stance y el sesgo del modelo de Exur sobre BTC ahora, y qué dice el pulso de noticias? Sé factual y conciso. Solo análisis: sin tarjeta de trade."
-      },
-      "key-levels": {
-        "title": "Niveles clave",
-        "description": "Soporte y resistencia más cercanos que importan ahora.",
-        "text": "Mapea el soporte y la resistencia de BTC con la estructura reciente y el precio en vivo. Señala los niveles más cercanos y si el precio presiona, rechaza o está a mitad de rango. Solo análisis: sin tarjeta de trade."
+      "eth-liquidity": {
+        "title": "Mapa de liquidez ETH",
+        "description": "Identifica soporte y resistencia estructurales clave.",
+        "text": "Mapea los niveles clave de soporte y resistencia estructurales de Ethereum (ETH) según el precio en vivo. ¿Dónde descansa ahora la liquidez principal?"
       }
     },
     "emptySignedIn": "Empieza con un prompt o pregunta en lenguaje natural.",
@@ -653,18 +653,18 @@
       "dismiss": "Cerrar",
       "retrying": "Reintentando…"
     },
-    "regenerate": "Regenerate",
-    "regenerateResponse": "Regenerate response",
-    "editConfirmTitle": "Edit this message?",
-    "editConfirmBody": "Later messages in this chat will be removed so Exur can reply from your edited prompt.",
-    "editConfirmAction": "Edit and continue",
+    "regenerate": "Regenerar",
+    "regenerateResponse": "Regenerar respuesta",
+    "editConfirmTitle": "¿Editar este mensaje?",
+    "editConfirmBody": "Los mensajes posteriores de este chat se eliminarán para que Exur responda desde tu prompt editado.",
+    "editConfirmAction": "Editar y continuar",
     "assistantRawContent": "Raw content",
     "assistantTablePreview": "Table preview",
     "assistantLevelsPreview": "Levels preview",
     "assistantFullView": "Full view",
     "assistantCopied": "Copied",
     "signalCardCopyLevels": "Copy levels",
-    "composerPasteAttachmentMax": "You can attach up to {count} pasted files.",
+    "composerPasteAttachmentMax": "Puedes adjuntar hasta {count} archivos pegados.",
     "composerVoiceUnavailable": "La entrada de voz no está disponible en este navegador.",
     "composerVoiceStop": "Suelta para detener",
     "composerVoiceListening": "Suelta para detener",
@@ -678,9 +678,9 @@
     "composerVoicePermissionDeniedTitle": "Micrófono bloqueado",
     "composerVoiceMicMissingTitle": "Sin micrófono",
     "composerVoiceNetworkErrorTitle": "Conexión perdida",
-    "composerPasteAttachmentMaxTitle": "Attachment limit",
-    "analyzeNewsInstruction": "Analyze the impact of this news on the current market structure.",
-    "analyzeNewsBusy": "Wait for the current reply to finish, then analyze again.",
+    "composerPasteAttachmentMaxTitle": "Límite de adjuntos",
+    "analyzeNewsInstruction": "Analiza el impacto de esta noticia en la estructura actual del mercado.",
+    "analyzeNewsBusy": "Espera a que termine la respuesta actual y luego analiza de nuevo.",
     "tradingProfile": {
       "menuLabel": "Personalization",
       "title": "Personalization",
@@ -734,6 +734,51 @@
     "signalShareShareImage": "Share image",
     "signalShareCopied": "Copied",
     "signalShareCopyFailed": "Could not copy",
-    "signalShareShareFailed": "Could not share"
+    "signalShareShareFailed": "Could not share",
+    "thinkingTerminal": {
+      "aria": "Exur está preparando un análisis",
+      "lines": {
+        "orderBooks": "Obteniendo libros de órdenes en vivo…",
+        "headlines": "Escaneando el impacto de los titulares…",
+        "atr": "Calculando bandas ATR…",
+        "rewardRisk": "Evaluando recompensa frente a riesgo…"
+      }
+    },
+    "composerToolCorrelationLabel": "Correlación de activos",
+    "composerToolVolatilityLabel": "Pronóstico de volatilidad",
+    "authCallbackConnecting": "Conectando tu cuenta…",
+    "authCallbackSuccessTitle": "Sesión iniciada",
+    "authCallbackSuccess": "Puedes cerrar esta pestaña y volver a Exur.",
+    "authCallbackErrorTitle": "Error al iniciar sesión",
+    "authCallbackError": "Algo salió mal al iniciar sesión. Inténtalo de nuevo.",
+    "authCallbackClose": "Cerrar"
+  },
+  "dashboard": {
+    "loadingNews": "Cargando noticias",
+    "noHeadlinesYet": "Aún no hay titulares",
+    "noHeadlinesHint": "La cinta se actualiza con el próximo ciclo de mercado.",
+    "marketNews": "Noticias del mercado",
+    "newsTitle": "Noticias",
+    "newsSubtitle": "Titulares puntuados y cinta, no un cable en bruto.",
+    "latest": "Últimas",
+    "leadStory": "Principal",
+    "assetSentiment": "Sentimiento del activo",
+    "headlineTape": "Cinta de titulares",
+    "brief": "Brief",
+    "briefTitles": {
+      "eth": "Brief ETH",
+      "btc": "Brief BTC",
+      "macro": "Brief macro",
+      "dxy": "Brief DXY",
+      "xau": "Brief oro"
+    },
+    "stopReadingAloud": "Dejar de leer en voz alta",
+    "listenToArticle": "Escuchar artículo",
+    "copied": "Copiado",
+    "copyArticle": "Copiar artículo",
+    "analyzeArticle": "Analizar",
+    "openOriginalArticle": "Abrir artículo original",
+    "stop": "Detener",
+    "readAll": "Leer todo"
   }
 }
