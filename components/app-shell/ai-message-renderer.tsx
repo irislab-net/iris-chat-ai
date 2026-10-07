@@ -5,6 +5,8 @@ import DOMPurify from "isomorphic-dompurify"
 import { marked } from "marked"
 import { Streamdown } from "streamdown"
 import { code } from "@streamdown/code"
+
+import "@/app/styles/chat-markdown.css"
 import {
   CheckIcon,
   CopyIcon,

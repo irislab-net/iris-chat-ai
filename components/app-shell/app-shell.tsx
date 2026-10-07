@@ -4,12 +4,11 @@ import * as React from "react"
 import dynamic from "next/dynamic"
 import { useSearchParams } from "next/navigation"
 
-import "@/app/styles/chat-gemini.css"
-
 import {
   MAIN_CONTENT_ID,
   SkipToContent,
 } from "@/components/landing/modern/skip-to-content"
+import { ChatGeminiCssLazy } from "@/components/app-shell/chat-gemini-css-lazy"
 import { ChatAsideSkeleton } from "@/components/app-shell/shell-skeletons"
 import { AppViewportSync } from "@/components/app-shell/app-viewport-sync"
 import { useIsDesktop } from "@/hooks/use-media-query"
@@ -225,6 +224,7 @@ function AppShellInner({
     // so narrow devices never flash the two-column desktop chrome.
     return (
       <>
+        <ChatGeminiCssLazy />
         <AppViewportSync />
         <SkipToContent />
         <main
@@ -267,6 +267,7 @@ function AppShellInner({
 
   return (
     <>
+      <ChatGeminiCssLazy />
       <AppViewportSync />
       <SkipToContent />
       <div

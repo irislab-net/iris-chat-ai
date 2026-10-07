@@ -6,7 +6,7 @@ import { getLocale, getMessages } from "next-intl/server"
 import "./globals.css"
 import { AuthProvider } from "@/components/auth/auth-provider"
 import { AnalyticsConsentGate } from "@/components/privacy/analytics-consent-gate"
-import { PwaSplash } from "@/components/pwa/pwa-splash"
+import { PwaSplashLazy } from "@/components/pwa/pwa-splash-lazy"
 import { JsonLd } from "@/components/seo/json-ld"
 import { ThemeExtras } from "@/components/theme-provider"
 import { Toaster } from "@/components/ui/sonner"
@@ -28,6 +28,17 @@ import {
   webApplicationJsonLd,
   websiteJsonLd,
 } from "@/lib/seo"
+
+/** Ingest host from public DSN — early preconnect for Sentry (PSI LCP candidate). */
+function sentryIngestOrigin(): string | null {
+  const dsn = process.env.NEXT_PUBLIC_SENTRY_DSN
+  if (!dsn) return null
+  try {
+    return new URL(dsn).origin
+  } catch {
+    return null
+  }
+}
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -166,6 +177,7 @@ export default async function RootLayout({
     // Image / metadata routes (e.g. opengraph-image) have no intl provider.
   }
   const dir = localeDirection(locale)
+  const sentryOrigin = sentryIngestOrigin()
 
   return (
     <html
@@ -175,6 +187,9 @@ export default async function RootLayout({
       className="font-sans antialiased"
     >
       <body>
+        {sentryOrigin ? (
+          <link rel="preconnect" href={sentryOrigin} crossOrigin="anonymous" />
+        ) : null}
         {/* Print discovery for audit tools — kept as a media=print link on purpose. */}
         {/* eslint-disable-next-line @next/next/no-css-tags -- print media link required by checklist */}
         <link rel="stylesheet" href="/styles/print.css" media="print" />
@@ -205,7 +220,7 @@ export default async function RootLayout({
         <Script
           id="browser-chrome-init"
           src="/scripts/browser-chrome-init.js"
-          strategy="beforeInteractive"
+          strategy="afterInteractive"
         />
         <JsonLd id="json-ld-organization" data={organizationJsonLd()} />
         <JsonLd id="json-ld-website" data={websiteJsonLd()} />
@@ -226,7 +241,7 @@ export default async function RootLayout({
             <NextIntlClientProvider locale={locale} messages={messages}>
               <AuthProvider>
                 <AnalyticsConsentGate>
-                  <PwaSplash />
+                  <PwaSplashLazy />
                   {children}
                   <Toaster position="top-center" />
                 </AnalyticsConsentGate>

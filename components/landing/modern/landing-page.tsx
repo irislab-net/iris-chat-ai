@@ -1,6 +1,7 @@
 import { getLocale, getTranslations } from "next-intl/server"
 
 import { HeroComposeDemoLazy } from "@/components/landing/modern/hero-compose-demo-lazy"
+import { HeroGlassShell } from "@/components/landing/modern/hero-glass-shell"
 import { HeroLiquidGlassBgLazy } from "@/components/landing/modern/hero-liquid-glass-bg-lazy"
 import { LandingBelowFold } from "@/components/landing/modern/landing-below-fold"
 import { LandingFooterLazy } from "@/components/landing/modern/landing-footer-lazy"
@@ -9,8 +10,6 @@ import { LandingScrollProvider } from "@/components/landing/modern/landing-scrol
 import { SkipToContent } from "@/components/landing/modern/skip-to-content"
 import { localeDirection } from "@/lib/i18n/locale"
 import {
-  landingHeroCard,
-  landingHeroGlass,
   landingHeroToMain,
   landingInner,
   landingMainStack,
@@ -50,7 +49,7 @@ export async function ModernLandingPage() {
         >
           <LandingNav />
 
-          <div id="hero" className={cn(landingHeroCard, landingHeroGlass)}>
+          <HeroGlassShell>
             <HeroLiquidGlassBgLazy tone="blue" />
             <div className="relative z-10 flex min-h-0 flex-1 flex-col">
               <section className="flex min-h-0 flex-1 flex-col">
@@ -77,7 +76,7 @@ export async function ModernLandingPage() {
                 </div>
               </section>
             </div>
-          </div>
+          </HeroGlassShell>
 
           <main
             id={MAIN_CONTENT_ID}

@@ -3,6 +3,7 @@
 import type { ComponentProps } from "react"
 import { useTranslations } from "next-intl"
 
+import { ChatEmptyHeroLcp } from "@/components/app-shell/chat-empty-hero-lcp"
 import { ChatMobileGeminiBackground } from "@/components/app-shell/chat-mobile-gemini-background"
 import {
   chatDesktopCanvasClass,
@@ -14,7 +15,6 @@ import {
   chatMobileEmptyHeroWrapClass,
   chatMobileHeaderScrimClass,
   chatMobileHeaderShellClass,
-  chatSamplePromptCarouselDotsClass,
 } from "@/components/app-shell/chat-mobile-gemini-styles"
 import { cn } from "@/lib/utils"
 
@@ -100,23 +100,7 @@ function ChatMobileEmptyHeroSkeleton() {
             stagger={2}
             className="h-7 w-[min(18rem,78%)] max-w-72 rounded-full"
           />
-          <div className={chatEmptyHeroPromptsClass}>
-            <Bone
-              stagger={2}
-              className="h-2.5 w-12 self-center rounded-full"
-            />
-            <ChatStarterCardSkeleton stagger={2} />
-            <div
-              className={cn(
-                "flex items-center justify-center gap-1.5",
-                chatSamplePromptCarouselDotsClass
-              )}
-            >
-              <Bone stagger={3} className="size-1.5 rounded-full" />
-              <Bone stagger={3} className="size-1.5 rounded-full" />
-              <Bone stagger={3} className="size-1.5 rounded-full" />
-            </div>
-          </div>
+          <ChatEmptyHeroLcp />
         </div>
       </div>
     </div>

@@ -5,6 +5,8 @@ import { ChevronRightIcon, WrenchIcon } from "lucide-react"
 import { useTranslations } from "next-intl"
 import { Streamdown } from "streamdown"
 
+import "@/app/styles/chat-markdown.css"
+
 import {
   chatThinkingDotsClass,
   chatThinkingLabelClass,

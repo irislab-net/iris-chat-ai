@@ -3,7 +3,8 @@
 import * as React from "react"
 import { useTranslations } from "next-intl"
 
-import { IrisMark } from "@/components/app-shell/chat-message"
+import "@/app/styles/pwa-splash.css"
+import { IrisMark } from "@/components/brand/iris-mark"
 import { isStandaloneDisplay } from "@/lib/display-mode"
 import { SITE_NAME } from "@/lib/seo"
 import { cn } from "@/lib/utils"

@@ -15,6 +15,7 @@ import { toast } from "sonner"
 
 import { ChatAccountFooter } from "@/components/app-shell/chat-account-footer"
 import { ChatAccountMenu } from "@/components/app-shell/chat-account-menu"
+import { ChatEmptyHeroLcp } from "@/components/app-shell/chat-empty-hero-lcp"
 import { ExurLogo } from "@/components/brand/exur-logo"
 import { ChatMobileGeminiBackground } from "@/components/app-shell/chat-mobile-gemini-background"
 import {
@@ -241,7 +242,13 @@ const IrisSamplePrompts = dynamic(
     import("@/components/app-shell/chat-sample-prompts").then(
       (m) => m.IrisSamplePrompts
     ),
-  { ssr: false }
+  {
+    ssr: false,
+    loading: () => (
+      // Keep the SSR LCP sample description painted until Embla hydrates.
+      <ChatEmptyHeroLcp />
+    ),
+  }
 )
 
 type ChatAsideProps = {

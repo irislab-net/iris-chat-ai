@@ -1,6 +1,5 @@
 "use client"
 
-import { gsap } from "gsap"
 import {
   MonitorIcon,
   MoonIcon,
@@ -116,7 +115,10 @@ function scrollAndClose(
   navigate: (id: string) => void
 ) {
   close()
-  gsap.delayedCall(LANDING_MOTION.durationFast * 0.3, () => navigate(id))
+  window.setTimeout(
+    () => navigate(id),
+    LANDING_MOTION.durationFast * 0.3 * 1000
+  )
 }
 
 function NavMenuIcon() {

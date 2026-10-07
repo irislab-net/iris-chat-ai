@@ -1,10 +1,9 @@
 import type { Metadata } from "next"
 import { Link } from "@/i18n/navigation"
 import dynamic from "next/dynamic"
-import { Suspense } from "react"
 
-import { fetchPublicHomeSnapshot } from "@/lib/api/public-home"
 import { DashboardSkeleton } from "@/components/dashboard/intel-skeletons"
+import { HomeViewLazy } from "@/components/dashboard/home-view-lazy"
 import { SITE_DESCRIPTION, SITE_NAME, SITE_TITLE } from "@/lib/seo"
 import { isMarketingRequest } from "@/lib/request-host"
 import {
@@ -26,17 +25,6 @@ const AppShell = dynamic(
       >
         <DashboardSkeleton />
       </main>
-    ),
-  }
-)
-
-const HomeView = dynamic(
-  () => import("@/components/dashboard/home-view").then((m) => m.HomeView),
-  {
-    loading: () => (
-      <div className="flex h-full min-h-0 w-full flex-1 flex-col">
-        <DashboardSkeleton />
-      </div>
     ),
   }
 )
@@ -73,9 +61,6 @@ const newsMetadata: Metadata = {
   },
 }
 
-/** Matches `PUBLIC_HOME_REVALIDATE_SECONDS` / news cadence (literal required for the segment config). */
-export const revalidate = 300
-
 type PageProps = {
   params: Promise<{ locale: AppLocale }>
 }
@@ -91,16 +76,12 @@ export async function generateMetadata({
   return newsMetadata
 }
 
-async function NewsWithSnapshot() {
-  const snapshot = await fetchPublicHomeSnapshot()
-  return <HomeView initialNews={snapshot.news} />
-}
-
 /**
  * Chat desk at `/` (chat.exur.ai / local).
  * Marketing apex: proxy rewrites `/` → `/home`; this host check is a safety net
  * if the rewrite is skipped (e.g. preview hosts still hit this page).
  * Landing is dynamically imported so gsap/landing never enter the chat graph.
+ * News mounts after idle so empty-chat LCP is not competing with HomeView.
  */
 export default async function RootPage({ params }: PageProps) {
   if (await isMarketingRequest()) {
@@ -146,15 +127,7 @@ export default async function RootPage({ params }: PageProps) {
         </nav>
       </header>
       <AppShell>
-        <Suspense
-          fallback={
-            <div className="flex h-full min-h-0 w-full flex-1 flex-col">
-              <DashboardSkeleton />
-            </div>
-          }
-        >
-          <NewsWithSnapshot />
-        </Suspense>
+        <HomeViewLazy />
       </AppShell>
     </>
   )

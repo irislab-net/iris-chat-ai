@@ -139,6 +139,13 @@ export const landingGlassBubbleAi = `${landingGlassSurface} rounded-3xl rounded-
 export const landingGlassBubbleThinking = `${landingGlassSurface} rounded-3xl rounded-tl-md bg-white/46 dark:bg-white/8`
 
 /**
+ * Hero plate shell — layout-stable (radius, min-height, shadow) without
+ * `backdrop-blur`, so the LCP h1 can paint before Style & Layout pays for frost.
+ */
+export const landingHeroGlassSolid =
+  "relative flex min-h-120 flex-col overflow-hidden bg-white/92 text-foreground shadow-[0_28px_80px_rgba(15,23,42,0.07)] dark:bg-neutral-950/90 dark:shadow-[0_28px_80px_rgba(0,0,0,0.45)] sm:min-h-128 lg:min-h-144"
+
+/**
  * Frosted hero / marketing glass plate.
  * `overflow-hidden` is required so `backdrop-blur` follows `border-radius`
  * instead of leaving a hard rectangular fringe on mobile WebKit.

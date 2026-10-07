@@ -1,9 +1,7 @@
 "use client"
 
-import { ScrollTrigger } from "gsap/ScrollTrigger"
 import * as React from "react"
 
-import { ensureGsapScroll } from "@/lib/gsap-scroll"
 import { LANDING_SCROLL_SECTIONS } from "@/lib/landing-modern-data"
 import { LANDING_MOTION } from "@/lib/landing-motion"
 
@@ -26,37 +24,46 @@ export function LandingScrollProvider({
 
   React.useEffect(() => {
     let cancelled = false
-    const triggers: ScrollTrigger[] = []
+    const triggers: { kill: () => void }[] = []
     let frame = 0
     let fonts: Promise<void> | undefined
-
-    const onLoad = () => ScrollTrigger.refresh()
+    let onLoad: (() => void) | undefined
 
     const start = () => {
       if (cancelled) return
-      ensureGsapScroll()
 
-      for (const section of LANDING_SCROLL_SECTIONS) {
-        const el = document.getElementById(section.id)
-        if (!el) continue
+      void (async () => {
+        const [{ ScrollTrigger }, { ensureGsapScroll }] = await Promise.all([
+          import("gsap/ScrollTrigger"),
+          import("@/lib/gsap-scroll"),
+        ])
+        if (cancelled) return
 
-        triggers.push(
-          ScrollTrigger.create({
-            trigger: el,
-            start: LANDING_MOTION.spyStart,
-            end: LANDING_MOTION.spyEnd,
-            onEnter: () => setActiveSectionId(section.id),
-            onEnterBack: () => setActiveSectionId(section.id),
-          })
-        )
-      }
+        ensureGsapScroll()
 
-      // Reveals measure after first paint, fonts, and late images — refresh so
-      // start positions stay honest as the page settles.
-      const refresh = () => ScrollTrigger.refresh()
-      frame = requestAnimationFrame(refresh)
-      window.addEventListener("load", onLoad)
-      fonts = document.fonts?.ready.then(refresh)
+        for (const section of LANDING_SCROLL_SECTIONS) {
+          const el = document.getElementById(section.id)
+          if (!el) continue
+
+          triggers.push(
+            ScrollTrigger.create({
+              trigger: el,
+              start: LANDING_MOTION.spyStart,
+              end: LANDING_MOTION.spyEnd,
+              onEnter: () => setActiveSectionId(section.id),
+              onEnterBack: () => setActiveSectionId(section.id),
+            })
+          )
+        }
+
+        // Reveals measure after first paint, fonts, and late images — refresh so
+        // start positions stay honest as the page settles.
+        const refresh = () => ScrollTrigger.refresh()
+        onLoad = refresh
+        frame = requestAnimationFrame(refresh)
+        window.addEventListener("load", onLoad)
+        fonts = document.fonts?.ready.then(refresh)
+      })()
     }
 
     // Defer ScrollTrigger off the LCP critical path.
@@ -73,7 +80,7 @@ export function LandingScrollProvider({
       if (idleHandle !== undefined) window.cancelIdleCallback(idleHandle)
       if (timeoutHandle !== undefined) window.clearTimeout(timeoutHandle)
       cancelAnimationFrame(frame)
-      window.removeEventListener("load", onLoad)
+      if (onLoad) window.removeEventListener("load", onLoad)
       void fonts
       for (const trigger of triggers) trigger.kill()
     }
