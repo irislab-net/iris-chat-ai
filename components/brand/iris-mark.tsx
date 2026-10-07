@@ -14,11 +14,67 @@ export function IrisMark({
 }: {
   className?: string
   imageClassName?: string
-  /** Large empty-state mark — requests a sharper src than the inline default. */
-  variant?: "default" | "hero"
+  /**
+   * `hero` — glass-shell empty-state mark.
+   * `glyph` — bare mark with no shell (mobile chat hero).
+   */
+  variant?: "default" | "hero" | "glyph"
 }) {
   const isHero = variant === "hero"
   const gradientId = React.useId().replace(/:/g, "")
+
+  if (variant === "glyph") {
+    return (
+      <span
+        className={cn(
+          "chat-empty-hero-glyph relative inline-flex size-11 shrink-0 items-center justify-center",
+          className
+        )}
+      >
+        <svg
+          viewBox={EXUR_LOGO_VIEWBOX}
+          className={cn("size-full overflow-visible", imageClassName)}
+          fill="none"
+          aria-hidden
+        >
+          <defs>
+            <linearGradient
+              id={`exur-glyph-black-${gradientId}`}
+              x1="33.15"
+              y1="7"
+              x2="33.15"
+              y2="63"
+              gradientUnits="userSpaceOnUse"
+            >
+              <stop stopColor="#000000" />
+              <stop offset="1" stopColor="#3F3F3F" />
+            </linearGradient>
+            <linearGradient
+              id={`exur-glyph-white-${gradientId}`}
+              x1="33.15"
+              y1="7"
+              x2="33.15"
+              y2="63"
+              gradientUnits="userSpaceOnUse"
+            >
+              <stop stopColor="#FFFFFF" />
+              <stop offset="1" stopColor="#D4D4D4" />
+            </linearGradient>
+          </defs>
+          <path
+            className="dark:hidden"
+            d={EXUR_LOGO_MARK_PATH}
+            fill={`url(#exur-glyph-black-${gradientId})`}
+          />
+          <path
+            className="hidden dark:block"
+            d={EXUR_LOGO_MARK_PATH}
+            fill={`url(#exur-glyph-white-${gradientId})`}
+          />
+        </svg>
+      </span>
+    )
+  }
 
   if (!isHero) {
     return (

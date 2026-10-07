@@ -60,7 +60,7 @@ function ChatMobileHeaderSkeleton() {
       <header className="app-mobile-safe-header relative z-1 flex items-center justify-between gap-2 bg-transparent px-4 pb-2">
         <div className="flex h-11 min-w-0 items-center justify-start gap-2">
           <Bone stagger={1} className="size-11 shrink-0 rounded-full" />
-          <Bone stagger={1} className="h-11 w-28 shrink-0 rounded-full" />
+          <Bone stagger={1} className="ms-1 h-6 w-20 shrink-0 rounded-full" />
         </div>
         <div className="flex shrink-0 items-center justify-end">
           <Bone stagger={1} className="size-12 shrink-0 rounded-full" />
@@ -80,12 +80,11 @@ function ChatMobileEmptyHeroSkeleton() {
     >
       <div className="mx-auto w-full max-w-3xl">
         <div className={chatMobileEmptyHeroContentClass}>
-          <Bone stagger={1} className="size-14 shrink-0 rounded-full" />
+          <Bone stagger={1} className="size-11 shrink-0 rounded-full" />
           <Bone
             stagger={2}
-            className="h-7 w-[min(18rem,78%)] max-w-72 rounded-full"
+            className="h-8 w-[min(16rem,72%)] max-w-64 rounded-full"
           />
-          <ChatEmptyHeroLcp />
         </div>
       </div>
     </div>
@@ -137,8 +136,7 @@ function ChatMobileAsideSkeleton({ className }: { className?: string }) {
 }
 
 function ChatPromptsSkeleton() {
-  // Real starter copy (not shimmer) so desktop boot shares the same LCP text
-  // as the mobile skeleton (`ChatEmptyHeroLcp`).
+  // Real starter copy (not shimmer) so desktop boot paints the LCP text early.
   return (
     <div className="chat-empty-hero-shell flex min-h-0 flex-1 flex-col items-center justify-center px-4 py-10">
       <div className="mx-auto flex w-full max-w-3xl flex-col items-center gap-5 text-center">

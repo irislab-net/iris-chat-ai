@@ -27,37 +27,55 @@ function ChatMobileGeminiBackground({
   const isBlue = tone === "blue"
   const dotsActive = active || isHero
 
+  if (!isHero) {
+    return (
+      <div
+        aria-hidden
+        className={cn(
+          "chat-gemini-bg pointer-events-none absolute inset-0 overflow-hidden",
+          isBlue && "chat-gemini-bg-blue",
+          visible ? "chat-gemini-bg-visible" : "chat-gemini-bg-hidden",
+          active && "chat-gemini-bg-active",
+          loading && "chat-gemini-bg-loading",
+          className
+        )}
+      >
+        <div className="absolute inset-0 bg-background" />
+        <div className="chat-gemini-horizon">
+          <div
+            className={cn(
+              "chat-gemini-horizon-rise",
+              intro && "chat-gemini-horizon-intro"
+            )}
+          >
+            <div className="chat-gemini-horizon-dome" />
+            <div className="chat-gemini-horizon-glow" />
+            <div className="chat-gemini-horizon-sheen" />
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div
       aria-hidden
       className={cn(
-        "chat-gemini-bg pointer-events-none absolute inset-0 overflow-hidden",
-        isHero && "chat-gemini-bg-hero",
+        "chat-gemini-bg chat-gemini-bg-hero pointer-events-none absolute inset-0 overflow-hidden",
         isBlue && "chat-gemini-bg-blue",
         visible ? "chat-gemini-bg-visible" : "chat-gemini-bg-hidden",
-        (active || isHero) && "chat-gemini-bg-active",
+        "chat-gemini-bg-active",
         loading && "chat-gemini-bg-loading",
         className
       )}
     >
+      <div className="absolute inset-0 bg-linear-to-b from-white via-[#FAFBFC] to-[#F1F5F9] dark:from-background dark:via-background dark:to-card" />
       <div
         className={cn(
-          "absolute inset-0",
-          isHero
-            ? "bg-linear-to-b from-white via-[#FAFBFC] to-[#F1F5F9] dark:from-background dark:via-background dark:to-card"
-            : "bg-background"
+          "absolute inset-x-0 top-0 bg-linear-to-b from-white via-white/85 to-transparent dark:from-background dark:via-background/80",
+          isBlue ? "h-[24%] sm:h-[28%]" : "h-[28%] sm:h-[32%]"
         )}
       />
-      {isHero ? (
-        <div
-          className={cn(
-            "absolute inset-x-0 top-0 bg-linear-to-b from-white via-white/85 to-transparent dark:from-background dark:via-background/80",
-            isBlue ? "h-[24%] sm:h-[28%]" : "h-[28%] sm:h-[32%]"
-          )}
-        />
-      ) : (
-        <div className="chat-gemini-bg-top-fade absolute inset-x-0 top-0 h-[42%]" />
-      )}
       <div
         className={cn(
           "chat-gemini-mesh absolute inset-0",
@@ -77,8 +95,7 @@ function ChatMobileGeminiBackground({
       </div>
       <div
         className={cn(
-          "chat-gemini-pattern absolute",
-          isHero ? "inset-0" : isBlue ? "inset-x-0 bottom-0 h-[58%]" : "inset-x-0 bottom-0 h-[52%]",
+          "chat-gemini-pattern absolute inset-0",
           dotsActive && "chat-gemini-pattern-active",
           loading && "chat-gemini-pattern-loading"
         )}
@@ -94,16 +111,12 @@ function ChatMobileGeminiBackground({
           <div className="chat-gemini-glass-rim absolute inset-x-[12%] top-0 h-px" />
         </>
       ) : null}
-      {isHero ? (
-        <div
-          className={cn(
-            "absolute inset-x-0 bottom-0 bg-linear-to-b from-transparent via-white/70 to-white dark:via-background/70 dark:to-background",
-            isBlue ? "h-[30%] sm:h-[34%]" : "h-[36%] sm:h-[40%]"
-          )}
-        />
-      ) : (
-        <div className="chat-gemini-bg-bottom-fade absolute inset-x-0 bottom-0 h-[40%]" />
-      )}
+      <div
+        className={cn(
+          "absolute inset-x-0 bottom-0 bg-linear-to-b from-transparent via-white/70 to-white dark:via-background/70 dark:to-background",
+          isBlue ? "h-[30%] sm:h-[34%]" : "h-[36%] sm:h-[40%]"
+        )}
+      />
     </div>
   )
 }

@@ -33,6 +33,16 @@ const chatMobileComposerGlassFocusClass =
   "focus-within:border-white/50 focus-within:bg-white/36 focus-within:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.88),inset_0_0_0_0.5px_rgba(255,255,255,0.5),inset_0_-8px_16px_-12px_rgba(0,0,0,0.1),0_2px_6px_rgba(0,0,0,0.04),0_-8px_24px_-6px_rgba(37,99,235,0.16),0_-18px_48px_-12px_rgba(37,99,235,0.12),0_4px_14px_-10px_rgba(37,99,235,0.06)] supports-[backdrop-filter]:focus-within:bg-white/22 dark:focus-within:border-white/24 dark:focus-within:bg-white/18 dark:focus-within:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.35),inset_0_0_0_0.5px_rgba(255,255,255,0.18),inset_0_-10px_20px_-12px_rgba(0,0,0,0.4),0_2px_8px_rgba(0,0,0,0.22),0_-10px_28px_-6px_rgba(37,99,235,0.2),0_-20px_52px_-14px_rgba(37,99,235,0.14),0_4px_16px_-12px_rgba(37,99,235,0.07)] dark:supports-[backdrop-filter]:focus-within:bg-white/12"
 
 /**
+ * Mobile floating composer — opaque capsule with a soft lift (Gemini app),
+ * so it reads cleanly over the blue horizon wash.
+ */
+const chatMobileComposerSolidClass =
+  "relative isolate overflow-hidden border-0 bg-white shadow-[0_1px_2px_rgba(15,23,42,0.04),0_8px_28px_-10px_rgba(15,23,42,0.14)] dark:bg-[#1e1f22] dark:shadow-[0_1px_2px_rgba(0,0,0,0.3),0_10px_30px_-12px_rgba(0,0,0,0.6)]"
+
+const chatMobileComposerSolidFocusClass =
+  "focus-within:shadow-[0_1px_2px_rgba(15,23,42,0.05),0_12px_34px_-12px_rgba(37,99,235,0.28)] dark:focus-within:shadow-[0_1px_2px_rgba(0,0,0,0.32),0_12px_34px_-12px_rgba(37,99,235,0.36)]"
+
+/**
  * Primary / prominent — iOS 26 `.regular.tint(.blue).interactive()`:
  * capsule · tinted glass (not flat opaque) · specular insets · press 0.96 · ≥44pt.
  */
@@ -83,6 +93,9 @@ const chatMobileHeaderPlanBadgeClass =
 /** Glass capsule (effort / chips) — same 44 pt height as icon buttons, 16 pt side inset. */
 const chatMobileHeaderModelClass = `inline-flex h-11 shrink-0 items-center gap-2 rounded-full px-4 text-[15px] font-medium tracking-[-0.015em] text-foreground ${chatMobileGlassSurfaceClass} ${chatMobileHeaderShadowHoverClass} transition-[transform,background-color,box-shadow,border-color] active:scale-[0.98] [&_svg:not([class*='size-'])]:size-[18px] [&_svg]:opacity-65 [&_svg]:text-foreground`
 
+/** Effort / model trigger — plain label + chevron, no capsule (Gemini nav bar). */
+const chatMobileHeaderModelPlainClass = `inline-flex h-11 shrink-0 items-center gap-1 rounded-full border-0 bg-transparent px-3 text-[17px] font-normal tracking-[-0.015em] text-foreground shadow-none transition-[transform,background-color] duration-150 ease-out ${chatHoverFillClass} ${chatPressFillClass} aria-expanded:bg-[rgba(118,118,128,0.12)] active:scale-[0.98] dark:aria-expanded:bg-[rgba(118,118,128,0.24)] [&_svg]:opacity-60 [&_svg]:text-foreground`
+
 const chatMobileHeaderModelPrimaryClass = "text-foreground"
 
 const chatMobileHeaderModelSecondaryClass = "text-muted-foreground"
@@ -97,7 +110,7 @@ const chatMobileEmptyHeroContentClass =
 const chatMobileEmptyHeroMarkClass = "chat-empty-hero-mark"
 
 const chatMobileEmptyHeroTitleClass =
-  "chat-empty-hero-title max-w-xs text-balance text-[28px] font-light leading-8.5 tracking-[0.01em] text-foreground"
+  "chat-empty-hero-title max-w-68 text-balance text-[32px] font-normal leading-[1.22] tracking-[-0.012em] text-foreground"
 
 const chatMobileThreadClass = "px-6 pt-6 pb-6"
 
@@ -165,7 +178,7 @@ const chatMobileComposerShellClass =
  * Floating composer shell. Radius/padding/gap interpolate so compact↔expanded
  * does not hard-cut; height morph is driven by a FLIP in chat-composer.
  */
-const chatMobileComposerPillClass = `grid text-foreground transition-[box-shadow,background-color,border-color,border-radius,padding,gap,min-height] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none ${chatMobileComposerGlassClass} ${chatMobileComposerGlassFocusClass}`
+const chatMobileComposerPillClass = `grid text-foreground transition-[box-shadow,background-color,border-color,border-radius,padding,gap,min-height] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none ${chatMobileComposerSolidClass} ${chatMobileComposerSolidFocusClass}`
 
 /** Compact — pill ends (~half of min-h-16) without 9999px so radius can ease. */
 const chatMobileComposerPillCompactClass =
@@ -236,13 +249,17 @@ const chatMobileComposerSendClass =
   "size-11 shrink-0 overflow-hidden rounded-full border-0 bg-[#2563EB] text-white shadow-[inset_0_1px_1px_rgba(255,255,255,0.45),inset_0_-1px_1px_rgba(29,78,216,0.22),0_1px_2px_rgba(37,99,235,0.18)] transition-[transform,background-color,box-shadow,color] duration-150 ease-out hover:bg-[#1D4ED8] hover:text-white hover:shadow-[inset_0_1px_1px_rgba(255,255,255,0.5),0_2px_4px_rgba(37,99,235,0.22)] active:scale-[0.92] disabled:opacity-100 [&_svg:not([class*='size-'])]:size-[18px] [&_svg]:stroke-[2.25]"
 
 /** Idle send — tertiary system fill (Messages empty state). */
-const chatMobileComposerSendIdleClass =
+const chatComposerSendIdleNeutralClass =
   "size-11 shrink-0 overflow-hidden rounded-full border-0 bg-[rgba(118,118,128,0.12)] text-muted-foreground shadow-none transition-[transform,background-color] duration-150 ease-out hover:bg-[rgba(118,118,128,0.16)] active:scale-[0.92] disabled:pointer-events-none disabled:opacity-100 dark:bg-[rgba(118,118,128,0.24)] dark:hover:bg-[rgba(118,118,128,0.28)] [&_svg:not([class*='size-'])]:size-[18px] [&_svg]:stroke-[2.25]"
+
+/** Mobile idle send — soft sky-blue disc (Gemini trailing control). */
+const chatMobileComposerSendIdleClass =
+  "size-11 shrink-0 overflow-hidden rounded-full border-0 bg-[#DCEBFE] text-[#2563EB]/75 shadow-none transition-[transform,background-color,color] duration-200 ease-out active:scale-[0.92] disabled:pointer-events-none disabled:opacity-100 dark:bg-[#2563EB]/22 dark:text-[#93C5FD]/80 [&_svg:not([class*='size-'])]:size-[18px] [&_svg]:stroke-[2.25]"
 
 /** Desktop send — same glassProminent circle as mobile. */
 const chatDesktopComposerSendClass = chatMobileComposerSendClass
 
-const chatDesktopComposerSendDisabledClass = chatMobileComposerSendIdleClass
+const chatDesktopComposerSendDisabledClass = chatComposerSendIdleNeutralClass
 
 /** Empty-state / follow-up prompt cards. */
 const chatSamplePromptButtonClass =
@@ -746,6 +763,7 @@ export {
   chatMobileHeaderScrimClass,
   chatMobileComposerDockClass,
   chatMobileHeaderModelClass,
+  chatMobileHeaderModelPlainClass,
   chatMobileHeaderNewChatClass,
   chatMobileHeaderAvatarButtonClass,
   chatMobileHeaderAvatarClass,

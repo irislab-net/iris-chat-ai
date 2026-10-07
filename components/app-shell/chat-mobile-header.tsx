@@ -13,7 +13,7 @@ import {
   chatComposerLiquidSheetRowActiveClass,
   chatComposerLiquidSheetRowClass,
   chatMobileHeaderButtonClass,
-  chatMobileHeaderModelClass,
+  chatMobileHeaderModelPlainClass,
   chatMobileHeaderScrimClass,
   chatMobileHeaderShellClass,
   chatMobileSheetContentClass,
@@ -99,8 +99,8 @@ function ChatMobileHeader({
   const effortLabel = t(`effort.${effortValue}`)
 
   const effortTriggerClass = cn(
-    chatMobileHeaderModelClass,
-    "min-w-25 justify-between leading-none hover:border-white/55 hover:bg-white/32 aria-expanded:border-white/55 aria-expanded:bg-white/36 dark:hover:border-white/28 dark:hover:bg-white/18 dark:aria-expanded:border-white/28 dark:aria-expanded:bg-white/20"
+    chatMobileHeaderModelPlainClass,
+    "leading-none"
   )
 
   const effortControl =

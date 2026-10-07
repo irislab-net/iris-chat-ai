@@ -28,7 +28,6 @@ import {
   chatMobileThreadTopSpacerClass,
   chatMobileComposerDockClass,
   chatMobileEmptyHeroContentClass,
-  chatMobileEmptyHeroMarkClass,
   chatMobileEmptyHeroTitleClass,
   chatMobileEmptyHeroWrapClass,
   chatSamplePromptButtonClass,
@@ -2621,10 +2620,7 @@ function ChatAside({
                       >
                         <div className={chatMobileEmptyHeroContentClass}>
                           {isMobileOverlay ? (
-                            <IrisMark
-                              variant="hero"
-                              className={chatMobileEmptyHeroMarkClass}
-                            />
+                            <IrisMark variant="glyph" />
                           ) : (
                             <IrisMark variant="hero" />
                           )}
@@ -2637,16 +2633,18 @@ function ChatAside({
                           >
                             {mobileGreeting}
                           </h2>
-                          <IrisSamplePrompts
-                            disabled={sending}
-                            onEdit={(text: string) => {
-                              setDraft(text)
-                              focusComposer()
-                            }}
-                            onSend={(text: string) => {
-                              void handleSend(text)
-                            }}
-                          />
+                          {isMobileOverlay ? null : (
+                            <IrisSamplePrompts
+                              disabled={sending}
+                              onEdit={(text: string) => {
+                                setDraft(text)
+                                focusComposer()
+                              }}
+                              onSend={(text: string) => {
+                                void handleSend(text)
+                              }}
+                            />
+                          )}
                         </div>
                       </div>
                     </div>
