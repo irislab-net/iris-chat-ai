@@ -6,7 +6,7 @@ export default defineManifest({
   short_name: "Exur",
   description:
     "AI co-pilot in your Chrome side panel — chat, market news, and trade context.",
-  version: "0.0.4",
+  version: "0.0.5",
   homepage_url: "https://chat.exur.ai",
   // Stable ID for local/unpacked OAuth only. Stripped by `pnpm extension:pack`.
   key: "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4RIebkDmay2Q7vd0yxk+6snozvfWOeGRvGf41BrUvpC12lflX3PN7tbjv7HQCricJxNUzRG2NjJ5ixYvVQlvSjIL+Z7nJUbDdzg6o8LjyF+1iYVdYo2OWSxqOmV5eAMRXAsbGvxOfncoRNgclgAOerMWSUKDIdQX+ulP6Iwz1cRKBIxjoIjBhJ3jGr4z+KLUvDY6URbaI1iH+y9PXECppVQXB8JaizFvcArUdbo0xQd7Hc7tPUpW3laIZccQ7vINd7v8xPY1qigdm6bk0+zw8Cs2+STwtvzLTc/aBjCUHHcDAYozSQfAz8o2D9acbf3K3mE/4Jvr8WZS4LnwMPHgwQIDAQAB",

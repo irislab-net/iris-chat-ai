@@ -18,7 +18,7 @@ pnpm extension:pack
 - [ ] Pack confirms `app=chromimum_extension` is in the built JS
 - [ ] Pack confirms `callback.html` is in `web_accessible_resources` (OAuth redirect)
 - [ ] Pack fails if `identity` / `chrome.identity` / unexpected host_permissions appear
-- [ ] Version bumped in `manifest.config.ts` + `package.json` (currently **0.0.4**)
+- [ ] Version bumped in `manifest.config.ts` + `package.json` (currently **0.0.5**)
 - [ ] Smoke on the **packed** build (load zip contents or keyless staging): sign-in → chat → news → Upgrade opens `https://chat.exur.ai/upgrade`
 
 ## Manifest readiness (shipped)
