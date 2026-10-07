@@ -1,6 +1,9 @@
 /* Consent Mode v2 defaults — must run before GA/GTM.
  * Also hydrates a prior decision from the shared exur.ai cookie so apex + chat
- * stay aligned without waiting for React. */
+ * stay aligned without waiting for React.
+ *
+ * Production loads an inlined copy from `app/layout.tsx` (beforeInteractive)
+ * to avoid an extra render-blocking network hop. Keep this file in sync. */
 ;(function () {
   window.dataLayer = window.dataLayer || []
   function gtag() {

@@ -36,10 +36,8 @@ import {
   chatThreadUpgradeClass,
   chatUpgradePillClass,
 } from "@/components/app-shell/chat-mobile-gemini-styles"
-import { ChatMobileHeader } from "@/components/app-shell/chat-mobile-header"
 import { ChatMobileSlidePanel } from "@/components/app-shell/chat-mobile-slide-panel"
 import { ChatGeminiNewChatIcon } from "@/components/app-shell/chat-gemini-new-chat-icon"
-import { ChatComposer } from "@/components/app-shell/chat-composer"
 import { MAIN_CONTENT_ID } from "@/components/landing/modern/skip-to-content"
 import { ChatMessageActions } from "@/components/app-shell/chat-message-actions"
 import {
@@ -247,6 +245,30 @@ const IrisSamplePrompts = dynamic(
     loading: () => (
       // Keep the SSR LCP sample description painted until Embla hydrates.
       <ChatEmptyHeroLcp />
+    ),
+  }
+)
+
+/** Motion-heavy header — keep off the empty-chat critical chunk. */
+const ChatMobileHeader = dynamic(
+  () =>
+    import("@/components/app-shell/chat-mobile-header").then(
+      (m) => m.ChatMobileHeader
+    ),
+  { ssr: false }
+)
+
+/** Composer measures layout on mount (forced reflow) — load after empty hero. */
+const ChatComposer = dynamic(
+  () =>
+    import("@/components/app-shell/chat-composer").then((m) => m.ChatComposer),
+  {
+    ssr: false,
+    loading: () => (
+      <div
+        aria-hidden
+        className="mx-auto h-16 w-full max-w-3xl rounded-full bg-muted/40"
+      />
     ),
   }
 )

@@ -5,11 +5,11 @@
   "private": true,
   "packageManager": "pnpm@11.25.0",
   "browserslist": [
-    "defaults and fully supports es6-module",
-    "last 2 chrome versions",
-    "last 2 firefox versions",
-    "last 2 safari versions",
-    "last 2 edge versions"
+    "chrome >= 111",
+    "edge >= 111",
+    "firefox >= 111",
+    "safari >= 16.4",
+    "not dead"
   ],
   "scripts": {
     "build": "node scripts/build.mjs",

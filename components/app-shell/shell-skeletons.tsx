@@ -8,7 +8,6 @@ import { ChatMobileGeminiBackground } from "@/components/app-shell/chat-mobile-g
 import {
   chatDesktopCanvasClass,
   chatDesktopComposerShellClass,
-  chatEmptyHeroPromptsClass,
   chatMobileComposerDockClass,
   chatMobileComposerShellClass,
   chatMobileEmptyHeroContentClass,
@@ -68,20 +67,6 @@ function ChatMobileHeaderSkeleton() {
         </div>
       </header>
     </div>
-  )
-}
-
-/** Flat shimmer block matching real sample-prompt card radius + height. */
-function ChatStarterCardSkeleton({
-  stagger = 2,
-}: {
-  stagger?: 1 | 2 | 3
-}) {
-  return (
-    <Bone
-      stagger={stagger}
-      className="h-23.5 w-full rounded-3xl sm:h-24 lg:h-19"
-    />
   )
 }
 
@@ -152,19 +137,14 @@ function ChatMobileAsideSkeleton({ className }: { className?: string }) {
 }
 
 function ChatPromptsSkeleton() {
+  // Real starter copy (not shimmer) so desktop boot shares the same LCP text
+  // as the mobile skeleton (`ChatEmptyHeroLcp`).
   return (
     <div className="chat-empty-hero-shell flex min-h-0 flex-1 flex-col items-center justify-center px-4 py-10">
       <div className="mx-auto flex w-full max-w-3xl flex-col items-center gap-5 text-center">
         <Bone className="size-14 shrink-0 rounded-full" />
         <Bone className="h-7 w-[min(20rem,88%)] max-w-xs rounded-full" />
-        <div className={chatEmptyHeroPromptsClass}>
-          <Bone className="h-2.5 w-12 self-center rounded-full" />
-          <div className="mx-auto grid w-full max-w-md grid-cols-1 gap-2">
-            <ChatStarterCardSkeleton stagger={2} />
-            <ChatStarterCardSkeleton stagger={3} />
-            <ChatStarterCardSkeleton stagger={3} />
-          </div>
-        </div>
+        <ChatEmptyHeroLcp />
       </div>
     </div>
   )

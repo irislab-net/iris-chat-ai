@@ -83,14 +83,18 @@ const nextConfig: NextConfig = {
     position: "bottom-right",
   },
   experimental: {
-    optimizePackageImports: ["lucide-react", "motion"],
+    optimizePackageImports: ["lucide-react", "motion", "embla-carousel-react"],
   },
   // Drop Lucide's XML namespace URI so HTML5 SVG doesn't emit http:// xmlns
   // (checklist scanners false-flag it as an HTTPS downgrade).
+  // Empty polyfill-module: browserslist is modern Baseline — skip legacy polyfills
+  // Lighthouse flags as unused (Array.at, Object.hasOwn, flat, …).
   turbopack: {
     resolveAlias: {
       "lucide-react/dist/esm/defaultAttributes.mjs":
         "./lib/lucide-default-attributes.mjs",
+      "../build/polyfills/polyfill-module": "./lib/modern-polyfill.js",
+      "next/dist/build/polyfills/polyfill-module": "./lib/modern-polyfill.js",
     },
   },
   webpack: (config) => {
@@ -99,6 +103,14 @@ const nextConfig: NextConfig = {
       "lucide-react/dist/esm/defaultAttributes.mjs": join(
         process.cwd(),
         "lib/lucide-default-attributes.mjs"
+      ),
+      "../build/polyfills/polyfill-module": join(
+        process.cwd(),
+        "lib/modern-polyfill.js"
+      ),
+      "next/dist/build/polyfills/polyfill-module": join(
+        process.cwd(),
+        "lib/modern-polyfill.js"
       ),
     }
     return config

@@ -29,16 +29,8 @@ import {
   websiteJsonLd,
 } from "@/lib/seo"
 
-/** Ingest host from public DSN — early preconnect for Sentry (PSI LCP candidate). */
-function sentryIngestOrigin(): string | null {
-  const dsn = process.env.NEXT_PUBLIC_SENTRY_DSN
-  if (!dsn) return null
-  try {
-    return new URL(dsn).origin
-  } catch {
-    return null
-  }
-}
+/** Inlined so Consent Mode defaults are not an extra beforeInteractive network hop. */
+const CONSENT_DEFAULTS_SCRIPT = `(function(){window.dataLayer=window.dataLayer||[];function gtag(){window.dataLayer.push(arguments)}window.gtag=window.gtag||gtag;gtag("consent","default",{analytics_storage:"denied",ad_storage:"denied",ad_user_data:"denied",ad_personalization:"denied",wait_for_update:500});var KEY="exur-cookie-consent",VERSION="v1";function readCookie(name){var prefix=encodeURIComponent(name)+"=";var parts=document.cookie.split(";");for(var i=0;i<parts.length;i++){var trimmed=parts[i].trim();if(trimmed.indexOf(prefix)!==0)continue;try{return decodeURIComponent(trimmed.slice(prefix.length))}catch{return trimmed.slice(prefix.length)}}return null}function readStored(){try{var fromLs=localStorage.getItem(KEY);if(fromLs)return fromLs}catch{}return readCookie(KEY)}try{var raw=readStored();if(!raw)return;var prefs=JSON.parse(raw);if(!prefs||prefs.version!==VERSION)return;if(typeof prefs.analytics!=="boolean")return;var analytics=prefs.analytics?"granted":"denied";var advertising=prefs.advertising?"granted":"denied";gtag("consent","update",{analytics_storage:analytics,ad_storage:advertising,ad_user_data:advertising,ad_personalization:advertising})}catch{}})();`
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -177,7 +169,6 @@ export default async function RootLayout({
     // Image / metadata routes (e.g. opengraph-image) have no intl provider.
   }
   const dir = localeDirection(locale)
-  const sentryOrigin = sentryIngestOrigin()
 
   return (
     <html
@@ -187,9 +178,6 @@ export default async function RootLayout({
       className="font-sans antialiased"
     >
       <body>
-        {sentryOrigin ? (
-          <link rel="preconnect" href={sentryOrigin} crossOrigin="anonymous" />
-        ) : null}
         {/* Print discovery for audit tools — kept as a media=print link on purpose. */}
         {/* eslint-disable-next-line @next/next/no-css-tags -- print media link required by checklist */}
         <link rel="stylesheet" href="/styles/print.css" media="print" />
@@ -214,8 +202,8 @@ export default async function RootLayout({
         </noscript>
         <Script
           id="consent-defaults"
-          src="/scripts/consent-defaults.js"
           strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{ __html: CONSENT_DEFAULTS_SCRIPT }}
         />
         <Script
           id="browser-chrome-init"

@@ -1,8 +1,7 @@
 import type { Metadata } from "next"
 import { Link } from "@/i18n/navigation"
-import dynamic from "next/dynamic"
 
-import { DashboardSkeleton } from "@/components/dashboard/intel-skeletons"
+import { AppShell } from "@/components/app-shell/app-shell"
 import { HomeViewLazy } from "@/components/dashboard/home-view-lazy"
 import { SITE_DESCRIPTION, SITE_NAME, SITE_TITLE } from "@/lib/seo"
 import { isMarketingRequest } from "@/lib/request-host"
@@ -13,21 +12,6 @@ import {
   ROOT_ROBOTS,
 } from "@/lib/site"
 import type { AppLocale } from "@/i18n/routing"
-
-const AppShell = dynamic(
-  () => import("@/components/app-shell/app-shell").then((m) => m.AppShell),
-  {
-    loading: () => (
-      <main
-        id="main-content"
-        tabIndex={-1}
-        className="flex h-app overflow-hidden bg-background outline-none"
-      >
-        <DashboardSkeleton />
-      </main>
-    ),
-  }
-)
 
 const newsMetadata: Metadata = {
   title: {
@@ -81,7 +65,8 @@ export async function generateMetadata({
  * Marketing apex: proxy rewrites `/` → `/home`; this host check is a safety net
  * if the rewrite is skipped (e.g. preview hosts still hit this page).
  * Landing is dynamically imported so gsap/landing never enter the chat graph.
- * News mounts after idle so empty-chat LCP is not competing with HomeView.
+ * AppShell is a static import so the empty-hero LCP stub is in the first RSC
+ * payload (no DashboardSkeleton waterfall). News mounts after idle.
  */
 export default async function RootPage({ params }: PageProps) {
   if (await isMarketingRequest()) {
