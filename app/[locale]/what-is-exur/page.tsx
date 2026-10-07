@@ -11,7 +11,7 @@ import {
 } from "@/components/legal/legal-doc"
 import { JsonLd } from "@/components/seo/json-ld"
 import { Link } from "@/i18n/navigation"
-import { ROOT_ROBOTS } from "@/lib/site"
+import { getLaunchAppHref, LANDING_PATH, ROOT_ROBOTS } from "@/lib/site"
 import {
   AI_SIGNALS_FAQS,
   AI_SIGNALS_PATH,
@@ -141,14 +141,18 @@ function WhatIsExurPage() {
           <LegalList>
             <li>
               Website:{" "}
-              <a href={SITE_URL} className={legalLinkClass}>
+              <a
+                href={`${SITE_URL}${LANDING_PATH}`}
+                className={legalLinkClass}
+              >
                 {SITE_URL.replace(/^https:\/\//, "")}
+                {LANDING_PATH}
               </a>
             </li>
             <li>
               Chat app:{" "}
-              <a href="https://chat.exur.ai/" className={legalLinkClass}>
-                chat.exur.ai
+              <a href={getLaunchAppHref()} className={legalLinkClass}>
+                {SITE_URL.replace(/^https:\/\//, "")}
               </a>
             </li>
             <li>

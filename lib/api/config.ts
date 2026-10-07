@@ -60,23 +60,17 @@ export function isChatAppHost(hostname?: string | null) {
   return true
 }
 
-/** Where Google OAuth should send the browser after login — always the chat app in production. */
+/**
+ * Where Google OAuth should send the browser after login.
+ * Apex and chat.exur.ai both serve the desk — stay same-origin when possible.
+ */
 export function getAuthDestination() {
   const fromEnv = process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "")
   if (fromEnv) {
-    try {
-      const host = new URL(fromEnv).hostname
-      if (isMarketingHost(host)) return `${CHAT_APP_ORIGIN}/auth/success`
-      return `${fromEnv}/auth/success`
-    } catch {
-      return `${fromEnv}/auth/success`
-    }
+    return `${fromEnv}/auth/success`
   }
 
   if (typeof window !== "undefined") {
-    if (isMarketingHost(window.location.hostname)) {
-      return `${CHAT_APP_ORIGIN}/auth/success`
-    }
     return `${window.location.origin}/auth/success`
   }
 

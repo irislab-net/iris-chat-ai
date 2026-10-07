@@ -1,4 +1,4 @@
-import { CHAT_APP_ORIGIN, MARKETING_ORIGIN } from "@/lib/hosts"
+import { MARKETING_ORIGIN } from "@/lib/hosts"
 
 /**
  * Production chat app origin for OAuth / desk metadata.
@@ -41,18 +41,15 @@ export const SOCIAL_X_URL = "https://x.com/exur_ai"
 /** Public Telegram channel. */
 export const SOCIAL_TELEGRAM_URL = "https://t.me/exur_ai"
 
-/** Authenticated / public market desk (Launch App target on chat.exur.ai). */
+/** Authenticated / public market desk (Launch App target). */
 export const APP_PATH = "/"
 
-/**
- * Marketing landing path.
- * On production apex this is `/`. Local / preview still uses `/home`.
- */
-export const LANDING_PATH = "/"
+/** Marketing landing path — always `/home`. */
+export const LANDING_PATH = "/home"
 
 /** Absolute marketing home — always external in the extension. */
 export function getLandingHref(): string {
-  return MARKETING_ORIGIN
+  return `${MARKETING_ORIGIN}${LANDING_PATH}`
 }
 
 /**
@@ -64,21 +61,20 @@ export function getMarketingPageHref(path: string): string {
   return `${MARKETING_ORIGIN}${normalized}`
 }
 
-/** Marketing home path fragment for FAQ anchors — always apex. */
+/** Marketing home path fragment for FAQ anchors — always apex /home. */
 export function getMarketingHomePath(): string {
-  return "/"
+  return LANDING_PATH
 }
 
 /** Canonical in-app desk entry (news workspace at `/`). */
 export const APP_NEWS_PATH = APP_PATH
 
 /**
- * Cross-host Launch App href.
- * Relative on local so `local.exur.ai` keeps same-origin desk; absolute in production.
+ * Launch App href — desk at apex `/` (chat.exur.ai still works if opened directly).
  */
 export function getLaunchAppHref(): string {
   if (process.env.NODE_ENV === "development") return APP_NEWS_PATH
-  return `${CHAT_APP_ORIGIN}${APP_NEWS_PATH}`
+  return `${MARKETING_ORIGIN}${APP_NEWS_PATH}`
 }
 
 /** Desk routes — root chat app and legacy `/app` redirect target. */
@@ -95,6 +91,7 @@ export const BILLING_PATH = `${PRODUCTION_ORIGIN}/billing`
 /** Public indexable paths (sitemap + IA) — keep in sync with INDEXABLE_ROUTES. */
 export const PUBLIC_INDEXABLE_PATHS = [
   APP_PATH,
+  LANDING_PATH,
   "/what-is-exur",
   "/about",
   "/ai-trading-signals",

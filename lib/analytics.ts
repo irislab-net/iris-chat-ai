@@ -49,7 +49,14 @@ export function isChatGtmEnabled(
   pathname: string,
   hostname?: string | null
 ): boolean {
-  if (hostname && isMarketingHost(hostname)) return false
+  // Apex is also a chat host — only skip GTM on marketing-only paths there.
+  if (
+    hostname &&
+    isMarketingHost(hostname) &&
+    !isChatAnalyticsPath(pathname)
+  ) {
+    return false
+  }
   return isGtmEnabled() && isChatAnalyticsPath(pathname)
 }
 

@@ -46,6 +46,7 @@ export const metadata: Metadata = {
   publisher: SITE_NAME,
   category: "finance",
   alternates: {
+    // Desk at `/`; landing page sets its own canonical at `/home`.
     canonical: "/",
   },
   robots: {

@@ -1,31 +1,24 @@
 import {
-  CHAT_APP_ORIGIN,
-  isChatDeskSearch,
-  isChatOnlyPath,
-  isMarketingHost,
   isMarketingOnlyPath,
   isProductionChatHost,
   isSplitHost,
-  MARKETING_HOST,
   MARKETING_ORIGIN,
   MARKETING_WWW_HOST,
   splitLocalePath,
-  withLocalePrefix,
 } from "@/lib/hosts"
 
 export type HostRouteAction =
   | { type: "next" }
   | { type: "redirect"; location: string; status: 308 }
-  /** Internal rewrite — browser URL unchanged (marketing `/` → `/home`). */
-  | { type: "rewrite"; pathname: string }
 
 function absoluteOn(origin: string, pathname: string, search: string): string {
   return `${origin}${pathname}${search}`
 }
 
 /**
- * Apex (exur.ai) = landing at `/`; chat.exur.ai = desk at `/`.
- * Local / preview hosts skip this and keep path-based routing (`/home` = landing).
+ * Apex (exur.ai) and chat.exur.ai both serve the desk at `/`.
+ * Landing lives only at exur.ai/home. Marketing pages stay on apex.
+ * Local / preview hosts skip this and keep path-based routing.
  */
 export function resolveHostRouting(input: {
   hostname: string
@@ -45,74 +38,13 @@ export function resolveHostRouting(input: {
     }
   }
 
-  const { localePrefix, pathnameWithoutLocale } = splitLocalePath(pathname)
-
-  if (isMarketingHost(hostname) && hostname === MARKETING_HOST) {
-    if (isChatOnlyPath(pathnameWithoutLocale)) {
-      return {
-        type: "redirect",
-        location: absoluteOn(CHAT_APP_ORIGIN, pathname, search),
-        status: 308,
-      }
-    }
-
-    // Legacy /home → canonical landing at /
-    if (
-      pathnameWithoutLocale === "/home" ||
-      pathnameWithoutLocale.startsWith("/home/")
-    ) {
-      const rest =
-        pathnameWithoutLocale === "/home"
-          ? "/"
-          : pathnameWithoutLocale.slice("/home".length) || "/"
-      return {
-        type: "redirect",
-        location: absoluteOn(
-          MARKETING_ORIGIN,
-          withLocalePrefix(localePrefix, rest),
-          search
-        ),
-        status: 308,
-      }
-    }
-
-    // Launch App / handoff query on marketing root → chat desk
-    if (pathnameWithoutLocale === "/" && isChatDeskSearch(search)) {
-      return {
-        type: "redirect",
-        location: absoluteOn(CHAT_APP_ORIGIN, pathname, search),
-        status: 308,
-      }
-    }
-
-    // Marketing `/` rewrites to `/home` so the landing segment can stay
-    // static/cacheable (no per-request `headers()` host check on `/`).
-    if (pathnameWithoutLocale === "/") {
-      return {
-        type: "rewrite",
-        pathname: withLocalePrefix(localePrefix, "/home"),
-      }
-    }
-
-    return { type: "next" }
-  }
-
+  // Marketing pages on chat host → apex (including /home landing)
   if (isProductionChatHost(hostname)) {
+    const { pathnameWithoutLocale } = splitLocalePath(pathname)
     if (isMarketingOnlyPath(pathnameWithoutLocale)) {
-      // /home → apex / ; other marketing pages keep their path on apex
-      const targetPath =
-        pathnameWithoutLocale === "/home" ||
-        pathnameWithoutLocale.startsWith("/home/")
-          ? withLocalePrefix(
-              localePrefix,
-              pathnameWithoutLocale === "/home"
-                ? "/"
-                : pathnameWithoutLocale.slice("/home".length) || "/"
-            )
-          : pathname
       return {
         type: "redirect",
-        location: absoluteOn(MARKETING_ORIGIN, targetPath, search),
+        location: absoluteOn(MARKETING_ORIGIN, pathname, search),
         status: 308,
       }
     }

@@ -91,11 +91,13 @@ describe("analytics", () => {
     expect(isChatAnalyticsPath("/ai-trading-signals")).toBe(false)
   })
 
-  it("disables GTM on the marketing host even for `/`", () => {
+  it("enables GTM on apex chat paths; skips marketing-only paths", () => {
     vi.stubEnv("NODE_ENV", "production")
     vi.stubEnv("NEXT_PUBLIC_GTM_ID", "GTM-TEST")
-    expect(isChatGtmEnabled("/", "exur.ai")).toBe(false)
-    expect(isChatGtmEnabled("/", "www.exur.ai")).toBe(false)
+    expect(isChatGtmEnabled("/", "exur.ai")).toBe(true)
+    expect(isChatGtmEnabled("/", "www.exur.ai")).toBe(true)
+    expect(isChatGtmEnabled("/home", "exur.ai")).toBe(false)
+    expect(isChatGtmEnabled("/about", "exur.ai")).toBe(false)
     expect(isChatGtmEnabled("/", "chat.exur.ai")).toBe(true)
   })
 })

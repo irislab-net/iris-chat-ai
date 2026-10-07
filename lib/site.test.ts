@@ -50,6 +50,7 @@ describe("public SEO site policy (S1/S2)", () => {
   it("lists only real public indexable paths for sitemap IA", () => {
     expect(PUBLIC_INDEXABLE_PATHS).toEqual([
       "/",
+      "/home",
       "/what-is-exur",
       "/about",
       "/features",
@@ -61,15 +62,15 @@ describe("public SEO site policy (S1/S2)", () => {
     ])
     expect(PUBLIC_INDEXABLE_PATHS).not.toContain("/auth/success")
     expect(PUBLIC_INDEXABLE_PATHS).not.toContain(UPGRADE_PATH)
-    expect(PUBLIC_INDEXABLE_PATHS).not.toContain("/home")
+    expect(PUBLIC_INDEXABLE_PATHS).toContain("/home")
   })
 
-  it("points landing links at apex `/` (local preview still uses /home)", () => {
-    expect(LANDING_PATH).toBe("/")
+  it("points landing links at /home on apex and local", () => {
+    expect(LANDING_PATH).toBe("/home")
     vi.stubEnv("NODE_ENV", "development")
     expect(getLandingHref()).toBe("/home")
     vi.stubEnv("NODE_ENV", "production")
-    expect(getLandingHref()).toBe("https://exur.ai")
+    expect(getLandingHref()).toBe("https://exur.ai/home")
   })
 
   it("uses absolute apex hrefs for marketing pages from the chat desk", () => {

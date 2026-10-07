@@ -150,6 +150,12 @@ export function absoluteUrl(path = "/") {
 export const INDEXABLE_ROUTES = [
   {
     path: "/",
+    changeFrequency: "daily" as const,
+    priority: 0.9,
+    images: [EXUR_LOGO_MARK, "/opengraph-image"] as const,
+  },
+  {
+    path: "/home",
     changeFrequency: "weekly" as const,
     priority: 1,
     images: [
@@ -423,8 +429,8 @@ export function llmsTxt() {
     "## Official pages",
     "",
     `- What is Exur (citation page): ${absoluteUrl(WHAT_IS_EXUR_PATH)}`,
-    `- Landing: ${absoluteUrl("/")}`,
-    `- Chat app (Launch App): https://chat.exur.ai/`,
+    `- Landing: ${absoluteUrl("/home")}`,
+    `- Chat app (Launch App): ${absoluteUrl("/")}`,
     `- AI financial assistant: ${absoluteUrl(AI_SIGNALS_PATH)}`,
     `- About: ${absoluteUrl("/about")}`,
     `- Security: ${absoluteUrl(SECURITY_PATH)}`,

@@ -45,7 +45,7 @@ const linkClass =
 function useOnLanding() {
   const pathname = usePathname()
   const homePath = getMarketingHomePath()
-  return pathname === "/home" || pathname === "/" || pathname === homePath
+  return pathname === homePath || pathname === "/home"
 }
 
 function FooterColumnLink({

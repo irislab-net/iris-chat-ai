@@ -322,8 +322,7 @@ export function LandingNav() {
   const { activeSectionId } = useLandingActiveSection()
   const { user, loading: authLoading } = useAuth()
   const homePath = getMarketingHomePath()
-  const onLanding =
-    pathname === "/home" || pathname === "/" || pathname === homePath
+  const onLanding = pathname === homePath || pathname === "/home"
   const showGuestCtas = !authLoading && !user
 
   function goToSection(id: string) {

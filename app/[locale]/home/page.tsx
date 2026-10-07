@@ -22,9 +22,7 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
 }
 
 /**
- * Landing page segment.
- * - Local / preview: `/home`
- * - Production apex (`exur.ai/`): proxy rewrites `/` → `/home` (URL stays `/`)
+ * Landing page at `/home` (exur.ai/home locally and in production).
  */
 export default async function HomeLandingPage(props: Props) {
   return <MarketingLandingPage {...props} />

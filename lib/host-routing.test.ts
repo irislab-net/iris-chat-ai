@@ -34,14 +34,14 @@ describe("resolveHostRouting", () => {
     })
   })
 
-  it("rewrites marketing root to /home (static landing segment)", () => {
+  it("serves desk at marketing root (no rewrite to landing)", () => {
     expect(
       resolveHostRouting({
         hostname: "exur.ai",
         pathname: "/",
         search: "",
       })
-    ).toEqual({ type: "rewrite", pathname: "/home" })
+    ).toEqual({ type: "next" })
 
     expect(
       resolveHostRouting({
@@ -49,21 +49,17 @@ describe("resolveHostRouting", () => {
         pathname: "/ar",
         search: "",
       })
-    ).toEqual({ type: "rewrite", pathname: "/ar/home" })
+    ).toEqual({ type: "next" })
   })
 
-  it("canonicalizes /home on marketing to /", () => {
+  it("serves landing at /home on marketing (no redirect to /)", () => {
     expect(
       resolveHostRouting({
         hostname: "exur.ai",
         pathname: "/home",
         search: "",
       })
-    ).toEqual({
-      type: "redirect",
-      location: "https://exur.ai/",
-      status: 308,
-    })
+    ).toEqual({ type: "next" })
 
     expect(
       resolveHostRouting({
@@ -71,25 +67,17 @@ describe("resolveHostRouting", () => {
         pathname: "/ar/home",
         search: "",
       })
-    ).toEqual({
-      type: "redirect",
-      location: "https://exur.ai/ar",
-      status: 308,
-    })
+    ).toEqual({ type: "next" })
   })
 
-  it("sends desk launch queries from marketing to chat", () => {
+  it("keeps desk launch queries on apex", () => {
     expect(
       resolveHostRouting({
         hostname: "exur.ai",
         pathname: "/",
         search: "?tab=news",
       })
-    ).toEqual({
-      type: "redirect",
-      location: "https://chat.exur.ai/?tab=news",
-      status: 308,
-    })
+    ).toEqual({ type: "next" })
 
     expect(
       resolveHostRouting({
@@ -97,25 +85,17 @@ describe("resolveHostRouting", () => {
         pathname: "/ar",
         search: "?q=hello",
       })
-    ).toEqual({
-      type: "redirect",
-      location: "https://chat.exur.ai/ar?q=hello",
-      status: 308,
-    })
+    ).toEqual({ type: "next" })
   })
 
-  it("sends chat-only paths from marketing to chat", () => {
+  it("keeps chat-only paths on apex", () => {
     expect(
       resolveHostRouting({
         hostname: "exur.ai",
         pathname: "/upgrade",
         search: "",
       })
-    ).toEqual({
-      type: "redirect",
-      location: "https://chat.exur.ai/upgrade",
-      status: 308,
-    })
+    ).toEqual({ type: "next" })
 
     expect(
       resolveHostRouting({
@@ -123,11 +103,7 @@ describe("resolveHostRouting", () => {
         pathname: "/billing",
         search: "?id=1",
       })
-    ).toEqual({
-      type: "redirect",
-      location: "https://chat.exur.ai/billing?id=1",
-      status: 308,
-    })
+    ).toEqual({ type: "next" })
   })
 
   it("sends marketing pages from chat host to apex", () => {
@@ -139,7 +115,19 @@ describe("resolveHostRouting", () => {
       })
     ).toEqual({
       type: "redirect",
-      location: "https://exur.ai/",
+      location: "https://exur.ai/home",
+      status: 308,
+    })
+
+    expect(
+      resolveHostRouting({
+        hostname: "chat.exur.ai",
+        pathname: "/ar/home",
+        search: "",
+      })
+    ).toEqual({
+      type: "redirect",
+      location: "https://exur.ai/ar/home",
       status: 308,
     })
 

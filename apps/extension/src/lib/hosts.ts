@@ -1,11 +1,11 @@
 import { routing } from "@/i18n/routing"
 
-/** Marketing apex — landing and public pages. */
+/** Apex — desk at `/`, landing at `/home`, plus public marketing pages. */
 export const MARKETING_ORIGIN = "https://exur.ai"
 export const MARKETING_HOST = "exur.ai"
 export const MARKETING_WWW_HOST = "www.exur.ai"
 
-/** Product desk — chat / news app. */
+/** Alternate chat desk host (same app as apex `/`). */
 export const CHAT_APP_ORIGIN = "https://chat.exur.ai"
 export const CHAT_APP_HOST = "chat.exur.ai"
 
@@ -93,7 +93,7 @@ export function isMarketingOnlyPath(pathnameWithoutLocale: string): boolean {
 
 /**
  * Desk entry query on `/` — landing chat handoff (`q`), plus legacy `tab` bookmarks.
- * On the marketing host these must bounce to chat.exur.ai.
+ * Apex and chat.exur.ai both serve the desk, so these stay on the current host.
  */
 export function isChatDeskSearch(search: string): boolean {
   const raw = search.startsWith("?") ? search.slice(1) : search

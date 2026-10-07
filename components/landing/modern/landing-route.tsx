@@ -9,6 +9,7 @@ import { SITE_URL } from "@/lib/seo"
 import {
   APP_PATH,
   getSiteOrigin,
+  LANDING_PATH,
   ROOT_ROBOTS,
   SITE_NAME,
   SOCIAL_X_URL,
@@ -16,6 +17,12 @@ import {
 
 type Props = {
   params: Promise<{ locale: AppLocale }>
+}
+
+function landingCanonical(locale: AppLocale): string {
+  return locale === routing.defaultLocale
+    ? `${SITE_URL}${LANDING_PATH}`
+    : `${SITE_URL}/${locale}${LANDING_PATH}`
 }
 
 export async function generateLandingMetadata({
@@ -28,16 +35,15 @@ export async function generateLandingMetadata({
   const description = t("homeDescription")
   const og = t("homeOg")
 
-  const canonical =
-    locale === routing.defaultLocale ? SITE_URL : `${SITE_URL}/${locale}`
+  const canonical = landingCanonical(locale)
 
   const languages = Object.fromEntries(
     routing.locales.map((code) => [
       code,
-      code === routing.defaultLocale ? SITE_URL : `${SITE_URL}/${code}`,
+      landingCanonical(code as AppLocale),
     ])
   ) as Record<string, string>
-  languages["x-default"] = SITE_URL
+  languages["x-default"] = landingCanonical(routing.defaultLocale)
 
   return {
     title: { absolute: title },
@@ -77,19 +83,19 @@ export async function MarketingLandingPage({ params }: Props) {
   setRequestLocale(locale)
 
   const t = await getTranslations({ locale, namespace: "metadata" })
-  const marketingOrigin = SITE_URL
+  const landingUrl = landingCanonical(locale)
   const chatOrigin = getSiteOrigin()
   const landingLd = {
     "@context": "https://schema.org",
     "@type": "WebPage",
     name: t("homeTitle"),
-    url: marketingOrigin,
+    url: landingUrl,
     description: t("homeDescription"),
     inLanguage: locale,
     isPartOf: {
       "@type": "WebSite",
       name: SITE_NAME,
-      url: marketingOrigin,
+      url: SITE_URL,
     },
     primaryEntity: {
       "@type": "SoftwareApplication",
