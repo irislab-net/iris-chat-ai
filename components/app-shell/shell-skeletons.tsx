@@ -15,6 +15,7 @@ import {
   chatMobileHeaderScrimClass,
   chatMobileHeaderShellClass,
 } from "@/components/app-shell/chat-mobile-gemini-styles"
+import { APP_FEATURE_DEFAULTS } from "@/lib/app-features"
 import { cn } from "@/lib/utils"
 
 /** Flat shimmer bone — one surface per real UI layer. */
@@ -53,7 +54,7 @@ function ChatComposerSkeleton({ className }: { className?: string }) {
 }
 
 function ChatMobileHeaderSkeleton() {
-  // Mirrors ChatMobileHeader empty state: menu + effort | staking + account (44pt).
+  // Mirrors ChatMobileHeader empty state: menu + effort | optional staking + account.
   return (
     <div className={chatMobileHeaderShellClass}>
       <div aria-hidden className={chatMobileHeaderScrimClass} />
@@ -63,7 +64,9 @@ function ChatMobileHeaderSkeleton() {
           <Bone stagger={1} className="ms-1 h-6 w-28 shrink-0 rounded-full" />
         </div>
         <div className="flex h-11 shrink-0 items-center justify-end gap-2">
-          <Bone stagger={1} className="h-9 w-16 shrink-0 rounded-full" />
+          {APP_FEATURE_DEFAULTS.staking ? (
+            <Bone stagger={1} className="h-9 w-16 shrink-0 rounded-full" />
+          ) : null}
           <Bone stagger={1} className="size-11 shrink-0 rounded-full" />
         </div>
       </header>

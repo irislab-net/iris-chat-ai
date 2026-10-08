@@ -4,6 +4,7 @@ import * as React from "react"
 import {
   ActivityIcon,
   BookmarkIcon,
+  CoinsIcon,
   LineChartIcon,
   MicIcon,
   TrendingUpIcon,
@@ -29,6 +30,7 @@ const FEATURE_ICONS: Record<AppFeatureId, LucideIcon> = {
   volatility: ActivityIcon,
   watchlist: BookmarkIcon,
   voice: MicIcon,
+  staking: CoinsIcon,
 }
 
 function featureLabelKey(id: AppFeatureId) {
@@ -43,6 +45,8 @@ function featureLabelKey(id: AppFeatureId) {
       return "signalCardWatchlist" as const
     case "voice":
       return "featureToggleVoiceLabel" as const
+    case "staking":
+      return "staking" as const
   }
 }
 
@@ -58,6 +62,8 @@ function featureHintKey(id: AppFeatureId) {
       return "featureToggleWatchlistHint" as const
     case "voice":
       return "featureToggleVoiceHint" as const
+    case "staking":
+      return "featureToggleStakingHint" as const
   }
 }
 

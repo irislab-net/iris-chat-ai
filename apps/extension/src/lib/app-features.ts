@@ -13,6 +13,7 @@ export const APP_FEATURE_IDS = [
   "volatility",
   "watchlist",
   "voice",
+  "staking",
 ] as const
 
 export type AppFeatureId = (typeof APP_FEATURE_IDS)[number]
@@ -30,6 +31,7 @@ export const APP_FEATURE_ENV_KEYS: Record<AppFeatureId, string> = {
   volatility: "NEXT_PUBLIC_FEATURE_VOLATILITY",
   watchlist: "NEXT_PUBLIC_FEATURE_WATCHLIST",
   voice: "NEXT_PUBLIC_FEATURE_VOICE",
+  staking: "NEXT_PUBLIC_FEATURE_STAKING",
 }
 
 /** `true` / `1` / `yes` (case-insensitive) → on; anything else or unset → off. */
@@ -49,6 +51,7 @@ export function readProcessAppFeatureEnv(): Record<string, string | undefined> {
     NEXT_PUBLIC_FEATURE_VOLATILITY: process.env.NEXT_PUBLIC_FEATURE_VOLATILITY,
     NEXT_PUBLIC_FEATURE_WATCHLIST: process.env.NEXT_PUBLIC_FEATURE_WATCHLIST,
     NEXT_PUBLIC_FEATURE_VOICE: process.env.NEXT_PUBLIC_FEATURE_VOICE,
+    NEXT_PUBLIC_FEATURE_STAKING: process.env.NEXT_PUBLIC_FEATURE_STAKING,
   }
 }
 
@@ -61,6 +64,7 @@ export function createAppFeaturePrefsFromEnv(
     volatility: parseAppFeatureEnvFlag(env.NEXT_PUBLIC_FEATURE_VOLATILITY),
     watchlist: parseAppFeatureEnvFlag(env.NEXT_PUBLIC_FEATURE_WATCHLIST),
     voice: parseAppFeatureEnvFlag(env.NEXT_PUBLIC_FEATURE_VOICE),
+    staking: parseAppFeatureEnvFlag(env.NEXT_PUBLIC_FEATURE_STAKING),
   }
 }
 

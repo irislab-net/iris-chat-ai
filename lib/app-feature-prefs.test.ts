@@ -41,6 +41,7 @@ describe("createAppFeaturePrefsFromEnv", () => {
       volatility: false,
       watchlist: false,
       voice: false,
+      staking: false,
     })
   })
 
@@ -52,6 +53,7 @@ describe("createAppFeaturePrefsFromEnv", () => {
         NEXT_PUBLIC_FEATURE_VOLATILITY: "1",
         NEXT_PUBLIC_FEATURE_WATCHLIST: "no",
         NEXT_PUBLIC_FEATURE_VOICE: "yes",
+        NEXT_PUBLIC_FEATURE_STAKING: "true",
       })
     ).toEqual({
       signal: true,
@@ -59,6 +61,7 @@ describe("createAppFeaturePrefsFromEnv", () => {
       volatility: true,
       watchlist: false,
       voice: true,
+      staking: true,
     })
   })
 })
@@ -69,6 +72,7 @@ describe("app feature prefs snapshot", () => {
     expect(Object.keys(snapshot).sort()).toEqual([
       "correlation",
       "signal",
+      "staking",
       "voice",
       "volatility",
       "watchlist",

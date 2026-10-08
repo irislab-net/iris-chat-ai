@@ -725,6 +725,9 @@
     "guestChatUpstreamUnreachable": "Exur is temporarily unavailable. Try again in a moment, or sign in to continue.",
     "upgrade": "Upgrade",
     "staking": "Staking",
+    "stakingSheetTitle": "Staking",
+    "stakingSheetBody": "Plant your capital like a seed. It takes root, branches, and blooms into yield — a living tree of compounded returns.",
+    "stakingComingSoon": "Coming soon",
     "upgradeToPlus": "Upgrade to Plus",
     "billing": "Billing",
     "help": "Help",
@@ -1081,7 +1084,8 @@
     "composerVoicePermissionDeniedTitle": "Microphone blocked",
     "composerVoiceMicMissingTitle": "No microphone",
     "composerVoiceNetworkErrorTitle": "Connection lost",
-    "composerPasteAttachmentMaxTitle": "Attachment limit"
+    "composerPasteAttachmentMaxTitle": "Attachment limit",
+    "featureToggleStakingHint": "Header staking preview and coming-soon sheet."
   },
   "billingPage": {
     "title": "Billing",

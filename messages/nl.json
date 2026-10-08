@@ -390,6 +390,9 @@
     "guestChatUpstreamUnreachable": "Exur is tijdelijk niet beschikbaar. Probeer zo opnieuw, of log in om door te gaan.",
     "upgrade": "Upgraden",
     "staking": "Staking",
+    "stakingSheetTitle": "Staking",
+    "stakingSheetBody": "Plant je kapitaal als een zaadje. Het wortelt, vertakt en bloeit uit tot yield — een levende boom van samengestelde returns.",
+    "stakingComingSoon": "Binnenkort",
     "upgradeToPlus": "Upgraden naar Plus",
     "billing": "Facturering",
     "help": "Help",
@@ -683,7 +686,8 @@
       }
     },
     "composerToolCorrelationLabel": "Activacorrelatie",
-    "composerToolVolatilityLabel": "Volatiliteitsprognose"
+    "composerToolVolatilityLabel": "Volatiliteitsprognose",
+    "featureToggleStakingHint": "Staking-voorbeeld in de header en coming-soon sheet."
   },
   "dashboard": {
     "loadingNews": "Nieuws laden",

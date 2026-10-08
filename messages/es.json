@@ -390,6 +390,9 @@
     "guestChatUpstreamUnreachable": "Exur no está disponible temporalmente. Inténtalo en un momento o inicia sesión para continuar.",
     "upgrade": "Mejorar plan",
     "staking": "Staking",
+    "stakingSheetTitle": "Staking",
+    "stakingSheetBody": "Planta tu capital como una semilla. Echa raíces, se ramifica y florece en rendimiento — un árbol vivo de retornos compuestos.",
+    "stakingComingSoon": "Próximamente",
     "upgradeToPlus": "Mejorar a Plus",
     "billing": "Facturación",
     "help": "Ayuda",
@@ -683,7 +686,8 @@
       }
     },
     "composerToolCorrelationLabel": "Correlación de activos",
-    "composerToolVolatilityLabel": "Pronóstico de volatilidad"
+    "composerToolVolatilityLabel": "Pronóstico de volatilidad",
+    "featureToggleStakingHint": "Vista previa de staking en el encabezado y hoja de próximamente."
   },
   "dashboard": {
     "loadingNews": "Cargando noticias",

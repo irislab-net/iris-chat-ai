@@ -390,6 +390,9 @@
     "guestChatUpstreamUnreachable": "Exur geçici olarak kullanılamıyor. Biraz sonra deneyin veya devam için giriş yapın.",
     "upgrade": "Yükselt",
     "staking": "Staking",
+    "stakingSheetTitle": "Staking",
+    "stakingSheetBody": "Sermayeni bir tohum gibi ek. Kök salar, dallanır ve getirilere dönüşür — birleşik getirilerden oluşan canlı bir ağaç.",
+    "stakingComingSoon": "Yakında",
     "upgradeToPlus": "Plus'a yükselt",
     "billing": "Faturalama",
     "help": "Yardım",
@@ -683,7 +686,8 @@
       }
     },
     "composerToolCorrelationLabel": "Varlık korelasyonu",
-    "composerToolVolatilityLabel": "Volatilite tahmini"
+    "composerToolVolatilityLabel": "Volatilite tahmini",
+    "featureToggleStakingHint": "Üst bardaki staking önizlemesi ve yakında sayfası."
   },
   "dashboard": {
     "loadingNews": "Haberler yükleniyor",

@@ -674,6 +674,9 @@
     "guestChatUpstreamUnreachable": "Exur غير متاح مؤقتًا. أعد المحاولة بعد قليل، أو سجّل الدخول للمتابعة.",
     "upgrade": "ترقية",
     "staking": "Staking",
+    "stakingSheetTitle": "Staking",
+    "stakingSheetBody": "ازرع رأس مالك كبذرة. يتجذّر ويتفرّع ويزهر عائدًا حيًا — شجرة من العوائد المركّبة.",
+    "stakingComingSoon": "قريبًا",
     "upgradeToPlus": "الترقية إلى Plus",
     "billing": "الفوترة",
     "help": "المساعدة",
@@ -1002,7 +1005,8 @@
     "composerVoicePermissionDeniedTitle": "الميكروفون محظور",
     "composerVoiceMicMissingTitle": "لا ميكروفون",
     "composerVoiceNetworkErrorTitle": "انقطع الاتصال",
-    "composerPasteAttachmentMaxTitle": "حد المرفقات"
+    "composerPasteAttachmentMaxTitle": "حد المرفقات",
+    "featureToggleStakingHint": "معاينة الـstaking في الشريط العلوي وصحيفة قريبًا."
   },
   "billingPage": {
     "title": "الفوترة",

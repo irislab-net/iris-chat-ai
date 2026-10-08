@@ -390,6 +390,9 @@
     "guestChatUpstreamUnreachable": "Exur временно недоступен. Попробуйте через мгновение или войдите, чтобы продолжить.",
     "upgrade": "Улучшить",
     "staking": "Staking",
+    "stakingSheetTitle": "Стейкинг",
+    "stakingSheetBody": "Посади капитал как семя. Он укоренится, разветвится и расцветёт доходностью — живое дерево сложных процентов.",
+    "stakingComingSoon": "Скоро",
     "upgradeToPlus": "Перейти на Plus",
     "billing": "Оплата",
     "help": "Справка",
@@ -683,7 +686,8 @@
       }
     },
     "composerToolCorrelationLabel": "Корреляция активов",
-    "composerToolVolatilityLabel": "Прогноз волатильности"
+    "composerToolVolatilityLabel": "Прогноз волатильности",
+    "featureToggleStakingHint": "Превью стейкинга в шапке и лист «скоро»."
   },
   "dashboard": {
     "loadingNews": "Загрузка новостей",

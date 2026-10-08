@@ -725,6 +725,9 @@
     "guestChatUpstreamUnreachable": "Exur موقتاً در دسترس نیست. کمی بعد دوباره امتحان کن یا وارد شو.",
     "upgrade": "ارتقا",
     "staking": "استیکینگ",
+    "stakingSheetTitle": "استیکینگ",
+    "stakingSheetBody": "سرمایه‌ات را مثل بذر بکار. ریشه می‌دواند، شاخه می‌گیرد و به بازدهی زنده تبدیل می‌شود — درختی از سود مرکب.",
+    "stakingComingSoon": "به‌زودی",
     "upgradeToPlus": "ارتقا به Plus",
     "billing": "پرداخت",
     "help": "راهنما",
@@ -1081,7 +1084,8 @@
     "composerVoicePermissionDeniedTitle": "میکروفون مسدود است",
     "composerVoiceMicMissingTitle": "میکروفون پیدا نشد",
     "composerVoiceNetworkErrorTitle": "قطع ارتباط",
-    "composerPasteAttachmentMaxTitle": "حد پیوست"
+    "composerPasteAttachmentMaxTitle": "حد پیوست",
+    "featureToggleStakingHint": "پیش‌نمایش استیکینگ در هدر و شیت به‌زودی."
   },
   "billingPage": {
     "title": "پرداخت",
