@@ -546,7 +546,7 @@ function ChatComposer({
       typeof window !== "undefined" &&
       window.matchMedia?.("(prefers-reduced-motion: reduce)").matches
     // If sync missed capture (e.g. attachment-only), fall back to compact min height.
-    const from = composerFlipFromHeightRef.current ?? (prev ? null : 56)
+    const from = composerFlipFromHeightRef.current ?? (prev ? null : 76)
     composerFlipFromHeightRef.current = null
     if (reduceMotion || from == null) return
 

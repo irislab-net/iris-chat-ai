@@ -27,17 +27,48 @@ export function IrisMark({
     return (
       <span
         className={cn(
-          "chat-empty-hero-glyph relative inline-flex size-11 shrink-0 items-center justify-center",
+          "chat-empty-hero-glyph-shell chat-ios26-liquid-glass relative isolate inline-flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-full p-2",
+          "border border-white/70 bg-white/72 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.95),inset_0_0_0_0.5px_rgba(255,255,255,0.6),inset_0_-10px_18px_-12px_rgba(15,23,42,0.12),0_1px_2px_rgba(15,23,42,0.04),0_14px_36px_-14px_rgba(37,99,235,0.28)]",
+          "backdrop-blur-xl backdrop-saturate-[180%] supports-backdrop-filter:bg-white/56",
+          "dark:border-white/16 dark:bg-white/12 dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.3),inset_0_0_0_0.5px_rgba(255,255,255,0.14),inset_0_-12px_22px_-12px_rgba(0,0,0,0.5),0_14px_40px_-16px_rgba(37,99,235,0.4)] dark:supports-backdrop-filter:bg-white/8",
           className
         )}
       >
         <svg
           viewBox={EXUR_LOGO_VIEWBOX}
-          className={cn("size-full overflow-visible", imageClassName)}
+          className={cn(
+            "chat-empty-hero-glyph size-full overflow-visible",
+            imageClassName
+          )}
           fill="none"
           aria-hidden
         >
           <defs>
+            <clipPath id={`exur-glyph-clip-${gradientId}`}>
+              <path d={EXUR_LOGO_MARK_PATH} />
+            </clipPath>
+            <linearGradient
+              id={`exur-glyph-shine-light-${gradientId}`}
+              x1="0"
+              y1="0"
+              x2="1"
+              y2="0"
+            >
+              <stop stopColor="#FFFFFF" stopOpacity="0" />
+              <stop offset="0.5" stopColor="#FFFFFF" stopOpacity="0.9" />
+              <stop offset="1" stopColor="#FFFFFF" stopOpacity="0" />
+            </linearGradient>
+            <linearGradient
+              id={`exur-glyph-shine-dark-${gradientId}`}
+              x1="0"
+              y1="0"
+              x2="1"
+              y2="0"
+            >
+              <stop stopColor="#93C5FD" stopOpacity="0" />
+              <stop offset="0.5" stopColor="#93C5FD" stopOpacity="0.95" />
+              <stop offset="1" stopColor="#93C5FD" stopOpacity="0" />
+            </linearGradient>
             <linearGradient
               id={`exur-glyph-black-${gradientId}`}
               x1="33.15"
@@ -71,6 +102,24 @@ export function IrisMark({
             d={EXUR_LOGO_MARK_PATH}
             fill={`url(#exur-glyph-white-${gradientId})`}
           />
+          <g clipPath={`url(#exur-glyph-clip-${gradientId})`}>
+            <rect
+              className="chat-empty-hero-glyph-shine dark:hidden"
+              x="-34"
+              y="-8"
+              width="26"
+              height="85"
+              fill={`url(#exur-glyph-shine-light-${gradientId})`}
+            />
+            <rect
+              className="chat-empty-hero-glyph-shine hidden dark:block"
+              x="-34"
+              y="-8"
+              width="26"
+              height="85"
+              fill={`url(#exur-glyph-shine-dark-${gradientId})`}
+            />
+          </g>
         </svg>
       </span>
     )

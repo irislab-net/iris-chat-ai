@@ -71,7 +71,14 @@ const chatMobileHeaderCircleClass = `rounded-full ${chatMobileGlassSurfaceClass}
  * Nav-bar glass icon button — iOS 26 / HIG:
  * 44×44 pt hit target, ~22 pt symbol, ~11 pt optical padding.
  */
-const chatMobileHeaderButtonClass = `size-11 shrink-0 ${chatMobileHeaderCircleClass} ${chatMobileHeaderShadowHoverClass} [&_svg:not([class*='size-'])]:size-[22px] [&_svg]:stroke-[1.7]`
+/**
+ * Mobile nav-bar circles — Gemini header buttons: near-flat white frost,
+ * crisp neutral hairline rim, top specular, barely-there lift.
+ */
+const chatMobileHeaderWhiteGlassClass =
+  "border-[rgba(15,23,42,0.1)] bg-white/88 supports-[backdrop-filter]:bg-white/76 shadow-[inset_0_1px_0_0_rgba(255,255,255,1),inset_0_-6px_12px_-10px_rgba(15,23,42,0.06),0_1px_2px_rgba(15,23,42,0.04)] hover:border-[rgba(15,23,42,0.14)] hover:bg-white hover:shadow-[inset_0_1px_0_0_rgba(255,255,255,1),inset_0_-6px_12px_-10px_rgba(15,23,42,0.05),0_2px_6px_-2px_rgba(15,23,42,0.08)]"
+
+const chatMobileHeaderButtonClass = `size-11 shrink-0 ${chatMobileHeaderCircleClass} ${chatMobileHeaderShadowHoverClass} ${chatMobileHeaderWhiteGlassClass} [&_svg:not([class*='size-'])]:size-[22px] [&_svg]:stroke-[1.7]`
 
 /** Desktop sidebar glass icon — matches history rail (36×36, 16 pt symbol). */
 const chatDesktopSidebarIconButtonClass = `size-9 shrink-0 ${chatMobileHeaderCircleClass} ${chatMobileHeaderShadowHoverClass} [&_svg:not([class*='size-'])]:size-4 [&_svg]:stroke-[1.75]`
@@ -83,7 +90,7 @@ const chatMobileHeaderNewChatClass = chatMobileHeaderButtonClass
  * `overflow-visible` must come after the glass circle so it wins twMerge —
  * otherwise liquid-glass `overflow-hidden` clips the hanging plan badge.
  */
-const chatMobileHeaderAvatarButtonClass = `flex size-12 shrink-0 items-center justify-center p-0 ${chatMobileHeaderCircleClass} ${chatMobileHeaderShadowHoverClass} overflow-visible`
+const chatMobileHeaderAvatarButtonClass = `flex size-12 shrink-0 items-center justify-center p-0 ${chatMobileHeaderCircleClass} ${chatMobileHeaderShadowHoverClass} ${chatMobileHeaderWhiteGlassClass} overflow-visible`
 
 const chatMobileHeaderAvatarClass = "size-10 after:border-0 ring-0"
 
@@ -111,7 +118,7 @@ const chatMobileEmptyHeroMarkClass = "chat-empty-hero-mark"
 
 /** Empty-state title — Gemini: ~28px medium, no name personalization. */
 const chatMobileEmptyHeroTitleClass =
-  "chat-empty-hero-title max-w-68 text-balance text-[28px] font-medium leading-[1.25] tracking-[-0.015em] text-foreground"
+  "chat-empty-hero-title max-w-68 text-pretty text-[28px] font-light leading-[1.25] tracking-[-0.015em] text-foreground"
 
 const chatMobileThreadClass = "px-6 pt-6 pb-6"
 
@@ -130,7 +137,7 @@ const chatMobileThreadFirstTurnClass = "mt-4 sm:mt-5"
  * with extra air so the last turn can scroll fully above the dock.
  */
 const chatMobileThreadBottomSpacerClass =
-  "h-[calc(8.75rem+env(safe-area-inset-bottom,0px))] shrink-0"
+  "h-[calc(10rem+env(safe-area-inset-bottom,0px))] shrink-0"
 
 /**
  * Bottom fade behind floating composer.
@@ -186,7 +193,7 @@ const chatMobileComposerPillClass = `grid text-foreground transition-[box-shadow
  * on the shell so the bar reads ~90% width.
  */
 const chatMobileComposerPillCompactClass =
-  "min-h-14 w-full rounded-full grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-1.5 px-3 py-1.5 [grid-template-areas:'leading_field_trailing']"
+  "min-h-19 w-full rounded-[2.375rem] grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-1.5 px-4 py-2 [grid-template-areas:'leading_field_trailing']"
 
 /** Multiline — soft card radius. */
 const chatMobileComposerPillExpandedClass =
@@ -342,7 +349,7 @@ const chatComposerPasteChipCloseClass =
   "flex size-5 shrink-0 items-center justify-center rounded-full text-muted-foreground/60 transition-[color,background-color,transform] duration-150 hover:bg-foreground/8 hover:text-foreground active:scale-95"
 
 const chatMobileScrollDownClass =
-  `absolute bottom-[calc(4.5rem+env(safe-area-inset-bottom,0px))] left-1/2 z-10 size-9 -translate-x-1/2 rounded-full border border-border/50 bg-background/95 text-foreground shadow-[0_2px_10px_-3px_rgba(0,0,0,0.08),0_8px_24px_-10px_rgba(0,0,0,0.12)] transition-[transform,background-color,box-shadow,border-color] duration-150 ease-out hover:border-border hover:bg-background active:scale-[0.96] dark:border-white/16 dark:bg-background/92 dark:hover:border-white/28 dark:hover:bg-background`
+  `absolute bottom-[calc(5.75rem+env(safe-area-inset-bottom,0px))] left-1/2 z-10 size-9 -translate-x-1/2 rounded-full border border-border/50 bg-background/95 text-foreground shadow-[0_2px_10px_-3px_rgba(0,0,0,0.08),0_8px_24px_-10px_rgba(0,0,0,0.12)] transition-[transform,background-color,box-shadow,border-color] duration-150 ease-out hover:border-border hover:bg-background active:scale-[0.96] dark:border-white/16 dark:bg-background/92 dark:hover:border-white/28 dark:hover:bg-background`
 
 const chatMobileDrawerSurfaceClass = "bg-background text-foreground"
 

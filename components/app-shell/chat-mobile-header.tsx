@@ -14,6 +14,8 @@ import {
   chatComposerLiquidSheetRowClass,
   chatMobileHeaderButtonClass,
   chatMobileHeaderModelPlainClass,
+  chatMobileHeaderModelPrimaryClass,
+  chatMobileHeaderModelSecondaryClass,
   chatMobileHeaderScrimClass,
   chatMobileHeaderShellClass,
   chatMobileSheetContentClass,
@@ -90,6 +92,7 @@ function ChatMobileHeader({
   className,
 }: ChatMobileHeaderProps) {
   const t = useTranslations("workspace")
+  const common = useTranslations("common")
   const reduceMotion = useReducedMotion()
   const showThreadChrome = Boolean(threadMenu)
   const trailingSpring = reduceMotion ? { duration: 0 } : HEADER_TRAILING_SPRING
@@ -115,7 +118,14 @@ function ChatMobileHeader({
           className={effortTriggerClass}
           onClick={() => setEffortOpen(true)}
         >
-          <span className="truncate leading-none">{effortLabel}</span>
+          <span className="truncate leading-none">
+            <span className={chatMobileHeaderModelPrimaryClass}>
+              {common("brand")}
+            </span>{" "}
+            <span className={chatMobileHeaderModelSecondaryClass}>
+              {effortLabel}
+            </span>
+          </span>
           <ChevronDownIcon
             className="size-3.5 shrink-0 self-center opacity-70"
             aria-hidden

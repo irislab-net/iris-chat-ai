@@ -1,7 +1,4 @@
-import {
-  normalizeAssistantContent,
-  prepareAssistantMarkdown,
-} from "@/lib/chat/normalize-assistant-content"
+import { prepareAssistantMarkdown } from "@/lib/chat/normalize-assistant-content"
 
 export {
   normalizeAssistantContent,

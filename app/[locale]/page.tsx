@@ -12,11 +12,6 @@ import {
   ROOT_ROBOTS,
 } from "@/lib/site"
 import { MARKETING_ORIGIN } from "@/lib/hosts"
-import type { AppLocale } from "@/i18n/routing"
-
-type PageProps = {
-  params: Promise<{ locale: AppLocale }>
-}
 
 async function deskCanonicalOrigin(): Promise<string> {
   if (await isMarketingRequest()) return MARKETING_ORIGIN

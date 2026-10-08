@@ -1086,6 +1086,8 @@
 
 .chat-empty-hero-shell-exiting .chat-empty-hero-mark,
 .chat-empty-hero-shell-exiting .chat-empty-hero-glyph,
+.chat-empty-hero-shell-exiting .chat-empty-hero-glyph-shell,
+.chat-empty-hero-shell-exiting .chat-empty-hero-glyph-shine,
 .chat-empty-hero-shell-exiting .chat-empty-hero-title {
   animation: none !important;
 }
@@ -1383,6 +1385,45 @@ html.display-standalone[data-keyboard-open="true"]
     infinite;
 }
 
+@keyframes chat-empty-hero-glyph-shell-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.chat-empty-hero-glyph-shell {
+  animation: chat-empty-hero-glyph-shell-in 0.7s cubic-bezier(0.22, 1, 0.36, 1)
+    both;
+}
+
+/* Highlight band clipped to the mark — `px` are viewBox user units (0–69). */
+@keyframes chat-empty-hero-glyph-shine {
+  0% {
+    transform: translateX(0) skewX(-18deg);
+  }
+  45%,
+  100% {
+    transform: translateX(112px) skewX(-18deg);
+  }
+}
+
+.chat-empty-hero-glyph-shine {
+  transform-box: view-box;
+  transform-origin: 34.5px 34.5px;
+  animation: chat-empty-hero-glyph-shine 3.4s cubic-bezier(0.45, 0, 0.55, 1)
+    1s infinite;
+}
+
+[data-gemini-phase="streaming"] .chat-empty-hero-glyph-shine {
+  animation-duration: 1.6s;
+  animation-delay: 0s;
+}
+
 .chat-mobile-gemini-empty .chat-empty-hero-title {
   animation-delay: 0.22s;
 }
@@ -1506,6 +1547,8 @@ html.display-standalone[data-keyboard-open="true"]
   .chat-gemini-horizon-sheen,
   .chat-empty-hero-mark,
   .chat-empty-hero-glyph,
+  .chat-empty-hero-glyph-shell,
+  .chat-empty-hero-glyph-shine,
   .chat-empty-hero-title,
   .chat-empty-hero-shell,
   .chat-skeleton-shimmer::after,
