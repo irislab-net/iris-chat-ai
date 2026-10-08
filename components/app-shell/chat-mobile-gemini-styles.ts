@@ -166,9 +166,13 @@ const chatMobileHeaderShellClass = "absolute inset-x-0 top-0 z-20"
 const chatMobileHeaderScrimClass =
   "pointer-events-none absolute inset-x-0 top-0 -bottom-12 z-0 bg-gradient-to-b from-background from-0% via-background/50 via-45% to-transparent to-100% dark:from-background dark:via-background/55"
 
-/** Floating composer dock — absolute over the thread bottom. */
+/**
+ * Floating composer dock — absolute over the thread bottom.
+ * Solid bottom-chrome fill (no backdrop-filter): Safari 26 samples this edge
+ * for toolbar tint; blur stays on the inner pill only.
+ */
 const chatMobileComposerDockClass =
-  "absolute inset-x-0 bottom-0 z-20 mx-auto w-full bg-transparent"
+  "absolute inset-x-0 bottom-0 z-20 mx-auto w-full bg-[var(--browser-chrome-bottom,var(--browser-chrome-color,var(--background)))]"
 
 /**
  * Soft corner scale:
@@ -186,7 +190,7 @@ const chatMobileAssistantClass =
   "text-[16px] font-normal leading-[1.55] tracking-normal text-foreground [&_p]:mb-3 [&_p:last-child]:mb-0"
 
 const chatMobileComposerShellClass =
-  "relative shrink-0 bg-transparent px-4 pt-1.5 pb-[max(0.375rem,env(safe-area-inset-bottom,0px))]"
+  "relative shrink-0 bg-[var(--browser-chrome-bottom,var(--browser-chrome-color,var(--background)))] px-4 pt-1.5 pb-[max(0.375rem,env(safe-area-inset-bottom,0px))]"
 
 /**
  * Floating composer shell. Radius/padding/gap interpolate so compact↔expanded
@@ -686,7 +690,7 @@ const chatNewsPanelShellClass =
 const chatNewsPanelShellMobileClass = `border-0 ${chatMobileDrawerSurfaceClass}`
 
 const chatNewsPanelHeaderClass =
-  "app-mobile-safe-header relative z-1 flex items-center justify-between gap-2 bg-transparent px-4 pb-2"
+  "app-mobile-safe-header relative z-1 flex items-center justify-between gap-2 bg-[var(--browser-chrome-top,var(--browser-chrome-color,var(--background)))] px-4 pb-2"
 
 /** Desktop news rail header — in-flow with roomy top pad. */
 const chatNewsPanelHeaderDesktopClass =
@@ -721,6 +725,9 @@ const chatNewsGlassChipClass =
 
 export {
   chatMobileAssistantClass,
+  /** Composer-grade iOS 26 liquid frost (reusable for staking amount shell, etc.). */
+  chatMobileComposerGlassClass,
+  chatMobileComposerGlassFocusClass,
   chatMobileComposerIconButtonClass,
   chatMobileComposerIconButtonCompactClass,
   chatMobileComposerVoiceListeningClass,

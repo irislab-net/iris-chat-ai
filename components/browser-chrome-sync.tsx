@@ -130,7 +130,43 @@ function BrowserChromeSync() {
     }
   }, [sync])
 
-  return null
+  // Real fixed edge fills — Safari 26+ samples these for toolbar/status tint
+  // (theme-color meta is ignored). Inline seed styles avoid a transparent
+  // first paint before syncBrowserChromeTheme runs.
+  return (
+    <>
+      <div
+        aria-hidden
+        data-browser-chrome-tint="top"
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          width: "100%",
+          height: 12,
+          zIndex: 40,
+          pointerEvents: "none",
+          backgroundColor: "var(--browser-chrome-top, var(--background))",
+        }}
+      />
+      <div
+        aria-hidden
+        data-browser-chrome-tint="bottom"
+        style={{
+          position: "fixed",
+          bottom: 0,
+          left: 0,
+          right: 0,
+          width: "100%",
+          height: 12,
+          zIndex: 40,
+          pointerEvents: "none",
+          backgroundColor: "var(--browser-chrome-bottom, var(--background))",
+        }}
+      />
+    </>
+  )
 }
 
 export { BrowserChromeSync }

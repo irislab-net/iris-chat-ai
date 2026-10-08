@@ -44,6 +44,9 @@ export const SOCIAL_TELEGRAM_URL = "https://t.me/exur_ai"
 /** Authenticated / public market desk (Launch App target). */
 export const APP_PATH = "/"
 
+/** In-app staking desk (wallet / deposit / withdraw). */
+export const STAKING_PATH = "/staking"
+
 /** Marketing landing path — always `/home` (apex and local). */
 export const LANDING_PATH = "/home"
 

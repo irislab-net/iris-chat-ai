@@ -327,7 +327,15 @@ html[data-app-shell="true"] body {
   overflow: hidden;
   overscroll-behavior: none;
   touch-action: manipulation;
-  background-color: var(--browser-chrome-bottom, var(--background));
+  /*
+   * Safari 26 samples fixed body for chrome tint. A full-viewport blue body
+   * would paint the status bar blue; keep body on the top edge color and let
+   * [data-browser-chrome-tint=bottom] own the toolbar tint.
+   */
+  background-color: var(
+    --browser-chrome-top,
+    var(--browser-chrome-color, var(--background))
+  );
 }
 
 html[data-app-shell="true"] .h-app,
@@ -341,27 +349,42 @@ html[data-keyboard-open="true"] [data-slot="chat-composer"] {
   padding-bottom: 0.625rem;
 }
 
-/* Paint notch + home-indicator gutters to match the page edge they sit against. */
-html[data-app-shell="true"]::before,
-html[data-app-shell="true"]::after {
-  content: "";
+/*
+ * Safari 26+ ignores theme-color and samples fixed/sticky edge fills (≥3px,
+ * ≥80% wide, no backdrop-filter) for status-bar / toolbar tint. In-tab
+ * safe-area insets are often 0px, so gutters must not depend on env() alone.
+ * Home Screen PWAs keep black-translucent + html/body paint instead.
+ */
+html.display-standalone [data-browser-chrome-tint] {
+  display: none;
+}
+
+[data-browser-chrome-tint="top"],
+[data-browser-chrome-tint="bottom"] {
   position: fixed;
   left: 0;
   right: 0;
+  width: 100%;
   z-index: 30;
   pointer-events: none;
 }
 
-html[data-app-shell="true"]::before {
+[data-browser-chrome-tint="top"] {
   top: 0;
-  height: var(--app-safe-top);
-  background-color: var(--browser-chrome-top, var(--browser-chrome-color, var(--background)));
+  height: max(3px, env(safe-area-inset-top, 0px));
+  background-color: var(
+    --browser-chrome-top,
+    var(--browser-chrome-color, var(--background))
+  );
 }
 
-html[data-app-shell="true"]::after {
+[data-browser-chrome-tint="bottom"] {
   bottom: 0;
-  height: var(--app-safe-bottom);
-  background-color: var(--browser-chrome-bottom, var(--browser-chrome-color, var(--background)));
+  height: max(3px, env(safe-area-inset-bottom, 0px));
+  background-color: var(
+    --browser-chrome-bottom,
+    var(--browser-chrome-color, var(--background))
+  );
 }
 
 html.display-standalone {
@@ -394,11 +417,6 @@ html.display-standalone[data-app-shell="true"] body {
   overscroll-behavior: none;
   touch-action: manipulation;
   background-color: var(--browser-chrome-bottom, var(--browser-chrome-color, var(--background)));
-}
-
-html.display-standalone[data-app-shell="true"]::before,
-html.display-standalone[data-app-shell="true"]::after {
-  display: none;
 }
 
 html.display-standalone[data-app-shell="true"] .h-app,

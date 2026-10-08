@@ -95,9 +95,15 @@ const nextConfig: NextConfig = {
         "./lib/lucide-default-attributes.mjs",
       "../build/polyfills/polyfill-module": "./lib/modern-polyfill.js",
       "next/dist/build/polyfills/polyfill-module": "./lib/modern-polyfill.js",
+      // Optional Coinbase CDP x402 payment deps pulled by Reown — unused by staking.
+      "@x402/core/client": "./lib/staking-x402-stub.ts",
+      "@x402/core": "./lib/staking-x402-stub.ts",
+      "@x402/svm/exact/client": "./lib/staking-x402-stub.ts",
+      "@x402/svm": "./lib/staking-x402-stub.ts",
     },
   },
   webpack: (config) => {
+    const stub = join(process.cwd(), "lib/staking-x402-stub.ts")
     config.resolve.alias = {
       ...config.resolve.alias,
       "lucide-react/dist/esm/defaultAttributes.mjs": join(
@@ -112,6 +118,10 @@ const nextConfig: NextConfig = {
         process.cwd(),
         "lib/modern-polyfill.js"
       ),
+      "@x402/core/client": stub,
+      "@x402/core": stub,
+      "@x402/svm/exact/client": stub,
+      "@x402/svm": stub,
     }
     return config
   },

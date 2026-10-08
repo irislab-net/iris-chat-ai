@@ -140,18 +140,19 @@ export function isHorizonWashVisible(): boolean {
   if (typeof document === "undefined") return false
   if (document.documentElement.hasAttribute("data-overlay-open")) return false
 
-  const wash = document.querySelector(
-    ".chat-gemini-bg-visible .chat-gemini-horizon-dome"
+  // Class signal is authoritative — computed opacity is 0 while Gemini CSS is
+  // still lazy-loading or mid-fade, which previously left theme-color stuck on
+  // the flat fallback until (or unless) Safari noticed a later meta update.
+  const layer = document.querySelector(
+    ".chat-gemini-bg.chat-gemini-bg-visible"
   )
-  if (!(wash instanceof HTMLElement)) return false
+  if (!(layer instanceof HTMLElement)) return false
+  if (layer.classList.contains("chat-gemini-bg-hidden")) return false
+  if (!layer.querySelector(".chat-gemini-horizon-dome")) return false
 
-  const layer = wash.closest(".chat-gemini-bg")
-  if (layer instanceof HTMLElement && layer.classList.contains("chat-gemini-bg-hidden")) {
-    return false
-  }
-
-  const style = getComputedStyle(layer instanceof HTMLElement ? layer : wash)
-  return style.visibility !== "hidden" && style.opacity !== "0"
+  const style = getComputedStyle(layer)
+  if (style.visibility === "hidden") return false
+  return true
 }
 
 function readBrowserChromeEdges(theme: BrowserChromeTheme): BrowserChromeEdges {
@@ -184,14 +185,32 @@ function syncAppleStatusBarStyle(_theme: BrowserChromeTheme) {
 }
 
 /**
- * Force theme-color onto every matching meta (incl. media variants).
- * Keep media attributes intact so Next still owns the nodes; only content
- * is rewritten so iOS Safari toolbar / Android status bar stay in sync.
+ * Sync theme-color for browser chrome.
+ * iOS Safari often ignores in-place `content` updates (and media-qualified
+ * tags) after the first paint — replace with one unconditional meta when the
+ * color changes so the toolbar actually retints.
  */
 function syncThemeColorMeta(color: string) {
   if (typeof document === "undefined") return
 
   const existing = document.querySelectorAll('meta[name="theme-color"]')
+
+  if (prefersToolbarThemeColor()) {
+    const sole = existing.length === 1 ? existing[0] : null
+    const alreadyApplied =
+      sole !== null &&
+      !sole.hasAttribute("media") &&
+      sole.getAttribute("content") === color
+    if (alreadyApplied) return
+
+    for (const node of existing) node.remove()
+    const meta = document.createElement("meta")
+    meta.setAttribute("name", "theme-color")
+    meta.setAttribute("content", color)
+    document.head.appendChild(meta)
+    return
+  }
+
   if (existing.length === 0) {
     const meta = document.createElement("meta")
     meta.setAttribute("name", "theme-color")
@@ -223,6 +242,51 @@ export function syncDocumentColorScheme(theme: BrowserChromeTheme) {
   meta.setAttribute("content", theme)
 }
 
+/**
+ * Safari 26+ ignores theme-color and samples fixed edge fills. Drive height +
+ * solid background via inline styles so tint works before CSS lands and is not
+ * wiped by transparent / backdrop-filter siblings at the viewport edge.
+ */
+function applySafariEdgeTintStrips(edges: BrowserChromeEdges) {
+  if (typeof document === "undefined") return
+  if (isStandaloneDisplay()) return
+
+  const specs: Array<{
+    edge: "top" | "bottom"
+    color: string
+  }> = [
+    { edge: "top", color: edges.top },
+    { edge: "bottom", color: edges.bottom },
+  ]
+
+  for (const { edge, color } of specs) {
+    const node = document.querySelector(
+      `[data-browser-chrome-tint="${edge}"]`
+    )
+    if (!(node instanceof HTMLElement)) continue
+    node.style.position = "fixed"
+    node.style.left = "0"
+    node.style.right = "0"
+    node.style.width = "100%"
+    node.style.zIndex = "40"
+    node.style.pointerEvents = "none"
+    node.style.backgroundImage = "none"
+    node.style.backdropFilter = "none"
+    node.style.setProperty("-webkit-backdrop-filter", "none")
+    // ≥3px required; 12px stays sampleable with device pixel rounding.
+    node.style.height = "12px"
+    node.style.minHeight = "12px"
+    node.style.backgroundColor = color
+    if (edge === "top") {
+      node.style.top = "0"
+      node.style.bottom = "auto"
+    } else {
+      node.style.bottom = "0"
+      node.style.top = "auto"
+    }
+  }
+}
+
 function applyBrowserChromeEdges(edges: BrowserChromeEdges) {
   if (typeof document === "undefined") return
 
@@ -230,6 +294,7 @@ function applyBrowserChromeEdges(edges: BrowserChromeEdges) {
   root.style.setProperty("--browser-chrome-top", edges.top)
   root.style.setProperty("--browser-chrome-bottom", edges.bottom)
   syncThemeColorMeta(themeColorForEdges(edges))
+  applySafariEdgeTintStrips(edges)
 }
 
 /** Sync CSS chrome tokens + theme-color after hydration / theme / page-edge changes. */
@@ -241,10 +306,142 @@ export function syncBrowserChromeTheme(resolvedTheme: string | undefined) {
     : readThemeFromDocument()
   const color = BROWSER_CHROME_COLORS[theme]
   const root = document.documentElement
+  const horizonVisible = isHorizonWashVisible()
   const edges = readBrowserChromeEdges(theme)
+  const themeColor = themeColorForEdges(edges)
+  const iosToolbar = prefersToolbarThemeColor()
 
   syncDocumentColorScheme(theme)
   root.style.setProperty("--browser-chrome-color", color)
   applyBrowserChromeEdges(edges)
   syncAppleStatusBarStyle(theme)
+
+  // #region agent log
+  {
+    const metas = Array.from(
+      document.querySelectorAll('meta[name="theme-color"]')
+    ).map((node) => ({
+      content: node.getAttribute("content"),
+      media: node.getAttribute("media"),
+    }))
+    const apple = document
+      .querySelector('meta[name="apple-mobile-web-app-status-bar-style"]')
+      ?.getAttribute("content")
+    const htmlBg = getComputedStyle(root).backgroundColor
+    const bodyBg = document.body
+      ? getComputedStyle(document.body).backgroundColor
+      : null
+    const safeTop = getComputedStyle(root).getPropertyValue("--app-safe-top")
+    const safeBottom = getComputedStyle(root).getPropertyValue(
+      "--app-safe-bottom"
+    )
+    let safeAreaProbeTop = null as string | null
+    let safeAreaProbeBottom = null as string | null
+    if (document.body) {
+      const probe = document.createElement("div")
+      probe.setAttribute("aria-hidden", "true")
+      probe.style.cssText =
+        "position:absolute;width:0;height:0;overflow:hidden;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)"
+      document.body.appendChild(probe)
+      const probeStyle = getComputedStyle(probe)
+      safeAreaProbeTop = probeStyle.paddingTop
+      safeAreaProbeBottom = probeStyle.paddingBottom
+      probe.remove()
+    }
+    const payload = {
+      sessionId: "649b23",
+      runId: "post-fix-safari26-inline",
+      hypothesisId: "G,H",
+      location: "lib/browser-chrome.ts:syncBrowserChromeTheme",
+      message: "browser chrome sync",
+      data: {
+        path: window.location.pathname,
+        host: window.location.host,
+        protocol: window.location.protocol,
+        isSecureContext: window.isSecureContext,
+        theme,
+        resolvedTheme: resolvedTheme ?? null,
+        horizonVisible,
+        edges,
+        themeColor,
+        iosToolbar,
+        standalone: isStandaloneDisplay(),
+        appShell: root.getAttribute("data-app-shell"),
+        htmlClass: root.className,
+        htmlBg,
+        bodyBg,
+        cssChromeTop: root.style.getPropertyValue("--browser-chrome-top"),
+        cssChromeBottom: root.style.getPropertyValue(
+          "--browser-chrome-bottom"
+        ),
+        safeTop,
+        safeBottom,
+        safeAreaProbeTop,
+        safeAreaProbeBottom,
+        tintTop: Boolean(
+          document.querySelector('[data-browser-chrome-tint="top"]')
+        ),
+        tintBottom: Boolean(
+          document.querySelector('[data-browser-chrome-tint="bottom"]')
+        ),
+        tintTopH: (() => {
+          const el = document.querySelector(
+            '[data-browser-chrome-tint="top"]'
+          )
+          return el instanceof HTMLElement
+            ? getComputedStyle(el).height
+            : null
+        })(),
+        tintBottomH: (() => {
+          const el = document.querySelector(
+            '[data-browser-chrome-tint="bottom"]'
+          )
+          return el instanceof HTMLElement
+            ? getComputedStyle(el).height
+            : null
+        })(),
+        tintTopBg: (() => {
+          const el = document.querySelector(
+            '[data-browser-chrome-tint="top"]'
+          )
+          return el instanceof HTMLElement
+            ? getComputedStyle(el).backgroundColor
+            : null
+        })(),
+        tintBottomBg: (() => {
+          const el = document.querySelector(
+            '[data-browser-chrome-tint="bottom"]'
+          )
+          return el instanceof HTMLElement
+            ? getComputedStyle(el).backgroundColor
+            : null
+        })(),
+        themeColorMetaCount: metas.length,
+        themeColorHasMedia: metas.some((m) => Boolean(m.media)),
+        metas,
+        apple,
+        ua: navigator.userAgent.slice(0, 160),
+      },
+      timestamp: Date.now(),
+    }
+    const body = JSON.stringify(payload)
+    // Same-origin proxy works from phone WiFi; localhost ingest only from desktop.
+    fetch("/api/debug-session-log", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body,
+    }).catch(() => {})
+    fetch(
+      "http://127.0.0.1:7720/ingest/3be29a1b-f239-4020-9d2c-1ec85b598a76",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Debug-Session-Id": "649b23",
+        },
+        body,
+      }
+    ).catch(() => {})
+  }
+  // #endregion
 }
