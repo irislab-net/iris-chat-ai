@@ -53,7 +53,7 @@ function ChatComposerSkeleton({ className }: { className?: string }) {
 }
 
 function ChatMobileHeaderSkeleton() {
-  // Mirrors ChatMobileHeader empty state: menu + effort pill | account (48pt).
+  // Mirrors ChatMobileHeader empty state: menu + effort | staking + account (44pt).
   return (
     <div className={chatMobileHeaderShellClass}>
       <div aria-hidden className={chatMobileHeaderScrimClass} />
@@ -62,8 +62,9 @@ function ChatMobileHeaderSkeleton() {
           <Bone stagger={1} className="size-11 shrink-0 rounded-full" />
           <Bone stagger={1} className="ms-1 h-6 w-28 shrink-0 rounded-full" />
         </div>
-        <div className="flex shrink-0 items-center justify-end">
-          <Bone stagger={1} className="size-12 shrink-0 rounded-full" />
+        <div className="flex h-11 shrink-0 items-center justify-end gap-2">
+          <Bone stagger={1} className="h-9 w-16 shrink-0 rounded-full" />
+          <Bone stagger={1} className="size-11 shrink-0 rounded-full" />
         </div>
       </header>
     </div>
@@ -80,7 +81,7 @@ function ChatMobileEmptyHeroSkeleton() {
     >
       <div className="mx-auto w-full max-w-3xl">
         <div className={chatMobileEmptyHeroContentClass}>
-          <Bone stagger={1} className="size-16 shrink-0 rounded-full" />
+          <Bone stagger={1} className="size-14 shrink-0 rounded-full" />
           <Bone
             stagger={2}
             className="h-8 w-[min(16rem,72%)] max-w-64 rounded-full"

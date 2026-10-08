@@ -253,7 +253,7 @@ function ChatComposer({
 
   /** Behind-composer tools list — same row chrome as `/` mention listbox. */
   const toolsRows = (
-    <ul className="flex flex-col gap-0.5 px-3 pb-2 pt-0.5">
+    <ul className="flex flex-col gap-0.5 px-4 pb-2 pt-0.5">
       {visibleMentionOptions.map((option) => (
         <li key={option.id}>
           <button
@@ -1223,7 +1223,7 @@ function ChatComposer({
   ])
 
   const floatingMentionList = (
-    <ul className="flex flex-col gap-0.5 px-3 pb-2 pt-0.5">
+    <ul className="flex flex-col gap-0.5 px-4 pb-2 pt-0.5">
       {paletteTools.map((tool, index) => {
         const Icon =
           tool.id === "correlation"
@@ -1324,7 +1324,7 @@ function ChatComposer({
             style={{ paddingBottom: composerDockHeight }}
           >
             <div className={chatMobileSheetHandleClass} aria-hidden />
-            <p className={cn(chatMobileToolsMenuLabelClass, "px-5")}>
+            <p className={cn(chatMobileToolsMenuLabelClass, "px-7")}>
               {floatingToolsBehind
                 ? t("composerToolsMenu")
                 : t("composerMentionMenu")}
@@ -1434,9 +1434,9 @@ function ChatComposer({
                     }
                   >
                     {toolsSheetOpen ? (
-                      <XIcon className="size-5" />
+                      <XIcon className="size-6" strokeWidth={1.35} />
                     ) : (
-                      <PlusIcon className="size-5" />
+                      <PlusIcon className="size-6" strokeWidth={1.35} />
                     )}
                   </Button>
                 </ActionTooltip>

@@ -12,6 +12,8 @@
     var root = document.documentElement
     root.style.setProperty("color-scheme", scheme, "important")
     root.style.setProperty("--browser-chrome-color", color)
+    root.style.setProperty("--browser-chrome-top", color)
+    root.style.setProperty("--browser-chrome-bottom", color)
 
     var colorSchemeMeta = document.querySelector('meta[name="color-scheme"]')
     if (!colorSchemeMeta) {

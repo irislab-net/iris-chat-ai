@@ -24,6 +24,7 @@ import {
   chatMobileSheetTitleClass,
 } from "@/components/app-shell/chat-mobile-gemini-styles"
 import { ChatAccountMenu } from "@/components/app-shell/chat-account-menu"
+import { ChatMobileStakingButton } from "@/components/app-shell/chat-mobile-staking-button"
 import { ChatThreadOptionsMenu } from "@/components/app-shell/chat-thread-toolbar"
 import { Button } from "@/components/ui/button"
 import {
@@ -217,7 +218,7 @@ function ChatMobileHeader({
         </div>
 
         <motion.div
-          className="flex shrink-0 items-center justify-end"
+          className="flex h-11 shrink-0 items-center justify-end gap-2 overflow-visible"
           transition={trailingSpring}
         >
           <AnimatePresence initial={false} mode="popLayout">
@@ -256,7 +257,9 @@ function ChatMobileHeader({
             ) : null}
           </AnimatePresence>
 
-          <div className="relative size-12 shrink-0 overflow-visible">
+          <ChatMobileStakingButton />
+
+          <div className="relative size-11 shrink-0 overflow-visible">
             <AnimatePresence initial={false} mode="wait">
               {showThreadChrome && threadMenu ? (
                 <motion.div

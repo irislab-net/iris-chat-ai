@@ -72,13 +72,17 @@ const chatMobileHeaderCircleClass = `rounded-full ${chatMobileGlassSurfaceClass}
  * 44×44 pt hit target, ~22 pt symbol, ~11 pt optical padding.
  */
 /**
- * Mobile nav-bar circles — Gemini header buttons: near-flat white frost,
- * crisp neutral hairline rim, top specular, barely-there lift.
+ * Mobile nav-bar circles — Gemini: near-opaque white liquid glass that pops
+ * on the cool gray sky (not washed-out frost). Keep specular via ios26 class;
+ * do NOT compose the translucent `chatMobileGlassSurfaceClass` fill.
  */
 const chatMobileHeaderWhiteGlassClass =
-  "border-[rgba(15,23,42,0.1)] bg-white/88 supports-[backdrop-filter]:bg-white/76 shadow-[inset_0_1px_0_0_rgba(255,255,255,1),inset_0_-6px_12px_-10px_rgba(15,23,42,0.06),0_1px_2px_rgba(15,23,42,0.04)] hover:border-[rgba(15,23,42,0.14)] hover:bg-white hover:shadow-[inset_0_1px_0_0_rgba(255,255,255,1),inset_0_-6px_12px_-10px_rgba(15,23,42,0.05),0_2px_6px_-2px_rgba(15,23,42,0.08)]"
+  "chat-ios26-liquid-glass relative isolate overflow-hidden border-0 bg-white/92 supports-[backdrop-filter]:bg-white/88 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.95),0_1px_2px_rgba(15,23,42,0.05),0_6px_16px_-6px_rgba(15,23,42,0.14),0_14px_32px_-12px_rgba(15,23,42,0.16)] hover:bg-white hover:shadow-[inset_0_1px_0_0_rgba(255,255,255,1),0_2px_6px_-1px_rgba(15,23,42,0.07),0_12px_28px_-10px_rgba(15,23,42,0.18)]"
 
-const chatMobileHeaderButtonClass = `size-11 shrink-0 ${chatMobileHeaderCircleClass} ${chatMobileHeaderShadowHoverClass} ${chatMobileHeaderWhiteGlassClass} [&_svg:not([class*='size-'])]:size-[22px] [&_svg]:stroke-[1.7]`
+const chatMobileHeaderWhiteCircleClass =
+  "rounded-full text-foreground transition-[transform,background-color,box-shadow,border-color] duration-150 ease-out active:scale-[0.96]"
+
+const chatMobileHeaderButtonClass = `size-11 shrink-0 ${chatMobileHeaderWhiteCircleClass} ${chatMobileHeaderWhiteGlassClass} [&_svg:not([class*='size-'])]:size-[22px] [&_svg]:stroke-[1.7]`
 
 /** Desktop sidebar glass icon — matches history rail (36×36, 16 pt symbol). */
 const chatDesktopSidebarIconButtonClass = `size-9 shrink-0 ${chatMobileHeaderCircleClass} ${chatMobileHeaderShadowHoverClass} [&_svg:not([class*='size-'])]:size-4 [&_svg]:stroke-[1.75]`
@@ -90,12 +94,14 @@ const chatMobileHeaderNewChatClass = chatMobileHeaderButtonClass
  * `overflow-visible` must come after the glass circle so it wins twMerge —
  * otherwise liquid-glass `overflow-hidden` clips the hanging plan badge.
  */
-const chatMobileHeaderAvatarButtonClass = `flex size-12 shrink-0 items-center justify-center p-0 ${chatMobileHeaderCircleClass} ${chatMobileHeaderShadowHoverClass} ${chatMobileHeaderWhiteGlassClass} overflow-visible`
+const chatMobileHeaderAvatarButtonClass = `flex size-11 shrink-0 items-center justify-center p-0 ${chatMobileHeaderWhiteCircleClass} ${chatMobileHeaderWhiteGlassClass} overflow-visible`
 
-const chatMobileHeaderAvatarClass = "size-10 after:border-0 ring-0"
+/** Inner avatar — sits inside the white liquid-glass header disc. */
+const chatMobileHeaderAvatarClass =
+  "size-9 border-0 shadow-none ring-0 after:border-0"
 
 const chatMobileHeaderPlanBadgeClass =
-  "h-3.5 translate-y-[48%] px-1.5 text-[8px] font-semibold shadow-[0_1px_2px_color-mix(in_oklch,var(--foreground)_8%,transparent)]"
+  "bottom-0 h-3.5 min-w-0 translate-y-[28%] border-0 bg-[#1C1C1E] px-1 text-[8px] font-medium leading-none tracking-[0.02em] text-white shadow-[0_2px_8px_-2px_rgba(0,0,0,0.35)] dark:bg-white dark:text-[#1C1C1E]"
 
 /** Glass capsule (effort / chips) — same 44 pt height as icon buttons, 16 pt side inset. */
 const chatMobileHeaderModelClass = `inline-flex h-11 shrink-0 items-center gap-2 rounded-full px-4 text-[15px] font-medium tracking-[-0.015em] text-foreground ${chatMobileGlassSurfaceClass} ${chatMobileHeaderShadowHoverClass} transition-[transform,background-color,box-shadow,border-color] active:scale-[0.98] [&_svg:not([class*='size-'])]:size-[18px] [&_svg]:opacity-65 [&_svg]:text-foreground`
@@ -263,9 +269,9 @@ const chatMobileComposerSendClass =
 const chatComposerSendIdleNeutralClass =
   "size-11 shrink-0 overflow-hidden rounded-full border-0 bg-[rgba(118,118,128,0.12)] text-muted-foreground shadow-none transition-[transform,background-color] duration-150 ease-out hover:bg-[rgba(118,118,128,0.16)] active:scale-[0.92] disabled:pointer-events-none disabled:opacity-100 dark:bg-[rgba(118,118,128,0.24)] dark:hover:bg-[rgba(118,118,128,0.28)] [&_svg:not([class*='size-'])]:size-[18px] [&_svg]:stroke-[2.25]"
 
-/** Mobile idle send — soft sky-blue disc (Gemini trailing control). */
+/** Mobile idle send — soft sky-blue disc, thin black arrow (Gemini trailing). */
 const chatMobileComposerSendIdleClass =
-  "size-11 shrink-0 overflow-hidden rounded-full border-0 bg-[#DCEBFE] text-[#2563EB]/75 shadow-none transition-[transform,background-color,color] duration-200 ease-out active:scale-[0.92] disabled:pointer-events-none disabled:opacity-100 dark:bg-[#2563EB]/22 dark:text-[#93C5FD]/80 [&_svg:not([class*='size-'])]:size-[18px] [&_svg]:stroke-[2.25]"
+  "size-11 shrink-0 overflow-hidden rounded-full border-0 bg-[#DCEBFE] text-[#1C1C1E]/72 shadow-none transition-[transform,background-color,color] duration-200 ease-out active:scale-[0.92] disabled:pointer-events-none disabled:opacity-100 dark:bg-[#2563EB]/22 dark:text-white/75 [&_svg:not([class*='size-'])]:size-[18px] [&_svg]:stroke-[1.4]"
 
 /** Desktop send — same glassProminent circle as mobile. */
 const chatDesktopComposerSendClass = chatMobileComposerSendClass
@@ -306,12 +312,12 @@ const chatSamplePromptCarouselDotsClass =
 const chatSamplePromptStaticListClass =
   "mx-auto hidden w-full max-w-2xl grid-cols-1 gap-2 lg:grid lg:grid-cols-2"
 
-/** Plain icon controls — 44pt hit target (HIG minimum). */
+/** Plain icon controls — 44pt hit target; thin rounded glyph (Gemini +). */
 const chatMobileComposerIconButtonClass =
-  `size-11 shrink-0 rounded-full text-muted-foreground transition-[color,background-color,transform] duration-150 ease-out ${chatHoverFillClass} ${chatPressFillClass} hover:text-foreground active:scale-[0.96] [&_svg:not([class*='size-'])]:size-[22px] [&_svg]:stroke-[1.75]`
+  `size-11 shrink-0 rounded-full text-foreground/55 transition-[color,background-color,transform] duration-150 ease-out ${chatHoverFillClass} ${chatPressFillClass} hover:text-foreground active:scale-[0.96] [&_svg:not([class*='size-'])]:size-6 [&_svg]:stroke-[1.35] [&_svg]:stroke-linecap-round [&_svg]:stroke-linejoin-round`
 
 const chatMobileComposerIconButtonCompactClass =
-  `size-11 shrink-0 rounded-full text-muted-foreground transition-[color,background-color,transform] duration-150 ease-out ${chatHoverFillClass} ${chatPressFillClass} hover:text-foreground active:scale-[0.96] [&_svg:not([class*='size-'])]:size-[22px] [&_svg]:stroke-[1.75]`
+  `size-11 shrink-0 rounded-full text-foreground/55 transition-[color,background-color,transform] duration-150 ease-out ${chatHoverFillClass} ${chatPressFillClass} hover:text-foreground active:scale-[0.96] [&_svg:not([class*='size-'])]:size-6 [&_svg]:stroke-[1.35] [&_svg]:stroke-linecap-round [&_svg]:stroke-linejoin-round`
 
 /** Hold-to-speak active — primary liquid-glass disc (same family as accent CTAs). */
 const chatMobileComposerVoiceListeningClass =
@@ -378,6 +384,11 @@ const chatMobileDrawerUpgradeClass = `h-11 shrink-0 rounded-full px-5 text-[15px
 
 /** Compact upgrade pill — history rail, chat header, thread toolbar. */
 const chatUpgradePillClass = `h-9 shrink-0 rounded-full px-3.5 text-[13px] font-medium ${chatLandingAccentFillClass}`
+
+/**
+ * Mobile header Staking CTA — liquid glass pill (36 pt, shorter than nav discs).
+ */
+const chatMobileHeaderStakingClass = `relative z-10 inline-flex h-9 shrink-0 items-center justify-center rounded-full px-3.5 text-[13px] font-light tracking-[-0.01em] text-foreground ${chatMobileHeaderWhiteGlassClass} active:scale-[0.96]`
 
 const chatHistoryRailUpgradeClass = chatUpgradePillClass
 
@@ -619,9 +630,9 @@ const chatLoginConsentBrandMarkClass = `flex size-10 shrink-0 items-center justi
 const chatMobileToolsMenuClass =
   "z-60 min-w-60 max-w-[min(100vw-1.5rem,20rem)]"
 
-/** Section label — Caption 2, sentence case (iOS 26). */
+/** Section label — Caption 2, light weight, sentence case. */
 const chatMobileToolsMenuLabelClass =
-  "px-3 pb-1 pt-1.5 text-[11px] font-medium leading-3.25 tracking-[0.006em] text-muted-foreground"
+  "px-3 pb-1 pt-1.5 text-[11px] font-light leading-3.25 tracking-[0.006em] text-muted-foreground"
 
 /** Nested menu row — concentric ≈ 34 − 10 padding → 20–22pt continuous. */
 const chatMobileToolsMenuItemClass =
@@ -768,6 +779,7 @@ export {
   chatThreadConnectButtonClass,
   chatThreadUpgradeClass,
   chatUpgradePillClass,
+  chatMobileHeaderStakingClass,
   chatDesktopSidebarIconButtonClass,
   chatMobileHeaderButtonClass,
   chatMobileHeaderShellClass,

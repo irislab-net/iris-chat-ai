@@ -2,8 +2,7 @@
 
 import { useTranslations } from "next-intl"
 
-import { chatMobileGlassSurfaceClass } from "@/components/app-shell/chat-mobile-gemini-styles"
-import { SfPersonCircleIcon } from "@/components/icons/sf-menu-icons"
+import { SfPersonIcon } from "@/components/icons/sf-menu-icons"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { displayPlanName } from "@/lib/billing/catalog"
@@ -81,7 +80,7 @@ type ChatGuestAvatarProps = {
   badgeClassName?: string
 }
 
-/** Guest session avatar — liquid-glass disc + person icon (no brand mark). */
+/** Guest session avatar — muted disc + user silhouette (no outline ring). */
 function ChatGuestAvatar({
   className,
   avatarClassName,
@@ -95,16 +94,14 @@ function ChatGuestAvatar({
     <span className={cn("relative inline-flex shrink-0", className)}>
       <Avatar
         className={cn(
-          "size-8 after:border-0",
-          chatMobileGlassSurfaceClass,
-          "border-0",
+          "size-8 border-0 bg-[var(--horizon-chrome-top,#f5f5f5)] after:border-0 dark:bg-muted",
           avatarClassName
         )}
       >
-        <AvatarFallback className="bg-transparent text-foreground">
-          <SfPersonCircleIcon
-            className={cn("size-[88%]", iconClassName)}
-            strokeWidth={1}
+        <AvatarFallback className="bg-[var(--horizon-chrome-top,#f5f5f5)] text-foreground/70 dark:bg-muted dark:text-muted-foreground">
+          <SfPersonIcon
+            className={cn("size-[72%]", iconClassName)}
+            strokeWidth={1.1}
             aria-hidden
           />
         </AvatarFallback>

@@ -27,10 +27,10 @@ export function IrisMark({
     return (
       <span
         className={cn(
-          "chat-empty-hero-glyph-shell chat-ios26-liquid-glass relative isolate inline-flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-full p-2",
-          "border border-white/70 bg-white/72 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.95),inset_0_0_0_0.5px_rgba(255,255,255,0.6),inset_0_-10px_18px_-12px_rgba(15,23,42,0.12),0_1px_2px_rgba(15,23,42,0.04),0_14px_36px_-14px_rgba(37,99,235,0.28)]",
-          "backdrop-blur-xl backdrop-saturate-[180%] supports-backdrop-filter:bg-white/56",
-          "dark:border-white/16 dark:bg-white/12 dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.3),inset_0_0_0_0.5px_rgba(255,255,255,0.14),inset_0_-12px_22px_-12px_rgba(0,0,0,0.5),0_14px_40px_-16px_rgba(37,99,235,0.4)] dark:supports-backdrop-filter:bg-white/8",
+          "chat-empty-hero-glyph-shell chat-ios26-liquid-glass relative isolate inline-flex size-14 shrink-0 items-center justify-center overflow-hidden rounded-full p-1",
+          "border-0 bg-white/70 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.98),0_1px_2px_rgba(15,23,42,0.04),0_12px_28px_-12px_rgba(37,99,235,0.22)]",
+          "backdrop-blur-xl backdrop-saturate-[180%] supports-backdrop-filter:bg-white/48",
+          "dark:bg-white/12 dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.3),inset_0_-12px_22px_-12px_rgba(0,0,0,0.5),0_14px_40px_-16px_rgba(37,99,235,0.4)] dark:supports-backdrop-filter:bg-white/8",
           className
         )}
       >
@@ -55,7 +55,7 @@ export function IrisMark({
               y2="0"
             >
               <stop stopColor="#FFFFFF" stopOpacity="0" />
-              <stop offset="0.5" stopColor="#FFFFFF" stopOpacity="0.9" />
+              <stop offset="0.5" stopColor="#FFFFFF" stopOpacity="0.85" />
               <stop offset="1" stopColor="#FFFFFF" stopOpacity="0" />
             </linearGradient>
             <linearGradient
@@ -65,9 +65,9 @@ export function IrisMark({
               x2="1"
               y2="0"
             >
-              <stop stopColor="#93C5FD" stopOpacity="0" />
-              <stop offset="0.5" stopColor="#93C5FD" stopOpacity="0.95" />
-              <stop offset="1" stopColor="#93C5FD" stopOpacity="0" />
+              <stop stopColor="#E0F2FE" stopOpacity="0" />
+              <stop offset="0.5" stopColor="#E0F2FE" stopOpacity="0.9" />
+              <stop offset="1" stopColor="#E0F2FE" stopOpacity="0" />
             </linearGradient>
             <linearGradient
               id={`exur-glyph-black-${gradientId}`}

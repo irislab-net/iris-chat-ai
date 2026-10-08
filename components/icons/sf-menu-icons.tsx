@@ -78,6 +78,16 @@ function SfPersonCircleIcon({ className, ...props }: SfIconProps) {
   )
 }
 
+/** SF-style person.fill — head + shoulders, no outline circle. */
+function SfPersonIcon({ className, ...props }: SfIconProps) {
+  return (
+    <SfIcon className={className} {...props}>
+      <circle cx="12" cy="8.6" r="3.1" />
+      <path d="M5.6 19.2c1.1-3.2 3.4-4.8 6.4-4.8s5.3 1.6 6.4 4.8" />
+    </SfIcon>
+  )
+}
+
 /** SF-style person.2 — switch / multi-account */
 function SfSwitchAccountIcon({ className, ...props }: SfIconProps) {
   return (
@@ -345,6 +355,7 @@ export {
   SfNewspaperIcon,
   SfPencilIcon,
   SfPersonCircleIcon,
+  SfPersonIcon,
   SfPinIcon,
   SfPinSlashIcon,
   SfQuestionCircleIcon,

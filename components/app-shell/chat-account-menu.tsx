@@ -113,7 +113,7 @@ function ChatAccountMenu({
       >
         <ChatGuestAvatar
           avatarClassName={chatMobileHeaderAvatarClass}
-          badgeClassName={chatMobileHeaderPlanBadgeClass}
+          showBadge={false}
         />
       </Button>
     ) : (

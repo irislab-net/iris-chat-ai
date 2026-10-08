@@ -101,6 +101,11 @@
     --app-offset-top: 0px;
     --keyboard-inset-bottom: 0px;
     --browser-chrome-color: #ffffff;
+    --browser-chrome-top: var(--browser-chrome-color);
+    --browser-chrome-bottom: var(--browser-chrome-color);
+    /* Keep in sync with `.chat-gemini-horizon-dome` stops in chat-gemini.css. */
+    --horizon-chrome-top: #f5f5f5;
+    --horizon-chrome-bottom: #9cd1fd;
     --app-safe-top: env(safe-area-inset-top, 0px);
     --app-safe-bottom: env(safe-area-inset-bottom, 0px);
     --mobile-toolbar-height: calc(3rem + var(--app-safe-top));
@@ -108,6 +113,8 @@
 
 .dark {
     --browser-chrome-color: #0a0a0a;
+    --horizon-chrome-top: var(--background);
+    --horizon-chrome-bottom: color-mix(in oklab, #1d4ed8 42%, var(--background));
     --background: oklch(0.145 0 0);
     --foreground: oklch(0.985 0 0);
     --card: oklch(0.205 0 0);
@@ -160,7 +167,8 @@
     display: none;
   }
   html {
-    @apply bg-background font-sans;
+    @apply font-sans;
+    background-color: var(--browser-chrome-top, var(--browser-chrome-color, var(--background)));
     color-scheme: light;
   }
   html.dark {
@@ -168,7 +176,7 @@
   }
   body {
     @apply text-foreground;
-    background-color: var(--browser-chrome-color, var(--background));
+    background-color: var(--browser-chrome-bottom, var(--browser-chrome-color, var(--background)));
   }
   button:not(:disabled), [role="button"]:not(:disabled) {
     cursor: pointer;
@@ -303,7 +311,7 @@
 html[data-app-shell="true"] {
   height: 100%;
   overflow: hidden;
-  background-color: var(--browser-chrome-color, var(--background));
+  background-color: var(--browser-chrome-top, var(--browser-chrome-color, var(--background)));
 }
 
 html[data-app-shell="true"] body {
@@ -319,7 +327,7 @@ html[data-app-shell="true"] body {
   overflow: hidden;
   overscroll-behavior: none;
   touch-action: manipulation;
-  background-color: var(--background);
+  background-color: var(--browser-chrome-bottom, var(--background));
 }
 
 html[data-app-shell="true"] .h-app,
@@ -333,7 +341,7 @@ html[data-keyboard-open="true"] [data-slot="chat-composer"] {
   padding-bottom: 0.625rem;
 }
 
-/* Paint notch + home-indicator gutters with app background in mobile browsers. */
+/* Paint notch + home-indicator gutters to match the page edge they sit against. */
 html[data-app-shell="true"]::before,
 html[data-app-shell="true"]::after {
   content: "";
@@ -342,17 +350,18 @@ html[data-app-shell="true"]::after {
   right: 0;
   z-index: 30;
   pointer-events: none;
-  background-color: var(--browser-chrome-color, var(--background));
 }
 
 html[data-app-shell="true"]::before {
   top: 0;
   height: var(--app-safe-top);
+  background-color: var(--browser-chrome-top, var(--browser-chrome-color, var(--background)));
 }
 
 html[data-app-shell="true"]::after {
   bottom: 0;
   height: var(--app-safe-bottom);
+  background-color: var(--browser-chrome-bottom, var(--browser-chrome-color, var(--background)));
 }
 
 html.display-standalone {
@@ -362,7 +371,7 @@ html.display-standalone {
   min-height: 100%;
   min-height: 100lvh;
   overflow: hidden;
-  background-color: var(--browser-chrome-color, var(--background));
+  background-color: var(--browser-chrome-top, var(--browser-chrome-color, var(--background)));
   --app-height: 100vh;
   --app-height: 100dvh;
   --app-height: 100lvh;
@@ -384,7 +393,7 @@ html.display-standalone[data-app-shell="true"] body {
   overflow: hidden;
   overscroll-behavior: none;
   touch-action: manipulation;
-  background-color: var(--browser-chrome-color, var(--background));
+  background-color: var(--browser-chrome-bottom, var(--browser-chrome-color, var(--background)));
 }
 
 html.display-standalone[data-app-shell="true"]::before,
@@ -919,6 +928,55 @@ html.display-standalone[data-app-shell="true"] [data-slot="sheet-content"] .app-
   animation: exur-logo-shimmer 2.8s ease-in-out infinite;
 }
 
+/* Staking CTA — thin 1px gradient rim (aligned), soft fade + slow spin. */
+@keyframes chat-staking-rim-fade {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes chat-staking-rim-spin {
+  to {
+    rotate: 360deg;
+  }
+}
+
+.chat-staking-rim-glow {
+  --staking-red: #ff8947;
+  --staking-blue: #b5e7fa;
+  --staking-purple: #9896ff;
+  --staking-green: #63bbb6;
+  --staking-yellow: #ffd631;
+  animation: chat-staking-rim-fade 3.6s ease-in-out infinite;
+  box-shadow: 0 0 10px 0.5px color-mix(in oklab, var(--staking-purple) 45%, transparent);
+}
+
+.chat-staking-rim-spin {
+  background: conic-gradient(
+    from 0deg at 50% 50%,
+    var(--staking-red) 0deg,
+    var(--staking-blue) 124.43deg,
+    var(--staking-purple) 179.13deg,
+    var(--staking-green) 233.53deg,
+    var(--staking-yellow) 308.53deg,
+    var(--staking-red) 364.52deg
+  );
+  animation: chat-staking-rim-spin 4.5s linear infinite;
+}
+
+.dark .chat-staking-rim-glow {
+  box-shadow: 0 0 12px 0.5px color-mix(in oklab, var(--staking-blue) 50%, transparent);
+}
+
+.group\/staking:hover .chat-staking-rim-glow {
+  animation: none;
+  opacity: 1;
+}
+
 /* ChatGPT-style live thinking label shimmer */
 @keyframes chat-thinking-shimmer {
   0% {
@@ -1001,10 +1059,16 @@ html.display-standalone[data-app-shell="true"] [data-slot="sheet-content"] .app-
 
 @media (prefers-reduced-motion: reduce) {
   .animate-exur-logo-shimmer,
+  .chat-staking-rim-glow,
+  .chat-staking-rim-spin,
   .animate-ios-step-icon-share,
   .animate-ios-step-icon-add,
   .animate-ios-step-icon-check {
     animation: none;
+  }
+
+  .chat-staking-rim-glow {
+    opacity: 0.7;
   }
 }
 

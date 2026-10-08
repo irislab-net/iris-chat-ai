@@ -673,6 +673,7 @@
     "guestTrialExhaustedPrompt": "لتقديم تحليل أعمق وحفظ تفضيلاتك السوقية، يحتاج Exur إلى جلسة مؤمّنة. سجّل الدخول عبر Google للمتابعة.",
     "guestChatUpstreamUnreachable": "Exur غير متاح مؤقتًا. أعد المحاولة بعد قليل، أو سجّل الدخول للمتابعة.",
     "upgrade": "ترقية",
+    "staking": "Staking",
     "upgradeToPlus": "الترقية إلى Plus",
     "billing": "الفوترة",
     "help": "المساعدة",

@@ -220,10 +220,6 @@ export default async function RootLayout({
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
-          themeColor={{
-            light: BROWSER_CHROME_COLORS.light,
-            dark: BROWSER_CHROME_COLORS.dark,
-          }}
         >
           <ThemeExtras />
           <TooltipProvider>
