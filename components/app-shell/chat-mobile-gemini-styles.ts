@@ -168,11 +168,12 @@ const chatMobileHeaderScrimClass =
 
 /**
  * Floating composer dock — absolute over the thread bottom.
- * Solid bottom-chrome fill (no backdrop-filter): Safari 26 samples this edge
- * for toolbar tint; blur stays on the inner pill only.
+ * Keep this transparent so the horizon wash (not a solid chrome swatch)
+ * is what shows behind the pill. Safari 26 samples the html tint strips,
+ * not this absolute layer.
  */
 const chatMobileComposerDockClass =
-  "absolute inset-x-0 bottom-0 z-20 mx-auto w-full bg-[var(--browser-chrome-bottom,var(--browser-chrome-color,var(--background)))]"
+  "absolute inset-x-0 bottom-0 z-20 mx-auto w-full bg-transparent"
 
 /**
  * Soft corner scale:
@@ -190,7 +191,7 @@ const chatMobileAssistantClass =
   "text-[16px] font-normal leading-[1.55] tracking-normal text-foreground [&_p]:mb-3 [&_p:last-child]:mb-0"
 
 const chatMobileComposerShellClass =
-  "relative shrink-0 bg-[var(--browser-chrome-bottom,var(--browser-chrome-color,var(--background)))] px-4 pt-1.5 pb-[max(0.375rem,env(safe-area-inset-bottom,0px))]"
+  "relative shrink-0 bg-transparent px-4 pt-1.5 pb-[max(0.375rem,env(safe-area-inset-bottom,0px))]"
 
 /**
  * Floating composer shell. Radius/padding/gap interpolate so compact↔expanded

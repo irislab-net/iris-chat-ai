@@ -47,7 +47,7 @@ function WalletReadyGate({ children }: { children: ReactNode }) {
 
 function StakingPageHeader() {
   return (
-    <header className="relative z-40 shrink-0 bg-[var(--browser-chrome-top,var(--browser-chrome-color,var(--background)))] pt-[env(safe-area-inset-top,0px)]">
+    <header className="relative z-40 shrink-0 pt-[env(safe-area-inset-top,0px)]">
       <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-3 px-4 sm:px-6">
         <Link
           href="/"

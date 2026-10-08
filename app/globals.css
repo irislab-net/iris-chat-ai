@@ -105,7 +105,7 @@
     --browser-chrome-bottom: var(--browser-chrome-color);
     /* Keep in sync with `.chat-gemini-horizon-dome` stops in chat-gemini.css. */
     --horizon-chrome-top: #f5f5f5;
-    --horizon-chrome-bottom: #9cd1fd;
+    --horizon-chrome-bottom: #bfe3fc;
     --app-safe-top: env(safe-area-inset-top, 0px);
     --app-safe-bottom: env(safe-area-inset-bottom, 0px);
     --mobile-toolbar-height: calc(3rem + var(--app-safe-top));
@@ -315,7 +315,10 @@ html[data-app-shell="true"] {
 }
 
 html[data-app-shell="true"] body {
-  position: fixed;
+  /* Absolute (not fixed): Safari 26 samples full-viewport `position:fixed`
+   * layers for BOTH chrome edges. Do not paint the horizon swatch on body —
+   * it showed through the composer and history drawer as a saturated band. */
+  position: absolute;
   left: 0;
   right: 0;
   width: 100%;
@@ -327,15 +330,7 @@ html[data-app-shell="true"] body {
   overflow: hidden;
   overscroll-behavior: none;
   touch-action: manipulation;
-  /*
-   * Safari 26 samples fixed body for chrome tint. A full-viewport blue body
-   * would paint the status bar blue; keep body on the top edge color and let
-   * [data-browser-chrome-tint=bottom] own the toolbar tint.
-   */
-  background-color: var(
-    --browser-chrome-top,
-    var(--browser-chrome-color, var(--background))
-  );
+  background-color: transparent;
 }
 
 html[data-app-shell="true"] .h-app,
@@ -367,11 +362,13 @@ html.display-standalone [data-browser-chrome-tint] {
   width: 100%;
   z-index: 30;
   pointer-events: none;
+  visibility: hidden;
 }
 
 [data-browser-chrome-tint="top"] {
   top: 0;
-  height: max(3px, env(safe-area-inset-top, 0px));
+  /* Stay inside the layout viewport — html overflow:hidden clips negative offsets. */
+  height: max(12px, env(safe-area-inset-top, 0px));
   background-color: var(
     --browser-chrome-top,
     var(--browser-chrome-color, var(--background))
@@ -380,7 +377,7 @@ html.display-standalone [data-browser-chrome-tint] {
 
 [data-browser-chrome-tint="bottom"] {
   bottom: 0;
-  height: max(3px, env(safe-area-inset-bottom, 0px));
+  height: max(12px, env(safe-area-inset-bottom, 0px));
   background-color: var(
     --browser-chrome-bottom,
     var(--browser-chrome-color, var(--background))

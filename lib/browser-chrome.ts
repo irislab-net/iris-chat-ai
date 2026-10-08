@@ -13,8 +13,12 @@ export const HORIZON_CHROME_COLORS = {
   light: {
     /** Sampled from Gemini empty-state header field. */
     top: "#f5f5f5",
-    /** Sampled from Gemini empty-state bottom edge / home-indicator wash. */
-    bottom: "#9cd1fd",
+    /**
+     * Visible wash at the viewport bottom — 84% stop of `.chat-gemini-horizon-dome`.
+     * The 100% stop (#9cd1fd) sits in the -18% overdraw, off-screen; using it as a
+     * solid fill made a saturated band behind the composer.
+     */
+    bottom: "#bfe3fc",
   },
   dark: {
     top: "#0a0a0a",
@@ -96,46 +100,6 @@ function themeColorForEdges(edges: BrowserChromeEdges): string {
   return edges.top
 }
 
-function rgbToHex(color: string): string | null {
-  const value = color.trim().toLowerCase()
-  if (value.startsWith("#")) {
-    if (value.length === 7) return value
-    if (value.length === 4) {
-      return `#${value[1]}${value[1]}${value[2]}${value[2]}${value[3]}${value[3]}`
-    }
-    return null
-  }
-
-  const match = value.match(
-    /rgba?\(\s*([\d.]+)(?:\s*,\s*|\s+)([\d.]+)(?:\s*,\s*|\s+)([\d.]+)/
-  )
-  if (!match) return null
-
-  const channels = match.slice(1, 4).map((part) => Math.round(Number(part)))
-  if (channels.some((channel) => !Number.isFinite(channel))) return null
-
-  return `#${channels
-    .map((channel) => channel.toString(16).padStart(2, "0"))
-    .join("")}`
-}
-
-function resolveDocumentColor(cssColor: string): string | null {
-  if (typeof document === "undefined" || !document.body) return null
-
-  const probe = document.createElement("span")
-  probe.setAttribute("aria-hidden", "true")
-  probe.style.position = "absolute"
-  probe.style.width = "0"
-  probe.style.height = "0"
-  probe.style.overflow = "hidden"
-  probe.style.pointerEvents = "none"
-  probe.style.backgroundColor = cssColor
-  document.body.appendChild(probe)
-  const computed = getComputedStyle(probe).backgroundColor
-  probe.remove()
-  return rgbToHex(computed)
-}
-
 export function isHorizonWashVisible(): boolean {
   if (typeof document === "undefined") return false
   if (document.documentElement.hasAttribute("data-overlay-open")) return false
@@ -156,18 +120,10 @@ export function isHorizonWashVisible(): boolean {
 }
 
 function readBrowserChromeEdges(theme: BrowserChromeTheme): BrowserChromeEdges {
-  const horizonVisible = isHorizonWashVisible()
-  const edges = browserChromeEdgesForState({ theme, horizonVisible })
-  if (!horizonVisible) return edges
-
-  return {
-    top:
-      resolveDocumentColor("var(--horizon-chrome-top)") ??
-      HORIZON_CHROME_COLORS[theme].top,
-    bottom:
-      resolveDocumentColor("var(--horizon-chrome-bottom)") ??
-      HORIZON_CHROME_COLORS[theme].bottom,
-  }
+  return browserChromeEdgesForState({
+    theme,
+    horizonVisible: isHorizonWashVisible(),
+  })
 }
 
 function syncAppleStatusBarStyle(_theme: BrowserChromeTheme) {
@@ -251,6 +207,21 @@ function applySafariEdgeTintStrips(edges: BrowserChromeEdges) {
   if (typeof document === "undefined") return
   if (isStandaloneDisplay()) return
 
+  const root = document.documentElement
+  root.style.backgroundColor = edges.top
+  if (document.body) {
+    // A full-viewport solid body (especially `position:fixed`) is what Safari
+    // 26 samples — and what showed as the saturated blue band under the
+    // composer and white history drawer. Keep the shell body out of sampling.
+    if (root.hasAttribute("data-app-shell")) {
+      document.body.style.position = "absolute"
+      document.body.style.backgroundColor = "transparent"
+    } else {
+      document.body.style.removeProperty("position")
+      document.body.style.backgroundColor = edges.bottom
+    }
+  }
+
   const specs: Array<{
     edge: "top" | "bottom"
     color: string
@@ -260,20 +231,30 @@ function applySafariEdgeTintStrips(edges: BrowserChromeEdges) {
   ]
 
   for (const { edge, color } of specs) {
-    const node = document.querySelector(
+    let node = document.querySelector<HTMLElement>(
       `[data-browser-chrome-tint="${edge}"]`
     )
-    if (!(node instanceof HTMLElement)) continue
+    if (!node) {
+      node = document.createElement("div")
+      node.setAttribute("aria-hidden", "true")
+      node.setAttribute("data-browser-chrome-tint", edge)
+      // Attach to <html> so strips are not trapped inside overflow/fixed body.
+      root.appendChild(node)
+    } else if (node.parentElement !== root) {
+      root.appendChild(node)
+    }
     node.style.position = "fixed"
     node.style.left = "0"
     node.style.right = "0"
     node.style.width = "100%"
-    node.style.zIndex = "40"
+    node.style.zIndex = "2147483646"
     node.style.pointerEvents = "none"
     node.style.backgroundImage = "none"
     node.style.backdropFilter = "none"
     node.style.setProperty("-webkit-backdrop-filter", "none")
-    // ≥3px required; 12px stays sampleable with device pixel rounding.
+    // Safari 26 still samples `visibility: hidden` edge fills; hiding them
+    // removes the 12px solid band the user could see above the toolbar.
+    node.style.visibility = "hidden"
     node.style.height = "12px"
     node.style.minHeight = "12px"
     node.style.backgroundColor = color
@@ -348,10 +329,64 @@ export function syncBrowserChromeTheme(resolvedTheme: string | undefined) {
       safeAreaProbeBottom = probeStyle.paddingBottom
       probe.remove()
     }
+    const vw = window.innerWidth
+    const vh = window.innerHeight
+    const htmlStyle = getComputedStyle(root)
+    const bodyStyle = document.body ? getComputedStyle(document.body) : null
+    const layerSnapshot = (
+      el: Element | null,
+      role: string
+    ): Record<string, unknown> | null => {
+      if (!(el instanceof HTMLElement)) return null
+      const s = getComputedStyle(el)
+      const r = el.getBoundingClientRect()
+      return {
+        role,
+        tag: el.tagName,
+        pos: s.position,
+        bg: s.backgroundColor,
+        backdrop: s.backdropFilter,
+        webkitBackdrop: s.getPropertyValue("-webkit-backdrop-filter"),
+        top: Math.round(r.top),
+        bottom: Math.round(r.bottom),
+        h: Math.round(r.height),
+        w: Math.round(r.width),
+        z: s.zIndex,
+        overflow: s.overflow,
+        parent: el.parentElement?.tagName ?? null,
+        nearTop: r.top <= 4 && r.bottom > 0,
+        nearBot: r.bottom >= vh - 4 && r.top < vh,
+      }
+    }
+    const edgeLayers = [
+      layerSnapshot(root, "html"),
+      layerSnapshot(document.body, "body"),
+      layerSnapshot(
+        document.querySelector('[data-browser-chrome-tint="top"]'),
+        "tint-top"
+      ),
+      layerSnapshot(
+        document.querySelector('[data-browser-chrome-tint="bottom"]'),
+        "tint-bottom"
+      ),
+      layerSnapshot(
+        document.querySelector(".app-mobile-safe-header"),
+        "header"
+      ),
+      layerSnapshot(
+        document.querySelector('[data-slot="chat-composer"]'),
+        "composer"
+      ),
+      layerSnapshot(
+        document.querySelector('[data-slot="chat-composer"]')?.parentElement ??
+          null,
+        "composer-dock"
+      ),
+    ].filter(Boolean)
     const payload = {
       sessionId: "649b23",
-      runId: "post-fix-safari26-inline",
-      hypothesisId: "G,H",
+      runId: "post-fix-hidden-strips",
+      hypothesisId: "R",
       location: "lib/browser-chrome.ts:syncBrowserChromeTheme",
       message: "browser chrome sync",
       data: {
@@ -367,9 +402,12 @@ export function syncBrowserChromeTheme(resolvedTheme: string | undefined) {
         iosToolbar,
         standalone: isStandaloneDisplay(),
         appShell: root.getAttribute("data-app-shell"),
+        overlayOpen: root.getAttribute("data-overlay-open"),
         htmlClass: root.className,
         htmlBg,
         bodyBg,
+        htmlOverflow: htmlStyle.overflow,
+        htmlPosition: htmlStyle.position,
         cssChromeTop: root.style.getPropertyValue("--browser-chrome-top"),
         cssChromeBottom: root.style.getPropertyValue(
           "--browser-chrome-bottom"
@@ -378,12 +416,33 @@ export function syncBrowserChromeTheme(resolvedTheme: string | undefined) {
         safeBottom,
         safeAreaProbeTop,
         safeAreaProbeBottom,
+        vw,
+        vh,
+        vvH: window.visualViewport?.height ?? null,
+        edgeLayers,
         tintTop: Boolean(
           document.querySelector('[data-browser-chrome-tint="top"]')
         ),
         tintBottom: Boolean(
           document.querySelector('[data-browser-chrome-tint="bottom"]')
         ),
+        tintParent: (() => {
+          const el = document.querySelector(
+            '[data-browser-chrome-tint="top"]'
+          )
+          return el?.parentElement?.tagName ?? null
+        })(),
+        bodyPosition: bodyStyle?.position ?? null,
+        bodyBgInline: document.body?.style.backgroundColor || null,
+        htmlBgInline: root.style.backgroundColor || null,
+        tintVisibility: (() => {
+          const el = document.querySelector(
+            '[data-browser-chrome-tint="bottom"]'
+          )
+          return el instanceof HTMLElement
+            ? getComputedStyle(el).visibility
+            : null
+        })(),
         tintTopH: (() => {
           const el = document.querySelector(
             '[data-browser-chrome-tint="top"]'

@@ -14,6 +14,7 @@ import {
   prefersChatReducedMotion,
   slideOffscreenXPercent,
 } from "@/lib/chat-motion"
+import { useOverlayOpenSignal } from "@/hooks/use-overlay-open"
 import { localeDirection } from "@/lib/i18n/locale"
 import { cn } from "@/lib/utils"
 
@@ -52,6 +53,7 @@ function ChatMobileSlidePanel({
 }: ChatMobileSlidePanelProps) {
   const dir = localeDirection(useLocale())
   const off = slideOffscreenXPercent(side, dir)
+  useOverlayOpenSignal(open)
 
   const [mounted, setMounted] = React.useState(open)
   /** True after GSAP has parked the panel offscreen (avoids open flash). */
