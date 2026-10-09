@@ -8,6 +8,7 @@ import {
   useOverlayOpenSignal,
   useTouchSafeInitialFocus,
 } from "@/hooks/use-overlay-open"
+import { chatMobileSheetCloseButtonClass } from "@/components/app-shell/chat-mobile-gemini-styles"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { XIcon } from "lucide-react"
@@ -186,12 +187,12 @@ function SheetContent({
                 render={
                   <Button
                     variant="ghost"
-                    className="absolute inset-e-5 top-7"
+                    className={chatMobileSheetCloseButtonClass}
                     size="icon-sm"
                   />
                 }
               >
-                <XIcon />
+                <XIcon className="size-3.5" strokeWidth={1.75} />
                 <span className="sr-only">Close</span>
               </SheetPrimitive.Close>
             ) : null}
@@ -205,12 +206,15 @@ function SheetContent({
                 render={
                   <Button
                     variant="ghost"
-                    className="absolute inset-e-3 top-3"
+                    className={cn(
+                      chatMobileSheetCloseButtonClass,
+                      "inset-e-3 top-3"
+                    )}
                     size="icon-sm"
                   />
                 }
               >
-                <XIcon />
+                <XIcon className="size-3.5" strokeWidth={1.75} />
                 <span className="sr-only">Close</span>
               </SheetPrimitive.Close>
             ) : null}

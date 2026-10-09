@@ -503,6 +503,18 @@ const chatComposerLiquidDockCardClass = [
 const chatMobileSheetHeaderClass =
   "gap-1.5 space-y-0 px-5 pe-14 pb-2 pt-0 text-start"
 
+/** Absolute sheet dismiss — liquid glass disc (no `relative`; keeps `absolute`). */
+const chatMobileSheetCloseButtonClass = [
+  "absolute inset-e-5 top-7 z-20 size-8! shrink-0 rounded-full p-0",
+  "chat-ios26-liquid-glass isolate overflow-hidden border-0 bg-white/92 text-foreground",
+  "supports-[backdrop-filter]:bg-white/88",
+  "shadow-[inset_0_1px_0_0_rgba(255,255,255,0.95),0_1px_2px_rgba(15,23,42,0.05),0_6px_16px_-6px_rgba(15,23,42,0.14),0_14px_32px_-12px_rgba(15,23,42,0.16)]",
+  "transition-[transform,background-color,box-shadow,border-color] duration-150 ease-out",
+  "hover:bg-white hover:shadow-[inset_0_1px_0_0_rgba(255,255,255,1),0_2px_6px_-1px_rgba(15,23,42,0.07),0_12px_28px_-10px_rgba(15,23,42,0.18)]",
+  "active:scale-[0.96]",
+  "[&_svg:not([class*='size-'])]:size-3.5 [&_svg]:stroke-[1.75]",
+].join(" ")
+
 /** Display title — same optical weight as landing / account sheet. */
 const chatMobileSheetTitleClass =
   "flex min-h-7 items-center font-heading text-[22px] font-normal leading-none tracking-[-0.02em] text-foreground"
@@ -855,6 +867,7 @@ export {
   chatMobileSheetDescriptionClass,
   chatMobileSheetFooterBarClass,
   chatMobileSheetFooterClass,
+  chatMobileSheetCloseButtonClass,
   chatMobileSheetGhostButtonClass,
   chatMobileSheetHandleClass,
   chatMobileSheetHeaderClass,
