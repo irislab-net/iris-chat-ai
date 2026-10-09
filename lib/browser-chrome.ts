@@ -1,7 +1,7 @@
 /** Hex tints aligned with `--background` in `app/globals.css` (light/dark). */
 export const BROWSER_CHROME_COLORS = {
-  light: "#ffffff",
-  /** Matches `--background` light/dark in `app/globals.css` (`oklch(1 0 0)` / `oklch(0.145 0 0)`). */
+  light: "#fafafa",
+  /** Matches `--background` light/dark in `app/globals.css` (`#fafafa` / `oklch(0.145 0 0)`). */
   dark: "#0a0a0a",
 } as const
 

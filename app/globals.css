@@ -65,7 +65,7 @@
 }
 
 :root {
-    --background: oklch(1 0 0);
+    --background: #fafafa;
     --foreground: oklch(0.145 0 0);
     --card: oklch(1 0 0);
     --card-foreground: oklch(0.145 0 0);
@@ -100,7 +100,7 @@
     --app-height: 100dvh;
     --app-offset-top: 0px;
     --keyboard-inset-bottom: 0px;
-    --browser-chrome-color: #ffffff;
+    --browser-chrome-color: #fafafa;
     --browser-chrome-top: var(--browser-chrome-color);
     --browser-chrome-bottom: var(--browser-chrome-color);
     /* Keep in sync with `.chat-gemini-horizon-dome` stops in chat-gemini.css. */

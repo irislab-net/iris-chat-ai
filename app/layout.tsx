@@ -189,7 +189,7 @@ export default async function RootLayout({
               fontFamily: "system-ui, sans-serif",
               fontSize: "0.95rem",
               lineHeight: 1.5,
-              background: "#ffffff",
+              background: "#fafafa",
               color: "#171717",
             }}
           >
