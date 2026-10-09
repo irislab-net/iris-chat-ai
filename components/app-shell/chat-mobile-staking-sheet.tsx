@@ -51,23 +51,29 @@ function ChatMobileStakingSheet({
           aria-hidden
           className={cn(chatMobileSheetHandleClass, "shrink-0")}
         />
-        <SheetHeader
-          className={cn(chatMobileSheetHeaderClass, "shrink-0 gap-1.5")}
-        >
+
+        <SheetHeader className={cn(chatMobileSheetHeaderClass, "shrink-0")}>
           <SheetTitle className={chatMobileSheetTitleClass}>
             {t("stakingSheetTitle")}
           </SheetTitle>
-          <SheetDescription className={chatMobileSheetDescriptionClass}>
-            {t("stakingSheetBody")}
-          </SheetDescription>
         </SheetHeader>
+
+        <SheetDescription
+          className={cn(
+            chatMobileSheetDescriptionClass,
+            "shrink-0 px-5 pe-14 pb-3"
+          )}
+        >
+          {t("stakingSheetBody")}
+        </SheetDescription>
+
         <div
           className={cn(
             chatMobileSheetBodyClass,
-            "min-h-0 flex-1 overflow-visible pt-1 pb-2"
+            "min-h-0 flex-1 overflow-visible pt-0"
           )}
         >
-          <div className="relative isolate overflow-visible px-3.5 py-4">
+          <div className="relative isolate overflow-visible py-4">
             <div
               aria-hidden
               className="chat-staking-liquid-noise pointer-events-none absolute inset-0 overflow-hidden rounded-[1.65rem]"
@@ -81,6 +87,7 @@ function ChatMobileStakingSheet({
             </div>
           </div>
         </div>
+
         <SheetFooter className={cn(chatMobileSheetFooterClass, "shrink-0")}>
           <div className={cn(chatMobileSheetFooterBarClass, "pt-4")}>
             <Button
