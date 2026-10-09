@@ -7,6 +7,7 @@ import { chatMobileHeaderStakingClass } from "@/components/app-shell/chat-mobile
 import { ChatMobileStakingSheet } from "@/components/app-shell/chat-mobile-staking-sheet"
 import { Button } from "@/components/ui/button"
 import { useAppFeatureVisible } from "@/hooks/use-app-feature-prefs"
+import { trackStakingOpen } from "@/lib/analytics"
 import { cn } from "@/lib/utils"
 
 /**
@@ -40,7 +41,10 @@ function ChatMobileStakingButton({ className }: { className?: string }) {
           aria-label={t("staking")}
           aria-haspopup="dialog"
           aria-expanded={open}
-          onClick={() => setOpen(true)}
+          onClick={() => {
+            trackStakingOpen()
+            setOpen(true)
+          }}
         >
           {t("staking")}
         </Button>

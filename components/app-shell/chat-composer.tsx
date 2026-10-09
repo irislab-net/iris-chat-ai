@@ -42,6 +42,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Textarea } from "@/components/ui/textarea"
+import { trackComposerToolsOpen } from "@/lib/analytics"
 import {
   CHAT_EFFORT_OPTIONS,
   DEFAULT_CHAT_EFFORT,
@@ -1424,7 +1425,10 @@ function ChatComposer({
                     disabled={disabled}
                     onClick={(event) => {
                       event.stopPropagation()
-                      setToolsSheetOpen((open) => !open)
+                      setToolsSheetOpen((open) => {
+                        if (!open) trackComposerToolsOpen()
+                        return !open
+                      })
                       queueMicrotask(() => focusComposer({ force: true }))
                     }}
                     className={

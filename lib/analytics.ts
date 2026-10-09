@@ -192,6 +192,114 @@ export function trackChatToggle(open: boolean) {
   trackEvent(open ? "chat_open" : "chat_close")
 }
 
+/** Header Staking pill → preview sheet open. */
+export function trackStakingOpen() {
+  trackEvent("staking_open", { source: "chat_header" })
+}
+
+/** Assistant returned a trade-signal card in this turn. */
+export function trackSignalReceived(params: {
+  symbol: string
+  side: "LONG" | "SHORT"
+  conversation_id?: string
+}) {
+  trackEvent("signal_received", {
+    symbol: params.symbol,
+    side: params.side,
+    conversation_id: params.conversation_id,
+  })
+}
+
+/** User opened the news panel from chat chrome. */
+export function trackNewsOpen(params?: { source?: string }) {
+  trackEvent("news_open", {
+    source: params?.source ?? "chat",
+  })
+}
+
+/**
+ * Time spent in an active thread (has user messages) — not empty new-chat.
+ * Fire on tab hide / leave thread / unmount; duration is visible-time only.
+ */
+export function trackChatThreadEngagement(params: {
+  duration_sec: number
+  conversation_id?: string
+}) {
+  if (params.duration_sec < 3) return
+  trackEvent("chat_thread_engagement", {
+    duration_sec: params.duration_sec,
+    conversation_id: params.conversation_id,
+  })
+}
+
+/** Empty-state sample prompt tapped (send or fill composer). */
+export function trackStarterPromptClick(params: {
+  prompt_id: string
+  action: "send" | "edit"
+}) {
+  trackEvent("starter_prompt_click", {
+    prompt_id: params.prompt_id,
+    action: params.action,
+  })
+}
+
+/** Follow-up chip under an assistant turn. */
+export function trackFollowUpPromptClick() {
+  trackEvent("follow_up_prompt_click")
+}
+
+export function trackEffortChange(params: { effort: string }) {
+  trackEvent("effort_change", { effort: params.effort })
+}
+
+export function trackNewChat() {
+  trackEvent("new_chat")
+}
+
+/** News card → analyze in chat. */
+export function trackNewsAnalyze(params?: { article_id?: string }) {
+  trackEvent("news_analyze", {
+    article_id: params?.article_id,
+  })
+}
+
+export function trackGuestTrialExhausted() {
+  trackEvent("guest_trial_exhausted")
+}
+
+export function trackCreditsExhausted() {
+  trackEvent("credits_exhausted")
+}
+
+/** Upgrade CTA inside chat chrome (not the /upgrade page view). */
+export function trackUpgradeClick(params: { source: string }) {
+  trackEvent("upgrade_click", { source: params.source })
+}
+
+export function trackChatShare(params?: { conversation_id?: string }) {
+  trackEvent("chat_share", {
+    conversation_id: params?.conversation_id,
+  })
+}
+
+export function trackChatDownload(params?: { conversation_id?: string }) {
+  trackEvent("chat_download", {
+    conversation_id: params?.conversation_id,
+  })
+}
+
+/** Composer `+` tools sheet opened. */
+export function trackComposerToolsOpen() {
+  trackEvent("composer_tools_open")
+}
+
+/** Assistant returned a no-trade / sit-out card. */
+export function trackNoTradeReceived(params?: { conversation_id?: string }) {
+  trackEvent("no_trade_received", {
+    conversation_id: params?.conversation_id,
+  })
+}
+
 export function trackChatMessageCopied(params?: {
   conversation_id?: string
   message_id?: string

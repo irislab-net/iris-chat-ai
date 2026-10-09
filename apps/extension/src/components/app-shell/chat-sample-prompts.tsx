@@ -30,6 +30,7 @@ import {
   CarouselItem,
 } from "@/components/ui/carousel"
 import { Button } from "@/components/ui/button"
+import { trackStarterPromptClick } from "@/lib/analytics"
 import { IRIS_SAMPLE_PROMPTS } from "@/lib/chat/sample-prompts"
 import { localeDirection } from "@/lib/i18n/locale"
 import { cn } from "@/lib/utils"
@@ -74,7 +75,7 @@ function IrisSamplePromptCard({
   prompt: LocalizedSamplePrompt
   usePromptLabel: string
   disabled?: boolean
-  onActivate: (text: string) => void
+  onActivate: (prompt: LocalizedSamplePrompt) => void
 }) {
   const Icon =
     SAMPLE_PROMPT_ICONS[prompt.id as keyof typeof SAMPLE_PROMPT_ICONS] ??
@@ -94,7 +95,7 @@ function IrisSamplePromptCard({
     const dx = Math.abs(event.clientX - start.x)
     const dy = Math.abs(event.clientY - start.y)
     if (dx <= SAMPLE_PROMPT_TAP_SLOP_PX && dy <= SAMPLE_PROMPT_TAP_SLOP_PX) {
-      onActivate(prompt.text)
+      onActivate(prompt)
     }
   }
 
@@ -142,8 +143,14 @@ export function IrisSamplePrompts({
   /** When set, tap sends immediately (ChatGPT/Gemini-style). */
   onSend?: (text: string) => void
 }) {
-  const activate = onSend ?? onEdit
   const t = useTranslations("workspace")
+  function activate(prompt: LocalizedSamplePrompt) {
+    trackStarterPromptClick({
+      prompt_id: prompt.id,
+      action: onSend ? "send" : "edit",
+    })
+    ;(onSend ?? onEdit)(prompt.text)
+  }
   const textDir = localeDirection(useLocale())
   const reduceMotion = React.useSyncExternalStore(
     subscribeReducedMotion,

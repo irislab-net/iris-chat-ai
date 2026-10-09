@@ -37,6 +37,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { trackUpgradeClick } from "@/lib/analytics"
 import { UPGRADE_PATH } from "@/lib/site"
 import { cn } from "@/lib/utils"
 
@@ -72,6 +73,7 @@ function ChatThreadUpgradeButton({ className }: { className?: string }) {
       className={cn(chatThreadUpgradeClass, className)}
       nativeButton={false}
       render={<Link href={UPGRADE_PATH} />}
+      onClick={() => trackUpgradeClick({ source: "thread_toolbar" })}
     >
       <SparklesIcon className="size-3.5" />
       {t("upgrade")}

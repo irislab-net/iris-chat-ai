@@ -34,6 +34,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet"
 import { useIsDesktop } from "@/hooks/use-media-query"
+import { trackUpgradeClick } from "@/lib/analytics"
 import { landingCta } from "@/lib/landing-modern-styles"
 import { UPGRADE_PATH } from "@/lib/site"
 import { cn } from "@/lib/utils"
@@ -154,7 +155,10 @@ function ComposerPremiumToolsDialog({
                 className={cn(landingCta("primary", "sm"), "rounded-full")}
                 nativeButton={false}
                 render={<Link href={UPGRADE_PATH} />}
-                onClick={() => onOpenChange(false)}
+                onClick={() => {
+                  trackUpgradeClick({ source: "composer_premium_tools" })
+                  onOpenChange(false)
+                }}
               >
                 {t("composerPremiumToolsCta")}
               </Button>
@@ -192,7 +196,10 @@ function ComposerPremiumToolsDialog({
                 className={chatMobileSheetPrimaryButtonClass}
                 nativeButton={false}
                 render={<Link href={UPGRADE_PATH} />}
-                onClick={() => onOpenChange(false)}
+                onClick={() => {
+                  trackUpgradeClick({ source: "composer_premium_tools" })
+                  onOpenChange(false)
+                }}
               >
                 {t("composerPremiumToolsCta")}
               </Button>

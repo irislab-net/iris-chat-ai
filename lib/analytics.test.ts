@@ -6,8 +6,18 @@ import {
   isChatAnalyticsPath,
   isChatGtmEnabled,
   trackCheckoutStart,
+  trackChatThreadEngagement,
+  trackComposerToolsOpen,
+  trackEffortChange,
   trackEvent,
+  trackNewChat,
+  trackNewsOpen,
+  trackNoTradeReceived,
   trackPurchase,
+  trackSignalReceived,
+  trackStarterPromptClick,
+  trackStakingOpen,
+  trackUpgradeClick,
   trackUpgradeView,
 } from "@/lib/analytics"
 
@@ -61,6 +71,63 @@ describe("analytics", () => {
       value: 500,
       item_id: "plus_annual",
       item_name: "Plus",
+    })
+  })
+
+  it("tracks staking, signal, news, and thread engagement", () => {
+    trackStakingOpen()
+    trackSignalReceived({ symbol: "BTCUSDT", side: "LONG" })
+    trackNewsOpen({ source: "chat" })
+    trackChatThreadEngagement({ duration_sec: 2 })
+    trackChatThreadEngagement({
+      duration_sec: 45,
+      conversation_id: "sess_1",
+    })
+
+    expect(gtag).toHaveBeenCalledWith("event", "staking_open", {
+      source: "chat_header",
+    })
+    expect(gtag).toHaveBeenCalledWith("event", "signal_received", {
+      symbol: "BTCUSDT",
+      side: "LONG",
+      conversation_id: undefined,
+    })
+    expect(gtag).toHaveBeenCalledWith("event", "news_open", {
+      source: "chat",
+    })
+    expect(gtag).not.toHaveBeenCalledWith(
+      "event",
+      "chat_thread_engagement",
+      expect.objectContaining({ duration_sec: 2 })
+    )
+    expect(gtag).toHaveBeenCalledWith("event", "chat_thread_engagement", {
+      duration_sec: 45,
+      conversation_id: "sess_1",
+    })
+  })
+
+  it("tracks starter, effort, new chat, tools, upgrade, and no-trade", () => {
+    trackStarterPromptClick({ prompt_id: "btc-setup", action: "send" })
+    trackEffortChange({ effort: "high" })
+    trackNewChat()
+    trackComposerToolsOpen()
+    trackUpgradeClick({ source: "chat_header" })
+    trackNoTradeReceived({ conversation_id: "sess_2" })
+
+    expect(gtag).toHaveBeenCalledWith("event", "starter_prompt_click", {
+      prompt_id: "btc-setup",
+      action: "send",
+    })
+    expect(gtag).toHaveBeenCalledWith("event", "effort_change", {
+      effort: "high",
+    })
+    expect(gtag).toHaveBeenCalledWith("event", "new_chat", undefined)
+    expect(gtag).toHaveBeenCalledWith("event", "composer_tools_open", undefined)
+    expect(gtag).toHaveBeenCalledWith("event", "upgrade_click", {
+      source: "chat_header",
+    })
+    expect(gtag).toHaveBeenCalledWith("event", "no_trade_received", {
+      conversation_id: "sess_2",
     })
   })
 

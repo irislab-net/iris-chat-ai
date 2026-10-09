@@ -77,10 +77,11 @@ import { CreditsExhaustedDialog } from "@/components/billing/credits-exhausted-d
 import { SignalGuidanceDialog } from "@/components/app-shell/signal-guidance-dialog"
 import { ChatErrorDialog } from "@/components/app-shell/chat-error-dialog"
 import dynamic from "next/dynamic"
+import { useChatClientContext } from "@/hooks/use-chat-client-context"
+import { useChatThreadEngagement } from "@/hooks/use-chat-thread-engagement"
 import { useIsDesktop } from "@/hooks/use-media-query"
 import { useNewsSpotlight } from "@/hooks/use-news-spotlight"
 import { useShellSidebarLayout } from "@/hooks/use-shell-sidebar-layout"
-import { useChatClientContext } from "@/hooks/use-chat-client-context"
 import { ActionTooltip } from "@/components/ui/action-tooltip"
 import { Button } from "@/components/ui/button"
 import {
@@ -121,8 +122,20 @@ import type {
 } from "@/lib/api/types"
 import { formatCreditUsageCompact } from "@/lib/api/credit-usage"
 import {
+  trackChatDownload,
   trackChatMessageBlockedGuest,
   trackChatMessageSent,
+  trackChatShare,
+  trackCreditsExhausted,
+  trackEffortChange,
+  trackFollowUpPromptClick,
+  trackGuestTrialExhausted,
+  trackNewChat,
+  trackNewsAnalyze,
+  trackNewsOpen,
+  trackNoTradeReceived,
+  trackSignalReceived,
+  trackUpgradeClick,
 } from "@/lib/analytics"
 import {
   ensureGuestSession,
@@ -364,7 +377,10 @@ function IrisFollowUpPrompts({
               chatSamplePromptButtonClass,
               "h-auto gap-3 px-4 py-2.5 text-[14px] leading-[1.3] font-medium tracking-[-0.01em] whitespace-normal text-foreground disabled:opacity-50 sm:px-4 sm:py-2.5 lg:h-full lg:items-start"
             )}
-            onClick={() => onSelect(prompt)}
+            onClick={() => {
+              trackFollowUpPromptClick()
+              onSelect(prompt)
+            }}
           >
             <span className="min-w-0 flex-1 text-start text-pretty">
               {prompt}
@@ -461,6 +477,7 @@ function ChatAside({
     (next: boolean | ((prev: boolean) => boolean)) => {
       setNewsOpenState((prev) => {
         const value = typeof next === "function" ? next(prev) : next
+        if (value && !prev) trackNewsOpen({ source: "chat" })
         writeShellLayoutPrefs({ newsOpen: value })
         return value
       })
@@ -945,6 +962,7 @@ function ChatAside({
   }
 
   async function startNewChat() {
+    trackNewChat()
     abortRef.current?.abort()
     abortRef.current = null
     setSending(false)
@@ -1119,6 +1137,7 @@ function ChatAside({
   }
 
   function onEffortChange(next: ChatEffort) {
+    trackEffortChange({ effort: next })
     setEffort(next)
     writeChatEffort(next)
   }
@@ -1384,6 +1403,16 @@ function ChatAside({
             `${turnExtras.paperTicket.side} ${turnExtras.paperTicket.symbol}`
           : "")
 
+      if (turnExtras.paperTicket) {
+        trackSignalReceived({
+          symbol: turnExtras.paperTicket.symbol,
+          side: turnExtras.paperTicket.side,
+          conversation_id: finalId,
+        })
+      } else if (turnExtras.noTradeReason) {
+        trackNoTradeReceived({ conversation_id: finalId })
+      }
+
       const completeCoPilotTurn = () => {
         finalizeSuccess(displayText, result.suggestedPrompts, turnExtras)
       }
@@ -1456,9 +1485,10 @@ function ChatAside({
           })
           return
         }
-      } else if (isCreditExhaustedError(error)) {
+        } else if (isCreditExhaustedError(error)) {
         // HTTP 402 / credit codes only — not SSE agent/store failures (status 500).
         // Applies to Free and Plus (daily/weekly caps). Paywall is modal/sheet only.
+        trackCreditsExhausted()
         setCreditsExhaustedOpen(true)
         void fetchCoPilotUsage()
           .then((mapped) => {
@@ -1577,6 +1607,7 @@ function ChatAside({
     if (!isAuthenticated) {
       if (guestUnavailableForUi) return
       if (guestTrialExhausted) {
+        trackGuestTrialExhausted()
         setGuestTrialExhaustedOpen(true)
         return
       }
@@ -1693,6 +1724,7 @@ function ChatAside({
     partialContent?: string
   }) {
     if (options?.trial) setGuestTrial(options.trial)
+    trackGuestTrialExhausted()
     setGuestTrialExhaustedOpen(true)
 
     const assistantId = options?.assistantId
@@ -1896,6 +1928,7 @@ function ChatAside({
       toast.message(t("analyzeNewsBusy"))
       return
     }
+    trackNewsAnalyze({ article_id: item.id })
     const prompt = `"${title}"\n\n${t("analyzeNewsInstruction")}`
     setNewsOpen(false)
     void handleSendRef.current(prompt)
@@ -1923,6 +1956,7 @@ function ChatAside({
     if (!isAuthenticated) {
       if (guestUnavailableForUi) return
       if (guestTrialExhausted) {
+        trackGuestTrialExhausted()
         setGuestTrialExhaustedOpen(true)
         return
       }
@@ -1982,6 +2016,7 @@ function ChatAside({
     if (!isAuthenticated) {
       if (guestUnavailableForUi) return
       if (guestTrialExhausted) {
+        trackGuestTrialExhausted()
         setGuestTrialExhaustedOpen(true)
         return
       }
@@ -2059,6 +2094,10 @@ function ChatAside({
     (chat) => chat.id === conversationId
   )
   const threadHasUserMessages = hasUserMessages(messages)
+  useChatThreadEngagement(
+    hydrated && showThread && threadHasUserMessages,
+    conversationId || undefined
+  )
   const showThreadToolbarInHeader =
     showThread && threadHasUserMessages && showMainColumnHeader
   const showStandaloneThreadToolbar =
@@ -2214,6 +2253,7 @@ function ChatAside({
   }, [showThread, conversationId, messages.length, followChatBottom, pendingAssistantId])
 
   async function shareCurrentConversation() {
+    trackChatShare({ conversation_id: conversationId || undefined })
     const title =
       threadTitleRaw && threadTitleRaw !== NEW_CHAT_TITLE
         ? threadTitleRaw
@@ -2226,6 +2266,7 @@ function ChatAside({
   }
 
   function downloadCurrentConversation() {
+    trackChatDownload({ conversation_id: conversationId || undefined })
     const title =
       threadTitleRaw && threadTitleRaw !== NEW_CHAT_TITLE
         ? threadTitleRaw
@@ -2511,6 +2552,7 @@ function ChatAside({
                 className={chatThreadUpgradeClass}
                 nativeButton={false}
                 render={<Link href={UPGRADE_PATH} />}
+                onClick={() => trackUpgradeClick({ source: "chat_header" })}
               >
                 {t("upgrade")}
               </Button>
