@@ -1,7 +1,7 @@
 /** Pre-hydration browser chrome (theme-color / color-scheme). Keep in sync with lib/browser-chrome.ts. */
 (function () {
   try {
-    var light = "#ffffff"
+    var light = "#fafafa"
     var dark = "#0a0a0a"
     var stored = localStorage.getItem("theme")
     var prefersDark = matchMedia("(prefers-color-scheme: dark)").matches
