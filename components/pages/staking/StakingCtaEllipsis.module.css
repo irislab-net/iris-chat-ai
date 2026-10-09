@@ -1,0 +1,48 @@
+/* Fixed 3ch slot — no layout shift; dots cycle opacity (CSS only). */
+
+.slot {
+  display: inline-flex;
+  width: 3ch;
+  min-width: 3ch;
+  flex-shrink: 0;
+  justify-content: flex-start;
+  align-items: baseline;
+}
+
+.dot {
+  display: inline-block;
+  width: 1ch;
+  text-align: center;
+  opacity: 0.2;
+  animation: stakingCtaEllipsisDot 1.12s ease-in-out infinite;
+}
+
+.dot:nth-child(1) {
+  animation-delay: 0ms;
+}
+.dot:nth-child(2) {
+  animation-delay: 0.15s;
+}
+.dot:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes stakingCtaEllipsisDot {
+  0%,
+  100% {
+    opacity: 0.18;
+  }
+  35% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 0.55;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dot {
+    animation: none;
+    opacity: 1;
+  }
+}

@@ -166,7 +166,12 @@ const chatMobileHeaderShellClass = "absolute inset-x-0 top-0 z-20"
 const chatMobileHeaderScrimClass =
   "pointer-events-none absolute inset-x-0 top-0 -bottom-12 z-0 bg-gradient-to-b from-background from-0% via-background/50 via-45% to-transparent to-100% dark:from-background dark:via-background/55"
 
-/** Floating composer dock — absolute over the thread bottom. */
+/**
+ * Floating composer dock — absolute over the thread bottom.
+ * Keep this transparent so the horizon wash (not a solid chrome swatch)
+ * is what shows behind the pill. Safari 26 samples the html tint strips,
+ * not this absolute layer.
+ */
 const chatMobileComposerDockClass =
   "absolute inset-x-0 bottom-0 z-20 mx-auto w-full bg-transparent"
 
@@ -686,7 +691,7 @@ const chatNewsPanelShellClass =
 const chatNewsPanelShellMobileClass = `border-0 ${chatMobileDrawerSurfaceClass}`
 
 const chatNewsPanelHeaderClass =
-  "app-mobile-safe-header relative z-1 flex items-center justify-between gap-2 bg-transparent px-4 pb-2"
+  "app-mobile-safe-header relative z-1 flex items-center justify-between gap-2 bg-[var(--browser-chrome-top,var(--browser-chrome-color,var(--background)))] px-4 pb-2"
 
 /** Desktop news rail header — in-flow with roomy top pad. */
 const chatNewsPanelHeaderDesktopClass =
@@ -721,6 +726,9 @@ const chatNewsGlassChipClass =
 
 export {
   chatMobileAssistantClass,
+  /** Composer-grade iOS 26 liquid frost (reusable for staking amount shell, etc.). */
+  chatMobileComposerGlassClass,
+  chatMobileComposerGlassFocusClass,
   chatMobileComposerIconButtonClass,
   chatMobileComposerIconButtonCompactClass,
   chatMobileComposerVoiceListeningClass,

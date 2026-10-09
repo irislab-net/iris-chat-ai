@@ -193,7 +193,7 @@ function ChatMobileHeader({
       <div aria-hidden className={chatMobileHeaderScrimClass} />
       <header
         className={cn(
-          "app-mobile-safe-header relative z-1 flex items-center justify-between gap-2 bg-transparent px-4 pb-2",
+          "app-mobile-safe-header relative z-1 flex items-center justify-between gap-2 bg-[var(--browser-chrome-top,var(--browser-chrome-color,var(--background)))] px-4 pb-2",
           className
         )}
       >

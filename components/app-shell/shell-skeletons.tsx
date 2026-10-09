@@ -58,7 +58,7 @@ function ChatMobileHeaderSkeleton() {
   return (
     <div className={chatMobileHeaderShellClass}>
       <div aria-hidden className={chatMobileHeaderScrimClass} />
-      <header className="app-mobile-safe-header relative z-1 flex items-center justify-between gap-2 bg-transparent px-4 pb-2">
+      <header className="app-mobile-safe-header relative z-1 flex items-center justify-between gap-2 bg-[var(--browser-chrome-top,var(--browser-chrome-color,var(--background)))] px-4 pb-2">
         <div className="flex h-11 min-w-0 items-center justify-start gap-2">
           <Bone stagger={1} className="size-11 shrink-0 rounded-full" />
           <Bone stagger={1} className="ms-1 h-6 w-28 shrink-0 rounded-full" />

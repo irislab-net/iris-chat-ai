@@ -11,6 +11,9 @@ allowBuilds:
   '@parcel/watcher': true
   '@swc/core': true
   '@sentry/cli': true
+  '@firebase/util': true
+  '@reown/appkit': true
+  protobufjs: true
 
 minimumReleaseAgeExclude:
   - '@next/env@16.3.4'

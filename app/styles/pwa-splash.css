@@ -12,7 +12,7 @@
     max(1.5rem, env(safe-area-inset-right, 0px))
     max(1.5rem, env(safe-area-inset-bottom, 0px))
     max(1.5rem, env(safe-area-inset-left, 0px));
-  background-color: var(--browser-chrome-color, var(--background, #ffffff));
+  background-color: var(--browser-chrome-color, var(--background, #fafafa));
   color: var(--foreground, #171717);
   -webkit-user-select: none;
   user-select: none;

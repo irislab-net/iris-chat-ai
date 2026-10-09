@@ -130,6 +130,8 @@ function BrowserChromeSync() {
     }
   }, [sync])
 
+  // Tint strips are owned imperatively by `applySafariEdgeTintStrips` —
+  // do not portal onto <html> (React root teardown crashes).
   return null
 }
 

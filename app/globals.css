@@ -65,7 +65,7 @@
 }
 
 :root {
-    --background: oklch(1 0 0);
+    --background: #fafafa;
     --foreground: oklch(0.145 0 0);
     --card: oklch(1 0 0);
     --card-foreground: oklch(0.145 0 0);
@@ -100,12 +100,12 @@
     --app-height: 100dvh;
     --app-offset-top: 0px;
     --keyboard-inset-bottom: 0px;
-    --browser-chrome-color: #ffffff;
+    --browser-chrome-color: #fafafa;
     --browser-chrome-top: var(--browser-chrome-color);
     --browser-chrome-bottom: var(--browser-chrome-color);
     /* Keep in sync with `.chat-gemini-horizon-dome` stops in chat-gemini.css. */
     --horizon-chrome-top: #f5f5f5;
-    --horizon-chrome-bottom: #9cd1fd;
+    --horizon-chrome-bottom: #bfe3fc;
     --app-safe-top: env(safe-area-inset-top, 0px);
     --app-safe-bottom: env(safe-area-inset-bottom, 0px);
     --mobile-toolbar-height: calc(3rem + var(--app-safe-top));
@@ -315,7 +315,10 @@ html[data-app-shell="true"] {
 }
 
 html[data-app-shell="true"] body {
-  position: fixed;
+  /* Absolute (not fixed): Safari 26 samples full-viewport `position:fixed`
+   * layers for BOTH chrome edges. Do not paint the horizon swatch on body —
+   * it showed through the composer and history drawer as a saturated band. */
+  position: absolute;
   left: 0;
   right: 0;
   width: 100%;
@@ -327,7 +330,7 @@ html[data-app-shell="true"] body {
   overflow: hidden;
   overscroll-behavior: none;
   touch-action: manipulation;
-  background-color: var(--browser-chrome-bottom, var(--background));
+  background-color: transparent;
 }
 
 html[data-app-shell="true"] .h-app,
@@ -341,27 +344,44 @@ html[data-keyboard-open="true"] [data-slot="chat-composer"] {
   padding-bottom: 0.625rem;
 }
 
-/* Paint notch + home-indicator gutters to match the page edge they sit against. */
-html[data-app-shell="true"]::before,
-html[data-app-shell="true"]::after {
-  content: "";
+/*
+ * Safari 26+ ignores theme-color and samples fixed/sticky edge fills (≥3px,
+ * ≥80% wide, no backdrop-filter) for status-bar / toolbar tint. In-tab
+ * safe-area insets are often 0px, so gutters must not depend on env() alone.
+ * Home Screen PWAs keep black-translucent + html/body paint instead.
+ */
+html.display-standalone [data-browser-chrome-tint] {
+  display: none;
+}
+
+[data-browser-chrome-tint="top"],
+[data-browser-chrome-tint="bottom"] {
   position: fixed;
   left: 0;
   right: 0;
+  width: 100%;
   z-index: 30;
   pointer-events: none;
+  visibility: hidden;
 }
 
-html[data-app-shell="true"]::before {
+[data-browser-chrome-tint="top"] {
   top: 0;
-  height: var(--app-safe-top);
-  background-color: var(--browser-chrome-top, var(--browser-chrome-color, var(--background)));
+  /* Stay inside the layout viewport — html overflow:hidden clips negative offsets. */
+  height: max(12px, env(safe-area-inset-top, 0px));
+  background-color: var(
+    --browser-chrome-top,
+    var(--browser-chrome-color, var(--background))
+  );
 }
 
-html[data-app-shell="true"]::after {
+[data-browser-chrome-tint="bottom"] {
   bottom: 0;
-  height: var(--app-safe-bottom);
-  background-color: var(--browser-chrome-bottom, var(--browser-chrome-color, var(--background)));
+  height: max(12px, env(safe-area-inset-bottom, 0px));
+  background-color: var(
+    --browser-chrome-bottom,
+    var(--browser-chrome-color, var(--background))
+  );
 }
 
 html.display-standalone {
@@ -394,11 +414,6 @@ html.display-standalone[data-app-shell="true"] body {
   overscroll-behavior: none;
   touch-action: manipulation;
   background-color: var(--browser-chrome-bottom, var(--browser-chrome-color, var(--background)));
-}
-
-html.display-standalone[data-app-shell="true"]::before,
-html.display-standalone[data-app-shell="true"]::after {
-  display: none;
 }
 
 html.display-standalone[data-app-shell="true"] .h-app,

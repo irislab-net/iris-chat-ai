@@ -1,0 +1,15 @@
+<svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M13 87V13L50 50L87 13V87" stroke="currentColor" stroke-width="2.2" />
+
+  <g fill="currentColor">
+    <circle class="circle-sm circle-l-b" cx="13" cy="87" r="7" />
+    <circle class="circle-lg circle-l" cx="13" cy="50" r="12" />
+    <circle class="circle-sm circle-l-t" cx="13" cy="13" r="7" />
+    <circle class="circle-lg circle-t" cx="50" cy="13" r="12" />
+    <circle class="circle-sm circle-r-t" cx="87" cy="13" r="7" />
+    <circle class="circle-lg circle-r" cx="87" cy="50" r="12" />
+    <circle class="circle-sm circle-r-b" cx="87" cy="87" r="7" />
+    <circle class="circle-lg circle-b" cx="50" cy="87" r="12" />
+    <circle class="circle-lg circle-c" cx="50" cy="50" r="12" />
+  </g>
+</svg>

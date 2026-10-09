@@ -1,5 +1,8 @@
 "use client"
 
+import * as React from "react"
+
+import { syncBrowserChromeTheme } from "@/lib/browser-chrome"
 import { cn } from "@/lib/utils"
 
 type ChatMobileGeminiBackgroundProps = {
@@ -26,6 +29,13 @@ function ChatMobileGeminiBackground({
   const isHero = variant === "hero"
   const isBlue = tone === "blue"
   const dotsActive = active || isHero
+
+  // Retint iOS Safari / Android chrome as soon as the wash mounts — layout-level
+  // BrowserChromeSync often runs before this node exists and leaves a white bar.
+  React.useLayoutEffect(() => {
+    if (!visible || isHero) return
+    syncBrowserChromeTheme(undefined)
+  }, [visible, isHero, tone])
 
   if (!isHero) {
     return (

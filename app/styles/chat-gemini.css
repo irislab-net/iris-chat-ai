@@ -978,8 +978,8 @@
     #f4f7fa 34%,
     #e8f2fc 50%,
     #d7edfc 68%,
-    #bfe3fc 84%,
-    var(--horizon-chrome-bottom, #9cd1fd) 100%
+    var(--horizon-chrome-bottom, #bfe3fc) 84%,
+    var(--horizon-chrome-bottom, #bfe3fc) 100%
   );
   box-shadow: none;
   animation: gemini-horizon-breathe 7s ease-in-out infinite alternate;
