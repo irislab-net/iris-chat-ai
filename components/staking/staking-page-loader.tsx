@@ -11,7 +11,7 @@ const StakingPageClient = dynamic(
     ssr: false,
     loading: () => (
       <div
-        className="flex min-h-svh items-center justify-center px-4 text-sm text-muted-foreground"
+        className="flex min-h-svh items-center justify-center bg-background px-4 text-sm text-muted-foreground"
         aria-busy
       >
         Loading staking…
