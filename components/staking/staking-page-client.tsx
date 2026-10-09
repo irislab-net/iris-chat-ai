@@ -1,7 +1,5 @@
 "use client"
 
-import { ChatGeminiCssLazy } from "@/components/app-shell/chat-gemini-css-lazy"
-import { ChatMobileGeminiBackground } from "@/components/app-shell/chat-mobile-gemini-background"
 import { ExurLogo } from "@/components/brand/exur-logo"
 import { AppKitRouteGate } from "@/components/layout/AppKitRouteGate"
 import {
@@ -10,11 +8,12 @@ import {
 } from "@/components/layout/NavbarWalletSection"
 import { useAppKitReady } from "@/hooks/useAppKitReady"
 import { Link } from "@/i18n/navigation"
+import { syncBrowserChromeTheme } from "@/lib/browser-chrome"
 import { AppKitReadyProvider } from "@/providers/AppKitReadyProvider"
 import { BootstrapOrchestrationProvider } from "@/providers/BootstrapOrchestrationProvider"
 import { TelegramEscalationProvider } from "@/providers/TelegramEscalationProvider"
 import dynamic from "next/dynamic"
-import { Suspense, type ReactNode } from "react"
+import { Suspense, useLayoutEffect, type ReactNode } from "react"
 
 const StakingApp = dynamic(
   () => import("@/components/pages/staking/StakingApp"),
@@ -78,24 +77,30 @@ function StakingPageHeader() {
   )
 }
 
+function StakingFlatChrome() {
+  // Flat #fafafa canvas — keep top/bottom browser chrome on the same surface
+  // (no Gemini horizon wash on staking).
+  useLayoutEffect(() => {
+    syncBrowserChromeTheme(undefined)
+  }, [])
+  return null
+}
+
 export function StakingPageClient() {
   return (
     <AppKitReadyProvider>
       <BootstrapOrchestrationProvider>
         <TelegramEscalationProvider>
-          <ChatGeminiCssLazy />
+          <StakingFlatChrome />
           <div className="relative flex min-h-svh flex-col overflow-hidden bg-background text-foreground">
-            <ChatMobileGeminiBackground visible intro tone="blue" />
-            <div className="relative z-10 flex min-h-svh flex-col">
-              <StakingPageHeader />
-              <main className="min-w-0 flex-1">
-                <Suspense fallback={<StakingPageLoading />}>
-                  <AppKitRouteGate>
-                    <StakingApp />
-                  </AppKitRouteGate>
-                </Suspense>
-              </main>
-            </div>
+            <StakingPageHeader />
+            <main className="relative z-10 min-w-0 flex-1">
+              <Suspense fallback={<StakingPageLoading />}>
+                <AppKitRouteGate>
+                  <StakingApp />
+                </AppKitRouteGate>
+              </Suspense>
+            </main>
           </div>
         </TelegramEscalationProvider>
       </BootstrapOrchestrationProvider>
