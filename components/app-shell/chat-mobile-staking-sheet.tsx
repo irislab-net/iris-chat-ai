@@ -12,7 +12,7 @@ import {
   chatMobileSheetFooterClass,
   chatMobileSheetHandleClass,
   chatMobileSheetHeaderClass,
-  chatMobileSheetSecondaryButtonClass,
+  chatMobileSheetPrimaryButtonClass,
   chatMobileSheetTitleClass,
 } from "@/components/app-shell/chat-mobile-gemini-styles"
 import { Button } from "@/components/ui/button"
@@ -44,7 +44,7 @@ function ChatMobileStakingSheet({
         showCloseButton
         className={cn(
           chatMobileSheetContentClass,
-          "flex flex-col gap-0 overflow-hidden border-0"
+          "flex flex-col gap-0 overflow-visible border-0"
         )}
       >
         <div
@@ -64,14 +64,19 @@ function ChatMobileStakingSheet({
         <div
           className={cn(
             chatMobileSheetBodyClass,
-            "min-h-0 flex-1 overflow-y-auto pt-1 pb-2"
+            "min-h-0 flex-1 overflow-visible pt-1 pb-2"
           )}
         >
-          <div className="chat-staking-liquid-noise relative isolate overflow-hidden rounded-[1.65rem] border-0 px-3.5 py-4">
-            <div aria-hidden className="chat-staking-liquid-noise-wash" />
-            <div aria-hidden className="chat-staking-liquid-noise-grain" />
-            <div aria-hidden className="chat-staking-liquid-noise-sheen" />
-            <div className="relative z-10">
+          <div className="relative isolate overflow-visible px-3.5 py-4">
+            <div
+              aria-hidden
+              className="chat-staking-liquid-noise pointer-events-none absolute inset-0 overflow-hidden rounded-[1.65rem]"
+            >
+              <div className="chat-staking-liquid-noise-wash" />
+              <div className="chat-staking-liquid-noise-grain" />
+              <div className="chat-staking-liquid-noise-sheen" />
+            </div>
+            <div className="relative z-10 overflow-visible">
               <ChatStakingCoinTree active={open} />
             </div>
           </div>
@@ -80,8 +85,8 @@ function ChatMobileStakingSheet({
           <div className={cn(chatMobileSheetFooterBarClass, "pt-4")}>
             <Button
               type="button"
-              className={chatMobileSheetSecondaryButtonClass}
-              onClick={() => onOpenChange(false)}
+              disabled
+              className={chatMobileSheetPrimaryButtonClass}
             >
               {t("stakingComingSoon")}
             </Button>
