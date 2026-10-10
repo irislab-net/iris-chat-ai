@@ -11,6 +11,28 @@ Sentry.init({
   integrations: [],
   replaysSessionSampleRate: 0,
   replaysOnErrorSampleRate: 1.0,
+  // Browser extensions / translate tools / vendor SDKs mutate DOM or throw
+  // minified errors that are not actionable in app code.
+  ignoreErrors: [
+    // EXUR-FRONT-1A — extension eval blocked by production CSP
+    /Refused to evaluate a string as JavaScript because 'unsafe-eval'/,
+    // EXUR-FRONT-16 — React unmount after external DOM detach (Firefox wording)
+    /can't access property ["']removeChild["'], .*parentNode is null/,
+    // EXUR-FRONT-16/17 — Chromium / NotFoundError wording of the same class
+    /Cannot read properties of null \(reading ['"]removeChild['"]\)/,
+    /Failed to execute ['"]removeChild['"] on ['"]Node['"]/,
+    // EXUR-FRONT-19 — Android WebView / in-app browser JavaScriptInterface
+    /Java bridge method invocation error/,
+    /Error invoking post:/,
+  ],
+  denyUrls: [
+    /^chrome-extension:\/\//i,
+    /^moz-extension:\/\//i,
+    /^safari-web-extension:\/\//i,
+    // EXUR-FRONT-1D — Google Identity Services (One Tap) client
+    /gsi\/client/i,
+    /accounts\.google\.com\/gsi/i,
+  ],
 })
 
 if (enabled && typeof window !== "undefined") {

@@ -66,12 +66,23 @@ export function formatGuestTrialLabel(trial: TrialInfo): string {
 
 export async function ensureGuestSession(): Promise<GuestSessionResponse> {
   const existing = getStoredGuestToken()
-  const res = await fetch(chatApiPath("/guest/session"), {
-    method: "POST",
-    credentials: "include",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(existing ? { guest_token: existing } : {}),
-  })
+  let res: Response
+  try {
+    res = await fetch(chatApiPath("/guest/session"), {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(existing ? { guest_token: existing } : {}),
+    })
+  } catch (error) {
+    // Offline / aborted / DNS — surface as GuestChatError so callers never
+    // leave an unhandled TypeError: Failed to fetch rejection (EXUR-FRONT-18).
+    throw new GuestChatError(
+      error instanceof Error ? error.message : "Failed to fetch",
+      0,
+      "network"
+    )
+  }
 
   const raw = await res.json().catch(() => ({}))
   const payload = unwrapChatPayload<

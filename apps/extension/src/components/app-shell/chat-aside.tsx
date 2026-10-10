@@ -516,9 +516,16 @@ function ChatAside({
             setGuestSendError(t("guestSendBlocked"))
             return
           }
-          if (error.code === "upstream_unreachable") {
+          if (
+            error.code === "upstream_unreachable" ||
+            error.code === "network"
+          ) {
             setGuestUnavailable(false)
-            setGuestSendError(t("guestChatUpstreamUnreachable"))
+            setGuestSendError(
+              error.code === "network"
+                ? t("errors.network")
+                : t("guestChatUpstreamUnreachable")
+            )
             return
           }
         }
@@ -1775,9 +1782,16 @@ function ChatAside({
             trackChatMessageBlockedGuest()
             return
           }
-          if (error.code === "upstream_unreachable") {
+          if (
+            error.code === "upstream_unreachable" ||
+            error.code === "network"
+          ) {
             setGuestUnavailable(false)
-            setGuestSendError(t("guestChatUpstreamUnreachable"))
+            setGuestSendError(
+              error.code === "network"
+                ? t("errors.network")
+                : t("guestChatUpstreamUnreachable")
+            )
             trackChatMessageBlockedGuest()
             return
           }
@@ -1790,7 +1804,12 @@ function ChatAside({
             return
           }
         }
-        throw error
+        // Never rethrow — composer calls send() without awaiting; a reject
+        // becomes an unhandledrejection (EXUR-FRONT-18).
+        setGuestUnavailable(false)
+        setGuestSendError(t("errors.network"))
+        trackChatMessageBlockedGuest()
+        return
       }
     } else {
       if (!getStoredAccessToken()) {
