@@ -13,6 +13,7 @@ import { cn } from "@/lib/utils"
 /**
  * Liquid-glass Staking pill — opens the staking preview sheet.
  * Hidden unless `NEXT_PUBLIC_FEATURE_STAKING` is on.
+ * Mount only on empty/new-chat header (not threaded chat).
  */
 function ChatMobileStakingButton({ className }: { className?: string }) {
   const t = useTranslations("workspace")

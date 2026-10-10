@@ -3,6 +3,7 @@
 import * as React from "react"
 import { Link } from "@/i18n/navigation"
 import {
+  CoinsIcon,
   MessageSquareIcon,
   NewspaperIcon,
   PanelLeftCloseIcon,
@@ -22,6 +23,7 @@ import {
 import { ChatAccountMenu } from "@/components/app-shell/chat-account-menu"
 import { ChatGeminiNewChatIcon } from "@/components/app-shell/chat-gemini-new-chat-icon"
 import { ChatHistorySearchDialog } from "@/components/app-shell/chat-history-search-dialog"
+import { ChatMobileStakingSheet } from "@/components/app-shell/chat-mobile-staking-sheet"
 import {
   SfBubbleIcon,
   SfEllipsisIcon,
@@ -94,6 +96,8 @@ import {
   sortConversations,
   type StoredConversation,
 } from "@/lib/chat-storage"
+import { useAppFeatureVisible } from "@/hooks/use-app-feature-prefs"
+import { trackStakingOpen } from "@/lib/analytics"
 import { CHAT_HISTORY_RAIL_COLLAPSED_WIDTH } from "@/lib/chat-history-rail-prefs"
 import { localeDirection } from "@/lib/i18n/locale"
 import { getLandingHref, UPGRADE_PATH } from "@/lib/site"
@@ -304,6 +308,86 @@ function HistoryHomeNav({
       />
       <span className="min-w-0 flex-1 truncate text-start">{t("home")}</span>
     </Button>
+  )
+}
+
+function HistoryStakingNav({
+  isMobileDrawer = false,
+  minimal = false,
+}: {
+  isMobileDrawer?: boolean
+  minimal?: boolean
+}) {
+  const t = useTranslations("workspace")
+  const { tooltipSide } = useSidebarDir()
+  const visible = useAppFeatureVisible("staking")
+  const [open, setOpen] = React.useState(false)
+
+  if (!visible) return null
+
+  function openStaking() {
+    trackStakingOpen()
+    setOpen(true)
+  }
+
+  const sheet = (
+    <ChatMobileStakingSheet open={open} onOpenChange={setOpen} />
+  )
+
+  if (minimal) {
+    return (
+      <>
+        <Tooltip>
+          <TooltipTrigger
+            render={
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                className={historyRailGlassIconButtonClass}
+                aria-label={t("staking")}
+                aria-haspopup="dialog"
+                aria-expanded={open}
+                onClick={openStaking}
+              >
+                <CoinsIcon className="size-4.5" />
+              </Button>
+            }
+          >
+            <CoinsIcon className="size-4.5" />
+          </TooltipTrigger>
+          <TooltipContent side={tooltipSide}>{t("staking")}</TooltipContent>
+        </Tooltip>
+        {sheet}
+      </>
+    )
+  }
+
+  return (
+    <>
+      <Button
+        type="button"
+        variant="ghost"
+        className={
+          isMobileDrawer
+            ? chatMobileDrawerNavItemClass
+            : chatHistoryRailNavItemClass
+        }
+        aria-label={t("staking")}
+        aria-haspopup="dialog"
+        aria-expanded={open}
+        onClick={openStaking}
+      >
+        <CoinsIcon
+          className={cn(
+            "shrink-0 text-muted-foreground",
+            isMobileDrawer ? "size-4.5" : "size-4"
+          )}
+        />
+        <span className="min-w-0 flex-1 truncate text-start">{t("staking")}</span>
+      </Button>
+      {sheet}
+    </>
   )
 }
 
@@ -670,6 +754,10 @@ function ChatHistorySidebar({
                   showSpotlight={showNewsSpotlight}
                 />
               ) : null}
+              <HistoryStakingNav
+                isMobileDrawer={isMobileDrawer}
+                minimal={collapsed && !isMobileDrawer}
+              />
               <HistoryHomeNav
                 isMobileDrawer={isMobileDrawer}
                 minimal={collapsed && !isMobileDrawer}

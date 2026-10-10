@@ -54,7 +54,7 @@ function ChatComposerSkeleton({ className }: { className?: string }) {
 }
 
 function ChatMobileHeaderSkeleton() {
-  // Mirrors ChatMobileHeader empty state: menu + effort | optional staking + account.
+  // Mirrors ChatMobileHeader empty/new-chat: menu + effort | optional staking + account.
   return (
     <div className={chatMobileHeaderShellClass}>
       <div aria-hidden className={chatMobileHeaderScrimClass} />

@@ -257,7 +257,8 @@ function ChatMobileHeader({
             ) : null}
           </AnimatePresence>
 
-          <ChatMobileStakingButton />
+          {/* Staking only on empty / new-chat — never in an active thread. */}
+          {!showThreadChrome ? <ChatMobileStakingButton /> : null}
 
           <div className="relative size-11 shrink-0 overflow-visible">
             <AnimatePresence initial={false} mode="wait">
