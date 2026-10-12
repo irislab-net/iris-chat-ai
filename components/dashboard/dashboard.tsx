@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { useLocale } from "next-intl"
 
 import { DashboardSkeleton } from "@/components/dashboard/intel-skeletons"
 import { MarketContextWorkspace } from "@/components/dashboard/market-context-workspace"
@@ -27,6 +28,7 @@ function Dashboard({
   mobile = false,
   showWorkspace = true,
 }: DashboardProps) {
+  const locale = useLocale()
   const [news, setNews] = React.useState<NewsHome | null>(initialNews)
   const [newsReady, setNewsReady] = React.useState(() =>
     hasUsableNews(initialNews)
@@ -48,10 +50,11 @@ function Dashboard({
     if (newsInFlightRef.current) return
     newsInFlightRef.current = true
     try {
-      const home = await fetchNewsHome().catch(() => null)
+      const query = { lang: locale }
+      const home = await fetchNewsHome(query).catch(() => null)
       const newsData = home?.news?.length
         ? home
-        : mergeNewsHome(home, await fetchNewsLatest().catch(() => []))
+        : mergeNewsHome(home, await fetchNewsLatest(query).catch(() => []))
       if (!mountedRef.current) return
       lastNewsFetchAtRef.current = Date.now()
       if (newsData) setNews(newsData)
@@ -68,17 +71,19 @@ function Dashboard({
     return () => window.clearInterval(id)
   }, [])
 
-  React.useEffect(() => {
-    if (hasUsableNews(initialNews)) return
-    const id = window.setTimeout(() => {
-      void loadNews()
-    }, 0)
-    return () => window.clearTimeout(id)
-  }, [initialNews])
-
-  // News: refresh every 5 minutes (and on resume if the window elapsed).
+  // Fetch in the UI locale; refresh every 5 minutes (and on resume).
   React.useEffect(() => {
     let cancelled = false
+    let initialTimeoutId: number | undefined
+
+    if (hasUsableNews(initialNews)) {
+      // SSR seed may be a different lang — refresh once for the active locale.
+      void loadNews()
+    } else {
+      initialTimeoutId = window.setTimeout(() => {
+        if (!cancelled) void loadNews()
+      }, 0)
+    }
 
     const intervalId = window.setInterval(() => {
       if (cancelled) return
@@ -97,10 +102,11 @@ function Dashboard({
     document.addEventListener("visibilitychange", onVisibilityChange)
     return () => {
       cancelled = true
+      if (initialTimeoutId !== undefined) window.clearTimeout(initialTimeoutId)
       window.clearInterval(intervalId)
       document.removeEventListener("visibilitychange", onVisibilityChange)
     }
-  }, [])
+  }, [initialNews, locale])
 
   const analytics = news?.analytics?.[0] ?? null
   const newsFreshness = newsFeedUpdatedLabel(analytics?.generated_at, nowMs)

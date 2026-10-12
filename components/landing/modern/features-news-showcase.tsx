@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { useTranslations } from "next-intl"
+import { useLocale, useTranslations } from "next-intl"
 
 import {
   DeskNewsBoard,
@@ -66,6 +66,7 @@ function mapLiveBoard(news: NewsItem[]): {
 }
 
 function useFeaturesNewsFeed() {
+  const locale = useLocale()
   const [newsHome, setNewsHome] = React.useState<NewsHome | null>(null)
   const [ready, setReady] = React.useState(false)
   const [nowMs, setNowMs] = React.useState(() => Date.now())
@@ -77,10 +78,11 @@ function useFeaturesNewsFeed() {
     if (inFlightRef.current) return
     inFlightRef.current = true
     try {
-      const home = await fetchNewsHome().catch(() => null)
+      const query = { lang: locale }
+      const home = await fetchNewsHome(query).catch(() => null)
       const merged = home?.news?.length
         ? home
-        : mergeNewsHome(home, await fetchNewsLatest().catch(() => []))
+        : mergeNewsHome(home, await fetchNewsLatest(query).catch(() => []))
       if (!mountedRef.current) return
       setNewsHome(merged)
       lastFetchAtRef.current = Date.now()
@@ -123,7 +125,7 @@ function useFeaturesNewsFeed() {
       window.clearInterval(intervalId)
       document.removeEventListener("visibilitychange", onVisibilityChange)
     }
-  }, [])
+  }, [locale])
 
   const analytics = newsHome?.analytics?.[0] ?? null
   const freshnessLabel = newsFeedUpdatedLabel(analytics?.generated_at, nowMs)

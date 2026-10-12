@@ -4,7 +4,8 @@
  *
  * Outputs to apps/extension/store-assets/
  */
-import { mkdirSync, readFileSync, writeFileSync } from "node:fs"
+import { execFileSync } from "node:child_process"
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs"
 import { dirname, join } from "node:path"
 import { fileURLToPath } from "node:url"
 import { deflateSync } from "node:zlib"
@@ -13,8 +14,63 @@ import { Resvg } from "@resvg/resvg-js"
 const root = join(dirname(fileURLToPath(import.meta.url)), "..")
 const outDir = join(root, "store-assets")
 const publicDir = join(root, "public")
+const cropsDir = join(outDir, "_crops")
 
 mkdirSync(outDir, { recursive: true })
+mkdirSync(cropsDir, { recursive: true })
+
+function pngFileDataUri(filePath) {
+  return `data:image/png;base64,${readFileSync(filePath).toString("base64")}`
+}
+
+/** Phone body inside 1280×800 framed store screenshots (caption excluded). */
+const PHONE_CROP = { x: 454, y: 40, w: 372, h: 700 }
+
+function ensurePhoneCrop(screenshotName) {
+  const src = join(outDir, `${screenshotName}.png`)
+  const dest = join(cropsDir, `${screenshotName}-phone.png`)
+  if (!existsSync(src)) {
+    throw new Error(`Missing screenshot for promo compose: ${src}`)
+  }
+  // Prefer macOS sips when available; otherwise keep an existing crop.
+  try {
+    execFileSync(
+      "sips",
+      [
+        "-c",
+        String(PHONE_CROP.h),
+        String(PHONE_CROP.w),
+        "--cropOffset",
+        String(PHONE_CROP.y),
+        String(PHONE_CROP.x),
+        src,
+        "--out",
+        dest,
+      ],
+      { stdio: "ignore" }
+    )
+  } catch {
+    if (!existsSync(dest)) {
+      throw new Error(
+        `Could not crop ${screenshotName} (sips missing) and no cached crop at ${dest}`
+      )
+    }
+  }
+  return dest
+}
+
+/** Chat header shows a Free plan chip — paint it out for CWS Red Nickel. */
+function chatPhoneCleanDataUri() {
+  const raw = pngFileDataUri(ensurePhoneCrop("screenshot-2-chat"))
+  const svg = `<?xml version="1.0" encoding="UTF-8"?>
+<svg width="372" height="700" viewBox="0 0 372 700" xmlns="http://www.w3.org/2000/svg">
+  <image href="${raw}" width="372" height="700"/>
+  <!-- Cover plan badge under avatar ("Free") -->
+  <rect x="288" y="74" width="58" height="20" rx="6" fill="#F4F6F8"/>
+</svg>`
+  const png = renderSvgToRgbPng(svg, 372, 700)
+  return `data:image/png;base64,${png.toString("base64")}`
+}
 
 function crc32(buf) {
   let c = ~0
@@ -268,65 +324,96 @@ function screenshotAskAnywhere() {
 </svg>`
 }
 
+/**
+ * CWS promo tiles — real product phones + brand copy.
+ * No install CTAs / status badges (Red Nickel): free, premium, recommended, #1, new, Add/Open to Chrome, etc.
+ */
 function smallPromo() {
   const logo = logoMarkDataUri()
+  const chatPhone = chatPhoneCleanDataUri()
+  // Phone card sits on the right; image is scaled so the UI fills the frame.
+  const px = 236
+  const py = 18
+  const pw = 178
+  const ph = 292
   return `<?xml version="1.0" encoding="UTF-8"?>
 <svg width="440" height="280" viewBox="0 0 440 280" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#EFF6FF"/>
-      <stop offset="100%" stop-color="#DBEAFE"/>
+    <linearGradient id="g" x1="0" y1="0" x2="0.85" y2="1">
+      <stop offset="0%" stop-color="#0B1220"/>
+      <stop offset="55%" stop-color="#1E3A8A"/>
+      <stop offset="100%" stop-color="#1D4ED8"/>
     </linearGradient>
+    <filter id="phoneSh" x="-40%" y="-20%" width="180%" height="150%">
+      <feDropShadow dx="0" dy="16" stdDeviation="18" flood-color="#020617" flood-opacity="0.5"/>
+    </filter>
+    <clipPath id="phoneClip">
+      <rect x="${px}" y="${py}" width="${pw}" height="${ph}" rx="26"/>
+    </clipPath>
   </defs>
   <rect width="440" height="280" fill="url(#g)"/>
-  <rect x="28" y="28" width="384" height="224" rx="24" fill="#FFFFFF"/>
-  <image href="${logo}" x="52" y="56" width="48" height="48"/>
-  <text x="116" y="78" font-family="ui-sans-serif, system-ui, sans-serif" font-size="28" font-weight="700" fill="#0F172A">Exur Chat</text>
-  <text x="116" y="106" font-family="ui-sans-serif, system-ui, sans-serif" font-size="14" fill="#64748B">AI co-pilot in Chrome</text>
-  <text x="52" y="168" font-family="ui-sans-serif, system-ui, sans-serif" font-size="18" font-weight="600" fill="#0F172A">Ask about markets</text>
-  <text x="52" y="196" font-family="ui-sans-serif, system-ui, sans-serif" font-size="18" font-weight="600" fill="#0F172A">without leaving the page.</text>
-  <rect x="52" y="220" width="148" height="18" rx="9" fill="#2563EB"/>
+  <circle cx="390" cy="20" r="100" fill="#93C5FD" opacity="0.14"/>
+  <circle cx="40" cy="250" r="80" fill="#60A5FA" opacity="0.1"/>
+
+  <image href="${logo}" x="28" y="34" width="34" height="34"/>
+  <text x="72" y="57" font-family="ui-sans-serif, system-ui, sans-serif" font-size="22" font-weight="700" fill="#FFFFFF">Exur</text>
+  <text x="28" y="116" font-family="ui-sans-serif, system-ui, sans-serif" font-size="21" font-weight="700" fill="#FFFFFF">Ask markets.</text>
+  <text x="28" y="146" font-family="ui-sans-serif, system-ui, sans-serif" font-size="21" font-weight="700" fill="#BFDBFE">Get a clear</text>
+  <text x="28" y="176" font-family="ui-sans-serif, system-ui, sans-serif" font-size="21" font-weight="700" fill="#BFDBFE">next step.</text>
+  <text x="28" y="228" font-family="ui-sans-serif, system-ui, sans-serif" font-size="12" fill="#DBEAFE">AI co-pilot in the side panel</text>
+
+  <!-- Device chrome -->
+  <rect x="${px - 5}" y="${py - 5}" width="${pw + 10}" height="${ph + 10}" rx="30" fill="#0F172A" filter="url(#phoneSh)"/>
+  <g clip-path="url(#phoneClip)">
+    <image href="${chatPhone}" x="${px - 8}" y="${py - 14}" width="${pw + 16}" height="${(pw + 16) * (700 / 372)}"/>
+  </g>
 </svg>`
 }
 
 function marqueePromo() {
   const logo = logoMarkDataUri()
+  const signalPhone = pngFileDataUri(ensurePhoneCrop("screenshot-3-signal"))
+  const newsPhone = pngFileDataUri(ensurePhoneCrop("screenshot-4-news"))
   return `<?xml version="1.0" encoding="UTF-8"?>
 <svg width="1400" height="560" viewBox="0 0 1400 560" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <linearGradient id="mg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#F8FAFC"/>
-      <stop offset="50%" stop-color="#EEF2FF"/>
+      <stop offset="0%" stop-color="#EEF2FF"/>
+      <stop offset="40%" stop-color="#F8FAFC"/>
       <stop offset="100%" stop-color="#DBEAFE"/>
     </linearGradient>
-    <filter id="sh" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="0" dy="20" stdDeviation="30" flood-color="#0F172A" flood-opacity="0.14"/>
+    <filter id="phoneSh" x="-25%" y="-15%" width="150%" height="140%">
+      <feDropShadow dx="0" dy="28" stdDeviation="32" flood-color="#0F172A" flood-opacity="0.22"/>
     </filter>
+    <clipPath id="phoneA">
+      <rect x="760" y="36" width="292" height="520" rx="36"/>
+    </clipPath>
+    <clipPath id="phoneB">
+      <rect x="1040" y="56" width="292" height="520" rx="36"/>
+    </clipPath>
   </defs>
   <rect width="1400" height="560" fill="url(#mg)"/>
-  <circle cx="1180" cy="120" r="180" fill="#2563EB" opacity="0.08"/>
-  <circle cx="160" cy="480" r="140" fill="#2563EB" opacity="0.06"/>
+  <circle cx="1180" cy="80" r="200" fill="#2563EB" opacity="0.08"/>
+  <circle cx="160" cy="500" r="160" fill="#2563EB" opacity="0.06"/>
 
-  <image href="${logo}" x="96" y="120" width="72" height="72"/>
-  <text x="188" y="156" font-family="ui-sans-serif, system-ui, sans-serif" font-size="42" font-weight="700" fill="#0F172A">Exur Chat</text>
-  <text x="188" y="196" font-family="ui-sans-serif, system-ui, sans-serif" font-size="20" fill="#64748B">for Chrome</text>
+  <image href="${logo}" x="88" y="96" width="56" height="56"/>
+  <text x="158" y="132" font-family="ui-sans-serif, system-ui, sans-serif" font-size="36" font-weight="700" fill="#0F172A">Exur</text>
+  <text x="158" y="164" font-family="ui-sans-serif, system-ui, sans-serif" font-size="16" fill="#64748B">AI financial assistant for Chrome.</text>
 
-  <text x="96" y="280" font-family="ui-sans-serif, system-ui, sans-serif" font-size="52" font-weight="700" fill="#0F172A">Your AI market co-pilot</text>
-  <text x="96" y="340" font-family="ui-sans-serif, system-ui, sans-serif" font-size="52" font-weight="700" fill="#0F172A">in the side panel.</text>
-  <text x="96" y="400" font-family="ui-sans-serif, system-ui, sans-serif" font-size="22" fill="#475569">Ask in plain language. Stay on the page. Analysis only — not advice.</text>
-  <rect x="96" y="440" width="220" height="48" rx="24" fill="#2563EB"/>
-  <text x="206" y="471" text-anchor="middle" font-family="ui-sans-serif, system-ui, sans-serif" font-size="16" font-weight="700" fill="#FFFFFF">Open in Chrome</text>
+  <text x="88" y="260" font-family="ui-sans-serif, system-ui, sans-serif" font-size="48" font-weight="700" fill="#0F172A">Market news,</text>
+  <text x="88" y="318" font-family="ui-sans-serif, system-ui, sans-serif" font-size="48" font-weight="700" fill="#0F172A">clear answers.</text>
+  <text x="88" y="380" font-family="ui-sans-serif, system-ui, sans-serif" font-size="18" fill="#475569">Ask in plain language. Signal cards when the read is clear.</text>
+  <text x="88" y="410" font-family="ui-sans-serif, system-ui, sans-serif" font-size="18" fill="#475569">Stay on the page — analysis only, not financial advice.</text>
 
-  <!-- mini panel -->
-  <rect x="900" y="80" width="420" height="400" rx="24" fill="#FFFFFF" filter="url(#sh)"/>
-  <text x="932" y="128" font-family="ui-sans-serif, system-ui, sans-serif" font-size="18" font-weight="700" fill="#0F172A">Exur</text>
-  <rect x="932" y="160" width="240" height="48" rx="14" fill="#2563EB"/>
-  <text x="952" y="190" font-family="ui-sans-serif, system-ui, sans-serif" font-size="13" fill="#FFFFFF">What’s moving ETH?</text>
-  <rect x="932" y="228" width="356" height="100" rx="14" fill="#F8FAFC"/>
-  <text x="952" y="264" font-family="ui-sans-serif, system-ui, sans-serif" font-size="14" fill="#334155">Liquidity is thin above range.</text>
-  <text x="952" y="288" font-family="ui-sans-serif, system-ui, sans-serif" font-size="14" fill="#334155">Prefer confirmation over chase.</text>
-  <rect x="932" y="360" width="356" height="48" rx="24" fill="#F1F5F9"/>
-  <text x="956" y="390" font-family="ui-sans-serif, system-ui, sans-serif" font-size="13" fill="#94A3B8">Ask Exur…</text>
+  <!-- Back phone (news), then front phone (signal) for depth -->
+  <rect x="1035" y="51" width="302" height="530" rx="40" fill="#0F172A" filter="url(#phoneSh)"/>
+  <g clip-path="url(#phoneB)">
+    <image href="${newsPhone}" x="1040" y="40" width="292" height="550"/>
+  </g>
+  <rect x="755" y="31" width="302" height="530" rx="40" fill="#0F172A" filter="url(#phoneSh)"/>
+  <g clip-path="url(#phoneA)">
+    <image href="${signalPhone}" x="760" y="20" width="292" height="550"/>
+  </g>
 </svg>`
 }
 
@@ -350,18 +437,22 @@ writeFileSync(
   join(outDir, "README.md"),
   `# Chrome Web Store assets
 
-Generated opaque PNGs (no alpha) for the listing form.
+Opaque 24-bit PNGs (no alpha) for the listing form.
 
 | File | Upload as | Size |
 |---|---|---|
 | \`store-icon-128.png\` | Store icon | 128×128 |
-| \`screenshot-1-side-panel.png\` | Screenshot 1 | 1280×800 |
-| \`screenshot-2-sign-in.png\` | Screenshot 2 | 1280×800 |
-| \`screenshot-3-ask-anywhere.png\` | Screenshot 3 | 1280×800 |
-| \`small-promo-440x280.png\` | Small promo tile | 440×280 |
-| \`marquee-promo-1400x560.png\` | Marquee promo tile | 1400×560 |
+| \`screenshot-1-landing.png\` … \`screenshot-4-news.png\` | Screenshots (prefer these) | 1280×800 |
+| \`small-promo-440x280.png\` | Small promo tile | 440×280 · generator |
+| \`marquee-promo-1400x560.png\` | Marquee promo tile | 1400×560 · generator |
 
-Regenerate:
+**Promo tiles** (\`small-promo\`, \`marquee-promo\`) are composed by \`scripts/generate-store-assets.mjs\` from live phone crops of \`screenshot-2-chat\`, \`screenshot-3-signal\`, and \`screenshot-4-news\` (chat plan chip painted out) — brand copy only, no install CTAs.
+
+CWS Red Nickel: do **not** put badge/CTA text in promo images (\`free\`, \`premium\`, \`recommended\`, \`#1\`, \`new\`, \`Add to Chrome\`, \`Open in Chrome\`, etc.).
+
+Legacy mock screenshots (\`screenshot-*-side-panel|sign-in|ask-anywhere.png\`) may still be regenerated by the script — prefer the \`screenshot-1-landing\` … \`screenshot-4-news\` set for the listing.
+
+Regenerate promo + icon + legacy mocks:
 
 \`\`\`bash
 pnpm --filter @exur/extension store-assets

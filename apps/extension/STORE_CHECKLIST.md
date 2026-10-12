@@ -3,6 +3,7 @@
 Prior rejections:
 - **Red Potassium / login:** reviewers hit login error and could not chat.
 - **Purple Potassium (0.0.3):** unused `identity` permission — never request unused APIs.
+- **Red Nickel (0.0.5):** marquee/promo assets mimicking store status or promotional badges (keyword cited: `free`; also avoid faux **Add to Chrome** CTAs).
 
 Use this before every upload of `exur-chat-extension.zip`.
 
@@ -18,7 +19,7 @@ pnpm extension:pack
 - [ ] Pack confirms `app=chromimum_extension` is in the built JS
 - [ ] Pack confirms `callback.html` is in `web_accessible_resources` (OAuth redirect)
 - [ ] Pack fails if `identity` / `chrome.identity` / unexpected host_permissions appear
-- [ ] Version bumped in `manifest.config.ts` + `package.json` (currently **0.0.5**)
+- [ ] Version bumped in `manifest.config.ts` + `package.json` (currently **0.0.6**)
 - [ ] Smoke on the **packed** build (load zip contents or keyless staging): sign-in → chat → news → Upgrade opens `https://chat.exur.ai/upgrade`
 
 ## Manifest readiness (shipped)
@@ -61,10 +62,12 @@ Also ensure `app=chromimum_extension` honors `destination=chrome-extension://…
 |---|---|---|
 | Store icon | `store-assets/store-icon-128.png` | 128×128 opaque |
 | Screenshots (prefer 1–4 live product) | `screenshot-1-landing` … `screenshot-4-news` | 1280×800 |
-| Small promo | `small-promo-440x280.png` | 440×280 |
-| Marquee (optional, for featuring) | `marquee-promo-1400x560.png` | 1400×560 |
+| Small promo | `small-promo-440x280.png` | 440×280 · from `store-assets` script |
+| Marquee (optional, for featuring) | `marquee-promo-1400x560.png` | 1400×560 · from `store-assets` script |
 
 Avoid older mock set (`*-side-panel|sign-in|ask-anywhere`) unless they still match the UI.
+
+Promo tiles must stay brand + factual tagline only — regenerate with `pnpm --filter @exur/extension store-assets` after copy changes. The generator composites live phone crops and paints out the Free plan chip on the chat crop.
 
 ### Listing copy (paste)
 
@@ -149,6 +152,7 @@ Test account: use any Google account allowed by our OAuth consent screen
 5. **Privacy policy missing / mismatch** — URL must load and match disclosed data use.
 6. **Minimum functionality** — empty shell or “sign-in only” with no working chat gets rejected.
 7. **Misleading claims** — do not promise guaranteed trading profits; keep “not financial advice”.
+8. **Red Nickel / promo badges** — marquee + small promo must not use badge or CTA text such as `free`, `premium`, `recommended`, `#1`, `new`, `Add to Chrome`, `Open in Chrome`, or “Editor’s Choice”. Keep tiles brand-first; listing copy and screenshots must match.
 
 ## Policy refs
 

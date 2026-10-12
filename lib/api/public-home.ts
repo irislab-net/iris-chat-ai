@@ -18,10 +18,12 @@ export type PublicHomeSnapshot = {
 
 async function fetchPublicEnvelope<T>(
   path: string,
-  options: { revalidate: number; tags: string[] }
+  options: { revalidate: number; tags: string[]; lang?: string }
 ): Promise<T | null> {
   try {
-    const res = await fetch(`${API_BASE}${path}`, {
+    const url = new URL(`${API_BASE}${path}`)
+    if (options.lang) url.searchParams.set("lang", options.lang)
+    const res = await fetch(url, {
       headers: { Accept: "application/json" },
       next: { revalidate: options.revalidate, tags: options.tags },
     })
@@ -34,10 +36,13 @@ async function fetchPublicEnvelope<T>(
 }
 
 /** Guest-safe public home payloads — no cookies, tokens, or browser APIs. */
-export async function fetchPublicHomeSnapshot(): Promise<PublicHomeSnapshot> {
+export async function fetchPublicHomeSnapshot(options?: {
+  lang?: string
+}): Promise<PublicHomeSnapshot> {
   const newsOpts = {
     revalidate: PUBLIC_NEWS_REVALIDATE_SECONDS,
     tags: [PUBLIC_NEWS_CACHE_TAG],
+    lang: options?.lang,
   }
   const [newsHome, latest] = await Promise.all([
     fetchPublicEnvelope<NewsHome>("/v1/news/home", newsOpts),

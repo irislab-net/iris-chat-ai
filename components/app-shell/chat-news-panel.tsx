@@ -40,6 +40,7 @@ import { localeDirection } from "@/lib/i18n/locale"
 import { cn } from "@/lib/utils"
 
 function useChatNewsFeed(enabled: boolean) {
+  const locale = useLocale()
   const [newsHome, setNewsHome] = React.useState<NewsHome | null>(null)
   const [ready, setReady] = React.useState(false)
   const [nowMs, setNowMs] = React.useState(() => Date.now())
@@ -51,10 +52,11 @@ function useChatNewsFeed(enabled: boolean) {
     if (inFlightRef.current) return
     inFlightRef.current = true
     try {
-      const home = await fetchNewsHome().catch(() => null)
+      const query = { lang: locale }
+      const home = await fetchNewsHome(query).catch(() => null)
       const merged = home?.news?.length
         ? home
-        : mergeNewsHome(home, await fetchNewsLatest().catch(() => []))
+        : mergeNewsHome(home, await fetchNewsLatest(query).catch(() => []))
       if (!mountedRef.current) return
       setNewsHome(merged)
       lastFetchAtRef.current = Date.now()
@@ -101,7 +103,7 @@ function useChatNewsFeed(enabled: boolean) {
       window.clearInterval(intervalId)
       document.removeEventListener("visibilitychange", onVisibilityChange)
     }
-  }, [enabled])
+  }, [enabled, locale])
 
   const analytics = newsHome?.analytics?.[0] ?? null
   const freshnessLabel = newsFeedUpdatedLabel(analytics?.generated_at, nowMs)

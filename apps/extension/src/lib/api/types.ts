@@ -132,6 +132,15 @@ export type NewsHome = {
   news: NewsItem[]
 }
 
+/** Ranked empty-state starter from GET /v1/prompts. */
+export type DynamicPrompt = {
+  position: number
+  prompt_id: string
+  text: string
+  source: string
+  score: number
+}
+
 export type ApiEnvelope<T> = {
   success: boolean
   meta?: Record<string, unknown>

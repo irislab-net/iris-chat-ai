@@ -3,5 +3,6 @@ node_modules
 .vite
 .store-pack
 exur-chat-extension.zip
+store-assets/_crops
 *.local
 .DS_Store

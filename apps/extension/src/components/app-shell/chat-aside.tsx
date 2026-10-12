@@ -620,8 +620,13 @@ function ChatAside({
       if (!hydrated) return
       window.clearTimeout(persistTimer.current)
 
+      // Never steal selection after New chat / switch — delayed microtasks from
+      // the previous thread must not revive it as `activeId` on reload.
+      const setActive = next.id === conversationIdRef.current
+
       const cleaned = sanitizeMessages(next.messages)
       if (!hasUserMessages(cleaned)) {
+        if (!setActive) return
         const store = readChatStore(next.ownerId)
         writeChatStore(next.ownerId, setActiveConversation(store, next.id))
         return
@@ -650,7 +655,7 @@ function ChatAside({
         pinned: existing?.pinned,
       }
 
-      store = upsertConversation(store, saved, { setActive: true })
+      store = upsertConversation(store, saved, { setActive })
       writeChatStore(next.ownerId, store)
       setConversations(store.conversations)
     }
@@ -919,33 +924,61 @@ function ChatAside({
     setPendingAssistantId(null)
     closeHistoryPanelIfNeeded()
 
-    if (hasUserMessages(messages)) {
+    const previousId = conversationId
+    const previousMessages = messages
+    const previousHistory = history
+
+    if (previousId) {
+      draftsByConversationRef.current[previousId] = draft
+    }
+
+    // Detach the prior active session from storage immediately so reload / sync
+    // cannot revive it while we allocate a blank web session id.
+    const pendingId =
+      typeof crypto !== "undefined" && "randomUUID" in crypto
+        ? crypto.randomUUID()
+        : `new-${Date.now().toString(36)}`
+    conversationIdRef.current = pendingId
+    setConversationId(pendingId)
+    setMessages([])
+    setHistory([])
+    setDraft(draftsByConversationRef.current[pendingId] ?? "")
+    setReplyTarget(null)
+    setEffort(DEFAULT_CHAT_EFFORT)
+    writeChatEffort(DEFAULT_CHAT_EFFORT)
+    writeChatStore(
+      chatOwnerId,
+      setActiveConversation(readChatStore(chatOwnerId), pendingId)
+    )
+
+    if (hasUserMessages(previousMessages)) {
       persistCurrent({
-        id: conversationId,
-        messages,
-        history,
+        id: previousId,
+        messages: previousMessages,
+        history: previousHistory,
         ownerId: chatOwnerId,
       })
     }
 
-    if (conversationId) {
-      draftsByConversationRef.current[conversationId] = draft
-    }
-
     const ownerId = chatOwnerId ?? getStoredGuestUserId()
     const id = ownerId ? await newWebSessionId(ownerId) : ""
-    const blank = blankConversation(id)
+    if (
+      conversationIdRef.current !== pendingId &&
+      conversationIdRef.current !== id
+    ) {
+      return
+    }
+    const blank = blankConversation(id || pendingId)
     conversationIdRef.current = blank.id
     setConversationId(blank.id)
     setMessages(blank.messages)
     setHistory(blank.history)
     setDraft(draftsByConversationRef.current[blank.id] ?? "")
-    setReplyTarget(null)
-    setEffort(DEFAULT_CHAT_EFFORT)
-    writeChatEffort(DEFAULT_CHAT_EFFORT)
-    if (!blank.id) return
-    const store = setActiveConversation(readChatStore(chatOwnerId), blank.id)
-    writeChatStore(chatOwnerId, store)
+    if (!id) return
+    writeChatStore(
+      chatOwnerId,
+      setActiveConversation(readChatStore(chatOwnerId), id)
+    )
   }
 
   function openConversation(id: string) {
