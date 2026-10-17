@@ -79,7 +79,9 @@ function ChatMobileEmptyHeroSkeleton() {
     <div
       className={cn(
         chatMobileEmptyHeroWrapClass,
-        "chat-empty-hero-shell chat-mobile-skeleton-hero min-h-0 flex-1"
+        // Keep `min-h-full` from the wrap — do not add `min-h-0` (twMerge would
+        // collapse the hero to content height while the shell is still booting).
+        "chat-empty-hero-shell chat-mobile-skeleton-hero h-full flex-1"
       )}
     >
       <div className="mx-auto w-full max-w-3xl">

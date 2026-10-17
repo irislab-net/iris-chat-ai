@@ -75,9 +75,10 @@ const chatMobileHeaderCircleClass = `rounded-full ${chatMobileGlassSurfaceClass}
  * Mobile nav-bar circles — Gemini: near-opaque white liquid glass that pops
  * on the cool gray sky (not washed-out frost). Keep specular via ios26 class;
  * do NOT compose the translucent `chatMobileGlassSurfaceClass` fill.
+ * Dark: elevated frost (not solid white) so discs read as glass on the night sky.
  */
 const chatMobileHeaderWhiteGlassClass =
-  "chat-ios26-liquid-glass relative isolate overflow-hidden border-0 bg-white/92 supports-[backdrop-filter]:bg-white/88 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.95),0_1px_2px_rgba(15,23,42,0.05),0_6px_16px_-6px_rgba(15,23,42,0.14),0_14px_32px_-12px_rgba(15,23,42,0.16)] hover:bg-white hover:shadow-[inset_0_1px_0_0_rgba(255,255,255,1),0_2px_6px_-1px_rgba(15,23,42,0.07),0_12px_28px_-10px_rgba(15,23,42,0.18)]"
+  "chat-ios26-liquid-glass relative isolate overflow-hidden border-0 bg-white/92 supports-[backdrop-filter]:bg-white/88 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.95),0_1px_2px_rgba(15,23,42,0.05),0_6px_16px_-6px_rgba(15,23,42,0.14),0_14px_32px_-12px_rgba(15,23,42,0.16)] hover:bg-white hover:shadow-[inset_0_1px_0_0_rgba(255,255,255,1),0_2px_6px_-1px_rgba(15,23,42,0.07),0_12px_28px_-10px_rgba(15,23,42,0.18)] dark:bg-white/14 dark:supports-[backdrop-filter]:bg-white/10 dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.28),0_1px_2px_rgba(0,0,0,0.25),0_6px_16px_-6px_rgba(0,0,0,0.4),0_14px_32px_-12px_rgba(0,0,0,0.48)] dark:hover:bg-white/20 dark:hover:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.36),0_2px_6px_-1px_rgba(0,0,0,0.3),0_12px_28px_-10px_rgba(0,0,0,0.52)]"
 
 const chatMobileHeaderWhiteCircleClass =
   "rounded-full text-foreground transition-[transform,background-color,box-shadow,border-color] duration-150 ease-out active:scale-[0.96]"
@@ -386,9 +387,12 @@ const chatMobileDrawerUpgradeClass = `h-11 shrink-0 rounded-full px-5 text-[15px
 const chatUpgradePillClass = `h-9 shrink-0 rounded-full px-3.5 text-[13px] font-medium ${chatLandingAccentFillClass}`
 
 /**
- * Mobile header Staking CTA — liquid glass pill (36 pt, shorter than nav discs).
+ * Mobile header Staking CTA — liquid glass pill (36 pt).
+ * Face must stay near-opaque so the conic rim behind only shows in the 1px
+ * `p-px` gap — translucent dark glass lets the rainbow flood the whole label.
  */
-const chatMobileHeaderStakingClass = `relative z-10 inline-flex h-9 shrink-0 items-center justify-center rounded-full px-3.5 text-[13px] font-light tracking-[-0.01em] text-foreground ${chatMobileHeaderWhiteGlassClass} active:scale-[0.96]`
+const chatMobileHeaderStakingClass =
+  "relative z-10 inline-flex h-9 shrink-0 items-center justify-center rounded-full border-0 bg-[#F4F4F5] px-3.5 text-[13px] font-light tracking-[-0.01em] text-foreground shadow-[inset_0_1px_0_0_rgba(255,255,255,0.95),0_1px_2px_rgba(15,23,42,0.05)] transition-[transform,background-color] duration-150 ease-out hover:bg-white active:scale-[0.96] dark:bg-[#2C2C2E] dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.22),0_1px_2px_rgba(0,0,0,0.35)] dark:hover:bg-[#3A3A3C]"
 
 const chatHistoryRailUpgradeClass = chatUpgradePillClass
 
@@ -511,6 +515,9 @@ const chatMobileSheetCloseButtonClass = [
   "shadow-[inset_0_1px_0_0_rgba(255,255,255,0.95),0_1px_2px_rgba(15,23,42,0.05),0_6px_16px_-6px_rgba(15,23,42,0.14),0_14px_32px_-12px_rgba(15,23,42,0.16)]",
   "transition-[transform,background-color,box-shadow,border-color] duration-150 ease-out",
   "hover:bg-white hover:shadow-[inset_0_1px_0_0_rgba(255,255,255,1),0_2px_6px_-1px_rgba(15,23,42,0.07),0_12px_28px_-10px_rgba(15,23,42,0.18)]",
+  "dark:bg-white/14 dark:supports-[backdrop-filter]:bg-white/10",
+  "dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.28),0_1px_2px_rgba(0,0,0,0.25),0_6px_16px_-6px_rgba(0,0,0,0.4),0_14px_32px_-12px_rgba(0,0,0,0.48)]",
+  "dark:hover:bg-white/20 dark:hover:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.36),0_2px_6px_-1px_rgba(0,0,0,0.3),0_12px_28px_-10px_rgba(0,0,0,0.52)]",
   "active:scale-[0.96]",
   "[&_svg:not([class*='size-'])]:size-3.5 [&_svg]:stroke-[1.75]",
 ].join(" ")

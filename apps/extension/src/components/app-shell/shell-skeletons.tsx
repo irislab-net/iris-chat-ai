@@ -90,7 +90,7 @@ function ChatMobileEmptyHeroSkeleton() {
     <div
       className={cn(
         chatMobileEmptyHeroWrapClass,
-        "chat-empty-hero-shell chat-mobile-skeleton-hero min-h-0 flex-1"
+        "chat-empty-hero-shell chat-mobile-skeleton-hero h-full flex-1"
       )}
     >
       <div className="mx-auto w-full max-w-3xl">

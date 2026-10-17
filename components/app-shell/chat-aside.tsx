@@ -2415,7 +2415,12 @@ function ChatAside({
         id={MAIN_CONTENT_ID}
         tabIndex={-1}
         data-slot="chat-aside"
-        className={cn("min-h-0 outline-none", className)}
+        className={cn(
+          // Match ChatRoot height chain — without h-full the skeleton's
+          // h-full/% children collapse to content (~⅓ viewport) until hydrate.
+          "flex h-full min-h-0 w-full outline-none",
+          className
+        )}
       >
         {skeleton}
       </main>

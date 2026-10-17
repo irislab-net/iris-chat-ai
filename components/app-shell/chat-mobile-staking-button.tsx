@@ -26,7 +26,8 @@ function ChatMobileStakingButton({ className }: { className?: string }) {
     <>
       <div
         className={cn(
-          "group/staking relative flex w-fit shrink-0 self-center overflow-visible rounded-full p-px",
+          // 1px padding = rainbow rim only; opaque face covers the conic center.
+          "group/staking relative isolate flex w-fit shrink-0 self-center overflow-hidden rounded-full p-px",
           className
         )}
       >
@@ -38,7 +39,12 @@ function ChatMobileStakingButton({ className }: { className?: string }) {
         </span>
         <Button
           type="button"
-          className={cn(chatMobileHeaderStakingClass, "w-full")}
+          variant="ghost"
+          className={cn(
+            chatMobileHeaderStakingClass,
+            // Kill ghost/liquid translucency so the rim never shows through the face.
+            "relative z-10 w-full bg-clip-border hover:bg-white dark:hover:bg-[#3A3A3C]"
+          )}
           aria-label={t("staking")}
           aria-haspopup="dialog"
           aria-expanded={open}

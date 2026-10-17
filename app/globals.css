@@ -952,7 +952,7 @@ html.display-standalone[data-app-shell="true"] [data-slot="sheet-content"] .app-
   --staking-green: #63bbb6;
   --staking-yellow: #ffd631;
   animation: chat-staking-rim-fade 3.6s ease-in-out infinite;
-  box-shadow: 0 0 10px 0.5px color-mix(in oklab, var(--staking-purple) 45%, transparent);
+  /* No outer box-shadow — it bled onto sibling header buttons (overflow-visible). */
 }
 
 .chat-staking-rim-spin {
@@ -966,10 +966,6 @@ html.display-standalone[data-app-shell="true"] [data-slot="sheet-content"] .app-
     var(--staking-red) 364.52deg
   );
   animation: chat-staking-rim-spin 4.5s linear infinite;
-}
-
-.dark .chat-staking-rim-glow {
-  box-shadow: 0 0 12px 0.5px color-mix(in oklab, var(--staking-blue) 50%, transparent);
 }
 
 .group\/staking:hover .chat-staking-rim-glow {
