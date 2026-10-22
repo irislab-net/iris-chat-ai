@@ -56,6 +56,37 @@ async function registerPushToken(token: string) {
   writeSyncedPair(pair)
 }
 
+const PUSH_TOPIC_SYNCED_KEY = "exur_push_topic_token"
+
+/**
+ * Ask our server to subscribe this token to the broadcast topic
+ * (`exur-announcements`) — web clients cannot subscribe themselves, and
+ * one message to that topic reaches every web user. Best-effort: a 501
+ * (server secret not configured yet) retries on a later visit.
+ */
+async function subscribeToBroadcastTopic(token: string) {
+  try {
+    if (localStorage.getItem(PUSH_TOPIC_SYNCED_KEY) === token) return
+  } catch {
+    // ignore
+  }
+  try {
+    const res = await fetch("/api/push/subscribe", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token }),
+    })
+    if (!res.ok) return
+    try {
+      localStorage.setItem(PUSH_TOPIC_SYNCED_KEY, token)
+    } catch {
+      // ignore
+    }
+  } catch {
+    // offline / not deployed yet — retry next visit
+  }
+}
+
 export type ForegroundPushHandler = (payload: MessagePayload) => void
 
 let started = false
@@ -85,7 +116,10 @@ export async function startWebPush(onForeground?: ForegroundPushHandler) {
       vapidKey: FIREBASE_VAPID_KEY,
       serviceWorkerRegistration: registration,
     })
-    if (token) await registerPushToken(token)
+    if (token) {
+      await registerPushToken(token)
+      await subscribeToBroadcastTopic(token)
+    }
   } catch {
     started = false
   }
