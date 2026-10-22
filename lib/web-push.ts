@@ -49,6 +49,52 @@ export function isWebPushConfigured(): boolean {
 
 export const PUSH_TOKEN_SYNCED_KEY = "exur_push_last_synced_pair"
 export const PUSH_PENDING_SESSION_KEY = "exur_push_pending_session_id"
+export const PUSH_PROMPT_DISMISS_KEY = "exur-push-prompt-dismissed"
+/** Soft-prompt cooldown after "Not now" (7 days, PWA-nudge parity). */
+export const PUSH_PROMPT_COOLDOWN_MS = 7 * 24 * 60 * 60 * 1000
+
+/**
+ * Show the in-app enable card only when the native prompt can still be
+ * asked: configured, supported, and permission not yet decided. A denied
+ * permission can only be undone in browser site settings — never re-ask.
+ */
+export function shouldShowPushPrompt(input: {
+  configured: boolean
+  supported: boolean
+  permission: NotificationPermission | null
+  now?: number
+  dismissedAt?: number | null
+  cooldownMs?: number
+}): boolean {
+  if (!input.configured || !input.supported) return false
+  if (input.permission !== "default") return false
+  const dismissedAt = input.dismissedAt ?? null
+  if (dismissedAt != null) {
+    const now = input.now ?? Date.now()
+    if (now - dismissedAt < (input.cooldownMs ?? PUSH_PROMPT_COOLDOWN_MS))
+      return false
+  }
+  return true
+}
+
+export function readPushPromptDismissedAt(): number | null {
+  try {
+    const raw = localStorage.getItem(PUSH_PROMPT_DISMISS_KEY)
+    if (!raw) return null
+    const at = Number(raw)
+    return Number.isFinite(at) ? at : null
+  } catch {
+    return null
+  }
+}
+
+export function markPushPromptDismissed(at = Date.now()) {
+  try {
+    localStorage.setItem(PUSH_PROMPT_DISMISS_KEY, String(at))
+  } catch {
+    // ignore
+  }
+}
 
 /** Body for `POST /v1/devices/push-token` — identical shape to Android/iOS. */
 export function buildPushTokenPayload(token: string) {

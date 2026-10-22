@@ -91,13 +91,15 @@ export async function startWebPush(onForeground?: ForegroundPushHandler) {
   }
 }
 
-/** Call from a user gesture (e.g. a "Enable notifications" button). */
-export async function enableWebPush(): Promise<NotificationPermission | null> {
+/** Call from a user gesture (the soft-prompt "Enable" button). */
+export async function enableWebPush(
+  onForeground?: ForegroundPushHandler
+): Promise<NotificationPermission | null> {
   if (!isWebPushConfigured() || typeof Notification === "undefined") return null
   const permission = await Notification.requestPermission()
   if (permission === "granted") {
     started = false
-    await startWebPush()
+    await startWebPush(onForeground)
   }
   return permission
 }
