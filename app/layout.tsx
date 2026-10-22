@@ -7,6 +7,7 @@ import "./globals.css"
 import { AuthProvider } from "@/components/auth/auth-provider"
 import { AnalyticsConsentGate } from "@/components/privacy/analytics-consent-gate"
 import { PwaSplashLazy } from "@/components/pwa/pwa-splash-lazy"
+import { WebPushRegistration } from "@/components/pwa/web-push-registration"
 import { JsonLd } from "@/components/seo/json-ld"
 import { ThemeExtras } from "@/components/theme-provider"
 import { Toaster } from "@/components/ui/sonner"
@@ -227,6 +228,7 @@ export default async function RootLayout({
               <AuthProvider>
                 <AnalyticsConsentGate>
                   <PwaSplashLazy />
+                  <WebPushRegistration />
                   {children}
                   <Toaster position="top-center" />
                 </AnalyticsConsentGate>
