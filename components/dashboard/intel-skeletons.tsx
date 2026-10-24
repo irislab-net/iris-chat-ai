@@ -55,31 +55,44 @@ function NewsCardSkeleton({ featured = false }: { featured?: boolean }) {
 
 function NewsBulletinSkeleton({
   sidebar = false,
+  glass = false,
 }: {
   /** Chat news layout: tape + lead + feed (mirrors NewsHeadlineList). */
   sidebar?: boolean
+  /** Desk / mobile glass News layout — grid tape matching live UI. */
+  glass?: boolean
 }) {
   const t = useTranslations("dashboard")
+  const useGlassLayout = sidebar || glass
 
-  if (sidebar) {
+  if (useGlassLayout) {
     return (
       <div
-        className="flex min-h-0 flex-1 flex-col gap-10"
+        className="flex min-h-0 flex-1 flex-col gap-10 pt-2 sm:pt-3"
         aria-busy="true"
         aria-label={t("loadingNews")}
       >
-        {/* Asset tape — NewsAssetTape glass row */}
-        <div className="flex gap-2 overflow-hidden">
+        {/* Asset tape — NewsAssetTape grid-cols-2 */}
+        <div className="grid grid-cols-2 gap-2.5">
           {Array.from({ length: 4 }, (_, index) => (
-            <Bone
+            <div
               key={index}
-              className="h-14 w-19 shrink-0 rounded-2xl"
-            />
+              className={cn(chatNewsGlassTileClass, "space-y-2 p-3")}
+            >
+              <div className="flex items-center gap-2">
+                <Bone className="size-7 shrink-0 rounded-full" />
+                <div className="min-w-0 flex-1 space-y-1.5">
+                  <Bone className="h-2.5 w-10 rounded-full" />
+                  <Bone className="h-2 w-16 rounded-full" />
+                </div>
+              </div>
+              <Bone className="h-3 w-14 rounded-full" />
+            </div>
           ))}
         </div>
 
         {/* Window tiles — 3-col NewsTapeWindows */}
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-3 gap-2.5">
           {Array.from({ length: 3 }, (_, index) => (
             <div
               key={index}
@@ -179,7 +192,7 @@ function IntelWorkspaceSkeleton({
             mobile ? "px-4 py-3 pb-24" : "px-4 py-5 sm:px-6"
           )}
         >
-          <NewsBulletinSkeleton sidebar={mobile} />
+          <NewsBulletinSkeleton sidebar={mobile} glass={mobile} />
         </div>
       </div>
     </Card>

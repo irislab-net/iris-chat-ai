@@ -23,7 +23,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
   return {
     title: {
-      absolute: `News · ${SITE_NAME}`,
+      absolute: `AI · ${SITE_NAME}`,
     },
     description: SITE_DESCRIPTION,
     // Public desk entry — indexable on both exur.ai and chat.exur.ai.

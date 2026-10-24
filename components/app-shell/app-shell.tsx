@@ -10,6 +10,8 @@ import {
 } from "@/components/landing/modern/skip-to-content"
 import { ChatGeminiCssLazy } from "@/components/app-shell/chat-gemini-css-lazy"
 import { ChatAsideSkeleton } from "@/components/app-shell/shell-skeletons"
+import { DeskBottomNav } from "@/components/app-shell/desk-bottom-nav"
+import { DeskContextSidebar } from "@/components/app-shell/desk-context-sidebar"
 import { AppViewportSync } from "@/components/app-shell/app-viewport-sync"
 import { useIsDesktop } from "@/hooks/use-media-query"
 import { usePathname, useRouter } from "@/i18n/navigation"
@@ -24,10 +26,16 @@ import {
   type ChatDisplayMode,
 } from "@/lib/shell-layout-prefs"
 import { SHELL_SIDEBAR_COMPACT_FALLBACK } from "@/lib/shell-sidebar-layout"
-import { isAppDeskPath } from "@/lib/site"
+import { isAppDeskPath, isDeskAiPath } from "@/lib/site"
 import { cn } from "@/lib/utils"
 import { trackChatToggle } from "@/lib/analytics"
 import type { Layout } from "react-resizable-panels"
+
+/**
+ * Floating desk bottom nav clearance (island height + float gap).
+ * Safe-area is added separately on composer / content pads.
+ */
+const DESK_BOTTOM_NAV_OFFSET = "5.5rem"
 
 const ChatAside = dynamic(
   () => import("@/components/app-shell/chat-aside").then((m) => m.ChatAside),
@@ -134,9 +142,12 @@ function AppShellInner({
   const shellSidebars = sidebarLayout ?? SHELL_SIDEBAR_COMPACT_FALLBACK
   const pathname = usePathname()
   const onDesk = isAppDeskPath(pathname)
+  const onAi = isDeskAiPath(pathname)
   const [chatOpen, setChatOpen] = React.useState(defaultChatOpen)
+  /** Mobile: hide desk bottom nav while a chat thread has messages. */
+  const [mobileThreadActive, setMobileThreadActive] = React.useState(false)
   const [chatMode, setChatMode] = React.useState<ChatDisplayMode>(() =>
-    onDesk ? "focused" : "docked"
+    onAi ? "focused" : "docked"
   )
   const [panelLayout, setPanelLayout] = React.useState<Layout | undefined>()
   const [shellMediaHydrated, setShellMediaHydrated] = React.useState<
@@ -151,15 +162,29 @@ function AppShellInner({
     chatToggleAnalyticsReady.current = true
   }, [])
 
+  // Sync chat visibility when switching desk tabs.
+  React.useEffect(() => {
+    if (!onDesk) return
+    if (onAi) {
+      setChatOpen(true)
+      if (isDesktop === true) setChatMode("focused")
+    } else {
+      setChatOpen(false)
+    }
+  }, [onAi, onDesk, isDesktop, pathname])
+
   if (isDesktop === false && shellMediaHydrated !== "mobile") {
     setShellMediaHydrated("mobile")
-    setChatOpen(true)
+    setChatOpen(onAi)
   } else if (isDesktop === true && shellMediaHydrated !== "desktop") {
     const prefs = readShellLayoutPrefs()
     setShellMediaHydrated("desktop")
-    if (onDesk) {
+    if (onAi) {
       setChatOpen(true)
       setChatMode("focused")
+    } else if (onDesk) {
+      setChatOpen(false)
+      setChatMode(prefs.chatMode)
     } else {
       setChatOpen(defaultChatOpen ? (prefs.chatOpen ?? true) : false)
       setChatMode(prefs.chatMode)
@@ -186,29 +211,37 @@ function AppShellInner({
     }
   }
 
-  const resolvedChatOpen = isDesktop === false ? chatOpen : onDesk || chatOpen
+  const resolvedChatOpen =
+    isDesktop === false
+      ? onAi
+        ? chatOpen
+        : false
+      : onAi || chatOpen
   const resolvedChatMode: ChatDisplayMode =
-    onDesk && isDesktop === true && chatMode !== "docked" ? "focused" : chatMode
+    onAi && isDesktop === true && chatMode !== "docked" ? "focused" : chatMode
 
   function persistChatMode(next: ChatDisplayMode) {
     setChatMode(next)
     writeShellLayoutPrefs({ chatMode: next })
   }
 
-  const desktopChatEnabled = isDesktop === true && (onDesk || defaultChatOpen)
+  const desktopChatEnabled =
+    isDesktop === true && onAi && (onAi || defaultChatOpen)
 
   React.useEffect(() => {
-    if (isDesktop !== false || !resolvedChatOpen) return
+    if (isDesktop !== false || !resolvedChatOpen || !onAi) return
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") persistChatOpen(false)
     }
     window.addEventListener("keydown", onKeyDown)
     return () => window.removeEventListener("keydown", onKeyDown)
-  }, [isDesktop, resolvedChatOpen])
+  }, [isDesktop, resolvedChatOpen, onAi])
 
   const toolbarProps = {
     onCloseToChat:
-      isDesktop === false ? () => persistChatOpen(true) : undefined,
+      isDesktop === false && onAi
+        ? () => persistChatOpen(true)
+        : undefined,
   }
 
   const showDesktopChatDocked =
@@ -216,12 +249,27 @@ function AppShellInner({
   const showDesktopChatFocused =
     desktopChatEnabled && resolvedChatMode === "focused"
   const showDesktopSplit = showDesktopChatDocked
-  const showMobileChat = isDesktop === false && resolvedChatOpen
-  const deskChatBooting = onDesk && isDesktop === null
+  const showMobileChat = isDesktop === false && onAi && resolvedChatOpen
+  const showDeskContext = onDesk && !onAi
+  // Visible on New chat + News/Markets/Trade/Profile; hidden in an active thread.
+  const showBottomNav =
+    onDesk && isDesktop === false && !(showMobileChat && mobileThreadActive)
+  const deskChatBooting = onAi && isDesktop === null
+
+  const deskBottomNavStyle = showBottomNav
+    ? ({
+        ["--desk-bottom-nav" as string]: DESK_BOTTOM_NAV_OFFSET,
+      } as React.CSSProperties)
+    : undefined
+
+  React.useEffect(() => {
+    if (!showMobileChat) setMobileThreadActive(false)
+  }, [showMobileChat])
 
   if (deskChatBooting) {
     // Viewport unknown until matchMedia hydrates — CSS picks mobile vs focused
     // so narrow devices never flash the two-column desktop chrome.
+    // Default to New-chat chrome (bottom nav on) until media resolves.
     return (
       <>
         <ChatGeminiCssLazy />
@@ -235,6 +283,11 @@ function AppShellInner({
             "flex h-app overflow-hidden bg-background outline-none",
             className
           )}
+          style={
+            {
+              ["--desk-bottom-nav" as string]: DESK_BOTTOM_NAV_OFFSET,
+            } as React.CSSProperties
+          }
         >
           <ChatAsideSkeleton
             variant="responsive"
@@ -242,6 +295,7 @@ function AppShellInner({
             sidebarWidth={shellSidebars.chat.minSize}
           />
         </main>
+        <DeskBottomNav />
       </>
     )
   }
@@ -254,6 +308,7 @@ function AppShellInner({
             className="rounded-none"
             onClose={() => persistChatOpen(false)}
             isPrimaryContent
+            onMobileThreadActiveChange={setMobileThreadActive}
           />
         ) : (
           <>
@@ -261,6 +316,15 @@ function AppShellInner({
             <ContextMain>{children}</ContextMain>
           </>
         )}
+      </div>
+    </div>
+  )
+
+  const deskContextLayout = (
+    <div className="flex h-full min-h-0 min-w-0 flex-1">
+      <DeskContextSidebar />
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+        <ContextMain>{children}</ContextMain>
       </div>
     </div>
   )
@@ -273,8 +337,11 @@ function AppShellInner({
       <div
         data-slot="app-shell"
         className={cn("flex h-app overflow-hidden bg-background", className)}
+        style={deskBottomNavStyle}
       >
-        {showDesktopChatFocused ? (
+        {showDeskContext ? (
+          deskContextLayout
+        ) : showDesktopChatFocused ? (
           <ChatAside
             className="min-h-0 flex-1 rounded-none"
             displayMode="focused"
@@ -323,6 +390,7 @@ function AppShellInner({
           contextColumn
         )}
       </div>
+      {showBottomNav ? <DeskBottomNav /> : null}
     </>
   )
 }

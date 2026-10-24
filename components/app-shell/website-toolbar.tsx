@@ -121,13 +121,25 @@ type WebsiteToolbarProps = {
 
 function WorkspaceNavLabel() {
   const t = useTranslations("workspace")
+  const tDesk = useTranslations("deskNav")
   const pathname = usePathname()
   if (!isAppDeskPath(pathname)) return null
+
+  const label =
+    pathname === "/markets"
+      ? tDesk("markets")
+      : pathname === "/trade"
+        ? tDesk("trade")
+        : pathname === "/profile"
+          ? tDesk("profile")
+          : pathname === "/news"
+            ? tDesk("news")
+            : t("news")
 
   return (
     <div className="hidden items-center gap-1.5 text-[13px] font-semibold text-foreground lg:flex">
       <NewspaperIcon className="size-3.5 shrink-0" aria-hidden />
-      {t("news")}
+      {label}
     </div>
   )
 }

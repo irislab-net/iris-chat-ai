@@ -33,6 +33,33 @@ const chatMobileComposerGlassFocusClass =
   "focus-within:border-white/50 focus-within:bg-white/36 focus-within:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.88),inset_0_0_0_0.5px_rgba(255,255,255,0.5),inset_0_-8px_16px_-12px_rgba(0,0,0,0.1),0_2px_6px_rgba(0,0,0,0.04),0_-8px_24px_-6px_rgba(37,99,235,0.16),0_-18px_48px_-12px_rgba(37,99,235,0.12),0_4px_14px_-10px_rgba(37,99,235,0.06)] supports-[backdrop-filter]:focus-within:bg-white/22 dark:focus-within:border-white/24 dark:focus-within:bg-white/18 dark:focus-within:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.35),inset_0_0_0_0.5px_rgba(255,255,255,0.18),inset_0_-10px_20px_-12px_rgba(0,0,0,0.4),0_2px_8px_rgba(0,0,0,0.22),0_-10px_28px_-6px_rgba(37,99,235,0.2),0_-20px_52px_-14px_rgba(37,99,235,0.14),0_4px_16px_-12px_rgba(37,99,235,0.07)] dark:supports-[backdrop-filter]:focus-within:bg-white/12"
 
 /**
+ * Floating desk bottom nav — bright frost island (header-disc family),
+ * strong blur + blue ambient lift. Not a blue-washed slab.
+ */
+const deskBottomNavGlassClass = [
+  "chat-ios26-liquid-glass chat-sheet-glass relative isolate overflow-hidden",
+  "rounded-[2rem] border border-white/55",
+  "bg-white/78 supports-[backdrop-filter]:bg-white/58",
+  "shadow-[inset_0_1px_0_0_rgba(255,255,255,0.95),inset_0_0_0_0.5px_rgba(255,255,255,0.5),0_1px_2px_rgba(15,23,42,0.04),0_10px_32px_-10px_rgba(15,23,42,0.18),0_22px_56px_-18px_rgba(37,99,235,0.22)]",
+  "backdrop-blur-[40px] backdrop-saturate-[185%]",
+  "dark:border-white/18 dark:bg-white/16 dark:supports-[backdrop-filter]:bg-white/12",
+  "dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.3),inset_0_0_0_0.5px_rgba(255,255,255,0.14),0_10px_32px_-10px_rgba(0,0,0,0.5),0_22px_56px_-18px_rgba(37,99,235,0.28)]",
+].join(" ")
+
+/** Sliding liquid-glass chip behind the active bottom-nav tab. */
+const deskBottomNavTabPillClass = [
+  "rounded-[1.35rem] bg-white/92 supports-[backdrop-filter]:bg-white/78",
+  "shadow-[0_1px_2px_rgba(15,23,42,0.06),0_6px_16px_-8px_rgba(37,99,235,0.28),inset_0_1px_0_0_rgba(255,255,255,0.95),inset_0_0_0_0.5px_rgba(255,255,255,0.55)]",
+  "backdrop-blur-[18px] backdrop-saturate-[160%]",
+  "dark:bg-white/22 dark:supports-[backdrop-filter]:bg-white/16",
+  "dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.28),inset_0_0_0_0.5px_rgba(255,255,255,0.16),0_6px_16px_-8px_rgba(37,99,235,0.35)]",
+].join(" ")
+
+/** Selected tab label tint (chip itself is `deskBottomNavTabPillClass`). */
+const deskBottomNavTabActiveClass =
+  "text-[#2563EB] dark:text-[#93C5FD]"
+
+/**
  * Mobile floating composer — opaque capsule with a soft lift (Gemini app),
  * so it reads cleanly over the blue horizon wash.
  */
@@ -114,12 +141,19 @@ const chatMobileHeaderModelPrimaryClass = "text-foreground"
 
 const chatMobileHeaderModelSecondaryClass = "text-muted-foreground"
 
-/** Empty hero — vertical padding clears absolute header + raised composer dock. */
+/**
+ * Empty hero — centered column; composer sits in-flow under the title
+ * (not in the bottom dock), so only clear header + bottom nav.
+ */
 const chatMobileEmptyHeroWrapClass =
-  "flex min-h-full flex-col items-center justify-center px-6 pt-[max(5.5rem,calc(var(--app-safe-top)+4.25rem))] pb-[calc(9rem+env(safe-area-inset-bottom,0px))]"
+  "flex min-h-full flex-col items-center justify-center px-4 pt-[max(5.5rem,calc(var(--app-safe-top)+4.25rem))] pb-[calc(5.5rem+var(--desk-bottom-nav,0px)+env(safe-area-inset-bottom,0px))]"
 
 const chatMobileEmptyHeroContentClass =
-  "chat-empty-hero flex flex-col items-center gap-5 text-center"
+  "chat-empty-hero flex w-full flex-col items-center gap-5 text-center"
+
+/** In-flow composer under the empty greeting (mobile). */
+const chatMobileEmptyHeroComposerClass =
+  "mt-1 w-full min-w-0 self-stretch text-start"
 
 const chatMobileEmptyHeroMarkClass = "chat-empty-hero-mark"
 
@@ -144,7 +178,7 @@ const chatMobileThreadFirstTurnClass = "mt-4 sm:mt-5"
  * with extra air so the last turn can scroll fully above the dock.
  */
 const chatMobileThreadBottomSpacerClass =
-  "h-[calc(10rem+env(safe-area-inset-bottom,0px))] shrink-0"
+  "h-[calc(11.5rem+var(--desk-bottom-nav,0px)+env(safe-area-inset-bottom,0px))] shrink-0"
 
 /**
  * Bottom fade behind floating composer.
@@ -152,7 +186,7 @@ const chatMobileThreadBottomSpacerClass =
  * when content scrolls underneath fixed compositor layers.
  */
 const chatMobileThreadBottomFadeClass =
-  "pointer-events-none absolute inset-x-0 bottom-0 z-1 h-28 bg-gradient-to-t from-background from-0% via-background/55 via-40% to-transparent to-100% dark:from-background dark:via-background/60"
+  "pointer-events-none absolute inset-x-0 bottom-[calc(var(--desk-bottom-nav,0px)+env(safe-area-inset-bottom,0px))] z-1 h-28 bg-gradient-to-t from-background from-0% via-background/55 via-40% to-transparent to-100% dark:from-background dark:via-background/60"
 
 /**
  * Header overlay shell — floats over the thread (Gemini absolute chrome).
@@ -167,9 +201,9 @@ const chatMobileHeaderShellClass = "absolute inset-x-0 top-0 z-20"
 const chatMobileHeaderScrimClass =
   "pointer-events-none absolute inset-x-0 top-0 -bottom-12 z-0 bg-gradient-to-b from-background from-0% via-background/50 via-45% to-transparent to-100% dark:from-background dark:via-background/55"
 
-/** Floating composer dock — absolute over the thread bottom. */
+/** Floating composer dock — above desk bottom nav + home indicator. */
 const chatMobileComposerDockClass =
-  "absolute inset-x-0 bottom-0 z-20 mx-auto w-full bg-transparent"
+  "absolute inset-x-0 bottom-[calc(var(--desk-bottom-nav,0px)+env(safe-area-inset-bottom,0px))] z-20 mx-auto w-full bg-transparent"
 
 /**
  * Soft corner scale:
@@ -187,7 +221,7 @@ const chatMobileAssistantClass =
   "text-[16px] font-normal leading-[1.55] tracking-normal text-foreground [&_p]:mb-3 [&_p:last-child]:mb-0"
 
 const chatMobileComposerShellClass =
-  "relative shrink-0 bg-transparent px-4 pt-1.5 pb-[max(0.375rem,env(safe-area-inset-bottom,0px))]"
+  "relative shrink-0 bg-transparent px-4 pt-2 pb-2.5"
 
 /**
  * Floating composer shell. Radius/padding/gap interpolate so compact↔expanded
@@ -196,21 +230,21 @@ const chatMobileComposerShellClass =
 const chatMobileComposerPillClass = `grid text-foreground transition-[box-shadow,background-color,border-color,border-radius,padding,gap,min-height] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none ${chatMobileComposerSolidClass} ${chatMobileComposerSolidFocusClass}`
 
 /**
- * Compact — Gemini capsule: 56pt tall, fully rounded ends, 16pt side inset
- * on the shell so the bar reads ~90% width.
+ * Compact — taller capsule above desk bottom nav; fully rounded ends,
+ * 16pt side inset on the shell so the bar reads ~90% width.
  */
 const chatMobileComposerPillCompactClass =
-  "min-h-19 w-full rounded-[2.375rem] grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-1.5 px-4 py-2 [grid-template-areas:'leading_field_trailing']"
+  "min-h-22 w-full rounded-[1.75rem] grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-1.5 px-4 py-2.5 [grid-template-areas:'leading_field_trailing']"
 
 /** Multiline — soft card radius. */
 const chatMobileComposerPillExpandedClass =
-  "min-h-0 w-full rounded-3xl grid-cols-[auto_minmax(0,1fr)_auto] grid-rows-[auto_auto] items-end gap-x-0.5 gap-y-0.5 px-2.5 py-2.5 [grid-template-areas:'field_field_field'_'leading_._trailing']"
+  "min-h-0 w-full rounded-3xl grid-cols-[auto_minmax(0,1fr)_auto] grid-rows-[auto_auto] items-end gap-x-0.5 gap-y-0.5 px-2.5 py-3 [grid-template-areas:'field_field_field'_'leading_._trailing']"
 
 const chatMobileComposerLeadingClass =
-  "[grid-area:leading] flex h-11 min-w-0 items-center gap-1"
+  "[grid-area:leading] flex h-12 min-w-0 items-center gap-1"
 
 const chatMobileComposerTrailingClass =
-  "[grid-area:trailing] flex h-11 shrink-0 items-center justify-end"
+  "[grid-area:trailing] flex h-12 shrink-0 items-center justify-end"
 
 const chatMobileComposerTextareaClass =
   // `block` beats Textarea's baked-in `flex` so caret metrics match the mention mirror.
@@ -218,7 +252,7 @@ const chatMobileComposerTextareaClass =
   "chat-bidi block w-full min-w-0 flex-1 field-sizing-content resize-none rounded-none border-0 bg-transparent px-2.5 text-[16px]! font-normal leading-[1.4] tracking-normal break-words whitespace-pre-wrap text-foreground shadow-none placeholder:text-muted-foreground/45 focus-visible:border-transparent focus-visible:ring-0 disabled:cursor-not-allowed disabled:bg-transparent disabled:opacity-100 md:text-[16px]! dark:bg-transparent dark:disabled:bg-transparent dark:placeholder:text-muted-foreground/40"
 
 const chatMobileComposerTextareaCompactClass =
-  "h-11 min-h-11 max-h-11 w-full self-center py-0 overflow-hidden leading-11 [field-sizing:fixed] transition-[min-height,padding,line-height] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
+  "h-12 min-h-12 max-h-12 w-full self-center py-0 overflow-hidden leading-12 [field-sizing:fixed] transition-[min-height,padding,line-height] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
 
 const chatMobileComposerTextareaExpandedClass =
   "min-h-10 max-h-40 py-2.5 overflow-y-auto transition-[min-height,padding,line-height] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
@@ -228,7 +262,7 @@ const chatMobileComposerTextareaExpandedClass =
  * absolute mention mirror (`inset-0`) from the in-flow textarea (caret).
  */
 const chatMobileComposerFieldCompactClass =
-  "h-11 min-h-11 max-h-11 w-full self-center overflow-hidden transition-[min-height,height] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
+  "h-12 min-h-12 max-h-12 w-full self-center overflow-hidden transition-[min-height,height] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
 
 const chatMobileComposerFieldExpandedClass =
   "min-h-10 max-h-40 overflow-y-auto transition-[min-height,height] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
@@ -772,6 +806,7 @@ export {
   chatMobileComposerToolChipClass,
   chatMobileComposerToolChipCloseClass,
   chatMobileComposerShellClass,
+  chatMobileEmptyHeroComposerClass,
   chatMobileEmptyHeroContentClass,
   chatMobileEmptyHeroMarkClass,
   chatMobileEmptyHeroTitleClass,
@@ -850,6 +885,9 @@ export {
   chatSamplePromptTextClass,
   chatSamplePromptTitleClass,
   chatMobileGlassSurfaceClass,
+  deskBottomNavGlassClass,
+  deskBottomNavTabPillClass,
+  deskBottomNavTabActiveClass,
   chatMobileSheetBodyClass,
   chatMobileSheetCardClass,
   chatAppToastClass,

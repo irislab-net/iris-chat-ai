@@ -94,11 +94,11 @@ function ChatGuestAvatar({
     <span className={cn("relative inline-flex shrink-0", className)}>
       <Avatar
         className={cn(
-          "size-8 border-0 bg-[var(--horizon-chrome-top,#f5f5f5)] after:border-0 dark:bg-muted",
+          "size-8 border-0 bg-[var(--horizon-chrome-top,#f6f6f6)] after:border-0 dark:bg-muted",
           avatarClassName
         )}
       >
-        <AvatarFallback className="bg-[var(--horizon-chrome-top,#f5f5f5)] text-foreground/70 dark:bg-muted dark:text-muted-foreground">
+        <AvatarFallback className="bg-[var(--horizon-chrome-top,#f6f6f6)] text-foreground/70 dark:bg-muted dark:text-muted-foreground">
           <SfPersonIcon
             className={cn("size-[72%]", iconClassName)}
             strokeWidth={1.1}

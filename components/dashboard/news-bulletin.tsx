@@ -1388,7 +1388,9 @@ function NewsHeadlineList({
   const t = useTranslations("dashboard")
 
   if (loading && news.length === 0) {
-    return <NewsBulletinSkeleton sidebar={sidebar} />
+    return (
+      <NewsBulletinSkeleton sidebar={sidebar} glass={mobile || sidebar} />
+    )
   }
 
   if (news.length === 0) {
@@ -1414,12 +1416,12 @@ function NewsHeadlineList({
   const glass = mobile || sidebar
 
   return (
-    <div className={cn("flex flex-col", glass ? "gap-10" : "gap-5 pb-2")}>
-      {mobile && !sidebar ? (
-        <div className="flex justify-end px-1">
-          <NewsReadAllButton news={news} glass={glass} />
-        </div>
-      ) : null}
+    <div
+      className={cn(
+        "flex flex-col",
+        glass ? "gap-10 pt-2 sm:pt-3" : "gap-5 pb-2"
+      )}
+    >
       <NewsTape analytics={analytics} mobile={mobile || sidebar} glass={glass} />
       <NewsCard
         item={lead}

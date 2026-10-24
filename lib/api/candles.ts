@@ -160,3 +160,55 @@ export async function fetchHyperliquidMids(
   }
   return out
 }
+
+export type HyperliquidAssetCtx = {
+  coin: string
+  midPx: number
+  prevDayPx: number
+  dayNtlVlm: number
+  isDelisted: boolean
+}
+
+/** Perp universe + 24h context (mid, prev day, day notional). */
+export async function fetchHyperliquidAssetCtxs(
+  signal?: AbortSignal
+): Promise<HyperliquidAssetCtx[]> {
+  const res = await fetch(HL_INFO, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ type: "metaAndAssetCtxs" }),
+    signal,
+    cache: "no-store",
+  })
+
+  if (!res.ok) return []
+
+  const raw = (await res.json()) as unknown
+  if (!Array.isArray(raw) || raw.length < 2) return []
+
+  const meta = raw[0] as {
+    universe?: Array<{ name?: string; isDelisted?: boolean }>
+  } | null
+  const ctxs = raw[1]
+  if (!meta?.universe || !Array.isArray(ctxs)) return []
+
+  const out: HyperliquidAssetCtx[] = []
+  for (let i = 0; i < meta.universe.length; i++) {
+    const asset = meta.universe[i]
+    const name = asset?.name?.trim().toUpperCase()
+    const ctx = ctxs[i] as Record<string, unknown> | undefined
+    if (!name || !ctx) continue
+    const midPx = Number(ctx.midPx ?? ctx.markPx)
+    const prevDayPx = Number(ctx.prevDayPx)
+    const dayNtlVlm = Number(ctx.dayNtlVlm)
+    if (!Number.isFinite(midPx) || !(midPx > 0)) continue
+    out.push({
+      coin: name,
+      midPx,
+      prevDayPx: Number.isFinite(prevDayPx) && prevDayPx > 0 ? prevDayPx : midPx,
+      dayNtlVlm: Number.isFinite(dayNtlVlm) ? dayNtlVlm : 0,
+      isDelisted: Boolean(asset?.isDelisted),
+    })
+  }
+  return out
+}

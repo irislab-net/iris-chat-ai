@@ -5,17 +5,15 @@ import { Link } from "@/i18n/navigation"
 import {
   CoinsIcon,
   MessageSquareIcon,
-  NewspaperIcon,
   PanelLeftCloseIcon,
   PanelLeftOpenIcon,
   SearchIcon,
   Settings,
   XIcon,
-  HouseIcon,
 } from "lucide-react"
+import { DeskRailNav } from "@/components/app-shell/desk-rail-nav"
 import { useLocale, useTranslations } from "next-intl"
 
-import { AttentionPulseDot } from "@/components/app-shell/attention-pulse-dot"
 import {
   ChatAccountAvatar,
   ChatGuestAvatar,
@@ -100,7 +98,7 @@ import { useAppFeatureVisible } from "@/hooks/use-app-feature-prefs"
 import { trackStakingOpen } from "@/lib/analytics"
 import { CHAT_HISTORY_RAIL_COLLAPSED_WIDTH } from "@/lib/chat-history-rail-prefs"
 import { localeDirection } from "@/lib/i18n/locale"
-import { getLandingHref, UPGRADE_PATH } from "@/lib/site"
+import { UPGRADE_PATH } from "@/lib/site"
 import { userAccountLabel, userAccountSubline } from "@/lib/user-profile"
 import { cn } from "@/lib/utils"
 
@@ -178,136 +176,6 @@ function HistoryRailToggleButton({
       </TooltipTrigger>
       <TooltipContent side={tooltipSide}>{label}</TooltipContent>
     </Tooltip>
-  )
-}
-
-function HistoryNewsNav({
-  onOpenNews,
-  isMobileDrawer = false,
-  minimal = false,
-  showSpotlight = false,
-}: {
-  onOpenNews: () => void
-  isMobileDrawer?: boolean
-  minimal?: boolean
-  showSpotlight?: boolean
-}) {
-  const t = useTranslations("workspace")
-  const { tooltipSide } = useSidebarDir()
-
-  if (minimal) {
-    return (
-      <Tooltip>
-        <TooltipTrigger
-          render={
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              className={cn(historyRailGlassIconButtonClass, "relative")}
-              aria-label={t("news")}
-              onClick={(event) => {
-                event.stopPropagation()
-                onOpenNews()
-              }}
-            >
-              <NewspaperIcon className="size-4.5" />
-              {showSpotlight ? (
-                <AttentionPulseDot className="inset-e-1 -top-0.5" />
-              ) : null}
-            </Button>
-          }
-        >
-          <NewspaperIcon className="size-4.5" />
-        </TooltipTrigger>
-        <TooltipContent side={tooltipSide}>{t("news")}</TooltipContent>
-      </Tooltip>
-    )
-  }
-
-  return (
-    <Button
-      type="button"
-      variant="ghost"
-      className={cn(
-        "relative",
-        isMobileDrawer
-          ? chatMobileDrawerNavItemClass
-          : chatHistoryRailNavItemClass
-      )}
-      onClick={(event) => {
-        event.stopPropagation()
-        onOpenNews()
-      }}
-    >
-      <NewspaperIcon
-        className={cn(
-          "shrink-0 text-muted-foreground",
-          isMobileDrawer ? "size-4.5" : "size-4"
-        )}
-      />
-      <span className="min-w-0 flex-1 truncate text-start">{t("news")}</span>
-      {showSpotlight ? (
-        <AttentionPulseDot className="inset-e-2.5 top-1" />
-      ) : null}
-    </Button>
-  )
-}
-
-function HistoryHomeNav({
-  isMobileDrawer = false,
-  minimal = false,
-}: {
-  isMobileDrawer?: boolean
-  minimal?: boolean
-}) {
-  const t = useTranslations("workspace")
-  const { tooltipSide } = useSidebarDir()
-  const landingHref = getLandingHref()
-
-  if (minimal) {
-    return (
-      <Tooltip>
-        <TooltipTrigger
-          render={
-            <Button
-              variant="ghost"
-              size="icon"
-              className={historyRailGlassIconButtonClass}
-              aria-label={t("home")}
-              nativeButton={false}
-              render={<a href={landingHref} />}
-            >
-              <HouseIcon className="size-4.5" />
-            </Button>
-          }
-        >
-          <HouseIcon className="size-4.5" />
-        </TooltipTrigger>
-        <TooltipContent side={tooltipSide}>{t("home")}</TooltipContent>
-      </Tooltip>
-    )
-  }
-
-  return (
-    <Button
-      variant="ghost"
-      className={
-        isMobileDrawer
-          ? chatMobileDrawerNavItemClass
-          : chatHistoryRailNavItemClass
-      }
-      nativeButton={false}
-      render={<a href={landingHref} />}
-    >
-      <HouseIcon
-        className={cn(
-          "shrink-0 text-muted-foreground",
-          isMobileDrawer ? "size-4.5" : "size-4"
-        )}
-      />
-      <span className="min-w-0 flex-1 truncate text-start">{t("home")}</span>
-    </Button>
   )
 }
 
@@ -746,19 +614,12 @@ function ChatHistorySidebar({
                   </Button>
                 )
               ) : null}
-              {onOpenNews ? (
-                <HistoryNewsNav
-                  onOpenNews={onOpenNews}
-                  isMobileDrawer={isMobileDrawer}
-                  minimal={collapsed && !isMobileDrawer}
-                  showSpotlight={showNewsSpotlight}
-                />
-              ) : null}
-              <HistoryStakingNav
+              <DeskRailNav
                 isMobileDrawer={isMobileDrawer}
                 minimal={collapsed && !isMobileDrawer}
+                tooltipSide={tooltipSide}
               />
-              <HistoryHomeNav
+              <HistoryStakingNav
                 isMobileDrawer={isMobileDrawer}
                 minimal={collapsed && !isMobileDrawer}
               />

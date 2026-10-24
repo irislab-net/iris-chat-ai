@@ -1,7 +1,8 @@
 /** Hex tints aligned with `--background` in `app/globals.css` (light/dark). */
 export const BROWSER_CHROME_COLORS = {
-  light: "#ffffff",
-  /** Matches `--background` light/dark in `app/globals.css` (`oklch(1 0 0)` / `oklch(0.145 0 0)`). */
+  /** Matches light `--background` / `--sidebar` (`#FAF9F9`). */
+  light: "#faf9f9",
+  /** Matches `--background` dark in `app/globals.css` (`oklch(0.145 0 0)`). */
   dark: "#0a0a0a",
 } as const
 
@@ -11,10 +12,10 @@ export const BROWSER_CHROME_COLORS = {
  */
 export const HORIZON_CHROME_COLORS = {
   light: {
-    /** Sampled from Gemini empty-state header field. */
-    top: "#f5f5f5",
-    /** Sampled from Gemini empty-state bottom edge / home-indicator wash. */
-    bottom: "#9cd1fd",
+    /** New-chat gradient top (`#F6F6F6`). */
+    top: "#f6f6f6",
+    /** New-chat gradient bottom (`#BCE0F9`). */
+    bottom: "#bce0f9",
   },
   dark: {
     top: "#0a0a0a",
@@ -157,7 +158,14 @@ export function isHorizonWashVisible(): boolean {
 function readBrowserChromeEdges(theme: BrowserChromeTheme): BrowserChromeEdges {
   const horizonVisible = isHorizonWashVisible()
   const edges = browserChromeEdgesForState({ theme, horizonVisible })
-  if (!horizonVisible) return edges
+  if (!horizonVisible) {
+    // Match page surface exactly — hex fallbacks like #0a0a0a drift from
+    // `--background` (oklch) and show as a black strip under desk chrome.
+    const surface =
+      resolveDocumentColor("var(--background)") ?? edges.top
+    // Desk bottom nav CSS also forces gutters via [data-desk-bottom-nav].
+    return { top: surface, bottom: surface }
+  }
 
   return {
     top:

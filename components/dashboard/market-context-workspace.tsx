@@ -31,7 +31,7 @@ function MarketContextWorkspaceInner({
 }: MarketContextWorkspaceProps) {
   const t = useTranslations("dashboard")
   const mobileScrollClass =
-    "min-h-0 flex-1 overflow-y-auto overscroll-contain [-webkit-overflow-scrolling:touch] px-3 py-3 pb-24"
+    "min-h-0 flex-1 overflow-y-auto overscroll-contain [-webkit-overflow-scrolling:touch] px-3 py-3 pb-[calc(var(--desk-bottom-nav,4.75rem)+1.25rem+env(safe-area-inset-bottom,0px))]"
 
   return (
     <Card

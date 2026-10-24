@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { createPortal } from "react-dom"
 import { useLocale } from "next-intl"
 
 import {
@@ -280,13 +281,20 @@ function ChatMobileSlidePanel({
     [backdrop, off, onOpenChange]
   )
 
-  if (!mounted) return null
+  const [portalEl, setPortalEl] = React.useState<HTMLElement | null>(null)
+  React.useEffect(() => {
+    setPortalEl(document.body)
+  }, [])
 
-  return (
+  if (!mounted || !portalEl) return null
+
+  // Portal to body — ancestors use overflow/z-10 and would keep this under the
+  // fixed desk bottom nav even with position:fixed.
+  return createPortal(
     <div
       data-slot="chat-mobile-slide-panel"
       data-state={open ? "open" : "closed"}
-      className={cn("absolute inset-0 z-30", className)}
+      className={cn("fixed inset-0 z-50", className)}
     >
       {backdrop ? (
         <div
@@ -316,7 +324,8 @@ function ChatMobileSlidePanel({
       >
         {children}
       </div>
-    </div>
+    </div>,
+    portalEl
   )
 }
 

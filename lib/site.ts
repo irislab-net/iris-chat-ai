@@ -70,8 +70,24 @@ export function getMarketingHomePath(): string {
   return LANDING_PATH
 }
 
-/** Canonical in-app desk entry (news workspace at `/`). */
+/** Canonical in-app desk entry (AI co-pilot at `/`). */
 export const APP_NEWS_PATH = APP_PATH
+
+/** Desk primary tabs (mobile bottom nav / desktop rail). */
+export const DESK_AI_PATH = APP_PATH
+export const DESK_NEWS_PATH = "/news"
+export const DESK_MARKETS_PATH = "/markets"
+export const DESK_TRADE_PATH = "/trade"
+export const DESK_PROFILE_PATH = "/profile"
+
+const DESK_PATHS = new Set<string>([
+  DESK_AI_PATH,
+  "/app",
+  DESK_NEWS_PATH,
+  DESK_MARKETS_PATH,
+  DESK_TRADE_PATH,
+  DESK_PROFILE_PATH,
+])
 
 /**
  * Launch App href — desk at `/`.
@@ -83,9 +99,15 @@ export function getLaunchAppHref(): string {
   return `${MARKETING_ORIGIN}${APP_NEWS_PATH}`
 }
 
-/** Desk routes — root chat app and legacy `/app` redirect target. */
+/** Desk routes — AI + News + Markets + Trade + Profile (+ legacy `/app`). */
 export function isAppDeskPath(pathname: string | null | undefined): boolean {
-  return pathname === APP_PATH || pathname === "/app"
+  if (!pathname) return false
+  return DESK_PATHS.has(pathname)
+}
+
+/** AI co-pilot tab (`/` or legacy `/app`). */
+export function isDeskAiPath(pathname: string | null | undefined): boolean {
+  return pathname === DESK_AI_PATH || pathname === "/app"
 }
 
 /** Full-screen plan picker → crypto invoice checkout. */

@@ -41,9 +41,13 @@ describe("public SEO site policy (S1/S2)", () => {
     expect(PUBLIC_HOME_REVALIDATE_SECONDS).not.toBe(6 * 60 * 60)
   })
 
-  it("recognizes root and legacy /app as desk paths", () => {
+  it("recognizes desk tab paths and legacy /app", () => {
     expect(isAppDeskPath("/")).toBe(true)
     expect(isAppDeskPath("/app")).toBe(true)
+    expect(isAppDeskPath("/news")).toBe(true)
+    expect(isAppDeskPath("/markets")).toBe(true)
+    expect(isAppDeskPath("/trade")).toBe(true)
+    expect(isAppDeskPath("/profile")).toBe(true)
     expect(isAppDeskPath("/home")).toBe(false)
   })
 

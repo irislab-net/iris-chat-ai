@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { ChartCandlestickIcon, LineChartIcon } from "lucide-react"
 import { useLocale, useTranslations } from "next-intl"
 import { useTheme } from "@wrksz/themes/client/use-theme"
 
@@ -74,6 +75,10 @@ import {
 import { getPrivacyNoticeHref, getTermsOfServiceHref } from "@/lib/legal"
 import {
   BILLING_PATH,
+  DESK_MARKETS_PATH,
+  DESK_NEWS_PATH,
+  DESK_PROFILE_PATH,
+  DESK_TRADE_PATH,
   getMarketingHomePath,
   getMarketingPageHref,
   UPGRADE_PATH,
@@ -625,6 +630,29 @@ function ChatAccountSheet({
 
               {/* Primary actions — liquid rows (same family as Exur tools) */}
               <div className="flex flex-col gap-1.5 pt-1">
+                <SheetPill
+                  icon={<SfPersonCircleIcon className={sheetIconClass} />}
+                  label={t("deskProfile")}
+                  href={DESK_PROFILE_PATH}
+                  onClick={closeSheet}
+                />
+
+                <SheetPill
+                  icon={<LineChartIcon className={sheetIconClass} />}
+                  label={t("deskMarkets")}
+                  href={DESK_MARKETS_PATH}
+                  onClick={closeSheet}
+                />
+
+                <SheetPill
+                  icon={
+                    <ChartCandlestickIcon className={sheetIconClass} />
+                  }
+                  label={t("deskTrade")}
+                  href={DESK_TRADE_PATH}
+                  onClick={closeSheet}
+                />
+
                 {user ? (
                   <SheetPill
                     icon={<SfCreditCardIcon className={sheetIconClass} />}
@@ -669,7 +697,14 @@ function ChatAccountSheet({
                       onOpenNews()
                     }}
                   />
-                ) : null}
+                ) : (
+                  <SheetPill
+                    icon={<SfNewspaperIcon className={sheetIconClass} />}
+                    label={t("news")}
+                    href={DESK_NEWS_PATH}
+                    onClick={closeSheet}
+                  />
+                )}
 
                 {user ? (
                   <SheetPill

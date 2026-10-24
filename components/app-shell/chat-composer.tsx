@@ -105,14 +105,10 @@ import {
   chatComposerPasteChipIconClass,
   chatComposerPasteChipMetaClass,
   chatComposerPasteChipCloseClass,
-  chatComposerLiquidDockCardClass,
-  chatComposerLiquidMentionSheetClass,
-  chatComposerLiquidSheetOverlayClass,
   chatComposerLiquidSheetRowActiveClass,
   chatComposerLiquidSheetRowClass,
   chatComposerLiquidSheetRowIconClass,
   chatMobileComposerShellClass,
-  chatMobileSheetHandleClass,
   chatMobileToolsMenuClass,
   chatMobileToolsMenuItemClass,
   chatMobileToolsMenuItemDescClass,
@@ -122,15 +118,6 @@ import {
 import { useAppFeaturePrefs } from "@/hooks/use-app-feature-prefs"
 import { useIsDesktop } from "@/hooks/use-media-query"
 import { cn } from "@/lib/utils"
-
-/**
- * Typing `/` mention — full-bleed liquid sheet behind the composer pill.
- * Must stay inside the composer stacking context so the pill (z-10) paints above.
- */
-const composerMentionBackdropSheetClass = cn(
-  chatComposerLiquidMentionSheetClass,
-  "pointer-events-auto fixed inset-x-0 bottom-(--keyboard-inset-bottom,0px) z-1 flex flex-col"
-)
 
 type ChatComposerProps = {
   onSend?: (message: string) => void
@@ -191,7 +178,7 @@ function ChatComposer({
   const keyboardUnlockAllowedAtRef = React.useRef(0)
   const [uncontrolled, setUncontrolled] = React.useState("")
   const [premiumToolsOpen, setPremiumToolsOpen] = React.useState(false)
-  const [toolsSheetOpen, setToolsSheetOpen] = React.useState(false)
+  const [toolsMenuOpen, setToolsMenuOpen] = React.useState(false)
   const [mentionSuppressed, setMentionSuppressed] = React.useState(false)
   const [pasteAttachments, setPasteAttachments] = React.useState<
     ComposerPasteAttachment[]
@@ -200,14 +187,14 @@ function ChatComposer({
   const [mentionPaletteSeenKey, setMentionPaletteSeenKey] = React.useState("")
 
   function openPremiumTools() {
-    setToolsSheetOpen(false)
-    // Hide `/` sheet so it does not sit under the premium dialog.
+    setToolsMenuOpen(false)
+    // Hide `/` mention popover so it does not sit under the premium dialog.
     setMentionSuppressed(true)
     setPremiumToolsOpen(true)
   }
 
-  function closeToolsSheet() {
-    setToolsSheetOpen(false)
+  function closeToolsMenu() {
+    setToolsMenuOpen(false)
   }
   const [cursor, setCursor] = React.useState(0)
   const localRef = React.useRef<HTMLTextAreaElement>(null)
@@ -243,99 +230,8 @@ function ChatComposer({
     (part) => part.type === "mention"
   )
 
-  function selectToolsMention(option: IrisMentionOption) {
-    closeToolsSheet()
-    insertMentionToken(option)
-  }
-
   const visibleMentionOptions = IRIS_MENTION_OPTIONS.filter((option) =>
     isFeatureVisible(option.tool)
-  )
-
-  /** Behind-composer tools list — same row chrome as `/` mention listbox. */
-  const toolsRows = (
-    <ul className="flex flex-col gap-0.5 px-4 pb-2 pt-0.5">
-      {visibleMentionOptions.map((option) => (
-        <li key={option.id}>
-          <button
-            type="button"
-            className={cn(chatComposerLiquidSheetRowClass, "py-2.5")}
-            onMouseDown={(event) => {
-              event.preventDefault()
-              selectToolsMention(option)
-            }}
-          >
-            <span
-              className={cn(
-                chatComposerLiquidSheetRowIconClass,
-                "size-8 [&_svg]:size-3.5"
-              )}
-            >
-              <TrendingUpIcon className="size-3.5" aria-hidden />
-            </span>
-            <span className="min-w-0 flex-1 truncate text-[15px] font-medium tracking-[-0.016em] text-foreground">
-              {mentionOptionLabel(option)}
-            </span>
-          </button>
-        </li>
-      ))}
-      {isFeatureVisible("correlation") ? (
-        <li>
-          <button
-            type="button"
-            className={cn(chatComposerLiquidSheetRowClass, "py-2.5")}
-            onMouseDown={(event) => {
-              event.preventDefault()
-              openPremiumTools()
-            }}
-          >
-            <span
-              className={cn(
-                chatComposerLiquidSheetRowIconClass,
-                "size-8 [&_svg]:size-3.5"
-              )}
-            >
-              <LineChartIcon className="size-3.5" aria-hidden />
-            </span>
-            <span className="min-w-0 flex-1 truncate text-[15px] font-medium tracking-[-0.016em] text-foreground">
-              {t("composerToolCorrelationLabel")}
-            </span>
-            <LockIcon
-              className="size-3.5 shrink-0 text-muted-foreground/65"
-              aria-hidden
-            />
-          </button>
-        </li>
-      ) : null}
-      {isFeatureVisible("volatility") ? (
-        <li>
-          <button
-            type="button"
-            className={cn(chatComposerLiquidSheetRowClass, "py-2.5")}
-            onMouseDown={(event) => {
-              event.preventDefault()
-              openPremiumTools()
-            }}
-          >
-            <span
-              className={cn(
-                chatComposerLiquidSheetRowIconClass,
-                "size-8 [&_svg]:size-3.5"
-              )}
-            >
-              <ActivityIcon className="size-3.5" aria-hidden />
-            </span>
-            <span className="min-w-0 flex-1 truncate text-[15px] font-medium tracking-[-0.016em] text-foreground">
-              {t("composerToolVolatilityLabel")}
-            </span>
-            <LockIcon
-              className="size-3.5 shrink-0 text-muted-foreground/65"
-              aria-hidden
-            />
-          </button>
-        </li>
-      ) : null}
-    </ul>
   )
 
   const toolsMenuItems = (
@@ -628,8 +524,8 @@ function ChatComposer({
   const mentionOpen = Boolean(
     mentionPalette && paletteTools.length > 0 && !mentionSuppressed
   )
-  if (mentionOpen && toolsSheetOpen) {
-    setToolsSheetOpen(false)
+  if (mentionOpen && toolsMenuOpen) {
+    setToolsMenuOpen(false)
   }
   const safeMentionIndex =
     paletteTools.length === 0
@@ -877,22 +773,6 @@ function ChatComposer({
   }, [])
 
   React.useEffect(() => {
-    if (!toolsSheetOpen) return
-    let cancelled = false
-    queueMicrotask(() => {
-      if (!cancelled) stopVoiceInput()
-    })
-    function onKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape") closeToolsSheet()
-    }
-    window.addEventListener("keydown", onKeyDown)
-    return () => {
-      cancelled = true
-      window.removeEventListener("keydown", onKeyDown)
-    }
-  }, [toolsSheetOpen])
-
-  React.useEffect(() => {
     if (!isFloating) return
     const el = localRef.current
     if (!el || typeof ResizeObserver === "undefined") return
@@ -1028,7 +908,7 @@ function ChatComposer({
     const outbound = expanded || withFiles.trim()
     if (!outbound) return
     stopVoiceInput()
-    closeToolsSheet()
+    closeToolsMenu()
     setMentionSuppressed(true)
     onSend?.(outbound)
     setPasteAttachments([])
@@ -1193,38 +1073,122 @@ function ChatComposer({
     }
   }
 
-  /** `/` typing or `+` tools — same liquid listbox behind the composer pill. */
-  const floatingToolsBehind = isFloating && toolsSheetOpen
-  const floatingMentionBehind = isFloating && mentionOpen && !toolsSheetOpen
-  const floatingDockBehind = floatingToolsBehind || floatingMentionBehind
+  /** Tools / `/` mention — compact floating card matching composer width. */
   const formRef = React.useRef<HTMLFormElement>(null)
-  const [composerDockHeight, setComposerDockHeight] = React.useState(96)
+  const floatingToolsOpen = isFloating && toolsMenuOpen
+  const floatingDockOpen = floatingToolsOpen || (isFloating && mentionOpen)
+  const [softKeyboardOpen, setSoftKeyboardOpen] = React.useState(false)
 
-  function dismissFloatingDock() {
-    closeToolsSheet()
-    if (mentionOpen) setMentionSuppressed(true)
-  }
-
-  React.useLayoutEffect(() => {
-    if (!floatingDockBehind) return
-    const el = formRef.current
-    if (!el) return
+  React.useEffect(() => {
+    if (!isFloating) return
+    const root = document.documentElement
     const sync = () => {
-      setComposerDockHeight(Math.ceil(el.getBoundingClientRect().height))
+      setSoftKeyboardOpen(root.dataset.keyboardOpen === "true")
     }
     sync()
-    const observer = new ResizeObserver(sync)
-    observer.observe(el)
+    const observer = new MutationObserver(sync)
+    observer.observe(root, {
+      attributes: true,
+      attributeFilter: ["data-keyboard-open"],
+    })
     return () => observer.disconnect()
-  }, [
-    floatingDockBehind,
-    floatingComposerExpanded,
-    pasteAttachments.length,
-    composerValue,
-  ])
+  }, [isFloating])
+
+  // Phone: above composer while keyboard is up; below when keyboard is closed.
+  const floatingDockSide =
+    isFloating && softKeyboardOpen ? "above" : isFloating ? "below" : "above"
+
+  React.useEffect(() => {
+    if (!toolsMenuOpen) return
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") closeToolsMenu()
+    }
+    window.addEventListener("keydown", onKeyDown)
+    return () => window.removeEventListener("keydown", onKeyDown)
+  }, [toolsMenuOpen])
+
+  const floatingCompactRowClass = cn(
+    chatComposerLiquidSheetRowClass,
+    "gap-2.5 rounded-xl px-2.5 py-2"
+  )
+  const floatingCompactIconClass = cn(
+    chatComposerLiquidSheetRowIconClass,
+    "size-7 rounded-xl [&_svg]:size-3.5"
+  )
+
+  const floatingToolsList = (
+    <ul className="flex flex-col gap-0.5">
+      {visibleMentionOptions.map((option) => (
+        <li key={option.id}>
+          <button
+            type="button"
+            className={floatingCompactRowClass}
+            onMouseDown={(event) => {
+              event.preventDefault()
+              closeToolsMenu()
+              insertMentionToken(option)
+            }}
+          >
+            <span className={floatingCompactIconClass}>
+              <TrendingUpIcon className="size-3.5" aria-hidden />
+            </span>
+            <span className="min-w-0 flex-1 truncate text-[13px] font-medium tracking-[-0.01em] text-foreground">
+              {mentionOptionLabel(option)}
+            </span>
+          </button>
+        </li>
+      ))}
+      {isFeatureVisible("correlation") ? (
+        <li>
+          <button
+            type="button"
+            className={floatingCompactRowClass}
+            onMouseDown={(event) => {
+              event.preventDefault()
+              openPremiumTools()
+            }}
+          >
+            <span className={floatingCompactIconClass}>
+              <LineChartIcon className="size-3.5" aria-hidden />
+            </span>
+            <span className="min-w-0 flex-1 truncate text-[13px] font-medium tracking-[-0.01em] text-foreground">
+              {t("composerToolCorrelationLabel")}
+            </span>
+            <LockIcon
+              className="size-3 shrink-0 text-muted-foreground/65"
+              aria-hidden
+            />
+          </button>
+        </li>
+      ) : null}
+      {isFeatureVisible("volatility") ? (
+        <li>
+          <button
+            type="button"
+            className={floatingCompactRowClass}
+            onMouseDown={(event) => {
+              event.preventDefault()
+              openPremiumTools()
+            }}
+          >
+            <span className={floatingCompactIconClass}>
+              <ActivityIcon className="size-3.5" aria-hidden />
+            </span>
+            <span className="min-w-0 flex-1 truncate text-[13px] font-medium tracking-[-0.01em] text-foreground">
+              {t("composerToolVolatilityLabel")}
+            </span>
+            <LockIcon
+              className="size-3 shrink-0 text-muted-foreground/65"
+              aria-hidden
+            />
+          </button>
+        </li>
+      ) : null}
+    </ul>
+  )
 
   const floatingMentionList = (
-    <ul className="flex flex-col gap-0.5 px-4 pb-2 pt-0.5">
+    <ul className="flex flex-col gap-0.5">
       {paletteTools.map((tool, index) => {
         const Icon =
           tool.id === "correlation"
@@ -1241,8 +1205,7 @@ function ChatComposer({
               role="option"
               aria-selected={index === safeMentionIndex}
               className={cn(
-                chatComposerLiquidSheetRowClass,
-                "py-2.5",
+                floatingCompactRowClass,
                 index === safeMentionIndex &&
                   chatComposerLiquidSheetRowActiveClass
               )}
@@ -1251,20 +1214,15 @@ function ChatComposer({
                 selectPaletteTool(tool)
               }}
             >
-              <span
-                className={cn(
-                  chatComposerLiquidSheetRowIconClass,
-                  "size-8 [&_svg]:size-3.5"
-                )}
-              >
+              <span className={floatingCompactIconClass}>
                 <Icon className="size-3.5" aria-hidden />
               </span>
-              <span className="min-w-0 flex-1 truncate text-[15px] font-medium tracking-[-0.016em] text-foreground">
+              <span className="min-w-0 flex-1 truncate text-[13px] font-medium tracking-[-0.01em] text-foreground">
                 {paletteLabels[tool.id]}
               </span>
               {tool.locked ? (
                 <LockIcon
-                  className="size-3.5 shrink-0 text-muted-foreground/65"
+                  className="size-3 shrink-0 text-muted-foreground/65"
                   aria-hidden
                 />
               ) : null}
@@ -1285,8 +1243,7 @@ function ChatComposer({
         isFloating
           ? chatMobileComposerShellClass
           : chatDesktopComposerShellClass,
-        // Isolate so the dock sheet (z-1) stays under the pill (z-10).
-        floatingDockBehind && "z-30",
+        (floatingDockOpen || mentionOpen) && "z-30",
         className
       )}
       onSubmit={(event) => {
@@ -1298,64 +1255,50 @@ function ChatComposer({
         send()
       }}
     >
-      {floatingDockBehind ? (
-        <>
-          <div
-            role="presentation"
-            className={cn(
-              "fixed inset-0 z-0 touch-none",
-              chatComposerLiquidSheetOverlayClass
-            )}
-            onClick={dismissFloatingDock}
-          />
+      {floatingDockOpen ? (
+        <div
+          role="presentation"
+          className="fixed inset-0 z-0"
+          onClick={() => {
+            closeToolsMenu()
+            if (mentionOpen) setMentionSuppressed(true)
+          }}
+        />
+      ) : null}
+
+      {/* Pill-width anchor — overflow-visible so the dock is not clipped by pill overflow-hidden. */}
+      <div className="relative overflow-visible">
+        {floatingDockOpen || (!isFloating && mentionOpen) ? (
           <div
             id="composer-mention-listbox"
+            className={cn(
+              "absolute start-0 end-0 z-20 gap-0 overflow-hidden border-0 bg-white/90 text-foreground",
+              "shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_92%,transparent),inset_0_0_0_1px_color-mix(in_oklch,white_40%,transparent),0_18px_52px_-18px_color-mix(in_oklch,var(--foreground)_18%,transparent)]",
+              "backdrop-blur-2xl backdrop-saturate-[180%] supports-[backdrop-filter]:bg-white/72",
+              "dark:bg-[oklch(0.22_0_0_/0.92)] dark:supports-[backdrop-filter]:bg-[oklch(0.2_0_0_/0.72)]",
+              "dark:shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_14%,transparent),inset_0_0_0_1px_color-mix(in_oklch,white_8%,transparent),0_18px_52px_-18px_color-mix(in_oklch,black_55%,transparent)]",
+              floatingDockSide === "above"
+                ? "bottom-full mb-2"
+                : "top-full mt-2",
+              isFloating
+                ? "rounded-[1.75rem] p-1.5"
+                : "min-w-60 rounded-[28px] p-2.5"
+            )}
             role="listbox"
             aria-label={
-              floatingToolsBehind
+              floatingToolsOpen
                 ? t("composerToolsMenu")
                 : t("composerMentionMenu")
             }
             aria-activedescendant={
-              floatingMentionBehind && activeMentionOptionId
+              !floatingToolsOpen && activeMentionOptionId
                 ? `composer-mention-${activeMentionOptionId}`
                 : undefined
             }
-            className={composerMentionBackdropSheetClass}
-            style={{ paddingBottom: composerDockHeight }}
           >
-            <div className={chatMobileSheetHandleClass} aria-hidden />
-            <p className={cn(chatMobileToolsMenuLabelClass, "px-7")}>
-              {floatingToolsBehind
-                ? t("composerToolsMenu")
-                : t("composerMentionMenu")}
-            </p>
-            {floatingToolsBehind ? toolsRows : floatingMentionList}
+            {floatingToolsOpen ? floatingToolsList : floatingMentionList}
           </div>
-        </>
-      ) : null}
-
-      {!isFloating && mentionOpen ? (
-        <div
-          id="composer-mention-listbox"
-          className={cn(
-            "absolute inset-x-3 bottom-full z-20 mb-2 min-w-60 max-w-[min(100vw-1.5rem,20rem)]",
-            chatComposerLiquidDockCardClass
-          )}
-          role="listbox"
-          aria-label={t("composerMentionMenu")}
-          aria-activedescendant={
-            activeMentionOptionId
-              ? `composer-mention-${activeMentionOptionId}`
-              : undefined
-          }
-        >
-          <p className={chatMobileToolsMenuLabelClass}>
-            {t("composerMentionMenu")}
-          </p>
-          {floatingMentionList}
-        </div>
-      ) : null}
+        ) : null}
 
       <div
         ref={composerBodyRef}
@@ -1417,15 +1360,15 @@ function ChatComposer({
                     variant="ghost"
                     size="icon-sm"
                     aria-label={t("composerToolsMenu")}
-                    aria-expanded={toolsSheetOpen}
+                    aria-expanded={toolsMenuOpen}
                     aria-haspopup="listbox"
                     aria-controls={
-                      floatingToolsBehind ? "composer-mention-listbox" : undefined
+                      floatingToolsOpen ? "composer-mention-listbox" : undefined
                     }
                     disabled={disabled}
                     onClick={(event) => {
                       event.stopPropagation()
-                      setToolsSheetOpen((open) => {
+                      setToolsMenuOpen((open) => {
                         if (!open) trackComposerToolsOpen()
                         return !open
                       })
@@ -1437,7 +1380,7 @@ function ChatComposer({
                         : chatMobileComposerIconButtonCompactClass
                     }
                   >
-                    {toolsSheetOpen ? (
+                    {toolsMenuOpen ? (
                       <XIcon className="size-6" strokeWidth={1.35} />
                     ) : (
                       <PlusIcon className="size-6" strokeWidth={1.35} />
@@ -1818,6 +1761,7 @@ function ChatComposer({
             )}
           </div>
         ) : null}
+      </div>
       </div>
       {!isFloating ? (
         <p className="mt-2 text-center text-[11px] leading-3.25 tracking-[0.006em] text-muted-foreground/70">

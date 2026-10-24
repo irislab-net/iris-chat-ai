@@ -12,6 +12,7 @@ describe("marketAssetLogoSrc", () => {
   })
 
   it("returns null for unknown symbols", () => {
-    expect(marketAssetLogoSrc("DOGE")).toBeNull()
+    expect(marketAssetLogoSrc("DOGE")).toContain("dogecoin")
+    expect(marketAssetLogoSrc("XYZ")).toBeNull()
   })
 })

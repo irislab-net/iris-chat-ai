@@ -15,6 +15,11 @@ import {
 } from "@/components/app-shell/chat-context-menu-styles"
 import { GoogleGlyph } from "@/components/auth/google-glyph"
 import {
+  ChartCandlestickIcon,
+  LineChartIcon,
+  UserRoundIcon,
+} from "lucide-react"
+import {
   SfBookIcon,
   SfCreditCardIcon,
   SfDocTextIcon,
@@ -41,6 +46,10 @@ import type { User } from "@/lib/api/types"
 import { getPrivacyNoticeHref, getTermsOfServiceHref } from "@/lib/legal"
 import {
   BILLING_PATH,
+  DESK_MARKETS_PATH,
+  DESK_NEWS_PATH,
+  DESK_PROFILE_PATH,
+  DESK_TRADE_PATH,
   getMarketingHomePath,
   getMarketingPageHref,
   UPGRADE_PATH,
@@ -245,6 +254,30 @@ function AccountSignedInMenuSections({
           <SfCreditCardIcon className={chatContextMenuIconClass} />
           {t("billing")}
         </DropdownMenuItem>
+        <DropdownMenuItem
+          className={chatContextMenuItemClass}
+          nativeButton={false}
+          render={<Link href={DESK_MARKETS_PATH} />}
+        >
+          <LineChartIcon className={chatContextMenuIconClass} />
+          {t("deskMarkets")}
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          className={chatContextMenuItemClass}
+          nativeButton={false}
+          render={<Link href={DESK_TRADE_PATH} />}
+        >
+          <ChartCandlestickIcon className={chatContextMenuIconClass} />
+          {t("deskTrade")}
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          className={chatContextMenuItemClass}
+          nativeButton={false}
+          render={<Link href={DESK_PROFILE_PATH} />}
+        >
+          <UserRoundIcon className={chatContextMenuIconClass} />
+          {t("deskProfile")}
+        </DropdownMenuItem>
         {onOpenNews ? (
           <DropdownMenuItem
             className={chatContextMenuItemClass}
@@ -253,7 +286,16 @@ function AccountSignedInMenuSections({
             <SfNewspaperIcon className={chatContextMenuIconClass} />
             {t("news")}
           </DropdownMenuItem>
-        ) : null}
+        ) : (
+          <DropdownMenuItem
+            className={chatContextMenuItemClass}
+            nativeButton={false}
+            render={<Link href={DESK_NEWS_PATH} />}
+          >
+            <SfNewspaperIcon className={chatContextMenuIconClass} />
+            {t("news")}
+          </DropdownMenuItem>
+        )}
         {onOpenTradingProfile ? (
           <DropdownMenuItem
             className={chatContextMenuItemClass}
@@ -294,6 +336,40 @@ function AccountGuestMenuSections({
 
   return (
     <>
+      <DropdownMenuGroup>
+        <DropdownMenuItem
+          className={chatContextMenuItemClass}
+          nativeButton={false}
+          render={<Link href={DESK_MARKETS_PATH} />}
+        >
+          <LineChartIcon className={chatContextMenuIconClass} />
+          {t("deskMarkets")}
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          className={chatContextMenuItemClass}
+          nativeButton={false}
+          render={<Link href={DESK_TRADE_PATH} />}
+        >
+          <ChartCandlestickIcon className={chatContextMenuIconClass} />
+          {t("deskTrade")}
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          className={chatContextMenuItemClass}
+          nativeButton={false}
+          render={<Link href={DESK_PROFILE_PATH} />}
+        >
+          <UserRoundIcon className={chatContextMenuIconClass} />
+          {t("deskProfile")}
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          className={chatContextMenuItemClass}
+          nativeButton={false}
+          render={<Link href={DESK_NEWS_PATH} />}
+        >
+          <SfNewspaperIcon className={chatContextMenuIconClass} />
+          {t("news")}
+        </DropdownMenuItem>
+      </DropdownMenuGroup>
       <AccountPreferencesGroup />
       {onOpenTradingProfile ? (
         <DropdownMenuItem

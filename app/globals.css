@@ -65,7 +65,8 @@
 }
 
 :root {
-    --background: oklch(1 0 0);
+    /* Desk / thread / sidebar canvas — soft warm paper. */
+    --background: #faf9f9;
     --foreground: oklch(0.145 0 0);
     --card: oklch(1 0 0);
     --card-foreground: oklch(0.145 0 0);
@@ -89,7 +90,7 @@
     --chart-4: oklch(0.371 0 0);
     --chart-5: oklch(0.269 0 0);
     --radius: 0.875rem;
-    --sidebar: oklch(1 0 0);
+    --sidebar: #faf9f9;
     --sidebar-foreground: oklch(0.145 0 0);
     --sidebar-primary: oklch(0.205 0 0);
     --sidebar-primary-foreground: oklch(0.985 0 0);
@@ -100,12 +101,12 @@
     --app-height: 100dvh;
     --app-offset-top: 0px;
     --keyboard-inset-bottom: 0px;
-    --browser-chrome-color: #ffffff;
+    --browser-chrome-color: #faf9f9;
     --browser-chrome-top: var(--browser-chrome-color);
     --browser-chrome-bottom: var(--browser-chrome-color);
     /* Keep in sync with `.chat-gemini-horizon-dome` stops in chat-gemini.css. */
-    --horizon-chrome-top: #f5f5f5;
-    --horizon-chrome-bottom: #9cd1fd;
+    --horizon-chrome-top: #f6f6f6;
+    --horizon-chrome-bottom: #bce0f9;
     --app-safe-top: env(safe-area-inset-top, 0px);
     --app-safe-bottom: env(safe-area-inset-bottom, 0px);
     --mobile-toolbar-height: calc(3rem + var(--app-safe-top));
@@ -362,6 +363,18 @@ html[data-app-shell="true"]::after {
   bottom: 0;
   height: var(--app-safe-bottom);
   background-color: var(--browser-chrome-bottom, var(--browser-chrome-color, var(--background)));
+}
+
+/*
+ * Floating desk bottom nav — no solid dock behind the pill.
+ * Keep home-indicator gutter on page surface (not near-black chrome).
+ */
+html[data-app-shell="true"][data-desk-bottom-nav="true"]::after {
+  background-color: var(--background);
+}
+
+html[data-app-shell="true"][data-desk-bottom-nav="true"] body {
+  background-color: var(--background);
 }
 
 html.display-standalone {
@@ -1273,5 +1286,83 @@ html.display-standalone[data-app-shell="true"] [data-slot="sheet-content"] .app-
 
 :is(.dark) [data-slot="chat-gsap-view-stack"][data-transitioning] > [data-view] {
   background: oklch(0.22 0 0);
+}
+
+/* Desk wallet bank card — ported from exchange-admin treasury hero */
+@keyframes desk-wallet-shimmer {
+  from {
+    transform: translateX(-180%) skewX(-12deg);
+  }
+  to {
+    transform: translateX(320%) skewX(-12deg);
+  }
+}
+
+@keyframes desk-wallet-amount-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.desk-wallet-amount-loading {
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+  overflow: hidden;
+  border-radius: 0.35em;
+  color: oklch(0.55 0.01 264 / 0.55) !important;
+  filter: blur(6px);
+  opacity: 0.72;
+  user-select: none;
+  pointer-events: none;
+}
+
+:is(.dark) .desk-wallet-amount-loading {
+  color: oklch(0.78 0.01 264 / 0.45) !important;
+}
+
+.desk-wallet-amount-loading::after {
+  content: "";
+  position: absolute;
+  inset: -20% -30%;
+  border-radius: inherit;
+  background: linear-gradient(
+    105deg,
+    transparent 30%,
+    oklch(1 0 0 / 0.65) 50%,
+    transparent 70%
+  );
+  background-size: 220% 100%;
+  animation: desk-wallet-amount-shimmer 1.55s ease-in-out infinite;
+}
+
+:is(.dark) .desk-wallet-amount-loading::after {
+  background: linear-gradient(
+    105deg,
+    transparent 28%,
+    oklch(1 0 0 / 0.18) 48%,
+    transparent 68%
+  );
+  background-size: 220% 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .desk-wallet-amount-loading::after {
+    animation: none;
+    opacity: 0.35;
+  }
+}
+
+@keyframes desk-wallet-chip-shine {
+  0% {
+    transform: translateX(-10px);
+  }
+  55%,
+  100% {
+    transform: translateX(215px);
+  }
 }
 

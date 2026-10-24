@@ -27,6 +27,7 @@ import {
   chatMobileThreadFirstTurnClass,
   chatMobileThreadTopSpacerClass,
   chatMobileComposerDockClass,
+  chatMobileEmptyHeroComposerClass,
   chatMobileEmptyHeroContentClass,
   chatMobileEmptyHeroTitleClass,
   chatMobileEmptyHeroWrapClass,
@@ -292,6 +293,11 @@ type ChatAsideProps = {
   onDisplayModeChange?: (mode: ChatDisplayMode) => void
   /** When chat is the sole primary view, expose #main-content for skip links. */
   isPrimaryContent?: boolean
+  /**
+   * Mobile desk: true once the overlay has a thread (messages), so the shell
+   * can hide the bottom nav. New chat / empty stays false.
+   */
+  onMobileThreadActiveChange?: (active: boolean) => void
 }
 
 const CHAT_CONTENT_MAX_WIDTH = "max-w-3xl"
@@ -402,6 +408,7 @@ function ChatAside({
   displayMode = "docked",
   onDisplayModeChange,
   isPrimaryContent = false,
+  onMobileThreadActiveChange,
 }: ChatAsideProps) {
   const t = useTranslations("workspace")
   const common = useTranslations("common")
@@ -2139,13 +2146,13 @@ function ChatAside({
     !isFocusedLayout &&
     displayMode === "docked"
   const showThread = !showHistoryPanel
-  if (!showThread && showScrollDown) {
-    setShowScrollDown(false)
-  }
   const activeConversation = conversations.find(
     (chat) => chat.id === conversationId
   )
   const threadHasUserMessages = hasUserMessages(messages)
+  if ((!showThread || !threadHasUserMessages) && showScrollDown) {
+    setShowScrollDown(false)
+  }
   useChatThreadEngagement(
     hydrated && showThread && threadHasUserMessages,
     conversationId || undefined
@@ -2212,7 +2219,10 @@ function ChatAside({
 
   React.useEffect(() => {
     const viewport = scrollViewportRef.current
-    if (!viewport || !showThread) return
+    if (!viewport || !showThread || !threadHasUserMessages) {
+      setShowScrollDown((prev) => (prev ? false : prev))
+      return
+    }
 
     function syncScrollDown(source: "scroll" | "resize" | "init") {
       const el = scrollViewportRef.current
@@ -2302,7 +2312,14 @@ function ChatAside({
       viewport.removeEventListener("scroll", onScroll)
       resizeObserver?.disconnect()
     }
-  }, [showThread, conversationId, messages.length, followChatBottom, pendingAssistantId])
+  }, [
+    showThread,
+    threadHasUserMessages,
+    conversationId,
+    messages.length,
+    followChatBottom,
+    pendingAssistantId,
+  ])
 
   async function shareCurrentConversation() {
     trackChatShare({ conversation_id: conversationId || undefined })
@@ -2379,6 +2396,15 @@ function ChatAside({
   if (displayMode === "focused" && isAuthenticated && !historyOpen) {
     setHistoryOpen(true)
   }
+
+  React.useEffect(() => {
+    if (!onMobileThreadActiveChange) return
+    const active = Boolean(onClose) && messages.length > 0
+    onMobileThreadActiveChange(active)
+    return () => {
+      if (active) onMobileThreadActiveChange(false)
+    }
+  }, [onClose, messages.length, onMobileThreadActiveChange])
 
   React.useEffect(() => {
     if (messages.length === 0 || !isMobileOverlay) return
@@ -2722,6 +2748,50 @@ function ChatAside({
                           >
                             {mobileGreeting}
                           </h2>
+                          {isMobileOverlay && messages.length === 0 ? (
+                            <div className={chatMobileEmptyHeroComposerClass}>
+                              {guestSendError ? (
+                                <div className="mb-2 flex items-start justify-between gap-3 rounded-2xl bg-white/60 px-3.5 py-2.5 dark:bg-white/8">
+                                  <p className="min-w-0 flex-1 text-[13px] leading-4.5 tracking-[-0.006em] text-foreground/85">
+                                    {guestSendError}
+                                  </p>
+                                  {!isAuthenticated ? (
+                                    <Button
+                                      type="button"
+                                      size="xs"
+                                      className={cn(
+                                        chatUpgradePillClass,
+                                        "h-7 shrink-0 px-3 text-[12px]"
+                                      )}
+                                      onClick={() => login({ source: "chat" })}
+                                    >
+                                      {t("signIn")}
+                                    </Button>
+                                  ) : null}
+                                </div>
+                              ) : null}
+                              <ChatComposer
+                                value={draft}
+                                onValueChange={(next) => {
+                                  setDraft(next)
+                                  if (guestSendError) setGuestSendError(null)
+                                }}
+                                textareaRef={composerRef}
+                                effort={effort}
+                                onEffortChange={onEffortChange}
+                                onSend={handleSend}
+                                sending={sending}
+                                onStop={() => {
+                                  abortRef.current?.abort()
+                                }}
+                                layout="floating"
+                                onFloatingFocusChange={
+                                  setMobileComposerFocused
+                                }
+                                isProUser={isProUser}
+                              />
+                            </div>
+                          ) : null}
                           {isMobileOverlay ? null : (
                             <IrisSamplePrompts
                               disabled={sending}
@@ -2995,7 +3065,7 @@ function ChatAside({
                     className={chatMobileThreadBottomFadeClass}
                   />
                 ) : null}
-                {showScrollDown ? (
+                {showScrollDown && threadHasUserMessages ? (
                   <ActionTooltip label={t("scrollToLatest")}>
                     <Button
                       type="button"
@@ -3030,7 +3100,8 @@ function ChatAside({
               />
             )}
 
-            {showThread ? (
+            {showThread &&
+            !(isMobileOverlay && messages.length === 0) ? (
               <div
                 className={cn(
                   "mx-auto w-full",
