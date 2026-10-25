@@ -119,7 +119,7 @@ function DeskPageFrame({
                   <h1
                     className={cn(
                       landingTitleCard,
-                      "text-[1.65rem] sm:text-2xl"
+                      "text-[1.35rem] sm:text-xl"
                     )}
                   >
                     {title}

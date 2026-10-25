@@ -163,7 +163,7 @@ function IntelWorkspaceSkeleton({
       <div className="mx-auto flex min-h-0 w-full max-w-3xl flex-1 flex-col gap-6 px-4 py-4 pt-5 sm:gap-8 sm:px-6 sm:py-8 sm:pt-10 lg:max-w-4xl">
         <div className="flex shrink-0 items-center gap-2.5">
           <div className="min-w-0 flex-1">
-            <Bone className="h-8 w-28 rounded-full sm:h-9 sm:w-32" />
+            <Bone className="h-7 w-24 rounded-full sm:h-8 sm:w-28" />
           </div>
           <Bone className="size-10 shrink-0 rounded-full" />
         </div>
