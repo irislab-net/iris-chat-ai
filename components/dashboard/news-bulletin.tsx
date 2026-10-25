@@ -3,6 +3,7 @@
 import * as React from "react"
 import {
   CheckIcon,
+  ClockIcon,
   CopyIcon,
   EyeIcon,
   FlameIcon,
@@ -30,6 +31,8 @@ import { NewsBulletinSkeleton } from "@/components/dashboard/intel-skeletons"
 import { MarketAssetLogo } from "@/components/dashboard/market-asset-logo"
 import {
   chatMobileHeaderButtonClass,
+  chatMobileSheetChipActiveClass,
+  chatMobileSheetChipClass,
   chatNewsGlassCardClass,
   chatNewsGlassChipClass,
   chatNewsGlassTileClass,
@@ -373,21 +376,111 @@ function pickLeadStory(news: NewsItem[]) {
   }
 }
 
-type NewsBriefKind = "eth" | "macro" | "btc" | "dxy" | "xau"
+type NewsBriefKind = "macro" | "btc" | "eth" | "dxy" | "xau"
 
-const NEWS_BRIEF_ORDER: NewsBriefKind[] = ["eth", "macro", "btc", "dxy", "xau"]
+type NewsFilterId =
+  | "all"
+  | "BTC"
+  | "ETH"
+  | "XAU"
+  | "DXY"
+  | "war"
+  | "income"
 
-function newsBriefMeta(analytics: NewsAnalytics | null): {
+const NEWS_FILTER_TABS: NewsFilterId[] = [
+  "all",
+  "BTC",
+  "ETH",
+  "XAU",
+  "DXY",
+  "war",
+  "income",
+]
+
+const NEWS_FILTER_SOON = new Set<NewsFilterId>(["war", "income"])
+
+/** Macro first — ETH must not monopolize the tape when every market has a brief. */
+const NEWS_BRIEF_ORDER: NewsBriefKind[] = ["macro", "btc", "eth", "dxy", "xau"]
+
+const ASSET_BRIEF_KIND: Record<
+  (typeof TAPE_ASSETS)[number],
+  Exclude<NewsBriefKind, "macro">
+> = {
+  BTC: "btc",
+  ETH: "eth",
+  DXY: "dxy",
+  XAU: "xau",
+}
+
+/** Minimum per-asset relevance to keep a headline in a market filter. */
+const ASSET_NEWS_RELEVANCE_MIN = 0.3
+
+function isTapeAssetFilter(
+  filter: NewsFilterId
+): filter is (typeof TAPE_ASSETS)[number] {
+  return (TAPE_ASSETS as readonly string[]).includes(filter)
+}
+
+function newsFilterLabelKey(filter: NewsFilterId) {
+  if (filter === "all" || filter === "war" || filter === "income") {
+    return filter
+  }
+  return ASSET_BRIEF_KIND[filter]
+}
+
+function newsBriefMeta(
+  analytics: NewsAnalytics | null,
+  filter: NewsFilterId = "all"
+): {
   kind: NewsBriefKind
   text: string
 } | null {
   const summaries = analytics?.ai_summaries
   if (!summaries) return null
+
+  if (isTapeAssetFilter(filter)) {
+    const kind = ASSET_BRIEF_KIND[filter]
+    const text = summaries[kind]?.trim()
+    if (text) return { kind, text }
+  }
+
   for (const kind of NEWS_BRIEF_ORDER) {
     const text = summaries[kind]?.trim()
     if (text) return { kind, text }
   }
   return null
+}
+
+function assetRelevance(
+  item: NewsItem,
+  asset: (typeof TAPE_ASSETS)[number]
+): number {
+  const metrics = item.metrics?.assets?.[ASSET_BRIEF_KIND[asset]]
+  const relevance = metrics?.relevance
+  return typeof relevance === "number" && !Number.isNaN(relevance)
+    ? relevance
+    : 0
+}
+
+function newsForFilter(
+  news: NewsItem[],
+  filter: NewsFilterId
+): NewsItem[] {
+  if (!isTapeAssetFilter(filter)) return news
+
+  const ranked = news
+    .map((item) => ({ item, relevance: assetRelevance(item, filter) }))
+    .sort((a, b) => {
+      if (b.relevance !== a.relevance) return b.relevance - a.relevance
+      const impactA = a.item.metrics?.impact_score ?? Number.NEGATIVE_INFINITY
+      const impactB = b.item.metrics?.impact_score ?? Number.NEGATIVE_INFINITY
+      return impactB - impactA
+    })
+
+  const focused = ranked.filter(
+    ({ relevance }) => relevance >= ASSET_NEWS_RELEVANCE_MIN
+  )
+  return (focused.length > 0 ? focused : ranked).map(({ item }) => item)
 }
 
 /** Hot flame mark for the AI brief card. */
@@ -944,7 +1037,8 @@ function NewsSectionHeading({
   )
 }
 
-function NewsTape({
+/** Sentiment + headline-volume stats — not a filter. */
+function NewsStats({
   analytics,
   mobile = false,
   glass = false,
@@ -954,77 +1048,35 @@ function NewsTape({
   glass?: boolean
 }) {
   const t = useTranslations("dashboard")
-  const brief = newsBriefMeta(analytics)
-  const briefTitle = brief ? t(`briefTitles.${brief.kind}`) : null
   const hour = analytics?.timeframes?.["1h"] ?? analytics?.timeframes?.["15m"]
   const windows = tapeWindows(analytics)
   const assets = tapeAssets(analytics)
 
-  if (!brief && windows.length === 0 && assets.length === 0) return null
+  if (windows.length === 0 && assets.length === 0) return null
 
   if (mobile || glass) {
+    if (glass) {
+      return (
+        <div className="flex flex-col gap-2.5">
+          {assets.length > 0 ? (
+            <NewsAssetTape assets={assets} mobile glass />
+          ) : null}
+          {windows.length > 0 ? (
+            <NewsTapeWindows windows={windows} mobile glass />
+          ) : null}
+        </div>
+      )
+    }
+
     return (
-      <div className="flex flex-col gap-10">
-        {glass ? (
-          <>
-            {assets.length > 0 ? (
-              <NewsAssetTape assets={assets} mobile glass />
-            ) : null}
-            {windows.length > 0 ? (
-              <NewsTapeWindows windows={windows} mobile glass />
-            ) : null}
-          </>
-        ) : assets.length > 0 || windows.length > 0 ? (
-          <div className="flex flex-col gap-2 rounded-2xl bg-muted/18 p-2">
-            {assets.length > 0 ? (
-              <NewsAssetTape assets={assets} mobile />
-            ) : null}
-            {windows.length > 0 ? (
-              <div className="grid grid-cols-3 gap-1 rounded-xl bg-background/35 p-1 dark:bg-background/20">
-                {windows.map((slot) => (
-                  <NewsTapeWindowTile
-                    key={slot.key}
-                    slot={slot}
-                    variant="cell"
-                  />
-                ))}
-              </div>
-            ) : null}
+      <div className="flex flex-col gap-2 rounded-2xl bg-muted/18 p-2">
+        {assets.length > 0 ? <NewsAssetTape assets={assets} mobile /> : null}
+        {windows.length > 0 ? (
+          <div className="grid grid-cols-3 gap-1 rounded-xl bg-background/35 p-1 dark:bg-background/20">
+            {windows.map((slot) => (
+              <NewsTapeWindowTile key={slot.key} slot={slot} variant="cell" />
+            ))}
           </div>
-        ) : null}
-        {brief && briefTitle ? (
-          glass ? (
-            <article
-              className={cn(chatNewsGlassCardClass, newsNeutralWashClass)}
-            >
-              <div className="flex flex-col gap-3 px-4 py-4">
-                <div className="flex items-center gap-3">
-                  <NewsBriefIcon />
-                  <h3 className="min-w-0 truncate text-[15px] font-medium tracking-tight text-foreground">
-                    {briefTitle}
-                  </h3>
-                </div>
-                <p
-                  dir="auto"
-                  className="text-[13px] leading-relaxed text-foreground/85"
-                >
-                  {brief.text}
-                </p>
-              </div>
-            </article>
-          ) : (
-            <div className="flex flex-col gap-2">
-              <div className="flex items-center gap-2.5">
-                <NewsBriefIcon />
-                <h3 className="text-[15px] font-medium tracking-tight text-foreground">
-                  {briefTitle}
-                </h3>
-              </div>
-              <p className="text-sm leading-relaxed text-foreground/90">
-                {brief.text}
-              </p>
-            </div>
-          )
         ) : null}
       </div>
     )
@@ -1058,20 +1110,122 @@ function NewsTape({
           <NewsAssetTape assets={assets} />
         </div>
       ) : null}
-      {brief && briefTitle ? (
-        <div className="mt-3 flex flex-col gap-2">
-          <div className="flex items-center gap-2.5">
+    </div>
+  )
+}
+
+function NewsFilterTabs({
+  value,
+  onChange,
+}: {
+  value: NewsFilterId
+  onChange: (next: NewsFilterId) => void
+}) {
+  const t = useTranslations("dashboard")
+
+  return (
+    <div
+      role="tablist"
+      aria-label={t("newsFilterAria")}
+      className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+    >
+      {NEWS_FILTER_TABS.map((tab) => {
+        const active = value === tab
+        return (
+          <button
+            key={tab}
+            type="button"
+            role="tab"
+            aria-selected={active}
+            onClick={() => onChange(tab)}
+            className={cn(
+              chatMobileSheetChipClass,
+              "inline-flex shrink-0 items-center",
+              active && chatMobileSheetChipActiveClass
+            )}
+          >
+            {t(`newsFilters.${newsFilterLabelKey(tab)}`)}
+          </button>
+        )
+      })}
+    </div>
+  )
+}
+
+function NewsBriefCard({
+  analytics,
+  filter,
+  glass = false,
+}: {
+  analytics: NewsAnalytics | null
+  filter: NewsFilterId
+  glass?: boolean
+}) {
+  const t = useTranslations("dashboard")
+  const brief = newsBriefMeta(analytics, filter)
+  if (!brief) return null
+  const briefTitle = t(`briefTitles.${brief.kind}`)
+
+  if (glass) {
+    return (
+      <article className={cn(chatNewsGlassCardClass, newsNeutralWashClass)}>
+        <div className="flex flex-col gap-3 px-4 py-4">
+          <div className="flex items-center gap-3">
             <NewsBriefIcon />
-            <h3 className="text-sm font-medium tracking-tight text-foreground">
+            <h3 className="min-w-0 truncate text-[15px] font-medium tracking-tight text-foreground">
               {briefTitle}
             </h3>
           </div>
-          <p className="text-sm leading-relaxed text-foreground/90">
+          <p
+            dir="auto"
+            className="text-[13px] leading-relaxed text-foreground/85"
+          >
             {brief.text}
           </p>
         </div>
-      ) : null}
+      </article>
+    )
+  }
+
+  return (
+    <div className="flex flex-col gap-2">
+      <div className="flex items-center gap-2.5">
+        <NewsBriefIcon />
+        <h3 className="text-[15px] font-medium tracking-tight text-foreground">
+          {briefTitle}
+        </h3>
+      </div>
+      <p className="text-sm leading-relaxed text-foreground/90">{brief.text}</p>
     </div>
+  )
+}
+
+function NewsComingSoon({
+  filter,
+  glass = false,
+}: {
+  filter: "war" | "income"
+  glass?: boolean
+}) {
+  const t = useTranslations("dashboard")
+  const body =
+    filter === "war" ? t("newsComingSoonWar") : t("newsComingSoonIncome")
+
+  return (
+    <Empty
+      className={cn(
+        "min-h-48 rounded-2xl",
+        glass ? chatNewsGlassCardClass : "bg-muted/18"
+      )}
+    >
+      <EmptyHeader>
+        <EmptyMedia variant="icon">
+          <ClockIcon />
+        </EmptyMedia>
+        <EmptyTitle>{t("newsComingSoonTitle")}</EmptyTitle>
+        <EmptyDescription>{body}</EmptyDescription>
+      </EmptyHeader>
+    </Empty>
   )
 }
 
@@ -1386,6 +1540,8 @@ function NewsHeadlineList({
   onAnalyzeNews?: (item: NewsItem) => void
 }) {
   const t = useTranslations("dashboard")
+  const [filter, setFilter] = React.useState<NewsFilterId>("all")
+  const glass = mobile || sidebar
 
   if (loading && news.length === 0) {
     return (
@@ -1393,27 +1549,64 @@ function NewsHeadlineList({
     )
   }
 
-  if (news.length === 0) {
+  const stats = (
+    <NewsStats
+      analytics={analytics}
+      mobile={mobile || sidebar}
+      glass={glass}
+    />
+  )
+  const tabs = <NewsFilterTabs value={filter} onChange={setFilter} />
+
+  if (NEWS_FILTER_SOON.has(filter)) {
     return (
-      <Empty
+      <div
         className={cn(
-          "min-h-48 rounded-2xl",
-          mobile || sidebar ? chatNewsGlassCardClass : "bg-muted/18"
+          "flex flex-col",
+          glass ? "gap-10 pt-2 sm:pt-3" : "gap-5 pb-2"
         )}
       >
-        <EmptyHeader>
-          <EmptyMedia variant="icon">
-            <NewspaperIcon />
-          </EmptyMedia>
-          <EmptyTitle>{t("noHeadlinesYet")}</EmptyTitle>
-          <EmptyDescription>{t("noHeadlinesHint")}</EmptyDescription>
-        </EmptyHeader>
-      </Empty>
+        {stats}
+        {tabs}
+        <NewsComingSoon
+          filter={filter as "war" | "income"}
+          glass={glass}
+        />
+      </div>
     )
   }
 
-  const { lead, rest } = pickLeadStory(news)
-  const glass = mobile || sidebar
+  if (news.length === 0) {
+    return (
+      <div
+        className={cn(
+          "flex flex-col",
+          glass ? "gap-10 pt-2 sm:pt-3" : "gap-5 pb-2"
+        )}
+      >
+        {stats}
+        {tabs}
+        <Empty
+          className={cn(
+            "min-h-48 rounded-2xl",
+            glass ? chatNewsGlassCardClass : "bg-muted/18"
+          )}
+        >
+          <EmptyHeader>
+            <EmptyMedia variant="icon">
+              <NewspaperIcon />
+            </EmptyMedia>
+            <EmptyTitle>{t("noHeadlinesYet")}</EmptyTitle>
+            <EmptyDescription>{t("noHeadlinesHint")}</EmptyDescription>
+          </EmptyHeader>
+        </Empty>
+      </div>
+    )
+  }
+
+  const filteredNews = newsForFilter(news, filter)
+  const story =
+    filteredNews.length > 0 ? pickLeadStory(filteredNews) : null
 
   return (
     <div
@@ -1422,51 +1615,72 @@ function NewsHeadlineList({
         glass ? "gap-10 pt-2 sm:pt-3" : "gap-5 pb-2"
       )}
     >
-      <NewsTape analytics={analytics} mobile={mobile || sidebar} glass={glass} />
-      <NewsCard
-        item={lead}
-        featured
-        mobile={mobile || sidebar}
-        sidebar={sidebar}
-        onAnalyzeNews={onAnalyzeNews}
-      />
-      {rest.length > 0 ? (
-        glass ? (
-          <section>
-            <NewsSectionHeading>{t("latest")}</NewsSectionHeading>
-            <div className="flex flex-col gap-6">
-              {rest.map((item) => (
-                <NewsCard
-                  key={item.id}
-                  item={item}
-                  mobile={mobile || sidebar}
-                  sidebar={sidebar}
-                  onAnalyzeNews={onAnalyzeNews}
-                />
-              ))}
-            </div>
-          </section>
-        ) : (
-          <div>
-            <div className="mb-1 flex items-center gap-2 px-1">
-              <p className="text-[11px] font-medium tracking-[0.14em] text-muted-foreground uppercase">
-                {t("latest")}
-              </p>
-              <Separator className="flex-1" />
-            </div>
-            <div className="flex flex-col gap-2">
-              {rest.map((item) => (
-                <NewsCard
-                  key={item.id}
-                  item={item}
-                  sidebar={sidebar}
-                  onAnalyzeNews={onAnalyzeNews}
-                />
-              ))}
-            </div>
-          </div>
-        )
-      ) : null}
+      {stats}
+      {tabs}
+      <NewsBriefCard analytics={analytics} filter={filter} glass={glass} />
+      {story ? (
+        <>
+          <NewsCard
+            item={story.lead}
+            featured
+            mobile={mobile || sidebar}
+            sidebar={sidebar}
+            onAnalyzeNews={onAnalyzeNews}
+          />
+          {story.rest.length > 0 ? (
+            glass ? (
+              <section>
+                <NewsSectionHeading>{t("latest")}</NewsSectionHeading>
+                <div className="flex flex-col gap-6">
+                  {story.rest.map((item) => (
+                    <NewsCard
+                      key={item.id}
+                      item={item}
+                      mobile={mobile || sidebar}
+                      sidebar={sidebar}
+                      onAnalyzeNews={onAnalyzeNews}
+                    />
+                  ))}
+                </div>
+              </section>
+            ) : (
+              <div>
+                <div className="mb-1 flex items-center gap-2 px-1">
+                  <p className="text-[11px] font-medium tracking-[0.14em] text-muted-foreground uppercase">
+                    {t("latest")}
+                  </p>
+                  <Separator className="flex-1" />
+                </div>
+                <div className="flex flex-col gap-2">
+                  {story.rest.map((item) => (
+                    <NewsCard
+                      key={item.id}
+                      item={item}
+                      sidebar={sidebar}
+                      onAnalyzeNews={onAnalyzeNews}
+                    />
+                  ))}
+                </div>
+              </div>
+            )
+          ) : null}
+        </>
+      ) : (
+        <Empty
+          className={cn(
+            "min-h-48 rounded-2xl",
+            glass ? chatNewsGlassCardClass : "bg-muted/18"
+          )}
+        >
+          <EmptyHeader>
+            <EmptyMedia variant="icon">
+              <NewspaperIcon />
+            </EmptyMedia>
+            <EmptyTitle>{t("noHeadlinesYet")}</EmptyTitle>
+            <EmptyDescription>{t("noHeadlinesHint")}</EmptyDescription>
+          </EmptyHeader>
+        </Empty>
+      )}
     </div>
   )
 }

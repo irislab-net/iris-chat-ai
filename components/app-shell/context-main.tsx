@@ -24,10 +24,10 @@ function ContextMain({ className, children, ...props }: ContextMainProps) {
       )}
       {...props}
     >
-      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
+      <div className="flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain">
         <div
           data-slot="context-source"
-          className="flex min-h-full flex-col pb-[calc(var(--desk-bottom-nav,0px)+0.75rem+env(safe-area-inset-bottom,0px))] lg:pb-0"
+          className="flex h-full min-h-0 flex-col pb-[calc(var(--desk-bottom-nav,0px)+0.75rem+env(safe-area-inset-bottom,0px))] lg:pb-0"
         >
           {children}
         </div>

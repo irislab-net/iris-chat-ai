@@ -93,15 +93,15 @@ function MarketsSkeleton() {
   const t = useTranslations("deskNav")
 
   return (
-    <DeskPageFrame className="pt-8 sm:pt-12">
+    <DeskPageFrame className="flex h-full min-h-0 flex-1 flex-col gap-0 py-3 pt-5 max-lg:pb-0 sm:py-4 sm:pt-6">
       <section
-        className="flex flex-col gap-3 pt-1 sm:gap-3.5 sm:pt-2"
+        className="flex min-h-0 flex-1 flex-col gap-3 pt-1 sm:gap-3.5 sm:pt-2"
         aria-busy="true"
         aria-label={t("loading")}
       >
         <div
           className={cn(
-            "relative isolate flex min-h-12 items-center gap-2.5 overflow-hidden rounded-[1.25rem] px-3.5 sm:px-4",
+            "relative isolate flex min-h-12 shrink-0 items-center gap-2.5 overflow-hidden rounded-[1.25rem] px-3.5 sm:px-4",
             deskLiquidGlassShellClass
           )}
           aria-hidden
@@ -117,8 +117,15 @@ function MarketsSkeleton() {
           />
         </div>
 
-        <DeskGlassCard className="divide-y divide-border/35 p-0 sm:p-0 dark:divide-white/8">
-          <div className="relative z-10 flex items-center gap-3 px-3.5 py-2.5 sm:px-4">
+        <DeskGlassCard
+          className={cn(
+            "flex min-h-0 flex-1 flex-col overflow-hidden p-0 sm:p-0",
+            "shadow-[0_1px_2px_rgba(15,23,42,0.04),0_6px_18px_-10px_rgba(15,23,42,0.1),inset_0_1px_1px_rgba(255,255,255,0.95),inset_0_0_0_0.5px_rgba(255,255,255,0.55)]",
+            "dark:shadow-[0_1px_2px_rgba(0,0,0,0.22),0_6px_18px_-10px_rgba(0,0,0,0.35),inset_0_1px_1px_rgba(255,255,255,0.2),inset_0_0_0_0.5px_rgba(255,255,255,0.12)]"
+          )}
+          contentClassName="flex min-h-0 flex-1 flex-col divide-y divide-border/35 dark:divide-white/8"
+        >
+          <div className="flex shrink-0 items-center gap-3 px-3.5 py-2.5 sm:px-4">
             <DeskBone stagger={1} className="h-2.5 w-14 rounded-full" />
             <div className="hidden w-14 shrink-0 sm:block" aria-hidden />
             <div className="ms-auto flex shrink-0 items-center gap-6 sm:gap-10">
@@ -130,7 +137,7 @@ function MarketsSkeleton() {
               />
             </div>
           </div>
-          <ul className="relative z-10">
+          <ul className="min-h-0 flex-1 overflow-hidden">
             {Array.from({ length: 9 }, (_, index) => (
               <MarketsRowSkeleton
                 key={index}
@@ -152,16 +159,17 @@ function PositionCardSkeleton({
   stagger?: 1 | 2 | 3
 }) {
   return (
-    <DeskGlassCard
-      className={cn(
-        "border-0 p-0",
-        "shadow-[0_1px_2px_rgba(15,23,42,0.04),0_12px_36px_-10px_rgba(15,23,42,0.12),inset_0_1px_1px_rgba(255,255,255,0.9),inset_0_-10px_22px_-14px_rgba(15,23,42,0.06)]",
-        "dark:shadow-[0_1px_2px_rgba(0,0,0,0.25),0_12px_36px_-10px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.18),inset_0_-12px_24px_-14px_rgba(0,0,0,0.4)]"
-      )}
-    >
+    <DeskGlassCard className="p-0">
       <div className="flex w-full items-center gap-2 px-4 py-3.5">
         <div className="flex min-w-0 flex-1 items-center gap-2">
-          <DeskBone stagger={stagger} className="size-7 shrink-0 rounded-full" />
+          <DeskBone
+            stagger={stagger}
+            className={cn(
+              "size-7 shrink-0 rounded-full",
+              "border border-white/75 dark:border-white/20",
+              "bg-white/55 dark:bg-white/12"
+            )}
+          />
           <DeskBone stagger={stagger} className="h-4 w-12 rounded-full" />
           <DeskBone stagger={stagger} className="h-5 w-12 rounded-full" />
         </div>
@@ -170,17 +178,13 @@ function PositionCardSkeleton({
       </div>
       {expanded ? (
         <div className="px-4 pt-1 pb-4">
-          <div className="grid grid-cols-4 gap-2 sm:gap-3">
-            {Array.from({ length: 4 }, (_, index) => (
-              <div key={index} className="min-w-0 space-y-1.5">
-                <DeskBone stagger={3} className="h-2 w-8 rounded-full" />
-                <DeskBone stagger={3} className="h-3.5 w-full rounded-full" />
+          <div className="grid grid-cols-2 gap-x-4 gap-y-3 sm:grid-cols-4 sm:gap-x-3">
+            {Array.from({ length: 6 }, (_, index) => (
+              <div key={index} className="min-w-0 space-y-1">
+                <DeskBone stagger={3} className="h-2.5 w-8 rounded-full" />
+                <DeskBone stagger={3} className="h-3 w-full rounded-full" />
               </div>
             ))}
-          </div>
-          <div className="mt-3 grid grid-cols-2 gap-2">
-            <DeskBone stagger={3} className="h-14 rounded-2xl" />
-            <DeskBone stagger={3} className="h-14 rounded-2xl" />
           </div>
         </div>
       ) : null}
@@ -192,7 +196,30 @@ function TradeSkeleton() {
   const t = useTranslations("deskNav")
 
   return (
-    <DeskPageFrame>
+    <DeskPageFrame className="gap-5 sm:gap-6">
+      <DeskGlassCard
+        className="p-4 sm:p-5"
+        contentClassName="flex flex-col gap-4 sm:gap-5"
+      >
+        <div className="flex items-center justify-between gap-4">
+          <DeskBone stagger={1} className="size-12 shrink-0 rounded-full" />
+          <div className="flex min-w-0 items-center gap-3">
+            <div className="min-w-0 space-y-1 text-end">
+              <DeskBone stagger={1} className="ms-auto h-3.5 w-20 rounded-full" />
+              <DeskBone stagger={1} className="ms-auto h-3 w-12 rounded-full" />
+            </div>
+            <DeskBone stagger={1} className="h-6 w-11 shrink-0 rounded-full" />
+          </div>
+        </div>
+        <div className="grid grid-cols-3 gap-x-4 gap-y-3 border-t border-border/35 pt-4 dark:border-white/8 sm:gap-x-5 sm:pt-5">
+          {Array.from({ length: 3 }, (_, index) => (
+            <div key={index} className="min-w-0 space-y-2">
+              <DeskBone stagger={2} className="h-2.5 w-12 rounded-full" />
+              <DeskBone stagger={2} className="h-4 w-16 rounded-full" />
+            </div>
+          ))}
+        </div>
+      </DeskGlassCard>
       <section
         className="flex flex-col gap-3.5 sm:gap-4"
         aria-busy="true"

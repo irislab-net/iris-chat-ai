@@ -12,29 +12,32 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { chatMobileGlassSurfaceClass } from "@/components/app-shell/chat-mobile-gemini-styles"
 import {
   SelectionCheckBadge,
   SelectionCheckSpacer,
 } from "@/components/ui/selection-check-badge"
 import { PAYMENT_NETWORK, PAYMENT_TOKENS } from "@/lib/billing/payment-options"
 import type { PaymentCurrency } from "@/lib/billing/invoice-types"
-import {
-  landingGlassSheen,
-  landingGlassSurface,
-} from "@/lib/landing-modern-styles"
+import { landingGlassSheen } from "@/lib/landing-modern-styles"
 import { cn } from "@/lib/utils"
 
 type PaymentMethodPickerProps = {
   currency: PaymentCurrency
   disabled?: boolean
   onCurrencyChange: (currency: PaymentCurrency) => void
+  /** Stretch trigger across the parent (wallet deposit / forms). */
+  fullWidth?: boolean
+  className?: string
 }
 
-/** Token chip for the amount row — liquid-glass trigger with mark + label. */
+/** Token chip / full-width trigger — liquid-glass dropdown with mark + network. */
 export function PaymentMethodPicker({
   currency,
   disabled,
   onCurrencyChange,
+  fullWidth = false,
+  className,
 }: PaymentMethodPickerProps) {
   const t = useTranslations("upgradePage.crypto")
   const selected =
@@ -42,7 +45,7 @@ export function PaymentMethodPicker({
     PAYMENT_TOKENS[0]!
 
   return (
-    <DropdownMenu>
+    <DropdownMenu modal={false}>
       <DropdownMenuTrigger
         disabled={disabled}
         render={
@@ -50,9 +53,14 @@ export function PaymentMethodPicker({
             type="button"
             variant="ghost"
             className={cn(
-              landingGlassSurface,
-              "h-11 shrink-0 gap-2 rounded-2xl bg-white/70 px-2.5 pe-2.5 shadow-none",
-              "hover:bg-white/85 dark:bg-white/12 dark:hover:bg-white/18"
+              chatMobileGlassSurfaceClass,
+              "h-12 gap-2.5 rounded-2xl border-white/55 px-3 pe-3",
+              "shadow-[inset_0_1px_0_0_rgba(255,255,255,0.95),inset_0_0_0_0.5px_rgba(255,255,255,0.55),inset_0_-8px_16px_-12px_rgba(15,23,42,0.08),0_1px_2px_rgba(15,23,42,0.04),0_8px_24px_-10px_rgba(15,23,42,0.14)]",
+              "hover:bg-white/28 hover:border-white/70",
+              "dark:border-white/20 dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.3),inset_0_0_0_0.5px_rgba(255,255,255,0.14),inset_0_-10px_20px_-12px_rgba(0,0,0,0.45),0_8px_24px_-10px_rgba(0,0,0,0.42)]",
+              "dark:hover:bg-white/16 dark:hover:border-white/28",
+              fullWidth ? "w-full justify-start" : "h-11 shrink-0 px-2.5 pe-2.5",
+              className
             )}
             aria-label={t("tokenAria", {
               token: selected.id,
@@ -67,7 +75,7 @@ export function PaymentMethodPicker({
           size="md"
           className="relative z-10"
         />
-        <span className="relative z-10 min-w-0 text-start">
+        <span className="relative z-10 min-w-0 flex-1 text-start">
           <span className="block text-sm leading-none font-semibold tracking-tight">
             {selected.id}
           </span>
@@ -79,31 +87,21 @@ export function PaymentMethodPicker({
       </DropdownMenuTrigger>
 
       <DropdownMenuContent
-        align="end"
+        align={fullWidth ? "start" : "end"}
         sideOffset={8}
+        // Above Sheet content (z-51) / overlay (z-50).
+        positionerClassName="z-70"
         className={cn(
-          landingGlassSurface,
-          "min-w-48 gap-0 rounded-[1.25rem] bg-white/82 p-1 shadow-lg ring-0 backdrop-blur-xl dark:bg-white/12"
+          fullWidth && "w-(--anchor-width) min-w-(--anchor-width) max-w-none"
         )}
       >
-        <span
-          aria-hidden
-          className={cn(landingGlassSheen, "rounded-[1.25rem]")}
-        />
-        <DropdownMenuGroup className="relative z-10 flex flex-col">
+        <DropdownMenuGroup>
           {PAYMENT_TOKENS.map((option) => {
             const active = option.id === currency
             return (
               <DropdownMenuItem
                 key={option.id}
-                className={cn(
-                  "min-h-11 justify-between gap-3 rounded-xl px-2.5 py-2",
-                  "bg-transparent hover:bg-transparent focus:bg-transparent",
-                  "dark:hover:bg-transparent dark:focus:bg-transparent",
-                  "data-highlighted:bg-transparent data-highlighted:text-foreground",
-                  "opacity-70 hover:opacity-100 focus:opacity-100",
-                  active && "opacity-100"
-                )}
+                className="justify-between gap-3"
                 onClick={() => onCurrencyChange(option.id)}
               >
                 <span className="flex min-w-0 items-center gap-2.5">

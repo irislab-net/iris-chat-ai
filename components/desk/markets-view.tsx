@@ -15,7 +15,7 @@ function MarketsView() {
   }
 
   return (
-    <DeskPageFrame className="pt-8 sm:pt-12">
+    <DeskPageFrame className="flex h-full min-h-0 flex-1 flex-col gap-0 py-3 pt-5 max-lg:pb-0 sm:py-4 sm:pt-6">
       <MarketPriceCards markets={markets} />
     </DeskPageFrame>
   )

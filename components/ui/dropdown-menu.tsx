@@ -48,6 +48,7 @@ function DropdownMenuContent({
   side = "bottom",
   sideOffset = 4,
   className,
+  positionerClassName,
   showBackdrop = false,
   backdropClassName,
   ...props
@@ -56,6 +57,8 @@ function DropdownMenuContent({
     MenuPrimitive.Positioner.Props,
     "align" | "alignOffset" | "side" | "sideOffset"
   > & {
+    /** Override Positioner stacking (e.g. `z-70` above Sheet `z-51`). */
+    positionerClassName?: string
     /** Scrim + blur behind the menu. `"mobile"` = max-md only. */
     showBackdrop?: boolean | "mobile"
     backdropClassName?: string
@@ -71,7 +74,7 @@ function DropdownMenuContent({
         />
       ) : null}
       <MenuPrimitive.Positioner
-        className="isolate z-50 outline-none"
+        className={cn("isolate z-50 outline-none", positionerClassName)}
         align={align}
         alignOffset={alignOffset}
         side={side}

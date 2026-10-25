@@ -71,9 +71,12 @@ function DeskPageFrame({
 function DeskGlassCard({
   children,
   className,
+  contentClassName,
 }: {
   children: React.ReactNode
   className?: string
+  /** Inner plate (above sheen). Needed for nested flex/scroll layouts. */
+  contentClassName?: string
 }) {
   return (
     <div
@@ -84,7 +87,7 @@ function DeskGlassCard({
       )}
     >
       <span aria-hidden className={cn(landingGlassSheen, "rounded-[1.75rem]")} />
-      <div className="relative z-10">{children}</div>
+      <div className={cn("relative z-10", contentClassName)}>{children}</div>
     </div>
   )
 }

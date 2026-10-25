@@ -4,9 +4,12 @@ import * as React from "react"
 import {
   ArrowDownToLineIcon,
   ArrowUpFromLineIcon,
+  Loader2Icon,
+  ReceiptTextIcon,
 } from "lucide-react"
 import { useTranslations } from "next-intl"
 
+import { DeskEmptyState } from "@/components/desk/desk-empty-state"
 import {
   DeskGlassCard,
   DeskPageFrame,
@@ -136,7 +139,15 @@ function ActivityRow({ row }: { row: DeskLedgerEntry }) {
         </p>
       </div>
       <ActivityGlassChip className={statusToneClass(row.status)}>
-        {statusLabel(row.status, t)}
+        <span className="inline-flex items-center gap-1">
+          {row.status === "confirming" ? (
+            <Loader2Icon
+              className="size-3 shrink-0 animate-spin"
+              aria-hidden
+            />
+          ) : null}
+          {statusLabel(row.status, t)}
+        </span>
       </ActivityGlassChip>
     </li>
   )
@@ -257,11 +268,29 @@ function ProfileView() {
           </div>
 
           {activity.length === 0 ? (
-            <DeskGlassCard>
-              <p className="py-6 text-center text-sm text-muted-foreground">
-                {t("ledgerEmpty")}
-              </p>
-            </DeskGlassCard>
+            <DeskEmptyState
+              icon={
+                activityFilter === "deposit"
+                  ? ArrowDownToLineIcon
+                  : activityFilter === "withdrawal"
+                    ? ArrowUpFromLineIcon
+                    : ReceiptTextIcon
+              }
+              title={
+                activityFilter === "deposit"
+                  ? t("ledgerEmptyDepositsTitle")
+                  : activityFilter === "withdrawal"
+                    ? t("ledgerEmptyWithdrawalsTitle")
+                    : t("ledgerEmptyTitle")
+              }
+              description={
+                activityFilter === "deposit"
+                  ? t("ledgerEmptyDeposits")
+                  : activityFilter === "withdrawal"
+                    ? t("ledgerEmptyWithdrawals")
+                    : t("ledgerEmpty")
+              }
+            />
           ) : (
             <DeskGlassCard className="divide-y divide-border/35 p-0 sm:p-0 dark:divide-white/8">
               <ul className="relative z-10">

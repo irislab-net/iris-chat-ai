@@ -325,13 +325,13 @@ function WalletBankCard({
           loading={loading}
         />
         <StatCell
-          label={t("unrealized")}
+          label={t("todayPnl")}
           amountClass={amountClass}
-          value={formatUsd(balances.unrealizedPnlUsd, { signed: true })}
+          value={formatUsd(balances.todayPnlUsd, { signed: true })}
           loading={loading}
           valueClassName={
             amountsVisible
-              ? pnlToneClass(balances.unrealizedPnlUsd)
+              ? pnlToneClass(balances.todayPnlUsd)
               : undefined
           }
         />

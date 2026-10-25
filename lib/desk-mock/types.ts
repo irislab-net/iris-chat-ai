@@ -19,7 +19,8 @@ export type DeskWalletBalances = {
   lockedUsd: number
   withdrawHoldUsd: number
   realizedPnlUsd: number
-  unrealizedPnlUsd: number
+  /** Day-session P&L (realized today + open mark-to-market). */
+  todayPnlUsd: number
 }
 
 export type DeskPosition = {
@@ -70,7 +71,7 @@ export type DeskMarketQuote = {
 
 export type DeskMockDepositInvoice = {
   id: string
-  amountUsd: number
+  /** Open deposit — credit whatever arrives above NowPayments minimum. */
   currency: "USDT" | "USDC"
   payAddress: string
   status: "pending" | "confirming" | "paid" | "expired"

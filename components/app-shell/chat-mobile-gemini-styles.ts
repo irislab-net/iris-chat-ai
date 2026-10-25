@@ -464,55 +464,46 @@ const chatHistoryRailHeaderWrapClass =
 const chatHistoryRailHeaderBarClass = "pointer-events-auto relative"
 
 /**
- * Shared frosted surface for chat bottom sheets / centered dialogs.
- *
- * Do NOT use `chat-ios26-liquid-glass` here — that chip specular (::before)
- * is sized for 40px controls; on a full sheet it paints a grey metallic wash
- * and `> * { z-index: 1 }` fights sheet stacking. Frost = blur + fill only.
- *
- * Keep the non-supports fill dense enough for Safari: backdrop-filter on the
- * same node as the sheet enter `transform` often fails intermittently, so the
- * opaque fallback must still look intentional (not a half-loaded glass).
+ * Shared bottom-sheet fill — same as app pages (`--background`).
+ * Matches account sheet canvas (source of truth for desk / chat sheets).
  */
-const chatLiquidSheetSurfaceClass = [
-  // `chat-sheet-glass` adds -webkit-backdrop-filter (Sheet inner + mention).
-  "chat-sheet-glass relative gap-0 overflow-y-auto border-0 bg-white/90 p-0 pt-2 text-foreground",
-  "shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_92%,transparent),inset_0_0_0_1px_color-mix(in_oklch,white_40%,transparent),0_-18px_52px_-18px_color-mix(in_oklch,var(--foreground)_18%,transparent)]",
-  "backdrop-blur-2xl backdrop-saturate-[180%]",
-  "supports-[backdrop-filter]:bg-white/72",
-  "dark:bg-[oklch(0.22_0_0_/0.92)] dark:supports-[backdrop-filter]:bg-[oklch(0.2_0_0_/0.72)]",
-  "dark:shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_14%,transparent),inset_0_0_0_1px_color-mix(in_oklch,white_8%,transparent),0_-18px_52px_-18px_color-mix(in_oklch,black_55%,transparent)]",
+const chatBottomSheetCanvasClass = [
+  "gap-0 border-0 bg-background text-foreground",
+  "shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_55%,transparent),0_-12px_40px_-18px_color-mix(in_oklch,var(--foreground)_14%,transparent)]",
+  "dark:shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_10%,transparent),0_-12px_40px_-18px_color-mix(in_oklch,black_45%,transparent)]",
 ].join(" ")
+
+/**
+ * Full-height bottom sheet shell — account menu / long flows.
+ * Fixed height so inner flex stacks don’t collapse.
+ */
+const chatMobileSheetContentClass = [
+  chatBottomSheetCanvasClass,
+  "flex h-[min(90dvh,720px)] min-h-0 flex-col overflow-hidden rounded-t-[28px] pt-2 pb-[max(1rem,env(safe-area-inset-bottom,0px))] data-[side=bottom]:h-[min(90dvh,720px)]",
+].join(" ")
+
+/**
+ * Compact bottom sheet — same fill as account, hugs content (deposit / withdraw).
+ * One continuous `bg-background` surface (header + body + footer).
+ */
+const chatMobileSheetCompactContentClass = [
+  chatBottomSheetCanvasClass,
+  "flex max-h-[min(90dvh,720px)] flex-col overflow-hidden rounded-t-[28px] pt-2 pb-[max(1rem,env(safe-area-inset-bottom,0px))]",
+].join(" ")
+
+const chatMobileSheetHandleClass =
+  "mx-auto mb-3 h-1 w-10 shrink-0 rounded-full bg-foreground/15 dark:bg-white/20"
 
 /** Soft scrim behind liquid sheets — matches composer tools / mention. */
 const chatMobileSheetOverlayClass =
   "overscroll-none bg-black/20 supports-backdrop-filter:bg-black/10 supports-backdrop-filter:backdrop-blur-sm dark:bg-black/40 dark:supports-backdrop-filter:bg-black/28"
 
 /**
- * Standard bottom-sheet floor — short content (e.g. one tool row) still reads
- * as a proper sheet instead of a thin strip.
- */
-const chatMobileSheetMinHeightClass = "min-h-[min(38dvh,20rem)]"
-
-/** Shared mobile bottom sheets — guide, privacy, rename, premium, share, …
- * Cap height to the visible app viewport so sheets stay above the soft keyboard
- * (SheetContent already offsets with --keyboard-inset-bottom). */
-const chatMobileSheetContentClass = [
-  chatLiquidSheetSurfaceClass,
-  chatMobileSheetMinHeightClass,
-  "max-h-[min(92dvh,720px,calc(var(--app-height,100dvh)-0.5rem))] rounded-t-[28px] pb-0",
-].join(" ")
-
-const chatMobileSheetHandleClass =
-  "mx-auto mb-4 h-1 w-10 shrink-0 rounded-full bg-foreground/15 dark:bg-white/20"
-
-/**
- * Composer tools / `/` mention bottom sheets — liquid family, shorter cap.
- * Hug content (no floor height); short lists stay compact over the composer.
+ * Composer tools / `/` mention bottom sheets — hug content, shorter cap.
  */
 const chatComposerLiquidSheetClass = [
-  chatLiquidSheetSurfaceClass,
-  "max-h-[min(72dvh,30rem)] rounded-t-[28px]",
+  chatBottomSheetCanvasClass,
+  "relative overflow-y-auto p-0 pt-2 max-h-[min(72dvh,30rem)] rounded-t-[28px]",
 ].join(" ")
 
 /** Alias — same hug surface as tools (kept for mention-specific call sites). */
@@ -644,29 +635,25 @@ const chatMobileSheetConsentUncheckedClass = [
 ].join(" ")
 
 /**
- * Desktop centered dialogs — same frosted family as mobile sheets.
+ * Desktop centered dialogs — same page background as mobile sheets.
  * Do not add `relative` here: twMerge would drop DialogContent’s `fixed`,
  * and the portal (end of body) then lays the popup out at the bottom of the page.
  */
 const chatLoginConsentDialogClass = [
-  "gap-0 overflow-hidden rounded-3xl border-0 bg-white/90 p-0 text-foreground ring-0",
-  "shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_92%,transparent),inset_0_0_0_1px_color-mix(in_oklch,white_40%,transparent),0_24px_64px_-24px_color-mix(in_oklch,var(--foreground)_22%,transparent)]",
-  "backdrop-blur-2xl backdrop-saturate-[180%] supports-[backdrop-filter]:bg-white/72",
+  "gap-0 overflow-hidden rounded-3xl border-0 bg-background p-0 text-foreground ring-0",
+  "shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_55%,transparent),0_24px_64px_-24px_color-mix(in_oklch,var(--foreground)_18%,transparent)]",
   "sm:max-w-sm",
-  "dark:bg-[oklch(0.22_0_0_/0.92)] dark:supports-[backdrop-filter]:bg-[oklch(0.2_0_0_/0.72)]",
-  "dark:shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_14%,transparent),inset_0_0_0_1px_color-mix(in_oklch,white_8%,transparent),0_24px_64px_-24px_color-mix(in_oklch,black_50%,transparent)]",
+  "dark:shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_10%,transparent),0_24px_64px_-24px_color-mix(in_oklch,black_45%,transparent)]",
 ].join(" ")
 
 const chatDesktopDialogClass = chatLoginConsentDialogClass
 
-/** Wider search / command-style dialog — sheet-tier 34pt frost. */
+/** Wider search / command-style dialog — same page fill as sheets. */
 const chatDesktopSearchDialogClass = [
-  "flex max-h-[min(32rem,calc(100dvh-2rem))] min-h-0 w-full max-w-[calc(100%-2rem)] flex-col gap-0 overflow-hidden rounded-[28px] border-0 bg-white/90 p-0 text-foreground ring-0",
-  "shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_92%,transparent),inset_0_0_0_1px_color-mix(in_oklch,white_40%,transparent),0_24px_64px_-24px_color-mix(in_oklch,var(--foreground)_22%,transparent)]",
-  "backdrop-blur-2xl backdrop-saturate-[180%] supports-[backdrop-filter]:bg-white/72",
+  "flex max-h-[min(32rem,calc(100dvh-2rem))] min-h-0 w-full max-w-[calc(100%-2rem)] flex-col gap-0 overflow-hidden rounded-[28px] border-0 bg-background p-0 text-foreground ring-0",
+  "shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_55%,transparent),0_24px_64px_-24px_color-mix(in_oklch,var(--foreground)_18%,transparent)]",
   "sm:max-h-[min(36rem,calc(100dvh-3rem))] sm:max-w-xl",
-  "dark:bg-[oklch(0.22_0_0_/0.92)] dark:supports-[backdrop-filter]:bg-[oklch(0.2_0_0_/0.72)]",
-  "dark:shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_14%,transparent),inset_0_0_0_1px_color-mix(in_oklch,white_8%,transparent),0_24px_64px_-24px_color-mix(in_oklch,black_50%,transparent)]",
+  "dark:shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_10%,transparent),0_24px_64px_-24px_color-mix(in_oklch,black_45%,transparent)]",
 ].join(" ")
 
 const chatDesktopDialogInputClass = `h-10 w-full rounded-2xl border-0 px-3 text-sm text-foreground shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_70%,transparent)] backdrop-blur-xl ${chatMobileGlassSurfaceClass} placeholder:text-muted-foreground/50 focus-visible:ring-2 focus-visible:ring-foreground/15 dark:placeholder:text-muted-foreground/40`
@@ -907,7 +894,9 @@ export {
   chatComposerLiquidSheetRowActiveClass,
   chatComposerLiquidSheetRowClass,
   chatComposerLiquidSheetRowIconClass,
+  chatBottomSheetCanvasClass,
   chatMobileSheetOverlayClass,
+  chatMobileSheetCompactContentClass,
   chatMobileSheetContentClass,
   chatMobileSheetDescriptionClass,
   chatMobileSheetFooterBarClass,

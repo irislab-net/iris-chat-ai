@@ -26,14 +26,40 @@ export const MARKET_ASSET_LOGOS = {
 
 export type MarketAssetLogoKey = keyof typeof MARKET_ASSET_LOGOS
 
+/** TradingView crypto mark — covers most live HL tickers not in the curated map. */
+function tradingViewCryptoLogo(symbol: string): string {
+  return `https://s3-symbol-logo.tradingview.com/crypto/XTVC${symbol}--big.svg`
+}
+
+function curatedOrTradingView(symbol: string): string {
+  if (symbol in MARKET_ASSET_LOGOS) {
+    return MARKET_ASSET_LOGOS[symbol as MarketAssetLogoKey]
+  }
+  return tradingViewCryptoLogo(symbol)
+}
+
 export function marketAssetLogoSrc(symbol: string): string | null {
   const key = symbol.trim().toUpperCase()
+  if (!key) return null
+
   if (key in MARKET_ASSET_LOGOS) {
     return MARKET_ASSET_LOGOS[key as MarketAssetLogoKey]
   }
+
   // Hyperliquid 1000x units (kPEPE) → base ticker logo.
-  if (/^K[A-Z0-9]{2,}$/.test(key) && key.slice(1) in MARKET_ASSET_LOGOS) {
-    return MARKET_ASSET_LOGOS[key.slice(1) as MarketAssetLogoKey]
+  if (/^K[A-Z0-9]{2,}$/.test(key)) {
+    return curatedOrTradingView(key.slice(1))
   }
+
+  // Hyperliquid 1000PEPE-style units.
+  if (/^1000[A-Z0-9]+$/.test(key)) {
+    return curatedOrTradingView(key.slice(4))
+  }
+
+  // Live tape coins outside the curated map (ZEC, BONK, …).
+  if (/^[A-Z0-9]{2,16}$/.test(key)) {
+    return tradingViewCryptoLogo(key)
+  }
+
   return null
 }

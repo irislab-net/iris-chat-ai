@@ -11,8 +11,19 @@ describe("marketAssetLogoSrc", () => {
     expect(marketAssetLogoSrc("DXY")).toContain("USD")
   })
 
-  it("returns null for unknown symbols", () => {
+  it("falls back to TradingView for live tickers outside the curated map", () => {
     expect(marketAssetLogoSrc("DOGE")).toContain("dogecoin")
-    expect(marketAssetLogoSrc("XYZ")).toBeNull()
+    expect(marketAssetLogoSrc("ZEC")).toContain("XTVCZEC")
+    expect(marketAssetLogoSrc("BONK")).toContain("XTVCBONK")
+  })
+
+  it("maps Hyperliquid 1000x units to the base logo", () => {
+    expect(marketAssetLogoSrc("kPEPE")).toContain("pepe")
+    expect(marketAssetLogoSrc("1000PEPE")).toContain("pepe")
+  })
+
+  it("returns null for empty or invalid symbols", () => {
+    expect(marketAssetLogoSrc("")).toBeNull()
+    expect(marketAssetLogoSrc("!!")).toBeNull()
   })
 })

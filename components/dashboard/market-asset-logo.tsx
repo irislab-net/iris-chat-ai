@@ -18,7 +18,8 @@ function MarketAssetLogo({
 }) {
   const key = symbol.trim().toUpperCase()
   const src = marketAssetLogoSrc(key)
-  const [failed, setFailed] = React.useState(false)
+  const [failedSrc, setFailedSrc] = React.useState<string | null>(null)
+  const failed = failedSrc === src
 
   return (
     <span
@@ -34,10 +35,10 @@ function MarketAssetLogo({
           alt=""
           width={size}
           height={size}
-          unoptimized={src.endsWith(".svg")}
+          unoptimized={src.includes(".svg") || src.includes("tradingview.com")}
           loading="lazy"
           referrerPolicy="no-referrer"
-          onError={() => setFailed(true)}
+          onError={() => setFailedSrc(src)}
           className={cn("size-full rounded-full object-cover", imageClassName)}
         />
       ) : (

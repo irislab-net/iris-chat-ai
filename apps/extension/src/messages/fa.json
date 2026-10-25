@@ -1237,6 +1237,19 @@
       "dxy": "خلاصه DXY",
       "xau": "خلاصه طلا"
     },
+    "newsFilters": {
+      "all": "همه",
+      "btc": "بیت‌کوین",
+      "eth": "اتریوم",
+      "xau": "طلا",
+      "dxy": "دلار",
+      "war": "جنگ",
+      "income": "درآمدزایی"
+    },
+    "newsFilterAria": "فیلتر اخبار",
+    "newsComingSoonTitle": "به‌زودی",
+    "newsComingSoonWar": "پوشش جنگ و ژئوپلیتیک به‌زودی اضافه می‌شود.",
+    "newsComingSoonIncome": "فرصت‌های درآمدزایی به‌زودی اینجا می‌آید.",
     "stopReadingAloud": "توقف خواندن با صدا",
     "listenToArticle": "گوش دادن به مطلب",
     "copied": "کپی شد",

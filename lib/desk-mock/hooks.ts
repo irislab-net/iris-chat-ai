@@ -190,33 +190,35 @@ function useMockMarkets(): {
   return { markets, loading, demo: !live }
 }
 
+function createMockDepositInvoice(
+  currency: "USDT" | "USDC"
+): DeskMockDepositInvoice {
+  const now = Date.now()
+  return {
+    id: `inv_mock_${now}`,
+    currency,
+    payAddress: MOCK_NOWPAYMENTS_ADDRESS,
+    status: "pending",
+    createdAt: new Date(now).toISOString(),
+    expiresAt: new Date(now + 30 * 60_000).toISOString(),
+  }
+}
+
 type MockDepositApi = {
   invoice: DeskMockDepositInvoice | null
-  startDeposit: (amountUsd: number, currency: "USDT" | "USDC") => void
+  startDeposit: (currency: "USDT" | "USDC") => void
   markPaid: () => void
   reset: () => void
 }
 
-function useMockDepositFlow(): MockDepositApi {
+function useMockDepositFlow(autoStart?: "USDT" | "USDC"): MockDepositApi {
   const [invoice, setInvoice] = React.useState<DeskMockDepositInvoice | null>(
-    null
+    () => (autoStart ? createMockDepositInvoice(autoStart) : null)
   )
 
-  const startDeposit = React.useCallback(
-    (amountUsd: number, currency: "USDT" | "USDC") => {
-      const now = Date.now()
-      setInvoice({
-        id: `inv_mock_${now}`,
-        amountUsd,
-        currency,
-        payAddress: MOCK_NOWPAYMENTS_ADDRESS,
-        status: "pending",
-        createdAt: new Date(now).toISOString(),
-        expiresAt: new Date(now + 30 * 60_000).toISOString(),
-      })
-    },
-    []
-  )
+  const startDeposit = React.useCallback((currency: "USDT" | "USDC") => {
+    setInvoice(createMockDepositInvoice(currency))
+  }, [])
 
   const markPaid = React.useCallback(() => {
     setInvoice((prev) =>

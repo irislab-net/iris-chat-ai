@@ -554,22 +554,14 @@ export function CryptoPaymentSheet({
       >
         <div
           className={cn(
-            landingGlassSurface,
-            "flex max-h-[inherit] min-h-0 flex-col overflow-hidden bg-white/78 dark:bg-white/10",
+            "flex max-h-[inherit] min-h-0 flex-col overflow-hidden bg-background",
+            "shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_55%,transparent),0_-12px_40px_-18px_color-mix(in_oklch,var(--foreground)_14%,transparent)]",
+            "dark:shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_10%,transparent),0_-12px_40px_-18px_color-mix(in_oklch,black_45%,transparent)]",
             isDesktop
               ? "h-full rounded-none rounded-s-[1.75rem]"
               : "rounded-t-[28px] rounded-b-none"
           )}
         >
-          <span
-            aria-hidden
-            className={cn(
-              landingGlassSheen,
-              isDesktop
-                ? "rounded-s-[1.75rem]"
-                : "rounded-t-[28px] rounded-b-none"
-            )}
-          />
 
           {isMobileSheet ? (
             <div

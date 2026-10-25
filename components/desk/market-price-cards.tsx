@@ -4,11 +4,14 @@ import * as React from "react"
 import {
   ArrowDownIcon,
   ArrowUpIcon,
+  CandlestickChartIcon,
+  PinIcon,
   ChevronsUpDownIcon,
   SearchIcon,
 } from "lucide-react"
 import { useTranslations } from "next-intl"
 
+import { DeskEmptyState } from "@/components/desk/desk-empty-state"
 import { DeskGlassCard } from "@/components/desk/desk-page-frame"
 import { MarketAssetLogo } from "@/components/dashboard/market-asset-logo"
 import { deskSearchHaystack } from "@/lib/desk-markets-catalog"
@@ -16,6 +19,8 @@ import {
   formatCompactUsd,
   formatPct,
   formatPrice,
+  formatUsd,
+  pnlToneClass,
 } from "@/lib/desk-mock/format"
 import type { DeskMarketQuote } from "@/lib/desk-mock/types"
 import { landingGlassSheen } from "@/lib/landing-modern-styles"
@@ -41,6 +46,43 @@ function marketMatchesQuery(m: DeskMarketQuote, query: string): boolean {
 
 type SortKey = "price" | "change"
 type SortDir = "asc" | "desc"
+
+const MARKED_MARKETS_KEY = "exur.desk.marked-markets"
+const MARKED_MARKETS_CHANGED = "exur-desk-marked-markets"
+
+function subscribeMarkedMarkets(onStoreChange: () => void) {
+  if (typeof window === "undefined") return () => {}
+  const onStorage = (event: StorageEvent) => {
+    if (event.key === MARKED_MARKETS_KEY || event.key === null) onStoreChange()
+  }
+  window.addEventListener("storage", onStorage)
+  window.addEventListener(MARKED_MARKETS_CHANGED, onStoreChange)
+  return () => {
+    window.removeEventListener("storage", onStorage)
+    window.removeEventListener(MARKED_MARKETS_CHANGED, onStoreChange)
+  }
+}
+
+function getMarkedMarketsRaw(): string {
+  if (typeof window === "undefined") return "[]"
+  try {
+    return window.localStorage.getItem(MARKED_MARKETS_KEY) ?? "[]"
+  } catch {
+    return "[]"
+  }
+}
+
+function parseMarkedMarkets(raw: string): Set<string> {
+  try {
+    const parsed = JSON.parse(raw) as unknown
+    if (!Array.isArray(parsed)) return new Set()
+    return new Set(
+      parsed.filter((item): item is string => typeof item === "string")
+    )
+  } catch {
+    return new Set()
+  }
+}
 
 function MiniSpark({
   values,
@@ -134,6 +176,30 @@ function MarketPriceCards({
   const [query, setQuery] = React.useState("")
   const [sortKey, setSortKey] = React.useState<SortKey | null>(null)
   const [sortDir, setSortDir] = React.useState<SortDir>("desc")
+  const markedRaw = React.useSyncExternalStore(
+    subscribeMarkedMarkets,
+    getMarkedMarketsRaw,
+    () => "[]"
+  )
+  const marked = React.useMemo(
+    () => parseMarkedMarkets(markedRaw),
+    [markedRaw]
+  )
+
+  function toggleMarked(instrument: string) {
+    const next = new Set(marked)
+    if (next.has(instrument)) next.delete(instrument)
+    else next.add(instrument)
+    try {
+      window.localStorage.setItem(
+        MARKED_MARKETS_KEY,
+        JSON.stringify([...next])
+      )
+    } catch {
+      // ignore quota / private mode
+    }
+    window.dispatchEvent(new Event(MARKED_MARKETS_CHANGED))
+  }
 
   function toggleSort(key: SortKey) {
     if (sortKey !== key) {
@@ -150,7 +216,7 @@ function MarketPriceCards({
   }
 
   const rows = React.useMemo(() => {
-    let next = query.trim()
+    const next = query.trim()
       ? markets.filter((m) => marketMatchesQuery(m, query))
       : [...markets]
 
@@ -169,14 +235,21 @@ function MarketPriceCards({
       )
     }
 
+    // Marked markets always pin to the top (keep relative order inside each group).
+    next.sort((a, b) => {
+      const aMarked = marked.has(a.instrument) ? 0 : 1
+      const bMarked = marked.has(b.instrument) ? 0 : 1
+      return aMarked - bMarked
+    })
+
     return next
-  }, [markets, query, sortDir, sortKey])
+  }, [markets, marked, query, sortDir, sortKey])
 
   return (
-    <section className="flex flex-col gap-3 pt-1 sm:gap-3.5 sm:pt-2">
+    <section className="flex min-h-0 flex-1 flex-col gap-3 pt-1 sm:gap-3.5 sm:pt-2">
       <label
         className={cn(
-          "relative isolate flex min-h-12 items-center gap-2.5 overflow-hidden rounded-[1.25rem] px-3.5 sm:px-4",
+          "relative isolate flex min-h-12 shrink-0 items-center gap-2.5 overflow-hidden rounded-[1.25rem] px-3.5 sm:px-4",
           "border border-white/80 dark:border-white/20",
           "bg-white/55 supports-[backdrop-filter]:bg-white/42 backdrop-blur-[40px] backdrop-saturate-[175%]",
           "shadow-[0_1px_2px_rgba(15,23,42,0.04),0_10px_28px_-10px_rgba(15,23,42,0.12),inset_0_1px_1px_rgba(255,255,255,0.95),inset_0_0_0_0.5px_rgba(255,255,255,0.6),inset_0_-8px_16px_-10px_rgba(15,23,42,0.07)]",
@@ -204,8 +277,16 @@ function MarketPriceCards({
         />
       </label>
 
-      <DeskGlassCard className="divide-y divide-border/35 p-0 sm:p-0 dark:divide-white/8">
-        <div className="relative z-10 flex items-center gap-3 px-3.5 py-2.5 sm:px-4">
+      <DeskGlassCard
+        className={cn(
+          "flex min-h-0 flex-1 flex-col overflow-hidden p-0 sm:p-0",
+          // Soft lift only — the deep 28/72 shadow reads as cut-off in a full-height panel.
+          "shadow-[0_1px_2px_rgba(15,23,42,0.04),0_6px_18px_-10px_rgba(15,23,42,0.1),inset_0_1px_1px_rgba(255,255,255,0.95),inset_0_0_0_0.5px_rgba(255,255,255,0.55)]",
+          "dark:shadow-[0_1px_2px_rgba(0,0,0,0.22),0_6px_18px_-10px_rgba(0,0,0,0.35),inset_0_1px_1px_rgba(255,255,255,0.2),inset_0_0_0_0.5px_rgba(255,255,255,0.12)]"
+        )}
+        contentClassName="flex min-h-0 flex-1 flex-col divide-y divide-border/35 dark:divide-white/8"
+      >
+        <div className="flex shrink-0 items-center gap-3 px-3.5 py-2.5 sm:px-4">
           <p className="min-w-0 flex-1 text-[11px] font-medium tracking-[0.08em] text-muted-foreground uppercase">
             {t("pair")}
           </p>
@@ -231,63 +312,108 @@ function MarketPriceCards({
           </div>
         </div>
 
-        {rows.length === 0 ? (
-          <p className="relative z-10 px-4 py-8 text-center text-sm text-muted-foreground">
-            {t("searchEmpty")}
-          </p>
-        ) : (
-          <ul className="relative z-10">
-            {rows.map((m) => {
-              const up = m.change24hPct >= 0
-              const quote = m.quote ?? "USD"
-              return (
-                <li
-                  key={m.instrument}
-                  className="flex items-center gap-3 px-3.5 py-3 sm:px-4 sm:py-3.5"
-                >
-                  <div className="flex min-w-0 flex-1 items-center gap-2.5">
-                    <MarketAssetLogo
-                      symbol={m.instrument}
-                      className="size-8 shrink-0"
-                    />
-                    <div className="min-w-0">
-                      <p className="truncate text-[14px] font-semibold tracking-tight">
-                        {m.instrument}
-                        <span className="font-medium text-muted-foreground">
-                          /{quote}
-                        </span>
+        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
+          {rows.length === 0 ? (
+            <DeskEmptyState
+              icon={query.trim() ? SearchIcon : CandlestickChartIcon}
+              title={
+                query.trim() ? t("searchEmptyTitle") : t("marketsEmptyTitle")
+              }
+              description={
+                query.trim() ? t("searchEmpty") : t("marketsEmpty")
+              }
+              className="py-10 sm:py-12"
+            />
+          ) : (
+            <ul>
+              {rows.map((m) => {
+                const up = m.change24hPct >= 0
+                const quote = m.quote ?? "USD"
+                const prev =
+                  m.change24hPct === -100
+                    ? 0
+                    : m.price / (1 + m.change24hPct / 100)
+                const changeUsd = m.price - prev
+                return (
+                  <li
+                    key={m.instrument}
+                    className="flex items-center gap-3 border-b border-border/35 px-3.5 py-3 last:border-b-0 sm:px-4 sm:py-3.5 dark:border-white/8"
+                  >
+                    <div className="flex min-w-0 flex-1 items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => toggleMarked(m.instrument)}
+                        aria-pressed={marked.has(m.instrument)}
+                        aria-label={
+                          marked.has(m.instrument)
+                            ? t("unmarkMarket", { market: m.instrument })
+                            : t("markMarket", { market: m.instrument })
+                        }
+                        className={cn(
+                          "inline-flex size-8 shrink-0 items-center justify-center rounded-full transition-colors",
+                          "hover:bg-black/[0.05] dark:hover:bg-white/10",
+                          marked.has(m.instrument)
+                            ? "text-muted-foreground"
+                            : "text-muted-foreground/45 hover:text-muted-foreground/70"
+                        )}
+                      >
+                        <PinIcon
+                          className={cn(
+                            "size-4 stroke-[1.75]",
+                            marked.has(m.instrument) && "fill-current"
+                          )}
+                          aria-hidden
+                        />
+                      </button>
+                      <MarketAssetLogo
+                        symbol={m.instrument}
+                        className="size-8 shrink-0"
+                      />
+                      <div className="min-w-0">
+                        <p className="truncate text-[14px] font-semibold tracking-tight">
+                          {m.instrument}
+                          <span className="font-medium text-muted-foreground">
+                            /{quote}
+                          </span>
+                        </p>
+                        <p className="truncate text-[11px] text-muted-foreground">
+                          {m.label}
+                        </p>
+                      </div>
+                    </div>
+
+                    <MiniSpark values={m.sparkline} up={up} />
+
+                    <div className="flex shrink-0 items-center gap-6 sm:gap-10">
+                      <p className="w-[4.5rem] text-end text-[14px] font-medium tabular-nums tracking-tight sm:w-[5.5rem]">
+                        {formatPrice(m.price, m.instrument)}
                       </p>
-                      <p className="truncate text-[11px] text-muted-foreground">
-                        {m.label}
+                      <div
+                        className={cn(
+                          "flex w-[4.25rem] flex-col items-end gap-0.5 tabular-nums",
+                          pnlToneClass(m.change24hPct)
+                        )}
+                      >
+                        <span className="text-[12px] font-semibold leading-none">
+                          {formatPct(m.change24hPct)}
+                        </span>
+                        <span className="text-[10px] font-medium leading-none opacity-70">
+                          {formatUsd(changeUsd, {
+                            signed: true,
+                            digits: Math.abs(changeUsd) >= 100 ? 0 : 2,
+                          })}
+                        </span>
+                      </div>
+                      <p className="hidden w-[4.5rem] text-end text-[12px] font-medium tabular-nums text-muted-foreground sm:block">
+                        {formatCompactUsd(m.volume24hUsd ?? 0)}
                       </p>
                     </div>
-                  </div>
-
-                  <MiniSpark values={m.sparkline} up={up} />
-
-                  <div className="flex shrink-0 items-center gap-6 sm:gap-10">
-                    <p className="w-[4.5rem] text-end text-[14px] font-medium tabular-nums tracking-tight sm:w-[5.5rem]">
-                      {formatPrice(m.price, m.instrument)}
-                    </p>
-                    <span
-                      className={cn(
-                        "inline-flex w-[4.25rem] items-center justify-end rounded-full px-2 py-1 text-[12px] font-semibold tabular-nums",
-                        up
-                          ? "bg-emerald-500/12 text-emerald-700 dark:bg-emerald-500/18 dark:text-emerald-300"
-                          : "bg-rose-500/12 text-rose-700 dark:bg-rose-500/18 dark:text-rose-300"
-                      )}
-                    >
-                      {formatPct(m.change24hPct)}
-                    </span>
-                    <p className="hidden w-[4.5rem] text-end text-[12px] font-medium tabular-nums text-muted-foreground sm:block">
-                      {formatCompactUsd(m.volume24hUsd ?? 0)}
-                    </p>
-                  </div>
-                </li>
-              )
-            })}
-          </ul>
-        )}
+                  </li>
+                )
+              })}
+            </ul>
+          )}
+        </div>
       </DeskGlassCard>
     </section>
   )

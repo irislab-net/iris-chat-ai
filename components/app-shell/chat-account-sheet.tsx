@@ -11,12 +11,15 @@ import {
 } from "@/components/app-shell/chat-account-avatar"
 import { ChatGsapViewStack } from "@/components/app-shell/chat-gsap-view-stack"
 import {
+  chatBottomSheetCanvasClass,
   chatComposerLiquidSheetRowClass,
   chatComposerLiquidSheetRowIconClass,
-  chatMobilePrimaryButtonClass,
+  chatMobileSheetContentClass,
+  chatMobileSheetHandleClass,
   chatMobileSheetPrimaryButtonClass,
   chatUpgradePillClass,
 } from "@/components/app-shell/chat-mobile-gemini-styles"
+import { ChatSheetDoneCheck } from "@/components/app-shell/chat-sheet-done-check"
 import {
   landingGlassSheen,
   landingGlassSurface,
@@ -26,7 +29,6 @@ import { LocaleFlag } from "@/components/i18n/locale-flag"
 import { TradingProfileForm } from "@/components/app-shell/trading-profile-form"
 import {
   SfBookIcon,
-  SfCheckIcon,
   SfChevronDownIcon,
   SfChevronRightIcon,
   SfCookieIcon,
@@ -89,21 +91,6 @@ import { cn } from "@/lib/utils"
 
 const CONTACT_EMAIL = "hello@exur.ai"
 
-/**
- * Frosted glass canvas — same family as working `/` mention listbox.
- * Blur is applied via Sheet's inner `[data-slot=sheet-surface].chat-sheet-glass`
- * (not on the translating shell) so Safari keeps the glass.
- */
-const sheetCanvasClass = [
-  "gap-0 border-0 bg-white/90 text-foreground",
-  "shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_92%,transparent),inset_0_0_0_1px_color-mix(in_oklch,white_40%,transparent),0_-18px_52px_-18px_color-mix(in_oklch,var(--foreground)_18%,transparent)]",
-  "supports-[backdrop-filter]:bg-white/72",
-  "dark:bg-[oklch(0.22_0_0_/0.92)] dark:supports-[backdrop-filter]:bg-[oklch(0.2_0_0_/0.72)]",
-  "dark:shadow-[inset_0_1px_0_0_color-mix(in_oklch,white_14%,transparent),inset_0_0_0_1px_color-mix(in_oklch,white_8%,transparent),0_-18px_52px_-18px_color-mix(in_oklch,black_55%,transparent)]",
-].join(" ")
-
-const sheetHandleClass =
-  "mx-auto mb-3 h-1 w-10 shrink-0 rounded-full bg-foreground/15 dark:bg-white/20"
 
 /** Profile / grouped cards — landing liquid glass (same family as site chrome). */
 const sheetCardClass = cn(
@@ -123,12 +110,6 @@ const sheetPillClass = cn(
 const sheetPrimaryPillClass = cn(
   chatUpgradePillClass,
   "inline-flex h-8 w-fit items-center justify-center gap-1.5 px-3.5 text-[13px] font-semibold"
-)
-
-/** Blue liquid-glass Done — tinted glass circle, white check. */
-const sheetDoneCheckClass = cn(
-  chatMobilePrimaryButtonClass,
-  "chat-ios26-liquid-glass relative isolate size-9 shrink-0 overflow-hidden rounded-full px-0 text-white hover:text-white"
 )
 
 const sheetRowClass = cn(
@@ -163,23 +144,6 @@ type ChatAccountSheetProps = {
   /** Log out then start a new sign-in (account picker). */
   onSwitchAccount?: () => void | Promise<void>
   onOpenNews?: () => void
-}
-
-function SheetDoneCheck({ onClick }: { onClick: () => void }) {
-  const common = useTranslations("common")
-  return (
-    <Button
-      type="button"
-      variant="ghost"
-      size="icon"
-      onClick={onClick}
-      aria-label={common("done")}
-      title={common("done")}
-      className={sheetDoneCheckClass}
-    >
-      <SfCheckIcon className="size-4.5 stroke-[2.4] text-white" />
-    </Button>
-  )
 }
 
 function SheetRow({
@@ -361,7 +325,7 @@ function NestedViewChrome({
         >
           {title}
         </h2>
-        <SheetDoneCheck onClick={onDone} />
+        <ChatSheetDoneCheck onClick={onDone} />
       </div>
       <div className="min-h-0 flex-1 space-y-1 overflow-y-auto overscroll-contain">
         {children}
@@ -502,7 +466,7 @@ function ChatAccountSheet({
               >
                 {t("accountSection")}
               </h2>
-              <SheetDoneCheck onClick={closeSheet} />
+              <ChatSheetDoneCheck onClick={closeSheet} />
             </div>
 
             <div className="min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-contain px-4 pt-1.5 pb-4">
@@ -951,7 +915,7 @@ function ChatAccountSheet({
           gsapMotion
           open={open}
           className={cn(
-            sheetCanvasClass,
+            chatBottomSheetCanvasClass,
             "flex h-[min(85dvh,640px)] max-h-[min(85dvh,640px)] min-h-0 w-full flex-col overflow-hidden rounded-3xl p-0 pt-3 pb-4 sm:max-w-104"
           )}
         >
@@ -969,13 +933,9 @@ function ChatAccountSheet({
       <SheetContent
         side="bottom"
         showCloseButton={false}
-        className={cn(
-          sheetCanvasClass,
-          // Fixed canvas height required — inner stack is flex-1 and collapses without it.
-          "flex h-[min(90dvh,720px)] min-h-0 flex-col overflow-hidden rounded-t-[28px] pt-2 pb-[max(1rem,env(safe-area-inset-bottom,0px))] data-[side=bottom]:h-[min(90dvh,720px)]"
-        )}
+        className={chatMobileSheetContentClass}
       >
-        <div aria-hidden className={sheetHandleClass} />
+        <div aria-hidden className={chatMobileSheetHandleClass} />
         <SheetHeader className="sr-only">
           <SheetTitle>{a11yTitle}</SheetTitle>
         </SheetHeader>

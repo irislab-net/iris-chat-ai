@@ -4,13 +4,13 @@ import * as React from "react"
 import {
   ActivityIcon,
   ChevronDownIcon,
-  CrosshairIcon,
   HistoryIcon,
-  ShieldIcon,
+  LayersIcon,
 } from "lucide-react"
 import { useTranslations } from "next-intl"
 
 import { MarketAssetLogo } from "@/components/dashboard/market-asset-logo"
+import { DeskEmptyState } from "@/components/desk/desk-empty-state"
 import { DeskGlassCard } from "@/components/desk/desk-page-frame"
 import {
   formatPrice,
@@ -51,8 +51,8 @@ function SideChip({ side }: { side: "long" | "short" }) {
         "shadow-[0_1px_2px_rgba(15,23,42,0.04),0_6px_16px_-6px_rgba(15,23,42,0.14),inset_0_1px_1px_rgba(255,255,255,0.95),inset_0_0_0_0.5px_rgba(255,255,255,0.55)]",
         "dark:shadow-[0_1px_2px_rgba(0,0,0,0.28),0_6px_16px_-6px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.2),inset_0_0_0_0.5px_rgba(255,255,255,0.12)]",
         long
-          ? "bg-white/55 text-emerald-700 dark:bg-white/12 dark:text-emerald-300"
-          : "bg-white/55 text-rose-700 dark:bg-white/12 dark:text-rose-300"
+          ? "bg-emerald-500/12 text-emerald-700 dark:bg-emerald-400/14 dark:text-emerald-300"
+          : "bg-rose-500/12 text-rose-700 dark:bg-rose-400/14 dark:text-rose-300"
       )}
     >
       {long ? t("long") : t("short")}
@@ -70,64 +70,18 @@ function Meta({
   valueClassName?: string
 }) {
   return (
-    <div className="min-w-0">
-      <p className="text-[10px] font-medium tracking-[0.06em] text-muted-foreground uppercase">
+    <div className="min-w-0 space-y-1">
+      <p className="text-[10px] leading-none font-medium tracking-[0.06em] text-muted-foreground uppercase">
         {label}
       </p>
       <p
         className={cn(
-          "mt-0.5 truncate text-[13px] font-medium tabular-nums",
+          "truncate text-[13px] leading-none font-medium tabular-nums",
           valueClassName
         )}
       >
         {value}
       </p>
-    </div>
-  )
-}
-
-function LevelCard({
-  label,
-  value,
-  icon: Icon,
-  tone,
-}: {
-  label: string
-  value: string
-  icon: React.ComponentType<{ className?: string }>
-  tone: "tp" | "sl"
-}) {
-  return (
-    <div
-      className={cn(
-        "relative isolate flex min-w-0 items-center gap-2.5 overflow-hidden rounded-2xl px-3 py-2.5",
-        "border border-white/75 dark:border-white/20",
-        "bg-white/55 backdrop-blur-[28px] dark:bg-white/10",
-        "shadow-[0_1px_2px_rgba(15,23,42,0.04),0_8px_20px_-8px_rgba(15,23,42,0.12),inset_0_1px_1px_rgba(255,255,255,0.95),inset_0_0_0_0.5px_rgba(255,255,255,0.55)]",
-        "dark:shadow-[0_1px_2px_rgba(0,0,0,0.25),0_8px_20px_-8px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.2),inset_0_0_0_0.5px_rgba(255,255,255,0.12)]"
-      )}
-    >
-      <span
-        className={cn(
-          "relative flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-full",
-          "border border-white/80 dark:border-white/20",
-          "bg-white/70 shadow-[inset_0_1px_1px_rgba(255,255,255,0.95)] dark:bg-white/12",
-          tone === "tp"
-            ? "text-emerald-700 dark:text-emerald-300"
-            : "text-rose-700 dark:text-rose-300"
-        )}
-        aria-hidden
-      >
-        <Icon className="size-3.5 stroke-[1.75]" />
-      </span>
-      <div className="min-w-0">
-        <p className="text-[10px] font-medium tracking-[0.08em] text-muted-foreground uppercase">
-          {label}
-        </p>
-        <p className="mt-0.5 truncate text-[13px] font-medium tabular-nums">
-          {value}
-        </p>
-      </div>
     </div>
   )
 }
@@ -154,7 +108,13 @@ function PositionCard({
       <div className="flex min-w-0 flex-1 items-center gap-2">
         <MarketAssetLogo
           symbol={position.instrument}
-          className="size-7 shrink-0"
+          className={cn(
+            "size-7 shrink-0",
+            "border border-white/75 dark:border-white/20",
+            "bg-white/55 backdrop-blur-[28px] dark:bg-white/12",
+            "shadow-[0_1px_2px_rgba(15,23,42,0.04),inset_0_1px_1px_rgba(255,255,255,0.95),inset_0_0_0_0.5px_rgba(255,255,255,0.55)]",
+            "dark:shadow-[0_1px_2px_rgba(0,0,0,0.28),inset_0_1px_1px_rgba(255,255,255,0.2),inset_0_0_0_0.5px_rgba(255,255,255,0.12)]"
+          )}
         />
         <span className="text-[15px] font-semibold tracking-tight">
           {position.instrument}
@@ -181,12 +141,11 @@ function PositionCard({
     </div>
   )
 
-  const positionCardShellClass =
-    "border-0 p-0 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_12px_36px_-10px_rgba(15,23,42,0.12),inset_0_1px_1px_rgba(255,255,255,0.9),inset_0_-10px_22px_-14px_rgba(15,23,42,0.06)] dark:shadow-[0_1px_2px_rgba(0,0,0,0.25),0_12px_36px_-10px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.18),inset_0_-12px_24px_-14px_rgba(0,0,0,0.4)]"
+  const positionCardShellClass = "p-0"
 
   const details = (
     <div className={cn("px-4 pb-4", collapsible ? "pt-1" : "pt-0")}>
-      <div className="grid grid-cols-4 gap-2 sm:gap-3">
+      <div className="grid grid-cols-2 gap-x-4 gap-y-3 sm:grid-cols-4 sm:gap-x-3">
         <Meta
           label={t("size")}
           value={position.size.toLocaleString("en-US", {
@@ -211,6 +170,20 @@ function PositionCard({
               )}
               valueClassName={pnlToneClass(position.unrealizedPnlUsd)}
             />
+            {position.takeProfit != null ? (
+              <Meta
+                label={t("tp")}
+                value={formatPrice(position.takeProfit, position.instrument)}
+                valueClassName="text-emerald-700 dark:text-emerald-300"
+              />
+            ) : null}
+            {position.stopLoss != null ? (
+              <Meta
+                label={t("sl")}
+                value={formatPrice(position.stopLoss, position.instrument)}
+                valueClassName="text-rose-700 dark:text-rose-300"
+              />
+            ) : null}
           </>
         ) : (
           <>
@@ -222,32 +195,6 @@ function PositionCard({
           </>
         )}
       </div>
-
-      {mode === "active" &&
-      (position.takeProfit != null || position.stopLoss != null) ? (
-        <div className="mt-3 grid grid-cols-2 gap-2">
-          {position.takeProfit != null ? (
-            <LevelCard
-              label={t("tp")}
-              value={formatPrice(position.takeProfit, position.instrument)}
-              icon={CrosshairIcon}
-              tone="tp"
-            />
-          ) : (
-            <span />
-          )}
-          {position.stopLoss != null ? (
-            <LevelCard
-              label={t("sl")}
-              value={formatPrice(position.stopLoss, position.instrument)}
-              icon={ShieldIcon}
-              tone="sl"
-            />
-          ) : (
-            <span />
-          )}
-        </div>
-      ) : null}
 
       {mode === "history" && position.closedAt ? (
         <p className="mt-3 text-[12px] text-muted-foreground">
@@ -309,10 +256,15 @@ function PositionList({
 
   const newestId = rows[0]?.id ?? null
   const [expandedId, setExpandedId] = React.useState<string | null>(newestId)
+  const [expandScope, setExpandScope] = React.useState({
+    tab,
+    newestId,
+  })
 
-  React.useEffect(() => {
+  if (expandScope.tab !== tab || expandScope.newestId !== newestId) {
+    setExpandScope({ tab, newestId })
     setExpandedId(newestId)
-  }, [newestId, tab])
+  }
 
   return (
     <section className="flex flex-col gap-3.5 sm:gap-4">
@@ -388,11 +340,13 @@ function PositionList({
       </div>
 
       {rows.length === 0 ? (
-        <DeskGlassCard>
-          <p className="py-6 text-center text-sm text-muted-foreground">
-            {tab === "active" ? t("emptyActive") : t("emptyHistory")}
-          </p>
-        </DeskGlassCard>
+        <DeskEmptyState
+          icon={tab === "active" ? ActivityIcon : LayersIcon}
+          title={tab === "active" ? t("emptyActiveTitle") : t("emptyHistoryTitle")}
+          description={
+            tab === "active" ? t("emptyActive") : t("emptyHistory")
+          }
+        />
       ) : (
         <div className="flex flex-col gap-2.5">
           {rows.map((p) => {
