@@ -1,7 +1,26 @@
 "use client"
 
 import * as React from "react"
+import { InfoIcon, MoreHorizontalIcon } from "lucide-react"
+import { useTranslations } from "next-intl"
 
+import { chatMobileHeaderButtonClass } from "@/components/app-shell/chat-mobile-gemini-styles"
+import {
+  chatContextMenuContentClass,
+  chatContextMenuIconClass,
+  chatContextMenuItemClass,
+} from "@/components/app-shell/chat-context-menu-styles"
+import {
+  DeskHelpSheet,
+  type DeskPageId,
+} from "@/components/desk/desk-help-sheet"
+import { Button } from "@/components/ui/button"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import {
   landingGlassSheen,
   landingTitleCard,
@@ -18,20 +37,69 @@ const deskLiquidGlassShellClass = [
   "dark:shadow-[0_1px_2px_rgba(0,0,0,0.25),0_12px_36px_-10px_rgba(0,0,0,0.45),0_28px_72px_-18px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.22),inset_0_0_0_0.5px_rgba(255,255,255,0.12),inset_0_-12px_24px_-14px_rgba(0,0,0,0.45)]",
 ].join(" ")
 
+const deskHeaderMoreButtonClass = cn(
+  chatMobileHeaderButtonClass,
+  "size-10 shrink-0 [&_svg:not([class*='size-'])]:size-[18px]"
+)
+
+function DeskPageMoreMenu({
+  onInformation,
+}: {
+  onInformation: () => void
+}) {
+  const t = useTranslations("deskHelp")
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger
+        render={
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className={deskHeaderMoreButtonClass}
+            aria-label={t("more")}
+          />
+        }
+      >
+        <MoreHorizontalIcon />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent
+        align="end"
+        sideOffset={8}
+        className={cn(chatContextMenuContentClass, "min-w-44")}
+      >
+        <DropdownMenuItem
+          className={chatContextMenuItemClass}
+          onClick={onInformation}
+        >
+          <InfoIcon className={chatContextMenuIconClass} />
+          {t("information")}
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  )
+}
+
 function DeskPageFrame({
   title,
   subtitle,
   badge,
+  pageId,
   children,
   className,
 }: {
   title?: string
   subtitle?: string
   badge?: React.ReactNode
+  /** Required when the page shows a header — drives More → help copy. */
+  pageId?: DeskPageId
   children: React.ReactNode
   className?: string
 }) {
+  const [helpOpen, setHelpOpen] = React.useState(false)
   const showHeader = Boolean(title) || Boolean(badge) || Boolean(subtitle)
+  const showMore = Boolean(pageId) && showHeader
 
   return (
     <div
@@ -43,17 +111,25 @@ function DeskPageFrame({
       )}
     >
       {showHeader ? (
-        <header className="flex flex-col gap-2">
-          {title || badge ? (
-            <div className="flex flex-wrap items-center gap-2.5">
-              {title ? (
-                <h1
-                  className={cn(landingTitleCard, "text-[1.65rem] sm:text-2xl")}
-                >
-                  {title}
-                </h1>
+        <header className="flex flex-col gap-2 ps-1.5 sm:ps-2">
+          {title || badge || showMore ? (
+            <div className="flex items-center gap-2.5">
+              <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2.5">
+                {title ? (
+                  <h1
+                    className={cn(
+                      landingTitleCard,
+                      "text-[1.65rem] sm:text-2xl"
+                    )}
+                  >
+                    {title}
+                  </h1>
+                ) : null}
+                {badge}
+              </div>
+              {showMore && pageId ? (
+                <DeskPageMoreMenu onInformation={() => setHelpOpen(true)} />
               ) : null}
-              {badge}
             </div>
           ) : null}
           {subtitle ? (
@@ -64,6 +140,13 @@ function DeskPageFrame({
         </header>
       ) : null}
       {children}
+      {pageId ? (
+        <DeskHelpSheet
+          pageId={pageId}
+          open={helpOpen}
+          onOpenChange={setHelpOpen}
+        />
+      ) : null}
     </div>
   )
 }
@@ -106,3 +189,4 @@ export {
   DeskSectionLabel,
   deskLiquidGlassShellClass,
 }
+export type { DeskPageId }

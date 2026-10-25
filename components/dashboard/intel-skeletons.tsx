@@ -160,38 +160,14 @@ function IntelWorkspaceSkeleton({
       aria-busy="true"
       aria-label={t("loadingNews")}
     >
-      <div className="flex min-h-0 flex-1 flex-col">
-        {mobile ? (
-          <div className="app-mobile-safe-header relative z-1 flex shrink-0 items-center justify-between gap-2 bg-transparent px-4 pb-2">
-            <div className="flex h-11 min-w-0 items-center gap-2">
-              <Bone className="size-11 shrink-0 rounded-full" />
-              <Bone className="h-5 w-16 rounded-full" />
-            </div>
-            <div className="flex h-11 shrink-0 items-center gap-2">
-              <Bone className="h-11 w-16 rounded-full" />
-              <Bone className="size-11 shrink-0 rounded-full" />
-              <Bone className="size-11 shrink-0 rounded-full" />
-            </div>
+      <div className="mx-auto flex min-h-0 w-full max-w-3xl flex-1 flex-col gap-6 px-4 py-4 pt-5 sm:gap-8 sm:px-6 sm:py-8 sm:pt-10 lg:max-w-4xl">
+        <div className="flex shrink-0 items-center gap-2.5">
+          <div className="min-w-0 flex-1">
+            <Bone className="h-8 w-28 rounded-full sm:h-9 sm:w-32" />
           </div>
-        ) : (
-          <div className="flex items-center justify-between gap-3 px-4 pt-5 pb-4 sm:px-6">
-            <div className="flex h-9 items-center gap-2">
-              <Bone className="size-9 shrink-0 rounded-full" />
-              <Bone className="h-4 w-20 rounded-full" />
-            </div>
-            <div className="flex items-center gap-2">
-              <Bone className="h-9 w-14 rounded-full" />
-              <Bone className="size-9 shrink-0 rounded-full" />
-              <Bone className="size-9 shrink-0 rounded-full" />
-            </div>
-          </div>
-        )}
-        <div
-          className={cn(
-            "flex min-h-0 flex-1 flex-col",
-            mobile ? "px-4 py-3 pb-24" : "px-4 py-5 sm:px-6"
-          )}
-        >
+          <Bone className="size-10 shrink-0 rounded-full" />
+        </div>
+        <div className="flex min-h-0 flex-1 flex-col">
           <NewsBulletinSkeleton sidebar={mobile} glass={mobile} />
         </div>
       </div>

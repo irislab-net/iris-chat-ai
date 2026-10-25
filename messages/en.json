@@ -1518,5 +1518,102 @@
     "withdrawSubmitted": "Withdrawal requested (demo).",
     "withdrawSubmittedHint": "In production this enters the payout queue.",
     "done": "Done"
+  },
+  "deskHelp": {
+    "more": "More",
+    "information": "Information",
+    "featuresLabel": "On this page",
+    "news": {
+      "title": "News",
+      "intro": "Market headlines scored for impact, with an AI brief — not a raw wire.",
+      "body": "Market headlines scored for impact, with an AI brief — not a raw wire.",
+      "features": [
+        {
+          "title": "Sentiment tape",
+          "detail": "BTC, ETH, Dollar, and Gold flow plus 15m / 1h / 24h headline volume."
+        },
+        {
+          "title": "Market filters",
+          "detail": "All, Bitcoin, Ethereum, Gold, Dollar. War and Opportunities arrive soon."
+        },
+        {
+          "title": "AI brief",
+          "detail": "A short summary for the selected market (or macro when All is on)."
+        },
+        {
+          "title": "Lead & latest",
+          "detail": "Highest-impact story first, then a ranked list you can open or analyze."
+        }
+      ]
+    },
+    "markets": {
+      "title": "Markets",
+      "intro": "Live marks for the assets Exur watches — prices only, no tickets.",
+      "body": "Live marks for the assets Exur watches — prices only, no tickets.",
+      "features": [
+        {
+          "title": "Live prices",
+          "detail": "Last mark, 24h change, and volume for each listed market."
+        },
+        {
+          "title": "Search",
+          "detail": "Jump to a symbol or name without leaving the list."
+        },
+        {
+          "title": "Mark / pin",
+          "detail": "Star a market to keep it handy for quick access."
+        },
+        {
+          "title": "Read-only desk",
+          "detail": "View marks here; open Trade when you need positions."
+        }
+      ]
+    },
+    "trade": {
+      "title": "Trade",
+      "intro": "Positions Exur opens for your account, with P&L in one place.",
+      "body": "Positions Exur opens for your account, with P&L in one place.",
+      "features": [
+        {
+          "title": "Summary card",
+          "detail": "Capital in positions, today’s P&L, and auto-trade status."
+        },
+        {
+          "title": "Active positions",
+          "detail": "Open longs and shorts with size, entry, mark, TP, and SL."
+        },
+        {
+          "title": "History",
+          "detail": "Closed trades with exit, fees, and realized result."
+        },
+        {
+          "title": "Auto-trade",
+          "detail": "Shows whether Exur is actively managing entries for you."
+        }
+      ]
+    },
+    "profile": {
+      "title": "Profile",
+      "intro": "Wallet balance and cash movement for your trading account.",
+      "body": "Wallet balance and cash movement for your trading account.",
+      "features": [
+        {
+          "title": "Trading wallet",
+          "detail": "Available balance, capital in positions, and today’s P&L."
+        },
+        {
+          "title": "Deposit & withdraw",
+          "detail": "Fund or cash out from the card actions on this page."
+        },
+        {
+          "title": "Activity",
+          "detail": "Filter All, Deposits, or Withdrawals in one ledger."
+        },
+        {
+          "title": "Privacy",
+          "detail": "Hide amounts on the card when you need a quieter view."
+        }
+      ]
+    }
   }
 }

@@ -6,7 +6,8 @@ export const MARKET_ASSET_LOGOS = {
   // XAUUSD--big.svg and DXY--big.svg return 403 on TradingView's CDN.
   XAU: "https://s3-symbol-logo.tradingview.com/metal/gold--big.svg",
   DXY: "https://s3-symbol-logo.tradingview.com/currency/USD--big.svg",
-  HYPE: "https://assets.coingecko.com/coins/images/50882/small/hyperliquid.jpeg",
+  // CoinGecko 50882 jpeg returns 403; TradingView crypto mark is stable.
+  HYPE: "https://s3-symbol-logo.tradingview.com/crypto/XTVCHYPE--big.svg",
   DOGE: "https://assets.coingecko.com/coins/images/5/small/dogecoin.png",
   LINK: "https://assets.coingecko.com/coins/images/877/small/chainlink-new-logo.png",
   AVAX: "https://assets.coingecko.com/coins/images/12559/small/Avalanche_Circle_RedWhite_Trans.png",

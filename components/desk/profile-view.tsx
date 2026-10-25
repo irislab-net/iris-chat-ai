@@ -202,7 +202,7 @@ function ProfileView() {
 
   return (
     <>
-      <DeskPageFrame title={t("title")}>
+      <DeskPageFrame pageId="profile" title={t("title")}>
         <WalletBankCard
           balances={balances}
           loading={false}

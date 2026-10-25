@@ -91,9 +91,14 @@ function MarketsRowSkeleton({ stagger }: { stagger?: 1 | 2 | 3 }) {
 
 function MarketsSkeleton() {
   const t = useTranslations("deskNav")
+  const tm = useTranslations("deskMarkets")
 
   return (
-    <DeskPageFrame className="flex h-full min-h-0 flex-1 flex-col gap-0 py-3 pt-5 max-lg:pb-0 sm:py-4 sm:pt-6">
+    <DeskPageFrame
+      pageId="markets"
+      title={tm("title")}
+      className="flex h-full min-h-0 flex-1 flex-col gap-5 py-3 pt-5 max-lg:pb-0 sm:gap-6 sm:py-4 sm:pt-6"
+    >
       <section
         className="flex min-h-0 flex-1 flex-col gap-3 pt-1 sm:gap-3.5 sm:pt-2"
         aria-busy="true"
@@ -194,9 +199,14 @@ function PositionCardSkeleton({
 
 function TradeSkeleton() {
   const t = useTranslations("deskNav")
+  const tt = useTranslations("deskTrade")
 
   return (
-    <DeskPageFrame className="gap-5 sm:gap-6">
+    <DeskPageFrame
+      pageId="trade"
+      title={tt("title")}
+      className="gap-5 sm:gap-6"
+    >
       <DeskGlassCard
         className="p-4 sm:p-5"
         contentClassName="flex flex-col gap-4 sm:gap-5"
@@ -251,16 +261,18 @@ function ActivityRowSkeleton({ stagger }: { stagger?: 1 | 2 | 3 }) {
 
 function ProfileSkeleton() {
   const t = useTranslations("deskNav")
+  const tp = useTranslations("deskProfile")
 
   return (
-    <DeskPageFrame>
+    <DeskPageFrame
+      pageId="profile"
+      title={tp("title")}
+    >
       <div
         className="flex flex-col gap-8 sm:gap-10"
         aria-busy="true"
         aria-label={t("loading")}
       >
-        <DeskBone stagger={1} className="h-8 w-28 rounded-full sm:h-9 sm:w-32" />
-
         <div
           className={cn(
             deskLiquidGlassShellClass,

@@ -9,6 +9,7 @@ describe("marketAssetLogoSrc", () => {
     expect(marketAssetLogoSrc("SOL")).toContain("solana")
     expect(marketAssetLogoSrc("XAU")).toContain("gold")
     expect(marketAssetLogoSrc("DXY")).toContain("USD")
+    expect(marketAssetLogoSrc("HYPE")).toContain("XTVCHYPE")
   })
 
   it("falls back to TradingView for live tickers outside the curated map", () => {

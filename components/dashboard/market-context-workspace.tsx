@@ -8,8 +8,8 @@ import {
   NewsReadAllButton,
 } from "@/components/dashboard/news-bulletin"
 import { IntelWorkspaceSkeleton } from "@/components/dashboard/intel-skeletons"
+import { DeskPageFrame } from "@/components/desk/desk-page-frame"
 import { Badge } from "@/components/ui/badge"
-import { Card } from "@/components/ui/card"
 import type { NewsAnalytics, NewsItem } from "@/lib/api/types"
 import { cn } from "@/lib/utils"
 
@@ -30,59 +30,45 @@ function MarketContextWorkspaceInner({
   mobile = false,
 }: MarketContextWorkspaceProps) {
   const t = useTranslations("dashboard")
-  const mobileScrollClass =
-    "min-h-0 flex-1 overflow-y-auto overscroll-contain [-webkit-overflow-scrolling:touch] px-3 py-3 pb-[calc(var(--desk-bottom-nav,4.75rem)+1.25rem+env(safe-area-inset-bottom,0px))]"
 
   return (
-    <Card
+    <div
       data-slot="context-workspace"
       aria-label={t("marketNews")}
-      className="h-full min-h-0 flex-1 gap-0 overflow-hidden border-0 bg-transparent py-0 shadow-none"
+      className="flex h-full min-h-0 flex-1 flex-col overflow-hidden"
     >
-      <div className="flex h-full min-h-0 flex-1 flex-col overflow-hidden">
-        {mobile ? null : (
-          <header className="flex shrink-0 items-start justify-between gap-3 border-b border-border/50 px-4 pt-5 pb-4 sm:px-6">
-            <div className="min-w-0">
-              <p className="text-[11px] font-medium tracking-[0.16em] text-muted-foreground uppercase">
-                Exur
-              </p>
-              <h2 className="mt-1 text-xl font-semibold tracking-tight">
-                {t("newsTitle")}
-              </h2>
-              <p className="mt-1 max-w-xl text-sm text-muted-foreground">
-                {t("newsSubtitle")}
-              </p>
-            </div>
-            <div className="flex shrink-0 items-center gap-2">
-              <NewsReadAllButton news={news} />
-              <Badge
-                variant="secondary"
-                className="font-mono text-xs font-normal"
-              >
-                {freshnessLabel}
-              </Badge>
-            </div>
-          </header>
+      <DeskPageFrame
+        pageId="news"
+        title={t("newsTitle")}
+        badge={
+          <div className="flex shrink-0 items-center gap-2">
+            {!mobile ? <NewsReadAllButton news={news} /> : null}
+            <Badge
+              variant="secondary"
+              className="font-mono text-xs font-normal"
+            >
+              {freshnessLabel}
+            </Badge>
+          </div>
+        }
+        className={cn(
+          "min-h-0 flex-1 gap-6 overflow-y-auto overscroll-contain [-webkit-overflow-scrolling:touch] sm:gap-8",
+          mobile
+            ? "py-4 pt-5 max-lg:pb-[calc(var(--desk-bottom-nav,4.75rem)+1.25rem+env(safe-area-inset-bottom,0px))]"
+            : "py-5 sm:py-8"
         )}
-        <div
-          className={cn(
-            mobile
-              ? mobileScrollClass
-              : "min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-5 [-webkit-overflow-scrolling:touch] sm:px-6"
-          )}
-        >
-          <NewsBulletin
-            analytics={analytics}
-            news={news}
-            loading={newsLoading}
-            freshnessLabel={freshnessLabel}
-            embedded
-            active
-            mobile={mobile}
-          />
-        </div>
-      </div>
-    </Card>
+      >
+        <NewsBulletin
+          analytics={analytics}
+          news={news}
+          loading={newsLoading}
+          freshnessLabel={freshnessLabel}
+          embedded
+          active
+          mobile={mobile}
+        />
+      </DeskPageFrame>
+    </div>
   )
 }
 
