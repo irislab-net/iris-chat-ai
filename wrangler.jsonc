@@ -53,5 +53,55 @@
 			"head_sampling_rate": 1,
 			"persist": true
 		}
+	},
+	// Separate Worker (iris-chat-ai-staging). Bindings are not inherited.
+	// Deploy with: pnpm deploy:staging
+	"env": {
+		"staging": {
+			"name": "iris-chat-ai-staging",
+			"workers_dev": false,
+			"routes": [
+				{
+					"pattern": "chat.staging.exur.ai",
+					"custom_domain": true
+				}
+			],
+			"services": [
+				{
+					"binding": "WORKER_SELF_REFERENCE",
+					"service": "iris-chat-ai-staging"
+				}
+			],
+			"r2_buckets": [
+				{
+					"binding": "NEXT_INC_CACHE_R2_BUCKET",
+					"bucket_name": "intel-front-opennext-cache-staging"
+				}
+			],
+			"images": {
+				"binding": "IMAGES"
+			},
+			"vars": {
+				"NEXT_PUBLIC_GA_MEASUREMENT_ID": "",
+				"NEXT_PUBLIC_GTM_ID": "",
+				"NEXT_PUBLIC_GOOGLE_CLIENT_ID": "50876205060-0j6l4c2b286q18e0vluvp7eadqcs15vq.apps.googleusercontent.com",
+				"NEXT_PUBLIC_APP_URL": "https://chat.staging.exur.ai",
+				"NEXT_PUBLIC_SITE_URL": "https://chat.staging.exur.ai",
+				"NEXT_PUBLIC_MARKETING_URL": "https://chat.staging.exur.ai",
+				"NEXT_PUBLIC_SENTRY_DSN": "https://a486aa37cf4b36a60fc2d09364aa4565@o4512120553406464.ingest.de.sentry.io/4512120559304784",
+				"NEXT_PUBLIC_SENTRY_ENVIRONMENT": "staging",
+				"SENTRY_ENVIRONMENT": "staging",
+				"NEXT_PUBLIC_PRICE_FREE": "0",
+				"NEXT_PUBLIC_PRICE_PLUS_MONTHLY": "19",
+				"NEXT_PUBLIC_FEATURE_SIGNAL": "true",
+				"NEXT_PUBLIC_FEATURE_CORRELATION": "false",
+				"NEXT_PUBLIC_FEATURE_VOLATILITY": "false",
+				"NEXT_PUBLIC_FEATURE_WATCHLIST": "false",
+				"NEXT_PUBLIC_FEATURE_VOICE": "false",
+				"NEXT_PUBLIC_FEATURE_STAKING": "true",
+				"IRIS_API_ORIGIN": "https://api.exur.ai",
+				"CHAT_API_ORIGIN": "https://intel-copilot-v1-git-71611170957.europe-west1.run.app"
+			}
+		}
 	}
 }
