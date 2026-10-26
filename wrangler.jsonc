@@ -99,7 +99,7 @@
 				"NEXT_PUBLIC_FEATURE_WATCHLIST": "false",
 				"NEXT_PUBLIC_FEATURE_VOICE": "false",
 				"NEXT_PUBLIC_FEATURE_STAKING": "true",
-				"IRIS_API_ORIGIN": "https://api.exur.ai",
+				"IRIS_API_ORIGIN": "https://api.staging.exur.ai",
 				"CHAT_API_ORIGIN": "https://intel-copilot-v1-git-71611170957.europe-west1.run.app"
 			}
 		}
