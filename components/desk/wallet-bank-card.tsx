@@ -203,11 +203,7 @@ function WalletBankCard({
             </span>
           </span>
         </span>
-        {user ? (
-          <span className="shrink-0 rounded-full bg-white/55 px-2.5 py-1 text-[9px] font-medium tracking-[0.16em] text-muted-foreground uppercase shadow-[inset_0_1px_0_rgba(255,255,255,0.85)] dark:bg-white/10 dark:shadow-none">
-            {t("mockBadge")}
-          </span>
-        ) : (
+        {!user ? (
           <button
             type="button"
             disabled={loginPending}
@@ -220,7 +216,7 @@ function WalletBankCard({
             <GoogleGlyph className="size-3.5" />
             {loginPending ? t("signingUp") : t("signUp")}
           </button>
-        )}
+        ) : null}
       </div>
 
       <div className="relative z-10 mt-4 min-w-0 ps-1 pe-14 @[18rem]/desk-wallet:mt-4.5 @[18rem]/desk-wallet:ps-1.5 @[18rem]/desk-wallet:pe-16">
