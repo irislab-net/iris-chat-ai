@@ -43,13 +43,13 @@ import { cn } from "@/lib/utils"
 
 const autoTradeGlassIdleClass = [
   "isolate overflow-hidden",
-  "border border-white/80 dark:border-white/22",
+  "border border-white/80 dark:border-white/5",
   "bg-[#2563EB]/10 supports-[backdrop-filter]:bg-[#2563EB]/12",
   "backdrop-blur-[28px] backdrop-saturate-[175%]",
   "text-[#1D4ED8]",
   "shadow-[0_1px_2px_rgba(37,99,235,0.08),0_8px_22px_-8px_rgba(37,99,235,0.18),inset_0_1px_1px_rgba(255,255,255,0.95),inset_0_0_0_0.5px_rgba(255,255,255,0.6),inset_0_-8px_16px_-10px_rgba(37,99,235,0.08)]",
   "dark:bg-[#2563EB]/18 dark:supports-[backdrop-filter]:bg-[#2563EB]/16 dark:text-[#93C5FD]",
-  "dark:shadow-[0_1px_2px_rgba(0,0,0,0.28),0_8px_22px_-8px_rgba(37,99,235,0.28),inset_0_1px_1px_rgba(255,255,255,0.28),inset_0_0_0_0.5px_rgba(255,255,255,0.14),inset_0_-10px_18px_-10px_rgba(0,0,0,0.35)]",
+  "dark:shadow-[0_1px_2px_rgba(0,0,0,0.28),0_8px_22px_-8px_rgba(37,99,235,0.28),inset_0_1px_0_0_rgba(255,255,255,0.1),inset_0_-10px_18px_-10px_rgba(0,0,0,0.35)]",
 ].join(" ")
 
 const autoTradeGlassActiveClass = [

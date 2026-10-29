@@ -19,7 +19,10 @@ import {
 import { ChatSheetDoneCheck } from "@/components/app-shell/chat-sheet-done-check"
 import { DepositAddressCard } from "@/components/billing/deposit-address-card"
 import { PaymentMethodPicker } from "@/components/billing/payment-method-picker"
-import { WalletLiquidField } from "@/components/desk/wallet-liquid-field"
+import {
+  WalletLiquidField,
+  walletFieldInputClass,
+} from "@/components/desk/wallet-liquid-field"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import type { PaymentCurrency } from "@/lib/billing/invoice-types"
@@ -283,7 +286,10 @@ function DepositBody({
                     value={amount}
                     disabled={loadingRoutes || submitting}
                     onChange={(e) => setAmount(e.target.value)}
-                    className="relative z-10 h-12 min-w-0 flex-1 border-0 bg-transparent ps-2 pe-3 text-[16px]! shadow-none focus-visible:ring-0 max-md:text-[16px]!"
+                    className={cn(
+                      walletFieldInputClass,
+                      "ps-2 pe-3 text-[16px]! max-md:text-[16px]!"
+                    )}
                   />
                 </WalletLiquidField>
               </div>

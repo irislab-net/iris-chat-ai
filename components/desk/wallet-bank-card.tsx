@@ -33,7 +33,7 @@ import { cn } from "@/lib/utils"
  */
 const walletCardShellClass = [
   "relative isolate overflow-hidden",
-  "border border-white/70 dark:border-white/18",
+  "border border-white/70 dark:border-white/5",
   "bg-[linear-gradient(155deg,oklch(0.99_0.002_264)_0%,oklch(0.965_0.004_264)_48%,oklch(0.94_0.006_264)_100%)]",
   "supports-[backdrop-filter]:bg-[linear-gradient(155deg,oklch(0.99_0.002_264_/_0.72)_0%,oklch(0.965_0.004_264_/_0.58)_48%,oklch(0.94_0.006_264_/_0.52)_100%)]",
   "backdrop-blur-[40px] backdrop-saturate-[180%]",
@@ -41,7 +41,7 @@ const walletCardShellClass = [
   "shadow-[0_1px_2px_rgba(15,23,42,0.04),0_12px_36px_-10px_rgba(15,23,42,0.14),0_28px_72px_-18px_rgba(15,23,42,0.12),inset_0_1px_1px_rgba(255,255,255,0.95),inset_0_0_0_0.5px_rgba(255,255,255,0.55),inset_0_-10px_22px_-14px_rgba(15,23,42,0.08)]",
   "dark:bg-[linear-gradient(155deg,oklch(0.22_0.008_264)_0%,oklch(0.18_0.006_264)_50%,oklch(0.15_0.004_264)_100%)]",
   "dark:supports-[backdrop-filter]:bg-[linear-gradient(155deg,oklch(0.22_0.008_264_/_0.72)_0%,oklch(0.18_0.006_264_/_0.58)_50%,oklch(0.15_0.004_264_/_0.5)_100%)]",
-  "dark:shadow-[0_1px_2px_rgba(0,0,0,0.25),0_12px_36px_-10px_rgba(0,0,0,0.45),0_28px_72px_-18px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.22),inset_0_0_0_0.5px_rgba(255,255,255,0.12),inset_0_-12px_24px_-14px_rgba(0,0,0,0.45)]",
+  "dark:shadow-[0_1px_2px_rgba(0,0,0,0.25),0_12px_36px_-10px_rgba(0,0,0,0.45),0_28px_72px_-18px_rgba(0,0,0,0.4),inset_0_1px_0_0_rgba(255,255,255,0.08),inset_0_-12px_24px_-14px_rgba(0,0,0,0.45)]",
 ].join(" ")
 
 /** EMV chip path from exchange-admin TreasuryHero. */
@@ -133,7 +133,7 @@ function WalletBankCard({
           <span
             className={cn(
               "relative isolate flex shrink-0 items-center justify-center overflow-hidden rounded-full p-[3px]",
-              "border-[1.5px] border-white dark:border-white/35",
+              "border-[1.5px] border-white dark:border-white/12",
               "bg-white/50 backdrop-blur-[20px] dark:bg-white/10",
               "shadow-[0_1px_2px_rgba(15,23,42,0.05),0_8px_20px_-6px_rgba(15,23,42,0.18),inset_0_1px_1px_rgba(255,255,255,1),inset_0_0_0_0.5px_rgba(255,255,255,0.7),inset_0_-6px_12px_-6px_rgba(15,23,42,0.08)]",
               "dark:shadow-[0_1px_2px_rgba(0,0,0,0.28),0_8px_20px_-6px_rgba(0,0,0,0.45),inset_0_1px_1px_rgba(255,255,255,0.28),inset_0_0_0_0.5px_rgba(255,255,255,0.14),inset_0_-8px_14px_-6px_rgba(0,0,0,0.4)]"

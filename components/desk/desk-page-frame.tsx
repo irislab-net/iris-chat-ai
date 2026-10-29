@@ -27,14 +27,14 @@ import {
 } from "@/lib/landing-modern-styles"
 import { cn } from "@/lib/utils"
 
-/** Liquid glass plate — white rim + outer lift + inset specular. */
+/** Liquid glass plate — light: white rim + specular; dark: no white rim. */
 const deskLiquidGlassShellClass = [
   "relative isolate overflow-hidden",
-  "border border-white/75 dark:border-white/18",
+  "border border-white/75 dark:border-transparent",
   "bg-white/48 supports-[backdrop-filter]:bg-white/38 dark:bg-white/10 dark:supports-[backdrop-filter]:bg-white/8",
   "backdrop-blur-[40px] backdrop-saturate-[175%]",
   "shadow-[0_1px_2px_rgba(15,23,42,0.04),0_12px_36px_-10px_rgba(15,23,42,0.14),0_28px_72px_-18px_rgba(15,23,42,0.1),inset_0_1px_1px_rgba(255,255,255,0.95),inset_0_0_0_0.5px_rgba(255,255,255,0.55),inset_0_-10px_22px_-14px_rgba(15,23,42,0.08)]",
-  "dark:shadow-[0_1px_2px_rgba(0,0,0,0.25),0_12px_36px_-10px_rgba(0,0,0,0.45),0_28px_72px_-18px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.22),inset_0_0_0_0.5px_rgba(255,255,255,0.12),inset_0_-12px_24px_-14px_rgba(0,0,0,0.45)]",
+  "dark:shadow-[0_1px_2px_rgba(0,0,0,0.25),0_12px_36px_-10px_rgba(0,0,0,0.45),0_28px_72px_-18px_rgba(0,0,0,0.4),inset_0_-12px_24px_-14px_rgba(0,0,0,0.45)]",
 ].join(" ")
 
 const deskHeaderMoreButtonClass = cn(

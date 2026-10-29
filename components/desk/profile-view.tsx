@@ -100,13 +100,13 @@ function formatLedgerRelativeWhen(iso: string, locale: string): string {
   return rtf.format(Math.round(diffSec / (86_400 * 365)), "year")
 }
 
-/** Liquid glass pill — white rim + outer lift + inset specular. */
+/** Liquid glass pill — light: white rim; dark: soft edge, no bright rim. */
 const activityLiquidGlassClass = [
   "relative isolate overflow-hidden rounded-full",
-  "border border-white/75 dark:border-white/20",
+  "border border-white/75 dark:border-white/5",
   "backdrop-blur-[28px] backdrop-saturate-[170%]",
   "shadow-[0_1px_2px_rgba(15,23,42,0.04),0_8px_22px_-6px_rgba(15,23,42,0.16),inset_0_1px_1px_rgba(255,255,255,0.95),inset_0_0_0_0.5px_rgba(255,255,255,0.55),inset_0_-6px_14px_-8px_rgba(15,23,42,0.08)]",
-  "dark:shadow-[0_1px_2px_rgba(0,0,0,0.28),0_8px_22px_-6px_rgba(0,0,0,0.45),inset_0_1px_1px_rgba(255,255,255,0.22),inset_0_0_0_0.5px_rgba(255,255,255,0.12),inset_0_-8px_16px_-8px_rgba(0,0,0,0.4)]",
+  "dark:shadow-[0_1px_2px_rgba(0,0,0,0.28),0_8px_22px_-6px_rgba(0,0,0,0.45),inset_0_1px_0_0_rgba(255,255,255,0.08),inset_0_-8px_16px_-8px_rgba(0,0,0,0.4)]",
 ].join(" ")
 
 function ActivityGlassChip({
@@ -120,7 +120,7 @@ function ActivityGlassChip({
     <span
       className={cn(
         activityLiquidGlassClass,
-        "inline-flex shrink-0 items-center justify-center px-2.5 py-1 text-[11px] font-medium",
+        "inline-flex shrink-0 items-center justify-center px-2.5 py-1 text-[11px] font-light",
         className
       )}
     >
@@ -351,11 +351,11 @@ function ProfileView() {
             aria-label={t("activity")}
             className={cn(
               "relative isolate flex items-center gap-1.5 overflow-hidden rounded-[1.35rem] p-1.5",
-              "border border-white/80 dark:border-white/20",
+              "border border-white/80 dark:border-white/5",
               "bg-white/42 supports-[backdrop-filter]:bg-white/32 backdrop-blur-[40px] backdrop-saturate-[175%]",
               "shadow-[0_1px_2px_rgba(15,23,42,0.04),0_10px_28px_-10px_rgba(15,23,42,0.12),inset_0_1px_1px_rgba(255,255,255,0.95),inset_0_0_0_0.5px_rgba(255,255,255,0.6),inset_0_-8px_16px_-10px_rgba(15,23,42,0.07)]",
               "dark:bg-white/10 dark:supports-[backdrop-filter]:bg-white/8",
-              "dark:shadow-[0_1px_2px_rgba(0,0,0,0.22),0_10px_28px_-10px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.22),inset_0_0_0_0.5px_rgba(255,255,255,0.12),inset_0_-10px_18px_-10px_rgba(0,0,0,0.4)]"
+              "dark:shadow-[0_1px_2px_rgba(0,0,0,0.22),0_10px_28px_-10px_rgba(0,0,0,0.4),inset_0_1px_0_0_rgba(255,255,255,0.08),inset_0_-10px_18px_-10px_rgba(0,0,0,0.4)]"
             )}
           >
             <span
@@ -376,10 +376,9 @@ function ProfileView() {
                     active
                       ? cn(
                           "isolate overflow-hidden border border-white font-semibold text-foreground",
-                          "bg-white dark:bg-white/22",
+                          "bg-white dark:border-transparent dark:bg-white/18",
                           "shadow-[0_1px_2px_rgba(15,23,42,0.05),0_6px_16px_-8px_rgba(15,23,42,0.14),inset_0_1px_1px_rgba(255,255,255,1),inset_0_0_0_0.5px_rgba(255,255,255,0.8),inset_0_-6px_12px_-8px_rgba(15,23,42,0.05)]",
-                          "dark:border-white/28",
-                          "dark:shadow-[0_1px_2px_rgba(0,0,0,0.2),0_6px_16px_-8px_rgba(0,0,0,0.35),inset_0_1px_1px_rgba(255,255,255,0.32),inset_0_0_0_0.5px_rgba(255,255,255,0.16),inset_0_-8px_14px_-8px_rgba(0,0,0,0.35)]"
+                          "dark:shadow-[0_1px_2px_rgba(0,0,0,0.2),0_6px_16px_-8px_rgba(0,0,0,0.35),inset_0_1px_0_0_rgba(255,255,255,0.1),inset_0_-8px_14px_-8px_rgba(0,0,0,0.35)]"
                         )
                       : landingNavLinkInactive
                   )}

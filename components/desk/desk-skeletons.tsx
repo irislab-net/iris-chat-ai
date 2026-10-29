@@ -33,11 +33,11 @@ function DeskBone({
 
 const deskTablistShellClass = cn(
   "relative isolate flex items-center gap-1.5 overflow-hidden rounded-[1.35rem] p-1.5",
-  "border border-white/80 dark:border-white/20",
+  "border border-white/80 dark:border-white/5",
   "bg-white/42 supports-[backdrop-filter]:bg-white/32 backdrop-blur-[40px] backdrop-saturate-[175%]",
   "shadow-[0_1px_2px_rgba(15,23,42,0.04),0_10px_28px_-10px_rgba(15,23,42,0.12),inset_0_1px_1px_rgba(255,255,255,0.95),inset_0_0_0_0.5px_rgba(255,255,255,0.6),inset_0_-8px_16px_-10px_rgba(15,23,42,0.07)]",
   "dark:bg-white/10 dark:supports-[backdrop-filter]:bg-white/8",
-  "dark:shadow-[0_1px_2px_rgba(0,0,0,0.22),0_10px_28px_-10px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.22),inset_0_0_0_0.5px_rgba(255,255,255,0.12),inset_0_-10px_18px_-10px_rgba(0,0,0,0.4)]"
+  "dark:shadow-[0_1px_2px_rgba(0,0,0,0.22),0_10px_28px_-10px_rgba(0,0,0,0.4),inset_0_1px_0_0_rgba(255,255,255,0.08),inset_0_-10px_18px_-10px_rgba(0,0,0,0.4)]"
 )
 
 function DeskTablistSkeleton({ tabs }: { tabs: 2 | 3 }) {
@@ -54,7 +54,7 @@ function DeskTablistSkeleton({ tabs }: { tabs: 2 | 3 }) {
           className={cn(
             "relative z-10 h-11 flex-1 rounded-[1.1rem]",
             index === 0 &&
-              "border border-white/90 bg-white/70 dark:border-white/25 dark:bg-white/16"
+              "border border-white/90 bg-white/70 dark:border-white/10 dark:bg-white/16"
           )}
         />
       ))}
@@ -126,7 +126,7 @@ function MarketsSkeleton() {
           className={cn(
             "flex min-h-0 flex-1 flex-col overflow-hidden p-0 sm:p-0",
             "shadow-[0_1px_2px_rgba(15,23,42,0.04),0_6px_18px_-10px_rgba(15,23,42,0.1),inset_0_1px_1px_rgba(255,255,255,0.95),inset_0_0_0_0.5px_rgba(255,255,255,0.55)]",
-            "dark:shadow-[0_1px_2px_rgba(0,0,0,0.22),0_6px_18px_-10px_rgba(0,0,0,0.35),inset_0_1px_1px_rgba(255,255,255,0.2),inset_0_0_0_0.5px_rgba(255,255,255,0.12)]"
+            "dark:shadow-[0_1px_2px_rgba(0,0,0,0.22),0_6px_18px_-10px_rgba(0,0,0,0.35),inset_0_1px_0_0_rgba(255,255,255,0.08)]"
           )}
           contentClassName="flex min-h-0 flex-1 flex-col divide-y divide-border/35 dark:divide-white/8"
         >

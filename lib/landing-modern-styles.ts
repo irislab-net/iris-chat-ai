@@ -111,7 +111,7 @@ export const landingGlassSurface =
 export const landingGlassPill = `${landingGlassSurface} rounded-full bg-white/44 shadow-[0_20px_56px_rgba(15,23,42,0.09),inset_0_1px_1px_rgba(255,255,255,0.96),inset_0_-1px_2px_rgba(255,255,255,0.3)] dark:bg-white/10 dark:shadow-[0_20px_56px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.14),inset_0_-1px_2px_rgba(255,255,255,0.04)]`
 
 export const landingGlassSheen =
-  "pointer-events-none absolute inset-0 bg-[linear-gradient(145deg,rgba(255,255,255,0.72)_0%,rgba(255,255,255,0.18)_38%,rgba(255,255,255,0.04)_62%,rgba(255,255,255,0)_100%)] dark:bg-[linear-gradient(145deg,rgba(255,255,255,0.16)_0%,rgba(255,255,255,0.05)_38%,rgba(255,255,255,0.02)_62%,transparent_100%)]"
+  "pointer-events-none absolute inset-0 bg-[linear-gradient(145deg,rgba(255,255,255,0.72)_0%,rgba(255,255,255,0.18)_38%,rgba(255,255,255,0.04)_62%,rgba(255,255,255,0)_100%)] dark:bg-[linear-gradient(145deg,rgba(255,255,255,0.06)_0%,rgba(255,255,255,0.02)_40%,transparent_65%)]"
 
 /** Desktop nav link group — frosted pill */
 export const landingNavPill =

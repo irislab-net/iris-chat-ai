@@ -7,7 +7,6 @@ import {
   DollarSignIcon,
   Loader2Icon,
   ScanLineIcon,
-  WalletIcon,
 } from "lucide-react"
 import { useTranslations } from "next-intl"
 
@@ -24,7 +23,11 @@ import {
   chatMobileSheetTitleClass,
 } from "@/components/app-shell/chat-mobile-gemini-styles"
 import { ChatSheetDoneCheck } from "@/components/app-shell/chat-sheet-done-check"
-import { WalletLiquidField } from "@/components/desk/wallet-liquid-field"
+import {
+  WalletLiquidField,
+  walletFieldInputClass,
+  walletFieldTextareaClass,
+} from "@/components/desk/wallet-liquid-field"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -42,6 +45,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet"
 import { Slider } from "@/components/ui/slider"
+import { Textarea } from "@/components/ui/textarea"
 import { WalletQrScanner } from "@/components/desk/wallet-qr-scanner"
 import { useIsDesktop } from "@/hooks/use-media-query"
 import {
@@ -57,10 +61,17 @@ import { cn } from "@/lib/utils"
 const NETWORKS = ["TRC20", "BEP20", "ERC20"] as const
 
 const fieldActionClass = cn(
-  "relative z-10 flex size-9 shrink-0 items-center justify-center rounded-full",
-  "text-foreground/70 transition-colors",
-  "hover:bg-white/50 hover:text-foreground active:scale-[0.96]",
-  "dark:hover:bg-white/12"
+  "chat-ios26-liquid-glass relative z-10 flex size-9 shrink-0 items-center justify-center",
+  "isolate overflow-hidden rounded-full border-0",
+  "bg-white/70 text-foreground/75 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.9),0_1px_2px_rgba(15,23,42,0.06),0_4px_12px_-4px_rgba(15,23,42,0.12)]",
+  "backdrop-blur-[18px] backdrop-saturate-[170%]",
+  "supports-[backdrop-filter]:bg-white/55",
+  "transition-[transform,background-color,box-shadow,color] duration-150 ease-out",
+  "hover:bg-white/85 hover:text-foreground active:scale-[0.96]",
+  "dark:bg-white/14 dark:supports-[backdrop-filter]:bg-white/10",
+  "dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.14),0_1px_2px_rgba(0,0,0,0.25),0_4px_12px_-4px_rgba(0,0,0,0.4)]",
+  "dark:hover:bg-white/20 dark:hover:text-foreground",
+  "disabled:pointer-events-none disabled:opacity-40"
 )
 
 type WalletWithdrawSheetProps = {
@@ -115,7 +126,7 @@ function WithdrawBody({
   const [cameraOpen, setCameraOpen] = React.useState(false)
   const [scanningFile, setScanningFile] = React.useState(false)
   const scanInputRef = React.useRef<HTMLInputElement>(null)
-  const addressInputRef = React.useRef<HTMLInputElement>(null)
+  const addressInputRef = React.useRef<HTMLTextAreaElement>(null)
   const pendingPasteCleanupRef = React.useRef<(() => void) | null>(null)
 
   React.useEffect(() => {
@@ -466,7 +477,10 @@ function WithdrawBody({
                     setFieldHint(null)
                     setCode(e.target.value.replace(/\D/g, "").slice(0, 8))
                   }}
-                  className="relative z-10 h-12 min-w-0 flex-1 border-0 bg-transparent tracking-[0.3em] text-[16px]! shadow-none focus-visible:ring-0 max-md:text-[16px]!"
+                  className={cn(
+                    walletFieldInputClass,
+                    "tracking-[0.3em] text-[16px]! max-md:text-[16px]!"
+                  )}
                   placeholder="••••••"
                 />
               </WalletLiquidField>
@@ -531,8 +545,26 @@ function WithdrawBody({
                 onChange={(e) => {
                   setAmount(e.target.value)
                 }}
-                className="relative z-10 h-12 min-w-0 flex-1 border-0 bg-transparent ps-2 pe-3 text-[16px]! shadow-none focus-visible:ring-0 max-md:text-[16px]!"
+                className={cn(
+                  walletFieldInputClass,
+                  "ps-2 pe-1.5 text-[16px]! max-md:text-[16px]!"
+                )}
               />
+              <button
+                type="button"
+                disabled={maxUsd <= 0}
+                onClick={() => setAmountFromNumber(maxUsd)}
+                className={cn(
+                  "relative z-10 shrink-0 rounded-full px-2 py-1",
+                  "text-[11px] font-semibold tracking-wide text-[#1D4ED8]",
+                  "bg-[#2563EB]/12 transition-colors",
+                  "hover:bg-[#2563EB]/18 active:scale-[0.96]",
+                  "disabled:pointer-events-none disabled:opacity-40",
+                  "dark:bg-[#2563EB]/22 dark:text-[#93C5FD] dark:hover:bg-[#2563EB]/28"
+                )}
+              >
+                {t("withdrawMax")}
+              </button>
             </WalletLiquidField>
             <p className="mt-1.5 px-3 text-[12px] text-muted-foreground">
               {t("withdrawAvailable", {
@@ -542,7 +574,7 @@ function WithdrawBody({
                 }),
               })}
             </p>
-            <div className="mt-2 px-6 sm:px-7">
+            <div className="mt-1 px-3">
               <Slider
                 min={0}
                 max={maxUsd > 0 ? maxUsd : 1}
@@ -593,58 +625,54 @@ function WithdrawBody({
             >
               {t("withdrawAddress")}
             </label>
-            <WalletLiquidField className="flex items-center gap-0.5 ps-3 pe-1.5">
-              <WalletIcon
-                className="relative z-10 size-4 shrink-0 stroke-[1.75] text-foreground/35"
-                aria-hidden
-              />
-              {/*
-                iOS Safari zooms any focused control under 16px. Keep real font-size
-                at 16px, then visually shrink on small screens so mono addresses
-                don’t dominate the row (≈14px look without triggering zoom).
-              */}
-              <div className="relative z-10 min-w-0 flex-1 overflow-hidden">
-                <Input
-                  ref={addressInputRef}
-                  value={address}
-                  onChange={(e) => {
-                    setFieldHint(null)
-                    setAddress(e.target.value)
-                  }}
-                  placeholder={activeNetwork === "TRC20" ? "T…" : "0x…"}
-                  className={cn(
-                    "h-12 border-0 bg-transparent ps-2 pe-1.5 font-mono tracking-tight shadow-none focus-visible:ring-0",
-                    "text-[16px]! max-md:text-[16px]!",
-                    "max-md:origin-left max-md:scale-[0.875] max-md:w-[calc(100%/0.875)]"
-                  )}
-                />
-              </div>
-              <button
-                type="button"
-                className={fieldActionClass}
-                aria-label={t("withdrawPaste")}
-                title={t("withdrawPaste")}
-                onClick={() => void onPasteAddress()}
-              >
-                <ClipboardPasteIcon className="size-4 stroke-[1.75]" />
-              </button>
-              <button
-                type="button"
-                className={fieldActionClass}
-                aria-label={t("withdrawScan")}
-                title={t("withdrawScan")}
-                disabled={scanningFile || cameraOpen}
-                onClick={() => {
+            <WalletLiquidField className="flex flex-col gap-0.5 px-1.5 pb-1.5 pt-1">
+              <Textarea
+                ref={addressInputRef}
+                rows={2}
+                value={address}
+                onChange={(e) => {
                   setFieldHint(null)
-                  setCameraOpen(true)
+                  setAddress(e.target.value)
                 }}
-              >
-                {scanningFile ? (
-                  <Loader2Icon className="size-4 animate-spin stroke-[1.75]" />
-                ) : (
-                  <ScanLineIcon className="size-4 stroke-[1.75]" />
+                placeholder={t("withdrawAddressPlaceholder")}
+                spellCheck={false}
+                autoCorrect="off"
+                autoCapitalize="none"
+                className={cn(
+                  walletFieldTextareaClass,
+                  "field-sizing-content max-h-28 break-all font-mono tracking-tight",
+                  "placeholder:font-sans placeholder:tracking-normal",
+                  "text-[16px]! max-md:text-[16px]!"
                 )}
-              </button>
+              />
+              <div className="relative z-10 flex items-center justify-end gap-2 pe-0.5">
+                <button
+                  type="button"
+                  className={fieldActionClass}
+                  aria-label={t("withdrawPaste")}
+                  title={t("withdrawPaste")}
+                  onClick={() => void onPasteAddress()}
+                >
+                  <ClipboardPasteIcon className="size-4 stroke-[1.75]" />
+                </button>
+                <button
+                  type="button"
+                  className={fieldActionClass}
+                  aria-label={t("withdrawScan")}
+                  title={t("withdrawScan")}
+                  disabled={scanningFile || cameraOpen}
+                  onClick={() => {
+                    setFieldHint(null)
+                    setCameraOpen(true)
+                  }}
+                >
+                  {scanningFile ? (
+                    <Loader2Icon className="size-4 animate-spin stroke-[1.75]" />
+                  ) : (
+                    <ScanLineIcon className="size-4 stroke-[1.75]" />
+                  )}
+                </button>
+              </div>
               <input
                 ref={scanInputRef}
                 type="file"

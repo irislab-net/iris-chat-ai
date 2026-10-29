@@ -93,7 +93,7 @@ function CopyAddressButton({
       className={cn(
         "inline-flex size-8 shrink-0 items-center justify-center rounded-full",
         "border border-white/70 bg-white/55 text-foreground/70",
-        "dark:border-white/20 dark:bg-white/12 dark:text-foreground/80"
+        "dark:border-white/5 dark:bg-white/12 dark:text-foreground/80"
       )}
     >
       {copied ? (
@@ -127,7 +127,7 @@ function ActivityDetailBody({
         <span
           className={cn(
             "flex size-10 shrink-0 items-center justify-center rounded-full",
-            "border border-white/70 bg-white/55 dark:border-white/20 dark:bg-white/12"
+            "border border-white/70 bg-white/55 dark:border-white/5 dark:bg-white/12"
           )}
           aria-hidden
         >

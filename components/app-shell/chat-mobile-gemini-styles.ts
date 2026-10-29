@@ -42,8 +42,8 @@ const deskBottomNavGlassClass = [
   "bg-white/78 supports-[backdrop-filter]:bg-white/58",
   "shadow-[inset_0_1px_0_0_rgba(255,255,255,0.95),inset_0_0_0_0.5px_rgba(255,255,255,0.5),0_1px_2px_rgba(15,23,42,0.04),0_10px_32px_-10px_rgba(15,23,42,0.18),0_22px_56px_-18px_rgba(37,99,235,0.22)]",
   "backdrop-blur-[40px] backdrop-saturate-[185%]",
-  "dark:border-white/18 dark:bg-white/16 dark:supports-[backdrop-filter]:bg-white/12",
-  "dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.3),inset_0_0_0_0.5px_rgba(255,255,255,0.14),0_10px_32px_-10px_rgba(0,0,0,0.5),0_22px_56px_-18px_rgba(37,99,235,0.28)]",
+  "dark:border-white/5 dark:bg-white/16 dark:supports-[backdrop-filter]:bg-white/12",
+  "dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.1),0_10px_32px_-10px_rgba(0,0,0,0.5),0_22px_56px_-18px_rgba(37,99,235,0.28)]",
 ].join(" ")
 
 /** Sliding liquid-glass chip behind the active bottom-nav tab. */
@@ -51,8 +51,8 @@ const deskBottomNavTabPillClass = [
   "rounded-[1.35rem] bg-white/92 supports-[backdrop-filter]:bg-white/78",
   "shadow-[0_1px_2px_rgba(15,23,42,0.06),0_6px_16px_-8px_rgba(37,99,235,0.28),inset_0_1px_0_0_rgba(255,255,255,0.95),inset_0_0_0_0.5px_rgba(255,255,255,0.55)]",
   "backdrop-blur-[18px] backdrop-saturate-[160%]",
-  "dark:bg-white/22 dark:supports-[backdrop-filter]:bg-white/16",
-  "dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.28),inset_0_0_0_0.5px_rgba(255,255,255,0.16),0_6px_16px_-8px_rgba(37,99,235,0.35)]",
+  "dark:bg-white/18 dark:supports-[backdrop-filter]:bg-white/14",
+  "dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.1),0_6px_16px_-8px_rgba(37,99,235,0.28)]",
 ].join(" ")
 
 /** Selected tab label tint (chip itself is `deskBottomNavTabPillClass`). */
@@ -102,10 +102,10 @@ const chatMobileHeaderCircleClass = `rounded-full ${chatMobileGlassSurfaceClass}
  * Mobile nav-bar circles — Gemini: near-opaque white liquid glass that pops
  * on the cool gray sky (not washed-out frost). Keep specular via ios26 class;
  * do NOT compose the translucent `chatMobileGlassSurfaceClass` fill.
- * Dark: elevated frost (not solid white) so discs read as glass on the night sky.
+ * Dark: same material as `deskBottomNavGlassClass` (frost + rim + blue ambient).
  */
 const chatMobileHeaderWhiteGlassClass =
-  "chat-ios26-liquid-glass relative isolate overflow-hidden border-0 bg-white/92 supports-[backdrop-filter]:bg-white/88 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.95),0_1px_2px_rgba(15,23,42,0.05),0_6px_16px_-6px_rgba(15,23,42,0.14),0_14px_32px_-12px_rgba(15,23,42,0.16)] hover:bg-white hover:shadow-[inset_0_1px_0_0_rgba(255,255,255,1),0_2px_6px_-1px_rgba(15,23,42,0.07),0_12px_28px_-10px_rgba(15,23,42,0.18)] dark:bg-white/14 dark:supports-[backdrop-filter]:bg-white/10 dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.28),0_1px_2px_rgba(0,0,0,0.25),0_6px_16px_-6px_rgba(0,0,0,0.4),0_14px_32px_-12px_rgba(0,0,0,0.48)] dark:hover:bg-white/20 dark:hover:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.36),0_2px_6px_-1px_rgba(0,0,0,0.3),0_12px_28px_-10px_rgba(0,0,0,0.52)]"
+  "chat-ios26-liquid-glass chat-sheet-glass relative isolate overflow-hidden border-0 bg-white/92 supports-[backdrop-filter]:bg-white/88 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.95),0_1px_2px_rgba(15,23,42,0.05),0_6px_16px_-6px_rgba(15,23,42,0.14),0_14px_32px_-12px_rgba(15,23,42,0.16)] backdrop-blur-[40px] backdrop-saturate-[185%] hover:bg-white hover:shadow-[inset_0_1px_0_0_rgba(255,255,255,1),0_2px_6px_-1px_rgba(15,23,42,0.07),0_12px_28px_-10px_rgba(15,23,42,0.18)] dark:border dark:border-white/5 dark:bg-white/16 dark:supports-[backdrop-filter]:bg-white/12 dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.1),0_10px_32px_-10px_rgba(0,0,0,0.5),0_22px_56px_-18px_rgba(37,99,235,0.28)] dark:hover:bg-white/22 dark:hover:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.14),0_10px_32px_-10px_rgba(0,0,0,0.55),0_22px_56px_-18px_rgba(37,99,235,0.34)]"
 
 const chatMobileHeaderWhiteCircleClass =
   "rounded-full text-foreground transition-[transform,background-color,box-shadow,border-color] duration-150 ease-out active:scale-[0.96]"

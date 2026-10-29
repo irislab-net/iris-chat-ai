@@ -73,10 +73,10 @@ function FeatureIcon({ icon: Icon }: { icon: LucideIcon }) {
     <span
       className={cn(
         "relative isolate flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-full",
-        "border border-white/70 dark:border-white/18",
+        "border border-white/70 dark:border-white/5",
         "bg-white/60 backdrop-blur-[24px] dark:bg-white/12",
         "shadow-[0_1px_2px_rgba(15,23,42,0.04),inset_0_1px_1px_rgba(255,255,255,0.9)]",
-        "dark:shadow-[inset_0_1px_1px_rgba(255,255,255,0.18)]",
+        "dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.08)]",
         "text-foreground/75"
       )}
       aria-hidden
@@ -118,11 +118,11 @@ function HelpBody({ pageId }: { pageId: DeskPageId }) {
                 key={feature.title}
                 className={cn(
                   "relative isolate flex items-start gap-3 overflow-hidden rounded-2xl px-3.5 py-3",
-                  "border border-white/70 dark:border-white/14",
+                  "border border-white/70 dark:border-white/5",
                   "bg-white/45 supports-[backdrop-filter]:bg-white/35 dark:bg-white/8 dark:supports-[backdrop-filter]:bg-white/6",
                   "backdrop-blur-[28px]",
                   "shadow-[0_1px_2px_rgba(15,23,42,0.03),inset_0_1px_1px_rgba(255,255,255,0.85)]",
-                  "dark:shadow-[inset_0_1px_1px_rgba(255,255,255,0.14)]"
+                  "dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.08)]"
                 )}
               >
                 <span

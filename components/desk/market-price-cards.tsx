@@ -250,16 +250,19 @@ function MarketPriceCards({
       <label
         className={cn(
           "relative isolate flex min-h-12 shrink-0 items-center gap-2.5 overflow-hidden rounded-[1.25rem] px-3.5 sm:px-4",
-          "border border-white/80 dark:border-white/20",
+          "border border-white/80 dark:border-transparent",
           "bg-white/55 supports-[backdrop-filter]:bg-white/42 backdrop-blur-[40px] backdrop-saturate-[175%]",
           "shadow-[0_1px_2px_rgba(15,23,42,0.04),0_10px_28px_-10px_rgba(15,23,42,0.12),inset_0_1px_1px_rgba(255,255,255,0.95),inset_0_0_0_0.5px_rgba(255,255,255,0.6),inset_0_-8px_16px_-10px_rgba(15,23,42,0.07)]",
           "dark:bg-white/10 dark:supports-[backdrop-filter]:bg-white/8",
-          "dark:shadow-[0_1px_2px_rgba(0,0,0,0.22),0_10px_28px_-10px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.22),inset_0_0_0_0.5px_rgba(255,255,255,0.12),inset_0_-10px_18px_-10px_rgba(0,0,0,0.4)]"
+          "dark:shadow-[0_1px_2px_rgba(0,0,0,0.22),0_10px_28px_-10px_rgba(0,0,0,0.4),inset_0_-10px_18px_-10px_rgba(0,0,0,0.4)]"
         )}
       >
         <span
           aria-hidden
-          className={cn(landingGlassSheen, "rounded-[1.25rem]")}
+          className={cn(
+            landingGlassSheen,
+            "rounded-[1.25rem] dark:opacity-30"
+          )}
         />
         <SearchIcon
           className="relative z-10 size-4 shrink-0 text-muted-foreground"
@@ -282,9 +285,10 @@ function MarketPriceCards({
           "flex min-h-0 flex-1 flex-col overflow-hidden p-0 sm:p-0",
           // Soft lift only — the deep 28/72 shadow reads as cut-off in a full-height panel.
           "shadow-[0_1px_2px_rgba(15,23,42,0.04),0_6px_18px_-10px_rgba(15,23,42,0.1),inset_0_1px_1px_rgba(255,255,255,0.95),inset_0_0_0_0.5px_rgba(255,255,255,0.55)]",
-          "dark:shadow-[0_1px_2px_rgba(0,0,0,0.22),0_6px_18px_-10px_rgba(0,0,0,0.35),inset_0_1px_1px_rgba(255,255,255,0.2),inset_0_0_0_0.5px_rgba(255,255,255,0.12)]"
+          "dark:border-transparent dark:shadow-[0_1px_2px_rgba(0,0,0,0.22),0_6px_18px_-10px_rgba(0,0,0,0.35)]",
+          "[&>[aria-hidden]]:dark:opacity-30"
         )}
-        contentClassName="flex min-h-0 flex-1 flex-col divide-y divide-border/35 dark:divide-white/8"
+        contentClassName="flex min-h-0 flex-1 flex-col divide-y divide-border/35 dark:divide-white/6"
       >
         <div className="flex shrink-0 items-center gap-3 px-3.5 py-2.5 sm:px-4">
           <p className="min-w-0 flex-1 text-[11px] font-medium tracking-[0.08em] text-muted-foreground uppercase">
