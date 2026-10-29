@@ -20,6 +20,7 @@ import { WalletDepositSheet } from "@/components/desk/wallet-deposit-sheet"
 import { WalletWithdrawSheet } from "@/components/desk/wallet-withdraw-sheet"
 import { useAuth } from "@/components/auth/auth-provider"
 import { useUserAvatarUrl } from "@/hooks/use-user-avatar-url"
+import { usePathname, useRouter } from "@/i18n/navigation"
 import { displayPlanName } from "@/lib/billing/catalog"
 import { formatUsd } from "@/lib/desk-mock/format"
 import { useMockLedger, useMockWallet } from "@/lib/desk-mock/hooks"
@@ -30,14 +31,20 @@ import {
 } from "@/lib/landing-modern-styles"
 import { userAccountLabel, userAccountSubline } from "@/lib/user-profile"
 import { cn } from "@/lib/utils"
+import { useSearchParams } from "next/navigation"
 
 type ActivityFilter = "all" | "deposit" | "withdrawal"
 
+function isAwaitingTransfer(row: DeskLedgerEntry): boolean {
+  return row.kind === "deposit" && row.status === "pending" && row.amountUsd <= 0
+}
+
 function statusLabel(
-  status: DeskLedgerEntry["status"],
+  row: DeskLedgerEntry,
   t: ReturnType<typeof useTranslations<"deskProfile">>
 ): string {
-  switch (status) {
+  if (isAwaitingTransfer(row)) return t("statusAwaiting")
+  switch (row.status) {
     case "pending":
       return t("statusPending")
     case "confirming":
@@ -51,7 +58,7 @@ function statusLabel(
     case "cancelled":
       return t("statusCancelled")
     default:
-      return status
+      return row.status
   }
 }
 
@@ -106,9 +113,15 @@ function ActivityRow({ row }: { row: DeskLedgerEntry }) {
   const t = useTranslations("deskProfile")
   const inbound = row.kind === "deposit"
   const Icon = inbound ? ArrowDownToLineIcon : ArrowUpFromLineIcon
+  const awaiting = isAwaitingTransfer(row)
 
   return (
-    <li className="flex items-center gap-3 px-4 py-3.5 sm:px-5">
+    <li
+      className={cn(
+        "flex items-center gap-3 px-4 py-3.5 sm:px-5",
+        awaiting && "opacity-80"
+      )}
+    >
       <span
         className={cn(
           activityLiquidGlassClass,
@@ -120,14 +133,26 @@ function ActivityRow({ row }: { row: DeskLedgerEntry }) {
         <Icon className="relative z-10 size-4 stroke-[1.75]" />
       </span>
       <div className="min-w-0 flex-1">
-        <p className="truncate text-[15px] font-medium tracking-tight tabular-nums">
-          {formatUsd(row.amountUsd)}
-          <span className="ms-1.5 text-[12px] font-medium text-muted-foreground">
-            {row.currency}
-          </span>
+        <p
+          className={cn(
+            "truncate text-[15px] font-medium tracking-tight",
+            !awaiting && "tabular-nums"
+          )}
+        >
+          {awaiting ? (
+            t("amountAwaiting")
+          ) : (
+            <>
+              {formatUsd(row.amountUsd)}
+              <span className="ms-1.5 text-[12px] font-medium text-muted-foreground">
+                {row.currency}
+              </span>
+            </>
+          )}
         </p>
         <p className="mt-0.5 truncate text-[12px] text-muted-foreground">
           {inbound ? t("deposit") : t("withdraw")}
+          {row.network ? ` · ${row.network}` : null}
           {" · "}
           {new Date(row.createdAt).toLocaleString(undefined, {
             month: "short",
@@ -146,7 +171,7 @@ function ActivityRow({ row }: { row: DeskLedgerEntry }) {
               aria-hidden
             />
           ) : null}
-          {statusLabel(row.status, t)}
+          {statusLabel(row, t)}
         </span>
       </ActivityGlassChip>
     </li>
@@ -168,6 +193,25 @@ function ProfileView() {
   const [withdrawOpen, setWithdrawOpen] = React.useState(false)
   const [activityFilter, setActivityFilter] =
     React.useState<ActivityFilter>("all")
+  const searchParams = useSearchParams()
+  const pathname = usePathname()
+  const router = useRouter()
+  const depositRequested = searchParams.get("deposit") === "1"
+  const [handledDepositRequest, setHandledDepositRequest] =
+    React.useState(false)
+
+  // Open deposit sheet from ?deposit=1 without setState-in-effect.
+  if (depositRequested && !handledDepositRequest) {
+    setHandledDepositRequest(true)
+    setDepositOpen(true)
+  } else if (!depositRequested && handledDepositRequest) {
+    setHandledDepositRequest(false)
+  }
+
+  React.useEffect(() => {
+    if (!depositRequested) return
+    router.replace(pathname, { scroll: false })
+  }, [depositRequested, pathname, router])
 
   const rawPlan = user ? displayPlanName(user.tier) : "Free"
   const planName =
@@ -177,23 +221,48 @@ function ProfileView() {
         ? tw("planUltimate")
         : tw("planFree")
 
-  const activity = React.useMemo(() => {
+  const ledgerRows = React.useMemo(() => {
     const merged = [...deposits, ...withdrawals].sort((a, b) =>
       b.createdAt.localeCompare(a.createdAt)
     )
+    // Keep only the newest open invoice per currency+network — staging
+    // returns every create attempt with amount 0 as "observed".
+    const seenOpen = new Set<string>()
+    return merged.filter((row) => {
+      if (!isAwaitingTransfer(row)) return true
+      const key = `${row.currency}:${row.network ?? "any"}`
+      if (seenOpen.has(key)) return false
+      seenOpen.add(key)
+      return true
+    })
+  }, [deposits, withdrawals])
+
+  const activity = React.useMemo(() => {
     if (activityFilter === "deposit") {
-      return merged.filter((row) => row.kind === "deposit")
+      return ledgerRows.filter((row) => row.kind === "deposit")
     }
     if (activityFilter === "withdrawal") {
-      return merged.filter((row) => row.kind === "withdrawal")
+      return ledgerRows.filter((row) => row.kind === "withdrawal")
     }
-    return merged
-  }, [activityFilter, deposits, withdrawals])
+    return ledgerRows
+  }, [activityFilter, ledgerRows])
 
-  const filters: { id: ActivityFilter; label: string }[] = [
-    { id: "all", label: t("activityAll") },
-    { id: "deposit", label: t("deposits") },
-    { id: "withdrawal", label: t("withdrawals") },
+  const filters: { id: ActivityFilter; label: string; count: number }[] = [
+    {
+      id: "all",
+      label: t("activityAll"),
+      count: ledgerRows.length,
+    },
+    {
+      id: "deposit",
+      label: t("deposits"),
+      count: ledgerRows.filter((row) => row.kind === "deposit").length,
+    },
+    {
+      id: "withdrawal",
+      label: t("withdrawals"),
+      count: ledgerRows.filter((row) => row.kind === "withdrawal").length,
+    },
   ]
 
   if (walletLoading || ledgerLoading) {
@@ -247,8 +316,9 @@ function ProfileView() {
                   type="button"
                   role="tab"
                   aria-selected={active}
+                  aria-label={`${filter.label} ${filter.count}`}
                   className={cn(
-                    "relative z-10 inline-flex h-11 flex-1 items-center justify-center rounded-[1.1rem] px-3 text-[13px] leading-none transition-[background-color,color,box-shadow,border-color] duration-200",
+                    "relative z-10 inline-flex h-11 flex-1 items-center justify-center gap-1.5 rounded-[1.1rem] px-2.5 text-[13px] leading-none transition-[background-color,color,box-shadow,border-color] duration-200 sm:px-3",
                     active
                       ? cn(
                           "isolate overflow-hidden border border-white font-semibold text-foreground",
@@ -261,7 +331,17 @@ function ProfileView() {
                   )}
                   onClick={() => setActivityFilter(filter.id)}
                 >
-                  {filter.label}
+                  <span className="truncate">{filter.label}</span>
+                  <span
+                    className={cn(
+                      "inline-flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[11px] font-semibold tabular-nums leading-none",
+                      active
+                        ? "bg-[#2563EB]/14 text-[#1D4ED8] dark:bg-[#2563EB]/28 dark:text-[#93C5FD]"
+                        : "bg-black/[0.06] text-muted-foreground dark:bg-white/12"
+                    )}
+                  >
+                    {filter.count}
+                  </span>
                 </button>
               )
             })}

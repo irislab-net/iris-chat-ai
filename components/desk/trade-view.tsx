@@ -25,7 +25,11 @@ function TradeView() {
       className="gap-5 sm:gap-6"
     >
       <TradeSummaryCard balances={balances} />
-      <PositionList active={open} history={closed} />
+      <PositionList
+        active={open}
+        history={closed}
+        availableUsd={balances.availableUsd}
+      />
     </DeskPageFrame>
   )
 }

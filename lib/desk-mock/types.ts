@@ -46,6 +46,8 @@ export type DeskLedgerEntry = {
   kind: DeskLedgerKind
   amountUsd: number
   currency: "USDT" | "USDC"
+  /** Chain from route when known (TRC20 / BEP20 / ERC20). */
+  network?: string
   status: DeskLedgerStatus
   createdAt: string
   /** Mock NowPayments / payout address fragment for display. */

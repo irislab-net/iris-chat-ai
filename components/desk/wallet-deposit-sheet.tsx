@@ -139,14 +139,13 @@ function DepositBody({
     return NETWORKS.filter((name) => set.has(name))
   }, [currency, routes])
 
-  React.useEffect(() => {
-    if (!availableNetworks.length) return
-    if (!availableNetworks.includes(network as (typeof NETWORKS)[number])) {
-      setNetwork(availableNetworks[0]!)
-    }
-  }, [availableNetworks, network])
+  const activeNetwork =
+    availableNetworks.length > 0 &&
+    !availableNetworks.includes(network as (typeof NETWORKS)[number])
+      ? availableNetworks[0]!
+      : network
 
-  const selectedRoute = preferStableRoute(routes, currency, network)
+  const selectedRoute = preferStableRoute(routes, currency, activeNetwork)
   const amountNum = Number(amount)
   const canCreate =
     Boolean(selectedRoute) &&
@@ -205,7 +204,7 @@ function DepositBody({
               <p className="px-3 text-[12px] text-muted-foreground">
                 {t("depositRouteHint", {
                   currency,
-                  network: selectedRoute?.network ?? network,
+                  network: selectedRoute?.network ?? activeNetwork,
                   amount: amountNum.toLocaleString("en-US", {
                     minimumFractionDigits: 2,
                     maximumFractionDigits: 6,
@@ -240,7 +239,7 @@ function DepositBody({
                     ? availableNetworks
                     : [...NETWORKS]
                   ).map((name) => {
-                    const active = network === name
+                    const active = activeNetwork === name
                     return (
                       <button
                         key={name}

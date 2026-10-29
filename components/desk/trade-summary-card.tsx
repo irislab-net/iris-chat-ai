@@ -48,16 +48,20 @@ function TradeSummaryCard({
   const t = useTranslations("deskTrade")
   const { user, refresh } = useAuth()
   const labelId = React.useId()
+  const serverAutoTrade = user?.auto_trade_enabled
   const [autoTrade, setAutoTrade] = React.useState(
-    () => user?.auto_trade_enabled !== false
+    () => serverAutoTrade !== false
   )
+  const [syncedAutoTrade, setSyncedAutoTrade] = React.useState(serverAutoTrade)
   const [pending, setPending] = React.useState(false)
 
-  React.useEffect(() => {
-    if (typeof user?.auto_trade_enabled === "boolean") {
-      setAutoTrade(user.auto_trade_enabled)
+  // Adjust during render when auth refreshes auto-trade (avoids setState-in-effect).
+  if (serverAutoTrade !== syncedAutoTrade) {
+    setSyncedAutoTrade(serverAutoTrade)
+    if (typeof serverAutoTrade === "boolean") {
+      setAutoTrade(serverAutoTrade)
     }
-  }, [user?.auto_trade_enabled])
+  }
 
   async function onAutoTradeChange(next: boolean) {
     if (pending) return

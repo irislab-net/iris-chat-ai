@@ -1,5 +1,6 @@
 "use client"
 
+import type { ReactNode } from "react"
 import type { LucideIcon } from "lucide-react"
 
 import { landingGlassSheen } from "@/lib/landing-modern-styles"
@@ -10,11 +11,13 @@ function DeskEmptyState({
   icon: Icon,
   title,
   description,
+  action,
   className,
 }: {
   icon: LucideIcon
   title: string
   description?: string
+  action?: ReactNode
   className?: string
 }) {
   return (
@@ -46,6 +49,7 @@ function DeskEmptyState({
           {description}
         </p>
       ) : null}
+      {action ? <div className="mt-5">{action}</div> : null}
     </div>
   )
 }

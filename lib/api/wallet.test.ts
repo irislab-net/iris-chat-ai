@@ -5,6 +5,7 @@ import {
   mapLedgerStatus,
   mapMeBalance,
   mapMeLedgerRow,
+  networkFromRoute,
   totalBalanceUsd,
 } from "@/lib/api/wallet"
 
@@ -54,6 +55,8 @@ describe("wallet mapping", () => {
     expect(mapLedgerStatus("approved")).toBe("settled")
     expect(currencyFromRoute("usdt_trc20")).toBe("USDT")
     expect(currencyFromRoute("usdc_bep20")).toBe("USDC")
+    expect(networkFromRoute("usdt_trc20")).toBe("TRC20")
+    expect(networkFromRoute("usdc_bep20")).toBe("BEP20")
     expect(
       mapMeLedgerRow(
         {
@@ -70,6 +73,7 @@ describe("wallet mapping", () => {
       kind: "deposit",
       amountUsd: 11,
       currency: "USDT",
+      network: "BEP20",
       status: "pending",
     })
   })

@@ -145,14 +145,13 @@ function WithdrawBody({
     return NETWORKS.filter((name) => set.has(name))
   }, [routes])
 
-  React.useEffect(() => {
-    if (!availableNetworks.length) return
-    if (!availableNetworks.includes(network as (typeof NETWORKS)[number])) {
-      setNetwork(availableNetworks[0]!)
-    }
-  }, [availableNetworks, network])
+  const activeNetwork =
+    availableNetworks.length > 0 &&
+    !availableNetworks.includes(network as (typeof NETWORKS)[number])
+      ? availableNetworks[0]!
+      : network
 
-  const selectedRoute = preferStableRoute(routes, "USDT", network)
+  const selectedRoute = preferStableRoute(routes, "USDT", activeNetwork)
   const amountNum = Number(amount)
   const sliderValue = Number.isFinite(amountNum)
     ? Math.min(Math.max(amountNum, 0), maxUsd || 0)
@@ -567,7 +566,7 @@ function WithdrawBody({
             <div className="flex flex-wrap gap-2 px-3">
               {(availableNetworks.length ? availableNetworks : [...NETWORKS]).map(
                 (name) => {
-                  const active = network === name
+                  const active = activeNetwork === name
                   return (
                     <button
                       key={name}
@@ -612,7 +611,7 @@ function WithdrawBody({
                     setFieldHint(null)
                     setAddress(e.target.value)
                   }}
-                  placeholder={network === "TRC20" ? "T…" : "0x…"}
+                  placeholder={activeNetwork === "TRC20" ? "T…" : "0x…"}
                   className={cn(
                     "h-12 border-0 bg-transparent ps-2 pe-1.5 font-mono tracking-tight shadow-none focus-visible:ring-0",
                     "text-[16px]! max-md:text-[16px]!",

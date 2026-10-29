@@ -284,18 +284,15 @@ function ProfileSkeleton() {
             aria-hidden
             className={cn(landingGlassSheen, "rounded-[inherit]")}
           />
-          <div className="relative z-10 flex items-start justify-between gap-2.5">
-            <div className="flex min-w-0 items-center gap-2.5">
-              <DeskBone
-                stagger={1}
-                className="size-[3.25rem] shrink-0 rounded-full"
-              />
-              <div className="min-w-0 space-y-1.5">
-                <DeskBone stagger={1} className="h-3.5 w-28 rounded-full" />
-                <DeskBone stagger={1} className="h-2.5 w-36 rounded-full" />
-              </div>
+          <div className="relative z-10 flex items-start gap-2.5">
+            <DeskBone
+              stagger={1}
+              className="size-[3.25rem] shrink-0 rounded-full"
+            />
+            <div className="min-w-0 space-y-1.5">
+              <DeskBone stagger={1} className="h-3.5 w-28 rounded-full" />
+              <DeskBone stagger={1} className="h-2.5 w-36 rounded-full" />
             </div>
-            <DeskBone stagger={1} className="h-6 w-14 shrink-0 rounded-full" />
           </div>
 
           <div className="relative z-10 mt-4 min-w-0 ps-1 pe-14 @[18rem]/desk-wallet:mt-4.5 @[18rem]/desk-wallet:pe-16">

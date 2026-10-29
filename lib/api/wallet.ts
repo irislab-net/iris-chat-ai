@@ -117,6 +117,14 @@ export function currencyFromRoute(
   return "USDT"
 }
 
+export function networkFromRoute(route: string): string | undefined {
+  const lower = route.toLowerCase()
+  if (lower.includes("trc20")) return "TRC20"
+  if (lower.includes("bep20")) return "BEP20"
+  if (lower.includes("erc20")) return "ERC20"
+  return undefined
+}
+
 export function mapMeLedgerRow(
   row: MeLedgerRow,
   kind: DeskLedgerEntry["kind"]
@@ -128,6 +136,7 @@ export function mapMeLedgerRow(
     kind,
     amountUsd: parseUsd(row.amount),
     currency: currencyFromRoute(row.route),
+    network: networkFromRoute(row.route),
     status: mapLedgerStatus(row.status),
     createdAt: row.createdAt,
     reference: reference || undefined,

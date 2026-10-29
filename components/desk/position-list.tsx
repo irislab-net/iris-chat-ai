@@ -9,9 +9,11 @@ import {
 } from "lucide-react"
 import { useTranslations } from "next-intl"
 
+import { chatMobilePrimaryButtonClass } from "@/components/app-shell/chat-mobile-gemini-styles"
 import { MarketAssetLogo } from "@/components/dashboard/market-asset-logo"
 import { DeskEmptyState } from "@/components/desk/desk-empty-state"
 import { DeskGlassCard } from "@/components/desk/desk-page-frame"
+import { Link } from "@/i18n/navigation"
 import {
   formatPrice,
   formatRoe,
@@ -241,12 +243,15 @@ function PositionCard({
 function PositionList({
   active,
   history,
+  availableUsd = 0,
 }: {
   active: DeskPosition[]
   history: DeskPosition[]
+  availableUsd?: number
 }) {
   const t = useTranslations("deskTrade")
   const [tab, setTab] = React.useState<"active" | "history">("active")
+  const needsFunding = tab === "active" && availableUsd <= 0
 
   const rows = React.useMemo(
     () =>
@@ -344,7 +349,24 @@ function PositionList({
           icon={tab === "active" ? ActivityIcon : LayersIcon}
           title={tab === "active" ? t("emptyActiveTitle") : t("emptyHistoryTitle")}
           description={
-            tab === "active" ? t("emptyActive") : t("emptyHistory")
+            tab === "active"
+              ? needsFunding
+                ? t("emptyActiveUnfunded")
+                : t("emptyActive")
+              : t("emptyHistory")
+          }
+          action={
+            needsFunding ? (
+              <Link
+                href="/profile?deposit=1"
+                className={cn(
+                  "inline-flex h-10 items-center justify-center rounded-full px-5 text-[13px] font-semibold",
+                  chatMobilePrimaryButtonClass
+                )}
+              >
+                {t("emptyFundCta")}
+              </Link>
+            ) : undefined
           }
         />
       ) : (
