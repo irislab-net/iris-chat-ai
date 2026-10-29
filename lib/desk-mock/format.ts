@@ -52,6 +52,15 @@ export function formatRoe(pnl: number, margin: number): string {
   return formatPct((pnl / margin) * 100)
 }
 
+export function formatLeverage(leverage: number | null | undefined): string {
+  if (leverage == null || !Number.isFinite(leverage) || leverage <= 0) {
+    return "—"
+  }
+  const rounded =
+    leverage >= 10 ? Math.round(leverage) : Math.round(leverage * 10) / 10
+  return `${rounded}×`
+}
+
 export function pnlToneClass(value: number): string {
   if (value > 0) return "text-emerald-600 dark:text-emerald-400"
   if (value < 0) return "text-rose-600 dark:text-rose-400"

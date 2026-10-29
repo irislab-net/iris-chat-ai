@@ -49,7 +49,7 @@ describe("wallet mapping", () => {
 
   it("maps ledger statuses and routes", () => {
     expect(mapLedgerStatus("observed")).toBe("pending")
-    expect(mapLedgerStatus("pending_review")).toBe("pending")
+    expect(mapLedgerStatus("pending_review")).toBe("reviewing")
     expect(mapLedgerStatus("confirming")).toBe("confirming")
     expect(mapLedgerStatus("credited")).toBe("credited")
     expect(mapLedgerStatus("approved")).toBe("settled")
@@ -75,6 +75,27 @@ describe("wallet mapping", () => {
       currency: "USDT",
       network: "BEP20",
       status: "pending",
+    })
+    expect(
+      mapMeLedgerRow(
+        {
+          id: "w1",
+          status: "pending_review",
+          route: "usdt_bep20",
+          amount: "10.000000",
+          createdAt: "2026-10-29T21:23:19.581402Z",
+          destinationAddress: "0xabc123def4567890abcdef",
+        },
+        "withdrawal"
+      )
+    ).toMatchObject({
+      id: "w1",
+      kind: "withdrawal",
+      amountUsd: 10,
+      currency: "USDT",
+      network: "BEP20",
+      status: "reviewing",
+      reference: "0xabc123def4567890abcdef",
     })
   })
 })

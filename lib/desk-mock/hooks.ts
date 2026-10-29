@@ -3,7 +3,11 @@
 import * as React from "react"
 
 import { getStoredAccessToken } from "@/lib/api/auth"
-import { fetchDeskPositions } from "@/lib/api/market-account"
+import {
+  buildMarkPriceLookup,
+  enrichOpenPositionsWithMarks,
+  fetchDeskPositions,
+} from "@/lib/api/market-account"
 import { fetchDeskLedger, fetchDeskWalletBalances } from "@/lib/api/wallet"
 import { DESK_WALLET_CHANGED } from "@/lib/desk-events"
 import {
@@ -125,6 +129,17 @@ function useMockPositions(): {
       if (!getStoredAccessToken()) setLoading(false)
     }, DESK_SOFT_BOOT_MS)
 
+    async function pullMarks(): Promise<Map<string, number>> {
+      try {
+        const res = await fetch("/api/market/mids", { cache: "no-store" })
+        if (!res.ok) return new Map()
+        const data = (await res.json()) as MidsPayload
+        return buildMarkPriceLookup(data)
+      } catch {
+        return new Map()
+      }
+    }
+
     async function pull(isBoot: boolean) {
       if (!getStoredAccessToken()) {
         if (!cancelled) {
@@ -135,9 +150,12 @@ function useMockPositions(): {
         return
       }
       try {
-        const next = await fetchDeskPositions()
+        const [next, marks] = await Promise.all([
+          fetchDeskPositions(),
+          pullMarks(),
+        ])
         if (cancelled) return
-        setOpen(next.open)
+        setOpen(enrichOpenPositionsWithMarks(next.open, marks))
         setClosed(next.closed)
       } catch {
         // Keep last good / empty snapshot.

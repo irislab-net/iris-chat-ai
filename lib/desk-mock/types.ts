@@ -8,6 +8,7 @@ export type DeskLedgerKind = "deposit" | "withdrawal"
 
 export type DeskLedgerStatus =
   | "pending"
+  | "reviewing"
   | "confirming"
   | "credited"
   | "settled"
@@ -32,11 +33,14 @@ export type DeskPosition = {
   entryPrice: number
   markPrice: number
   marginUsd: number
+  /** Notional / margin when known (account ledger does not send leverage). */
+  leverage: number | null
   unrealizedPnlUsd: number
   realizedPnlUsd: number
   feeUsd: number
   takeProfit: number | null
   stopLoss: number | null
+  liquidationPrice: number | null
   openedAt: string
   closedAt: string | null
 }

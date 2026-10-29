@@ -7,7 +7,7 @@ import {
   Loader2Icon,
   ReceiptTextIcon,
 } from "lucide-react"
-import { useTranslations } from "next-intl"
+import { useLocale, useTranslations } from "next-intl"
 
 import { DeskEmptyState } from "@/components/desk/desk-empty-state"
 import {
@@ -15,6 +15,7 @@ import {
   DeskPageFrame,
 } from "@/components/desk/desk-page-frame"
 import { ProfileSkeleton } from "@/components/desk/desk-skeletons"
+import { WalletActivityDetailSheet } from "@/components/desk/wallet-activity-detail-sheet"
 import { WalletBankCard } from "@/components/desk/wallet-bank-card"
 import { WalletDepositSheet } from "@/components/desk/wallet-deposit-sheet"
 import { WalletWithdrawSheet } from "@/components/desk/wallet-withdraw-sheet"
@@ -22,7 +23,7 @@ import { useAuth } from "@/components/auth/auth-provider"
 import { useUserAvatarUrl } from "@/hooks/use-user-avatar-url"
 import { usePathname, useRouter } from "@/i18n/navigation"
 import { displayPlanName } from "@/lib/billing/catalog"
-import { formatUsd } from "@/lib/desk-mock/format"
+import { formatUsd, pnlToneClass } from "@/lib/desk-mock/format"
 import { useMockLedger, useMockWallet } from "@/lib/desk-mock/hooks"
 import type { DeskLedgerEntry } from "@/lib/desk-mock/types"
 import {
@@ -47,12 +48,14 @@ function statusLabel(
   switch (row.status) {
     case "pending":
       return t("statusPending")
+    case "reviewing":
+      return t("statusReviewing")
     case "confirming":
       return t("statusConfirming")
     case "credited":
       return t("statusCredited")
     case "settled":
-      return t("statusSettled")
+      return row.kind === "withdrawal" ? t("statusApproved") : t("statusSettled")
     case "failed":
       return t("statusFailed")
     case "cancelled":
@@ -68,6 +71,7 @@ function statusToneClass(status: DeskLedgerEntry["status"]): string {
     case "settled":
       return "bg-emerald-500/18 text-emerald-700 dark:bg-emerald-500/22 dark:text-emerald-300"
     case "confirming":
+    case "reviewing":
       return "bg-[#2563EB]/18 text-[#1D4ED8] dark:bg-[#2563EB]/28 dark:text-[#93C5FD]"
     case "pending":
       return "bg-amber-500/18 text-amber-800 dark:bg-amber-500/22 dark:text-amber-200"
@@ -77,6 +81,23 @@ function statusToneClass(status: DeskLedgerEntry["status"]): string {
     default:
       return "bg-white/52 text-muted-foreground dark:bg-white/10"
   }
+}
+
+function formatLedgerRelativeWhen(iso: string, locale: string): string {
+  const then = new Date(iso).getTime()
+  if (!Number.isFinite(then)) return ""
+  const diffMs = then - Date.now()
+  const diffSec = Math.round(diffMs / 1000)
+  const abs = Math.abs(diffSec)
+  const rtf = new Intl.RelativeTimeFormat(locale, { numeric: "always" })
+  if (abs < 60) return rtf.format(diffSec, "second")
+  if (abs < 3600) return rtf.format(Math.round(diffSec / 60), "minute")
+  if (abs < 86_400) return rtf.format(Math.round(diffSec / 3600), "hour")
+  if (abs < 86_400 * 30) return rtf.format(Math.round(diffSec / 86_400), "day")
+  if (abs < 86_400 * 365) {
+    return rtf.format(Math.round(diffSec / (86_400 * 30)), "month")
+  }
+  return rtf.format(Math.round(diffSec / (86_400 * 365)), "year")
 }
 
 /** Liquid glass pill — white rim + outer lift + inset specular. */
@@ -109,71 +130,102 @@ function ActivityGlassChip({
   )
 }
 
-function ActivityRow({ row }: { row: DeskLedgerEntry }) {
+function ActivityCard({
+  row,
+  onOpen,
+}: {
+  row: DeskLedgerEntry
+  onOpen: (row: DeskLedgerEntry) => void
+}) {
   const t = useTranslations("deskProfile")
+  const locale = useLocale()
   const inbound = row.kind === "deposit"
   const Icon = inbound ? ArrowDownToLineIcon : ArrowUpFromLineIcon
   const awaiting = isAwaitingTransfer(row)
+  const label = statusLabel(row, t)
+  const when = formatLedgerRelativeWhen(row.createdAt, locale)
 
   return (
-    <li
-      className={cn(
-        "flex items-center gap-3 px-4 py-3.5 sm:px-5",
-        awaiting && "opacity-80"
-      )}
-    >
-      <span
-        className={cn(
-          activityLiquidGlassClass,
-          "flex size-9 shrink-0 items-center justify-center bg-white/55 text-foreground/70 dark:bg-white/12 dark:text-foreground/75"
-        )}
-        aria-hidden
-      >
-        <span aria-hidden className={cn(landingGlassSheen, "rounded-full")} />
-        <Icon className="relative z-10 size-4 stroke-[1.75]" />
-      </span>
-      <div className="min-w-0 flex-1">
-        <p
+    <li>
+      <DeskGlassCard className="p-0 sm:p-0">
+        <button
+          type="button"
+          onClick={() => onOpen(row)}
+          aria-label={`${t("activityOpenDetails")}: ${
+            inbound ? t("deposit") : t("withdraw")
+          } ${label}`}
           className={cn(
-            "truncate text-[15px] font-medium tracking-tight",
-            !awaiting && "tabular-nums"
+            "flex w-full items-start gap-3 px-4 py-3.5 text-start sm:px-5",
+            awaiting && "opacity-80"
           )}
         >
-          {awaiting ? (
-            t("amountAwaiting")
-          ) : (
-            <>
-              {formatUsd(row.amountUsd)}
-              <span className="ms-1.5 text-[12px] font-medium text-muted-foreground">
-                {row.currency}
-              </span>
-            </>
-          )}
-        </p>
-        <p className="mt-0.5 truncate text-[12px] text-muted-foreground">
-          {inbound ? t("deposit") : t("withdraw")}
-          {row.network ? ` · ${row.network}` : null}
-          {" · "}
-          {new Date(row.createdAt).toLocaleString(undefined, {
-            month: "short",
-            day: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
-          })}
-          {row.reference ? ` · ${row.reference}` : null}
-        </p>
-      </div>
-      <ActivityGlassChip className={statusToneClass(row.status)}>
-        <span className="inline-flex items-center gap-1">
-          {row.status === "confirming" ? (
-            <Loader2Icon
-              className="size-3 shrink-0 animate-spin"
+          <span
+            className={cn(
+              activityLiquidGlassClass,
+              "mt-0.5 flex size-9 shrink-0 items-center justify-center bg-white/55 text-foreground/70 dark:bg-white/12 dark:text-foreground/75"
+            )}
+            aria-hidden
+          >
+            <span
               aria-hidden
+              className={cn(landingGlassSheen, "rounded-full")}
             />
-          ) : null}
-          {statusLabel(row, t)}
-        </span>
-      </ActivityGlassChip>
+            <Icon className="relative z-10 size-4 stroke-[1.75]" />
+          </span>
+          <div className="min-w-0 flex-1 space-y-1">
+            <div className="flex items-start justify-between gap-2">
+              <p
+                className={cn(
+                  "min-w-0 text-[15px] font-medium tracking-tight",
+                  !awaiting && "tabular-nums",
+                  !awaiting &&
+                    pnlToneClass(
+                      inbound ? row.amountUsd : -Math.abs(row.amountUsd)
+                    )
+                )}
+              >
+                {awaiting ? (
+                  <span className="text-muted-foreground/70">—</span>
+                ) : (
+                  <>
+                    {inbound
+                      ? formatUsd(row.amountUsd, { signed: true })
+                      : formatUsd(-Math.abs(row.amountUsd), {
+                          signed: true,
+                        })}
+                    <span className="ms-1.5 text-[11px] font-normal text-muted-foreground/55">
+                      {row.currency}
+                    </span>
+                  </>
+                )}
+              </p>
+              <ActivityGlassChip className={statusToneClass(row.status)}>
+                <span className="inline-flex items-center gap-1">
+                  {row.status === "confirming" ||
+                  row.status === "reviewing" ? (
+                    <Loader2Icon
+                      className="size-3 shrink-0 animate-spin"
+                      aria-hidden
+                    />
+                  ) : null}
+                  {label}
+                </span>
+              </ActivityGlassChip>
+            </div>
+            <div className="flex items-baseline justify-between gap-2">
+              <p className="min-w-0 truncate text-[12px] leading-snug text-muted-foreground">
+                {inbound ? t("deposit") : t("withdraw")}
+                {row.network ? ` · ${row.network}` : null}
+              </p>
+              {when ? (
+                <p className="shrink-0 text-[12px] leading-snug text-muted-foreground tabular-nums">
+                  {when}
+                </p>
+              ) : null}
+            </div>
+          </div>
+        </button>
+      </DeskGlassCard>
     </li>
   )
 }
@@ -191,6 +243,8 @@ function ProfileView() {
   } = useMockLedger()
   const [depositOpen, setDepositOpen] = React.useState(false)
   const [withdrawOpen, setWithdrawOpen] = React.useState(false)
+  const [selectedActivity, setSelectedActivity] =
+    React.useState<DeskLedgerEntry | null>(null)
   const [activityFilter, setActivityFilter] =
     React.useState<ActivityFilter>("all")
   const searchParams = useSearchParams()
@@ -372,13 +426,15 @@ function ProfileView() {
               }
             />
           ) : (
-            <DeskGlassCard className="divide-y divide-border/35 p-0 sm:p-0 dark:divide-white/8">
-              <ul className="relative z-10">
-                {activity.map((row) => (
-                  <ActivityRow key={row.id} row={row} />
-                ))}
-              </ul>
-            </DeskGlassCard>
+            <ul className="flex flex-col gap-2.5">
+              {activity.map((row) => (
+                <ActivityCard
+                  key={row.id}
+                  row={row}
+                  onOpen={setSelectedActivity}
+                />
+              ))}
+            </ul>
           )}
         </section>
       </DeskPageFrame>
@@ -388,6 +444,16 @@ function ProfileView() {
         open={withdrawOpen}
         onOpenChange={setWithdrawOpen}
         availableUsd={balances.availableUsd}
+      />
+      <WalletActivityDetailSheet
+        entry={selectedActivity}
+        open={selectedActivity != null}
+        onOpenChange={(open) => {
+          if (!open) setSelectedActivity(null)
+        }}
+        statusLabel={
+          selectedActivity ? statusLabel(selectedActivity, t) : ""
+        }
       />
     </>
   )

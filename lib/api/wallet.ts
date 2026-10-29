@@ -84,6 +84,10 @@ export function mapLedgerStatus(status: string): DeskLedgerStatus {
     case "confirming_chain":
     case "processing":
       return "confirming"
+    case "pending_review":
+    case "review":
+    case "under_review":
+      return "reviewing"
     case "credited":
     case "completed":
     case "complete":
@@ -102,11 +106,102 @@ export function mapLedgerStatus(status: string): DeskLedgerStatus {
       return "cancelled"
     case "observed":
     case "pending":
-    case "pending_review":
     case "waiting":
     default:
       return "pending"
   }
+}
+
+const LEDGER_ADDRESS_KEY = "exur.desk.ledger-addresses"
+/** @deprecated migrated into LEDGER_ADDRESS_KEY */
+const LEGACY_WITHDRAWAL_DEST_KEY = "exur.desk.withdrawal-destinations"
+
+function ledgerAddressStorageKey(
+  kind: DeskLedgerEntry["kind"],
+  id: string
+): string {
+  return `${kind}:${id}`
+}
+
+function readStoredLedgerAddresses(): Record<string, string> {
+  if (typeof window === "undefined") return {}
+  const out: Record<string, string> = {}
+  try {
+    const raw = window.localStorage.getItem(LEDGER_ADDRESS_KEY)
+    if (raw) {
+      const parsed = JSON.parse(raw) as unknown
+      if (isRecord(parsed)) {
+        for (const [key, value] of Object.entries(parsed)) {
+          if (typeof value === "string" && value.trim()) out[key] = value.trim()
+        }
+      }
+    }
+  } catch {
+    // ignore
+  }
+  // One-time migrate legacy withdrawal-only cache.
+  try {
+    const legacy = window.localStorage.getItem(LEGACY_WITHDRAWAL_DEST_KEY)
+    if (legacy) {
+      const parsed = JSON.parse(legacy) as unknown
+      if (isRecord(parsed)) {
+        for (const [id, value] of Object.entries(parsed)) {
+          if (typeof value !== "string" || !value.trim()) continue
+          const key = ledgerAddressStorageKey("withdrawal", id)
+          if (!out[key]) out[key] = value.trim()
+        }
+      }
+    }
+  } catch {
+    // ignore
+  }
+  return out
+}
+
+/** History list omits addresses — keep them from the create response. */
+export function rememberLedgerAddress(
+  kind: DeskLedgerEntry["kind"],
+  id: string,
+  address: string
+): void {
+  if (typeof window === "undefined") return
+  const trimmed = address.trim()
+  if (!id || !trimmed) return
+  try {
+    const next = {
+      ...readStoredLedgerAddresses(),
+      [ledgerAddressStorageKey(kind, id)]: trimmed,
+    }
+    window.localStorage.setItem(LEDGER_ADDRESS_KEY, JSON.stringify(next))
+  } catch {
+    // Quota / private mode — row still works without the cached address.
+  }
+}
+
+/** @deprecated use rememberLedgerAddress("withdrawal", …) */
+export function rememberWithdrawalDestination(
+  id: string,
+  destinationAddress: string
+): void {
+  rememberLedgerAddress("withdrawal", id, destinationAddress)
+}
+
+export function lookupLedgerAddress(
+  kind: DeskLedgerEntry["kind"],
+  id: string
+): string | undefined {
+  return readStoredLedgerAddresses()[ledgerAddressStorageKey(kind, id)]
+}
+
+/** @deprecated use lookupLedgerAddress("withdrawal", …) */
+export function lookupWithdrawalDestination(id: string): string | undefined {
+  return lookupLedgerAddress("withdrawal", id)
+}
+
+export function shortenLedgerReference(value: string): string {
+  const trimmed = value.trim()
+  if (trimmed.length <= 14) return trimmed
+  return `${trimmed.slice(0, 6)}…${trimmed.slice(-4)}`
 }
 
 export function currencyFromRoute(
@@ -129,8 +224,9 @@ export function mapMeLedgerRow(
   row: MeLedgerRow,
   kind: DeskLedgerEntry["kind"]
 ): DeskLedgerEntry {
-  const reference =
-    row.destinationAddress ?? row.address ?? undefined
+  const fromApi = row.destinationAddress ?? row.address ?? undefined
+  const fromStore = !fromApi ? lookupLedgerAddress(kind, row.id) : undefined
+  const reference = fromApi || fromStore || undefined
   return {
     id: row.id,
     kind,
@@ -180,25 +276,40 @@ function parsePnl(body: unknown): AccountPnl {
   }
 }
 
+function mapLedgerApiRow(row: Record<string, unknown>): MeLedgerRow | null {
+  const id = readString(row, "id")
+  if (!id) return null
+  return {
+    id,
+    status: readString(row, "status") ?? "pending",
+    route: readString(row, "route") ?? "",
+    amount: readString(row, "amount") ?? "0",
+    createdAt:
+      readString(row, "createdAt") ??
+      readString(row, "created_at") ??
+      new Date(0).toISOString(),
+    address: readString(row, "address") ?? readString(row, "pay_address"),
+    destinationAddress:
+      readString(row, "destinationAddress") ??
+      readString(row, "destination_address") ??
+      readString(row, "to_address"),
+  }
+}
+
 function parseLedgerRows(
   body: unknown,
   key: "deposits" | "withdrawals"
 ): MeLedgerRow[] {
-  if (Array.isArray(body)) {
-    return body.filter(isRecord).map((row) => ({
-      id: readString(row, "id") ?? "",
-      status: readString(row, "status") ?? "pending",
-      route: readString(row, "route") ?? "",
-      amount: readString(row, "amount") ?? "0",
-      createdAt: readString(row, "createdAt") ?? new Date(0).toISOString(),
-      address: readString(row, "address"),
-      destinationAddress: readString(row, "destinationAddress"),
-    })).filter((row) => row.id)
-  }
-  if (!isRecord(body)) return []
-  const list = body[key]
+  const list = Array.isArray(body)
+    ? body
+    : isRecord(body) && Array.isArray(body[key])
+      ? body[key]
+      : null
   if (!Array.isArray(list)) return []
-  return parseLedgerRows(list, key)
+  return list
+    .filter(isRecord)
+    .map(mapLedgerApiRow)
+    .filter((row): row is MeLedgerRow => row != null)
 }
 
 export async function fetchMeBalance(): Promise<MeBalance> {
@@ -297,6 +408,7 @@ function pickDepositInvoice(body: unknown): MeDepositInvoice {
   if (!id || !address) {
     throw Object.assign(new Error("invalid deposit response"), { status: 500 })
   }
+  rememberLedgerAddress("deposit", id, address)
   return {
     id,
     status: readString(body, "status") ?? "observed",
@@ -365,14 +477,18 @@ export async function createMeWithdrawal(input: {
       status: 500,
     })
   }
+  const destinationAddress =
+    readString(body, "destinationAddress") ??
+    readString(body, "destination_address") ??
+    input.destinationAddress
+  rememberLedgerAddress("withdrawal", id, destinationAddress)
   return {
     id,
     status: readString(body, "status") ?? "pending_review",
     route: readString(body, "route") ?? input.route,
     amount: readString(body, "amount") ?? formatUsdAmount(input.amountUsd),
     createdAt: readString(body, "createdAt") ?? new Date().toISOString(),
-    destinationAddress:
-      readString(body, "destinationAddress") ?? input.destinationAddress,
+    destinationAddress,
   }
 }
 

@@ -180,7 +180,7 @@ function PositionCardSkeleton({
       {expanded ? (
         <div className="px-4 pt-1 pb-4">
           <div className="grid grid-cols-2 gap-x-4 gap-y-3 sm:grid-cols-4 sm:gap-x-3">
-            {Array.from({ length: 6 }, (_, index) => (
+            {Array.from({ length: 8 }, (_, index) => (
               <div key={index} className="min-w-0 space-y-1">
                 <DeskBone stagger={3} className="h-2.5 w-8 rounded-full" />
                 <DeskBone stagger={3} className="h-3 w-full rounded-full" />
@@ -297,15 +297,6 @@ function ProfileSkeleton() {
               stagger={2}
               className="mt-2 h-7 w-[min(11rem,70%)] rounded-full sm:h-8"
             />
-          </div>
-
-          <div className="relative z-10 mt-4 grid grid-cols-3 gap-2 px-1 @[18rem]/desk-wallet:mt-4.5 @[18rem]/desk-wallet:gap-3">
-            {Array.from({ length: 3 }, (_, index) => (
-              <div key={index} className="min-w-0 space-y-1.5">
-                <DeskBone stagger={2} className="h-2 w-12 rounded-full" />
-                <DeskBone stagger={2} className="h-3 w-16 rounded-full" />
-              </div>
-            ))}
           </div>
 
           <div className="relative z-10 mt-4 grid grid-cols-2 gap-2 @[18rem]/desk-wallet:mt-4.5">

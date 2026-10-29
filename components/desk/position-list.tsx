@@ -15,6 +15,7 @@ import { DeskEmptyState } from "@/components/desk/desk-empty-state"
 import { DeskGlassCard } from "@/components/desk/desk-page-frame"
 import { Link } from "@/i18n/navigation"
 import {
+  formatLeverage,
   formatPrice,
   formatRoe,
   formatUsd,
@@ -123,7 +124,10 @@ function PositionCard({
           pnlToneClass(pnl)
         )}
       >
-        {formatUsd(pnl, { signed: true })}
+        {formatUsd(pnl, {
+          signed: true,
+          digits: Math.abs(pnl) > 0 && Math.abs(pnl) < 0.01 ? 4 : 2,
+        })}
       </p>
       {collapsible ? (
         <ChevronDownIcon
@@ -139,13 +143,29 @@ function PositionCard({
 
   const positionCardShellClass = "p-0"
 
+  const openedLabel = new Date(position.openedAt).toLocaleString(undefined, {
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  })
+
+  // Match header title start: px-4 + logo (size-7) + gap-2
+  const detailsInlineStartClass = "ps-[calc(1rem+1.75rem+0.5rem)] pe-4"
+
   const details = (
-    <div className={cn("px-4 pb-4", collapsible ? "pt-1" : "pt-0")}>
+    <div
+      className={cn(
+        detailsInlineStartClass,
+        "pb-4",
+        collapsible ? "pt-1" : "pt-0"
+      )}
+    >
       <div className="grid grid-cols-2 gap-x-4 gap-y-3 sm:grid-cols-4 sm:gap-x-3">
         <Meta
           label={t("size")}
           value={position.size.toLocaleString("en-US", {
-            maximumFractionDigits: 4,
+            maximumFractionDigits: 6,
           })}
         />
         <Meta
@@ -166,6 +186,24 @@ function PositionCard({
               )}
               valueClassName={pnlToneClass(position.unrealizedPnlUsd)}
             />
+            <Meta
+              label={t("margin")}
+              value={formatUsd(position.marginUsd)}
+            />
+            <Meta
+              label={t("leverage")}
+              value={formatLeverage(position.leverage)}
+            />
+            {position.liquidationPrice != null ? (
+              <Meta
+                label={t("liq")}
+                value={formatPrice(
+                  position.liquidationPrice,
+                  position.instrument
+                )}
+                valueClassName="text-rose-700 dark:text-rose-300"
+              />
+            ) : null}
             {position.takeProfit != null ? (
               <Meta
                 label={t("tp")}
@@ -188,9 +226,23 @@ function PositionCard({
               value={formatPrice(position.markPrice, position.instrument)}
             />
             <Meta label={t("fees")} value={formatUsd(position.feeUsd)} />
+            <Meta
+              label={t("margin")}
+              value={formatUsd(position.marginUsd)}
+            />
+            <Meta
+              label={t("leverage")}
+              value={formatLeverage(position.leverage)}
+            />
           </>
         )}
       </div>
+
+      {mode === "active" ? (
+        <p className="mt-3 text-[12px] text-muted-foreground">
+          {t("openedAt", { date: openedLabel })}
+        </p>
+      ) : null}
 
       {mode === "history" && position.closedAt ? (
         <p className="mt-3 text-[12px] text-muted-foreground">
