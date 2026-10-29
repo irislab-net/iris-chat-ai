@@ -17,6 +17,8 @@ export type User = {
   wallet_address?: string | null
   tier: UserTier
   role: string
+  /** Desk auto-trade flag from user-manager (`POST /v1/me/auto-trade`). */
+  auto_trade_enabled?: boolean
   trial_started_at?: string | null
   trial_ends_at?: string | null
   pro_expires_at?: string | null

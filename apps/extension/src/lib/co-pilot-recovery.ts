@@ -8,6 +8,10 @@ import { isGuestChatSession } from "@/lib/chat-auth-session"
 
 /** User-facing copy for recoverable co-pilot failures (no status codes / stack traces). */
 export const COPILOT_RECOVERY_MESSAGE =
+  "Something went wrong while getting your reply. Please try again."
+
+/** Older EN sentinel still present in stored sessions / locales. */
+const COPILOT_RECOVERY_MESSAGE_LEGACY =
   "Something went wrong while receiving the response."
 
 export const COPILOT_TIMEOUT_MESSAGE =
@@ -37,8 +41,43 @@ export const COPILOT_PRO_SESSION_REFRESH_MESSAGE =
 export const COPILOT_AUTH_MESSAGE =
   "Sign in with Google to get answers from Exur. You can explore prompts and typing first."
 
+/** Access/refresh failed — user must sign in again (not a silent retry). */
+export const COPILOT_SESSION_EXPIRED_MESSAGE =
+  "Your session expired. Sign in with Google to keep chatting."
+
 export const COPILOT_TRIAL_EXHAUSTED_MESSAGE =
   "Your free messages this week are used up. Sign in to continue."
+
+/** Sheet title keys under workspace.chatError.* */
+export type CoPilotErrorTitleKey =
+  | "default"
+  | "network"
+  | "timeout"
+  | "server"
+  | "session"
+  | "stream"
+
+/** Internal API/stream phrases — never show these to users. */
+function isInternalApiFailureMessage(message: string): boolean {
+  const msg = message.trim()
+  if (!msg) return false
+  if (isChatRetryableFailureMessage(msg)) return true
+  return (
+    /^chat request failed$/i.test(msg) ||
+    /^chat stream failed$/i.test(msg) ||
+    /^request failed(?:\s+\d+)?$/i.test(msg)
+  )
+}
+
+function messageLooksLikeAuthFailure(message: string): boolean {
+  const msg = message.trim()
+  if (!msg) return false
+  if (/^(unauthorized|invalid[_\s-]?token)$/i.test(msg)) return true
+  if (/token expired|session expired|jwt expired|not authenticated/i.test(msg)) {
+    return true
+  }
+  return false
+}
 
 /** Map stored English error sentinels to workspace.errors.* translation keys. */
 export function localizeCoPilotErrorText(
@@ -64,15 +103,43 @@ export function localizeCoPilotErrorText(
       return t("errors.proSessionRefresh")
     case COPILOT_AUTH_MESSAGE:
       return t("errors.auth")
+    case COPILOT_SESSION_EXPIRED_MESSAGE:
+      return t("errors.sessionExpired")
     case COPILOT_TRIAL_EXHAUSTED_MESSAGE:
       return t("errors.trialExhausted")
     case COPILOT_RECOVERY_MESSAGE:
+    case COPILOT_RECOVERY_MESSAGE_LEGACY:
     case undefined:
     case "":
       return t("errors.recovery")
     default:
-      // API/stream messages (e.g. "agent execution failed") — show as returned.
+      // Technical / internal phrases from older sessions → generic recovery.
+      if (isInternalApiFailureMessage(text) || !sanitizeApiErrorMessage(text)) {
+        return t("errors.recovery")
+      }
       return text
+  }
+}
+
+export function localizeCoPilotErrorTitle(
+  titleKey: CoPilotErrorTitleKey | undefined,
+  tChatError: (key: string) => string
+): string {
+  switch (titleKey) {
+    case "network":
+      return tChatError("titleNetwork")
+    case "timeout":
+      return tChatError("titleTimeout")
+    case "server":
+      return tChatError("titleServer")
+    case "session":
+      return tChatError("titleSession")
+    case "stream":
+      return tChatError("titleStream")
+    case "default":
+    case undefined:
+    default:
+      return tChatError("title")
   }
 }
 
@@ -98,6 +165,7 @@ function sanitizeApiErrorMessage(message: string): string | null {
   const msg = message.trim().replace(/\s+/g, " ")
   if (!msg || msg.length > 280) return null
   if (isUnsafeTechnicalErrorMessage(msg)) return null
+  if (isInternalApiFailureMessage(msg)) return null
   if (/^failed to fetch$/i.test(msg)) return null
   if (/^networkerror/i.test(msg)) return null
   if (/streaming response has no body/i.test(msg)) return null
@@ -186,6 +254,24 @@ export function isCreditExhaustedError(error: unknown): boolean {
   return false
 }
 
+/**
+ * Auth/session failures that need Sign in — not Try again.
+ * Detect via status/code/message so we stay correct even after
+ * AUTH_SESSION_EXPIRED clears registeredUserId mid-request.
+ */
+export function isAuthSessionError(error: unknown): boolean {
+  if (isGuestTrialExhaustedError(error)) return false
+  const status = (error as { status?: number } | null)?.status
+  const code = coPilotErrorCode(error)
+  if (status === 401 || code === "unauthorized" || code === "invalid_token") {
+    return true
+  }
+  if (error instanceof Error && messageLooksLikeAuthFailure(error.message)) {
+    return true
+  }
+  return false
+}
+
 export function coPilotUserFacingError(
   error: unknown,
   _options?: { isProUser?: boolean }
@@ -196,13 +282,12 @@ export function coPilotUserFacingError(
     return COPILOT_SIGNAL_SYMBOL_REQUIRED_MESSAGE
   }
   const status = (error as { status?: number } | null)?.status
-  const code = coPilotErrorCode(error)
   // Guests: sign-in copy for login_required and mis-tagged credit/paywall codes.
   if (isGuestTrialExhaustedError(error)) {
     return COPILOT_TRIAL_EXHAUSTED_MESSAGE
   }
-  if (status === 401 || code === "unauthorized" || code === "invalid_token") {
-    return COPILOT_AUTH_MESSAGE
+  if (isAuthSessionError(error)) {
+    return COPILOT_SESSION_EXPIRED_MESSAGE
   }
   // Real credit/limit codes (incl. Plus daily/weekly caps). Session refresh after
   // upgrade is handled silently in withCreditSessionRetry — never show that CTA here.
@@ -233,17 +318,70 @@ export function coPilotUserFacingError(
     ) {
       return COPILOT_STREAM_INTERRUPTED_MESSAGE
     }
-    if (/^HTTP\s+\d+/i.test(msg) || (status != null && status >= 500)) {
+    // 404 = chat API missing/misconfigured upstream; 5xx = server fault.
+    if (
+      /^HTTP\s+\d+/i.test(msg) ||
+      (status != null && (status === 404 || status >= 500))
+    ) {
       return COPILOT_SERVER_MESSAGE
     }
 
-    // Prefer the real API/stream reason (agent failed, invalid command, …).
+    // Prefer a safe human reason; internal phrases fall through to recovery.
     const safe = sanitizeApiErrorMessage(msg)
     if (safe) return safe
   }
 
-  if (status != null && status >= 500) return COPILOT_SERVER_MESSAGE
+  if (status != null && (status === 404 || status >= 500)) {
+    return COPILOT_SERVER_MESSAGE
+  }
   return COPILOT_RECOVERY_MESSAGE
+}
+
+/** Title variant for the chat error sheet — matched to the failure kind. */
+export function coPilotErrorTitleKey(error: unknown): CoPilotErrorTitleKey {
+  if (isAbortError(error)) return "default"
+  if (isTimeoutError(error)) return "timeout"
+  if (isGuestTrialExhaustedError(error) || isAuthSessionError(error)) {
+    return "session"
+  }
+
+  const status = (error as { status?: number } | null)?.status
+  if (error instanceof Error) {
+    const msg = error.message.trim()
+    if (/failed to fetch/i.test(msg) || /^networkerror/i.test(msg)) {
+      return "network"
+    }
+    if (/network/i.test(msg) && !sanitizeApiErrorMessage(msg)) {
+      return "network"
+    }
+    if (
+      /streaming response has no body/i.test(msg) ||
+      /^stream closed without done$/i.test(msg)
+    ) {
+      return "stream"
+    }
+    if (
+      /^HTTP\s+\d+/i.test(msg) ||
+      (status != null && (status === 404 || status >= 500))
+    ) {
+      return "server"
+    }
+  }
+  if (status != null && (status === 404 || status >= 500)) return "server"
+
+  const facing = coPilotUserFacingError(error)
+  if (facing === COPILOT_NETWORK_MESSAGE) return "network"
+  if (facing === COPILOT_TIMEOUT_MESSAGE) return "timeout"
+  if (facing === COPILOT_SERVER_MESSAGE) return "server"
+  if (facing === COPILOT_STREAM_INTERRUPTED_MESSAGE) return "stream"
+  if (
+    facing === COPILOT_SESSION_EXPIRED_MESSAGE ||
+    facing === COPILOT_AUTH_MESSAGE ||
+    facing === COPILOT_TRIAL_EXHAUSTED_MESSAGE
+  ) {
+    return "session"
+  }
+  return "default"
 }
 
 export type FailedAssistantTurn = {
@@ -364,14 +502,10 @@ export function coPilotFailureAction(
   _options?: { isProUser?: boolean }
 ): "connect" | "retry" | undefined {
   if (isGuestTrialExhaustedError(error)) return "connect"
-  const status = (error as { status?: number } | null)?.status
-  const code = coPilotErrorCode(error)
-  if (
-    (status === 401 || code === "unauthorized" || code === "invalid_token") &&
-    !isGuestChatSession()
-  ) {
-    return "connect"
-  }
+  // Always Sign in for auth/session failures — do not gate on isGuestChatSession().
+  // AUTH_SESSION_EXPIRED clears registeredUserId before the catch runs, so a
+  // guest check here would wrongly turn session-expiry into "Try again".
+  if (isAuthSessionError(error)) return "connect"
   // Out-of-credit / period limit: paywall only — retrying will not help (Plus included).
   if (isCreditExhaustedError(error)) {
     return undefined

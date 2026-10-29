@@ -906,7 +906,8 @@
       "proSessionRefresh": "خطة Plus نشطة، لكن هذه الجلسة تحتاج إلى تحديث. حاول مجددًا.",
       "auth": "سجّل الدخول عبر Google للحصول على إجابات من Exur. يمكنك استكشاف الاقتراحات أولًا.",
       "trialExhausted": "لتقديم تحليل أعمق وحفظ تفضيلاتك السوقية، يحتاج Exur إلى جلسة مؤمّنة. سجّل الدخول عبر Google للمتابعة.",
-      "signalSymbolRequired": "الإشارة تحتاج سوقًا — أضف شيئًا مثل ETH أو BTC بعد /Signal."
+      "signalSymbolRequired": "الإشارة تحتاج سوقًا — أضف شيئًا مثل ETH أو BTC بعد /Signal.",
+      "sessionExpired": "انتهت جلستك. سجّل الدخول عبر Google لمتابعة المحادثة."
     },
     "creditsExhausted": {
       "title": "نفد رصيدك",
@@ -978,7 +979,12 @@
     "chatError": {
       "title": "تعذّر إكمال الرد",
       "dismiss": "إغلاق",
-      "retrying": "إعادة المحاولة…"
+      "retrying": "إعادة المحاولة…",
+      "titleNetwork": "تحقق من اتصالك",
+      "titleTimeout": "استغرق الأمر وقتًا طويلًا",
+      "titleServer": "واجه Exur مشكلة",
+      "titleSession": "سجّل الدخول للمتابعة",
+      "titleStream": "انقطع الرد"
     },
     "regenerate": "إعادة التوليد",
     "regenerateResponse": "إعادة توليد الرد",

@@ -1,20 +1,23 @@
 import { describe, expect, it } from "vitest"
 
 import {
-  COPILOT_AUTH_MESSAGE,
   COPILOT_CREDIT_MESSAGE,
   COPILOT_EMPTY_REPLY_MESSAGE,
   COPILOT_NETWORK_MESSAGE,
+  COPILOT_RECOVERY_MESSAGE,
   COPILOT_SERVER_MESSAGE,
+  COPILOT_SESSION_EXPIRED_MESSAGE,
   COPILOT_SIGNAL_SYMBOL_REQUIRED_MESSAGE,
   COPILOT_STREAM_INTERRUPTED_MESSAGE,
   COPILOT_TIMEOUT_MESSAGE,
   COPILOT_TRIAL_EXHAUSTED_MESSAGE,
   buildFailedAssistantTurn,
+  coPilotErrorTitleKey,
   coPilotFailureAction,
   coPilotUserFacingError,
   getRetryUserMessage,
   isAbortError,
+  isAuthSessionError,
   isCreditExhaustedError,
   isGuestTrialExhaustedError,
   isLowSignalUserMessage,
@@ -109,17 +112,25 @@ describe("co-pilot recovery helpers", () => {
     ]) {
       const err = Object.assign(new Error(message), { code: "" })
       expect(isCreditExhaustedError(err)).toBe(false)
-      expect(coPilotUserFacingError(err)).toBe(
-        message.charAt(0).toUpperCase() + message.slice(1)
-      )
+      expect(coPilotUserFacingError(err)).toBe(COPILOT_RECOVERY_MESSAGE)
       expect(coPilotFailureAction(err)).toBe("retry")
     }
   })
 
-  it("surfaces the real API error reason instead of generic recovery copy", () => {
-    expect(
-      coPilotUserFacingError(new Error("agent execution failed"))
-    ).toBe("Agent execution failed")
+  it("maps internal API failure phrases to friendly recovery copy", () => {
+    for (const message of [
+      "Chat request failed",
+      "chat request failed",
+      "Chat stream failed",
+      "agent execution failed",
+      "failed to reserve credit",
+      "request failed",
+      "request failed 500",
+    ]) {
+      expect(coPilotUserFacingError(new Error(message))).toBe(
+        COPILOT_RECOVERY_MESSAGE
+      )
+    }
     expect(
       coPilotUserFacingError(
         Object.assign(new Error("invalid_command"), { code: "invalid_command" })
@@ -140,21 +151,56 @@ describe("co-pilot recovery helpers", () => {
     )
   })
 
-  it("maps 401 to sign-in copy and connect action for registered users", () => {
+  it("maps 401 to session-expired copy and connect action for registered users", () => {
     setChatRegisteredUserId("user-123")
     const err = Object.assign(new Error("unauthorized"), { status: 401 })
-    expect(coPilotUserFacingError(err)).toBe(COPILOT_AUTH_MESSAGE)
+    expect(isAuthSessionError(err)).toBe(true)
+    expect(coPilotUserFacingError(err)).toBe(COPILOT_SESSION_EXPIRED_MESSAGE)
     expect(coPilotFailureAction(err)).toBe("connect")
+    expect(coPilotErrorTitleKey(err)).toBe("session")
     expect(coPilotFailureAction(new Error("HTTP 502"))).toBe("retry")
     setChatRegisteredUserId(null)
   })
 
-  it("maps guest 401 to retry instead of forced sign-in", () => {
+  it("keeps connect for 401 even after registeredUserId is cleared (session-expiry race)", () => {
+    // AUTH_SESSION_EXPIRED clears registeredUserId before the chat catch runs.
     setChatRegisteredUserId(null)
     const err = Object.assign(new Error("invalid_token"), {
       status: 401,
       code: "invalid_token",
     })
+    expect(isAuthSessionError(err)).toBe(true)
+    expect(coPilotUserFacingError(err)).toBe(COPILOT_SESSION_EXPIRED_MESSAGE)
+    expect(coPilotFailureAction(err)).toBe("connect")
+    expect(coPilotErrorTitleKey(err)).toBe("session")
+  })
+
+  it("maps token-expired message text to session connect CTA", () => {
+    const err = new Error("token expired")
+    expect(isAuthSessionError(err)).toBe(true)
+    expect(coPilotUserFacingError(err)).toBe(COPILOT_SESSION_EXPIRED_MESSAGE)
+    expect(coPilotFailureAction(err)).toBe("connect")
+  })
+
+  it("picks title keys for transport failures", () => {
+    expect(coPilotErrorTitleKey(new Error("Failed to fetch"))).toBe("network")
+    expect(coPilotErrorTitleKey(new Error("HTTP 502"))).toBe("server")
+    expect(
+      coPilotErrorTitleKey(
+        Object.assign(new Error("timed out"), { name: "TimeoutError" })
+      )
+    ).toBe("timeout")
+    expect(coPilotErrorTitleKey(new Error("agent execution failed"))).toBe(
+      "default"
+    )
+  })
+
+  it("maps upstream 404 (missing chat API) to server copy, not generic recovery", () => {
+    const err = Object.assign(new Error("Chat request failed"), {
+      status: 404,
+    })
+    expect(coPilotUserFacingError(err)).toBe(COPILOT_SERVER_MESSAGE)
+    expect(coPilotErrorTitleKey(err)).toBe("server")
     expect(coPilotFailureAction(err)).toBe("retry")
   })
 

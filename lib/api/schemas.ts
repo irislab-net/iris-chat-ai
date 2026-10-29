@@ -25,6 +25,7 @@ export const userSchema = z
     wallet_address: z.string().nullish(),
     tier: z.enum(["free", "pro", "ultimate"]),
     role: z.string(),
+    auto_trade_enabled: z.boolean().optional(),
     trial_started_at: z.string().nullish(),
     trial_ends_at: z.string().nullish(),
     pro_expires_at: z.string().nullish(),

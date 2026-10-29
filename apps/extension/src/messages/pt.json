@@ -602,7 +602,8 @@
       "proSessionRefresh": "Seu plano Plus está ativo, mas esta sessão precisa ser atualizada. Tente de novo.",
       "auth": "Entre com o Google para obter respostas do Exur. Você pode explorar prompts primeiro.",
       "trialExhausted": "Para oferecer análise mais profunda e guardar as suas preferências de mercado, o Exur exige uma sessão segura. Entre com o Google para continuar.",
-      "signalSymbolRequired": "O Signal precisa de um mercado — adicione algo como ETH ou BTC após /Signal."
+      "signalSymbolRequired": "O Signal precisa de um mercado — adicione algo como ETH ou BTC após /Signal.",
+      "sessionExpired": "A sua sessão expirou. Inicie sessão com o Google para continuar."
     },
     "creditsExhausted": {
       "title": "Seus créditos acabaram",
@@ -651,7 +652,12 @@
     "chatError": {
       "title": "Não foi possível concluir a resposta",
       "dismiss": "Fechar",
-      "retrying": "A tentar novamente…"
+      "retrying": "A tentar novamente…",
+      "titleNetwork": "Verifique a ligação",
+      "titleTimeout": "Demorou demasiado",
+      "titleServer": "A Exur teve um problema",
+      "titleSession": "Inicie sessão para continuar",
+      "titleStream": "A resposta foi interrompida"
     },
     "regenerate": "Regenerar",
     "regenerateResponse": "Regenerar resposta",

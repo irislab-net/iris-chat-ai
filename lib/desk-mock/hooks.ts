@@ -2,11 +2,14 @@
 
 import * as React from "react"
 
+import { getStoredAccessToken } from "@/lib/api/auth"
+import { fetchDeskPositions } from "@/lib/api/market-account"
+import { fetchDeskLedger, fetchDeskWalletBalances } from "@/lib/api/wallet"
+import { DESK_WALLET_CHANGED } from "@/lib/desk-events"
 import {
   MOCK_LEDGER,
   MOCK_MARKETS,
   MOCK_NOWPAYMENTS_ADDRESS,
-  MOCK_POSITIONS,
   MOCK_WALLET,
 } from "@/lib/desk-mock/fixtures"
 import type {
@@ -18,6 +21,8 @@ import type {
 } from "@/lib/desk-mock/types"
 
 const MIDS_POLL_MS = 30_000
+const WALLET_POLL_MS = 15_000
+const POSITIONS_POLL_MS = 15_000
 const DESK_SOFT_BOOT_MS = 720
 const MARKETS_BOOT_MAX_MS = 1_200
 
@@ -53,8 +58,53 @@ function useMockWallet(): {
   balances: DeskWalletBalances
   loading: boolean
 } {
-  const loading = useDeskSoftBoot()
-  return { balances: MOCK_WALLET, loading }
+  const [balances, setBalances] = React.useState(MOCK_WALLET)
+  const [loading, setLoading] = React.useState(true)
+
+  React.useEffect(() => {
+    let cancelled = false
+    let softBootDone = false
+
+    const softBoot = window.setTimeout(() => {
+      softBootDone = true
+      if (!getStoredAccessToken()) setLoading(false)
+    }, DESK_SOFT_BOOT_MS)
+
+    async function pull(isBoot: boolean) {
+      if (!getStoredAccessToken()) {
+        if (!cancelled) {
+          setBalances(MOCK_WALLET)
+          if (isBoot || softBootDone) setLoading(false)
+        }
+        return
+      }
+      try {
+        const next = await fetchDeskWalletBalances()
+        if (cancelled) return
+        setBalances(next)
+      } catch {
+        // Keep last good / mock snapshot.
+      } finally {
+        if (!cancelled && (isBoot || softBootDone)) setLoading(false)
+      }
+    }
+
+    void pull(true)
+    const id = window.setInterval(() => void pull(false), WALLET_POLL_MS)
+    const onFocus = () => void pull(false)
+    const onWallet = () => void pull(false)
+    window.addEventListener("focus", onFocus)
+    window.addEventListener(DESK_WALLET_CHANGED, onWallet)
+    return () => {
+      cancelled = true
+      window.clearTimeout(softBoot)
+      window.clearInterval(id)
+      window.removeEventListener("focus", onFocus)
+      window.removeEventListener(DESK_WALLET_CHANGED, onWallet)
+    }
+  }, [])
+
+  return { balances, loading }
 }
 
 function useMockPositions(): {
@@ -62,15 +112,52 @@ function useMockPositions(): {
   closed: DeskPosition[]
   loading: boolean
 } {
-  const loading = useDeskSoftBoot()
-  const open = React.useMemo(
-    () => MOCK_POSITIONS.filter((p) => p.status === "open"),
-    []
-  )
-  const closed = React.useMemo(
-    () => MOCK_POSITIONS.filter((p) => p.status === "closed"),
-    []
-  )
+  const [open, setOpen] = React.useState<DeskPosition[]>([])
+  const [closed, setClosed] = React.useState<DeskPosition[]>([])
+  const [loading, setLoading] = React.useState(true)
+
+  React.useEffect(() => {
+    let cancelled = false
+    let softBootDone = false
+
+    const softBoot = window.setTimeout(() => {
+      softBootDone = true
+      if (!getStoredAccessToken()) setLoading(false)
+    }, DESK_SOFT_BOOT_MS)
+
+    async function pull(isBoot: boolean) {
+      if (!getStoredAccessToken()) {
+        if (!cancelled) {
+          setOpen([])
+          setClosed([])
+          if (isBoot || softBootDone) setLoading(false)
+        }
+        return
+      }
+      try {
+        const next = await fetchDeskPositions()
+        if (cancelled) return
+        setOpen(next.open)
+        setClosed(next.closed)
+      } catch {
+        // Keep last good / empty snapshot.
+      } finally {
+        if (!cancelled && (isBoot || softBootDone)) setLoading(false)
+      }
+    }
+
+    void pull(true)
+    const id = window.setInterval(() => void pull(false), POSITIONS_POLL_MS)
+    const onFocus = () => void pull(false)
+    window.addEventListener("focus", onFocus)
+    return () => {
+      cancelled = true
+      window.clearTimeout(softBoot)
+      window.clearInterval(id)
+      window.removeEventListener("focus", onFocus)
+    }
+  }, [])
+
   return { open, closed, loading }
 }
 
@@ -79,15 +166,59 @@ function useMockLedger(): {
   withdrawals: DeskLedgerEntry[]
   loading: boolean
 } {
-  const loading = useDeskSoftBoot()
-  const deposits = React.useMemo(
-    () => MOCK_LEDGER.filter((e) => e.kind === "deposit"),
-    []
+  const [deposits, setDeposits] = React.useState(
+    () => MOCK_LEDGER.filter((e) => e.kind === "deposit")
   )
-  const withdrawals = React.useMemo(
-    () => MOCK_LEDGER.filter((e) => e.kind === "withdrawal"),
-    []
+  const [withdrawals, setWithdrawals] = React.useState(
+    () => MOCK_LEDGER.filter((e) => e.kind === "withdrawal")
   )
+  const [loading, setLoading] = React.useState(true)
+
+  React.useEffect(() => {
+    let cancelled = false
+    let softBootDone = false
+
+    const softBoot = window.setTimeout(() => {
+      softBootDone = true
+      if (!getStoredAccessToken()) setLoading(false)
+    }, DESK_SOFT_BOOT_MS)
+
+    async function pull(isBoot: boolean) {
+      if (!getStoredAccessToken()) {
+        if (!cancelled) {
+          setDeposits([])
+          setWithdrawals([])
+          if (isBoot || softBootDone) setLoading(false)
+        }
+        return
+      }
+      try {
+        const next = await fetchDeskLedger()
+        if (cancelled) return
+        setDeposits(next.deposits)
+        setWithdrawals(next.withdrawals)
+      } catch {
+        // Keep last good / empty snapshot.
+      } finally {
+        if (!cancelled && (isBoot || softBootDone)) setLoading(false)
+      }
+    }
+
+    void pull(true)
+    const id = window.setInterval(() => void pull(false), WALLET_POLL_MS)
+    const onFocus = () => void pull(false)
+    const onWallet = () => void pull(false)
+    window.addEventListener("focus", onFocus)
+    window.addEventListener(DESK_WALLET_CHANGED, onWallet)
+    return () => {
+      cancelled = true
+      window.clearTimeout(softBoot)
+      window.clearInterval(id)
+      window.removeEventListener("focus", onFocus)
+      window.removeEventListener(DESK_WALLET_CHANGED, onWallet)
+    }
+  }, [])
+
   return { deposits, withdrawals, loading }
 }
 

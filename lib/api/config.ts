@@ -7,7 +7,9 @@ import {
 
 export { CHAT_API_ORIGIN } from "@/lib/api/origins"
 
-export const API_BASE = "https://api.exur.ai"
+/** Google login / PKCE host. Override for staging local: NEXT_PUBLIC_API_ORIGIN. */
+export const API_BASE =
+  process.env.NEXT_PUBLIC_API_ORIGIN?.replace(/\/$/, "") || "https://api.exur.ai"
 
 /** Google OAuth web client ID — required for One Tap (GIS). */
 export function getGoogleClientId() {
@@ -34,6 +36,11 @@ export const AUTH_API_BASE = ""
 
 function resolveRequestHostname(hostname?: string | null): string | null {
   if (hostname) return hostname
+  // Prefer the live tab host. NEXT_PUBLIC_APP_URL is a production build default
+  // (chat.exur.ai) and must not force app=chat when developing on local.exur.ai.
+  if (typeof window !== "undefined") {
+    return window.location.hostname
+  }
   const fromEnv = process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "")
   if (fromEnv) {
     try {
@@ -41,9 +48,6 @@ function resolveRequestHostname(hostname?: string | null): string | null {
     } catch {
       /* fall through */
     }
-  }
-  if (typeof window !== "undefined") {
-    return window.location.hostname
   }
   return null
 }
@@ -65,13 +69,14 @@ export function isChatAppHost(hostname?: string | null) {
  * Apex and chat.exur.ai both serve the desk — stay same-origin when possible.
  */
 export function getAuthDestination() {
+  // Same-origin return for local / preview tabs. Do not bounce to NEXT_PUBLIC_APP_URL.
+  if (typeof window !== "undefined") {
+    return `${window.location.origin}/auth/success`
+  }
+
   const fromEnv = process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "")
   if (fromEnv) {
     return `${fromEnv}/auth/success`
-  }
-
-  if (typeof window !== "undefined") {
-    return `${window.location.origin}/auth/success`
   }
 
   return `${CHAT_APP_ORIGIN}/auth/success`

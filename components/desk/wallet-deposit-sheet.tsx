@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { CheckCircle2Icon, Loader2Icon } from "lucide-react"
+import { CheckCircle2Icon, DollarSignIcon, Loader2Icon } from "lucide-react"
 import { useTranslations } from "next-intl"
 
 import {
@@ -13,12 +13,15 @@ import {
   chatMobileSheetHandleClass,
   chatMobileSheetHeaderClass,
   chatMobileSheetPrimaryButtonClass,
+  chatMobileSheetSectionLabelClass,
   chatMobileSheetTitleClass,
 } from "@/components/app-shell/chat-mobile-gemini-styles"
 import { ChatSheetDoneCheck } from "@/components/app-shell/chat-sheet-done-check"
 import { DepositAddressCard } from "@/components/billing/deposit-address-card"
 import { PaymentMethodPicker } from "@/components/billing/payment-method-picker"
+import { WalletLiquidField } from "@/components/desk/wallet-liquid-field"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import type { PaymentCurrency } from "@/lib/billing/invoice-types"
 import {
   Dialog,
@@ -35,12 +38,21 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet"
 import { useIsDesktop } from "@/hooks/use-media-query"
-import { useMockDepositFlow } from "@/lib/desk-mock/hooks"
+import {
+  createMeDeposit,
+  fetchMeStableRoutes,
+  preferStableRoute,
+  type MeDepositInvoice,
+  type MeStableRoute,
+} from "@/lib/api/wallet"
+import { notifyDeskWalletChanged } from "@/lib/desk-events"
 import {
   landingGlassSheen,
   landingGlassSurface,
 } from "@/lib/landing-modern-styles"
 import { cn } from "@/lib/utils"
+
+const NETWORKS = ["TRC20", "BEP20", "ERC20"] as const
 
 function DepositWatchStatus({ confirming }: { confirming: boolean }) {
   const t = useTranslations("deskProfile")
@@ -86,73 +98,238 @@ function DepositBody({
   footerClassName?: string
 }) {
   const t = useTranslations("deskProfile")
-  const { invoice, startDeposit, markPaid } = useMockDepositFlow("USDT")
   const [currency, setCurrency] = React.useState<PaymentCurrency>("USDT")
+  const [network, setNetwork] = React.useState<string>("TRC20")
+  const [amount, setAmount] = React.useState("20")
+  const [routes, setRoutes] = React.useState<MeStableRoute[]>([])
+  const [invoice, setInvoice] = React.useState<MeDepositInvoice | null>(null)
+  const [loadingRoutes, setLoadingRoutes] = React.useState(true)
+  const [submitting, setSubmitting] = React.useState(false)
+  const [error, setError] = React.useState<string | null>(null)
 
-  const paid = invoice?.status === "paid"
-  const confirming = invoice?.status === "confirming"
-  const address = invoice?.payAddress ?? ""
+  React.useEffect(() => {
+    let cancelled = false
+    void (async () => {
+      try {
+        const next = await fetchMeStableRoutes()
+        if (cancelled) return
+        setRoutes(next)
+        const preferred = preferStableRoute(next, "USDT", "TRC20")
+        if (preferred) setNetwork(preferred.network)
+      } catch {
+        if (!cancelled) setError(t("depositError"))
+      } finally {
+        if (!cancelled) setLoadingRoutes(false)
+      }
+    })()
+    return () => {
+      cancelled = true
+    }
+  }, [t])
 
-  function onCurrencyChange(next: PaymentCurrency) {
-    if (paid) return
-    setCurrency(next)
-    startDeposit(next)
+  const availableNetworks = React.useMemo(() => {
+    const set = new Set(
+      routes
+        .filter(
+          (route) =>
+            route.enabled && route.token.toUpperCase() === currency.toUpperCase()
+        )
+        .map((route) => route.network.toUpperCase())
+    )
+    return NETWORKS.filter((name) => set.has(name))
+  }, [currency, routes])
+
+  React.useEffect(() => {
+    if (!availableNetworks.length) return
+    if (!availableNetworks.includes(network as (typeof NETWORKS)[number])) {
+      setNetwork(availableNetworks[0]!)
+    }
+  }, [availableNetworks, network])
+
+  const selectedRoute = preferStableRoute(routes, currency, network)
+  const amountNum = Number(amount)
+  const canCreate =
+    Boolean(selectedRoute) &&
+    Number.isFinite(amountNum) &&
+    amountNum > 0 &&
+    !submitting
+
+  async function onCreate() {
+    if (!selectedRoute || !canCreate) return
+    setSubmitting(true)
+    setError(null)
+    try {
+      const next = await createMeDeposit({
+        route: selectedRoute.code,
+        amountUsd: amountNum,
+      })
+      setInvoice(next)
+      notifyDeskWalletChanged()
+    } catch (err) {
+      const message =
+        err && typeof err === "object" && "body" in err
+          ? String(
+              (err as { body?: { error?: string } }).body?.error ??
+                t("depositError")
+            )
+          : t("depositError")
+      setError(message)
+    } finally {
+      setSubmitting(false)
+    }
   }
+
+  const confirming =
+    invoice?.status === "confirming" || invoice?.status === "confirming_chain"
+  const credited =
+    invoice?.status === "credited" ||
+    invoice?.status === "settled" ||
+    invoice?.status === "paid"
 
   return (
     <>
       <div className={cn(chatMobileSheetBodyClass, "overflow-y-auto pt-5")}>
         <div className="flex flex-col gap-4">
-          {!paid ? (
-            <>
-              <PaymentMethodPicker
-                currency={currency}
-                disabled={paid}
-                fullWidth
-                onCurrencyChange={onCurrencyChange}
-              />
-              {address ? (
-                <DepositAddressCard
-                  address={address}
-                  currency={currency}
-                  compact
-                />
-              ) : (
-                <div className="flex justify-center py-10">
-                  <Loader2Icon className="size-5 animate-spin text-muted-foreground" />
-                </div>
-              )}
-            </>
-          ) : (
+          {credited ? (
             <div className="flex flex-col items-center gap-2 py-8 text-center">
               <CheckCircle2Icon className="size-8 text-emerald-600 dark:text-emerald-400" />
               <p className="text-sm font-medium">{t("depositPaid")}</p>
             </div>
+          ) : invoice ? (
+            <>
+              <DepositAddressCard
+                address={invoice.address}
+                currency={currency}
+                compact
+              />
+              <p className="px-3 text-[12px] text-muted-foreground">
+                {t("depositRouteHint", {
+                  currency,
+                  network: selectedRoute?.network ?? network,
+                  amount: amountNum.toLocaleString("en-US", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 6,
+                  }),
+                })}
+              </p>
+              <DepositWatchStatus confirming={confirming} />
+            </>
+          ) : (
+            <>
+              <PaymentMethodPicker
+                currency={currency}
+                disabled={loadingRoutes || submitting}
+                fullWidth
+                onCurrencyChange={(next) => {
+                  setCurrency(next)
+                  setError(null)
+                }}
+              />
+
+              <div>
+                <p
+                  className={cn(
+                    chatMobileSheetSectionLabelClass,
+                    "mb-2 block px-3"
+                  )}
+                >
+                  {t("depositNetwork")}
+                </p>
+                <div className="flex flex-wrap gap-2 px-3">
+                  {(availableNetworks.length
+                    ? availableNetworks
+                    : [...NETWORKS]
+                  ).map((name) => {
+                    const active = network === name
+                    return (
+                      <button
+                        key={name}
+                        type="button"
+                        disabled={loadingRoutes || submitting}
+                        onClick={() => setNetwork(name)}
+                        className={cn(
+                          "rounded-full px-3 py-1.5 text-[12px] font-semibold transition-colors",
+                          active
+                            ? "bg-[#2563EB] text-white"
+                            : "bg-white/55 text-foreground/70 dark:bg-white/10"
+                        )}
+                      >
+                        {name}
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+
+              <div>
+                <label
+                  className={cn(
+                    chatMobileSheetSectionLabelClass,
+                    "mb-2 block px-3"
+                  )}
+                  htmlFor="desk-deposit-amount"
+                >
+                  {t("depositAmount")}
+                </label>
+                <WalletLiquidField className="flex items-center ps-3 pe-1.5">
+                  <DollarSignIcon
+                    className="relative z-10 size-4 shrink-0 stroke-[1.75] text-foreground/35"
+                    aria-hidden
+                  />
+                  <Input
+                    id="desk-deposit-amount"
+                    type="number"
+                    min={1}
+                    step="0.01"
+                    value={amount}
+                    disabled={loadingRoutes || submitting}
+                    onChange={(e) => setAmount(e.target.value)}
+                    className="relative z-10 h-12 min-w-0 flex-1 border-0 bg-transparent ps-2 pe-3 text-[16px]! shadow-none focus-visible:ring-0 max-md:text-[16px]!"
+                  />
+                </WalletLiquidField>
+              </div>
+
+              {loadingRoutes ? (
+                <div className="flex justify-center py-6">
+                  <Loader2Icon className="size-5 animate-spin text-muted-foreground" />
+                </div>
+              ) : null}
+            </>
           )}
-          {!paid && address ? (
-            <DepositWatchStatus confirming={confirming} />
+
+          {error ? (
+            <p className="px-3 text-[12px] text-destructive" role="alert">
+              {error}
+            </p>
           ) : null}
         </div>
       </div>
 
       <div className={cn(chatMobileSheetFooterClass, "shrink-0", footerClassName)}>
         <div className={cn(chatMobileSheetFooterBarClass, "pt-3 pb-0")}>
-          {!paid ? (
-            <Button
-              type="button"
-              className={chatMobileSheetPrimaryButtonClass}
-              disabled={!address}
-              onClick={markPaid}
-            >
-              {t("depositIvePaid")}
-            </Button>
-          ) : (
+          {credited || invoice ? (
             <Button
               type="button"
               className={chatMobileSheetPrimaryButtonClass}
               onClick={onClose}
             >
               {t("done")}
+            </Button>
+          ) : (
+            <Button
+              type="button"
+              className={chatMobileSheetPrimaryButtonClass}
+              disabled={!canCreate || loadingRoutes}
+              onClick={() => void onCreate()}
+            >
+              {submitting ? (
+                <>
+                  <Loader2Icon className="size-4 animate-spin" />
+                  {t("depositCreating")}
+                </>
+              ) : (
+                t("depositCreate")
+              )}
             </Button>
           )}
         </div>

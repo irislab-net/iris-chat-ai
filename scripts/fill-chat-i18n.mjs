@@ -113,13 +113,15 @@ const NEW_KEYS_EN = {
   minutesAgo: "{count}m ago",
   hoursAgo: "{count}h ago",
   errors: {
-    recovery: "Something went wrong while receiving the response.",
+    recovery: "Something went wrong while getting your reply. Please try again.",
     timeout:
       "Exur took too long to respond. Check your connection and try again.",
     credits: "You've used this period's chat credits. Upgrade to continue.",
     proSessionRefresh:
       "Your Plus plan is active, but this session needs a refresh. Try again.",
     auth: "Sign in with Google to get answers from Exur. You can explore prompts and typing first.",
+    sessionExpired:
+      "Your session expired. Sign in with Google to keep chatting.",
     trialExhausted:
       "Your free messages this week are used up. Sign in to continue.",
   },
@@ -329,7 +331,7 @@ const NEW_KEYS = {
     minutesAgo: "{count}د پیش",
     hoursAgo: "{count}س پیش",
     errors: {
-      recovery: "هنگام دریافت پاسخ مشکلی پیش آمد.",
+      recovery: "هنگام دریافت پاسخ مشکلی پیش آمد. دوباره تلاش کنید.",
       timeout:
         "Exur خیلی دیر پاسخ داد. اتصال را بررسی کن و دوباره امتحان کن.",
       credits:

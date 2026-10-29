@@ -1,4 +1,31 @@
+import { appendFile } from "node:fs/promises"
 import { CHAT_API_ORIGIN } from "@/lib/api/origins"
+
+const DEBUG_LOG_PATH =
+  "/Users/mohammad/project/work/iris-chat-ai/.cursor/debug-7c7463.log"
+
+async function agentDebugLog(
+  hypothesisId: string,
+  location: string,
+  message: string,
+  data: Record<string, unknown>
+) {
+  // #region agent log
+  const line = JSON.stringify({
+    sessionId: "7c7463",
+    hypothesisId,
+    location,
+    message,
+    data,
+    timestamp: Date.now(),
+  })
+  try {
+    await appendFile(DEBUG_LOG_PATH, `${line}\n`)
+  } catch {
+    /* ignore */
+  }
+  // #endregion
+}
 
 function normalizeApiPath(path: string): string {
   const [pathname] = path.split("?")
@@ -46,6 +73,12 @@ async function proxyChatRequest(
   try {
     res = await fetch(url, init)
   } catch {
+    await agentDebugLog(
+      "B",
+      "lib/api/chat-route.ts:proxyChatRequest",
+      "upstream fetch threw",
+      { method: req.method, apiPath, origin }
+    )
     return Response.json(
       {
         code: "upstream_unreachable",
@@ -58,6 +91,22 @@ async function proxyChatRequest(
       }
     )
   }
+
+  // #region agent log
+  await agentDebugLog(
+    res.status === 401 ? "A" : "B",
+    "lib/api/chat-route.ts:proxyChatRequest",
+    "chat upstream response",
+    {
+      method: req.method,
+      apiPath,
+      origin,
+      status: res.status,
+      hasAuthHeader: Boolean(authorization),
+      contentType: res.headers.get("content-type"),
+    }
+  )
+  // #endregion
 
   const responseHeaders = new Headers()
   responseHeaders.set("x-iris-chat-proxy", origin)

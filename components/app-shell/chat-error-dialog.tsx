@@ -7,16 +7,16 @@ import { useTranslations } from "next-intl"
 import {
   chatDesktopDialogClass,
   chatDesktopDialogFooterClass,
-  chatMobileSheetContentClass,
+  chatMobileSheetCompactContentClass,
   chatMobileSheetDescriptionClass,
   chatMobileSheetFooterBarClass,
   chatMobileSheetFooterClass,
   chatMobileSheetHandleClass,
   chatMobileSheetHeaderClass,
   chatMobileSheetPrimaryButtonClass,
-  chatMobileSheetSecondaryButtonClass,
   chatMobileSheetTitleClass,
 } from "@/components/app-shell/chat-mobile-gemini-styles"
+import { ChatSheetDoneCheck } from "@/components/app-shell/chat-sheet-done-check"
 import { GoogleGlyph } from "@/components/auth/google-glyph"
 import { Button } from "@/components/ui/button"
 import {
@@ -46,6 +46,8 @@ type ChatErrorDialogProps = {
   onOpenChange: (open: boolean) => void
   /** Localized / sanitized reason shown to the user. */
   message: string
+  /** Localized title matched to failure kind. */
+  title?: string
   action?: ChatErrorDialogAction
   retrying?: boolean
   signingIn?: boolean
@@ -57,6 +59,7 @@ function ChatErrorDialog({
   open,
   onOpenChange,
   message,
+  title,
   action = "retry",
   retrying = false,
   signingIn = false,
@@ -70,68 +73,58 @@ function ChatErrorDialog({
   if (isDesktop === null) return null
 
   const busy = retrying || signingIn
+  const close = () => onOpenChange(false)
+  const heading = title?.trim() || t("title")
 
-  const actions = (
-    <>
-      {action === "connect" ? (
-        <Button
-          type="button"
-          className={cn(
-            isDesktop
-              ? cn(landingCta("primary", "sm"), "rounded-full gap-2")
-              : cn(chatMobileSheetPrimaryButtonClass, "gap-2")
-          )}
-          disabled={busy}
-          onClick={() => {
-            onOpenChange(false)
-            onSignIn?.()
-          }}
-        >
-          <GoogleGlyph className="size-4 shrink-0" />
-          {signingIn ? tw("connecting") : tw("continueWithGoogle")}
-        </Button>
-      ) : (
-        <Button
-          type="button"
-          className={cn(
-            isDesktop
-              ? cn(landingCta("primary", "sm"), "rounded-full gap-2")
-              : cn(chatMobileSheetPrimaryButtonClass, "gap-2")
-          )}
-          disabled={busy || !onRetry}
-          onClick={() => {
-            onOpenChange(false)
-            onRetry?.()
-          }}
-        >
-          <RefreshCwIcon className="size-4 shrink-0" aria-hidden />
-          {retrying ? t("retrying") : tw("tryAgain")}
-        </Button>
-      )}
+  const primaryAction =
+    action === "connect" ? (
       <Button
         type="button"
         className={cn(
           isDesktop
-            ? cn(landingCta("secondary", "sm"), "rounded-full")
-            : chatMobileSheetSecondaryButtonClass
+            ? cn(landingCta("primary", "sm"), "rounded-full gap-2")
+            : cn(chatMobileSheetPrimaryButtonClass, "gap-2")
         )}
         disabled={busy}
-        onClick={() => onOpenChange(false)}
+        onClick={() => {
+          close()
+          onSignIn?.()
+        }}
       >
-        {t("dismiss")}
+        <GoogleGlyph className="size-4 shrink-0" />
+        {signingIn ? tw("connecting") : tw("continueWithGoogle")}
       </Button>
-    </>
-  )
+    ) : (
+      <Button
+        type="button"
+        className={cn(
+          isDesktop
+            ? cn(landingCta("primary", "sm"), "rounded-full gap-2")
+            : cn(chatMobileSheetPrimaryButtonClass, "gap-2")
+        )}
+        disabled={busy || !onRetry}
+        onClick={() => {
+          close()
+          onRetry?.()
+        }}
+      >
+        <RefreshCwIcon className="size-4 shrink-0" aria-hidden />
+        {retrying ? t("retrying") : tw("tryAgain")}
+      </Button>
+    )
 
   if (isDesktop) {
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className={chatDesktopDialogClass} showCloseButton>
-          <div className="flex flex-col gap-4 px-5 pt-5 pb-1">
-            <DialogHeader className="gap-2 space-y-0 text-start">
-              <DialogTitle className="font-heading text-[1.35rem] font-normal tracking-tight text-foreground">
-                {t("title")}
-              </DialogTitle>
+        <DialogContent className={chatDesktopDialogClass} showCloseButton={false}>
+          <div className="flex flex-col gap-3 px-5 pt-5 pb-1">
+            <DialogHeader className="gap-1.5 space-y-0 text-start">
+              <div className="flex items-center gap-2">
+                <DialogTitle className="min-w-0 flex-1 font-heading text-[1.35rem] font-normal tracking-tight text-foreground">
+                  {heading}
+                </DialogTitle>
+                <ChatSheetDoneCheck onClick={close} />
+              </div>
               <DialogDescription className="text-[13px] leading-relaxed text-pretty text-muted-foreground">
                 {message}
               </DialogDescription>
@@ -143,7 +136,7 @@ function ChatErrorDialog({
               "flex-col gap-2 sm:flex-col sm:justify-stretch"
             )}
           >
-            {actions}
+            {primaryAction}
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -154,21 +147,26 @@ function ChatErrorDialog({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side="bottom"
-        showCloseButton
-        className={cn(chatMobileSheetContentClass, "gap-0 border-0")}
+        showCloseButton={false}
+        className={cn(chatMobileSheetCompactContentClass, "gap-0 border-0")}
       >
         <div aria-hidden className={chatMobileSheetHandleClass} />
-        <SheetHeader className={cn(chatMobileSheetHeaderClass, "gap-2")}>
-          <SheetTitle className={chatMobileSheetTitleClass}>
-            {t("title")}
-          </SheetTitle>
+        <SheetHeader className={cn(chatMobileSheetHeaderClass, "gap-1.5 pe-5 pb-1")}>
+          <div className="flex items-center gap-2">
+            <SheetTitle
+              className={cn(chatMobileSheetTitleClass, "min-w-0 flex-1")}
+            >
+              {heading}
+            </SheetTitle>
+            <ChatSheetDoneCheck onClick={close} />
+          </div>
           <SheetDescription className={chatMobileSheetDescriptionClass}>
             {message}
           </SheetDescription>
         </SheetHeader>
-        <SheetFooter className={chatMobileSheetFooterClass}>
-          <div className={cn(chatMobileSheetFooterBarClass, "space-y-2 pt-4")}>
-            {actions}
+        <SheetFooter className={cn(chatMobileSheetFooterClass, "mt-0")}>
+          <div className={cn(chatMobileSheetFooterBarClass, "pt-5")}>
+            {primaryAction}
           </div>
         </SheetFooter>
       </SheetContent>

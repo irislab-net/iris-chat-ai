@@ -212,7 +212,7 @@ const chatMobileComposerDockClass =
 
 /** User bubble. */
 const chatMobileUserBubbleClass =
-  "w-full rounded-3xl border-0 bg-[#F9F9F9] px-5 py-3.5 text-[16px] font-normal leading-[1.45] tracking-normal text-foreground shadow-none dark:bg-secondary dark:text-secondary-foreground"
+  "w-full rounded-3xl border-0 bg-white px-5 py-3.5 text-[16px] font-normal leading-[1.45] tracking-normal text-foreground shadow-none dark:bg-secondary dark:text-secondary-foreground"
 
 const chatMobileUserBubbleInteractiveClass = `${chatMobileUserBubbleClass} outline-none transition-colors duration-150 hover:bg-[#F5F5F5] focus-within:bg-[#F5F5F5] dark:hover:bg-secondary/90 dark:focus-within:bg-secondary/90`
 

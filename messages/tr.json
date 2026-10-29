@@ -603,7 +603,8 @@
       "proSessionRefresh": "Plus planınız aktif, ancak bu oturumun yenilenmesi gerekiyor. Tekrar deneyin.",
       "auth": "Exur'dan yanıt almak için Google ile giriş yapın. Önce istemleri inceleyebilirsiniz.",
       "trialExhausted": "Daha derin analiz sunmak ve piyasa tercihlerinizi kaydetmek için Exur güvenli bir oturum gerektirir. Devam etmek için Google ile giriş yapın.",
-      "signalSymbolRequired": "Signal için bir piyasa gerekli — /Signal’dan sonra ETH veya BTC gibi bir varlık ekleyin."
+      "signalSymbolRequired": "Signal için bir piyasa gerekli — /Signal’dan sonra ETH veya BTC gibi bir varlık ekleyin.",
+      "sessionExpired": "Oturumunuz sona erdi. Sohbete devam için Google ile giriş yapın."
     },
     "creditsExhausted": {
       "title": "Krediniz bitti",
@@ -648,7 +649,12 @@
     "chatError": {
       "title": "Yanıt tamamlanamadı",
       "dismiss": "Kapat",
-      "retrying": "Yeniden deneniyor…"
+      "retrying": "Yeniden deneniyor…",
+      "titleNetwork": "Bağlantınızı kontrol edin",
+      "titleTimeout": "Çok uzun sürdü",
+      "titleServer": "Exur'da bir sorun oluştu",
+      "titleSession": "Devam etmek için giriş yapın",
+      "titleStream": "Yanıt kesildi"
     },
     "regenerate": "Regenerate",
     "regenerateResponse": "Regenerate response",

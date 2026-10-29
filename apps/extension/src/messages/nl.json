@@ -602,7 +602,8 @@
       "proSessionRefresh": "Je Plus-abonnement is actief, maar deze sessie moet worden vernieuwd. Probeer opnieuw.",
       "auth": "Log in met Google voor antwoorden van Exur. Je kunt eerst prompts verkennen.",
       "trialExhausted": "Voor diepere analyse en het bewaren van je marktvoorkeuren heeft Exur een beveiligde sessie nodig. Log in met Google om door te gaan.",
-      "signalSymbolRequired": "Signal heeft een markt nodig — voeg iets als ETH of BTC toe na /Signal."
+      "signalSymbolRequired": "Signal heeft een markt nodig — voeg iets als ETH of BTC toe na /Signal.",
+      "sessionExpired": "Je sessie is verlopen. Log in met Google om verder te chatten."
     },
     "creditsExhausted": {
       "title": "Je credits zijn op",
@@ -651,7 +652,12 @@
     "chatError": {
       "title": "Antwoord kon niet worden voltooid",
       "dismiss": "Sluiten",
-      "retrying": "Opnieuw proberen…"
+      "retrying": "Opnieuw proberen…",
+      "titleNetwork": "Controleer je verbinding",
+      "titleTimeout": "Dit duurde te lang",
+      "titleServer": "Exur had een probleem",
+      "titleSession": "Log in om door te gaan",
+      "titleStream": "Antwoord werd onderbroken"
     },
     "regenerate": "Opnieuw genereren",
     "regenerateResponse": "Antwoord opnieuw genereren",

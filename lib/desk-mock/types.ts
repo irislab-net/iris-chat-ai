@@ -1,4 +1,4 @@
-export type DeskInstrument = "BTC" | "ETH" | "XAU"
+export type DeskInstrument = string
 
 export type DeskSide = "long" | "short"
 

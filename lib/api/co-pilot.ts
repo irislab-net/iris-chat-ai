@@ -356,6 +356,34 @@ async function streamCoPilotChatOnce(input: {
 
       // Older gateways may not support SSE yet — fall back to JSON /message.
       if (res.status === 404 || code === "stream_unsupported") {
+        // #region agent log
+        fetch(
+          "http://127.0.0.1:7371/ingest/8d665b6d-4a70-4998-b969-c5182d9c6538",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-Debug-Session-Id": "7c7463",
+            },
+            body: JSON.stringify({
+              sessionId: "7c7463",
+              hypothesisId: "E",
+              location: "lib/api/co-pilot.ts:streamCoPilotChatOnce",
+              message: "stream failed; falling back to JSON /message",
+              data: {
+                streamStatus: res.status,
+                code: code ?? null,
+                contentType,
+                payloadError:
+                  typeof payload.error === "string"
+                    ? payload.error.slice(0, 120)
+                    : null,
+              },
+              timestamp: Date.now(),
+            }),
+          }
+        ).catch(() => {})
+        // #endregion
         timeout.clear()
         return await sendCoPilotChat({
           message: input.message,

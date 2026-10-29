@@ -602,7 +602,8 @@
       "proSessionRefresh": "План Plus активен, но эту сессию нужно обновить. Попробуйте снова.",
       "auth": "Войдите через Google, чтобы получать ответы от Exur. Сначала можно изучить подсказки.",
       "trialExhausted": "Для более глубокого анализа и сохранения ваших рыночных предпочтений Exur требует защищённую сессию. Войдите через Google, чтобы продолжить.",
-      "signalSymbolRequired": "Signal нужен рынок — добавьте что-то вроде ETH или BTC после /Signal."
+      "signalSymbolRequired": "Signal нужен рынок — добавьте что-то вроде ETH или BTC после /Signal.",
+      "sessionExpired": "Сессия истекла. Войдите через Google, чтобы продолжить чат."
     },
     "creditsExhausted": {
       "title": "Кредиты закончились",
@@ -651,7 +652,12 @@
     "chatError": {
       "title": "Не удалось завершить ответ",
       "dismiss": "Закрыть",
-      "retrying": "Повтор…"
+      "retrying": "Повтор…",
+      "titleNetwork": "Проверьте соединение",
+      "titleTimeout": "Слишком долго",
+      "titleServer": "У Exur сбой",
+      "titleSession": "Войдите, чтобы продолжить",
+      "titleStream": "Ответ прервался"
     },
     "regenerate": "Перегенерировать",
     "regenerateResponse": "Перегенерировать ответ",

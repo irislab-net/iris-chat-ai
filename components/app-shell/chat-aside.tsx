@@ -156,10 +156,14 @@ import {
   COPILOT_PRO_SESSION_REFRESH_MESSAGE,
   coPilotUserFacingError,
   coPilotFailureAction,
+  coPilotErrorTitleKey,
+  isAuthSessionError,
   isCreditExhaustedError,
   isSignalSymbolRequiredError,
   shouldShowGuestSignInPrompt,
   localizeCoPilotErrorText,
+  localizeCoPilotErrorTitle,
+  type CoPilotErrorTitleKey,
 } from "@/lib/co-pilot-recovery"
 import {
   conversationTitleFromMessages,
@@ -541,6 +545,7 @@ function ChatAside({
   const [signalGuidanceOpen, setSignalGuidanceOpen] = React.useState(false)
   const [chatErrorSheet, setChatErrorSheet] = React.useState<{
     message: string
+    titleKey: CoPilotErrorTitleKey
     action: "retry" | "connect"
     retryUserMessage: string
   } | null>(null)
@@ -1611,8 +1616,40 @@ function ChatAside({
       const errorText =
         coPilotUserFacingError(error, { isProUser }) || t("errors.recovery")
       const action = coPilotFailureAction(error, { isProUser }) ?? "retry"
+      const titleKey = coPilotErrorTitleKey(error)
+      // #region agent log
+      fetch("http://127.0.0.1:7371/ingest/8d665b6d-4a70-4998-b969-c5182d9c6538", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Debug-Session-Id": "7c7463",
+        },
+        body: JSON.stringify({
+          sessionId: "7c7463",
+          hypothesisId: "C",
+          location: "components/app-shell/chat-aside.tsx:catch",
+          message: "chat error sheet mapping",
+          data: {
+            isAuthenticated,
+            errStatus: (error as { status?: number } | null)?.status ?? null,
+            errCode: (error as { code?: string } | null)?.code ?? null,
+            errName: error instanceof Error ? error.name : typeof error,
+            errMessage:
+              error instanceof Error
+                ? error.message.slice(0, 160)
+                : String(error).slice(0, 160),
+            mappedMessage: errorText.slice(0, 160),
+            action,
+            titleKey,
+            isAuthSession: isAuthSessionError(error),
+          },
+          timestamp: Date.now(),
+        }),
+      }).catch(() => {})
+      // #endregion
       setChatErrorSheet({
         message: errorText,
+        titleKey,
         action,
         retryUserMessage: userMessage,
       })
@@ -3206,6 +3243,14 @@ function ChatAside({
             onOpenChange={(open) => {
               if (!open) setChatErrorSheet(null)
             }}
+            title={
+              chatErrorSheet
+                ? localizeCoPilotErrorTitle(
+                    chatErrorSheet.titleKey,
+                    (key) => t(`chatError.${key}`)
+                  )
+                : undefined
+            }
             message={
               chatErrorSheet
                 ? localizeCoPilotErrorText(chatErrorSheet.message, t)

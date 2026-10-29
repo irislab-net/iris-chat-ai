@@ -903,7 +903,7 @@
     },
     "loadingExur": "Loading Exur",
     "errors": {
-      "recovery": "Something went wrong while receiving the response.",
+      "recovery": "Something went wrong while getting your reply. Please try again.",
       "network": "Couldn't reach Exur. Check your connection and try again.",
       "server": "Exur's servers hit a problem. Please try again in a moment.",
       "streamInterrupted": "The response ended unexpectedly. Please try again.",
@@ -913,7 +913,8 @@
       "proSessionRefresh": "Your Plus plan is active, but this session needs a refresh. Try again.",
       "auth": "Sign in with Google to get answers from Exur. You can explore prompts and typing first.",
       "trialExhausted": "To provide deeper analysis and save your market preferences, Exur requires a secured session. Sign in with Google to continue.",
-      "signalSymbolRequired": "Signal needs a market — add something like ETH or BTC after /Signal."
+      "signalSymbolRequired": "Signal needs a market — add something like ETH or BTC after /Signal.",
+      "sessionExpired": "Your session expired. Sign in with Google to keep chatting."
     },
     "creditsExhausted": {
       "title": "You're out of credits",
@@ -962,7 +963,12 @@
     "chatError": {
       "title": "Couldn't finish that reply",
       "dismiss": "Dismiss",
-      "retrying": "Trying again…"
+      "retrying": "Trying again…",
+      "titleNetwork": "Check your connection",
+      "titleTimeout": "That took too long",
+      "titleServer": "Exur hit a snag",
+      "titleSession": "Sign in to continue",
+      "titleStream": "Reply was interrupted"
     },
     "regenerate": "Regenerate",
     "regenerateResponse": "Regenerate response",

@@ -150,10 +150,13 @@ import {
   COPILOT_PRO_SESSION_REFRESH_MESSAGE,
   coPilotUserFacingError,
   coPilotFailureAction,
+  coPilotErrorTitleKey,
   isCreditExhaustedError,
   isSignalSymbolRequiredError,
   shouldShowGuestSignInPrompt,
   localizeCoPilotErrorText,
+  localizeCoPilotErrorTitle,
+  type CoPilotErrorTitleKey,
 } from "@/lib/co-pilot-recovery"
 import {
   conversationTitleFromMessages,
@@ -483,6 +486,7 @@ function ChatAside({
   const [creditsExhaustedOpen, setCreditsExhaustedOpen] = React.useState(false)
   const [chatErrorSheet, setChatErrorSheet] = React.useState<{
     message: string
+    titleKey: CoPilotErrorTitleKey
     action: "retry" | "connect"
     retryUserMessage: string
   } | null>(null)
@@ -1547,6 +1551,7 @@ function ChatAside({
       const action = coPilotFailureAction(error, { isProUser }) ?? "retry"
       setChatErrorSheet({
         message: errorText,
+        titleKey: coPilotErrorTitleKey(error),
         action,
         retryUserMessage: userMessage,
       })
@@ -3057,6 +3062,14 @@ function ChatAside({
             onOpenChange={(open) => {
               if (!open) setChatErrorSheet(null)
             }}
+            title={
+              chatErrorSheet
+                ? localizeCoPilotErrorTitle(
+                    chatErrorSheet.titleKey,
+                    (key) => t(`chatError.${key}`)
+                  )
+                : undefined
+            }
             message={
               chatErrorSheet
                 ? localizeCoPilotErrorText(chatErrorSheet.message, t)

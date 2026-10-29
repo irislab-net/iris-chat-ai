@@ -3,39 +3,14 @@
 import * as React from "react"
 import { useTranslations } from "next-intl"
 
+import { useAuth } from "@/components/auth/auth-provider"
 import { ExurLogo } from "@/components/brand/exur-logo"
 import { DeskGlassCard } from "@/components/desk/desk-page-frame"
 import { Switch } from "@/components/ui/switch"
+import { setAutoTradeEnabled } from "@/lib/api/wallet"
 import { formatUsd, pnlToneClass } from "@/lib/desk-mock/format"
 import type { DeskWalletBalances } from "@/lib/desk-mock/types"
 import { cn } from "@/lib/utils"
-
-const AUTO_TRADE_KEY = "exur.desk.auto-trade"
-const AUTO_TRADE_CHANGED = "exur-desk-auto-trade"
-
-function subscribeAutoTrade(onStoreChange: () => void) {
-  if (typeof window === "undefined") return () => {}
-  const onStorage = (event: StorageEvent) => {
-    if (event.key === AUTO_TRADE_KEY || event.key === null) onStoreChange()
-  }
-  window.addEventListener("storage", onStorage)
-  window.addEventListener(AUTO_TRADE_CHANGED, onStoreChange)
-  return () => {
-    window.removeEventListener("storage", onStorage)
-    window.removeEventListener(AUTO_TRADE_CHANGED, onStoreChange)
-  }
-}
-
-function getAutoTradeSnapshot(): boolean {
-  if (typeof window === "undefined") return false
-  try {
-    const raw = window.localStorage.getItem(AUTO_TRADE_KEY)
-    if (raw == null) return false
-    return raw === "1" || raw === "true"
-  } catch {
-    return false
-  }
-}
 
 function Stat({
   label,
@@ -71,20 +46,33 @@ function TradeSummaryCard({
   className?: string
 }) {
   const t = useTranslations("deskTrade")
+  const { user, refresh } = useAuth()
   const labelId = React.useId()
-  const autoTrade = React.useSyncExternalStore(
-    subscribeAutoTrade,
-    getAutoTradeSnapshot,
-    () => false
+  const [autoTrade, setAutoTrade] = React.useState(
+    () => user?.auto_trade_enabled !== false
   )
+  const [pending, setPending] = React.useState(false)
 
-  function onAutoTradeChange(next: boolean) {
-    try {
-      window.localStorage.setItem(AUTO_TRADE_KEY, next ? "1" : "0")
-    } catch {
-      // ignore quota / private mode
+  React.useEffect(() => {
+    if (typeof user?.auto_trade_enabled === "boolean") {
+      setAutoTrade(user.auto_trade_enabled)
     }
-    window.dispatchEvent(new Event(AUTO_TRADE_CHANGED))
+  }, [user?.auto_trade_enabled])
+
+  async function onAutoTradeChange(next: boolean) {
+    if (pending) return
+    const previous = autoTrade
+    setAutoTrade(next)
+    setPending(true)
+    try {
+      const enabled = await setAutoTradeEnabled(next)
+      setAutoTrade(enabled)
+      await refresh()
+    } catch {
+      setAutoTrade(previous)
+    } finally {
+      setPending(false)
+    }
   }
 
   return (
@@ -121,12 +109,11 @@ function TradeSummaryCard({
           </div>
           <Switch
             checked={autoTrade}
-            onCheckedChange={onAutoTradeChange}
+            disabled={!user || pending}
+            onCheckedChange={(next) => void onAutoTradeChange(next)}
             aria-labelledby={labelId}
             className={
-              autoTrade
-                ? "bg-[#2563EB] hover:bg-[#1D4ED8]"
-                : undefined
+              autoTrade ? "bg-[#2563EB] hover:bg-[#1D4ED8]" : undefined
             }
           />
         </div>

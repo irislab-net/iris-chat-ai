@@ -167,8 +167,9 @@ const nextConfig: NextConfig = {
           {
             key: "Permissions-Policy",
             // identity-credentials-get=* — FedCM One Tap (default is self; * is explicit).
+            // camera=(self) — wallet QR scanner. clipboard-read=(self) — withdraw paste.
             value:
-              "camera=(), microphone=(), geolocation=(), identity-credentials-get=*",
+              "camera=(self), microphone=(), geolocation=(), clipboard-read=(self), clipboard-write=(self), identity-credentials-get=*",
           },
           { key: "X-Frame-Options", value: "SAMEORIGIN" },
           // Never send HSTS in development — it locks Chrome onto HTTPS for

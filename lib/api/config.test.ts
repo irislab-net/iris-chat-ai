@@ -25,6 +25,7 @@ describe("loginWithGoogleUrl", () => {
     expect(isChatAppHost("exur.ai")).toBe(true)
     expect(isChatAppHost("www.exur.ai")).toBe(true)
     expect(isChatAppHost("intel.exur.ai")).toBe(false)
+    expect(isChatAppHost("local.exur.ai")).toBe(false)
   })
 
   it("uses app=chat for chat OAuth without destination", () => {
