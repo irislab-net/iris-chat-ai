@@ -20,26 +20,34 @@ function MarketAssetLogo({
   const src = marketAssetLogoSrc(key)
   const [failedSrc, setFailedSrc] = React.useState<string | null>(null)
   const failed = failedSrc === src
+  const showImage = Boolean(src && !failed)
+  // TradingView marks ship as square plates with inset artwork; scale crops that padding.
+  const tradingViewPlate = Boolean(src?.includes("tradingview.com"))
 
   return (
     <span
       className={cn(
-        "flex shrink-0 items-center justify-center overflow-hidden rounded-full bg-background/55 dark:bg-background/35",
+        "flex shrink-0 items-center justify-center overflow-hidden rounded-full",
+        !showImage && "bg-background/55 dark:bg-background/35",
         className
       )}
       aria-hidden
     >
-      {src && !failed ? (
+      {showImage && src ? (
         <Image
           src={src}
           alt=""
           width={size}
           height={size}
-          unoptimized={src.includes(".svg") || src.includes("tradingview.com")}
+          unoptimized={src.includes(".svg") || tradingViewPlate}
           loading="lazy"
           referrerPolicy="no-referrer"
           onError={() => setFailedSrc(src)}
-          className={cn("size-full rounded-full object-cover", imageClassName)}
+          className={cn(
+            "size-full rounded-full object-cover",
+            tradingViewPlate && "scale-[1.42]",
+            imageClassName
+          )}
         />
       ) : (
         <span className="font-mono text-[9px] font-bold text-muted-foreground">

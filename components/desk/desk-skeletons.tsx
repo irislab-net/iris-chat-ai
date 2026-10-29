@@ -169,11 +169,7 @@ function PositionCardSkeleton({
         <div className="flex min-w-0 flex-1 items-center gap-2">
           <DeskBone
             stagger={stagger}
-            className={cn(
-              "size-7 shrink-0 rounded-full",
-              "border border-white/75 dark:border-white/20",
-              "bg-white/55 dark:bg-white/12"
-            )}
+            className="size-7 shrink-0 rounded-full"
           />
           <DeskBone stagger={stagger} className="h-4 w-12 rounded-full" />
           <DeskBone stagger={stagger} className="h-5 w-12 rounded-full" />

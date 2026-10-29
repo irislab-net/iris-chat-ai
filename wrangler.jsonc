@@ -62,7 +62,7 @@
 			"workers_dev": false,
 			"routes": [
 				{
-					"pattern": "chat.staging.exur.ai",
+					"pattern": "dev.exur.ai",
 					"custom_domain": true
 				}
 			],
@@ -85,9 +85,9 @@
 				"NEXT_PUBLIC_GA_MEASUREMENT_ID": "",
 				"NEXT_PUBLIC_GTM_ID": "",
 				"NEXT_PUBLIC_GOOGLE_CLIENT_ID": "50876205060-0j6l4c2b286q18e0vluvp7eadqcs15vq.apps.googleusercontent.com",
-				"NEXT_PUBLIC_APP_URL": "https://chat.staging.exur.ai",
-				"NEXT_PUBLIC_SITE_URL": "https://chat.staging.exur.ai",
-				"NEXT_PUBLIC_MARKETING_URL": "https://chat.staging.exur.ai",
+				"NEXT_PUBLIC_APP_URL": "https://dev.exur.ai",
+				"NEXT_PUBLIC_SITE_URL": "https://dev.exur.ai",
+				"NEXT_PUBLIC_MARKETING_URL": "https://dev.exur.ai",
 				"NEXT_PUBLIC_SENTRY_DSN": "https://a486aa37cf4b36a60fc2d09364aa4565@o4512120553406464.ingest.de.sentry.io/4512120559304784",
 				"NEXT_PUBLIC_SENTRY_ENVIRONMENT": "staging",
 				"SENTRY_ENVIRONMENT": "staging",

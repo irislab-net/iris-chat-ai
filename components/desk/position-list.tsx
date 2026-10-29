@@ -110,13 +110,7 @@ function PositionCard({
       <div className="flex min-w-0 flex-1 items-center gap-2">
         <MarketAssetLogo
           symbol={position.instrument}
-          className={cn(
-            "size-7 shrink-0",
-            "border border-white/75 dark:border-white/20",
-            "bg-white/55 backdrop-blur-[28px] dark:bg-white/12",
-            "shadow-[0_1px_2px_rgba(15,23,42,0.04),inset_0_1px_1px_rgba(255,255,255,0.95),inset_0_0_0_0.5px_rgba(255,255,255,0.55)]",
-            "dark:shadow-[0_1px_2px_rgba(0,0,0,0.28),inset_0_1px_1px_rgba(255,255,255,0.2),inset_0_0_0_0.5px_rgba(255,255,255,0.12)]"
-          )}
+          className="size-7 shrink-0"
         />
         <span className="text-[15px] font-semibold tracking-tight">
           {position.instrument}
