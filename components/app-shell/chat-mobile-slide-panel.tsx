@@ -69,6 +69,7 @@ function ChatMobileSlidePanel({
     }
   }
 
+  const rootRef = React.useRef<HTMLDivElement>(null)
   const panelRef = React.useRef<HTMLDivElement>(null)
   const scrimRef = React.useRef<HTMLDivElement>(null)
   const tlRef = React.useRef<{ kill: () => void } | null>(null)
@@ -80,6 +81,13 @@ function ChatMobileSlidePanel({
   const dragStartYRef = React.useRef(0)
   const dragPointerIdRef = React.useRef<number | null>(null)
   const dragWidthRef = React.useRef(0)
+
+  const setSliding = React.useCallback((sliding: boolean) => {
+    const root = rootRef.current
+    if (!root) return
+    if (sliding) root.setAttribute("data-sliding", "true")
+    else root.removeAttribute("data-sliding")
+  }, [])
 
   React.useEffect(() => {
     openRef.current = open
@@ -102,23 +110,33 @@ function ChatMobileSlidePanel({
       const scrim = scrimRef.current
       if (open) {
         // Park offscreen before the open tween so the first paint never flashes.
-        gsap.set(panelRef.current, { xPercent: off, force3D: true })
+        gsap.set(panelRef.current, {
+          xPercent: off,
+          autoAlpha: 1,
+          force3D: true,
+        })
         setParked(true)
+        setSliding(true)
         tlRef.current = openChatSidebar(gsap, {
           sidebarEl: panelRef.current,
           scrimEl: backdrop ? scrim : null,
           offscreenXPercent: off,
           reducedMotion: reduced,
+          onComplete: () => {
+            if (!cancelled) setSliding(false)
+          },
         })
         return
       }
 
+      setSliding(true)
       tlRef.current = closeChatSidebar(gsap, {
         sidebarEl: panelRef.current,
         scrimEl: backdrop ? scrim : null,
         offscreenXPercent: off,
         reducedMotion: reduced,
         onComplete: () => {
+          if (!cancelled) setSliding(false)
           if (!cancelled && !openRef.current) {
             setMounted(false)
             setParked(false)
@@ -131,8 +149,9 @@ function ChatMobileSlidePanel({
       cancelled = true
       tlRef.current?.kill()
       tlRef.current = null
+      setSliding(false)
     }
-  }, [mounted, open, off, backdrop])
+  }, [mounted, open, off, backdrop, setSliding])
 
   React.useEffect(() => {
     if (!mounted || !open) return
@@ -208,6 +227,7 @@ function ChatMobileSlidePanel({
         draggingRef.current = true
         dragPendingRef.current = false
         tlRef.current?.kill()
+        setSliding(true)
         try {
           panel.setPointerCapture(event.pointerId)
         } catch {
@@ -231,7 +251,7 @@ function ChatMobileSlidePanel({
         progress,
       })
     },
-    [backdrop, off]
+    [backdrop, off, setSliding]
   )
 
   const endDrag = React.useCallback(
@@ -270,15 +290,17 @@ function ChatMobileSlidePanel({
         onOpenChange(false)
       } else {
         tlRef.current?.kill()
+        setSliding(true)
         tlRef.current = openChatSidebar(gsap, {
           sidebarEl: panel,
           scrimEl: backdrop ? scrimRef.current : null,
           offscreenXPercent: off,
           reducedMotion: false,
+          onComplete: () => setSliding(false),
         })
       }
     },
-    [backdrop, off, onOpenChange]
+    [backdrop, off, onOpenChange, setSliding]
   )
 
   const [portalEl, setPortalEl] = React.useState<HTMLElement | null>(null)
@@ -292,6 +314,7 @@ function ChatMobileSlidePanel({
   // fixed desk bottom nav even with position:fixed.
   return createPortal(
     <div
+      ref={rootRef}
       data-slot="chat-mobile-slide-panel"
       data-state={open ? "open" : "closed"}
       className={cn("fixed inset-0 z-50", className)}

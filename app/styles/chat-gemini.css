@@ -427,6 +427,16 @@
 }
 
 /*
+ * Parent transform + child backdrop-filter flickers on WebKit (header / close /
+ * search glass discs "jump" while the drawer slides). Freeze blur for the tween.
+ */
+[data-slot="chat-mobile-slide-panel"][data-sliding] .chat-ios26-liquid-glass,
+[data-slot="chat-mobile-slide-panel"][data-sliding] .chat-sheet-glass {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+/*
  * iOS 26 liquid glass specular — diagonal highlight like light through wet glass.
  * Used by header controls / chips (`chat-ios26-liquid-glass`).
  */

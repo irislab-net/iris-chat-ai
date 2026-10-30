@@ -116,12 +116,18 @@ export function closeChatSidebar(
   } = opts
 
   const finish = () => {
-    killInlineTransform(gsap, sidebarEl)
+    // Hide while still offscreen, then clear transforms. Clearing xPercent
+    // first flashes the full panel at identity for a frame before unmount
+    // (mobile: header / new-chat / footer appear then vanish).
+    gsap.set(sidebarEl, { autoAlpha: 0 })
     if (scrimEl) {
       gsap.set(scrimEl, { display: "none", opacity: 0 })
       killInlineTransform(gsap, scrimEl)
     }
     onComplete?.()
+    if (sidebarEl.isConnected) {
+      killInlineTransform(gsap, sidebarEl)
+    }
   }
 
   const tl = gsap.timeline({ onComplete: finish })
