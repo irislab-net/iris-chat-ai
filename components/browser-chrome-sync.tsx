@@ -1,7 +1,6 @@
 "use client"
 
 import * as React from "react"
-import { usePathname } from "next/navigation"
 import { useTheme } from "@wrksz/themes/client/use-theme"
 
 import { syncBrowserChromeTheme } from "@/lib/browser-chrome"
@@ -17,43 +16,8 @@ function isHorizonChromeTarget(node: Node): boolean {
   )
 }
 
-/**
- * Safari 26+ ignores `theme-color` and tints toolbars from `html`/`body` or a
- * qualifying `position: fixed` strip at the edge. Pseudo-elements are skipped.
- * These real tint nodes keep the Safari chin/forehead matched to each page.
- */
-function BrowserChromeTintBars() {
-  return (
-    <>
-      <div
-        aria-hidden
-        data-slot="browser-chrome-top-tint"
-        className="pointer-events-none fixed inset-x-0 top-0 z-[29]"
-        style={{
-          height: "max(12px, var(--app-safe-top, env(safe-area-inset-top, 0px)))",
-          backgroundColor:
-            "var(--browser-chrome-top, var(--browser-chrome-color, var(--background)))",
-        }}
-      />
-      <div
-        aria-hidden
-        data-slot="browser-chrome-bottom-tint"
-        className="pointer-events-none fixed inset-x-0 bottom-0 z-[29]"
-        style={{
-          height:
-            "max(12px, var(--app-safe-bottom, env(safe-area-inset-bottom, 0px)))",
-          backgroundColor:
-            "var(--browser-chrome-bottom, var(--browser-chrome-color, var(--background)))",
-        }}
-      />
-    </>
-  )
-}
-
 function BrowserChromeSync() {
   const { theme, resolvedTheme, systemTheme } = useTheme()
-  // Root ThemeProvider sits outside next-intl — use Next's pathname, not i18n's.
-  const pathname = usePathname()
 
   const sync = React.useCallback(() => {
     syncBrowserChromeTheme(resolvedTheme)
@@ -61,7 +25,7 @@ function BrowserChromeSync() {
 
   React.useLayoutEffect(() => {
     sync()
-  }, [sync, pathname])
+  }, [sync])
 
   // Re-assert after paint so late theme scripts cannot leave a stale white bar.
   React.useEffect(() => {
@@ -72,7 +36,7 @@ function BrowserChromeSync() {
       window.cancelAnimationFrame(raf)
       window.clearTimeout(t)
     }
-  }, [sync, pathname])
+  }, [sync])
 
   // When preference is "system", re-sync phone chrome if OS theme flips
   // (resolvedTheme usually updates too; this covers the race).
@@ -109,7 +73,6 @@ function BrowserChromeSync() {
         "class",
         "data-overlay-open",
         "data-app-shell",
-        "data-desk-bottom-nav",
         "data-keyboard-open",
       ],
     })
@@ -167,7 +130,7 @@ function BrowserChromeSync() {
     }
   }, [sync])
 
-  return <BrowserChromeTintBars />
+  return null
 }
 
 export { BrowserChromeSync }

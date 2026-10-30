@@ -155,25 +155,15 @@ export function isHorizonWashVisible(): boolean {
   return style.visibility !== "hidden" && style.opacity !== "0"
 }
 
-function isDeskBottomNavChrome(): boolean {
-  if (typeof document === "undefined") return false
-  return document.documentElement.hasAttribute("data-desk-bottom-nav")
-}
-
 function readBrowserChromeEdges(theme: BrowserChromeTheme): BrowserChromeEdges {
-  // Desk routes (profile / markets / …): always match page surface so Safari’s
-  // bottom toolbar doesn’t keep a chat-horizon tint.
-  const forcePageSurface =
-    isDeskBottomNavChrome() || !isHorizonWashVisible()
-  const edges = browserChromeEdgesForState({
-    theme,
-    horizonVisible: !forcePageSurface,
-  })
-  if (forcePageSurface) {
+  const horizonVisible = isHorizonWashVisible()
+  const edges = browserChromeEdgesForState({ theme, horizonVisible })
+  if (!horizonVisible) {
     // Match page surface exactly — hex fallbacks like #0a0a0a drift from
     // `--background` (oklch) and show as a black strip under desk chrome.
     const surface =
       resolveDocumentColor("var(--background)") ?? edges.top
+    // Desk bottom nav CSS also forces gutters via [data-desk-bottom-nav].
     return { top: surface, bottom: surface }
   }
 
