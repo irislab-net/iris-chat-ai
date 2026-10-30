@@ -248,6 +248,10 @@ export function startLoginWithGoogle(options?: {
   const standalone =
     typeof window !== "undefined" ? isStandaloneDisplay() : false
 
+  // #region agent log
+  fetch('http://127.0.0.1:7371/ingest/8d665b6d-4a70-4998-b969-c5182d9c6538',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'0edd15'},body:JSON.stringify({sessionId:'0edd15',runId:'pre-fix',hypothesisId:'E',location:'lib/api/auth.ts:startLoginWithGoogle',message:'login start',data:{host:typeof window!=='undefined'?window.location.host:'',app:app??null,standalone,forceRedirect:Boolean(options?.forceRedirect),mode:(app||standalone||options?.forceRedirect)?'assign':'popup',loginHost:(()=>{try{return new URL(url).host}catch{return null}})()},timestamp:Date.now()})}).catch(()=>{})
+  // #endregion
+
   // Installed PWA / chat app: always full-page redirect. iOS standalone cannot
   // return OAuth via window.open + postMessage (opens Safari, loses opener).
   if (app || standalone || options?.forceRedirect) {
@@ -281,6 +285,10 @@ export async function refreshAccessToken(): Promise<TokenPair> {
 
   refreshInFlight = (async () => {
     // Same-origin via next.config rewrite → browser sends refresh_token (Domain=.exur.ai, Path=/v1/auth)
+    // #region agent log
+    const _dbgT0 = Date.now()
+    fetch('http://127.0.0.1:7371/ingest/8d665b6d-4a70-4998-b969-c5182d9c6538',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'0edd15'},body:JSON.stringify({sessionId:'0edd15',runId:'pre-fix',hypothesisId:'A',location:'lib/api/auth.ts:refreshAccessToken',message:'refresh start',data:{host:typeof window!=='undefined'?window.location.host:'',path:typeof window!=='undefined'?window.location.pathname:'',cookieLen:typeof document!=='undefined'?document.cookie.length:-1,hasDocRefresh:typeof document!=='undefined'?document.cookie.includes('refresh_token'):false},timestamp:Date.now()})}).catch(()=>{})
+    // #endregion
     const res = await fetch(authUrl("/v1/auth/refresh"), {
       method: "POST",
       credentials: "include",
@@ -289,14 +297,23 @@ export async function refreshAccessToken(): Promise<TokenPair> {
     })
     // Local proxy returns 204 when no refresh cookie (avoids Chrome console 400 noise).
     if (res.status === 204) {
+      // #region agent log
+      fetch('http://127.0.0.1:7371/ingest/8d665b6d-4a70-4998-b969-c5182d9c6538',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'0edd15'},body:JSON.stringify({sessionId:'0edd15',runId:'pre-fix',hypothesisId:'A',location:'lib/api/auth.ts:refreshAccessToken',message:'refresh 204 no cookie',data:{ms:Date.now()-_dbgT0,host:typeof window!=='undefined'?window.location.host:''},timestamp:Date.now()})}).catch(()=>{})
+      // #endregion
       throw Object.assign(new Error("no session"), { status: 401 })
     }
     const body = await res.json().catch(() => ({}))
     if (!res.ok) {
+      // #region agent log
+      fetch('http://127.0.0.1:7371/ingest/8d665b6d-4a70-4998-b969-c5182d9c6538',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'0edd15'},body:JSON.stringify({sessionId:'0edd15',runId:'pre-fix',hypothesisId:'B',location:'lib/api/auth.ts:refreshAccessToken',message:'refresh failed',data:{status:res.status,error:typeof body?.error==='string'?body.error:null,ms:Date.now()-_dbgT0,host:typeof window!=='undefined'?window.location.host:''},timestamp:Date.now()})}).catch(()=>{})
+      // #endregion
       throw Object.assign(new Error(body.error || "refresh failed"), {
         status: res.status,
       })
     }
+    // #region agent log
+    fetch('http://127.0.0.1:7371/ingest/8d665b6d-4a70-4998-b969-c5182d9c6538',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'0edd15'},body:JSON.stringify({sessionId:'0edd15',runId:'pre-fix',hypothesisId:'A',location:'lib/api/auth.ts:refreshAccessToken',message:'refresh ok',data:{ms:Date.now()-_dbgT0,hasAccess:typeof body?.access_token==='string'},timestamp:Date.now()})}).catch(()=>{})
+    // #endregion
     return parseTokenPair(body)
   })()
 

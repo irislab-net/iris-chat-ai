@@ -70,9 +70,16 @@ export default function AuthSuccessPage() {
       const standalone = isStandaloneDisplay()
       const hasOpener = Boolean(window.opener && !window.opener.closed)
 
+      // #region agent log
+      fetch('http://127.0.0.1:7371/ingest/8d665b6d-4a70-4998-b969-c5182d9c6538',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'0edd15'},body:JSON.stringify({sessionId:'0edd15',runId:'pre-fix',hypothesisId:'C',location:'app/auth/success/page.tsx:effect',message:'auth success enter',data:{host:window.location.host,href:window.location.href,dedupeId,alreadyDone,standalone,hasOpener,ua:navigator.userAgent.slice(0,120),visibility:document.visibilityState},timestamp:Date.now()})}).catch(()=>{})
+      // #endregion
+
       // Popup flow (browser tabs only): notify opener, then try to close.
       // If close is ignored (common), fall through and finish in this window.
       if (hasOpener && !standalone) {
+        // #region agent log
+        fetch('http://127.0.0.1:7371/ingest/8d665b6d-4a70-4998-b969-c5182d9c6538',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'0edd15'},body:JSON.stringify({sessionId:'0edd15',runId:'pre-fix',hypothesisId:'E',location:'app/auth/success/page.tsx:popup',message:'has opener — postMessage+close',data:{origin:window.location.origin},timestamp:Date.now()})}).catch(()=>{})
+        // #endregion
         try {
           window.opener.postMessage(
             { type: AUTH_SUCCESS_MESSAGE },
@@ -91,6 +98,9 @@ export default function AuthSuccessPage() {
       // Reloaded callback after a successful exchange — go home (session may
       // already be in storage). Still try a quick establish when possible.
       if (alreadyDone) {
+        // #region agent log
+        fetch('http://127.0.0.1:7371/ingest/8d665b6d-4a70-4998-b969-c5182d9c6538',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'0edd15'},body:JSON.stringify({sessionId:'0edd15',runId:'pre-fix',hypothesisId:'D',location:'app/auth/success/page.tsx:alreadyDone',message:'dedupe already processed — restore path',data:{dedupeId},timestamp:Date.now()})}).catch(()=>{})
+        // #endregion
         try {
           await withTimeout(
             establishSession(),
@@ -110,6 +120,9 @@ export default function AuthSuccessPage() {
 
       try {
         const pwaPending = hasAuthPwaPending()
+        // #region agent log
+        fetch('http://127.0.0.1:7371/ingest/8d665b6d-4a70-4998-b969-c5182d9c6538',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'0edd15'},body:JSON.stringify({sessionId:'0edd15',runId:'pre-fix',hypothesisId:'A',location:'app/auth/success/page.tsx:establish',message:'calling establishSession',data:{pwaPending,standalone},timestamp:Date.now()})}).catch(()=>{})
+        // #endregion
         const session = await withTimeout(
           establishSession(),
           ESTABLISH_TIMEOUT_MS,
@@ -121,6 +134,10 @@ export default function AuthSuccessPage() {
         trackLoginSuccess(session.user)
         await refresh()
         if (cancelled) return
+
+        // #region agent log
+        fetch('http://127.0.0.1:7371/ingest/8d665b6d-4a70-4998-b969-c5182d9c6538',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'0edd15'},body:JSON.stringify({sessionId:'0edd15',runId:'pre-fix',hypothesisId:'A',location:'app/auth/success/page.tsx:ok',message:'establish ok',data:{userId:session.user?.id?String(session.user.id).slice(0,8):null,pwaPending,standalone,willSafariHandOff:!standalone&&pwaPending},timestamp:Date.now()})}).catch(()=>{})
+        // #endregion
 
         // OAuth often finishes in Safari after leaving the Home Screen app.
         // Keep PWA pending so the installed app can resume the shared cookie.
@@ -134,6 +151,9 @@ export default function AuthSuccessPage() {
       } catch (err) {
         if (cancelled) return
         const message = err instanceof Error ? err.message : "Session failed"
+        // #region agent log
+        fetch('http://127.0.0.1:7371/ingest/8d665b6d-4a70-4998-b969-c5182d9c6538',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'0edd15'},body:JSON.stringify({sessionId:'0edd15',runId:'pre-fix',hypothesisId:'B',location:'app/auth/success/page.tsx:catch',message:'establish failed',data:{error:message,cancelled,status:(err as {status?:number})?.status??null},timestamp:Date.now()})}).catch(()=>{})
+        // #endregion
         setError(message)
         trackLoginFail(message)
         window.setTimeout(() => {

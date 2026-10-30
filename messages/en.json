@@ -1490,7 +1490,7 @@
   "deskProfile": {
     "title": "Profile",
     "subtitle": "Your wallet, auto-trading capital, and cash movement.",
-    "guestHint": "Sign in to sync your wallet across devices.",
+    "guestHint": "Sign in to sync.",
     "signUp": "Sign up",
     "signingUp": "Connecting…",
     "wallet": "Wallet",

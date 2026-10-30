@@ -132,7 +132,7 @@ function WalletBankCard({
         <span className="flex min-w-0 items-center gap-2.5">
           <span
             className={cn(
-              "relative isolate flex shrink-0 items-center justify-center overflow-hidden rounded-full p-[3px]",
+              "relative isolate flex shrink-0 items-center justify-center overflow-hidden rounded-full p-0",
               "border-[1.5px] border-white dark:border-white/12",
               "bg-white/50 backdrop-blur-[20px] dark:bg-white/10",
               "shadow-[0_1px_2px_rgba(15,23,42,0.05),0_8px_20px_-6px_rgba(15,23,42,0.18),inset_0_1px_1px_rgba(255,255,255,1),inset_0_0_0_0.5px_rgba(255,255,255,0.7),inset_0_-6px_12px_-6px_rgba(15,23,42,0.08)]",
@@ -150,13 +150,13 @@ function WalletBankCard({
                 isProUser={isProUser}
                 planName={planName}
                 showPlanBadge={false}
-                avatarClassName="relative z-10 size-11 ring-0 ring-offset-0 after:border-0"
+                avatarClassName="relative z-10 size-12 ring-0 ring-offset-0 after:border-0"
               />
             ) : (
               <ChatGuestAvatar
                 showBadge={false}
-                avatarClassName="relative z-10 size-11 bg-white/60 after:border-0 dark:bg-white/12"
-                iconClassName="size-5 text-foreground/55"
+                avatarClassName="relative z-10 size-12 bg-white/60 after:border-0 dark:bg-white/12"
+                iconClassName="size-7 text-foreground/55"
               />
             )}
           </span>

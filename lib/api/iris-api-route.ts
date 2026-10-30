@@ -61,6 +61,9 @@ export async function proxyIrisApiRequest(
     req.method === "POST" &&
     !cookieHasName(req.headers.get("cookie"), "refresh_token")
   ) {
+    // #region agent log
+    fetch('http://127.0.0.1:7371/ingest/8d665b6d-4a70-4998-b969-c5182d9c6538',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'0edd15'},body:JSON.stringify({sessionId:'0edd15',runId:'pre-fix',hypothesisId:'A',location:'lib/api/iris-api-route.ts:refresh',message:'proxy short-circuit 204 — no refresh_token cookie',data:{host:new URL(req.url).host,cookieNames:(req.headers.get('cookie')||'').split(';').map(p=>p.trim().split('=')[0]).filter(Boolean).slice(0,20)},timestamp:Date.now()})}).catch(()=>{})
+    // #endregion
     return new Response(null, { status: 204 })
   }
 
@@ -76,6 +79,12 @@ export async function proxyIrisApiRequest(
   if (cookie) headers.set("cookie", cookie)
   forwardClientTelemetry(req, headers)
 
+  // #region agent log
+  if (apiPath === "/v1/auth/refresh") {
+    fetch('http://127.0.0.1:7371/ingest/8d665b6d-4a70-4998-b969-c5182d9c6538',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'0edd15'},body:JSON.stringify({sessionId:'0edd15',runId:'pre-fix',hypothesisId:'B',location:'lib/api/iris-api-route.ts:refresh',message:'proxy forwarding refresh',data:{irisOrigin:origin,hasRefreshCookie:cookieHasName(cookie,'refresh_token'),cookieNames:(cookie||'').split(';').map(p=>p.trim().split('=')[0]).filter(Boolean).slice(0,20)},timestamp:Date.now()})}).catch(()=>{})
+  }
+  // #endregion
+
   const init: RequestInit = {
     method: req.method,
     headers,
@@ -88,11 +97,22 @@ export async function proxyIrisApiRequest(
   try {
     res = await fetch(url, init)
   } catch {
+    // #region agent log
+    if (apiPath === "/v1/auth/refresh") {
+      fetch('http://127.0.0.1:7371/ingest/8d665b6d-4a70-4998-b969-c5182d9c6538',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'0edd15'},body:JSON.stringify({sessionId:'0edd15',runId:'pre-fix',hypothesisId:'B',location:'lib/api/iris-api-route.ts:refresh',message:'upstream unreachable',data:{irisOrigin:origin},timestamp:Date.now()})}).catch(()=>{})
+    }
+    // #endregion
     return Response.json(
       { error: "API is not reachable.", code: "upstream_unreachable" },
       { status: 503 }
     )
   }
+
+  // #region agent log
+  if (apiPath === "/v1/auth/refresh") {
+    fetch('http://127.0.0.1:7371/ingest/8d665b6d-4a70-4998-b969-c5182d9c6538',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'0edd15'},body:JSON.stringify({sessionId:'0edd15',runId:'pre-fix',hypothesisId:'B',location:'lib/api/iris-api-route.ts:refresh',message:'upstream refresh response',data:{status:res.status,irisOrigin:origin,setCookieCount:typeof res.headers.getSetCookie==='function'?res.headers.getSetCookie().length:res.headers.get('set-cookie')?1:0},timestamp:Date.now()})}).catch(()=>{})
+  }
+  // #endregion
 
   const responseHeaders = new Headers()
   const upstreamType = res.headers.get("content-type")

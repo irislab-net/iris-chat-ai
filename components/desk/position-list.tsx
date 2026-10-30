@@ -161,7 +161,7 @@ function PositionCard({
         collapsible ? "pt-1" : "pt-0"
       )}
     >
-      <div className="grid grid-cols-2 gap-x-4 gap-y-3 sm:grid-cols-4 sm:gap-x-3">
+      <div className="grid grid-cols-2 gap-x-4 gap-y-3 sm:grid-cols-4 sm:gap-x-3 [&>:nth-child(even)]:text-end">
         <Meta
           label={t("size")}
           value={position.size.toLocaleString("en-US", {

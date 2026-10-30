@@ -75,7 +75,7 @@ function Stat({
 }) {
   return (
     <div className={cn("min-w-0 space-y-2", align === "end" && "text-end")}>
-      <p className="text-[10px] leading-none font-medium tracking-[0.06em] text-muted-foreground/55 uppercase">
+      <p className="text-[10px] leading-none font-medium tracking-wide text-muted-foreground/55">
         {label}
       </p>
       <p
@@ -346,7 +346,7 @@ function TradeSummaryCard({
           </button>
         </div>
 
-        <div className="grid grid-cols-3 gap-x-4 gap-y-3 border-t border-border/35 px-1 pt-4 dark:border-white/8 sm:gap-x-5 sm:px-1.5 sm:pt-5">
+        <div className="mx-auto grid w-[96%] max-w-full grid-cols-3 gap-x-3 gap-y-3 border-t border-border/35 px-1 pt-4 dark:border-white/8 sm:w-[94%] sm:gap-x-4 sm:px-1.5 sm:pt-5">
           <Stat
             label={t("inPositions")}
             value={formatUsd(balances.lockedUsd)}
