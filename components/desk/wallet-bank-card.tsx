@@ -185,10 +185,10 @@ function WalletBankCard({
         ) : null}
       </div>
 
-      <div className="relative z-10 mt-4 min-w-0 ps-1 pe-14 @[18rem]/desk-wallet:mt-4.5 @[18rem]/desk-wallet:ps-1.5 @[18rem]/desk-wallet:pe-16">
+      <div className="relative z-10 mt-4 min-w-0 ps-2.5 pe-16 @[18rem]/desk-wallet:mt-4.5 @[18rem]/desk-wallet:ps-3 @[18rem]/desk-wallet:pe-[4.25rem]">
         <svg
           viewBox="0 0 143 108"
-          className="absolute end-0 top-1/2 h-7 w-[2.3rem] -translate-y-1/2 drop-shadow-[0_0_8px_oklch(0.62_0.19_264/0.45)] @[18rem]/desk-wallet:h-8 @[18rem]/desk-wallet:w-[2.6rem]"
+          className="absolute end-2 top-1/2 h-7 w-[2.3rem] -translate-y-1/2 drop-shadow-[0_0_8px_oklch(0.62_0.19_264/0.45)] @[18rem]/desk-wallet:end-2.5 @[18rem]/desk-wallet:h-8 @[18rem]/desk-wallet:w-[2.6rem]"
           fill="none"
           aria-hidden
         >

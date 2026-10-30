@@ -368,8 +368,12 @@ html[data-app-shell="true"]::after {
 /*
  * Floating desk bottom nav — no solid dock behind the pill.
  * Keep home-indicator gutter on page surface (not near-black chrome).
+ * Safari 26 samples real fixed nodes (`[data-slot=browser-chrome-*-tint]`),
+ * not `::before` / `::after` — keep both in sync.
  */
-html[data-app-shell="true"][data-desk-bottom-nav="true"]::after {
+html[data-app-shell="true"][data-desk-bottom-nav="true"]::after,
+html[data-app-shell="true"][data-desk-bottom-nav="true"]
+  [data-slot="browser-chrome-bottom-tint"] {
   background-color: var(--background);
 }
 
@@ -377,8 +381,15 @@ html[data-app-shell="true"][data-desk-bottom-nav="true"] body {
   background-color: var(--background);
 }
 
+html[data-app-shell="true"][data-desk-bottom-nav="true"]
+  [data-slot="browser-chrome-top-tint"] {
+  background-color: var(--background);
+}
+
 /* Sheet/dialog open — no solid home-indicator strip over the scrim. */
-html[data-overlay-open][data-app-shell="true"]::after {
+html[data-overlay-open][data-app-shell="true"]::after,
+html[data-overlay-open] [data-slot="browser-chrome-top-tint"],
+html[data-overlay-open] [data-slot="browser-chrome-bottom-tint"] {
   background-color: transparent;
 }
 
