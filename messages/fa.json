@@ -1530,7 +1530,7 @@
     "activityDate": "تاریخ",
     "activityDestination": "آدرس مقصد",
     "activityDepositAddress": "آدرس واریز",
-    "activityAddressUnavailable": "آدرس برای این مورد موجود نیست. برای انتقال‌های جدید، بعد از ایجاد، آدرس کامل نگه داشته می‌شود.",
+    "activityAddressUnavailable": "آدرس مقصد برای این انتقال ذخیره نشده.",
     "activityCopyAddress": "کپی آدرس",
     "activityAddressCopied": "آدرس کپی شد",
     "activityId": "شناسه",

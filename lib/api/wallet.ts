@@ -279,6 +279,10 @@ function parsePnl(body: unknown): AccountPnl {
 function mapLedgerApiRow(row: Record<string, unknown>): MeLedgerRow | null {
   const id = readString(row, "id")
   if (!id) return null
+  const nestedDest = isRecord(row.destination)
+    ? readString(row.destination, "address") ??
+      readString(row.destination, "wallet")
+    : null
   return {
     id,
     status: readString(row, "status") ?? "pending",
@@ -288,11 +292,22 @@ function mapLedgerApiRow(row: Record<string, unknown>): MeLedgerRow | null {
       readString(row, "createdAt") ??
       readString(row, "created_at") ??
       new Date(0).toISOString(),
-    address: readString(row, "address") ?? readString(row, "pay_address"),
+    address:
+      readString(row, "address") ??
+      readString(row, "pay_address") ??
+      readString(row, "payAddress") ??
+      readString(row, "deposit_address") ??
+      readString(row, "depositAddress"),
     destinationAddress:
       readString(row, "destinationAddress") ??
       readString(row, "destination_address") ??
-      readString(row, "to_address"),
+      readString(row, "to_address") ??
+      readString(row, "toAddress") ??
+      readString(row, "payout_address") ??
+      readString(row, "payoutAddress") ??
+      readString(row, "wallet_address") ??
+      readString(row, "walletAddress") ??
+      nestedDest,
   }
 }
 

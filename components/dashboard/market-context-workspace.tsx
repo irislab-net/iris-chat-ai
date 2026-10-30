@@ -52,10 +52,10 @@ function MarketContextWorkspaceInner({
           </div>
         }
         className={cn(
-          "min-h-0 flex-1 gap-6 overflow-y-auto overscroll-contain [-webkit-overflow-scrolling:touch] sm:gap-8",
+          "min-h-0 flex-1 overflow-y-auto overscroll-contain [-webkit-overflow-scrolling:touch]",
           mobile
-            ? "py-4 pt-5 max-lg:pb-[calc(var(--desk-bottom-nav,4.75rem)+1.25rem+env(safe-area-inset-bottom,0px))]"
-            : "py-5 sm:py-8"
+            ? "max-lg:pb-[calc(var(--desk-bottom-nav,4.75rem)+1.25rem+env(safe-area-inset-bottom,0px))]"
+            : null
         )}
       >
         <NewsBulletin

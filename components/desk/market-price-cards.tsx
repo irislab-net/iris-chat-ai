@@ -254,7 +254,7 @@ function MarketPriceCards({
   }, [markets, marked, query, sortDir, sortKey])
 
   return (
-    <section className="flex min-h-0 flex-1 flex-col gap-3 pt-1 sm:gap-3.5 sm:pt-2">
+    <section className="flex min-h-0 flex-1 flex-col gap-3 sm:gap-3.5">
       <label
         className={cn(
           "relative isolate flex min-h-12 shrink-0 items-center gap-2.5 overflow-hidden rounded-[1.25rem] px-3.5 sm:px-4",

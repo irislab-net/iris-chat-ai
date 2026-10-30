@@ -1551,7 +1551,7 @@
     "activityDate": "Date",
     "activityDestination": "Destination address",
     "activityDepositAddress": "Deposit address",
-    "activityAddressUnavailable": "Address isn’t available for this entry. New transfers keep the full address after you create them.",
+    "activityAddressUnavailable": "Destination wasn’t saved for this transfer.",
     "activityCopyAddress": "Copy address",
     "activityAddressCopied": "Address copied",
     "activityId": "Reference ID",

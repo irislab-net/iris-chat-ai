@@ -19,11 +19,7 @@ function TradeView() {
   }
 
   return (
-    <DeskPageFrame
-      pageId="trade"
-      title={t("title")}
-      className="gap-5 sm:gap-6"
-    >
+    <DeskPageFrame pageId="trade" title={t("title")}>
       <TradeSummaryCard balances={balances} />
       <PositionList
         active={open}

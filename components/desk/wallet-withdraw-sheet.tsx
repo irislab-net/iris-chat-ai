@@ -53,6 +53,7 @@ import {
   createWithdrawalChallenge,
   fetchMeStableRoutes,
   preferStableRoute,
+  rememberLedgerAddress,
   type MeStableRoute,
 } from "@/lib/api/wallet"
 import { notifyDeskWalletChanged } from "@/lib/desk-events"
@@ -404,12 +405,13 @@ function WithdrawBody({
     setSubmitting(true)
     setFieldHint(null)
     try {
-      await createMeWithdrawal({
+      const created = await createMeWithdrawal({
         route: selectedRoute.code,
         destinationAddress: address.trim(),
         amountUsd: amountNum,
         code: code.trim(),
       })
+      rememberLedgerAddress("withdrawal", created.id, address.trim())
       notifyDeskWalletChanged()
       setStep("done")
     } catch (err) {

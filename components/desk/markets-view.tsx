@@ -20,7 +20,7 @@ function MarketsView() {
     <DeskPageFrame
       pageId="markets"
       title={t("title")}
-      className="flex h-full min-h-0 flex-1 flex-col gap-5 py-3 pt-5 max-lg:pb-0 sm:gap-6 sm:py-4 sm:pt-6"
+      className="flex h-full min-h-0 flex-1 flex-col max-lg:pb-0"
     >
       <MarketPriceCards markets={markets} />
     </DeskPageFrame>

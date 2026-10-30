@@ -13,6 +13,8 @@ import {
   chatMobileSheetCompactContentClass,
   chatMobileSheetHandleClass,
   chatMobileSheetHeaderClass,
+  chatMobileSheetPrimaryButtonClass,
+  chatMobileSheetSecondaryButtonClass,
   chatMobileSheetTitleClass,
 } from "@/components/app-shell/chat-mobile-gemini-styles"
 import { ChatSheetDoneCheck } from "@/components/app-shell/chat-sheet-done-check"
@@ -370,10 +372,13 @@ function MarketDetailBody({
         <div className="mt-5 grid grid-cols-2 gap-2 pb-1">
           <Button
             type="button"
-            variant="outline"
+            variant="ghost"
             aria-pressed={marked}
             onClick={onToggleMarked}
-            className="h-11 rounded-full text-[14px] font-medium"
+            className={cn(
+              chatMobileSheetSecondaryButtonClass,
+              "h-11! min-h-11 gap-1.5 text-[14px]"
+            )}
           >
             <PinIcon
               className={cn("size-4 stroke-[1.75]", marked && "fill-current")}
@@ -383,7 +388,11 @@ function MarketDetailBody({
           </Button>
           <Button
             nativeButton={false}
-            className="h-11 rounded-full bg-[#2563EB] text-[14px] font-medium text-white hover:bg-[#1D4ED8]"
+            variant="ghost"
+            className={cn(
+              chatMobileSheetPrimaryButtonClass,
+              "h-11! min-h-11 gap-1.5 text-[14px]"
+            )}
             render={<Link href={DESK_AI_PATH} onClick={onClose} />}
           >
             {t("askExur")}

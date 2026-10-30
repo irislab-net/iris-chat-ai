@@ -104,7 +104,7 @@ function DeskPageFrame({
   return (
     <div
       className={cn(
-        "mx-auto flex w-full max-w-3xl flex-col gap-8 px-4 py-5 pt-6 sm:gap-10 sm:px-6 sm:py-8 sm:pt-10 lg:max-w-4xl",
+        "mx-auto flex w-full max-w-3xl flex-col gap-5 px-4 py-5 pt-6 sm:gap-6 sm:px-6 sm:py-8 sm:pt-10 lg:max-w-4xl",
         // Extra air so last cards clear the floating desk pill (desktop: none).
         "max-lg:pb-[calc(var(--desk-bottom-nav,4.75rem)+0.5rem)]",
         className

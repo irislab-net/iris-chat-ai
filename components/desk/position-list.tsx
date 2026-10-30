@@ -240,7 +240,7 @@ function PositionCard({
           <span
             className={cn(
               "inline-flex h-5 shrink-0 items-center rounded-full px-2 text-[11px] font-normal tracking-tight",
-              "border-transparent bg-muted/60 text-muted-foreground"
+              "border-transparent bg-emerald-500/12 text-emerald-700 dark:bg-emerald-400/14 dark:text-emerald-300"
             )}
           >
             {t("opened")}
@@ -256,7 +256,7 @@ function PositionCard({
           <span
             className={cn(
               "inline-flex h-5 shrink-0 items-center rounded-full px-2 text-[11px] font-normal tracking-tight",
-              "border-transparent bg-muted/60 text-muted-foreground"
+              "border-transparent bg-rose-500/12 text-rose-700 dark:bg-rose-400/14 dark:text-rose-300"
             )}
           >
             {t("closed")}

@@ -32,7 +32,8 @@ import { cn } from "@/lib/utils"
  * (same family as landing / iOS frost plates).
  */
 const walletCardShellClass = [
-  "relative isolate overflow-hidden",
+  // No overflow-hidden here — Safari clips outer box-shadow at rounded corners.
+  "relative isolate",
   "border border-white/70 dark:border-white/5",
   "bg-[linear-gradient(155deg,oklch(0.99_0.002_264)_0%,oklch(0.965_0.004_264)_48%,oklch(0.94_0.006_264)_100%)]",
   "supports-[backdrop-filter]:bg-[linear-gradient(155deg,oklch(0.99_0.002_264_/_0.72)_0%,oklch(0.965_0.004_264_/_0.58)_48%,oklch(0.94_0.006_264_/_0.52)_100%)]",
@@ -103,30 +104,22 @@ function WalletBankCard({
         className
       )}
     >
-      {/* Soft grey atmosphere — no blue wash */}
-      <span
+      {/* Clip atmosphere/sheen inside the radius — keep shadow on the outer shell */}
+      <div
         aria-hidden
-        className="pointer-events-none absolute -top-24 -end-16 size-56 rounded-full bg-black/[0.04] blur-3xl dark:bg-white/[0.06]"
-      />
-      <span
-        aria-hidden
-        className="pointer-events-none absolute -bottom-28 -start-20 size-64 rounded-full bg-black/[0.035] blur-3xl dark:bg-white/[0.04]"
-      />
-      <span
-        aria-hidden
-        className="pointer-events-none absolute inset-0 bg-[linear-gradient(115deg,transparent_22%,oklch(1_0_0_/_0.55)_48%,transparent_72%)] dark:bg-[linear-gradient(115deg,transparent_22%,oklch(1_0_0_/_0.06)_48%,transparent_72%)]"
-      />
-      <span
-        aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-[0.045] mix-blend-multiply dark:opacity-[0.07] dark:mix-blend-overlay"
-        style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E")`,
-        }}
-      />
-      <span
-        aria-hidden
-        className={cn(landingGlassSheen, "rounded-[inherit]")}
-      />
+        className="pointer-events-none absolute inset-0 overflow-hidden rounded-[inherit]"
+      >
+        <span className="absolute -top-24 -end-16 size-56 rounded-full bg-black/[0.04] blur-3xl dark:bg-white/[0.06]" />
+        <span className="absolute -bottom-28 -start-20 size-64 rounded-full bg-black/[0.035] blur-3xl dark:bg-white/[0.04]" />
+        <span className="absolute inset-0 bg-[linear-gradient(115deg,transparent_22%,oklch(1_0_0_/_0.55)_48%,transparent_72%)] dark:bg-[linear-gradient(115deg,transparent_22%,oklch(1_0_0_/_0.06)_48%,transparent_72%)]" />
+        <span
+          className="absolute inset-0 opacity-[0.045] mix-blend-multiply dark:opacity-[0.07] dark:mix-blend-overlay"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E")`,
+          }}
+        />
+        <span className={cn(landingGlassSheen, "rounded-[inherit]")} />
+      </div>
 
       <div className="relative z-10 flex items-start justify-between gap-2.5">
         <span className="flex min-w-0 items-center gap-2.5">
