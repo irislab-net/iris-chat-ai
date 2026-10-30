@@ -1,7 +1,13 @@
 "use client"
 
 import * as React from "react"
-import { Loader2Icon, PlayIcon, SquareIcon } from "lucide-react"
+import {
+  ArrowDownIcon,
+  ArrowUpIcon,
+  Loader2Icon,
+  PlayIcon,
+  SquareIcon,
+} from "lucide-react"
 import { useTranslations } from "next-intl"
 
 import {
@@ -16,9 +22,11 @@ import {
   chatMobileSheetTitleClass,
 } from "@/components/app-shell/chat-mobile-gemini-styles"
 import { ChatSheetDoneCheck } from "@/components/app-shell/chat-sheet-done-check"
+import { ChatStakingCoinTree } from "@/components/app-shell/chat-staking-coin-tree"
 import { useAuth } from "@/components/auth/auth-provider"
-import { ExurLogo } from "@/components/brand/exur-logo"
+import { AutoTradeStatusViz } from "@/components/desk/auto-trade-status-viz"
 import { DeskGlassCard } from "@/components/desk/desk-page-frame"
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -62,17 +70,45 @@ const autoTradeGlassActiveClass = [
   "dark:shadow-[0_1px_2px_rgba(0,0,0,0.35),0_10px_24px_-8px_rgba(37,99,235,0.55),inset_0_1px_1px_rgba(255,255,255,0.32),inset_0_0_0_0.5px_rgba(255,255,255,0.18),inset_0_-10px_18px_-10px_rgba(0,0,0,0.45)]",
 ].join(" ")
 
+function StatAmount({ value }: { value: string }) {
+  const match = /^([+−-]?)(\$)(.+)$/u.exec(value)
+  if (!match) {
+    return <span className="min-w-0 truncate">{value}</span>
+  }
+  const [, sign, dollar, rest] = match
+  return (
+    <span className="min-w-0 truncate">
+      {sign}
+      <span className="text-muted-foreground/45">{dollar}</span>
+      {rest}
+    </span>
+  )
+}
+
 function Stat({
   label,
   value,
   valueClassName,
   align = "start",
+  trend,
 }: {
   label: string
   value: string
   valueClassName?: string
   align?: "start" | "end"
+  /** When set, shows an up/down icon from the signed amount. */
+  trend?: number
 }) {
+  const trendDir =
+    trend == null || trend === 0 ? null : trend > 0 ? "up" : "down"
+  const TrendIcon = trendDir === "up" ? ArrowUpIcon : ArrowDownIcon
+  const trendTone =
+    trendDir === "up"
+      ? "text-emerald-600 dark:text-emerald-400"
+      : trendDir === "down"
+        ? "text-rose-600 dark:text-rose-400"
+        : undefined
+
   return (
     <div className={cn("min-w-0 space-y-2", align === "end" && "text-end")}>
       <p className="text-[10px] leading-none font-medium tracking-wide text-muted-foreground/55">
@@ -80,11 +116,18 @@ function Stat({
       </p>
       <p
         className={cn(
-          "truncate text-[15px] leading-none font-medium tabular-nums tracking-tight",
+          "inline-flex max-w-full items-center gap-0.5 truncate text-[15px] leading-none font-medium tabular-nums tracking-tight",
+          align === "end" && "justify-end",
           valueClassName
         )}
       >
-        {value}
+        {trendDir ? (
+          <TrendIcon
+            className={cn("size-3.5 shrink-0 stroke-[2.25]", trendTone)}
+            aria-hidden
+          />
+        ) : null}
+        <StatAmount value={value} />
       </p>
     </div>
   )
@@ -93,12 +136,15 @@ function Stat({
 function AutoTradeConfirmBody({
   enabling,
   pending,
+  active,
   onConfirm,
   onCancel,
   footerClassName,
 }: {
   enabling: boolean
   pending: boolean
+  /** When true, replay the coin-tree grow sequence (sheet/dialog open). */
+  active: boolean
   onConfirm: () => void
   onCancel: () => void
   footerClassName?: string
@@ -107,10 +153,33 @@ function AutoTradeConfirmBody({
 
   return (
     <>
-      <div className={cn(chatMobileSheetBodyClass, "overflow-y-auto pt-4 pb-2")}>
+      <div
+        className={cn(
+          chatMobileSheetBodyClass,
+          "min-h-0 flex-1 overflow-y-auto overflow-x-visible pt-3 pb-2"
+        )}
+      >
         <p className="px-1 text-[14px] leading-relaxed text-muted-foreground">
           {enabling ? t("autoTradeEnableBody") : t("autoTradePauseBody")}
         </p>
+        <div className="relative isolate overflow-visible py-3">
+          <div
+            aria-hidden
+            className="chat-staking-liquid-noise pointer-events-none absolute inset-0 overflow-hidden rounded-[1.65rem]"
+          >
+            <div className="chat-staking-liquid-noise-wash" />
+            <div className="chat-staking-liquid-noise-grain" />
+            <div className="chat-staking-liquid-noise-sheen" />
+          </div>
+          <div
+            className={cn(
+              "relative z-10 overflow-visible transition-[filter,opacity] duration-500",
+              !enabling && "opacity-55 grayscale-[0.35]"
+            )}
+          >
+            <ChatStakingCoinTree active={active} />
+          </div>
+        </div>
       </div>
       <div className={cn(chatMobileSheetFooterClass, "shrink-0", footerClassName)}>
         <div className={cn(chatMobileSheetFooterBarClass, "flex flex-col gap-2 pt-3 pb-0")}>
@@ -165,7 +234,7 @@ function AutoTradeConfirmSheet({
         <DialogContent
           className={cn(
             chatDesktopDialogClass,
-            "max-h-[min(85dvh,28rem)] gap-0 overflow-hidden p-0 sm:max-w-md"
+            "max-h-[min(85dvh,36rem)] gap-0 overflow-hidden p-0 sm:max-w-md"
           )}
         >
           <DialogHeader className={cn(chatMobileSheetHeaderClass, "px-5 pt-5")}>
@@ -178,6 +247,7 @@ function AutoTradeConfirmSheet({
             <AutoTradeConfirmBody
               enabling={enabling}
               pending={pending}
+              active={open}
               onConfirm={onConfirm}
               onCancel={() => onOpenChange(false)}
               footerClassName="pb-2"
@@ -195,7 +265,7 @@ function AutoTradeConfirmSheet({
         showCloseButton={false}
         className={cn(
           chatMobileSheetCompactContentClass,
-          "max-h-[min(88dvh,28rem)]"
+          "max-h-[min(88dvh,36rem)]"
         )}
       >
         <div aria-hidden className={chatMobileSheetHandleClass} />
@@ -218,6 +288,7 @@ function AutoTradeConfirmSheet({
           <AutoTradeConfirmBody
             enabling={enabling}
             pending={pending}
+            active={open}
             onConfirm={onConfirm}
             onCancel={() => onOpenChange(false)}
           />
@@ -294,30 +365,25 @@ function TradeSummaryCard({
       >
         <div className="flex items-center justify-between gap-4">
           <div className="flex min-w-0 items-center gap-3">
-            <ExurLogo
-              decorative
-              variant="gradient"
-              shimmer
-              size={48}
-              className="size-12 shrink-0 overflow-hidden rounded-full p-[1.5%]"
-            />
-            <div className="min-w-0 space-y-1">
+            <AutoTradeStatusViz active={showAutoTrade} />
+            <div className="min-w-0 space-y-1.5">
               <p
                 id={labelId}
                 className="text-[13px] leading-none font-semibold tracking-tight text-foreground"
               >
                 {t("autoTrade")}
               </p>
-              <p
+              <Badge
+                variant="outline"
                 className={cn(
-                  "text-[12px] leading-none font-medium",
+                  "h-5 rounded-full px-2 text-[11px] font-medium tracking-tight",
                   showAutoTrade
-                    ? "text-[#1D4ED8] dark:text-[#93C5FD]"
-                    : "text-muted-foreground"
+                    ? "border-transparent bg-[#2563EB] text-white shadow-none dark:bg-[#3B82F6]"
+                    : "border-border/60 bg-muted/50 text-muted-foreground"
                 )}
               >
                 {showAutoTrade ? t("autoTradeOn") : t("autoTradeOff")}
-              </p>
+              </Badge>
             </div>
           </div>
           <button
@@ -361,15 +427,18 @@ function TradeSummaryCard({
           <Stat
             label={t("inPositions")}
             value={formatUsd(balances.lockedUsd)}
+            trend={balances.lockedUsd}
           />
           <Stat
             label={t("onHold")}
             value={formatUsd(balances.withdrawHoldUsd)}
+            trend={balances.withdrawHoldUsd}
           />
           <Stat
             label={t("todayPnl")}
             value={formatUsd(balances.todayPnlUsd, { signed: true })}
             valueClassName={pnlToneClass(balances.todayPnlUsd)}
+            trend={balances.todayPnlUsd}
             align="end"
           />
         </div>

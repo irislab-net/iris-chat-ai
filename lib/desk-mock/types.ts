@@ -68,10 +68,14 @@ export type DeskMarketQuote = {
   price: number
   change24hPct: number
   sparkline: number[]
-  high24h: number
-  low24h: number
+  /** Previous-day mark (HL prevDayPx). */
+  prevDayPx: number
   /** 24h notional volume in USD when live. */
   volume24hUsd?: number
+  /** Open interest notional in USD (base OI × mark). */
+  openInterestUsd?: number
+  /** Hourly funding rate from Hyperliquid (e.g. 0.0000125). */
+  fundingRate?: number
   updatedAt: string
 }
 

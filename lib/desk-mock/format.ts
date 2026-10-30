@@ -47,6 +47,18 @@ export function formatPct(value: number, signed = true): string {
   return `${abs}%`
 }
 
+/** Hyperliquid hourly funding rate → display percent (e.g. 0.0000125 → +0.0013%). */
+export function formatFundingRate(rate: number): string {
+  if (!Number.isFinite(rate)) return "—"
+  const pct = rate * 100
+  const abs = Math.abs(pct)
+  const digits = abs >= 0.01 ? 4 : 6
+  const body = abs.toFixed(digits)
+  if (rate > 0) return `+${body}%`
+  if (rate < 0) return `−${body}%`
+  return `${body}%`
+}
+
 export function formatRoe(pnl: number, margin: number): string {
   if (!margin) return "—"
   return formatPct((pnl / margin) * 100)
@@ -64,5 +76,5 @@ export function formatLeverage(leverage: number | null | undefined): string {
 export function pnlToneClass(value: number): string {
   if (value > 0) return "text-emerald-600 dark:text-emerald-400"
   if (value < 0) return "text-rose-600 dark:text-rose-400"
-  return "text-muted-foreground"
+  return ""
 }

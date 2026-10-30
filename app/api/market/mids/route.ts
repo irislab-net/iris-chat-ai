@@ -16,8 +16,9 @@ type MarketRow = {
   price: number
   change24hPct: number
   volume24hUsd: number
-  high24h: number
-  low24h: number
+  prevDayPx: number
+  openInterestUsd: number
+  fundingRate: number
 }
 
 /** Full live Hyperliquid tape for desk Markets (+ legacy mids for BTC/ETH/XAU). */
@@ -33,6 +34,7 @@ export async function GET() {
           ctx.prevDayPx > 0
             ? ((ctx.midPx - ctx.prevDayPx) / ctx.prevDayPx) * 100
             : 0
+        const mark = ctx.markPx > 0 ? ctx.markPx : ctx.midPx
         return {
           instrument: deskInstrumentFromHlCoin(ctx.coin),
           hlCoin: ctx.coin,
@@ -41,8 +43,9 @@ export async function GET() {
           price: ctx.midPx,
           change24hPct,
           volume24hUsd: ctx.dayNtlVlm,
-          high24h: Math.max(ctx.midPx, ctx.prevDayPx),
-          low24h: Math.min(ctx.midPx, ctx.prevDayPx),
+          prevDayPx: ctx.prevDayPx,
+          openInterestUsd: ctx.openInterest * mark,
+          fundingRate: ctx.funding,
         }
       })
       // Highest volume first — exchange-style default tape.

@@ -1415,7 +1415,27 @@
     "livePrices": "{count} بازار زنده",
     "demoPrices": "{count} بازار دمو",
     "markMarket": "مارک {market}",
-    "unmarkMarket": "برداشتن مارک {market}"
+    "unmarkMarket": "برداشتن مارک {market}",
+    "detailTitle": "بازار",
+    "wrapTitle": "خلاصه بازار",
+    "wrapSubtitle": "زنده",
+    "last": "آخرین",
+    "prevDay": "روز قبل",
+    "volume24hFull": "حجم ۲۴س",
+    "openInterest": "بهره باز",
+    "funding": "فاندینگ",
+    "markShort": "مارک",
+    "unmarkShort": "مارک‌شده",
+    "askExur": "بپرس از Exur",
+    "chartLoading": "در حال بارگذاری چارت…",
+    "chartEmpty": "چارت در دسترس نیست",
+    "range": {
+      "live": "زنده",
+      "1d": "۱ر",
+      "1w": "۱ه",
+      "1m": "۱م",
+      "1y": "۱س"
+    }
   },
   "deskTrade": {
     "title": "معاملات",
@@ -1464,7 +1484,9 @@
     "tp": "TP",
     "sl": "SL",
     "openedAt": "باز شده {date}",
-    "closedAt": "بسته {date}"
+    "closedAt": "بسته {date}",
+    "opened": "باز",
+    "closed": "بسته"
   },
   "deskProfile": {
     "title": "پروفایل",

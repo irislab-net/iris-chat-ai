@@ -91,8 +91,57 @@ function parseCandle(raw: unknown): CandleBar | null {
   return bar
 }
 
+export type DeskChartRange = "live" | "1d" | "1w" | "1m" | "1y"
+
+/** Interval + lookback window for desk market detail chart chips. */
+export function deskChartRangeSpec(range: DeskChartRange): {
+  interval: string
+  lookbackMs: number
+  /** Soft poll while sheet is open (LIVE only). */
+  pollMs?: number
+} {
+  const hour = 60 * 60 * 1000
+  const day = 24 * hour
+  switch (range) {
+    case "live":
+      return { interval: "1m", lookbackMs: 3 * hour, pollMs: 20_000 }
+    case "1d":
+      return { interval: "15m", lookbackMs: day }
+    case "1w":
+      return { interval: "1h", lookbackMs: 7 * day }
+    case "1m":
+      return { interval: "4h", lookbackMs: 30 * day }
+    case "1y":
+      return { interval: "1d", lookbackMs: 365 * day }
+    default:
+      return { interval: "15m", lookbackMs: day }
+  }
+}
+
+/**
+ * Resolve Hyperliquid coin for candles.
+ * Prefer live `hlCoin`, then known symbol map, then raw ticker.
+ */
+export function resolveHyperliquidCoin(input: {
+  instrument?: string
+  hlCoin?: string | null
+}): string | null {
+  const fromHl = input.hlCoin?.trim().toUpperCase()
+  if (fromHl) return fromHl
+  const mapped = input.instrument ? hyperliquidCoin(input.instrument) : null
+  if (mapped) return mapped
+  const raw = input.instrument
+    ?.trim()
+    .toUpperCase()
+    .replace(/[^A-Z0-9]/g, "")
+  return raw || null
+}
+
 export async function fetchHyperliquidCandles(input: {
-  symbol: string
+  /** Desk / signal symbol (BTC, ETH, XAU…). Ignored when `coin` is set. */
+  symbol?: string
+  /** Hyperliquid universe name (BTC, PAXG, HYPE…). */
+  coin?: string
   timeframe: string
   /** How many bars to request (capped). Ignored when startTime is set. */
   limit?: number
@@ -102,7 +151,9 @@ export async function fetchHyperliquidCandles(input: {
   endTime?: number
   signal?: AbortSignal
 }): Promise<CandleBar[]> {
-  const coin = hyperliquidCoin(input.symbol)
+  const coin =
+    input.coin?.trim().toUpperCase() ||
+    (input.symbol ? hyperliquidCoin(input.symbol) : null)
   if (!coin) return []
 
   const interval = hyperliquidInterval(input.timeframe)
@@ -164,12 +215,17 @@ export async function fetchHyperliquidMids(
 export type HyperliquidAssetCtx = {
   coin: string
   midPx: number
+  markPx: number
   prevDayPx: number
   dayNtlVlm: number
+  /** Coin units (base). */
+  openInterest: number
+  /** Hourly funding rate (e.g. 0.0000125 = 0.00125%). */
+  funding: number
   isDelisted: boolean
 }
 
-/** Perp universe + 24h context (mid, prev day, day notional). */
+/** Perp universe + 24h context (mid, prev day, day notional, OI, funding). */
 export async function fetchHyperliquidAssetCtxs(
   signal?: AbortSignal
 ): Promise<HyperliquidAssetCtx[]> {
@@ -199,14 +255,21 @@ export async function fetchHyperliquidAssetCtxs(
     const ctx = ctxs[i] as Record<string, unknown> | undefined
     if (!name || !ctx) continue
     const midPx = Number(ctx.midPx ?? ctx.markPx)
+    const markPx = Number(ctx.markPx ?? ctx.midPx)
     const prevDayPx = Number(ctx.prevDayPx)
     const dayNtlVlm = Number(ctx.dayNtlVlm)
+    const openInterest = Number(ctx.openInterest)
+    const funding = Number(ctx.funding)
     if (!Number.isFinite(midPx) || !(midPx > 0)) continue
     out.push({
       coin: name,
       midPx,
+      markPx: Number.isFinite(markPx) && markPx > 0 ? markPx : midPx,
       prevDayPx: Number.isFinite(prevDayPx) && prevDayPx > 0 ? prevDayPx : midPx,
       dayNtlVlm: Number.isFinite(dayNtlVlm) ? dayNtlVlm : 0,
+      openInterest:
+        Number.isFinite(openInterest) && openInterest >= 0 ? openInterest : 0,
+      funding: Number.isFinite(funding) ? funding : 0,
       isDelisted: Boolean(asset?.isDelisted),
     })
   }

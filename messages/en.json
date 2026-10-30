@@ -1436,7 +1436,27 @@
     "livePrices": "{count} live markets",
     "demoPrices": "{count} demo markets",
     "markMarket": "Mark {market}",
-    "unmarkMarket": "Unmark {market}"
+    "unmarkMarket": "Unmark {market}",
+    "detailTitle": "Market",
+    "wrapTitle": "Market wrap",
+    "wrapSubtitle": "Live",
+    "last": "Last",
+    "prevDay": "Prev day",
+    "volume24hFull": "24h volume",
+    "openInterest": "Open interest",
+    "funding": "Funding",
+    "markShort": "Mark",
+    "unmarkShort": "Marked",
+    "askExur": "Ask Exur",
+    "chartLoading": "Loading chart…",
+    "chartEmpty": "Chart unavailable",
+    "range": {
+      "live": "LIVE",
+      "1d": "1D",
+      "1w": "1W",
+      "1m": "1M",
+      "1y": "1Y"
+    }
   },
   "deskTrade": {
     "title": "Trade",
@@ -1485,7 +1505,9 @@
     "tp": "TP",
     "sl": "SL",
     "openedAt": "Opened {date}",
-    "closedAt": "Closed {date}"
+    "closedAt": "Closed {date}",
+    "opened": "Opened",
+    "closed": "Closed"
   },
   "deskProfile": {
     "title": "Profile",

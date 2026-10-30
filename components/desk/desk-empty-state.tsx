@@ -41,7 +41,7 @@ function DeskEmptyState({
         <span aria-hidden className={cn(landingGlassSheen, "rounded-full")} />
         <Icon className="relative z-10 size-5 stroke-[1.6]" />
       </span>
-      <p className="mt-4 text-[15px] font-semibold tracking-tight text-foreground">
+      <p className="mt-4 text-[15px] font-normal tracking-tight text-foreground">
         {title}
       </p>
       {description ? (

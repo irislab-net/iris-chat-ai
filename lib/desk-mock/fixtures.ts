@@ -36,8 +36,7 @@ function mockQuote(
   change24hPct: number,
   volume24hUsd: number
 ): DeskMarketQuote {
-  const high24h = price * (1 + Math.max(change24hPct, 0.4) / 100)
-  const low24h = price * (1 - Math.max(Math.abs(change24hPct), 0.4) / 100)
+  const prevDayPx = price / (1 + change24hPct / 100)
   return {
     instrument,
     label,
@@ -45,9 +44,10 @@ function mockQuote(
     price,
     change24hPct,
     sparkline: spark(price * 0.97),
-    high24h,
-    low24h,
+    prevDayPx,
     volume24hUsd,
+    openInterestUsd: volume24hUsd * 0.35,
+    fundingRate: change24hPct >= 0 ? 0.0000125 : -0.000008,
     updatedAt: new Date().toISOString(),
   }
 }

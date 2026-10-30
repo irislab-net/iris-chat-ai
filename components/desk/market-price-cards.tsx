@@ -13,6 +13,7 @@ import { useTranslations } from "next-intl"
 
 import { DeskEmptyState } from "@/components/desk/desk-empty-state"
 import { DeskGlassCard } from "@/components/desk/desk-page-frame"
+import { MarketDetailSheet } from "@/components/desk/market-detail-sheet"
 import { MarketAssetLogo } from "@/components/dashboard/market-asset-logo"
 import { deskSearchHaystack } from "@/lib/desk-markets-catalog"
 import {
@@ -185,6 +186,13 @@ function MarketPriceCards({
     () => parseMarkedMarkets(markedRaw),
     [markedRaw]
   )
+  const [detailInstrument, setDetailInstrument] = React.useState<string | null>(
+    null
+  )
+  const detailMarket = React.useMemo(
+    () => markets.find((m) => m.instrument === detailInstrument) ?? null,
+    [detailInstrument, markets]
+  )
 
   function toggleMarked(instrument: string) {
     const next = new Set(marked)
@@ -341,9 +349,9 @@ function MarketPriceCards({
                 return (
                   <li
                     key={m.instrument}
-                    className="flex items-center gap-3 border-b border-border/35 px-3.5 py-3 last:border-b-0 sm:px-4 sm:py-3.5 dark:border-white/8"
+                    className="border-b border-border/35 last:border-b-0 dark:border-white/8"
                   >
-                    <div className="flex min-w-0 flex-1 items-center gap-2">
+                    <div className="flex items-center gap-3 px-3.5 py-3 sm:px-4 sm:py-3.5">
                       <button
                         type="button"
                         onClick={() => toggleMarked(m.instrument)}
@@ -369,48 +377,54 @@ function MarketPriceCards({
                           aria-hidden
                         />
                       </button>
-                      <MarketAssetLogo
-                        symbol={m.instrument}
-                        className="size-8 shrink-0"
-                      />
-                      <div className="min-w-0">
-                        <p className="truncate text-[14px] font-semibold tracking-tight">
-                          {m.instrument}
-                          <span className="font-medium text-muted-foreground">
-                            /{quote}
-                          </span>
-                        </p>
-                        <p className="truncate text-[11px] text-muted-foreground">
-                          {m.label}
-                        </p>
-                      </div>
-                    </div>
-
-                    <MiniSpark values={m.sparkline} up={up} />
-
-                    <div className="flex shrink-0 items-center gap-6 sm:gap-10">
-                      <p className="w-[4.5rem] text-end text-[14px] font-medium tabular-nums tracking-tight sm:w-[5.5rem]">
-                        {formatPrice(m.price, m.instrument)}
-                      </p>
-                      <div
-                        className={cn(
-                          "flex w-[4.25rem] flex-col items-end gap-0.5 tabular-nums",
-                          pnlToneClass(m.change24hPct)
-                        )}
+                      <button
+                        type="button"
+                        onClick={() => setDetailInstrument(m.instrument)}
+                        className="flex min-w-0 flex-1 items-center gap-3 text-start outline-none transition-opacity active:opacity-80 focus-visible:ring-2 focus-visible:ring-[#2563EB]/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                       >
-                        <span className="text-[12px] font-semibold leading-none">
-                          {formatPct(m.change24hPct)}
-                        </span>
-                        <span className="text-[10px] font-medium leading-none opacity-70">
-                          {formatUsd(changeUsd, {
-                            signed: true,
-                            digits: Math.abs(changeUsd) >= 100 ? 0 : 2,
-                          })}
-                        </span>
-                      </div>
-                      <p className="hidden w-[4.5rem] text-end text-[12px] font-medium tabular-nums text-muted-foreground sm:block">
-                        {formatCompactUsd(m.volume24hUsd ?? 0)}
-                      </p>
+                        <MarketAssetLogo
+                          symbol={m.instrument}
+                          className="size-8 shrink-0"
+                        />
+                        <div className="min-w-0 flex-1">
+                          <p className="truncate text-[14px] font-semibold tracking-tight">
+                            {m.instrument}
+                            <span className="font-medium text-muted-foreground">
+                              /{quote}
+                            </span>
+                          </p>
+                          <p className="truncate text-[11px] text-muted-foreground">
+                            {m.label}
+                          </p>
+                        </div>
+
+                        <MiniSpark values={m.sparkline} up={up} />
+
+                        <div className="flex shrink-0 items-center gap-6 sm:gap-10">
+                          <p className="w-[4.5rem] text-end text-[14px] font-medium tabular-nums tracking-tight sm:w-[5.5rem]">
+                            {formatPrice(m.price, m.instrument)}
+                          </p>
+                          <div
+                            className={cn(
+                              "flex w-[4.25rem] flex-col items-end gap-0.5 tabular-nums",
+                              pnlToneClass(m.change24hPct)
+                            )}
+                          >
+                            <span className="text-[12px] font-semibold leading-none">
+                              {formatPct(m.change24hPct)}
+                            </span>
+                            <span className="text-[10px] font-medium leading-none opacity-70">
+                              {formatUsd(changeUsd, {
+                                signed: true,
+                                digits: Math.abs(changeUsd) >= 100 ? 0 : 2,
+                              })}
+                            </span>
+                          </div>
+                          <p className="hidden w-[4.5rem] text-end text-[12px] font-medium tabular-nums text-muted-foreground sm:block">
+                            {formatCompactUsd(m.volume24hUsd ?? 0)}
+                          </p>
+                        </div>
+                      </button>
                     </div>
                   </li>
                 )
@@ -419,6 +433,20 @@ function MarketPriceCards({
           )}
         </div>
       </DeskGlassCard>
+
+      <MarketDetailSheet
+        market={detailMarket}
+        open={detailMarket != null}
+        onOpenChange={(next) => {
+          if (!next) setDetailInstrument(null)
+        }}
+        marked={
+          detailMarket != null ? marked.has(detailMarket.instrument) : false
+        }
+        onToggleMarked={() => {
+          if (detailMarket) toggleMarked(detailMarket.instrument)
+        }}
+      />
     </section>
   )
 }

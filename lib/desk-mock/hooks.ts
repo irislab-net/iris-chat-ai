@@ -38,8 +38,9 @@ type LiveMarketRow = {
   price: number
   change24hPct: number
   volume24hUsd?: number
-  high24h?: number
-  low24h?: number
+  prevDayPx?: number
+  openInterestUsd?: number
+  fundingRate?: number
 }
 
 type MidsPayload = {
@@ -291,9 +292,15 @@ function useMockMarkets(): {
                   price * 0.995,
                   price,
                 ],
-                high24h: row.high24h ?? price,
-                low24h: row.low24h ?? price,
+                prevDayPx:
+                  row.prevDayPx ??
+                  seed?.prevDayPx ??
+                  (row.change24hPct === -100
+                    ? price
+                    : price / (1 + row.change24hPct / 100)),
                 volume24hUsd: row.volume24hUsd,
+                openInterestUsd: row.openInterestUsd ?? seed?.openInterestUsd,
+                fundingRate: row.fundingRate ?? seed?.fundingRate,
                 updatedAt: now,
               } satisfies DeskMarketQuote
             })

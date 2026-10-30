@@ -176,7 +176,7 @@ function ActivityCard({
             <div className="flex items-start justify-between gap-2">
               <p
                 className={cn(
-                  "min-w-0 text-[15px] font-medium tracking-tight",
+                  "min-w-0 text-[15px] font-normal tracking-tight",
                   !awaiting && "tabular-nums",
                   !awaiting &&
                     pnlToneClass(
@@ -185,7 +185,16 @@ function ActivityCard({
                 )}
               >
                 {awaiting ? (
-                  <span className="text-muted-foreground/70">—</span>
+                  <>
+                    <span className="tabular-nums text-muted-foreground/40">
+                      $···
+                    </span>
+                    {row.currency ? (
+                      <span className="ms-1.5 text-[11px] font-normal text-muted-foreground/45">
+                        {row.currency}
+                      </span>
+                    ) : null}
+                  </>
                 ) : (
                   <>
                     {inbound
@@ -372,22 +381,22 @@ function ProfileView() {
                   aria-selected={active}
                   aria-label={`${filter.label} ${filter.count}`}
                   className={cn(
-                    "relative z-10 inline-flex h-11 flex-1 items-center justify-center gap-1.5 rounded-[1.1rem] px-2.5 text-[13px] leading-none transition-[background-color,color,box-shadow,border-color] duration-200 sm:px-3",
+                    "relative z-10 inline-flex h-11 flex-1 items-center justify-center gap-1.5 rounded-[1.1rem] px-2.5 text-[13px] font-normal leading-none transition-[background-color,color,box-shadow,border-color] duration-200 sm:px-3",
                     active
                       ? cn(
-                          "isolate overflow-hidden border border-white font-semibold text-foreground",
+                          "isolate overflow-hidden border border-white text-foreground",
                           "bg-white dark:border-transparent dark:bg-white/18",
                           "shadow-[0_1px_2px_rgba(15,23,42,0.05),0_6px_16px_-8px_rgba(15,23,42,0.14),inset_0_1px_1px_rgba(255,255,255,1),inset_0_0_0_0.5px_rgba(255,255,255,0.8),inset_0_-6px_12px_-8px_rgba(15,23,42,0.05)]",
                           "dark:shadow-[0_1px_2px_rgba(0,0,0,0.2),0_6px_16px_-8px_rgba(0,0,0,0.35),inset_0_1px_0_0_rgba(255,255,255,0.1),inset_0_-8px_14px_-8px_rgba(0,0,0,0.35)]"
                         )
-                      : landingNavLinkInactive
+                      : cn(landingNavLinkInactive, "font-normal")
                   )}
                   onClick={() => setActivityFilter(filter.id)}
                 >
-                  <span className="truncate">{filter.label}</span>
+                  <span className="truncate font-normal">{filter.label}</span>
                   <span
                     className={cn(
-                      "inline-flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[11px] font-semibold tabular-nums leading-none",
+                      "inline-flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[11px] font-normal tabular-nums leading-none",
                       active
                         ? "bg-[#2563EB]/14 text-[#1D4ED8] dark:bg-[#2563EB]/28 dark:text-[#93C5FD]"
                         : "bg-black/[0.06] text-muted-foreground dark:bg-white/12"
