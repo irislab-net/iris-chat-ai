@@ -10,6 +10,7 @@ import {
 import { useTranslations } from "next-intl"
 
 import { chatMobilePrimaryButtonClass } from "@/components/app-shell/chat-mobile-gemini-styles"
+import { useAuth } from "@/components/auth/auth-provider"
 import { MarketAssetLogo } from "@/components/dashboard/market-asset-logo"
 import { DeskEmptyState } from "@/components/desk/desk-empty-state"
 import { DeskGlassCard } from "@/components/desk/desk-page-frame"
@@ -150,18 +151,14 @@ function PositionCard({
     minute: "2-digit",
   })
 
-  // Match header title start: px-4 + logo (size-7) + gap-2
-  const detailsInlineStartClass = "ps-[calc(1rem+1.75rem+0.5rem)] pe-4"
-
   const details = (
     <div
       className={cn(
-        detailsInlineStartClass,
-        "pb-4",
+        "px-5 pb-4 sm:px-6",
         collapsible ? "pt-1" : "pt-0"
       )}
     >
-      <div className="grid grid-cols-2 gap-x-4 gap-y-3 sm:grid-cols-4 sm:gap-x-3 [&>:nth-child(even)]:text-end">
+      <div className="grid w-full grid-cols-2 gap-x-4 gap-y-3 sm:grid-cols-4 sm:gap-x-3 [&>:nth-child(even)]:text-end">
         <Meta
           label={t("size")}
           value={position.size.toLocaleString("en-US", {
@@ -296,6 +293,7 @@ function PositionList({
   availableUsd?: number
 }) {
   const t = useTranslations("deskTrade")
+  const { user, login, loginPending } = useAuth()
   const [tab, setTab] = React.useState<"active" | "history">("active")
   const needsFunding = tab === "active" && availableUsd <= 0
 
@@ -402,15 +400,29 @@ function PositionList({
           }
           action={
             needsFunding ? (
-              <Link
-                href="/profile?deposit=1"
-                className={cn(
-                  "inline-flex h-10 items-center justify-center rounded-full px-5 text-[13px] font-semibold",
-                  chatMobilePrimaryButtonClass
-                )}
-              >
-                {t("emptyFundCta")}
-              </Link>
+              user ? (
+                <Link
+                  href="/profile?deposit=1"
+                  className={cn(
+                    "inline-flex h-10 items-center justify-center rounded-full px-5 text-[13px] font-semibold",
+                    chatMobilePrimaryButtonClass
+                  )}
+                >
+                  {t("emptyFundCta")}
+                </Link>
+              ) : (
+                <button
+                  type="button"
+                  disabled={loginPending}
+                  onClick={() => login({ source: "chat" })}
+                  className={cn(
+                    "inline-flex h-10 items-center justify-center rounded-full px-5 text-[13px] font-semibold",
+                    chatMobilePrimaryButtonClass
+                  )}
+                >
+                  {t("emptyFundCta")}
+                </button>
+              )
             ) : undefined
           }
         />

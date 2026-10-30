@@ -29,9 +29,9 @@ import { getPrivacyNoticeHref, getTermsOfServiceHref } from "@/lib/legal"
 import {
   chatLoginConsentDialogClass,
   chatMobileSheetBodyClass,
+  chatMobileSheetCompactContentClass,
   chatMobileSheetConsentCheckedClass,
   chatMobileSheetConsentUncheckedClass,
-  chatMobileSheetContentClass,
   chatMobileSheetDescriptionClass,
   chatMobileSheetFooterBarClass,
   chatMobileSheetFooterClass,
@@ -88,10 +88,12 @@ function ConsentCheck({
     <label
       htmlFor={id}
       className={cn(
-        "flex min-h-12 cursor-pointer items-center gap-3 rounded-2xl py-3 ps-5 pe-3.5 text-start transition-[background-color,box-shadow]",
+        "flex min-h-12 cursor-pointer items-center gap-3 rounded-2xl py-3 text-start transition-[background-color,box-shadow]",
         checked
           ? chatMobileSheetConsentCheckedClass
-          : chatMobileSheetConsentUncheckedClass
+          : chatMobileSheetConsentUncheckedClass,
+        // After row surface classes so twMerge keeps start padding over `px-3`.
+        "ps-5 pe-3.5"
       )}
     >
       <span
@@ -300,7 +302,7 @@ function LoginConsentDialog({
       <SheetContent
         side="bottom"
         showCloseButton={!confirming}
-        className={cn(chatMobileSheetContentClass, "gap-0 border-0")}
+        className={cn(chatMobileSheetCompactContentClass, "gap-0 border-0")}
       >
         <div aria-hidden className={chatMobileSheetHandleClass} />
         <div className={cn(chatMobileSheetBodyClass, "gap-4 pb-5")}>

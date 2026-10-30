@@ -238,19 +238,28 @@ function TradeSummaryCard({
   const { user, refresh } = useAuth()
   const labelId = React.useId()
   const serverAutoTrade = user?.auto_trade_enabled
+  const authAutoTradeKey = `${user?.id ?? ""}:${String(serverAutoTrade)}`
   const [autoTrade, setAutoTrade] = React.useState(
-    () => serverAutoTrade !== false
+    () => (user ? serverAutoTrade !== false : false)
   )
-  const [syncedAutoTrade, setSyncedAutoTrade] = React.useState(serverAutoTrade)
+  const [syncedAuthAutoTradeKey, setSyncedAuthAutoTradeKey] =
+    React.useState(authAutoTradeKey)
   const [pending, setPending] = React.useState(false)
   const [confirmOpen, setConfirmOpen] = React.useState(false)
   const [confirmEnabling, setConfirmEnabling] = React.useState(false)
 
+  // Guests never show Active — only the signed-in server flag may light up.
+  const showAutoTrade = Boolean(user) && autoTrade
+
   // Adjust during render when auth refreshes auto-trade (avoids setState-in-effect).
-  if (serverAutoTrade !== syncedAutoTrade) {
-    setSyncedAutoTrade(serverAutoTrade)
-    if (typeof serverAutoTrade === "boolean") {
+  if (authAutoTradeKey !== syncedAuthAutoTradeKey) {
+    setSyncedAuthAutoTradeKey(authAutoTradeKey)
+    if (!user) {
+      setAutoTrade(false)
+    } else if (typeof serverAutoTrade === "boolean") {
       setAutoTrade(serverAutoTrade)
+    } else {
+      setAutoTrade(true)
     }
   }
 
@@ -302,12 +311,12 @@ function TradeSummaryCard({
               <p
                 className={cn(
                   "text-[12px] leading-none font-medium",
-                  autoTrade
+                  showAutoTrade
                     ? "text-[#1D4ED8] dark:text-[#93C5FD]"
                     : "text-muted-foreground"
                 )}
               >
-                {autoTrade ? t("autoTradeOn") : t("autoTradeOff")}
+                {showAutoTrade ? t("autoTradeOn") : t("autoTradeOff")}
               </p>
             </div>
           </div>
@@ -316,15 +325,17 @@ function TradeSummaryCard({
             disabled={!user || pending}
             onClick={openConfirm}
             aria-labelledby={labelId}
-            aria-pressed={autoTrade}
+            aria-pressed={showAutoTrade}
             aria-label={
-              autoTrade ? t("autoTradeStopAria") : t("autoTradePlayAria")
+              showAutoTrade ? t("autoTradeStopAria") : t("autoTradePlayAria")
             }
             className={cn(
               "relative inline-flex size-11 shrink-0 items-center justify-center rounded-full transition-[background-color,box-shadow,border-color,opacity] duration-200",
               "outline-none focus-visible:ring-3 focus-visible:ring-[#2563EB]/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
               "disabled:pointer-events-none disabled:opacity-45",
-              autoTrade ? autoTradeGlassActiveClass : autoTradeGlassIdleClass
+              showAutoTrade
+                ? autoTradeGlassActiveClass
+                : autoTradeGlassIdleClass
             )}
           >
             <span
@@ -334,7 +345,7 @@ function TradeSummaryCard({
             <span className="relative z-10 inline-flex items-center justify-center">
               {pending ? (
                 <Loader2Icon className="size-4 animate-spin" aria-hidden />
-              ) : autoTrade ? (
+              ) : showAutoTrade ? (
                 <SquareIcon className="size-3.5 fill-current" aria-hidden />
               ) : (
                 <PlayIcon
