@@ -9,8 +9,8 @@ type ContextMainProps = React.ComponentProps<"main">
 
 /**
  * Full-bleed scroll surface. Desk bottom-nav clearance lives on the *content*
- * (`--desk-bottom-nav`), not as padding on this shell — otherwise a solid
- * `bg-background` strip sits behind the floating pill.
+ * (`DeskPageFrame` / `--desk-bottom-nav`), not as padding here — otherwise a
+ * solid `bg-background` strip sits under the floating pill and covers main.
  */
 function ContextMain({ className, children, ...props }: ContextMainProps) {
   return (
@@ -27,7 +27,7 @@ function ContextMain({ className, children, ...props }: ContextMainProps) {
       <div className="flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain">
         <div
           data-slot="context-source"
-          className="flex h-full min-h-0 flex-col pb-[calc(var(--desk-bottom-nav,0px)+0.75rem+env(safe-area-inset-bottom,0px))] lg:pb-0"
+          className="flex h-full min-h-0 flex-col"
         >
           {children}
         </div>
