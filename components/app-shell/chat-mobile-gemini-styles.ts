@@ -40,10 +40,10 @@ const deskBottomNavGlassClass = [
   "chat-ios26-liquid-glass chat-sheet-glass relative isolate overflow-hidden",
   "rounded-[2rem] border border-white/55",
   "bg-white/78 supports-[backdrop-filter]:bg-white/58",
-  "shadow-[inset_0_1px_0_0_rgba(255,255,255,0.95),inset_0_0_0_0.5px_rgba(255,255,255,0.5),0_1px_2px_rgba(15,23,42,0.04),0_10px_32px_-10px_rgba(15,23,42,0.18),0_22px_56px_-18px_rgba(37,99,235,0.22)]",
+  "shadow-[inset_0_1px_0_0_rgba(255,255,255,0.95),inset_0_0_0_0.5px_rgba(255,255,255,0.5),0_1px_2px_rgba(15,23,42,0.04),0_6px_18px_-8px_rgba(15,23,42,0.12)]",
   "backdrop-blur-[40px] backdrop-saturate-[185%]",
   "dark:border-white/5 dark:bg-white/16 dark:supports-[backdrop-filter]:bg-white/12",
-  "dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.1),0_10px_32px_-10px_rgba(0,0,0,0.5),0_22px_56px_-18px_rgba(37,99,235,0.28)]",
+  "dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.1),0_6px_18px_-8px_rgba(0,0,0,0.35)]",
 ].join(" ")
 
 /** Sliding liquid-glass chip behind the active bottom-nav tab. */
